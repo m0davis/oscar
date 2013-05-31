@@ -1,0 +1,41 @@
+
+  --[Premise]
+  --[Conclusion]
+  --[ForwardsPrimaFacieReason]
+  --[ForwardsConclusiveReason]
+  --[BackwardsPrimaFacieReason]
+  --[BackwardsConclusiveReason]
+  --Description
+
+--parseProblem :: Stream s m Char => ParsecT s u m Problem
+--parseProblem = do 
+    
+
+--parseString :: Stream s m Char => ParsecT s u m LispVal
+--parseString = do char '"'
+--                 x <- many $ (try (char '\\' >> char '"') <|> noneOf "\"")
+--                 char '"'
+--                 return $ String x
+
+
+
+--  [(UltimateElpistemicInterestName, Interest)]
+
+
+--type ProblemPremise = String
+
+
+--problem #(\d+)
+--(.*?)
+-- *given premises: *
+--(^ *(.*?) *justification = (.*)$)+
+-- *ultimate epistemic interests: *
+--( *(.*?) *interest = (.*)$)+
+-- *forwards prima facie reasons *
+--(^ *(.*?:) *\{(.*?)\} *\|\|=> *(.*?) *(variables = \{(.*?)\})? *strength = (.*?) *$)+
+-- *backwards prima facie reasons *
+--(^ *(.*?:) *\{(.*?)\} *\{(.*?)\} *\|\|=> *(.*?) *(variables = {(.*?)})? *strength = (.*?) *$)+
+-- *forwards conclusive reasons *
+--(^ *(.*?:) *\{(.*?)\} *\|\|=> *(.*?) *(variables = \{(.*?)\})? *strength = (.*?) *$)+
+-- *backwards conclusive reasons *
+--(^ *(.*?:) *\{(.*?)\} *\{(.*?)\} *\|\|=> *(.*?) *(variables = {(.*?)})? *strength = (.*?) *$)+
