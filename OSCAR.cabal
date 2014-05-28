@@ -1,0 +1,25 @@
+name:                OSCAR
+version:             0.0.0.0
+author:              Martin Stone Davis
+maintainer:          martin.stone.davis@gmail.com
+build-type:          Simple
+extra-source-files:  extras/Combined-problems
+cabal-version:       >= 1.10
+
+executable OSCAR
+    main-is: Main.hs
+
+    other-modules:
+
+    build-depends: 
+            base                            == 4.7.*
+        ,   classy-prelude                  == 0.9.*
+        ,   parsec                          == 3.1.*
+        ,   cond                            == 0.4.*
+        ,   containers                      == 0.5.*
+        ,   text                            == 1.1.*
+        ,   pretty-show                     == 1.6.*
+        ,   safe                            == 0.3.*
+
+    default-language:    
+        Haskell2010
