@@ -28,6 +28,8 @@ import Safe
 
 import Control.Applicative
 
+import Data.Tagged
+
 --import Debug.Trace
 
 --data Problem = Problem
@@ -368,6 +370,22 @@ import Control.Applicative
 --    manyTill 
 
 
+--data Formula 
+--    =   ForAll Var Formula
+--    |   Some Var Formula
+--    |   Not Formula
+--    |   Defeats Formula Formula
+--    |   And Formula Formula
+--    |   Or Formula Formula
+--    |   Implies Formula Formula
+--    |   Iff Formula Formula
+--    |   Predicate PName [Var]
+
+--data Var 
+--    =   Function FunctionName [Var]
+--    |   Skolem VName
+
+
 eol :: Parser String
 eol = map pure lf <|> (try $ liftA2 (:) cr (map pure lf))
 
@@ -376,6 +394,12 @@ lf = satisfy (== '\n')
 
 cr :: Parser Char
 cr = satisfy (== '\r')
+
+manyTill' :: Parser a -> Parser end -> Parser ([a], end)
+manyTill' a end = do 
+    a' <- manyTill a (lookAhead . try $ end)
+    end' <- end
+    return (a', end')
 
 -----------
 
@@ -423,23 +447,23 @@ instance PhaseParser (ProblemNumber, PhaseStream Phase'FromEndOfValueOfProblemNu
         return (ProblemNumber . readNote "ProblemNumber" $ pn, PhaseStream rest)
 
 data SectionTitle
-    =   SectionTitleGivenPremises
-    |   SectionTitleUltimateEpistemicInterests
-    |   SectionTitleForwardsPrimaFacieReasons
-    |   SectionTitleForwardsConclusiveReasons
-    |   SectionTitleBackwardsPrimaFacieReasons
-    |   SectionTitleBackwardsConclusiveReasons
-    deriving (Eq)
+    =   SectionTitle'GivenPremises
+    |   SectionTitle'UltimateEpistemicInterests
+    |   SectionTitle'ForwardsPrimaFacieReasons
+    |   SectionTitle'ForwardsConclusiveReasons
+    |   SectionTitle'BackwardsPrimaFacieReasons
+    |   SectionTitle'BackwardsConclusiveReasons
+    deriving (Eq, Show)
 
 sectionTitleParser :: Parser SectionTitle
 sectionTitleParser = do
     empty
-    <|> (pure SectionTitleGivenPremises              <* try (string "Given premises:"))
-    <|> (pure SectionTitleUltimateEpistemicInterests <* try (string "Ultimate epistemic interests:"))
-    <|> (pure SectionTitleForwardsPrimaFacieReasons  <* try (string "FORWARDS PRIMA FACIE REASONS"))
-    <|> (pure SectionTitleForwardsConclusiveReasons  <* try (string "FORWARDS CONCLUSIVE REASONS"))
-    <|> (pure SectionTitleBackwardsPrimaFacieReasons <* try (string "BACKWARDS PRIMA FACIE REASONS"))
-    <|> (pure SectionTitleBackwardsConclusiveReasons <* try (string "BACKWARDS CONCLUSIVE REASONS"))
+    <|> (pure SectionTitle'GivenPremises              <* try (string "Given premises:"))
+    <|> (pure SectionTitle'UltimateEpistemicInterests <* try (string "Ultimate epistemic interests:"))
+    <|> (pure SectionTitle'ForwardsPrimaFacieReasons  <* try (string "FORWARDS PRIMA FACIE REASONS"))
+    <|> (pure SectionTitle'ForwardsConclusiveReasons  <* try (string "FORWARDS CONCLUSIVE REASONS"))
+    <|> (pure SectionTitle'BackwardsPrimaFacieReasons <* try (string "BACKWARDS PRIMA FACIE REASONS"))
+    <|> (pure SectionTitle'BackwardsConclusiveReasons <* try (string "BACKWARDS CONCLUSIVE REASONS"))
 
 newtype ProblemDescription = ProblemDescription Text
     deriving (Show)
@@ -458,14 +482,87 @@ instance PhaseParser ProblemDescription where
     type InputPhase ProblemDescription = Phase'FromBeginningOfProblemDescriptionToBeginningOfSections
     phaseParser = ProblemDescription . pack <$> (many space *> manyTill anyChar (lookAhead . try $ many space >> eof))
 
-data Phase'GivenPremisesSection
+instance PhaseParser [SectionTitle] where
+    type InputPhase [SectionTitle] = Phase'FromBeginningOfSections
+    phaseParser = many (try $ snd <$> manyTill' anyChar sectionTitleParser)
 
-instance PhaseParser (PhaseStream Phase'GivenPremisesSection) where
-    type InputPhase (PhaseStream Phase'GivenPremisesSection) = Phase'FromBeginningOfSections
+-- |  TaggedSectionTitle
+class TaggedSectionTitle output where
+    taggedSectionTitle :: Tagged output SectionTitle
+
+data                           Phase'Section'GivenPremises
+instance TaggedSectionTitle    Phase'Section'GivenPremises where
+    taggedSectionTitle = Tagged SectionTitle'GivenPremises
+
+data                           Phase'Section'UltimateEpistemicInterests
+instance TaggedSectionTitle    Phase'Section'UltimateEpistemicInterests where
+    taggedSectionTitle = Tagged SectionTitle'UltimateEpistemicInterests
+
+data                           Phase'Section'ForwardsPrimaFacieReasons
+instance TaggedSectionTitle    Phase'Section'ForwardsPrimaFacieReasons where
+    taggedSectionTitle = Tagged SectionTitle'ForwardsPrimaFacieReasons
+
+data                           Phase'Section'ForwardsConclusiveReasons
+instance TaggedSectionTitle    Phase'Section'ForwardsConclusiveReasons where
+    taggedSectionTitle = Tagged SectionTitle'ForwardsConclusiveReasons
+
+data                           Phase'Section'BackwardsPrimaFacieReasons
+instance TaggedSectionTitle    Phase'Section'BackwardsPrimaFacieReasons where
+    taggedSectionTitle = Tagged SectionTitle'BackwardsPrimaFacieReasons
+
+data                           Phase'Section'BackwardsConclusiveReasons
+instance TaggedSectionTitle    Phase'Section'BackwardsConclusiveReasons where
+    taggedSectionTitle = Tagged SectionTitle'BackwardsConclusiveReasons
+--
+
+
+instance TaggedSectionTitle output => PhaseParser (PhaseStream output) where
+    type InputPhase (PhaseStream output) = Phase'FromBeginningOfSections
     phaseParser = do
-        _ <- manyTill anyChar $ lookAhead . try . guardM $ (== SectionTitleGivenPremises) <$> sectionTitleParser
-        s <- manyTill anyChar $ lookAhead . try . guardM $ (/= SectionTitleGivenPremises) <$> sectionTitleParser
-        return $ PhaseStream . pack $ s
+        availableTitles :: [SectionTitle] <- lookAhead phaseParser
+        let sectionTitle = unTagged (taggedSectionTitle :: Tagged output SectionTitle)
+        if sectionTitle `elem` availableTitles then do
+            _ <- manyTill' anyChar (guardM $ (== sectionTitle) <$> sectionTitleParser)
+            _ <- many space
+            (s, _) <- manyTill' anyChar (eof <|> (guardM $ (/= sectionTitle) <$> sectionTitleParser))
+            return $ PhaseStream . pack $ s
+        else
+            return $ PhaseStream . pack $ ""
+
+
+--data Premise = Premise Formula Degree
+
+--data Phase'Single'GivenPremises
+
+--instance PhaseParser Phase'Single'GivenPremises where
+--    type InputPhase Phase'Section'Single'GivenPremises = Phase'Section'GivenPremises
+--    phaseParser = do
+--        manyTill
+
+--instance PhaseParser (Premise, Phase'Section'GivenPremises) where
+--    type InputPhase Premises = Phase'Section'GivenPremises
+--    phaseParser = do 
+
+--        Premise <$> formulaParser <*>  (Premises . pack . fst <$> manyTill' anyChar (many space >> eof))
+
+
+newtype GivenPremises = GivenPremises Text
+    deriving (Show)
+
+instance PhaseParser GivenPremises where
+    type InputPhase GivenPremises = Phase'Section'GivenPremises
+    phaseParser = GivenPremises . pack <$> many anyChar
+
+
+newtype BackwardsPrimaFacieReasons = BackwardsPrimaFacieReasons Text
+    deriving (Show)
+
+instance PhaseParser BackwardsPrimaFacieReasons where
+    type InputPhase BackwardsPrimaFacieReasons = Phase'Section'BackwardsPrimaFacieReasons
+    phaseParser = BackwardsPrimaFacieReasons . pack <$> many anyChar
+
+
+
 
 main :: IO ()
 main = do 
@@ -473,10 +570,15 @@ main = do
     let p1  :: [PhaseStream Phase'FromEndOfLabelOfProblemNumber] = runPhase "1" combinedProblems
     let p2s :: [(ProblemNumber, PhaseStream Phase'FromEndOfValueOfProblemNumber)] = runPhase "2" <$> p1
     let p3s :: [(PhaseStream Phase'FromBeginningOfProblemDescriptionToBeginningOfSections, PhaseStream Phase'FromBeginningOfSections)] = runPhase "3" . snd <$> p2s
-    let p4s :: [PhaseStream Phase'GivenPremisesSection] = runPhase "4" . snd <$> p3s
+    let p4s :: [PhaseStream Phase'Section'GivenPremises] = runPhase "4" . snd <$> p3s
+    let p5s :: [GivenPremises] = runPhase "5" <$> p4s
+    let p6s :: [PhaseStream Phase'Section'BackwardsPrimaFacieReasons] = runPhase "6" . snd <$> p3s
+    let p7s :: [BackwardsPrimaFacieReasons] = runPhase "7" <$> p6s
 
     let ns = map fst p2s
     let ds :: [ProblemDescription] = runPhase "descriptions" <$> map fst p3s
 
-    sequence_ $ putStrLn . pack . ppShow <$> ns
-    sequence_ $ putStrLn . pack . ppShow <$> ds
+    --sequence_ $ putStrLn . pack . ppShow <$> ns
+    --sequence_ $ putStrLn . pack . ppShow <$> ds
+    sequence_ $ putStrLn . pack . ppShow <$> p5s
+    sequence_ $ putStrLn . pack . ppShow <$> p7s
