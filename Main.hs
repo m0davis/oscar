@@ -545,6 +545,37 @@ instance TaggedSectionTitle output => PhaseParser (PhaseStream output) where
 
 --        Premise <$> formulaParser <*>  (Premises . pack . fst <$> manyTill' anyChar (many space >> eof))
 
+followedBy :: Parser a -> Parser b -> Parser (a, b)
+followedBy a b = do
+    (before, b') <- manyTill' anyChar b
+    i <- getInput
+    setInput . pack $ before
+    a' <- a
+    setInput i
+    (,) <$> pure a' <*> pure b'
+
+--parallelParse :: Parse a -> Parse b -> Parser (Maybe a, Maybe b)
+--parallelParse a b = do
+
+newtype Degree = Degree Double
+    deriving (Show)
+
+degreeParser :: Parser Degree
+degreeParser = Degree . read <$> (degreeLabelParser *> many space *> string "=" *> many space *> manyTill anyChar space)
+  where
+    degreeLabelParser = try (string "justification") <|> try (string "strength") <|> string "interest"
+
+data Phase'Formula
+
+instance PhaseParser [(PhaseStream Phase'Formula, Degree)] where
+    type InputPhase [(PhaseStream Phase'Formula, Degree)] = Phase'Section'GivenPremises
+    phaseParser = many onePremise
+      where
+        onePremise :: Parser (PhaseStream Phase'Formula, Degree)
+        onePremise = do
+            (f, d) <- many anyChar `followedBy` (many space *> degreeParser <* many space)
+            return (PhaseStream . pack $ f, d)
+
 
 newtype GivenPremises = GivenPremises Text
     deriving (Show)
@@ -570,8 +601,9 @@ main = do
     let p1  :: [PhaseStream Phase'FromEndOfLabelOfProblemNumber] = runPhase "1" combinedProblems
     let p2s :: [(ProblemNumber, PhaseStream Phase'FromEndOfValueOfProblemNumber)] = runPhase "2" <$> p1
     let p3s :: [(PhaseStream Phase'FromBeginningOfProblemDescriptionToBeginningOfSections, PhaseStream Phase'FromBeginningOfSections)] = runPhase "3" . snd <$> p2s
-    let p4s :: [PhaseStream Phase'Section'GivenPremises] = runPhase "4" . snd <$> p3s
-    let p5s :: [GivenPremises] = runPhase "5" <$> p4s
+    --let p4s :: [PhaseStream Phase'Section'GivenPremises] = runPhase "4" . snd <$> p3s
+    let gps :: [[GivenPremise]] = runPhase "5" <$> p4s
+    --let p5s :: [GivenPremises] = runPhase "5" <$> p4s
     let p6s :: [PhaseStream Phase'Section'BackwardsPrimaFacieReasons] = runPhase "6" . snd <$> p3s
     let p7s :: [BackwardsPrimaFacieReasons] = runPhase "7" <$> p6s
 
@@ -580,5 +612,6 @@ main = do
 
     --sequence_ $ putStrLn . pack . ppShow <$> ns
     --sequence_ $ putStrLn . pack . ppShow <$> ds
-    sequence_ $ putStrLn . pack . ppShow <$> p5s
+    --sequence_ $ putStrLn . pack . ppShow <$> p5s
     sequence_ $ putStrLn . pack . ppShow <$> p7s
+    sequence_ $ putStrLn . pack . ppShow <$> gps
