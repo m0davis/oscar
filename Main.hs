@@ -4,6 +4,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoMonomorphismRestriction #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DataKinds #-}
 
 module Main where
 
@@ -23,6 +25,8 @@ import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
 import Text.Show.Pretty
 
+
+
 main :: IO ()
 main = do
     combinedProblems <- combinedProblemsFileReader
@@ -34,6 +38,11 @@ main = do
     let reasonTexts = snd . (decipher :: Text -> (ProblemDescription, Text)) . snd . (decipher :: Text -> (ProblemNumber, Text)) <$> ps
     sequence_ $ putStrLn . pack . ppShow . (decipher0 :: Text -> ProblemGivenPremisesText) <$> reasonTexts
     sequence_ $ putStrLn . pack . ppShow . (decipher0 :: Text -> ProblemForwardsPrimaFacieReasonsText) <$> reasonTexts
+    sequence_ $ putStrLn . pack . ppShow . (decipherFoo stsBackwardsPrimaFacieReason) <$> reasonTexts
+
+    
+
+
   where
     ppn :: Text -> IO ()
     ppn t = do
@@ -128,14 +137,51 @@ class Decipherable0 a where
 
 newtype ProblemForwardsPrimaFacieReasonsText = ProblemForwardsPrimaFacieReasonsText Text
     deriving (Show)
-
 instance Decipherable0 ProblemForwardsPrimaFacieReasonsText where
     dv0 _ = Section'ForwardsPrimaFacieReasons
     dc0 = ProblemForwardsPrimaFacieReasonsText
 
-newtype ProblemGivenPremisesText = ProblemGivenPremisesText Text
+data STS output = STS 
+    {   stsDV0 :: Section
+    ,   stsDC0 :: Text -> output
+    }
+
+newtype ProblemBackwardsPrimaFacieReasonsText = ProblemBackwardsPrimaFacieReasonsText Text
     deriving (Show)
 
+stsBackwardsPrimaFacieReason :: STS ProblemBackwardsPrimaFacieReasonsText
+stsBackwardsPrimaFacieReason = STS Section'BackwardsPrimaFacieReasons ProblemBackwardsPrimaFacieReasonsText
+
+decipherFoo :: forall a. STS a -> Text -> a
+decipherFoo STS {..} = either (error . ppShow) id . runParser p () ""
+    where
+        p :: Parser a
+        p = do
+            _ <- manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== stsDV0) sectionParser)
+            p' <|> pure (stsDC0 . pack $ "")
+          where
+            p' :: Parser a
+            p' = do
+                guardM (map (== stsDV0) sectionParser)
+                stsDC0 . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
+
+
+--foo :: Text -> SpecialText Section
+--foo = 
+
+--bar :: SpecialText Section -> Text
+
+
+
+data SpecialText (v :: Section) = SpecialText Text
+
+decipher1 :: Section -> Text -> SpecialText Section'BackwardsPrimaFacieReasons
+decipher1 sec txt = SpecialText $ txt
+
+
+
+newtype ProblemGivenPremisesText = ProblemGivenPremisesText Text
+    deriving (Show)
 instance Decipherable0 ProblemGivenPremisesText where
     dv0 _ = Section'GivenPremises
     dc0 = ProblemGivenPremisesText
