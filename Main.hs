@@ -166,6 +166,42 @@ decipherFoo STS {..} = either (error . ppShow) id . runParser p () ""
                 stsDC0 . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
 
+
+
+--newtype ReasonText kind = ReasonText Text
+
+--data TaggedBPFR
+
+--data TaggedSTS output = TaggedSTS 
+--    {   stsDV0 :: Section
+--    ,   stsDC0 :: Text -> ReasonText output
+--    }
+
+--newtype ProblemBackwardsPrimaFacieReasonsText = ProblemBackwardsPrimaFacieReasonsText Text
+--    deriving (Show)
+
+--taggedStsBackwardsPrimaFacieReason :: STS ProblemBackwardsPrimaFacieReasonsText
+--taggedStsBackwardsPrimaFacieReason = STS Section'BackwardsPrimaFacieReasons ProblemBackwardsPrimaFacieReasonsText
+
+--taggedDecipherFoo :: forall a. STS a -> Text -> a
+--taggedDecipherFoo STS {..} = either (error . ppShow) id . runParser p () ""
+--    where
+--        p :: Parser a
+--        p = do
+--            _ <- manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== stsDV0) sectionParser)
+--            p' <|> pure (stsDC0 . pack $ "")
+--          where
+--            p' :: Parser a
+--            p' = do
+--                guardM (map (== stsDV0) sectionParser)
+--                stsDC0 . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
+
+
+
+
+
+
+
 --foo :: Text -> SpecialText Section
 --foo = 
 
