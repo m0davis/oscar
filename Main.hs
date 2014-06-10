@@ -25,11 +25,20 @@ import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
 import Text.Show.Pretty
 
+class FilePathIO a where
+    fp2IO :: FilePath -> IO a
+
+newtype CombinedProblemsText = CombinedProblemsText Text
+    deriving (Show)
+
+instance FilePathIO CombinedProblemsText where
+    fp2IO = map CombinedProblemsText . readFile
+
 main :: IO ()
 main = do
-    combinedProblems <- combinedProblemsFileReader
+    combinedProblems <- fp2IO (fpFromString "Combined-problems")
     putStrLn . pack . ppShow $ combinedProblems
-    let ps = listProblems combinedProblems
+    let ps = coerce <$> listProblems combinedProblems
     sequence_ $ putStrLn . pack . ppShow <$> ps
     sequence_ $ ppn <$> ps
     sequence_ $ ppd . decipher <$> ps
@@ -72,11 +81,8 @@ sectionParser =
     if_then :: forall a b. Parser a -> b -> Parser b
     if_then p t = pure t <* try p
 
-combinedProblemsFileReader :: IO Text
-combinedProblemsFileReader = readFile (fpFromString "Combined-problems")
-
-listProblems :: Text -> [Text]
-listProblems = either (error . ppShow) id . runParser (many p) () ""
+listProblems :: CombinedProblemsText -> [CombinedProblemsText]
+listProblems = map CombinedProblemsText . either (error . ppShow) id . runParser (many p) () "" . coerce
   where
     p :: Parser Text
     p = do
