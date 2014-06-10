@@ -210,8 +210,8 @@ parserProblemInterestDegree = ProblemInterestDegree <$> (many space *> string "i
 newtype ProblemUltimateEpistemicInterestText = ProblemUltimateEpistemicInterestText Text
     deriving (Show)
 
-problemUltimateEpistemicInterestTextAndProblemJustificationDegreesFromProblemUltimateEpistemicInterestsText :: ProblemUltimateEpistemicInterestsText -> [(ProblemUltimateEpistemicInterestText, ProblemInterestDegree)]
-problemUltimateEpistemicInterestTextAndProblemJustificationDegreesFromProblemUltimateEpistemicInterestsText = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
+problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText :: ProblemUltimateEpistemicInterestsText -> [(ProblemUltimateEpistemicInterestText, ProblemInterestDegree)]
+problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
     where
         p :: Parser (ProblemUltimateEpistemicInterestText, ProblemInterestDegree)
         p = do
@@ -293,7 +293,7 @@ main = do
     let problemGivenPremiseTextAndProblemJustificationDegrees = problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText <$> problemGivenPremisesTexts
     messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
 
-    let problemUltimateEpistemicInterestTextAndProblemJustificationDegrees = problemUltimateEpistemicInterestTextAndProblemJustificationDegreesFromProblemUltimateEpistemicInterestsText <$> problemUltimateEpistemicInterestsTexts
+    let problemUltimateEpistemicInterestTextAndProblemJustificationDegrees = problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText <$> problemUltimateEpistemicInterestsTexts
     messageFromShows problemUltimateEpistemicInterestTextAndProblemJustificationDegrees
 
 
