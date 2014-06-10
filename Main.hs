@@ -162,11 +162,23 @@ sectionTextFromAfterProblemDescriptionText SectionTextFromAfterProblemDescriptio
                 _pack . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
 --
+newtype ProblemJustificationDegree = ProblemJustificationDegree Double
+    deriving (Show)
+
 newtype ProblemGivenPremiseText = ProblemGivenPremiseText Text
     deriving (Show)
 
-problemGivenPremiseTextsFromProblemGivenPremisesText :: ProblemGivenPremisesText -> [ProblemGivenPremiseText]
-problemGivenPremiseTextsFromProblemGivenPremisesText _ = []
+problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText :: ProblemGivenPremisesText -> [(ProblemGivenPremiseText, ProblemJustificationDegree)]
+problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
+    where
+        p :: Parser (ProblemGivenPremiseText, ProblemJustificationDegree)
+        p = do
+            many space
+            (t, d) <- many anyChar `precededBy` parserProblemJustificationDegree
+            return (ProblemGivenPremiseText . pack $ t, d)
+
+parserProblemJustificationDegree :: Parser ProblemJustificationDegree
+parserProblemJustificationDegree = ProblemJustificationDegree . read <$> (many space *> string "justification" *> many space *> string "=" *> many space *> manyTill anyChar ((space *> pure ()) <|> eof))
 
 --
 eol :: Parser String
@@ -224,23 +236,23 @@ main = do
     let problemGivenPremisesTexts = sectionTextFromAfterProblemDescriptionText givenPremises <$> afterProblemDescriptionTexts
     messageFromShows problemGivenPremisesTexts
 
-    let problemUltimateEpistemicInterestsTexts = sectionTextFromAfterProblemDescriptionText ultimateEpistemicInterests <$> afterProblemDescriptionTexts
-    messageFromShows problemUltimateEpistemicInterestsTexts
+    --let problemUltimateEpistemicInterestsTexts = sectionTextFromAfterProblemDescriptionText ultimateEpistemicInterests <$> afterProblemDescriptionTexts
+    --messageFromShows problemUltimateEpistemicInterestsTexts
 
-    let problemForwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemForwardsPrimaFacieReasonsTexts
+    --let problemForwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
+    --messageFromShows problemForwardsPrimaFacieReasonsTexts
 
-    let problemForwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsConclusiveReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemForwardsConclusiveReasonsTexts
+    --let problemForwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsConclusiveReasons <$> afterProblemDescriptionTexts
+    --messageFromShows problemForwardsConclusiveReasonsTexts
     
-    let problemBackwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemBackwardsPrimaFacieReasonsTexts
+    --let problemBackwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
+    --messageFromShows problemBackwardsPrimaFacieReasonsTexts
 
-    let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemBackwardsConclusiveReasonsTexts
+    --let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
+    --messageFromShows problemBackwardsConclusiveReasonsTexts
 
-    let problemGivenPremiseTextss = problemGivenPremiseTextsFromProblemGivenPremisesText <$> problemGivenPremisesTexts
-    messageFromShows problemGivenPremiseTextss
+    let problemGivenPremiseTextAndProblemJustificationDegrees = problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText <$> problemGivenPremisesTexts
+    messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
 
 
 --data Problem = Problem
@@ -249,9 +261,6 @@ main = do
 --    [ProblemPremise]
 --    [ProblemInterest]
 --    [ProblemReason]
-
---newtype Degree = Degree Double
---    deriving (Show)
 
 --data ProblemPremise = ProblemPremise
 --    Text
@@ -377,18 +386,6 @@ main = do
 
 --unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
 --unlessM c a = ifM c mzero a
-
---premiseParser :: Parser Premise
---premiseParser = do
---    unlessM (isAhead $ skipString "Ultimate epistemic interests:" >> emptyLine) $ do
---        (f, (_, d)) <- 
---            between_ng
---                skipSpaceChars 
---                (prFormula) 
---                (skipSpaceChars *> skipString "justification" *> skipSpaceChars *> skipString "=" *> skipSpaceChars *> 
---                    prDegree 
---                    <* (emptyLine))
---        return $ Premise f d
 
 --isAhead :: Parser a -> Parser Bool
 --isAhead p = (lookAhead p *> pure True) <|> pure False
@@ -1026,21 +1023,7 @@ What if the user state stores a map of markers?
 --newtype Degree = Degree Double
 --    deriving (Show)
 
---degreeParser :: Parser Degree
---degreeParser = Degree . read <$> (degreeLabelParser *> many space *> string "=" *> many space *> manyTill anyChar space)
---  where
---    degreeLabelParser = try (string "justification") <|> try (string "strength") <|> string "interest"
-
 --data Phase'Formula
-
---instance PhaseParser [(PhaseStream Phase'Formula, Degree)] where
---    type InputPhase [(PhaseStream Phase'Formula, Degree)] = Phase'Section'GivenPremises
---    phaseParser = many onePremise
---      where
---        onePremise :: Parser (PhaseStream Phase'Formula, Degree)
---        onePremise = do
---            (f, d) <- many anyChar `followedBy` (many space *> degreeParser <* many space)
---            return (PhaseStream . pack $ f, d)
 
 
 --newtype GivenPremises = GivenPremises Text
