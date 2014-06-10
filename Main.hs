@@ -236,20 +236,20 @@ main = do
     let problemGivenPremisesTexts = sectionTextFromAfterProblemDescriptionText givenPremises <$> afterProblemDescriptionTexts
     messageFromShows problemGivenPremisesTexts
 
-    --let problemUltimateEpistemicInterestsTexts = sectionTextFromAfterProblemDescriptionText ultimateEpistemicInterests <$> afterProblemDescriptionTexts
-    --messageFromShows problemUltimateEpistemicInterestsTexts
+    let problemUltimateEpistemicInterestsTexts = sectionTextFromAfterProblemDescriptionText ultimateEpistemicInterests <$> afterProblemDescriptionTexts
+    messageFromShows problemUltimateEpistemicInterestsTexts
 
-    --let problemForwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
-    --messageFromShows problemForwardsPrimaFacieReasonsTexts
+    let problemForwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemForwardsPrimaFacieReasonsTexts
 
-    --let problemForwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsConclusiveReasons <$> afterProblemDescriptionTexts
-    --messageFromShows problemForwardsConclusiveReasonsTexts
+    let problemForwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsConclusiveReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemForwardsConclusiveReasonsTexts
     
-    --let problemBackwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
-    --messageFromShows problemBackwardsPrimaFacieReasonsTexts
+    let problemBackwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemBackwardsPrimaFacieReasonsTexts
 
-    --let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
-    --messageFromShows problemBackwardsConclusiveReasonsTexts
+    let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemBackwardsConclusiveReasonsTexts
 
     let problemGivenPremiseTextAndProblemJustificationDegrees = problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText <$> problemGivenPremisesTexts
     messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
