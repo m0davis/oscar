@@ -25,8 +25,6 @@ import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
 import Text.Show.Pretty
 
-
-
 main :: IO ()
 main = do
     combinedProblems <- combinedProblemsFileReader
@@ -39,9 +37,6 @@ main = do
     sequence_ $ putStrLn . pack . ppShow . (decipher0 :: Text -> ProblemGivenPremisesText) <$> reasonTexts
     sequence_ $ putStrLn . pack . ppShow . (decipher0 :: Text -> ProblemForwardsPrimaFacieReasonsText) <$> reasonTexts
     sequence_ $ putStrLn . pack . ppShow . (decipherFoo stsBackwardsPrimaFacieReason) <$> reasonTexts
-
-    
-
 
   where
     ppn :: Text -> IO ()
