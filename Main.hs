@@ -25,7 +25,8 @@ import qualified Data.Set as Set
 import Safe
 import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
-import Text.Show.Pretty
+import Text.Show.Pretty (ppShow)
+import Numeric (readFloat, readSigned)
 
 --
 newtype ProblemsText = ProblemsText Text
@@ -162,9 +163,30 @@ sectionTextFromAfterProblemDescriptionText SectionTextFromAfterProblemDescriptio
                 _pack . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
 --
-newtype ProblemJustificationDegree = ProblemJustificationDegree Double
+newtype LispPositiveDouble = LispPositiveDouble Double
     deriving (Show)
 
+parserLispPositiveDouble :: Parser LispPositiveDouble
+parserLispPositiveDouble = do
+    d <- many space *> manyTill anyChar ((space *> pure ()) <|> eof)
+    if null d then
+        mzero
+    else
+        if headEx d == '.' then
+            return . LispPositiveDouble . read $ "0" ++ d
+        else if headEx d == '-' then
+            error "LispPositiveDouble negative number?"
+        else
+            return . LispPositiveDouble . read $ d
+
+--
+newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
+    deriving (Show)
+
+parserProblemJustificationDegree :: Parser ProblemJustificationDegree
+parserProblemJustificationDegree = ProblemJustificationDegree <$> (many space *> string "justification" *> many space *> string "=" *> parserLispPositiveDouble)
+
+--
 newtype ProblemGivenPremiseText = ProblemGivenPremiseText Text
     deriving (Show)
 
@@ -177,8 +199,25 @@ problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesTex
             (t, d) <- many anyChar `precededBy` parserProblemJustificationDegree
             return (ProblemGivenPremiseText . pack $ t, d)
 
-parserProblemJustificationDegree :: Parser ProblemJustificationDegree
-parserProblemJustificationDegree = ProblemJustificationDegree . read <$> (many space *> string "justification" *> many space *> string "=" *> many space *> manyTill anyChar ((space *> pure ()) <|> eof))
+--
+newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
+    deriving (Show)
+
+parserProblemInterestDegree :: Parser ProblemInterestDegree
+parserProblemInterestDegree = ProblemInterestDegree <$> (many space *> string "interest" *> many space *> string "=" *> parserLispPositiveDouble)
+
+--
+newtype ProblemUltimateEpistemicInterestText = ProblemUltimateEpistemicInterestText Text
+    deriving (Show)
+
+problemUltimateEpistemicInterestTextAndProblemJustificationDegreesFromProblemUltimateEpistemicInterestsText :: ProblemUltimateEpistemicInterestsText -> [(ProblemUltimateEpistemicInterestText, ProblemInterestDegree)]
+problemUltimateEpistemicInterestTextAndProblemJustificationDegreesFromProblemUltimateEpistemicInterestsText = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
+    where
+        p :: Parser (ProblemUltimateEpistemicInterestText, ProblemInterestDegree)
+        p = do
+            many space
+            (t, d) <- many anyChar `precededBy` parserProblemInterestDegree
+            return (ProblemUltimateEpistemicInterestText . pack $ t, d)
 
 --
 eol :: Parser String
@@ -253,6 +292,9 @@ main = do
 
     let problemGivenPremiseTextAndProblemJustificationDegrees = problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText <$> problemGivenPremisesTexts
     messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
+
+    let problemUltimateEpistemicInterestTextAndProblemJustificationDegrees = problemUltimateEpistemicInterestTextAndProblemJustificationDegreesFromProblemUltimateEpistemicInterestsText <$> problemUltimateEpistemicInterestsTexts
+    messageFromShows problemUltimateEpistemicInterestTextAndProblemJustificationDegrees
 
 
 --data Problem = Problem
@@ -361,8 +403,6 @@ main = do
 --    skipSpaceChars
 --    skipNewline
 --    return ()
-
---debugShowInput = getInput >>= traceShowM . take 100
 
 ---- starts from the beginning of the "Problem #" line
 ---- ends after the newline
