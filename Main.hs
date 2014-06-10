@@ -57,34 +57,131 @@ newtype AfterProblemNumberText = AfterProblemNumberText Text
 newtype ProblemNumber = ProblemNumber Int
     deriving (Show)
 
+problemNumberAndAfterProblemNumberTextFromProblemText :: ProblemText -> (ProblemNumber, AfterProblemNumberText)
+problemNumberAndAfterProblemNumberTextFromProblemText = either (error . ppShow) id . runParser p () "" . coerce
+    where
+        p :: Parser (ProblemNumber, AfterProblemNumberText)
+        p = do
+            n <- ProblemNumber . read <$> manyTill anyChar (lookAhead . try $ space)
+            t <- pack <$> many anyChar
+            return (n, AfterProblemNumberText t)
 
 --
+newtype AfterProblemDescriptionText = AfterProblemDescriptionText Text
+    deriving (Show)
+
+newtype ProblemDescription = ProblemDescription Text
+    deriving (Show)
+
+problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText :: AfterProblemNumberText -> (ProblemDescription, AfterProblemDescriptionText)
+problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText = either (error . ppShow) id . runParser p () "" . coerce
+    where
+        p :: Parser (ProblemDescription, AfterProblemDescriptionText)
+        p = do
+            _ <- many space
+            n <- ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
+            t <- pack <$> many anyChar
+            return (n, AfterProblemDescriptionText t)
+
+--
+newtype ProblemGivenPremisesText = ProblemGivenPremisesText Text
+    deriving (Show)
+
+newtype ProblemUltimateEpistemicInterestsText = ProblemUltimateEpistemicInterestsText Text
+    deriving (Show)
+
+newtype ProblemForwardsPrimaFacieReasonsText = ProblemForwardsPrimaFacieReasonsText Text
+    deriving (Show)
+
+newtype ProblemForwardsConclusiveReasonsText = ProblemForwardsConclusiveReasonsText Text
+    deriving (Show)
+
+newtype ProblemBackwardsPrimaFacieReasonsText = ProblemBackwardsPrimaFacieReasonsText Text
+    deriving (Show)
+
+newtype ProblemBackwardsConclusiveReasonsText = ProblemBackwardsConclusiveReasonsText Text
+    deriving (Show)
+
+data SectionTextFromAfterProblemDescriptionText output = SectionTextFromAfterProblemDescriptionText
+    {   _section :: Section
+    ,   _pack :: Text -> output
+    }
+
+givenPremises :: SectionTextFromAfterProblemDescriptionText ProblemGivenPremisesText
+givenPremises = SectionTextFromAfterProblemDescriptionText Section'GivenPremises ProblemGivenPremisesText
+
+ultimateEpistemicInterests :: SectionTextFromAfterProblemDescriptionText ProblemUltimateEpistemicInterestsText
+ultimateEpistemicInterests = SectionTextFromAfterProblemDescriptionText Section'UltimateEpistemicInterests ProblemUltimateEpistemicInterestsText
+
+forwardsPrimaFacieReasons :: SectionTextFromAfterProblemDescriptionText ProblemForwardsPrimaFacieReasonsText
+forwardsPrimaFacieReasons = SectionTextFromAfterProblemDescriptionText Section'ForwardsPrimaFacieReasons ProblemForwardsPrimaFacieReasonsText
+
+forwardsConclusiveReasons :: SectionTextFromAfterProblemDescriptionText ProblemForwardsConclusiveReasonsText
+forwardsConclusiveReasons = SectionTextFromAfterProblemDescriptionText Section'ForwardsConclusiveReasons ProblemForwardsConclusiveReasonsText
+
+backwardsPrimaFacieReasons :: SectionTextFromAfterProblemDescriptionText ProblemBackwardsPrimaFacieReasonsText
+backwardsPrimaFacieReasons = SectionTextFromAfterProblemDescriptionText Section'BackwardsPrimaFacieReasons ProblemBackwardsPrimaFacieReasonsText
+
+backwardsConclusiveReasons :: SectionTextFromAfterProblemDescriptionText ProblemBackwardsConclusiveReasonsText
+backwardsConclusiveReasons = SectionTextFromAfterProblemDescriptionText Section'BackwardsConclusiveReasons ProblemBackwardsConclusiveReasonsText
+
+sectionTextFromAfterProblemDescriptionText :: forall output. SectionTextFromAfterProblemDescriptionText output -> AfterProblemDescriptionText -> output
+sectionTextFromAfterProblemDescriptionText SectionTextFromAfterProblemDescriptionText {..} = either (error . ppShow) id . runParser p () "" . coerce
+    where
+        p :: Parser output
+        p = do
+            _ <- manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== _section) sectionParser)
+            p' <|> pure (_pack . pack $ "")
+          where
+            p' :: Parser output
+            p' = do
+                guardM (map (== _section) sectionParser)
+                _pack . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
+
+--
+messageFromShow :: Show a => a -> IO ()
+messageFromShow = putStrLn . pack . ppShow
+
+messageFromShows :: Show a => [a] -> IO ()
+messageFromShows = sequence_ . map messageFromShow
 
 main :: IO ()
 main = do
     combinedProblems <- ioProblemsTextFromFilePath $ fpFromString "Combined-problems"
-    putStrLn . pack . ppShow $ combinedProblems
-    let ps' :: [ProblemText] = problemTextsFromProblemsText combinedProblems
-    let ps = coerce <$> ps'
-    sequence_ $ putStrLn . pack . ppShow <$> ps
-    sequence_ $ ppn <$> ps
-    sequence_ $ ppd . decipher <$> ps
-    let reasonTexts = snd . (decipher :: Text -> (ProblemDescription, Text)) . snd . (decipher :: Text -> (ProblemNumber, Text)) <$> ps
-    sequence_ $ putStrLn . pack . ppShow . (decipher0 :: Text -> ProblemGivenPremisesText) <$> reasonTexts
-    sequence_ $ putStrLn . pack . ppShow . (decipher0 :: Text -> ProblemForwardsPrimaFacieReasonsText) <$> reasonTexts
-    sequence_ $ putStrLn . pack . ppShow . (decipherFoo stsBackwardsPrimaFacieReason) <$> reasonTexts
+    messageFromShow combinedProblems
 
-  where
-    ppn :: Text -> IO ()
-    ppn t = do
-        let (pn :: ProblemNumber, t') = decipher t
-        putStrLn . pack . ppShow $ pn
+    let problemTexts = problemTextsFromProblemsText combinedProblems
+    messageFromShows problemTexts
 
-    ppd :: (ProblemNumber, Text) -> IO ()
-    ppd (_, t) = do
-        let (pd :: ProblemDescription, t') = decipher t
-        putStrLn . pack . ppShow $ pd
+    let problemNumberAndAfterProblemNumberTexts = problemNumberAndAfterProblemNumberTextFromProblemText <$> problemTexts
+    let problemNumbers = fst <$> problemNumberAndAfterProblemNumberTexts
+    let afterProblemNumberTexts = snd <$> problemNumberAndAfterProblemNumberTexts
+    messageFromShows problemNumbers
+    --messageFromShows afterProblemNumberTexts
 
+    let problemDescriptionAndAfterProblemDescriptionTexts = problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText <$> afterProblemNumberTexts
+    let problemDescriptions = fst <$> problemDescriptionAndAfterProblemDescriptionTexts
+    let afterProblemDescriptionTexts = snd <$> problemDescriptionAndAfterProblemDescriptionTexts
+    messageFromShows problemDescriptions
+    --messageFromShows afterProblemDescriptionTexts
+    
+    let problemGivenPremisesTexts = sectionTextFromAfterProblemDescriptionText givenPremises <$> afterProblemDescriptionTexts
+    messageFromShows problemGivenPremisesTexts
+
+    let problemUltimateEpistemicInterestsTexts = sectionTextFromAfterProblemDescriptionText ultimateEpistemicInterests <$> afterProblemDescriptionTexts
+    messageFromShows problemUltimateEpistemicInterestsTexts
+
+    let problemForwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemForwardsPrimaFacieReasonsTexts
+
+    let problemForwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsConclusiveReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemForwardsConclusiveReasonsTexts
+    
+    let problemBackwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemBackwardsPrimaFacieReasonsTexts
+
+    let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
+    messageFromShows problemBackwardsConclusiveReasonsTexts
 
 data Section
     =   Section'GivenPremises
@@ -108,134 +205,7 @@ sectionParser =
     if_then :: forall a b. Parser a -> b -> Parser b
     if_then p t = pure t <* try p
 
-class Decipherable out where
-    decipher :: Text -> (out, Text)
-
-instance Decipherable ProblemNumber where
-    decipher = either (error . ppShow) id . runParser p () ""
-      where
-        p :: Parser (ProblemNumber, Text)
-        p = do
-            n <- ProblemNumber . read <$> manyTill anyChar (lookAhead . try $ space)
-            t <- pack <$> many anyChar
-            return (n, t)
-
-newtype ProblemDescription = ProblemDescription Text
-    deriving (Show)
-
-instance Decipherable ProblemDescription where
-    decipher = either (error . ppShow) id . runParser p () ""
-      where
-        p :: Parser (ProblemDescription, Text)
-        p = do
-            _ <- many space
-            n <- ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
-            t <- pack <$> many anyChar
-            return (n, t)
-
-class Decipherable0 a where
-    decipher0 :: Text -> a
-    decipher0 = either (error . ppShow) id . runParser p () ""
-      where
-        p :: Parser a
-        p = do
-            _ <- manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== dv0 (undefined :: a)) sectionParser)
-            p' <|> pure ((dc0 :: Text -> a) . pack $ "")
-          where
-            p' :: Parser a
-            p' = do
-                guardM (map (== dv0 (undefined :: a)) sectionParser)
-                dc0 . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
-    dv0 :: a -> Section
-    dc0 :: Text -> a
-
-newtype ProblemForwardsPrimaFacieReasonsText = ProblemForwardsPrimaFacieReasonsText Text
-    deriving (Show)
-instance Decipherable0 ProblemForwardsPrimaFacieReasonsText where
-    dv0 _ = Section'ForwardsPrimaFacieReasons
-    dc0 = ProblemForwardsPrimaFacieReasonsText
-
-data STS output = STS 
-    {   stsDV0 :: Section
-    ,   stsDC0 :: Text -> output
-    }
-
-newtype ProblemBackwardsPrimaFacieReasonsText = ProblemBackwardsPrimaFacieReasonsText Text
-    deriving (Show)
-
-stsBackwardsPrimaFacieReason :: STS ProblemBackwardsPrimaFacieReasonsText
-stsBackwardsPrimaFacieReason = STS Section'BackwardsPrimaFacieReasons ProblemBackwardsPrimaFacieReasonsText
-
-decipherFoo :: forall a. STS a -> Text -> a
-decipherFoo STS {..} = either (error . ppShow) id . runParser p () ""
-    where
-        p :: Parser a
-        p = do
-            _ <- manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== stsDV0) sectionParser)
-            p' <|> pure (stsDC0 . pack $ "")
-          where
-            p' :: Parser a
-            p' = do
-                guardM (map (== stsDV0) sectionParser)
-                stsDC0 . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
-
-
-
-
---newtype ReasonText kind = ReasonText Text
-
---data TaggedBPFR
-
---data TaggedSTS output = TaggedSTS 
---    {   stsDV0 :: Section
---    ,   stsDC0 :: Text -> ReasonText output
---    }
-
---newtype ProblemBackwardsPrimaFacieReasonsText = ProblemBackwardsPrimaFacieReasonsText Text
---    deriving (Show)
-
---taggedStsBackwardsPrimaFacieReason :: STS ProblemBackwardsPrimaFacieReasonsText
---taggedStsBackwardsPrimaFacieReason = STS Section'BackwardsPrimaFacieReasons ProblemBackwardsPrimaFacieReasonsText
-
---taggedDecipherFoo :: forall a. STS a -> Text -> a
---taggedDecipherFoo STS {..} = either (error . ppShow) id . runParser p () ""
---    where
---        p :: Parser a
---        p = do
---            _ <- manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== stsDV0) sectionParser)
---            p' <|> pure (stsDC0 . pack $ "")
---          where
---            p' :: Parser a
---            p' = do
---                guardM (map (== stsDV0) sectionParser)
---                stsDC0 . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
-
-
-
-
-
-
-
---foo :: Text -> SpecialText Section
---foo = 
-
---bar :: SpecialText Section -> Text
-
-
-
-data SpecialText (v :: Section) = SpecialText Text
-
-decipher1 :: Section -> Text -> SpecialText Section'BackwardsPrimaFacieReasons
-decipher1 sec txt = SpecialText $ txt
-
-
-
-newtype ProblemGivenPremisesText = ProblemGivenPremisesText Text
-    deriving (Show)
-instance Decipherable0 ProblemGivenPremisesText where
-    dv0 _ = Section'GivenPremises
-    dc0 = ProblemGivenPremisesText
-
+--
 eol :: Parser String
 eol = map pure lf <|> (try $ liftA2 (:) cr (map pure lf))
 
@@ -262,39 +232,38 @@ unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
 unlessM c a = ifM c mzero a
 
 
+--data Problem = Problem
+--    ProblemNumber
+--    ProblemDescription
+--    [ProblemPremise]
+--    [ProblemInterest]
+--    [ProblemReason]
 
-data Problem = Problem
-    ProblemNumber
-    ProblemDescription
-    [ProblemPremise]
-    [ProblemInterest]
-    [ProblemReason]
+--newtype Degree = Degree Double
+--    deriving (Show)
 
-newtype Degree = Degree Double
-    deriving (Show)
+--data ProblemPremise = ProblemPremise
+--    Text
+--    Degree
+--    deriving (Show)
 
-data ProblemPremise = ProblemPremise
-    Text
-    Degree
-    deriving (Show)
+--data ProblemInterest = ProblemInterest
+--    Text
+--    Degree
+--    deriving (Show)
 
-data ProblemInterest = ProblemInterest
-    Text
-    Degree
-    deriving (Show)
-
-data ProblemReason = ProblemReason 
-    Text 
-    Bool 
-    Double
-    deriving (Show)
+--data ProblemReason = ProblemReason 
+--    Text 
+--    Bool 
+--    Double
+--    deriving (Show)
 
 
-data Text'ProblemNumber
-data Text'ProblemDescription
-data Text'ProblemPremises
-data Text'ProblemInterests
-data Text'ProblemReasons
+--data Text'ProblemNumber
+--data Text'ProblemDescription
+--data Text'ProblemPremises
+--data Text'ProblemInterests
+--data Text'ProblemReasons
 
 
 
