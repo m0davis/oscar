@@ -67,6 +67,29 @@ problemNumberAndAfterProblemNumberTextFromProblemText = either (error . ppShow) 
             return (n, AfterProblemNumberText t)
 
 --
+data Section
+    =   Section'GivenPremises
+    |   Section'UltimateEpistemicInterests
+    |   Section'ForwardsPrimaFacieReasons
+    |   Section'ForwardsConclusiveReasons
+    |   Section'BackwardsPrimaFacieReasons
+    |   Section'BackwardsConclusiveReasons
+    deriving (Eq, Show)
+
+sectionParser :: Parser Section
+sectionParser =
+    empty
+    <|> string "Given premises:"               `if_then` Section'GivenPremises              
+    <|> string "Ultimate epistemic interests:" `if_then` Section'UltimateEpistemicInterests 
+    <|> string "FORWARDS PRIMA FACIE REASONS"  `if_then` Section'ForwardsPrimaFacieReasons  
+    <|> string "FORWARDS CONCLUSIVE REASONS"   `if_then` Section'ForwardsConclusiveReasons  
+    <|> string "BACKWARDS PRIMA FACIE REASONS" `if_then` Section'BackwardsPrimaFacieReasons 
+    <|> string "BACKWARDS CONCLUSIVE REASONS"  `if_then` Section'BackwardsConclusiveReasons 
+  where
+    if_then :: forall a b. Parser a -> b -> Parser b
+    if_then p t = pure t <* try p
+
+--
 newtype AfterProblemDescriptionText = AfterProblemDescriptionText Text
     deriving (Show)
 
@@ -139,6 +162,39 @@ sectionTextFromAfterProblemDescriptionText SectionTextFromAfterProblemDescriptio
                 _pack . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
 --
+newtype ProblemGivenPremiseText = ProblemGivenPremiseText Text
+    deriving (Show)
+
+problemGivenPremiseTextsFromProblemGivenPremisesText :: ProblemGivenPremisesText -> [ProblemGivenPremiseText]
+problemGivenPremiseTextsFromProblemGivenPremisesText _ = []
+
+--
+eol :: Parser String
+eol = map pure lf <|> (try $ liftA2 (:) cr (map pure lf))
+
+lf :: Parser Char
+lf = satisfy (== '\n')
+
+cr :: Parser Char
+cr = satisfy (== '\r')
+
+withInput :: Monad m => s -> ParsecT s u m a -> ParsecT s u m a
+withInput s p = do
+    s' <- getInput
+    setInput s
+    p' <- p
+    setInput s'
+    return p'
+
+precededBy :: Parser first -> Parser second -> Parser (first, second)
+precededBy first second = do
+    firstInput <- pack <$> manyTill anyChar (lookAhead . try $ second)
+    liftA2 (,) (withInput firstInput first) second
+
+unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
+unlessM c a = ifM c mzero a
+
+--
 messageFromShow :: Show a => a -> IO ()
 messageFromShow = putStrLn . pack . ppShow
 
@@ -183,53 +239,8 @@ main = do
     let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
     messageFromShows problemBackwardsConclusiveReasonsTexts
 
-data Section
-    =   Section'GivenPremises
-    |   Section'UltimateEpistemicInterests
-    |   Section'ForwardsPrimaFacieReasons
-    |   Section'ForwardsConclusiveReasons
-    |   Section'BackwardsPrimaFacieReasons
-    |   Section'BackwardsConclusiveReasons
-    deriving (Eq, Show)
-
-sectionParser :: Parser Section
-sectionParser =
-    empty
-    <|> string "Given premises:"               `if_then` Section'GivenPremises              
-    <|> string "Ultimate epistemic interests:" `if_then` Section'UltimateEpistemicInterests 
-    <|> string "FORWARDS PRIMA FACIE REASONS"  `if_then` Section'ForwardsPrimaFacieReasons  
-    <|> string "FORWARDS CONCLUSIVE REASONS"   `if_then` Section'ForwardsConclusiveReasons  
-    <|> string "BACKWARDS PRIMA FACIE REASONS" `if_then` Section'BackwardsPrimaFacieReasons 
-    <|> string "BACKWARDS CONCLUSIVE REASONS"  `if_then` Section'BackwardsConclusiveReasons 
-  where
-    if_then :: forall a b. Parser a -> b -> Parser b
-    if_then p t = pure t <* try p
-
---
-eol :: Parser String
-eol = map pure lf <|> (try $ liftA2 (:) cr (map pure lf))
-
-lf :: Parser Char
-lf = satisfy (== '\n')
-
-cr :: Parser Char
-cr = satisfy (== '\r')
-
-withInput :: Monad m => s -> ParsecT s u m a -> ParsecT s u m a
-withInput s p = do
-    s' <- getInput
-    setInput s
-    p' <- p
-    setInput s'
-    return p'
-
-precededBy :: Parser first -> Parser second -> Parser (first, second)
-precededBy first second = do
-    firstInput <- pack <$> manyTill anyChar (lookAhead . try $ second)
-    liftA2 (,) (withInput firstInput first) second
-
-unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
-unlessM c a = ifM c mzero a
+    let problemGivenPremiseTextss = problemGivenPremiseTextsFromProblemGivenPremisesText <$> problemGivenPremisesTexts
+    messageFromShows problemGivenPremiseTextss
 
 
 --data Problem = Problem
