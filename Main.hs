@@ -6,6 +6,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FunctionalDependencies #-}
 
 module Main where
 
@@ -25,20 +27,45 @@ import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
 import Text.Show.Pretty
 
-class FilePathIO a where
-    fp2IO :: FilePath -> IO a
-
-newtype CombinedProblemsText = CombinedProblemsText Text
+--
+newtype ProblemsText = ProblemsText Text
     deriving (Show)
 
-instance FilePathIO CombinedProblemsText where
-    fp2IO = map CombinedProblemsText . readFile
+ioProblemsTextFromFilePath :: FilePath -> IO ProblemsText
+ioProblemsTextFromFilePath = map ProblemsText . readFile
+
+--
+newtype ProblemText = ProblemText Text
+    deriving (Show)
+
+problemTextsFromProblemsText :: ProblemsText -> [ProblemText]
+problemTextsFromProblemsText = map ProblemText . either (error . ppShow) id . runParser (many p) () "" . coerce
+    where
+        p :: Parser Text
+        p = do
+            spaces
+            string "Problem #"
+            pack <$> manyTill anyChar endP
+
+        endP :: Parser ()
+        endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
+
+--
+newtype AfterProblemNumberText = AfterProblemNumberText Text
+    deriving (Show)
+
+newtype ProblemNumber = ProblemNumber Int
+    deriving (Show)
+
+
+--
 
 main :: IO ()
 main = do
-    combinedProblems <- fp2IO (fpFromString "Combined-problems")
+    combinedProblems <- ioProblemsTextFromFilePath $ fpFromString "Combined-problems"
     putStrLn . pack . ppShow $ combinedProblems
-    let ps = coerce <$> listProblems combinedProblems
+    let ps' :: [ProblemText] = problemTextsFromProblemsText combinedProblems
+    let ps = coerce <$> ps'
     sequence_ $ putStrLn . pack . ppShow <$> ps
     sequence_ $ ppn <$> ps
     sequence_ $ ppd . decipher <$> ps
@@ -81,22 +108,8 @@ sectionParser =
     if_then :: forall a b. Parser a -> b -> Parser b
     if_then p t = pure t <* try p
 
-listProblems :: CombinedProblemsText -> [CombinedProblemsText]
-listProblems = map CombinedProblemsText . either (error . ppShow) id . runParser (many p) () "" . coerce
-  where
-    p :: Parser Text
-    p = do
-        spaces
-        string "Problem #"
-        pack <$> manyTill anyChar endP
-    endP :: Parser ()
-    endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
-
 class Decipherable out where
     decipher :: Text -> (out, Text)
-
-newtype ProblemNumber = ProblemNumber Int
-    deriving (Show)
 
 instance Decipherable ProblemNumber where
     decipher = either (error . ppShow) id . runParser p () ""
