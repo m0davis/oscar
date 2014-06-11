@@ -357,5 +357,14 @@ main = do
     let problemUltimateEpistemicInterestTextAndProblemJustificationDegrees = problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText <$> problemUltimateEpistemicInterestsTexts
     messageFromShows problemUltimateEpistemicInterestTextAndProblemJustificationDegrees
 
-    let problemReasonNameAndProblemForwardsPrimaFacieReasonTextAndProblemVariablesTextAndProblemStrengthDegrees = fromReasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
-    messageFromShows problemReasonNameAndProblemForwardsPrimaFacieReasonTextAndProblemVariablesTextAndProblemStrengthDegrees
+    let reasonBlocksFromForwardsPrimaFacieReasonsTexts = fromReasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
+    messageFromShows reasonBlocksFromForwardsPrimaFacieReasonsTexts
+
+    let reasonBlocksFromForwardsConclusiveReasonsTexts = fromReasonBlocks <$> problemForwardsConclusiveReasonsTexts
+    messageFromShows reasonBlocksFromForwardsConclusiveReasonsTexts
+
+    let reasonBlocksFromBackwardsPrimaFacieReasonsTexts = fromReasonBlocks <$> problemBackwardsPrimaFacieReasonsTexts
+    messageFromShows reasonBlocksFromBackwardsPrimaFacieReasonsTexts
+
+    let reasonBlocksFromBackwardsConclusiveReasonsTexts = fromReasonBlocks <$> problemBackwardsConclusiveReasonsTexts
+    messageFromShows reasonBlocksFromBackwardsConclusiveReasonsTexts
