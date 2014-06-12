@@ -254,6 +254,14 @@ newtype ProblemBackwardsPrimaFacieReasonText = ProblemBackwardsPrimaFacieReasonT
 newtype ProblemBackwardsConclusiveReasonText = ProblemBackwardsConclusiveReasonText Text
     deriving (Show)
 
+
+
+
+
+
+
+
+
 class (Coercible input Text, Coercible Text output) => CoercibleForwards input output | input -> output where
 
 instance CoercibleForwards ProblemForwardsPrimaFacieReasonsText ProblemForwardsPrimaFacieReasonText
@@ -279,6 +287,85 @@ fromReasonBlocks = either (error . ppShow) id . runParser (many (try p) <* many 
                     t <- parserProblemVariablesText
                     d <- parserProblemStrengthDegree
                     return (t, d)
+
+--
+
+--class Mereology whole parts where
+
+--newtype ProblemVariableText = ProblemVariableText Text
+
+--instance Mereology ProblemVariablesText [ProblemVariableText]
+
+--type family MereologyPart whole :: *
+--type instance MereologyPart ProblemVariablesText = [ProblemVariableText]
+
+--type family MereologyWhole part :: *
+--type instance MereologyWhole [ProblemVariableText] = ProblemVariablesText
+
+
+--class (Coercible t Text) => IsBackwardsReasonText t where
+
+--instance IsBackwardsReasonText ProblemBackwardsPrimaFacieReasonText
+
+--instance IsBackwardsReasonText ProblemBackwardsConclusiveReasonText
+
+--newtype IsBackwardsReasonText t => BackwardsPremisesText t = BackwardsPremisesText Text
+
+--newtype BackwardsPremisesText t = BackwardsPremisesText Text
+
+--newtype ConclusionText t = ConclusionText Text
+
+--fromBackwardsReasonText :: forall t. IsBackwardsReasonText t => t -> (ForwardsPremisesText t, BackwardsPremisesText t, ConclusionText t)
+--fromBackwardsReasonText = coerce . either (error . ppShow) id . runParser (p <* eof) () "" . coerce
+--    where
+--        p :: Parser (ForwardsPremisesText t, BackwardsPremisesText t, ConclusionText t)
+--        p = pure (,,) <*> ft1 <*> ft2 <*> ft3
+--            where
+--                ft1 = map (ForwardsPremisesText  . pack) $ char '{' *> manyTill anyChar (char '}')
+--                ft2 = map (BackwardsPremisesText . pack) $ many space *> char '{' *> manyTill anyChar (char '}')
+--                ft3 = map (ConclusionText        . pack) $ many space *> string "||=>" *> many space *> many anyChar
+
+--class (Coercible t Text) => IsForwardsReasonText t where
+
+--newtype IsForwardsReasonText t => ForwardsPremisesText t = ForwardsPremisesText Text
+
+--instance IsForwardsReasonText ProblemForwardsPrimaFacieReasonText
+
+--instance IsForwardsReasonText ProblemForwardsConclusiveReasonText
+
+--fromForwardsReasonText :: IsForwardsReasonText t => t -> (ForwardsPremisesText t, ConclusionText t)
+--fromForwardsReasonText = coerce . either (error . ppShow) id . runParser (p <* eof) () ""
+--    where
+--        p :: Parser (ForwardsPremisesText t, ConclusionText Text)
+--        p = pure (,) <*> ft1 <*> ft2
+--            where
+--                ft1 = map (ForwardsPremisesText . pack) $ char '{' *> manyTill anyChar (char '}')
+--                ft2 = map (ConclusionText       . pack) $ many space *> string "||=>" *> many space *> many anyChar
+
+--class (Coercible t Text, Coercible Text u) => IsCommaDelimitedText t u where
+
+--instance IsCommaDelimitedText ProblemVariablesText ProblemVariableText
+
+--instance IsCommaDelimitedText ProblemVariablesText ProblemVariableText
+
+
+
+--fromCommaDelimitedText :: (MereologyWhole part ~ whole, MereologyPart whole ~ part) => whole -> part
+--fromCommaDelimitedText = either (error . ppShow) id . runParser (many p <* eof) () ""
+--    where
+--        p :: Parser Text
+--        p = map pack $ manyTill anyChar (many space *> (eof <|> (char ',' *> many space *> pure ())))
+
+--data Formula 
+--    =   FormulaQuantifier QuantifierType QuantifierVariable Formula
+--    |   FormulaUnaryOperator UnaryOperatorType Formula
+--    |   FormulaBinaryOperator BinaryOperatorType Formula Formula
+--    |   FormulaTODO [Text]
+
+--newtype Reason
+--    deriving (Show)
+
+--instance CoercibleForwards ProblemForwardsConclusiveReasonText ([Formula], Formula)
 
 --
 eol :: Parser String
@@ -315,56 +402,58 @@ messageFromShows = sequence_ . map messageFromShow
 
 main :: IO ()
 main = do
-    combinedProblems <- ioProblemsTextFromFilePath $ fpFromString "Combined-problems"
-    messageFromShow combinedProblems
+    combinedProblems <- ioProblemsTextFromFilePath $ fpFromString "combined-problems"
+    --messageFromShow combinedProblems
 
     let problemTexts = problemTextsFromProblemsText combinedProblems
-    messageFromShows problemTexts
+    --messageFromShows problemTexts
 
     let problemNumberAndAfterProblemNumberTexts = problemNumberAndAfterProblemNumberTextFromProblemText <$> problemTexts
     let problemNumbers = fst <$> problemNumberAndAfterProblemNumberTexts
     let afterProblemNumberTexts = snd <$> problemNumberAndAfterProblemNumberTexts
-    messageFromShows problemNumbers
+    --messageFromShows problemNumbers
     --messageFromShows afterProblemNumberTexts
 
     let problemDescriptionAndAfterProblemDescriptionTexts = problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText <$> afterProblemNumberTexts
     let problemDescriptions = fst <$> problemDescriptionAndAfterProblemDescriptionTexts
     let afterProblemDescriptionTexts = snd <$> problemDescriptionAndAfterProblemDescriptionTexts
-    messageFromShows problemDescriptions
+    --messageFromShows problemDescriptions
     --messageFromShows afterProblemDescriptionTexts
     
     let problemGivenPremisesTexts = sectionTextFromAfterProblemDescriptionText givenPremises <$> afterProblemDescriptionTexts
-    messageFromShows problemGivenPremisesTexts
+    --messageFromShows problemGivenPremisesTexts
 
     let problemUltimateEpistemicInterestsTexts = sectionTextFromAfterProblemDescriptionText ultimateEpistemicInterests <$> afterProblemDescriptionTexts
-    messageFromShows problemUltimateEpistemicInterestsTexts
+    --messageFromShows problemUltimateEpistemicInterestsTexts
 
     let problemForwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemForwardsPrimaFacieReasonsTexts
+    --messageFromShows problemForwardsPrimaFacieReasonsTexts
 
     let problemForwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText forwardsConclusiveReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemForwardsConclusiveReasonsTexts
+    --messageFromShows problemForwardsConclusiveReasonsTexts
     
     let problemBackwardsPrimaFacieReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsPrimaFacieReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemBackwardsPrimaFacieReasonsTexts
+    --messageFromShows problemBackwardsPrimaFacieReasonsTexts
 
     let problemBackwardsConclusiveReasonsTexts = sectionTextFromAfterProblemDescriptionText backwardsConclusiveReasons <$> afterProblemDescriptionTexts
-    messageFromShows problemBackwardsConclusiveReasonsTexts
+    --messageFromShows problemBackwardsConclusiveReasonsTexts
 
     let problemGivenPremiseTextAndProblemJustificationDegrees = problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText <$> problemGivenPremisesTexts
-    messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
+    --messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
 
     let problemUltimateEpistemicInterestTextAndProblemJustificationDegrees = problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText <$> problemUltimateEpistemicInterestsTexts
-    messageFromShows problemUltimateEpistemicInterestTextAndProblemJustificationDegrees
+    --messageFromShows problemUltimateEpistemicInterestTextAndProblemJustificationDegrees
 
     let reasonBlocksFromForwardsPrimaFacieReasonsTexts = fromReasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
     messageFromShows reasonBlocksFromForwardsPrimaFacieReasonsTexts
 
     let reasonBlocksFromForwardsConclusiveReasonsTexts = fromReasonBlocks <$> problemForwardsConclusiveReasonsTexts
-    messageFromShows reasonBlocksFromForwardsConclusiveReasonsTexts
+    --messageFromShows reasonBlocksFromForwardsConclusiveReasonsTexts
 
     let reasonBlocksFromBackwardsPrimaFacieReasonsTexts = fromReasonBlocks <$> problemBackwardsPrimaFacieReasonsTexts
-    messageFromShows reasonBlocksFromBackwardsPrimaFacieReasonsTexts
+    --messageFromShows reasonBlocksFromBackwardsPrimaFacieReasonsTexts
 
     let reasonBlocksFromBackwardsConclusiveReasonsTexts = fromReasonBlocks <$> problemBackwardsConclusiveReasonsTexts
-    messageFromShows reasonBlocksFromBackwardsConclusiveReasonsTexts
+    --messageFromShows reasonBlocksFromBackwardsConclusiveReasonsTexts
+
+    return ()
