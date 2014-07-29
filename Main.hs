@@ -426,6 +426,8 @@ main = do
     putStrLn . pack . ppShow $ tf6
     let tf7 :: Free [] [LexemeWord] = map (simpleParse (many lexemeWord)) tf6
     putStrLn . pack . ppShow $ tf7
+    let tf8 :: Free [] [Maybe LexemeQUOBOS] = map (map tokenize) tf7
+    putStrLn . pack . ppShow $ tf8
 
     --let ls = lexemesFromText $ pack "(some x)((~AB) v C)X"
 

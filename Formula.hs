@@ -82,6 +82,8 @@ treeFromParentheses f = fst . tfp 0 []
             Just (a, as) = uncons ass
 
 
+--
+
 newtype LexemeWord = LexemeWord Text
     deriving (Show)
 
@@ -101,18 +103,30 @@ lexemeWord = {-(LexemeWord . pack) <$> -}do
             notFollowedBy $ space
             anyChar
 
+--
 
-
-
-{-
 -- | formula text (sans parentheses) -> list of symbols
 data Quantifier
     =   Quantifier_Universal
     |   Quantifier_Existential
+    deriving (Show)
+
+instance Tokenizer LexemeWord Quantifier where
+    tokenize (LexemeWord lw) = case lw of
+        "all"  -> Just Quantifier_Universal
+        "some" -> Just Quantifier_Existential
+        _      -> Nothing
 
 data UnaryOperator
     =   UnaryOperator_Negation
     |   UnaryOperator_Whether
+    deriving (Show)
+
+instance Tokenizer LexemeWord UnaryOperator where
+    tokenize (LexemeWord lw) = case lw of
+        "~"  -> Just UnaryOperator_Negation
+        "?"  -> Just UnaryOperator_Whether
+        _    -> Nothing
 
 data BinaryOperator
     =   BinaryOperator_Conjunction
@@ -120,13 +134,33 @@ data BinaryOperator
     |   BinaryOperator_Conditional
     |   BinaryOperator_Biconditional
     |   BinaryOperator_Defeater
+    deriving (Show)
 
-data LexemeQUOBOS a
+instance Tokenizer LexemeWord BinaryOperator where
+    tokenize (LexemeWord lw) = case lw of
+        "&"   -> Just BinaryOperator_Conjunction
+        "v"   -> Just BinaryOperator_Disjunction
+        "->"  -> Just BinaryOperator_Conditional
+        "<->" -> Just BinaryOperator_Biconditional
+        "@"   -> Just BinaryOperator_Defeater
+        _     -> Nothing
+
+data LexemeQUOBOS
     =   LexemeQUOBOS_Quantifier Quantifier
     |   LexemeQUOBOS_UnaryOperator UnaryOperator
     |   LexemeQUOBOS_BinaryOperator BinaryOperator
-    |   LexemeQUOBOS_Symbol a
+    |   LexemeQUOBOS_Symbol Text
+    deriving (Show)
 
+instance Tokenizer LexemeWord LexemeQUOBOS where
+    tokenize lw@(LexemeWord lw') = quantifier <|> unary <|> binary <|> symbol
+        where
+        quantifier = maybe Nothing (Just . LexemeQUOBOS_Quantifier    ) $ tokenize lw
+        unary      = maybe Nothing (Just . LexemeQUOBOS_UnaryOperator ) $ tokenize lw
+        binary     = maybe Nothing (Just . LexemeQUOBOS_BinaryOperator) $ tokenize lw
+        symbol     = Just $ LexemeQUOBOS_Symbol lw'
+
+{-
 :: ParsecT Text u m (LexemeQUOBOS Text)
 = 
 
