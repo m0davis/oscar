@@ -91,8 +91,16 @@ lexemeWord = {-(LexemeWord . pack) <$> -}do
     (
         empty
         <|> (char '~' >>= (return . LexemeWord . pack . point))
-        <|> (manyTill anyChar (eof <|> (lookAhead $ (space *> pure ()) <|> (char '~' *> pure ()))) >>= (return . LexemeWord . pack))
+        <|> (many1 validChar >>= (return . LexemeWord . pack))
         )
+    where
+        validChar :: Parser Char
+        validChar = do
+            notFollowedBy eof
+            notFollowedBy $ char '~'
+            notFollowedBy $ space
+            anyChar
+
 
 
 

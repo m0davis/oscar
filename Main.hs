@@ -414,8 +414,8 @@ main = do
     let forwardsPremisesTexts' :: [[([Text], Text)]] = map extractFromProblemReasonTextForwards . map _rbProblemReasonText <$> reasonBlocksFromForwardsConclusiveReasonsTexts
     messageFromShows forwardsPremisesTexts'
 
-    --let testFormula :: Text = pack "(some x)((~AB) v C)()X"
-    let testFormula :: Text = pack "x"
+    let testFormula :: Text = pack "(some x)((~AB) v C)()X"
+    --let testFormula :: Text = pack "x"
 
     let tf1 :: [Char] = otoList testFormula
     let tf2 :: [Either Char Parenthesis] = (`eitherOr` tokenize) <$> tf1
@@ -423,9 +423,9 @@ main = do
     let tf4 :: [Either Parenthesis [Char]] = mconcatRightPoints tf3
     let tf5 :: Free [] [Char] = treeFromParentheses id tf4
     let tf6 :: Free [] Text = map pack tf5
-    putStrLn . pack . ppShow $ tf6 {- works, such as it is -}
+    putStrLn . pack . ppShow $ tf6
     let tf7 :: Free [] [LexemeWord] = map (simpleParse (many lexemeWord)) tf6
-    putStrLn . pack . ppShow $ tf7 {- FIXME -}
+    putStrLn . pack . ppShow $ tf7
 
     --let ls = lexemesFromText $ pack "(some x)((~AB) v C)X"
 
