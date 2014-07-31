@@ -11,6 +11,7 @@ import Text.Show.Pretty (ppShow)
 
 import Numeric.Natural
 import Data.Pointed
+import Data.List.Split
 import Control.Applicative
 import Control.Monad
 import Control.Lens hiding (uncons)
@@ -94,7 +95,7 @@ lexemeWord = {-(LexemeWord . pack) <$> -}do
         empty
         <|> (char '~' >>= (return . LexemeWord . pack . point))
         <|> (many1 validChar >>= (return . LexemeWord . pack))
-        )
+        ) <* many space
     where
         validChar :: Parser Char
         validChar = do
@@ -109,7 +110,7 @@ lexemeWord = {-(LexemeWord . pack) <$> -}do
 data Quantifier
     =   Quantifier_Universal
     |   Quantifier_Existential
-    deriving (Show)
+    deriving (Show, Eq)
 
 instance Tokenizer LexemeWord Quantifier where
     tokenize (LexemeWord lw) = case lw of
@@ -120,7 +121,7 @@ instance Tokenizer LexemeWord Quantifier where
 data UnaryOperator
     =   UnaryOperator_Negation
     |   UnaryOperator_Whether
-    deriving (Show)
+    deriving (Show, Eq)
 
 instance Tokenizer LexemeWord UnaryOperator where
     tokenize (LexemeWord lw) = case lw of
@@ -134,7 +135,7 @@ data BinaryOperator
     |   BinaryOperator_Conditional
     |   BinaryOperator_Biconditional
     |   BinaryOperator_Defeater
-    deriving (Show)
+    deriving (Show, Eq)
 
 instance Tokenizer LexemeWord BinaryOperator where
     tokenize (LexemeWord lw) = case lw of
@@ -150,7 +151,7 @@ data LexemeQUOBOS
     |   LexemeQUOBOS_UnaryOperator UnaryOperator
     |   LexemeQUOBOS_BinaryOperator BinaryOperator
     |   LexemeQUOBOS_Symbol Text
-    deriving (Show)
+    deriving (Show, Eq)
 
 instance Tokenizer LexemeWord LexemeQUOBOS where
     tokenize lw@(LexemeWord lw') = quantifier <|> unary <|> binary <|> symbol
@@ -159,6 +160,112 @@ instance Tokenizer LexemeWord LexemeQUOBOS where
         unary      = maybe Nothing (Just . LexemeQUOBOS_UnaryOperator ) $ tokenize lw
         binary     = maybe Nothing (Just . LexemeQUOBOS_BinaryOperator) $ tokenize lw
         symbol     = Just $ LexemeQUOBOS_Symbol lw'
+
+--
+
+simplify :: Free [] a -> Free [] a
+simplify (Free [a]) = simplify a
+simplify (Free as)  = Free $ map simplify as
+simplify (Pure a)   = Pure a
+
+data PrefixBinary
+    =   PrefixBinary BinaryOperator PrefixBinary PrefixBinary
+    |   PrefixBinary' (Free [] PrefixBinary)
+    |   PrefixBinary'' LexemeQUOBOS
+    deriving (Show)
+
+prefix :: Free [] LexemeQUOBOS -> Free [] PrefixBinary
+prefix (Free ls) = case splitBinary ls of
+    [l,[Pure (LexemeQUOBOS_BinaryOperator b)],r] -> 
+        Pure $ 
+            PrefixBinary 
+                b 
+                (PrefixBinary' . prefix $ Free l) 
+                (PrefixBinary' . prefix $ Free r)
+    [e] -> Free $ map prefix e
+    _ -> error "invalid use of binary operator"
+    where
+    splitBinary :: [Free [] LexemeQUOBOS] -> [[Free [] LexemeQUOBOS]]
+    splitBinary = split (whenElt isBinary)
+
+    isBinary :: Free [] LexemeQUOBOS -> Bool
+    isBinary (Pure (LexemeQUOBOS_BinaryOperator _)) = True
+    isBinary _ = False
+prefix (Pure l) = Pure $ PrefixBinary'' l
+
+data PrefixBinaryUnary
+    =   PrefixBinaryUnary UnaryOperator PrefixBinaryUnary
+    |   PrefixBinaryUnary' (Free [] PrefixBinaryUnary)
+    |   PrefixBinaryUnary'' PrefixBinary
+    deriving (Show)
+
+prefix2 :: Free [] PrefixBinary -> Free [] PrefixBinaryUnary
+prefix2 (Free ls) = case splitUnary ls of
+    [[Pure (PrefixBinary'' (LexemeQUOBOS_UnaryOperator u))],r] -> 
+        Pure $ 
+            PrefixBinaryUnary 
+                u 
+                (PrefixBinaryUnary' . prefix2 $ Free r)
+    [e] -> Free $ map prefix2 e
+    _ -> error "invalid use of unary operator"
+    where
+    splitUnary :: [Free [] PrefixBinary] -> [[Free [] PrefixBinary]]
+    splitUnary = split (whenElt isUnary)
+
+    isUnary :: Free [] PrefixBinary -> Bool
+    isUnary (Pure (PrefixBinary'' (LexemeQUOBOS_UnaryOperator _))) = True
+    isUnary _ = False
+prefix2 (Pure l) = Pure $ PrefixBinaryUnary'' l
+
+data PrefixBinaryUnaryQuantifier
+    =   PrefixBinaryUnaryQuantifier Quantifier Text PrefixBinaryUnaryQuantifier
+    |   PrefixBinaryUnaryQuantifier' (Free [] PrefixBinaryUnaryQuantifier)
+    |   PrefixBinaryUnaryQuantifier'' PrefixBinaryUnary
+    deriving (Show)
+
+
+
+--reform :: Free [] LexemeQUOBOS -> Free [] LexemeQUOBOS
+--reform = reformQuantifiers . reformUnaryOperators . reformBinaryOperators
+--    where
+--    reformBinaryOperators =
+--        where
+--reform (Free [x]) = reform x -- simplification
+--reform (Free [x]) = reform x -- simplification
+--reform (Free (uo@(Pure (LexemeQUOBOS_UnaryOperator _):l:ls))) = reform $
+--    Free [Free (uo:l)]
+--reform (Free (Free [Pure (LexemeQUOBOS_Quantifier q), s]:xs)) = 
+--    Free $ [Pure (LexemeQUOBOS_Quantifier q), s] ++ map reform xs
+--reform (Free (Free [Pure (LexemeQUOBOS_Quantifier q), s]:xs)) = 
+--    Free $ [Pure (LexemeQUOBOS_Quantifier q), s] ++ map reform xs
+--reform (Free (a:[Free (Pure (LexemeQUOBOS_BinaryOperator b):cs)])) =
+--    Free (Pure (LexemeQUOBOS_BinaryOperator b) : reform a : map reform cs)
+--reform (Free xs) = -- recursion to fixed point
+--    | map reform xs == xs = Free xs
+--    | otherwise = reform $ Free $ map reform xs
+--reform x = x
+
+--Free
+--  [ Free
+--      [ Free
+--          [ Pure (LexemeQUOBOS_Quantifier Quantifier_Existential)
+--          , Pure (LexemeQUOBOS_Symbol "x")
+--          ]
+--      ]
+--  , Free
+--      [ Free
+--          [ Free
+--              [ Pure (LexemeQUOBOS_UnaryOperator UnaryOperator_Negation)
+--              , Pure (LexemeQUOBOS_Symbol "AB")
+--              ]
+--          ]
+--      , Free
+--          [ Pure (LexemeQUOBOS_BinaryOperator BinaryOperator_Disjunction)
+--          , Pure (LexemeQUOBOS_Symbol "C")
+--          ]
+--      ]
+--  ]
+
 
 {-
 :: ParsecT Text u m (LexemeQUOBOS Text)

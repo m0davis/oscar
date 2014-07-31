@@ -18,6 +18,7 @@ import Control.Applicative
 import Control.Conditional hiding (unlessM)
 import Control.Monad
 import Data.Char
+import Data.Maybe (fromJust)
 import Data.Coerce
 import Data.Set (Set)
 import Data.Tagged
@@ -414,9 +415,25 @@ main = do
     let forwardsPremisesTexts' :: [[([Text], Text)]] = map extractFromProblemReasonTextForwards . map _rbProblemReasonText <$> reasonBlocksFromForwardsConclusiveReasonsTexts
     messageFromShows forwardsPremisesTexts'
 
-    let testFormula :: Text = pack "(some x)((~AB) v C)()X"
+    --let testFormula1 :: Text = pack "(some x)((~AB) v C)"
+    --goforit testFormula1
+
+    let testFormula2 :: Text = pack "[(all x)[((F a) & ((F x) -> (F (g x)))) -> (F (g (g x)))] ->\n          (all x)[[(~(F a) v (F x)) v (F (g (g x)))] &\n               [(~(F a) v ~(F (g x))) v (F (g (g x)))]]]"
+    goforit testFormula2
     --let testFormula :: Text = pack "x"
 
+
+    --let ls = lexemesFromText $ pack "(some x)((~AB) v C)X"
+
+    --print ls
+    --putStrLn . pack . ppShow $ freeLexemes ls
+
+    --print . runParser formulaParser () "" . lexemesFromText $ pack "(~AB v C)"
+
+    return ()
+
+goforit :: Text -> IO ()
+goforit testFormula = do
     let tf1 :: [Char] = otoList testFormula
     let tf2 :: [Either Char Parenthesis] = (`eitherOr` tokenize) <$> tf1
     let tf3 :: [Either Parenthesis Char] = either Right Left <$> tf2
@@ -428,12 +445,24 @@ main = do
     putStrLn . pack . ppShow $ tf7
     let tf8 :: Free [] [Maybe LexemeQUOBOS] = map (map tokenize) tf7
     putStrLn . pack . ppShow $ tf8
+    let tf9 :: Free [] [LexemeQUOBOS] = map (map fromJust) tf8
+    putStrLn . pack . ppShow $ tf9
+    let tf10 :: Free [] LexemeQUOBOS = joinFree tf9
+    putStrLn . pack $ "tf10"
+    putStrLn . pack . ppShow $ tf10
+    let tf11 :: Free [] LexemeQUOBOS = simplify tf10
+    putStrLn . pack $ "tf11"
+    putStrLn . pack . ppShow $ tf11
+    let tf12 :: Free [] PrefixBinary = prefix tf11
+    putStrLn . pack $ "tf12"
+    putStrLn . pack . ppShow $ tf12
+    let tf13 :: Free [] PrefixBinary = simplify tf12
+    putStrLn . pack $ "tf13"
+    putStrLn . pack . ppShow $ tf13
+    let tf14 :: Free [] PrefixBinaryUnary = prefix2 tf13
+    putStrLn . pack $ "tf14"
+    putStrLn . pack . ppShow $ tf14
 
-    --let ls = lexemesFromText $ pack "(some x)((~AB) v C)X"
-
-    --print ls
-    --putStrLn . pack . ppShow $ freeLexemes ls
-
-    --print . runParser formulaParser () "" . lexemesFromText $ pack "(~AB v C)"
-
-    return ()
+joinFree :: Functor f => Free f (f a) -> Free f a
+joinFree (Pure as) = Free (map Pure as)
+joinFree (Free fs) = Free $ map joinFree fs

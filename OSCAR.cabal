@@ -26,6 +26,7 @@ executable OSCAR
         ,   nats                            ==  0.1.*
         ,   lens                            ==  4.1.*
         ,   MissingH                        ==  1.2.*
+        ,   split                           ==  0.2.*
 
     default-language:    
         Haskell2010
