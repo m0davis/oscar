@@ -14,30 +14,29 @@
 module Main where
 
 import ClassyPrelude hiding (Text, try)
+
 import Control.Applicative
 import Control.Conditional hiding (unlessM)
 import Control.Monad
+import Control.Monad.Free
 import Data.Char
-import Data.Maybe (fromJust)
 import Data.Coerce
+import Data.Maybe (fromJust)
 import Data.Set (Set)
 import Data.Tagged
 import Data.Text.Internal.Lazy (Text)
+import Numeric (readFloat, readSigned)
 import Prelude (read)
-import qualified Data.Set as Set
 import Safe
 import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
 import Text.Show.Pretty (ppShow)
-import Numeric (readFloat, readSigned)
-import Control.Monad.Free
+
+import qualified Data.Set as Set
 
 import Formula
+import Utilities
 --import FormulaLexer (lexemesFromText)
-
---
-simpleParse :: Parser a -> Text -> a
-simpleParse p = either (error . ppShow) id . runParser p () ""
 
 --
 newtype ProblemsText = ProblemsText Text
@@ -300,44 +299,6 @@ reasonBlocksFromProblemSectionText = simpleParse (many (try p) <* many space <* 
                     d <- parserProblemStrengthDegree
                     return (t, d)
 
---
-eol :: Parser String
-eol = map pure lf <|> (try $ liftA2 (:) cr (map pure lf))
-
-lf :: Parser Char
-lf = satisfy (== '\n')
-
-cr :: Parser Char
-cr = satisfy (== '\r')
-
-withInput :: Monad m => s -> ParsecT s u m a -> ParsecT s u m a
-withInput s p = do
-    s' <- getInput
-    setInput s
-    p' <- p
-    setInput s'
-    return p'
-
-precededBy :: Parser first -> Parser second -> Parser (first, second)
-precededBy first second = do
-    firstInput <- pack <$> manyTill anyChar (lookAhead . try $ second)
-    liftA2 (,) (withInput firstInput first) second
-
-unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
-unlessM c a = ifM c mzero a
-
---
-messageFromShow :: Show a => a -> IO ()
-messageFromShow = putStrLn . pack . ppShow
-
-messageFromShows :: Show a => [a] -> IO ()
-messageFromShows = sequence_ . map messageFromShow
-
-messageFromShows10 :: Show a => String -> [a] -> IO ()
-messageFromShows10 s xs = do
-    print s
-    messageFromShows $ take 10 xs
-
 main :: IO ()
 main = do
     combinedProblems <- ioProblemsTextFromFilePath $ fpFromString "combined-problems"
@@ -441,7 +402,3 @@ goforit testFormula = do
     let tf5 :: Formula = formula tf4
     putStrLn . pack $ "tf5"
     putStrLn . pack . ppShow $ tf5
-
-joinFree :: Functor f => Free f (f a) -> Free f a
-joinFree (Pure as) = Free (map Pure as)
-joinFree (Free fs) = Free $ map joinFree fs

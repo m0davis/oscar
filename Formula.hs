@@ -27,6 +27,10 @@ import Text.Parsec.String ()
 import Text.Parsec.Text.Lazy
 
 import Debug.Trace
+import Utilities
+
+formulaFromText :: Text -> Formula
+formulaFromText = undefined
 
 -- | formula text (sans parentheses) -> list of symbols
 data Quantifier
@@ -201,23 +205,3 @@ treeFromParentheses f = fst . tfp 0 []
 
 --
 
-simplify :: Free [] a -> Free [] a
-simplify (Free [a]) = simplify a
-simplify (Free as)  = Free $ map simplify as
-simplify (Pure a)   = Pure a
-
-eitherOr :: 
-    a -> 
-    (a -> Maybe b) -> 
-    Either a b
-eitherOr a f = maybeToEither a (f a)
-
-mconcatRightPoints :: 
-    (Pointed p, Semigroup s, p r ~ s) => 
-    [Either l r] -> 
-    [Either l s]
-mconcatRightPoints [] = []
-mconcatRightPoints (Left l : xs) = Left l : mconcatRightPoints xs
-mconcatRightPoints (Right r : xs) = case mconcatRightPoints xs of
-    (Right rs : ys) -> Right (point r <> rs) : ys
-    ys              -> Right (point r      ) : ys
