@@ -150,22 +150,6 @@ instance Tokenizer Char Parenthesis where
     tokenize ']' = Just CloseParenthesis
     tokenize _   = Nothing
 
-mconcatRightPoints :: 
-    (Pointed p, Semigroup s, p r ~ s) => 
-    [Either l r] -> 
-    [Either l s]
-mconcatRightPoints [] = []
-mconcatRightPoints (Left l : xs) = Left l : mconcatRightPoints xs
-mconcatRightPoints (Right r : xs) = case mconcatRightPoints xs of
-    (Right rs : ys) -> Right (point r <> rs) : ys
-    ys              -> Right (point r      ) : ys
-
-eitherOr :: 
-    a -> 
-    (a -> Maybe b) -> 
-    Either a b
-eitherOr a f = maybeToEither a (f a)
-
 treeFromParentheses ::
     forall as a b.
     (IsSequence as, Element as ~ a) =>
@@ -196,49 +180,16 @@ treeFromParentheses f = fst . tfp 0 []
 
 --
 
-newtype LexemeWord = LexemeWord Text
-    deriving (Show)
-
-lexemeWord :: Parser LexemeWord
-lexemeWord = {-(LexemeWord . pack) <$> -}do
-    many space
-    (
-        empty
-        <|> (char '~' >>= (return . LexemeWord . pack . point))
-        <|> (many1 validChar >>= (return . LexemeWord . pack))
-        ) <* many space
-    where
-        validChar :: Parser Char
-        validChar = do
-            notFollowedBy eof
-            notFollowedBy $ char '~'
-            notFollowedBy $ space
-            anyChar
-
---
-
 -- | formula text (sans parentheses) -> list of symbols
 data Quantifier
     =   Quantifier_Universal
     |   Quantifier_Existential
     deriving (Show, Eq)
 
-instance Tokenizer LexemeWord Quantifier where
-    tokenize (LexemeWord lw) = case lw of
-        "all"  -> Just Quantifier_Universal
-        "some" -> Just Quantifier_Existential
-        _      -> Nothing
-
 data UnaryOperator
     =   UnaryOperator_Negation
     |   UnaryOperator_Whether
     deriving (Show, Eq)
-
-instance Tokenizer LexemeWord UnaryOperator where
-    tokenize (LexemeWord lw) = case lw of
-        "~"  -> Just UnaryOperator_Negation
-        "?"  -> Just UnaryOperator_Whether
-        _    -> Nothing
 
 data BinaryOperator
     =   BinaryOperator_Conjunction
@@ -248,33 +199,25 @@ data BinaryOperator
     |   BinaryOperator_Defeater
     deriving (Show, Eq)
 
-instance Tokenizer LexemeWord BinaryOperator where
-    tokenize (LexemeWord lw) = case lw of
-        "&"   -> Just BinaryOperator_Conjunction
-        "v"   -> Just BinaryOperator_Disjunction
-        "->"  -> Just BinaryOperator_Conditional
-        "<->" -> Just BinaryOperator_Biconditional
-        "@"   -> Just BinaryOperator_Defeater
-        _     -> Nothing
-
-data LexemeQUOBOS
-    =   LexemeQUOBOS_Quantifier Quantifier
-    |   LexemeQUOBOS_UnaryOperator UnaryOperator
-    |   LexemeQUOBOS_BinaryOperator BinaryOperator
-    |   LexemeQUOBOS_Symbol Text
-    deriving (Show, Eq)
-
-instance Tokenizer LexemeWord LexemeQUOBOS where
-    tokenize lw@(LexemeWord lw') = quantifier <|> unary <|> binary <|> symbol
-        where
-        quantifier = maybe Nothing (Just . LexemeQUOBOS_Quantifier    ) $ tokenize lw
-        unary      = maybe Nothing (Just . LexemeQUOBOS_UnaryOperator ) $ tokenize lw
-        binary     = maybe Nothing (Just . LexemeQUOBOS_BinaryOperator) $ tokenize lw
-        symbol     = Just $ LexemeQUOBOS_Symbol lw'
-
 --
 
 simplify :: Free [] a -> Free [] a
 simplify (Free [a]) = simplify a
 simplify (Free as)  = Free $ map simplify as
 simplify (Pure a)   = Pure a
+
+eitherOr :: 
+    a -> 
+    (a -> Maybe b) -> 
+    Either a b
+eitherOr a f = maybeToEither a (f a)
+
+mconcatRightPoints :: 
+    (Pointed p, Semigroup s, p r ~ s) => 
+    [Either l r] -> 
+    [Either l s]
+mconcatRightPoints [] = []
+mconcatRightPoints (Left l : xs) = Left l : mconcatRightPoints xs
+mconcatRightPoints (Right r : xs) = case mconcatRightPoints xs of
+    (Right rs : ys) -> Right (point r <> rs) : ys
+    ys              -> Right (point r      ) : ys
