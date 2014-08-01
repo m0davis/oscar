@@ -25,6 +25,114 @@ import Text.Parsec.Prim hiding ((<|>), many, uncons)
 import Text.Parsec.String ()
 import Text.Parsec.Text.Lazy
 
+import Debug.Trace
+
+--
+data AToken
+    =   ATokenParenthesis Parenthesis
+    |   ATokenUnaryOperator UnaryOperator
+    |   ATokenBinaryOperator BinaryOperator
+    |   ATokenQuantifier Quantifier
+    |   ATokenSymbol Text
+    deriving (Show)
+
+atoken :: Parser AToken
+atoken = many space *> 
+    (   empty
+    <|> parenthesis 
+    <|> unaryOperator 
+    <|> binaryOperator 
+    <|> quantifier 
+    <|> symbol
+    )
+    where
+    parenthesis = 
+        empty
+        <|> (char '(' *> pure (ATokenParenthesis OpenParenthesis))
+        <|> (char '[' *> pure (ATokenParenthesis OpenParenthesis))
+        <|> (char ')' *> pure (ATokenParenthesis CloseParenthesis))
+        <|> (char ']' *> pure (ATokenParenthesis CloseParenthesis))
+    unaryOperator =
+        empty
+        <|> (char '?' *> pure (ATokenUnaryOperator UnaryOperator_Whether))
+        <|> (char '~' *> pure (ATokenUnaryOperator UnaryOperator_Negation))
+    binaryOperator =
+        empty
+        <|> (char 'v' *> pure (ATokenBinaryOperator BinaryOperator_Disjunction))
+        <|> (char '&' *> pure (ATokenBinaryOperator BinaryOperator_Conjunction))
+        <|> (char '@' *> pure (ATokenBinaryOperator BinaryOperator_Defeater))
+        <|> (try (string "->")  *> pure (ATokenBinaryOperator BinaryOperator_Conditional))
+        <|> (try (string "<->") *> pure (ATokenBinaryOperator BinaryOperator_Biconditional))
+    quantifier =
+        empty
+        <|> (try (string "all")  *> pure (ATokenQuantifier Quantifier_Universal))
+        <|> (try (string "some") *> pure (ATokenQuantifier Quantifier_Existential))
+    symbol = ATokenSymbol . pack <$> many1 (notFollowedBy (Text.Parsec.Char.oneOf "([])?~&@-<>" <|> space) *> anyChar)
+
+aTokenTree :: [AToken] -> Free [] AToken
+aTokenTree =
+    treeFromParentheses (
+        \case
+            ATokenParenthesis p -> Left p
+            x -> Right x
+        )
+
+data BToken
+    =   BTokenUnaryOperator UnaryOperator
+    |   BTokenBinaryOperator BinaryOperator
+    |   BTokenQuantifier Quantifier Text
+    |   BTokenSymbol Text
+    deriving (Show)
+
+bTokenTree :: Free [] AToken -> Free [] BToken
+bTokenTree (Pure (ATokenUnaryOperator u)) = Pure (BTokenUnaryOperator u)
+bTokenTree (Pure (ATokenBinaryOperator b)) = Pure (BTokenBinaryOperator b)
+bTokenTree (Pure (ATokenSymbol s)) = Pure (BTokenSymbol s)
+bTokenTree (Free [Pure (ATokenQuantifier q), Pure (ATokenSymbol s)]) = Pure (BTokenQuantifier q s)
+bTokenTree (Free ts) = Free $ map bTokenTree ts
+
+
+structurePrefixOperators :: Free [] BToken -> Free [] BToken
+structurePrefixOperators t@(Pure _) = t
+structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
+    suo :: [Free [] BToken] -> [Free [] BToken]
+    suo [] = []
+    --suo [a, u@(Pure (BTokenUnaryOperator _))] =
+    --    [Free [u, structurePrefixOperators a]]
+    suo [a, u@(Pure (BTokenQuantifier _ _))] =
+        [Free [u, structurePrefixOperators a]]
+    suo (a:u@(Pure (BTokenUnaryOperator _)):as) =
+        let chunk = Free [u, structurePrefixOperators a] 
+        in 
+            if null as then
+                [chunk]
+            else
+                suo (chunk:as)
+    suo (a:u@(Pure (BTokenQuantifier _ _)):as) =
+        suo $ Free [u, structurePrefixOperators a]:as
+    suo (a:as) = structurePrefixOperators a:suo as
+
+data Formula
+    =   FormulaBinary BinaryOperator Formula Formula
+    |   FormulaUnary UnaryOperator Formula
+    |   FormulaQuantification Quantifier Text Formula
+    |   FormulaPredication Text [Free [] Text]
+    deriving (Show)
+
+formula :: Free [] BToken -> Formula
+formula (Free [l,Pure (BTokenBinaryOperator b), r]) = FormulaBinary b (formula l) (formula r)
+formula (Free [Pure (BTokenUnaryOperator u), r]) = FormulaUnary u (formula r)
+formula (Free [Pure (BTokenQuantifier q s), r]) = FormulaQuantification q s (formula r)
+formula (Free (Pure (BTokenSymbol s):ss)) = FormulaPredication s (map subformula ss)
+    where
+    subformula :: Free [] BToken -> Free [] Text
+    subformula (Pure (BTokenSymbol s)) = Pure s
+    subformula (Free (Pure (BTokenSymbol s):ss)) = Free (Pure s:map subformula ss)
+    subformula _ = error "subformula: unexpected structure"
+formula (Pure (BTokenSymbol s)) = FormulaPredication s []
+formula (Free [x]) = formula x
+formula x = error ("formula: unexpected structure: \n" ++ ppShow x)
+
 --
 data Parenthesis = OpenParenthesis | CloseParenthesis
     deriving (Bounded, Eq, Read, Show)
