@@ -415,20 +415,8 @@ main = do
     let forwardsPremisesTexts' :: [[([Text], Text)]] = map extractFromProblemReasonTextForwards . map _rbProblemReasonText <$> reasonBlocksFromForwardsConclusiveReasonsTexts
     messageFromShows forwardsPremisesTexts'
 
-    --let testFormula1 :: Text = pack "(some x)((~AB) v C)"
-    --goforit testFormula1
-
     let testFormula2 :: Text = pack "[~~(all x)~~[((F a) & ((F x) -> (F (g x)))) -> (F (g (g x)))] ->\n          (all x)[[(~(F a) v (F x)) v (F (g (g x)))] &\n               [(~(F a) v ~~~(F (g x))) v (F (g (g x)))]]]"
     goforit testFormula2
-    --let testFormula :: Text = pack "x"
-
-
-    --let ls = lexemesFromText $ pack "(some x)((~AB) v C)X"
-
-    --print ls
-    --putStrLn . pack . ppShow $ freeLexemes ls
-
-    --print . runParser formulaParser () "" . lexemesFromText $ pack "(~AB v C)"
 
     return ()
 
