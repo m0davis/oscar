@@ -377,7 +377,10 @@ main = do
     messageFromShows forwardsPremisesTexts'
 
     let testFormula2 :: Text = pack "[~~(all x)~~[((F a) & ((F x) -> (F (g x)))) -> (F (g (g x)))] ->\n          (all x)[[(~(F a) v (F x)) v (F (g (g x)))] &\n               [(~(F a) v ~~~(F (g x))) v (F (g (g x)))]]]"
-    goforit testFormula2
+    --goforit testFormula2
+
+    let tf2 = formulaFromText testFormula2
+    putStrLn . pack . ppShow $ tf2
 
     return ()
 

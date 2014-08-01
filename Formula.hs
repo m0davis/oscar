@@ -30,7 +30,7 @@ import Debug.Trace
 import Utilities
 
 formulaFromText :: Text -> Formula
-formulaFromText = undefined
+formulaFromText = formula . structurePrefixOperators . bTokenTree . aTokenTree . simpleParse (many atoken)
 
 -- | formula text (sans parentheses) -> list of symbols
 data Quantifier
@@ -200,8 +200,3 @@ treeFromParentheses f = fst . tfp 0 []
                         tfp d (prev ++ [Pure b]) as
         where
             Just (a, as) = uncons ass
-
-
-
---
-
