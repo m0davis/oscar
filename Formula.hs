@@ -4,6 +4,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE PatternSynonyms #-}
 module Formula where
 
 import ClassyPrelude hiding (Text, try)
@@ -119,8 +120,10 @@ data Formula
     |   FormulaPredication Text [Free [] Text]
     deriving (Show)
 
+pattern Binary b l r = (Free [l,Pure (BTokenBinaryOperator b), r])
+
 formula :: Free [] BToken -> Formula
-formula (Free [l,Pure (BTokenBinaryOperator b), r]) = FormulaBinary b (formula l) (formula r)
+formula (Binary b l r) = FormulaBinary b (formula l) (formula r)
 formula (Free [Pure (BTokenUnaryOperator u), r]) = FormulaUnary u (formula r)
 formula (Free [Pure (BTokenQuantifier q s), r]) = FormulaQuantification q s (formula r)
 formula (Free (Pure (BTokenSymbol s):ss)) = FormulaPredication s (map subformula ss)
