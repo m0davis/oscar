@@ -28,6 +28,26 @@ import Text.Parsec.Text.Lazy
 
 import Debug.Trace
 
+-- | formula text (sans parentheses) -> list of symbols
+data Quantifier
+    =   Quantifier_Universal
+    |   Quantifier_Existential
+    deriving (Show, Eq)
+
+data UnaryOperator
+    =   UnaryOperator_Negation
+    |   UnaryOperator_Whether
+    deriving (Show, Eq)
+
+data BinaryOperator
+    =   BinaryOperator_Conjunction
+    |   BinaryOperator_Disjunction
+    |   BinaryOperator_Conditional
+    |   BinaryOperator_Biconditional
+    |   BinaryOperator_Defeater
+    deriving (Show, Eq)
+
+
 --
 data AToken
     =   ATokenParenthesis Parenthesis
@@ -178,26 +198,6 @@ treeFromParentheses f = fst . tfp 0 []
             Just (a, as) = uncons ass
 
 
---
-
--- | formula text (sans parentheses) -> list of symbols
-data Quantifier
-    =   Quantifier_Universal
-    |   Quantifier_Existential
-    deriving (Show, Eq)
-
-data UnaryOperator
-    =   UnaryOperator_Negation
-    |   UnaryOperator_Whether
-    deriving (Show, Eq)
-
-data BinaryOperator
-    =   BinaryOperator_Conjunction
-    |   BinaryOperator_Disjunction
-    |   BinaryOperator_Conditional
-    |   BinaryOperator_Biconditional
-    |   BinaryOperator_Defeater
-    deriving (Show, Eq)
 
 --
 
