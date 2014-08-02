@@ -143,23 +143,23 @@ qsFromQTokenTree _ = error "qsFromQTokenTree: unexpected QTokenQuantifier"
 
 reformQSTokenTree :: Free [] QSToken -> Free [] QSToken
 reformQSTokenTree t@(Pure _) = t
-reformQSTokenTree (Free ts) = Free $ reverse . suo . reverse $ ts where
-    suo :: [Free [] QSToken] -> [Free [] QSToken]
-    suo [] = 
+reformQSTokenTree (Free ts) = Free $ reverse . rqstt . reverse $ ts where
+    rqstt :: [Free [] QSToken] -> [Free [] QSToken]
+    rqstt [] = 
         []
-    suo [a, u@(Pure (QSTokenQuantifier _ _))] =
+    rqstt [a, u@(Pure (QSTokenQuantifier _ _))] =
         [Free [u, reformQSTokenTree a]]
-    suo (a:u@(Pure (QSTokenUnaryOp _)):as) =
+    rqstt (a:u@(Pure (QSTokenUnaryOp _)):as) =
         let chunk = Free [u, reformQSTokenTree a] 
         in 
             if null as then
                 [chunk]
             else
-                suo (chunk : as)
-    suo (a:u@(Pure (QSTokenQuantifier _ _)):as) =
-        suo $ Free [u, reformQSTokenTree a] : as
-    suo (a:as) = 
-        reformQSTokenTree a : suo as
+                rqstt (chunk : as)
+    rqstt (a:u@(Pure (QSTokenQuantifier _ _)):as) =
+        rqstt $ Free [u, reformQSTokenTree a] : as
+    rqstt (a:as) = 
+        reformQSTokenTree a : rqstt as
 
 --
 data Predication = Predication Symbol [DomainFunction]
@@ -178,36 +178,36 @@ data Formula
     | FormulaPredication Predication
     deriving (Show)
 
-formula :: Free [] QSToken -> Formula
-formula (Free [l,Pure (QSTokenBinaryOp b), r]) = 
-    FormulaBinary b (formula l) (formula r)
-formula (Free [Pure (QSTokenUnaryOp u), r]) = 
-    FormulaUnary u (formula r)
-formula (Free [Pure (QSTokenQuantifier q s), r]) = 
-    FormulaQuantification q s (formula r)
-formula (Free (Pure (QSTokenSymbol s):ss)) = 
-    FormulaPredication $ Predication s $ domainFunction <$> ss
-formula (Pure (QSTokenSymbol s)) = 
+formulaFromQSTokenTree :: Free [] QSToken -> Formula
+formulaFromQSTokenTree (Free [l,Pure (QSTokenBinaryOp b), r]) = 
+    FormulaBinary b (formulaFromQSTokenTree l) (formulaFromQSTokenTree r)
+formulaFromQSTokenTree (Free [Pure (QSTokenUnaryOp u), r]) = 
+    FormulaUnary u (formulaFromQSTokenTree r)
+formulaFromQSTokenTree (Free [Pure (QSTokenQuantifier q s), r]) = 
+    FormulaQuantification q s (formulaFromQSTokenTree r)
+formulaFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) = 
+    FormulaPredication $ Predication s $ domainFunctionFromQSTokenTree <$> ss
+formulaFromQSTokenTree (Pure (QSTokenSymbol s)) = 
     FormulaPredication $ Predication s []
-formula (Free [x]) = 
-    formula x
-formula x = 
-    error ("formula: unexpected structure: \n" ++ ppShow x)
+formulaFromQSTokenTree (Free [x]) = 
+    formulaFromQSTokenTree x
+formulaFromQSTokenTree x = 
+    error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
 
-domainFunction :: Free [] QSToken -> DomainFunction
-domainFunction (Pure (QSTokenSymbol s)) = 
-        DomainVariable s
-domainFunction (Free (Pure (QSTokenSymbol s):ss)) = 
-        DomainFunction s $ map domainFunction ss
-domainFunction (Free [x]) = 
-        domainFunction x
-domainFunction _ = 
-        error "domainFunction: unexpected structure"
+domainFunctionFromQSTokenTree :: Free [] QSToken -> DomainFunction
+domainFunctionFromQSTokenTree (Pure (QSTokenSymbol s)) = 
+    DomainVariable s
+domainFunctionFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) = 
+    DomainFunction s $ map domainFunctionFromQSTokenTree ss
+domainFunctionFromQSTokenTree (Free [x]) = 
+    domainFunctionFromQSTokenTree x
+domainFunctionFromQSTokenTree x = 
+    error $ "domainFunctionFromQSTokenTree: unexpected structure\n" ++ ppShow x
 
 --
 formulaFromText :: Text -> Formula
 formulaFromText = id
-    . formula 
+    . formulaFromQSTokenTree
     . reformQSTokenTree 
     . qsFromQTokenTree 
     . freeFromParentheses id 
