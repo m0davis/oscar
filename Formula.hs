@@ -131,10 +131,10 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
 
 -- QSToken
 data QSToken
-    =   QSTokenUnaryOperator UnaryOperator
-    |   QSTokenBinaryOperator BinaryOperator
-    |   QSTokenQuantifier Quantifier Symbol
-    |   QSTokenSymbol Symbol
+    = QSTokenUnaryOperator UnaryOperator
+    | QSTokenBinaryOperator BinaryOperator
+    | QSTokenQuantifier Quantifier Symbol
+    | QSTokenSymbol Symbol
     deriving (Show)
 
 bTokenTree :: Free [] QToken -> Free [] QSToken
