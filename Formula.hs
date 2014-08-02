@@ -30,6 +30,7 @@ import Text.Parsec.Text.Lazy
 
 import Utilities
 
+-- Parenthesis
 data Parenthesis = OpenParenthesis | CloseParenthesis
     deriving (Bounded, Eq, Read, Show)
 
@@ -59,6 +60,7 @@ treeFromParentheses f = fst . tfp 0 []
         where
             Just (a, as) = uncons ass
 
+-- QUBS
 data Quantifier
     = Quantifier_Universal
     | Quantifier_Existential
@@ -80,6 +82,7 @@ data BinaryOperator
 newtype Symbol = Symbol Text
     deriving (Show, Eq)
 
+-- QToken
 data QToken
     =   QTokenUnaryOperator UnaryOperator
     |   QTokenBinaryOperator BinaryOperator
@@ -120,6 +123,7 @@ atoken = empty
 
     symbol = Symbol . pack <$> many1 alphaNum
 
+-- QSToken
 data QSToken
     =   QSTokenUnaryOperator UnaryOperator
     |   QSTokenBinaryOperator BinaryOperator
@@ -155,6 +159,7 @@ structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
     suo (a:as) = 
         structurePrefixOperators a : suo as
 
+-- Formula
 data Formula
     = FormulaBinary BinaryOperator Formula Formula
     | FormulaUnary UnaryOperator Formula
@@ -183,5 +188,6 @@ formula (Free [x]) =
 formula x = 
         error ("formula: unexpected structure: \n" ++ ppShow x)
 
+--
 formulaFromText :: Text -> Formula
 formulaFromText = formula . structurePrefixOperators . bTokenTree . treeFromParentheses id . simpleParse (many (many space *> atoken))
