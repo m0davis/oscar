@@ -86,35 +86,37 @@ data AToken
     deriving (Show)
 
 atoken :: Parser (Either Parenthesis AToken)
-atoken = many space *> 
-    (   empty
-    <|> (Left                         <$> parenthesis   )
-    <|> (Right . ATokenUnaryOperator  <$> unaryOperator )
-    <|> (Right . ATokenBinaryOperator <$> binaryOperator)
-    <|> (Right . ATokenQuantifier     <$> quantifier    )
-    <|> (Right . ATokenSymbol . pack  <$> symbol        )
-    )
+atoken = many space *> do empty
+    <|> Left                         <$> parenthesis   
+    <|> Right . ATokenUnaryOperator  <$> unaryOperator 
+    <|> Right . ATokenBinaryOperator <$> binaryOperator
+    <|> Right . ATokenQuantifier     <$> quantifier    
+    <|> Right . ATokenSymbol . pack  <$> symbol        
   where
+    p **> v = try p *> pure v
+
     parenthesis = empty
         <|> char '(' **> OpenParenthesis
         <|> char '[' **> OpenParenthesis
         <|> char ')' **> CloseParenthesis
         <|> char ']' **> CloseParenthesis
+
     unaryOperator = empty
         <|> char '?' **> UnaryOperator_Whether 
         <|> char '~' **> UnaryOperator_Negation
+
     binaryOperator = empty
         <|> (char 'v' >> space) **> BinaryOperator_Disjunction  
         <|> char '&'            **> BinaryOperator_Conjunction  
         <|> char '@'            **> BinaryOperator_Defeater     
         <|> string "->"         **> BinaryOperator_Conditional  
         <|> string "<->"        **> BinaryOperator_Biconditional
+
     quantifier = empty
         <|> string "all"        **> Quantifier_Universal  
         <|> string "some"       **> Quantifier_Existential
+        
     symbol = many1 alphaNum
-
-    p **> v = (try p *> pure v)
 
 data BToken
     =   BTokenUnaryOperator UnaryOperator
