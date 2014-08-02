@@ -178,9 +178,10 @@ formula (Free (Pure (QSTokenSymbol s):ss)) =
         FormulaPredication s (map subformula ss)
     where
     subformula :: Free [] QSToken -> Free [] Symbol
-    subformula (Pure (QSTokenSymbol s)) = Pure s
-    subformula (Free (Pure (QSTokenSymbol s):ss)) = Free (Pure s:map subformula ss)
-    subformula _ = error "subformula: unexpected structure"
+    subformula (Pure (QSTokenSymbol s)) = 
+            Pure s
+    subformula (Free (Pure (QSTokenSymbol s):ss)) = 
+            Free (Pure s:map subformula ss)
 formula (Pure (QSTokenSymbol s)) = 
         FormulaPredication s []
 formula (Free [x]) = 
