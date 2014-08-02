@@ -84,10 +84,10 @@ newtype Symbol = Symbol Text
 
 -- QToken
 data QToken
-    =   QTokenUnaryOperator UnaryOperator
-    |   QTokenBinaryOperator BinaryOperator
-    |   QTokenQuantifier Quantifier
-    |   QTokenSymbol Symbol
+    = QTokenUnaryOperator UnaryOperator
+    | QTokenBinaryOperator BinaryOperator
+    | QTokenQuantifier Quantifier
+    | QTokenSymbol Symbol
     deriving (Show)
 
 atoken :: Parser (Either Parenthesis QToken)
@@ -159,12 +159,21 @@ structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
     suo (a:as) = 
         structurePrefixOperators a : suo as
 
+--
+data Predication = Predication Symbol [DomainFunction]
+    deriving (Show)
+
+data DomainFunction 
+    = DomainFunction Symbol [DomainFunction]
+    | DomainVariable Symbol
+    deriving (Show)
+
 -- Formula
 data Formula
     = FormulaBinary BinaryOperator Formula Formula
     | FormulaUnary UnaryOperator Formula
     | FormulaQuantification Quantifier Symbol Formula
-    | FormulaPredication Symbol [Free [] Symbol]
+    | FormulaPredication Predication
     deriving (Show)
 
 formula :: Free [] QSToken -> Formula
@@ -175,17 +184,19 @@ formula (Free [Pure (QSTokenUnaryOperator u), r]) =
 formula (Free [Pure (QSTokenQuantifier q s), r]) = 
         FormulaQuantification q s (formula r)
 formula (Free (Pure (QSTokenSymbol s):ss)) = 
-        FormulaPredication s $ map subformula ss
-    where
-    subformula :: Free [] QSToken -> Free [] Symbol
-    subformula (Pure (QSTokenSymbol s)) = 
-            Pure s
-    subformula (Free (Pure (QSTokenSymbol s):ss)) = 
-            Free (Pure s:map subformula ss)
-    subformula _ = 
-            error "subformula: unexpected structure"
+        FormulaPredication $ Predication s $ domainFunction <$> ss
+  where
+    domainFunction :: Free [] QSToken -> DomainFunction
+    domainFunction (Pure (QSTokenSymbol s)) = 
+            DomainVariable s
+    domainFunction (Free (Pure (QSTokenSymbol s):ss)) = 
+            DomainFunction s $ map domainFunction ss
+    domainFunction (Free [x]) = 
+            domainFunction x
+    domainFunction _ = 
+            error "domainFunction: unexpected structure"
 formula (Pure (QSTokenSymbol s)) = 
-        FormulaPredication s []
+        FormulaPredication $ Predication s []
 formula (Free [x]) = 
         formula x
 formula x = 
