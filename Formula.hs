@@ -193,4 +193,9 @@ formula x =
 
 --
 formulaFromText :: Text -> Formula
-formulaFromText = formula . structurePrefixOperators . bTokenTree . freeFromParentheses id . simpleParse (many (many space *> atoken))
+formulaFromText = id
+    . formula 
+    . structurePrefixOperators 
+    . bTokenTree 
+    . freeFromParentheses id 
+    . simpleParse (many (many space *> atoken))
