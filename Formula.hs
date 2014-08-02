@@ -88,35 +88,33 @@ data AToken
 atoken :: Parser (Either Parenthesis AToken)
 atoken = many space *> 
     (   empty
-    <|> (Left <$> parenthesis)
-    <|> (Right <$> unaryOperator)
-    <|> (Right <$> binaryOperator)
-    <|> (Right <$> quantifier)
-    <|> (Right <$> symbol)
+    <|> (Left                         <$> parenthesis   )
+    <|> (Right . ATokenUnaryOperator  <$> unaryOperator )
+    <|> (Right . ATokenBinaryOperator <$> binaryOperator)
+    <|> (Right . ATokenQuantifier     <$> quantifier    )
+    <|> (Right . ATokenSymbol . pack  <$> symbol        )
     )
-    where
-    parenthesis = 
-        empty
-        <|> (char '(' *> pure OpenParenthesis)
-        <|> (char '[' *> pure OpenParenthesis)
-        <|> (char ')' *> pure CloseParenthesis)
-        <|> (char ']' *> pure CloseParenthesis)
-    unaryOperator =
-        empty
-        <|> (char '?' *> pure (ATokenUnaryOperator UnaryOperator_Whether))
-        <|> (char '~' *> pure (ATokenUnaryOperator UnaryOperator_Negation))
-    binaryOperator =
-        empty
-        <|> (char 'v' *> pure (ATokenBinaryOperator BinaryOperator_Disjunction))
-        <|> (char '&' *> pure (ATokenBinaryOperator BinaryOperator_Conjunction))
-        <|> (char '@' *> pure (ATokenBinaryOperator BinaryOperator_Defeater))
-        <|> (try (string "->")  *> pure (ATokenBinaryOperator BinaryOperator_Conditional))
-        <|> (try (string "<->") *> pure (ATokenBinaryOperator BinaryOperator_Biconditional))
-    quantifier =
-        empty
-        <|> (try (string "all")  *> pure (ATokenQuantifier Quantifier_Universal))
-        <|> (try (string "some") *> pure (ATokenQuantifier Quantifier_Existential))
-    symbol = ATokenSymbol . pack <$> many1 (notFollowedBy (Text.Parsec.Char.oneOf "([])?~&@-<>" <|> space) *> anyChar)
+  where
+    parenthesis = empty
+        <|> char '(' **> OpenParenthesis
+        <|> char '[' **> OpenParenthesis
+        <|> char ')' **> CloseParenthesis
+        <|> char ']' **> CloseParenthesis
+    unaryOperator = empty
+        <|> char '?' **> UnaryOperator_Whether 
+        <|> char '~' **> UnaryOperator_Negation
+    binaryOperator = empty
+        <|> (char 'v' >> space) **> BinaryOperator_Disjunction  
+        <|> char '&'            **> BinaryOperator_Conjunction  
+        <|> char '@'            **> BinaryOperator_Defeater     
+        <|> string "->"         **> BinaryOperator_Conditional  
+        <|> string "<->"        **> BinaryOperator_Biconditional
+    quantifier = empty
+        <|> string "all"        **> Quantifier_Universal  
+        <|> string "some"       **> Quantifier_Existential
+    symbol = many1 alphaNum
+
+    p **> v = (try p *> pure v)
 
 data BToken
     =   BTokenUnaryOperator UnaryOperator
