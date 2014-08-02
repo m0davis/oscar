@@ -34,13 +34,13 @@ import Utilities
 data Parenthesis = OpenParenthesis | CloseParenthesis
     deriving (Bounded, Eq, Read, Show)
 
-treeFromParentheses ::
+freeFromParentheses ::
     forall as a b.
     (IsSequence as, Element as ~ a) =>
     (a -> Either Parenthesis b) ->
     as ->
     Free [] b
-treeFromParentheses f = fst . tfp 0 []
+freeFromParentheses f = fst . tfp 0 []
     where
 
     tfp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
@@ -62,21 +62,21 @@ treeFromParentheses f = fst . tfp 0 []
 
 -- QUBS
 data Quantifier
-    = Quantifier_Universal
-    | Quantifier_Existential
+    = Universal
+    | Existential
     deriving (Show, Eq)
 
 data UnaryOperator
-    = UnaryOperator_Negation
-    | UnaryOperator_Whether
+    = Negation
+    | Whether
     deriving (Show, Eq)
 
 data BinaryOperator
-    = BinaryOperator_Conjunction
-    | BinaryOperator_Disjunction
-    | BinaryOperator_Conditional
-    | BinaryOperator_Biconditional
-    | BinaryOperator_Defeater
+    = Conjunction
+    | Disjunction
+    | Conditional
+    | Biconditional
+    | Defeater
     deriving (Show, Eq)
 
 newtype Symbol = Symbol Text
@@ -107,19 +107,19 @@ atoken = empty
         <|> char ']'            **> CloseParenthesis
 
     unaryOperator = empty
-        <|> char '?'            **> UnaryOperator_Whether 
-        <|> char '~'            **> UnaryOperator_Negation
+        <|> char '?'            **> Whether 
+        <|> char '~'            **> Negation
 
     binaryOperator = empty
-        <|> (char 'v' >> space) **> BinaryOperator_Disjunction  
-        <|> char '&'            **> BinaryOperator_Conjunction  
-        <|> char '@'            **> BinaryOperator_Defeater     
-        <|> string "->"         **> BinaryOperator_Conditional  
-        <|> string "<->"        **> BinaryOperator_Biconditional
+        <|> (char 'v' >> space) **> Disjunction  
+        <|> char '&'            **> Conjunction  
+        <|> char '@'            **> Defeater     
+        <|> string "->"         **> Conditional  
+        <|> string "<->"        **> Biconditional
 
     quantifier = empty
-        <|> string "all"        **> Quantifier_Universal  
-        <|> string "some"       **> Quantifier_Existential
+        <|> string "all"        **> Universal  
+        <|> string "some"       **> Existential
 
     symbol = Symbol . pack <$> many1 alphaNum
 
@@ -132,12 +132,12 @@ data QSToken
     deriving (Show)
 
 bTokenTree :: Free [] QToken -> Free [] QSToken
-bTokenTree (Pure (QTokenUnaryOperator u))  = Pure (QSTokenUnaryOperator u)
-bTokenTree (Pure (QTokenBinaryOperator b)) = Pure (QSTokenBinaryOperator b)
-bTokenTree (Pure (QTokenSymbol s))         = Pure (QSTokenSymbol s)
+bTokenTree (Pure (QTokenUnaryOperator  u)) = Pure $ QSTokenUnaryOperator u
+bTokenTree (Pure (QTokenBinaryOperator b)) = Pure $ QSTokenBinaryOperator b
+bTokenTree (Pure (QTokenSymbol         s)) = Pure $ QSTokenSymbol s
 bTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) 
-                                           = Pure (QSTokenQuantifier q s)
-bTokenTree (Free ts) = Free $ map bTokenTree ts
+                                           = Pure $ QSTokenQuantifier q s
+bTokenTree (Free ts)                       = Free $ map bTokenTree ts
 
 structurePrefixOperators :: Free [] QSToken -> Free [] QSToken
 structurePrefixOperators t@(Pure _) = t
@@ -175,13 +175,15 @@ formula (Free [Pure (QSTokenUnaryOperator u), r]) =
 formula (Free [Pure (QSTokenQuantifier q s), r]) = 
         FormulaQuantification q s (formula r)
 formula (Free (Pure (QSTokenSymbol s):ss)) = 
-        FormulaPredication s (map subformula ss)
+        FormulaPredication s $ map subformula ss
     where
     subformula :: Free [] QSToken -> Free [] Symbol
     subformula (Pure (QSTokenSymbol s)) = 
             Pure s
     subformula (Free (Pure (QSTokenSymbol s):ss)) = 
             Free (Pure s:map subformula ss)
+    subformula _ = 
+            error "subformula: unexpected structure"
 formula (Pure (QSTokenSymbol s)) = 
         FormulaPredication s []
 formula (Free [x]) = 
@@ -191,4 +193,4 @@ formula x =
 
 --
 formulaFromText :: Text -> Formula
-formulaFromText = formula . structurePrefixOperators . bTokenTree . treeFromParentheses id . simpleParse (many (many space *> atoken))
+formulaFromText = formula . structurePrefixOperators . bTokenTree . freeFromParentheses id . simpleParse (many (many space *> atoken))
