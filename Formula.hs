@@ -92,11 +92,11 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
   where
     parsePQToken :: Parser PQToken
     parsePQToken = empty
-        <|> Left                         <$> parenthesis   
-        <|> Right . QTokenUnaryOp  <$> unaryOp 
+        <|> Left                         <$> parenthesis
+        <|> Right . QTokenUnaryOp  <$> unaryOp
         <|> Right . QTokenBinaryOp <$> binaryOp
-        <|> Right . QTokenQuantifier     <$> quantifier    
-        <|> Right . QTokenSymbol         <$> symbol        
+        <|> Right . QTokenQuantifier     <$> quantifier
+        <|> Right . QTokenSymbol         <$> symbol
       where
         p **> v = try p *> pure v
         infixl 4 **>
@@ -108,18 +108,18 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
             <|> char ']'            **> CloseParenthesis
 
         unaryOp = empty
-            <|> char '?'            **> Whether 
+            <|> char '?'            **> Whether
             <|> char '~'            **> Negation
 
         binaryOp = empty
-            <|> char 'v' *> space   **> Disjunction  
-            <|> char '&'            **> Conjunction  
-            <|> char '@'            **> Defeater     
-            <|> string "->"         **> Conditional  
+            <|> char 'v' *> space   **> Disjunction
+            <|> char '&'            **> Conjunction
+            <|> char '@'            **> Defeater
+            <|> string "->"         **> Conditional
             <|> string "<->"        **> Biconditional
 
         quantifier = empty
-            <|> string "all"        **> Universal  
+            <|> string "all"        **> Universal
             <|> string "some"       **> Existential
 
         symbol = Symbol . pack <$> many1 alphaNum
@@ -136,7 +136,7 @@ qsFromQTokenTree :: Free [] QToken -> Free [] QSToken
 qsFromQTokenTree (Pure (QTokenUnaryOp  u)) = Pure $ QSTokenUnaryOp u
 qsFromQTokenTree (Pure (QTokenBinaryOp b)) = Pure $ QSTokenBinaryOp b
 qsFromQTokenTree (Pure (QTokenSymbol   s)) = Pure $ QSTokenSymbol s
-qsFromQTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) 
+qsFromQTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)])
                                            = Pure $ QSTokenQuantifier q s
 qsFromQTokenTree (Free ts)                 = Free $ map qsFromQTokenTree ts
 qsFromQTokenTree _ = error "qsFromQTokenTree: unexpected QTokenQuantifier"
@@ -145,32 +145,31 @@ reformQSTokenTree :: Free [] QSToken -> Free [] QSToken
 reformQSTokenTree t@(Pure _) = t
 reformQSTokenTree (Free ts) = Free $ reverse . rqstt . reverse $ ts where
     rqstt :: [Free [] QSToken] -> [Free [] QSToken]
-    rqstt [] = 
+    rqstt [] =
         []
     rqstt [a, u@(Pure (QSTokenQuantifier _ _))] =
         [Free [u, reformQSTokenTree a]]
     rqstt (a:u@(Pure (QSTokenUnaryOp _)):as) =
-        let chunk = Free [u, reformQSTokenTree a] 
-        in 
+        let chunk = Free [u, reformQSTokenTree a]
+        in
             if null as then
                 [chunk]
             else
                 rqstt (chunk : as)
     rqstt (a:u@(Pure (QSTokenQuantifier _ _)):as) =
         rqstt $ Free [u, reformQSTokenTree a] : as
-    rqstt (a:as) = 
+    rqstt (a:as) =
         reformQSTokenTree a : rqstt as
 
---
+-- Formula
 data Predication = Predication Symbol [DomainFunction]
     deriving (Show)
 
-data DomainFunction 
+data DomainFunction
     = DomainFunction Symbol [DomainFunction]
     | DomainVariable Symbol
     deriving (Show)
 
--- Formula
 data Formula
     = FormulaBinary BinaryOp Formula Formula
     | FormulaUnary UnaryOp Formula
@@ -179,36 +178,36 @@ data Formula
     deriving (Show)
 
 formulaFromQSTokenTree :: Free [] QSToken -> Formula
-formulaFromQSTokenTree (Free [l,Pure (QSTokenBinaryOp b), r]) = 
+formulaFromQSTokenTree (Free [l,Pure (QSTokenBinaryOp b), r]) =
     FormulaBinary b (formulaFromQSTokenTree l) (formulaFromQSTokenTree r)
-formulaFromQSTokenTree (Free [Pure (QSTokenUnaryOp u), r]) = 
+formulaFromQSTokenTree (Free [Pure (QSTokenUnaryOp u), r]) =
     FormulaUnary u (formulaFromQSTokenTree r)
-formulaFromQSTokenTree (Free [Pure (QSTokenQuantifier q s), r]) = 
+formulaFromQSTokenTree (Free [Pure (QSTokenQuantifier q s), r]) =
     FormulaQuantification q s (formulaFromQSTokenTree r)
-formulaFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) = 
+formulaFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) =
     FormulaPredication $ Predication s $ domainFunctionFromQSTokenTree <$> ss
-formulaFromQSTokenTree (Pure (QSTokenSymbol s)) = 
+formulaFromQSTokenTree (Pure (QSTokenSymbol s)) =
     FormulaPredication $ Predication s []
-formulaFromQSTokenTree (Free [x]) = 
+formulaFromQSTokenTree (Free [x]) =
     formulaFromQSTokenTree x
-formulaFromQSTokenTree x = 
+formulaFromQSTokenTree x =
     error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
 
 domainFunctionFromQSTokenTree :: Free [] QSToken -> DomainFunction
-domainFunctionFromQSTokenTree (Pure (QSTokenSymbol s)) = 
+domainFunctionFromQSTokenTree (Pure (QSTokenSymbol s)) =
     DomainVariable s
-domainFunctionFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) = 
+domainFunctionFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) =
     DomainFunction s $ map domainFunctionFromQSTokenTree ss
-domainFunctionFromQSTokenTree (Free [x]) = 
+domainFunctionFromQSTokenTree (Free [x]) =
     domainFunctionFromQSTokenTree x
-domainFunctionFromQSTokenTree x = 
+domainFunctionFromQSTokenTree x =
     error $ "domainFunctionFromQSTokenTree: unexpected structure\n" ++ ppShow x
 
 --
 formulaFromText :: Text -> Formula
 formulaFromText = id
     . formulaFromQSTokenTree
-    . reformQSTokenTree 
-    . qsFromQTokenTree 
-    . freeFromParentheses id 
+    . reformQSTokenTree
+    . qsFromQTokenTree
+    . freeFromParentheses id
     . pqTokensFromText

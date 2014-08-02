@@ -90,12 +90,12 @@ data Section
 sectionParser :: Parser Section
 sectionParser =
     empty
-    <|> string "Given premises:"               `if_then` Section'GivenPremises              
-    <|> string "Ultimate epistemic interests:" `if_then` Section'UltimateEpistemicInterests 
-    <|> string "FORWARDS PRIMA FACIE REASONS"  `if_then` Section'ForwardsPrimaFacieReasons  
-    <|> string "FORWARDS CONCLUSIVE REASONS"   `if_then` Section'ForwardsConclusiveReasons  
-    <|> string "BACKWARDS PRIMA FACIE REASONS" `if_then` Section'BackwardsPrimaFacieReasons 
-    <|> string "BACKWARDS CONCLUSIVE REASONS"  `if_then` Section'BackwardsConclusiveReasons 
+    <|> string "Given premises:"               `if_then` Section'GivenPremises
+    <|> string "Ultimate epistemic interests:" `if_then` Section'UltimateEpistemicInterests
+    <|> string "FORWARDS PRIMA FACIE REASONS"  `if_then` Section'ForwardsPrimaFacieReasons
+    <|> string "FORWARDS CONCLUSIVE REASONS"   `if_then` Section'ForwardsConclusiveReasons
+    <|> string "BACKWARDS PRIMA FACIE REASONS" `if_then` Section'BackwardsPrimaFacieReasons
+    <|> string "BACKWARDS CONCLUSIVE REASONS"  `if_then` Section'BackwardsConclusiveReasons
   where
     if_then :: forall a b. Parser a -> b -> Parser b
     if_then p t = pure t <* try p
@@ -143,8 +143,8 @@ data Reasons (direction :: Direction) (defeasible :: Defeasibility) = Reasons
 
 instance HasSection GivenPremises                  where section _ = Section'GivenPremises
 instance HasSection UltimateEpistemicInterests     where section _ = Section'UltimateEpistemicInterests
-instance HasSection (Reasons Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons 
-instance HasSection (Reasons Forwards  Conclusive) where section _ = Section'ForwardsConclusiveReasons 
+instance HasSection (Reasons Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons
+instance HasSection (Reasons Forwards  Conclusive) where section _ = Section'ForwardsConclusiveReasons
 instance HasSection (Reasons Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
 instance HasSection (Reasons Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
@@ -245,7 +245,7 @@ parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill a
 newtype ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility) = ProblemReasonText Text
     deriving (Show)
 
-data ReasonBlock (direction :: Direction) (defeasible :: Defeasibility) = ReasonBlock 
+data ReasonBlock (direction :: Direction) (defeasible :: Defeasibility) = ReasonBlock
     {   _rbProblemReasonName     :: ProblemReasonName
     ,   _rbProblemReasonText     :: (ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility))
     ,   _rbProblemVariablesText  :: ProblemVariablesText
@@ -272,14 +272,14 @@ enbracedListParser = do
         p = do
             (firstText, restText) <- (many space *> (pack <$> many anyChar) <* many space) `precededBy` (lookAhead $ (eof *> pure False) <|> (char ',' *> many anyChar *> pure True))
             if restText then do
-                _ <- char ','                
+                _ <- char ','
                 restTexts <- p
                 return $ firstText : restTexts
             else do
                 return [firstText]
 
-reasonBlocksFromProblemSectionText :: forall direction defeasible. 
-    (ProblemSectionText (Reasons (direction :: Direction) (defeasible :: Defeasibility))) -> 
+reasonBlocksFromProblemSectionText :: forall direction defeasible.
+    (ProblemSectionText (Reasons (direction :: Direction) (defeasible :: Defeasibility))) ->
     [ReasonBlock (direction :: Direction) (defeasible :: Defeasibility)]
     --  [(ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)]
 reasonBlocksFromProblemSectionText = simpleParse (many (try p) <* many space <* eof) . coerce
@@ -318,7 +318,7 @@ main = do
     let afterProblemDescriptionTexts = snd <$> problemDescriptionAndAfterProblemDescriptionTexts
     messageFromShows problemDescriptions
     messageFromShows afterProblemDescriptionTexts
-    
+
     let problemGivenPremisesTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
     messageFromShows problemGivenPremisesTexts
 
@@ -330,7 +330,7 @@ main = do
 
     let problemForwardsConclusiveReasonsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
     messageFromShows problemForwardsConclusiveReasonsTexts
-    
+
     let problemBackwardsPrimaFacieReasonsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
     messageFromShows problemBackwardsPrimaFacieReasonsTexts
 
