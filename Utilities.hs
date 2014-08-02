@@ -7,22 +7,22 @@ import Text.Show.Pretty (ppShow)
 
 import Control.Applicative
 import Control.Conditional hiding (unlessM)
-import Control.Lens hiding (uncons)
+--import Control.Lens hiding (uncons)
 import Control.Monad
 import Control.Monad.Free
 import Data.Either.Utils (maybeToEither)
-import Data.List.Split
+--import Data.List.Split
 import Data.Pointed
 import Data.Text.Internal.Lazy (Text)
-import Numeric.Natural
+--import Numeric.Natural
 import Text.Parsec.Char
 import Text.Parsec.Combinator
-import Text.Parsec.Pos
+--import Text.Parsec.Pos
 import Text.Parsec.Prim hiding ((<|>), many, uncons)
 import Text.Parsec.String ()
 import Text.Parsec.Text.Lazy
 
-import Debug.Trace
+--import Debug.Trace
 
 simplify :: Free [] a -> Free [] a
 simplify (Free [a]) = simplify a
@@ -71,10 +71,10 @@ withInput s p = do
     setInput s'
     return p'
 
-precededBy :: Parser first -> Parser second -> Parser (first, second)
-precededBy first second = do
-    firstInput <- pack <$> manyTill anyChar (lookAhead . try $ second)
-    liftA2 (,) (withInput firstInput first) second
+precededBy :: Parser p1 -> Parser p2 -> Parser (p1, p2)
+precededBy p1 p2 = do
+    firstInput <- pack <$> manyTill anyChar (lookAhead . try $ p2)
+    liftA2 (,) (withInput firstInput p1) p2
 
 unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
 unlessM c a = ifM c mzero a

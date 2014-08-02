@@ -13,17 +13,17 @@ import Text.Show.Pretty (ppShow)
 import ClassyPrelude hiding (Text, try)
 
 import Control.Applicative
-import Control.Lens hiding (uncons)
-import Control.Monad
+--import Control.Lens hiding (uncons)
+--import Control.Monad
 import Control.Monad.Free
-import Data.Either.Utils (maybeToEither)
-import Data.List.Split
-import Data.Pointed
+--import Data.Either.Utils (maybeToEither)
+--import Data.List.Split
+--import Data.Pointed
 import Data.Text.Internal.Lazy (Text)
 import Numeric.Natural
 import Text.Parsec.Char
 import Text.Parsec.Combinator
-import Text.Parsec.Pos
+--import Text.Parsec.Pos
 import Text.Parsec.Prim hiding ((<|>), many, uncons)
 import Text.Parsec.String ()
 import Text.Parsec.Text.Lazy
@@ -40,23 +40,25 @@ freeFromParentheses ::
     (a -> Either Parenthesis b) ->
     as ->
     Free [] b
-freeFromParentheses f = fst . tfp 0 []
-    where
+freeFromParentheses f = fst . ffp 0 []
+  where
 
-    tfp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
-    tfp d prev ass
+    ffp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
+    ffp d prev ass
         | onull ass =
             (Free prev, mempty)
         | Left OpenParenthesis <- f a =
-            let (paren, rest) = tfp (succ d) [] as
-            in  tfp d (prev ++ [paren]) rest
+            let (paren, rest) = ffp (succ d) [] as
+            in  ffp d (prev ++ [paren]) rest
         | Left CloseParenthesis <- f a
         , d == 0 =
             error "unexpected CloseParenthesis at depth 0"
         | Left CloseParenthesis <- f a =
             (Free prev, as)
         | Right b <- f a =
-            tfp d (prev ++ [Pure b]) as
+            ffp d (prev ++ [Pure b]) as
+        | otherwise = error ""
+          -- suppresses invalid ghc warning about non-exhaustive pattern match
         where
             Just (a, as) = uncons ass
 
@@ -66,12 +68,12 @@ data Quantifier
     | Existential
     deriving (Show, Eq)
 
-data UnaryOperator
+data UnaryOp
     = Negation
     | Whether
     deriving (Show, Eq)
 
-data BinaryOperator
+data BinaryOp
     = Conjunction
     | Disjunction
     | Conditional
@@ -84,8 +86,8 @@ newtype Symbol = Symbol Text
 
 -- QToken and PQToken
 data QToken
-    = QTokenUnaryOperator UnaryOperator
-    | QTokenBinaryOperator BinaryOperator
+    = QTokenUnaryOp UnaryOp
+    | QTokenBinaryOp BinaryOp
     | QTokenQuantifier Quantifier
     | QTokenSymbol Symbol
     deriving (Show)
@@ -98,8 +100,8 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
     parsePQToken :: Parser PQToken
     parsePQToken = empty
         <|> Left                         <$> parenthesis   
-        <|> Right . QTokenUnaryOperator  <$> unaryOperator 
-        <|> Right . QTokenBinaryOperator <$> binaryOperator
+        <|> Right . QTokenUnaryOp  <$> unaryOp 
+        <|> Right . QTokenBinaryOp <$> binaryOp
         <|> Right . QTokenQuantifier     <$> quantifier    
         <|> Right . QTokenSymbol         <$> symbol        
       where
@@ -112,11 +114,11 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
             <|> char ')'            **> CloseParenthesis
             <|> char ']'            **> CloseParenthesis
 
-        unaryOperator = empty
+        unaryOp = empty
             <|> char '?'            **> Whether 
             <|> char '~'            **> Negation
 
-        binaryOperator = empty
+        binaryOp = empty
             <|> char 'v' *> space   **> Disjunction  
             <|> char '&'            **> Conjunction  
             <|> char '@'            **> Defeater     
@@ -131,39 +133,40 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
 
 -- QSToken
 data QSToken
-    = QSTokenUnaryOperator UnaryOperator
-    | QSTokenBinaryOperator BinaryOperator
+    = QSTokenUnaryOp UnaryOp
+    | QSTokenBinaryOp BinaryOp
     | QSTokenQuantifier Quantifier Symbol
     | QSTokenSymbol Symbol
     deriving (Show)
 
-bTokenTree :: Free [] QToken -> Free [] QSToken
-bTokenTree (Pure (QTokenUnaryOperator  u)) = Pure $ QSTokenUnaryOperator u
-bTokenTree (Pure (QTokenBinaryOperator b)) = Pure $ QSTokenBinaryOperator b
-bTokenTree (Pure (QTokenSymbol         s)) = Pure $ QSTokenSymbol s
-bTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) 
+qsFromQTokenTree :: Free [] QToken -> Free [] QSToken
+qsFromQTokenTree (Pure (QTokenUnaryOp  u)) = Pure $ QSTokenUnaryOp u
+qsFromQTokenTree (Pure (QTokenBinaryOp b)) = Pure $ QSTokenBinaryOp b
+qsFromQTokenTree (Pure (QTokenSymbol   s)) = Pure $ QSTokenSymbol s
+qsFromQTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) 
                                            = Pure $ QSTokenQuantifier q s
-bTokenTree (Free ts)                       = Free $ map bTokenTree ts
+qsFromQTokenTree (Free ts)                 = Free $ map qsFromQTokenTree ts
+qsFromQTokenTree _ = error "qsFromQTokenTree: unexpected QTokenQuantifier"
 
-structurePrefixOperators :: Free [] QSToken -> Free [] QSToken
-structurePrefixOperators t@(Pure _) = t
-structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
+reformQSTokenTree :: Free [] QSToken -> Free [] QSToken
+reformQSTokenTree t@(Pure _) = t
+reformQSTokenTree (Free ts) = Free $ reverse . suo . reverse $ ts where
     suo :: [Free [] QSToken] -> [Free [] QSToken]
     suo [] = 
         []
     suo [a, u@(Pure (QSTokenQuantifier _ _))] =
-        [Free [u, structurePrefixOperators a]]
-    suo (a:u@(Pure (QSTokenUnaryOperator _)):as) =
-        let chunk = Free [u, structurePrefixOperators a] 
+        [Free [u, reformQSTokenTree a]]
+    suo (a:u@(Pure (QSTokenUnaryOp _)):as) =
+        let chunk = Free [u, reformQSTokenTree a] 
         in 
             if null as then
                 [chunk]
             else
                 suo (chunk : as)
     suo (a:u@(Pure (QSTokenQuantifier _ _)):as) =
-        suo $ Free [u, structurePrefixOperators a] : as
+        suo $ Free [u, reformQSTokenTree a] : as
     suo (a:as) = 
-        structurePrefixOperators a : suo as
+        reformQSTokenTree a : suo as
 
 --
 data Predication = Predication Symbol [DomainFunction]
@@ -176,43 +179,43 @@ data DomainFunction
 
 -- Formula
 data Formula
-    = FormulaBinary BinaryOperator Formula Formula
-    | FormulaUnary UnaryOperator Formula
+    = FormulaBinary BinaryOp Formula Formula
+    | FormulaUnary UnaryOp Formula
     | FormulaQuantification Quantifier Symbol Formula
     | FormulaPredication Predication
     deriving (Show)
 
 formula :: Free [] QSToken -> Formula
-formula (Free [l,Pure (QSTokenBinaryOperator b), r]) = 
-        FormulaBinary b (formula l) (formula r)
-formula (Free [Pure (QSTokenUnaryOperator u), r]) = 
-        FormulaUnary u (formula r)
+formula (Free [l,Pure (QSTokenBinaryOp b), r]) = 
+    FormulaBinary b (formula l) (formula r)
+formula (Free [Pure (QSTokenUnaryOp u), r]) = 
+    FormulaUnary u (formula r)
 formula (Free [Pure (QSTokenQuantifier q s), r]) = 
-        FormulaQuantification q s (formula r)
+    FormulaQuantification q s (formula r)
 formula (Free (Pure (QSTokenSymbol s):ss)) = 
-        FormulaPredication $ Predication s $ domainFunction <$> ss
-  where
-    domainFunction :: Free [] QSToken -> DomainFunction
-    domainFunction (Pure (QSTokenSymbol s)) = 
-            DomainVariable s
-    domainFunction (Free (Pure (QSTokenSymbol s):ss)) = 
-            DomainFunction s $ map domainFunction ss
-    domainFunction (Free [x]) = 
-            domainFunction x
-    domainFunction _ = 
-            error "domainFunction: unexpected structure"
+    FormulaPredication $ Predication s $ domainFunction <$> ss
 formula (Pure (QSTokenSymbol s)) = 
-        FormulaPredication $ Predication s []
+    FormulaPredication $ Predication s []
 formula (Free [x]) = 
-        formula x
+    formula x
 formula x = 
-        error ("formula: unexpected structure: \n" ++ ppShow x)
+    error ("formula: unexpected structure: \n" ++ ppShow x)
+
+domainFunction :: Free [] QSToken -> DomainFunction
+domainFunction (Pure (QSTokenSymbol s)) = 
+        DomainVariable s
+domainFunction (Free (Pure (QSTokenSymbol s):ss)) = 
+        DomainFunction s $ map domainFunction ss
+domainFunction (Free [x]) = 
+        domainFunction x
+domainFunction _ = 
+        error "domainFunction: unexpected structure"
 
 --
 formulaFromText :: Text -> Formula
 formulaFromText = id
     . formula 
-    . structurePrefixOperators 
-    . bTokenTree 
+    . reformQSTokenTree 
+    . qsFromQTokenTree 
     . freeFromParentheses id 
     . pqTokensFromText

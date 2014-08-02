@@ -18,21 +18,21 @@ import ClassyPrelude hiding (Text, try)
 import Control.Applicative
 import Control.Conditional hiding (unlessM)
 import Control.Monad
-import Control.Monad.Free
-import Data.Char
+--import Control.Monad.Free
+--import Data.Char
 import Data.Coerce
-import Data.Maybe (fromJust)
-import Data.Set (Set)
-import Data.Tagged
+--import Data.Maybe (fromJust)
+--import Data.Set (Set)
+--import Data.Tagged
 import Data.Text.Internal.Lazy (Text)
-import Numeric (readFloat, readSigned)
+--import Numeric (readFloat, readSigned)
 import Prelude (read)
-import Safe
+--import Safe
 import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.Text.Lazy
 import Text.Show.Pretty (ppShow)
 
-import qualified Data.Set as Set
+--import qualified Data.Set as Set
 
 import Formula
 import Utilities
@@ -55,7 +55,7 @@ problemTextsFromProblemsText = map ProblemText . simpleParse (many p) . coerce
         p :: Parser Text
         p = do
             spaces
-            string "Problem #"
+            _ <- string "Problem #"
             pack <$> manyTill anyChar endP
 
         endP :: Parser ()
@@ -196,7 +196,7 @@ problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesTex
     where
         p :: Parser (ProblemGivenPremiseText, ProblemJustificationDegree)
         p = do
-            many space
+            spaces
             (t, d) <- many anyChar `precededBy` parserProblemJustificationDegree
             return (ProblemGivenPremiseText . pack $ t, d)
 
@@ -216,7 +216,7 @@ problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimate
     where
         p :: Parser (ProblemUltimateEpistemicInterestText, ProblemInterestDegree)
         p = do
-            many space
+            spaces
             (t, d) <- many anyChar `precededBy` parserProblemInterestDegree
             return (ProblemUltimateEpistemicInterestText . pack $ t, d)
 
@@ -263,7 +263,7 @@ extractFromProblemReasonTextForwards = simpleParse p . coerce
 
 enbracedListParser :: Parser [Text]
 enbracedListParser = do
-    char '{'
+    _ <- char '{'
     (inner, _) <- (pack <$> many anyChar) `precededBy` char '}'
     let texts = simpleParse p inner
     return texts
@@ -272,7 +272,7 @@ enbracedListParser = do
         p = do
             (firstText, restText) <- (many space *> (pack <$> many anyChar) <* many space) `precededBy` (lookAhead $ (eof *> pure False) <|> (char ',' *> many anyChar *> pure True))
             if restText then do
-                char ','                
+                _ <- char ','                
                 restTexts <- p
                 return $ firstText : restTexts
             else do
@@ -288,7 +288,7 @@ reasonBlocksFromProblemSectionText = simpleParse (many (try p) <* many space <* 
         p :: Parser (ReasonBlock (direction :: Direction) (defeasible :: Defeasibility))
         p = do
             n <- parserProblemReasonName
-            many space
+            spaces
             (t, (v, d)) <- many anyChar `precededBy` p'
             --return (n, coerce  . (pack :: String -> Text) $ t, v, d)
             return $ ReasonBlock n (coerce  . (pack :: String -> Text) $ t) v d
