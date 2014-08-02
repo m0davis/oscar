@@ -77,11 +77,14 @@ data BinaryOperator
     | BinaryOperator_Defeater
     deriving (Show, Eq)
 
+newtype Symbol = Symbol Text
+    deriving (Show, Eq)
+
 data QToken
     =   QTokenUnaryOperator UnaryOperator
     |   QTokenBinaryOperator BinaryOperator
     |   QTokenQuantifier Quantifier
-    |   QTokenSymbol Text
+    |   QTokenSymbol Symbol
     deriving (Show)
 
 atoken :: Parser (Either Parenthesis QToken)
@@ -90,7 +93,7 @@ atoken = empty
     <|> Right . QTokenUnaryOperator  <$> unaryOperator 
     <|> Right . QTokenBinaryOperator <$> binaryOperator
     <|> Right . QTokenQuantifier     <$> quantifier    
-    <|> Right . QTokenSymbol . pack  <$> symbol        
+    <|> Right . QTokenSymbol         <$> symbol        
   where
     p **> v = try p *> pure v
 
@@ -115,27 +118,29 @@ atoken = empty
         <|> string "all"        **> Quantifier_Universal  
         <|> string "some"       **> Quantifier_Existential
 
-    symbol = many1 alphaNum
+    symbol = Symbol . pack <$> many1 alphaNum
 
 data QSToken
     =   QSTokenUnaryOperator UnaryOperator
     |   QSTokenBinaryOperator BinaryOperator
-    |   QSTokenQuantifier Quantifier Text
-    |   QSTokenSymbol Text
+    |   QSTokenQuantifier Quantifier Symbol
+    |   QSTokenSymbol Symbol
     deriving (Show)
 
 bTokenTree :: Free [] QToken -> Free [] QSToken
-bTokenTree (Pure (QTokenUnaryOperator u)) = Pure (QSTokenUnaryOperator u)
+bTokenTree (Pure (QTokenUnaryOperator u))  = Pure (QSTokenUnaryOperator u)
 bTokenTree (Pure (QTokenBinaryOperator b)) = Pure (QSTokenBinaryOperator b)
-bTokenTree (Pure (QTokenSymbol s)) = Pure (QSTokenSymbol s)
-bTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) = Pure (QSTokenQuantifier q s)
+bTokenTree (Pure (QTokenSymbol s))         = Pure (QSTokenSymbol s)
+bTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) 
+                                           = Pure (QSTokenQuantifier q s)
 bTokenTree (Free ts) = Free $ map bTokenTree ts
 
 structurePrefixOperators :: Free [] QSToken -> Free [] QSToken
 structurePrefixOperators t@(Pure _) = t
 structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
     suo :: [Free [] QSToken] -> [Free [] QSToken]
-    suo [] = []
+    suo [] = 
+        []
     suo [a, u@(Pure (QSTokenQuantifier _ _))] =
         [Free [u, structurePrefixOperators a]]
     suo (a:u@(Pure (QSTokenUnaryOperator _)):as) =
@@ -144,16 +149,17 @@ structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
             if null as then
                 [chunk]
             else
-                suo (chunk:as)
+                suo (chunk : as)
     suo (a:u@(Pure (QSTokenQuantifier _ _)):as) =
-        suo $ Free [u, structurePrefixOperators a]:as
-    suo (a:as) = structurePrefixOperators a:suo as
+        suo $ Free [u, structurePrefixOperators a] : as
+    suo (a:as) = 
+        structurePrefixOperators a : suo as
 
 data Formula
     = FormulaBinary BinaryOperator Formula Formula
     | FormulaUnary UnaryOperator Formula
-    | FormulaQuantification Quantifier Text Formula
-    | FormulaPredication Text [Free [] Text]
+    | FormulaQuantification Quantifier Symbol Formula
+    | FormulaPredication Symbol [Free [] Symbol]
     deriving (Show)
 
 formula :: Free [] QSToken -> Formula
@@ -166,7 +172,7 @@ formula (Free [Pure (QSTokenQuantifier q s), r]) =
 formula (Free (Pure (QSTokenSymbol s):ss)) = 
         FormulaPredication s (map subformula ss)
     where
-    subformula :: Free [] QSToken -> Free [] Text
+    subformula :: Free [] QSToken -> Free [] Symbol
     subformula (Pure (QSTokenSymbol s)) = Pure s
     subformula (Free (Pure (QSTokenSymbol s):ss)) = Free (Pure s:map subformula ss)
     subformula _ = error "subformula: unexpected structure"
