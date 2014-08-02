@@ -78,20 +78,29 @@ data BinaryOperator
     |   BinaryOperator_Defeater
     deriving (Show, Eq)
 
-data AToken
-    =   ATokenUnaryOperator UnaryOperator
-    |   ATokenBinaryOperator BinaryOperator
-    |   ATokenQuantifier Quantifier
-    |   ATokenSymbol Text
+data Token unaryOperator binaryOperator quantifier symbol
+    =   TokenUnaryOperator unaryOperator
+    |   TokenBinaryOperator binaryOperator
+    |   TokenQuantifier quantifier
+    |   TokenSymbol symbol
     deriving (Show)
 
+--data AToken
+--    =   ATokenUnaryOperator UnaryOperator
+--    |   ATokenBinaryOperator BinaryOperator
+--    |   ATokenQuantifier Quantifier
+--    |   ATokenSymbol Text
+--    deriving (Show)
+
+type AToken = Token UnaryOperator BinaryOperator Quantifier Text
+
 atoken :: Parser (Either Parenthesis AToken)
-atoken = many space *> do empty
-    <|> Left                         <$> parenthesis   
-    <|> Right . ATokenUnaryOperator  <$> unaryOperator 
-    <|> Right . ATokenBinaryOperator <$> binaryOperator
-    <|> Right . ATokenQuantifier     <$> quantifier    
-    <|> Right . ATokenSymbol . pack  <$> symbol        
+atoken = empty
+    <|> Left                        <$> parenthesis   
+    <|> Right . TokenUnaryOperator  <$> unaryOperator 
+    <|> Right . TokenBinaryOperator <$> binaryOperator
+    <|> Right . TokenQuantifier     <$> quantifier    
+    <|> Right . TokenSymbol . pack  <$> symbol        
   where
     p **> v = try p *> pure v
 
@@ -115,38 +124,64 @@ atoken = many space *> do empty
     quantifier = empty
         <|> string "all"        **> Quantifier_Universal  
         <|> string "some"       **> Quantifier_Existential
-        
+
     symbol = many1 alphaNum
 
-data BToken
-    =   BTokenUnaryOperator UnaryOperator
-    |   BTokenBinaryOperator BinaryOperator
-    |   BTokenQuantifier Quantifier Text
-    |   BTokenSymbol Text
-    deriving (Show)
+--data BToken
+--    =   BTokenUnaryOperator UnaryOperator
+--    |   BTokenBinaryOperator BinaryOperator
+--    |   BTokenQuantifier Quantifier Text
+--    |   BTokenSymbol Text
+--    deriving (Show)
+type BToken = Token UnaryOperator BinaryOperator (Quantifier, Text) Text
+
+--bTokenTree :: Free [] AToken -> Free [] BToken
+--bTokenTree (Pure (ATokenUnaryOperator u)) = Pure (BTokenUnaryOperator u)
+--bTokenTree (Pure (ATokenBinaryOperator b)) = Pure (BTokenBinaryOperator b)
+--bTokenTree (Pure (ATokenSymbol s)) = Pure (BTokenSymbol s)
+--bTokenTree (Free [Pure (ATokenQuantifier q), Pure (ATokenSymbol s)]) = Pure (BTokenQuantifier q s)
+--bTokenTree (Free ts) = Free $ map bTokenTree ts
 
 bTokenTree :: Free [] AToken -> Free [] BToken
-bTokenTree (Pure (ATokenUnaryOperator u)) = Pure (BTokenUnaryOperator u)
-bTokenTree (Pure (ATokenBinaryOperator b)) = Pure (BTokenBinaryOperator b)
-bTokenTree (Pure (ATokenSymbol s)) = Pure (BTokenSymbol s)
-bTokenTree (Free [Pure (ATokenQuantifier q), Pure (ATokenSymbol s)]) = Pure (BTokenQuantifier q s)
+bTokenTree (Pure (TokenUnaryOperator u))  = Pure (TokenUnaryOperator u)
+bTokenTree (Pure (TokenBinaryOperator b)) = Pure (TokenBinaryOperator b)
+bTokenTree (Pure (TokenSymbol s))         = Pure (TokenSymbol s)
+bTokenTree (Free [Pure (TokenQuantifier q), Pure (TokenSymbol s)]) = Pure (TokenQuantifier (q, s))
 bTokenTree (Free ts) = Free $ map bTokenTree ts
+
+--structurePrefixOperators :: Free [] BToken -> Free [] BToken
+--structurePrefixOperators t@(Pure _) = t
+--structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
+--    suo :: [Free [] BToken] -> [Free [] BToken]
+--    suo [] = []
+--    suo [a, u@(Pure (BTokenQuantifier _ _))] =
+--        [Free [u, structurePrefixOperators a]]
+--    suo (a:u@(Pure (BTokenUnaryOperator _)):as) =
+--        let chunk = Free [u, structurePrefixOperators a] 
+--        in 
+--            if null as then
+--                [chunk]
+--            else
+--                suo (chunk:as)
+--    suo (a:u@(Pure (BTokenQuantifier _ _)):as) =
+--        suo $ Free [u, structurePrefixOperators a]:as
+--    suo (a:as) = structurePrefixOperators a:suo as
 
 structurePrefixOperators :: Free [] BToken -> Free [] BToken
 structurePrefixOperators t@(Pure _) = t
 structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
     suo :: [Free [] BToken] -> [Free [] BToken]
     suo [] = []
-    suo [a, u@(Pure (BTokenQuantifier _ _))] =
+    suo [a, u@(Pure (TokenQuantifier _))] =
         [Free [u, structurePrefixOperators a]]
-    suo (a:u@(Pure (BTokenUnaryOperator _)):as) =
+    suo (a:u@(Pure (TokenUnaryOperator _)):as) =
         let chunk = Free [u, structurePrefixOperators a] 
         in 
             if null as then
                 [chunk]
             else
                 suo (chunk:as)
-    suo (a:u@(Pure (BTokenQuantifier _ _)):as) =
+    suo (a:u@(Pure (TokenQuantifier _)):as) =
         suo $ Free [u, structurePrefixOperators a]:as
     suo (a:as) = structurePrefixOperators a:suo as
 
@@ -157,21 +192,37 @@ data Formula
     |   FormulaPredication Text [Free [] Text]
     deriving (Show)
 
-pattern Binary b l r = (Free [l,Pure (BTokenBinaryOperator b), r])
+--pattern Binary b l r = (Free [l,Pure (BTokenBinaryOperator b), r])
+
+--formula :: Free [] BToken -> Formula
+--formula (Binary b l r) = FormulaBinary b (formula l) (formula r)
+--formula (Free [Pure (BTokenUnaryOperator u), r]) = FormulaUnary u (formula r)
+--formula (Free [Pure (BTokenQuantifier q s), r]) = FormulaQuantification q s (formula r)
+--formula (Free (Pure (BTokenSymbol s):ss)) = FormulaPredication s (map subformula ss)
+--    where
+--    subformula :: Free [] BToken -> Free [] Text
+--    subformula (Pure (BTokenSymbol s)) = Pure s
+--    subformula (Free (Pure (BTokenSymbol s):ss)) = Free (Pure s:map subformula ss)
+--    subformula _ = error "subformula: unexpected structure"
+--formula (Pure (BTokenSymbol s)) = FormulaPredication s []
+--formula (Free [x]) = formula x
+--formula x = error ("formula: unexpected structure: \n" ++ ppShow x)
+
+pattern Binary b l r = (Free [l,Pure (TokenBinaryOperator b), r])
 
 formula :: Free [] BToken -> Formula
-formula (Binary b l r) = FormulaBinary b (formula l) (formula r)
-formula (Free [Pure (BTokenUnaryOperator u), r]) = FormulaUnary u (formula r)
-formula (Free [Pure (BTokenQuantifier q s), r]) = FormulaQuantification q s (formula r)
-formula (Free (Pure (BTokenSymbol s):ss)) = FormulaPredication s (map subformula ss)
+formula (Binary b l r)                            = FormulaBinary b (formula l) (formula r)
+formula (Free [Pure (TokenUnaryOperator u), r])   = FormulaUnary u (formula r)
+formula (Free [Pure (TokenQuantifier (q, s)), r]) = FormulaQuantification q s (formula r)
+formula (Free (Pure (TokenSymbol s):ss))          = FormulaPredication s (map subformula ss)
     where
     subformula :: Free [] BToken -> Free [] Text
-    subformula (Pure (BTokenSymbol s)) = Pure s
-    subformula (Free (Pure (BTokenSymbol s):ss)) = Free (Pure s:map subformula ss)
-    subformula _ = error "subformula: unexpected structure"
-formula (Pure (BTokenSymbol s)) = FormulaPredication s []
-formula (Free [x]) = formula x
-formula x = error ("formula: unexpected structure: \n" ++ ppShow x)
+    subformula (Pure (TokenSymbol s))           = Pure s
+    subformula (Free (Pure (TokenSymbol s):ss)) = Free (Pure s:map subformula ss)
+    subformula _                                = error "subformula: unexpected structure"
+formula (Pure (TokenSymbol s)) = FormulaPredication s []
+formula (Free [x])             = formula x
+formula x                      = error ("formula: unexpected structure: \n" ++ ppShow x)
 
 formulaFromText :: Text -> Formula
-formulaFromText = formula . structurePrefixOperators . bTokenTree . treeFromParentheses id . simpleParse (many atoken)
+formulaFromText = formula . structurePrefixOperators . bTokenTree . treeFromParentheses id . simpleParse (many (many space *> atoken))
