@@ -8,22 +8,15 @@
 module Formula where
 
 import Text.Show.Pretty (ppShow)
---import Debug.Trace (traceShow)
 
 import ClassyPrelude hiding (Text, try)
 
 import Control.Applicative
---import Control.Lens hiding (uncons)
---import Control.Monad
 import Control.Monad.Free
---import Data.Either.Utils (maybeToEither)
---import Data.List.Split
---import Data.Pointed
 import Data.Text.Internal.Lazy (Text)
 import Numeric.Natural
 import Text.Parsec.Char
 import Text.Parsec.Combinator
---import Text.Parsec.Pos
 import Text.Parsec.Prim hiding ((<|>), many, uncons)
 import Text.Parsec.String ()
 import Text.Parsec.Text.Lazy
