@@ -7,18 +7,20 @@
 {-# LANGUAGE PatternSynonyms #-}
 module Formula where
 
-import ClassyPrelude hiding (Text, try)
 import Text.Show.Pretty (ppShow)
+--import Debug.Trace (traceShow)
 
-import Numeric.Natural
-import Data.Pointed
-import Data.List.Split
+import ClassyPrelude hiding (Text, try)
+
 import Control.Applicative
-import Control.Monad
 import Control.Lens hiding (uncons)
+import Control.Monad
 import Control.Monad.Free
 import Data.Either.Utils (maybeToEither)
+import Data.List.Split
+import Data.Pointed
 import Data.Text.Internal.Lazy (Text)
+import Numeric.Natural
 import Text.Parsec.Char
 import Text.Parsec.Combinator
 import Text.Parsec.Pos
@@ -26,13 +28,38 @@ import Text.Parsec.Prim hiding ((<|>), many, uncons)
 import Text.Parsec.String ()
 import Text.Parsec.Text.Lazy
 
-import Debug.Trace
 import Utilities
 
-formulaFromText :: Text -> Formula
-formulaFromText = formula . structurePrefixOperators . bTokenTree . aTokenTree . simpleParse (many atoken)
+data Parenthesis = OpenParenthesis | CloseParenthesis
+    deriving (Bounded, Eq, Read, Show)
 
--- | formula text (sans parentheses) -> list of symbols
+treeFromParentheses ::
+    forall as a b.
+    (IsSequence as, Element as ~ a) =>
+    (a -> Either Parenthesis b) ->
+    as ->
+    Free [] b
+treeFromParentheses f = fst . tfp 0 []
+    where
+
+    tfp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
+    tfp d prev ass
+        |   onull ass =
+                (Free prev, mempty)
+        |   otherwise =
+                case f a of
+                    Left OpenParenthesis ->
+                        let (paren, rest) = tfp (succ d) [] as
+                        in  tfp d (prev ++ [paren]) rest
+                    Left CloseParenthesis ->
+                        case d of
+                            0 -> error "unexpected CloseParenthesis at depth 0"
+                            _ -> (Free prev, as)
+                    Right b -> -- ^?! _Right
+                        tfp d (prev ++ [Pure b]) as
+        where
+            Just (a, as) = uncons ass
+
 data Quantifier
     =   Quantifier_Universal
     |   Quantifier_Existential
@@ -51,32 +78,29 @@ data BinaryOperator
     |   BinaryOperator_Defeater
     deriving (Show, Eq)
 
-
---
 data AToken
-    =   ATokenParenthesis Parenthesis
-    |   ATokenUnaryOperator UnaryOperator
+    =   ATokenUnaryOperator UnaryOperator
     |   ATokenBinaryOperator BinaryOperator
     |   ATokenQuantifier Quantifier
     |   ATokenSymbol Text
     deriving (Show)
 
-atoken :: Parser AToken
+atoken :: Parser (Either Parenthesis AToken)
 atoken = many space *> 
     (   empty
-    <|> parenthesis 
-    <|> unaryOperator 
-    <|> binaryOperator 
-    <|> quantifier 
-    <|> symbol
+    <|> (Left <$> parenthesis)
+    <|> (Right <$> unaryOperator)
+    <|> (Right <$> binaryOperator)
+    <|> (Right <$> quantifier)
+    <|> (Right <$> symbol)
     )
     where
     parenthesis = 
         empty
-        <|> (char '(' *> pure (ATokenParenthesis OpenParenthesis))
-        <|> (char '[' *> pure (ATokenParenthesis OpenParenthesis))
-        <|> (char ')' *> pure (ATokenParenthesis CloseParenthesis))
-        <|> (char ']' *> pure (ATokenParenthesis CloseParenthesis))
+        <|> (char '(' *> pure OpenParenthesis)
+        <|> (char '[' *> pure OpenParenthesis)
+        <|> (char ')' *> pure CloseParenthesis)
+        <|> (char ']' *> pure CloseParenthesis)
     unaryOperator =
         empty
         <|> (char '?' *> pure (ATokenUnaryOperator UnaryOperator_Whether))
@@ -94,14 +118,6 @@ atoken = many space *>
         <|> (try (string "some") *> pure (ATokenQuantifier Quantifier_Existential))
     symbol = ATokenSymbol . pack <$> many1 (notFollowedBy (Text.Parsec.Char.oneOf "([])?~&@-<>" <|> space) *> anyChar)
 
-aTokenTree :: [AToken] -> Free [] AToken
-aTokenTree =
-    treeFromParentheses (
-        \case
-            ATokenParenthesis p -> Left p
-            x -> Right x
-        )
-
 data BToken
     =   BTokenUnaryOperator UnaryOperator
     |   BTokenBinaryOperator BinaryOperator
@@ -116,14 +132,11 @@ bTokenTree (Pure (ATokenSymbol s)) = Pure (BTokenSymbol s)
 bTokenTree (Free [Pure (ATokenQuantifier q), Pure (ATokenSymbol s)]) = Pure (BTokenQuantifier q s)
 bTokenTree (Free ts) = Free $ map bTokenTree ts
 
-
 structurePrefixOperators :: Free [] BToken -> Free [] BToken
 structurePrefixOperators t@(Pure _) = t
 structurePrefixOperators (Free ts) = Free $ reverse . suo . reverse $ ts where
     suo :: [Free [] BToken] -> [Free [] BToken]
     suo [] = []
-    --suo [a, u@(Pure (BTokenUnaryOperator _))] =
-    --    [Free [u, structurePrefixOperators a]]
     suo [a, u@(Pure (BTokenQuantifier _ _))] =
         [Free [u, structurePrefixOperators a]]
     suo (a:u@(Pure (BTokenUnaryOperator _)):as) =
@@ -160,43 +173,5 @@ formula (Pure (BTokenSymbol s)) = FormulaPredication s []
 formula (Free [x]) = formula x
 formula x = error ("formula: unexpected structure: \n" ++ ppShow x)
 
---
-data Parenthesis = OpenParenthesis | CloseParenthesis
-    deriving (Bounded, Eq, Read, Show)
-
-class Tokenizer from to where
-    tokenize :: from -> Maybe to
-
-instance Tokenizer Char Parenthesis where
-    tokenize '(' = Just OpenParenthesis
-    tokenize '[' = Just OpenParenthesis
-    tokenize ')' = Just CloseParenthesis
-    tokenize ']' = Just CloseParenthesis
-    tokenize _   = Nothing
-
-treeFromParentheses ::
-    forall as a b.
-    (IsSequence as, Element as ~ a) =>
-    (a -> Either Parenthesis b) ->
-    as ->
-    Free [] b
-treeFromParentheses f = fst . tfp 0 []
-    where
-
-    tfp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
-    tfp d prev ass
-        |   onull ass =
-                (Free prev, mempty)
-        |   otherwise =
-                case f a of
-                    Left OpenParenthesis ->
-                        let (paren, rest) = tfp (succ d) [] as
-                        in  tfp d (prev ++ [paren]) rest
-                    Left CloseParenthesis ->
-                        case d of
-                            0 -> error "unexpected CloseParenthesis at depth 0"
-                            _ -> (Free prev, as)
-                    Right b -> -- ^?! _Right
-                        tfp d (prev ++ [Pure b]) as
-        where
-            Just (a, as) = uncons ass
+formulaFromText :: Text -> Formula
+formulaFromText = formula . structurePrefixOperators . bTokenTree . treeFromParentheses id . simpleParse (many atoken)

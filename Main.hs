@@ -377,31 +377,8 @@ main = do
     messageFromShows forwardsPremisesTexts'
 
     let testFormula2 :: Text = pack "[~~(all x)~~[((F a) & ((F x) -> (F (g x)))) -> (F (g (g x)))] ->\n          (all x)[[(~(F a) v (F x)) v (F (g (g x)))] &\n               [(~(F a) v ~~~(F (g x))) v (F (g (g x)))]]]"
-    --goforit testFormula2
 
     let tf2 = formulaFromText testFormula2
     putStrLn . pack . ppShow $ tf2
 
     return ()
-
-goforit :: Text -> IO ()
-goforit testFormula = do
-    let tf1 :: [AToken] = simpleParse (many atoken) testFormula
-    putStrLn . pack $ "tf1"
-    putStrLn . pack . ppShow $ tf1
-
-    let tf2 :: Free [] AToken = aTokenTree tf1
-    putStrLn . pack $ "tf2"
-    putStrLn . pack . ppShow $ tf2
-
-    let tf3 :: Free [] BToken = bTokenTree tf2
-    putStrLn . pack $ "tf3"
-    putStrLn . pack . ppShow $ tf3
-
-    let tf4 :: Free [] BToken = structurePrefixOperators tf3
-    putStrLn . pack $ "tf4"
-    putStrLn . pack . ppShow $ tf4
-
-    let tf5 :: Formula = formula tf4
-    putStrLn . pack $ "tf5"
-    putStrLn . pack . ppShow $ tf5
