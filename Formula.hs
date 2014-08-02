@@ -82,7 +82,7 @@ data BinaryOperator
 newtype Symbol = Symbol Text
     deriving (Show, Eq)
 
--- QToken
+-- QToken and PQToken
 data QToken
     = QTokenUnaryOperator UnaryOperator
     | QTokenBinaryOperator BinaryOperator
@@ -90,38 +90,44 @@ data QToken
     | QTokenSymbol Symbol
     deriving (Show)
 
-atoken :: Parser (Either Parenthesis QToken)
-atoken = empty
-    <|> Left                         <$> parenthesis   
-    <|> Right . QTokenUnaryOperator  <$> unaryOperator 
-    <|> Right . QTokenBinaryOperator <$> binaryOperator
-    <|> Right . QTokenQuantifier     <$> quantifier    
-    <|> Right . QTokenSymbol         <$> symbol        
+type PQToken = Either Parenthesis QToken
+
+pqTokensFromText :: Text -> [PQToken]
+pqTokensFromText = simpleParse (many (many space *> parsePQToken))
   where
-    p **> v = try p *> pure v
+    parsePQToken :: Parser PQToken
+    parsePQToken = empty
+        <|> Left                         <$> parenthesis   
+        <|> Right . QTokenUnaryOperator  <$> unaryOperator 
+        <|> Right . QTokenBinaryOperator <$> binaryOperator
+        <|> Right . QTokenQuantifier     <$> quantifier    
+        <|> Right . QTokenSymbol         <$> symbol        
+      where
+        p **> v = try p *> pure v
+        infixl 4 **>
 
-    parenthesis = empty
-        <|> char '('            **> OpenParenthesis
-        <|> char '['            **> OpenParenthesis
-        <|> char ')'            **> CloseParenthesis
-        <|> char ']'            **> CloseParenthesis
+        parenthesis = empty
+            <|> char '('            **> OpenParenthesis
+            <|> char '['            **> OpenParenthesis
+            <|> char ')'            **> CloseParenthesis
+            <|> char ']'            **> CloseParenthesis
 
-    unaryOperator = empty
-        <|> char '?'            **> Whether 
-        <|> char '~'            **> Negation
+        unaryOperator = empty
+            <|> char '?'            **> Whether 
+            <|> char '~'            **> Negation
 
-    binaryOperator = empty
-        <|> (char 'v' >> space) **> Disjunction  
-        <|> char '&'            **> Conjunction  
-        <|> char '@'            **> Defeater     
-        <|> string "->"         **> Conditional  
-        <|> string "<->"        **> Biconditional
+        binaryOperator = empty
+            <|> char 'v' *> space   **> Disjunction  
+            <|> char '&'            **> Conjunction  
+            <|> char '@'            **> Defeater     
+            <|> string "->"         **> Conditional  
+            <|> string "<->"        **> Biconditional
 
-    quantifier = empty
-        <|> string "all"        **> Universal  
-        <|> string "some"       **> Existential
+        quantifier = empty
+            <|> string "all"        **> Universal  
+            <|> string "some"       **> Existential
 
-    symbol = Symbol . pack <$> many1 alphaNum
+        symbol = Symbol . pack <$> many1 alphaNum
 
 -- QSToken
 data QSToken
@@ -209,4 +215,4 @@ formulaFromText = id
     . structurePrefixOperators 
     . bTokenTree 
     . freeFromParentheses id 
-    . simpleParse (many (many space *> atoken))
+    . pqTokensFromText
