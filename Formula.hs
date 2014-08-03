@@ -178,23 +178,6 @@ data Formula
     deriving (Show)
 
 
-
---formulaFromQSTokenTree :: Free [] QSToken -> Formula
---formulaFromQSTokenTree (Free [l,Pure (QSTokenBinaryOp b), r]) =
---    FormulaBinary b (formulaFromQSTokenTree l) (formulaFromQSTokenTree r)
---formulaFromQSTokenTree (Free [Pure (QSTokenUnaryOp u), r]) =
---    FormulaUnary u (formulaFromQSTokenTree r)
---formulaFromQSTokenTree (Free [Pure (QSTokenQuantifier q s), r]) =
---    FormulaQuantification q s (formulaFromQSTokenTree r)
---formulaFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) =
---    FormulaPredication $ Predication s $ domainFunctionFromQSTokenTree <$> ss
---formulaFromQSTokenTree (Pure (QSTokenSymbol s)) =
---    FormulaPredication $ Predication s []
---formulaFromQSTokenTree (Free [x]) =
---    formulaFromQSTokenTree x
---formulaFromQSTokenTree x =
---    error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
-
 pattern BinaryOpP left op right 
         = Free [left,Pure (QSTokenBinaryOp op), right]
 
