@@ -40,7 +40,7 @@ import Text.Show.Pretty (ppShow)
 
 --import qualified Data.Set as Set
 
-import Formula
+import Formula (formulaFromText)
 import Utilities
 --import FormulaLexer (lexemesFromText)
 
