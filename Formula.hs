@@ -8,7 +8,6 @@
 module Formula where
 
 import ClassyPrelude hiding (
-    --Text, 
     try,
     )
 
@@ -68,13 +67,13 @@ makeFormula = mk
             o (mk l) (mk r)
         UnaryOpP o r                -> FormulaUnary 
             o (mk r)
-        QuantifierP q s r           -> FormulaQuantification 
-            q s (mk r)
+        QuantifierP q v f           -> FormulaQuantification 
+            q v (mk f)
         ComplexPredicationP p dfs   -> FormulaPredication $ 
             Predication p $ makeDomainFunction <$> dfs
         SimplePredicationP p        -> FormulaPredication $ 
             Predication p []
-        RedundantParenthesesP x -> mk x
+        RedundantParenthesesP f -> mk f
         x -> error $ "makeFormula: unexpected structure\n" ++ ppShow x
 
 
