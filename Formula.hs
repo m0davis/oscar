@@ -14,8 +14,6 @@ import ClassyPrelude hiding (
 
 import Control.Monad.Free           (Free(Free))
 import Control.Monad.Free           (Free(Pure))
---import Data.Text                    (Text)
---import Data.Text.Internal.Lazy      (Text)
 import Text.Show.Pretty             (ppShow)
 
 import Parenthesis                  (freeFromParentheses)
@@ -30,16 +28,13 @@ import QSToken                      (QSToken(QSTokenQuantifier))
 import QSToken                      (QSToken(QSTokenSymbol))
 import QSToken                      (makeQSTokenTree)
 import QSToken                      (reformQSTokenTree)
+import DomainFunction               (DomainFunction)
+import DomainFunction               (makeDomainFunction)
 
 -- module Formula (DomainFunction(..), Formula(..), Predication(..), makeFormula, makeDomainFunction)
 -- import QUBS
 -- import QSToken
 data Predication = Predication Symbol [DomainFunction]
-    deriving (Show)
-
-data DomainFunction
-    = DomainFunction Symbol [DomainFunction]
-    | DomainVariable Symbol
     deriving (Show)
 
 data Formula
@@ -85,15 +80,6 @@ makeFormula = mk
         RedundantParenthesesP x -> mk x
         x -> error $ "makeFormula: unexpected structure\n" ++ ppShow x
 
-makeDomainFunction :: Free [] QSToken -> DomainFunction
-makeDomainFunction (Pure (QSTokenSymbol s)) =
-    DomainVariable s
-makeDomainFunction (Free (Pure (QSTokenSymbol s):ss)) =
-    DomainFunction s $ map makeDomainFunction ss
-makeDomainFunction (Free [x]) =
-    makeDomainFunction x
-makeDomainFunction x =
-    error $ "makeDomainFunction: unexpected structure\n" ++ ppShow x
 
 --
 formulaFromText :: Text -> Formula
