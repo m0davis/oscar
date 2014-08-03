@@ -2,7 +2,10 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module Utilities where
 
-import ClassyPrelude hiding (Text, try)
+import ClassyPrelude hiding (
+    --Text, 
+    try,
+    )
 import Text.Show.Pretty (ppShow)
 
 import Control.Applicative
@@ -11,12 +14,13 @@ import Control.Monad
 import Control.Monad.Free
 import Data.Either.Utils (maybeToEither)
 import Data.Pointed
-import Data.Text.Internal.Lazy (Text)
+--import Data.Text.Internal.Lazy (Text)
 import Text.Parsec.Char
 import Text.Parsec.Combinator
 import Text.Parsec.Prim hiding ((<|>), many, uncons)
 import Text.Parsec.String ()
-import Text.Parsec.Text.Lazy
+--import Text.Parsec.Text.Lazy
+import Text.Parsec.Text
 
 simplify :: Free [] a -> Free [] a
 simplify (Free [a]) = simplify a

@@ -16,75 +16,36 @@ import Control.Applicative          (empty)
 import Control.Applicative          (many)
 import Control.Monad.Free           (Free(Free))
 import Control.Monad.Free           (Free(Pure))
-import Data.Text.Internal.Lazy      (Text)
-import Numeric.Natural              (Natural)
+import Data.Text                    (Text)
+--import Data.Text.Internal.Lazy      (Text)
 import Text.Parsec.Char             (alphaNum)
 import Text.Parsec.Char             (char)
 import Text.Parsec.Char             (space)
 import Text.Parsec.Char             (string)
 import Text.Parsec.Combinator       (many1)
 import Text.Parsec.Prim             (try)
-import Text.Parsec.Text.Lazy        (Parser)
+--import Text.Parsec.Text.Lazy        (Parser)
+import Text.Parsec.Text             (Parser)
 import Text.Show.Pretty             (ppShow)
 
 import Utilities                    (simpleParse)
-
--- Parenthesis
-data Parenthesis = OpenParenthesis | CloseParenthesis
-    deriving (Bounded, Eq, Read, Show)
-
-freeFromParentheses ::
-    forall as a b.
-    (IsSequence as, Element as ~ a) =>
-    (a -> Either Parenthesis b) ->
-    as ->
-    Free [] b
-freeFromParentheses f = fst . ffp 0 []
-  where
-
-    ffp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
-    ffp d prev ass
-        | onull ass =
-            (Free prev, mempty)
-        | Left OpenParenthesis <- f a =
-            let (paren, rest) = ffp (succ d) [] as
-            in  ffp d (prev ++ [paren]) rest
-        | Left CloseParenthesis <- f a
-        , d == 0 =
-            error "unexpected CloseParenthesis at depth 0"
-        | Left CloseParenthesis <- f a =
-            (Free prev, as)
-        | Right b <- f a =
-            ffp d (prev ++ [Pure b]) as
-        | otherwise = error ""
-          -- suppresses invalid ghc warning about non-exhaustive pattern match
-        where
-            Just (a, as) = uncons ass
-
--- QUBS
-data Quantifier
-    = Universal
-    | Existential
-    deriving (Show, Eq)
-
-data UnaryOp
-    = Negation
-    | Whether
-    deriving (Show, Eq)
-
-data BinaryOp
-    = Conjunction
-    | Disjunction
-    | Conditional
-    | Biconditional
-    | Defeater
-    deriving (Show, Eq)
-
-newtype Symbol = Symbol Text
-    deriving (Show, Eq)
+import Parenthesis                  (freeFromParentheses)
+import Parenthesis                  (Parenthesis(OpenParenthesis))
+import Parenthesis                  (Parenthesis(CloseParenthesis))
+import QUBS                         (Quantifier(Universal))
+import QUBS                         (Quantifier(Existential))
+import QUBS                         (UnaryOp(Negation))
+import QUBS                         (UnaryOp(Whether))
+import QUBS                         (BinaryOp(Conjunction))
+import QUBS                         (BinaryOp(Disjunction))
+import QUBS                         (BinaryOp(Conditional))
+import QUBS                         (BinaryOp(Biconditional))
+import QUBS                         (BinaryOp(Defeater))
+import QUBS                         (Symbol(Symbol))
 
 -- module QToken
 -- import QToken
+-- import QUBS
 data QToken
     = QTokenUnaryOp UnaryOp
     | QTokenBinaryOp BinaryOp

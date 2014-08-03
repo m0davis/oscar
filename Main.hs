@@ -13,7 +13,12 @@
 
 module Main where
 
-import ClassyPrelude hiding (Text, try)
+import ClassyPrelude hiding (
+    --Text, 
+    try, 
+    undefined,
+    )
+import Prelude (undefined)
 
 import Control.Applicative
 import Control.Conditional hiding (unlessM)
@@ -24,12 +29,13 @@ import Data.Coerce
 --import Data.Maybe (fromJust)
 --import Data.Set (Set)
 --import Data.Tagged
-import Data.Text.Internal.Lazy (Text)
+--import Data.Text.Internal.Lazy (Text)
 --import Numeric (readFloat, readSigned)
 import Prelude (read)
 --import Safe
 import Text.Parsec hiding ((<|>), many)
-import Text.Parsec.Text.Lazy
+--import Text.Parsec.Text.Lazy
+import Text.Parsec.Text
 import Text.Show.Pretty (ppShow)
 
 --import qualified Data.Set as Set
