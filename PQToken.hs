@@ -2,20 +2,17 @@
 module PQToken where
 
 import ClassyPrelude hiding (
-    Text, 
     try,
     )
 
 import Control.Applicative          (empty)
 import Control.Applicative          (many)
-import Data.Text                    (Text)
 import Text.Parsec.Char             (alphaNum)
 import Text.Parsec.Char             (char)
 import Text.Parsec.Char             (space)
 import Text.Parsec.Char             (string)
 import Text.Parsec.Combinator       (many1)
 import Text.Parsec.Prim             (try)
---import Text.Parsec.Text.Lazy        (Parser)
 import Text.Parsec.Text             (Parser)
 
 import Parenthesis                  (Parenthesis(OpenParenthesis))

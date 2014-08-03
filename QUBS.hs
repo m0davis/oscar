@@ -3,7 +3,6 @@ module QUBS where
 
 import ClassyPrelude
 
--- QUBS
 data Quantifier
     = Universal
     | Existential
@@ -24,4 +23,3 @@ data BinaryOp
 
 newtype Symbol = Symbol Text
     deriving (Show, Eq)
-

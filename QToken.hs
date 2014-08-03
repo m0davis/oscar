@@ -14,5 +14,3 @@ data QToken
     | QTokenQuantifier Quantifier
     | QTokenSymbol Symbol
     deriving (Show)
-
-

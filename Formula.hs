@@ -31,9 +31,6 @@ import QSToken                      (reformQSTokenTree)
 import DomainFunction               (DomainFunction)
 import DomainFunction               (makeDomainFunction)
 
--- module Formula (DomainFunction(..), Formula(..), Predication(..), makeFormula, makeDomainFunction)
--- import QUBS
--- import QSToken
 data Predication = Predication Symbol [DomainFunction]
     deriving (Show)
 
