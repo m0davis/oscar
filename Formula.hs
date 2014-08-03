@@ -7,21 +7,27 @@
 {-# LANGUAGE PatternSynonyms #-}
 module Formula where
 
-import Text.Show.Pretty (ppShow)
+import ClassyPrelude hiding (
+    Text, 
+    try,
+    )
 
-import ClassyPrelude hiding (Text, try)
+import Control.Applicative          (empty)
+import Control.Applicative          (many)
+import Control.Monad.Free           (Free(Free))
+import Control.Monad.Free           (Free(Pure))
+import Data.Text.Internal.Lazy      (Text)
+import Numeric.Natural              (Natural)
+import Text.Parsec.Char             (alphaNum)
+import Text.Parsec.Char             (char)
+import Text.Parsec.Char             (space)
+import Text.Parsec.Char             (string)
+import Text.Parsec.Combinator       (many1)
+import Text.Parsec.Prim             (try)
+import Text.Parsec.Text.Lazy        (Parser)
+import Text.Show.Pretty             (ppShow)
 
-import Control.Applicative
-import Control.Monad.Free
-import Data.Text.Internal.Lazy (Text)
-import Numeric.Natural
-import Text.Parsec.Char
-import Text.Parsec.Combinator
-import Text.Parsec.Prim hiding ((<|>), many, uncons)
-import Text.Parsec.String ()
-import Text.Parsec.Text.Lazy
-
-import Utilities
+import Utilities                    (simpleParse)
 
 -- Parenthesis
 data Parenthesis = OpenParenthesis | CloseParenthesis
@@ -77,7 +83,8 @@ data BinaryOp
 newtype Symbol = Symbol Text
     deriving (Show, Eq)
 
--- QToken and PQToken
+-- module QToken
+-- import QToken
 data QToken
     = QTokenUnaryOp UnaryOp
     | QTokenBinaryOp BinaryOp
@@ -85,18 +92,23 @@ data QToken
     | QTokenSymbol Symbol
     deriving (Show)
 
+
+-- PQToken
+-- import Parenthesis (Parenthesis)
+-- import QToken
+-- import QUBS
 type PQToken = Either Parenthesis QToken
 
-pqTokensFromText :: Text -> [PQToken]
-pqTokensFromText = simpleParse (many (many space *> parsePQToken))
+makePQTokens :: Text -> [PQToken]
+makePQTokens = simpleParse $ many $ many space *> parsePQToken
   where
     parsePQToken :: Parser PQToken
     parsePQToken = empty
-        <|> Left                         <$> parenthesis
-        <|> Right . QTokenUnaryOp  <$> unaryOp
-        <|> Right . QTokenBinaryOp <$> binaryOp
-        <|> Right . QTokenQuantifier     <$> quantifier
-        <|> Right . QTokenSymbol         <$> symbol
+        <|> Left                     <$> parenthesis
+        <|> Right . QTokenUnaryOp    <$> unaryOp
+        <|> Right . QTokenBinaryOp   <$> binaryOp
+        <|> Right . QTokenQuantifier <$> quantifier
+        <|> Right . QTokenSymbol     <$> symbol
       where
         p **> v = try p *> pure v
         infixl 4 **>
@@ -125,6 +137,8 @@ pqTokensFromText = simpleParse (many (many space *> parsePQToken))
         symbol = Symbol . pack <$> many1 alphaNum
 
 -- QSToken
+-- import QUBS
+-- import QToken
 data QSToken
     = QSTokenUnaryOp UnaryOp
     | QSTokenBinaryOp BinaryOp
@@ -132,14 +146,14 @@ data QSToken
     | QSTokenSymbol Symbol
     deriving (Show)
 
-qsFromQTokenTree :: Free [] QToken -> Free [] QSToken
-qsFromQTokenTree (Pure (QTokenUnaryOp  u)) = Pure $ QSTokenUnaryOp u
-qsFromQTokenTree (Pure (QTokenBinaryOp b)) = Pure $ QSTokenBinaryOp b
-qsFromQTokenTree (Pure (QTokenSymbol   s)) = Pure $ QSTokenSymbol s
-qsFromQTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)])
-                                           = Pure $ QSTokenQuantifier q s
-qsFromQTokenTree (Free ts)                 = Free $ map qsFromQTokenTree ts
-qsFromQTokenTree _ = error "qsFromQTokenTree: unexpected QTokenQuantifier"
+makeQSTokenTree :: Free [] QToken -> Free [] QSToken
+makeQSTokenTree (Pure (QTokenUnaryOp  u)) = Pure $ QSTokenUnaryOp u
+makeQSTokenTree (Pure (QTokenBinaryOp b)) = Pure $ QSTokenBinaryOp b
+makeQSTokenTree (Pure (QTokenSymbol   s)) = Pure $ QSTokenSymbol s
+makeQSTokenTree (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)])
+                                          = Pure $ QSTokenQuantifier q s
+makeQSTokenTree (Free ts)                 = Free $ map makeQSTokenTree ts
+makeQSTokenTree _ = error "makeQSTokenTree: unexpected QTokenQuantifier"
 
 reformQSTokenTree :: Free [] QSToken -> Free [] QSToken
 reformQSTokenTree t@(Pure _) = t
@@ -161,7 +175,9 @@ reformQSTokenTree (Free ts) = Free $ reverse . rqstt . reverse $ ts where
     rqstt (a:as) =
         reformQSTokenTree a : rqstt as
 
--- Formula
+-- module Formula (DomainFunction(..), Formula(..), Predication(..), makeFormula, makeDomainFunction)
+-- import QUBS
+-- import QSToken
 data Predication = Predication Symbol [DomainFunction]
     deriving (Show)
 
@@ -196,38 +212,38 @@ pattern SimplePredicationP predication
 pattern RedundantParenthesesP x
         = Free [x]
 
-formulaFromQSTokenTree :: Free [] QSToken -> Formula
-formulaFromQSTokenTree = make
+makeFormula :: Free [] QSToken -> Formula
+makeFormula = mk
   where
-    make = \case
+    mk = \case
         BinaryOpP l o r             -> FormulaBinary 
-            o (make l) (make r)
+            o (mk l) (mk r)
         UnaryOpP o r                -> FormulaUnary 
-            o (make r)
+            o (mk r)
         QuantifierP q s r           -> FormulaQuantification 
-            q s (make r)
+            q s (mk r)
         ComplexPredicationP p dfs   -> FormulaPredication $ 
-            Predication p $ domainFunctionFromQSTokenTree <$> dfs
+            Predication p $ makeDomainFunction <$> dfs
         SimplePredicationP p        -> FormulaPredication $ 
             Predication p []
-        RedundantParenthesesP x -> make x
-        x -> error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
+        RedundantParenthesesP x -> mk x
+        x -> error $ "makeFormula: unexpected structure\n" ++ ppShow x
 
-domainFunctionFromQSTokenTree :: Free [] QSToken -> DomainFunction
-domainFunctionFromQSTokenTree (Pure (QSTokenSymbol s)) =
+makeDomainFunction :: Free [] QSToken -> DomainFunction
+makeDomainFunction (Pure (QSTokenSymbol s)) =
     DomainVariable s
-domainFunctionFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) =
-    DomainFunction s $ map domainFunctionFromQSTokenTree ss
-domainFunctionFromQSTokenTree (Free [x]) =
-    domainFunctionFromQSTokenTree x
-domainFunctionFromQSTokenTree x =
-    error $ "domainFunctionFromQSTokenTree: unexpected structure\n" ++ ppShow x
+makeDomainFunction (Free (Pure (QSTokenSymbol s):ss)) =
+    DomainFunction s $ map makeDomainFunction ss
+makeDomainFunction (Free [x]) =
+    makeDomainFunction x
+makeDomainFunction x =
+    error $ "makeDomainFunction: unexpected structure\n" ++ ppShow x
 
 --
 formulaFromText :: Text -> Formula
 formulaFromText = id
-    . formulaFromQSTokenTree
+    . makeFormula
     . reformQSTokenTree
-    . qsFromQTokenTree
+    . makeQSTokenTree
     . freeFromParentheses id
-    . pqTokensFromText
+    . makePQTokens
