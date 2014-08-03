@@ -177,21 +177,58 @@ data Formula
     | FormulaPredication Predication
     deriving (Show)
 
+
+
+--formulaFromQSTokenTree :: Free [] QSToken -> Formula
+--formulaFromQSTokenTree (Free [l,Pure (QSTokenBinaryOp b), r]) =
+--    FormulaBinary b (formulaFromQSTokenTree l) (formulaFromQSTokenTree r)
+--formulaFromQSTokenTree (Free [Pure (QSTokenUnaryOp u), r]) =
+--    FormulaUnary u (formulaFromQSTokenTree r)
+--formulaFromQSTokenTree (Free [Pure (QSTokenQuantifier q s), r]) =
+--    FormulaQuantification q s (formulaFromQSTokenTree r)
+--formulaFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) =
+--    FormulaPredication $ Predication s $ domainFunctionFromQSTokenTree <$> ss
+--formulaFromQSTokenTree (Pure (QSTokenSymbol s)) =
+--    FormulaPredication $ Predication s []
+--formulaFromQSTokenTree (Free [x]) =
+--    formulaFromQSTokenTree x
+--formulaFromQSTokenTree x =
+--    error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
+
+pattern BinaryOpP left op right 
+        = Free [left,Pure (QSTokenBinaryOp op), right]
+
+pattern UnaryOpP op right 
+        = Free [Pure (QSTokenUnaryOp op), right]
+
+pattern QuantifierP quantifier variable formula
+        = Free [Pure (QSTokenQuantifier quantifier variable), formula]
+
+pattern ComplexPredicationP predication domainFunctions
+        = Free (Pure (QSTokenSymbol predication):domainFunctions)
+
+pattern SimplePredicationP predication     
+        = Pure (QSTokenSymbol predication)
+
+pattern RedundantParenthesesP x
+        = Free [x]
+
 formulaFromQSTokenTree :: Free [] QSToken -> Formula
-formulaFromQSTokenTree (Free [l,Pure (QSTokenBinaryOp b), r]) =
-    FormulaBinary b (formulaFromQSTokenTree l) (formulaFromQSTokenTree r)
-formulaFromQSTokenTree (Free [Pure (QSTokenUnaryOp u), r]) =
-    FormulaUnary u (formulaFromQSTokenTree r)
-formulaFromQSTokenTree (Free [Pure (QSTokenQuantifier q s), r]) =
-    FormulaQuantification q s (formulaFromQSTokenTree r)
-formulaFromQSTokenTree (Free (Pure (QSTokenSymbol s):ss)) =
-    FormulaPredication $ Predication s $ domainFunctionFromQSTokenTree <$> ss
-formulaFromQSTokenTree (Pure (QSTokenSymbol s)) =
-    FormulaPredication $ Predication s []
-formulaFromQSTokenTree (Free [x]) =
-    formulaFromQSTokenTree x
-formulaFromQSTokenTree x =
-    error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
+formulaFromQSTokenTree = make
+  where
+    make = \case
+        BinaryOpP l o r             -> FormulaBinary 
+            o (make l) (make r)
+        UnaryOpP o r                -> FormulaUnary 
+            o (make r)
+        QuantifierP q s r           -> FormulaQuantification 
+            q s (make r)
+        ComplexPredicationP p dfs   -> FormulaPredication $ 
+            Predication p $ domainFunctionFromQSTokenTree <$> dfs
+        SimplePredicationP p        -> FormulaPredication $ 
+            Predication p []
+        RedundantParenthesesP x -> make x
+        x -> error $ "formulaFromQSTokenTree: unexpected structure\n" ++ ppShow x
 
 domainFunctionFromQSTokenTree :: Free [] QSToken -> DomainFunction
 domainFunctionFromQSTokenTree (Pure (QSTokenSymbol s)) =
