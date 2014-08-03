@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-module Utilities where
+module Oscar.Utilities where
 
 import ClassyPrelude hiding (
     --Text, 

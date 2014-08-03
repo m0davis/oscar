@@ -1,5 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module PQToken where
+module Oscar.PQToken where
 
 import ClassyPrelude hiding (
     try,
@@ -15,23 +15,23 @@ import Text.Parsec.Combinator       (many1)
 import Text.Parsec.Prim             (try)
 import Text.Parsec.Text             (Parser)
 
-import Parenthesis                  (Parenthesis(OpenParenthesis))
-import Parenthesis                  (Parenthesis(CloseParenthesis))
-import QUBS                         (Quantifier(Universal))
-import QUBS                         (Quantifier(Existential))
-import QUBS                         (UnaryOp(Negation))
-import QUBS                         (UnaryOp(Whether))
-import QUBS                         (BinaryOp(Conjunction))
-import QUBS                         (BinaryOp(Disjunction))
-import QUBS                         (BinaryOp(Conditional))
-import QUBS                         (BinaryOp(Biconditional))
-import QUBS                         (BinaryOp(Defeater))
-import QUBS                         (Symbol(Symbol))
-import QToken                       (QToken(QTokenUnaryOp))
-import QToken                       (QToken(QTokenBinaryOp))
-import QToken                       (QToken(QTokenQuantifier))
-import QToken                       (QToken(QTokenSymbol))
-import Utilities                    (simpleParse)
+import Oscar.Parenthesis            (Parenthesis(OpenParenthesis))
+import Oscar.Parenthesis            (Parenthesis(CloseParenthesis))
+import Oscar.QUBS                   (Quantifier(Universal))
+import Oscar.QUBS                   (Quantifier(Existential))
+import Oscar.QUBS                   (UnaryOp(Negation))
+import Oscar.QUBS                   (UnaryOp(Whether))
+import Oscar.QUBS                   (BinaryOp(Conjunction))
+import Oscar.QUBS                   (BinaryOp(Disjunction))
+import Oscar.QUBS                   (BinaryOp(Conditional))
+import Oscar.QUBS                   (BinaryOp(Biconditional))
+import Oscar.QUBS                   (BinaryOp(Defeater))
+import Oscar.QUBS                   (Symbol(Symbol))
+import Oscar.QToken                 (QToken(QTokenUnaryOp))
+import Oscar.QToken                 (QToken(QTokenBinaryOp))
+import Oscar.QToken                 (QToken(QTokenQuantifier))
+import Oscar.QToken                 (QToken(QTokenSymbol))
+import Oscar.Utilities              (simpleParse)
 
 type PQToken = Either Parenthesis QToken
 

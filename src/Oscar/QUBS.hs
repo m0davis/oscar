@@ -1,5 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module QUBS where
+module Oscar.QUBS where
 
 import ClassyPrelude
 

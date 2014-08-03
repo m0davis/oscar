@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE LambdaCase #-}
-module FormulaLexer where
+module Oscar.FormulaLexer where
 
 import ClassyPrelude hiding (Text, try)
 

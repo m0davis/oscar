@@ -1,19 +1,19 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module QSToken where
+module Oscar.QSToken where
 
 import ClassyPrelude
 
 import Control.Monad.Free           (Free(Free))
 import Control.Monad.Free           (Free(Pure))
 
-import QUBS                         (Quantifier)
-import QUBS                         (UnaryOp)
-import QUBS                         (BinaryOp)
-import QUBS                         (Symbol)
-import QToken                       (QToken(QTokenUnaryOp))
-import QToken                       (QToken(QTokenBinaryOp))
-import QToken                       (QToken(QTokenQuantifier))
-import QToken                       (QToken(QTokenSymbol))
+import Oscar.QUBS                         (Quantifier)
+import Oscar.QUBS                         (UnaryOp)
+import Oscar.QUBS                         (BinaryOp)
+import Oscar.QUBS                         (Symbol)
+import Oscar.QToken                       (QToken(QTokenUnaryOp))
+import Oscar.QToken                       (QToken(QTokenBinaryOp))
+import Oscar.QToken                       (QToken(QTokenQuantifier))
+import Oscar.QToken                       (QToken(QTokenSymbol))
 
 data QSToken
     = QSTokenUnaryOp UnaryOp

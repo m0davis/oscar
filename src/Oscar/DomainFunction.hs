@@ -1,5 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module DomainFunction where
+module Oscar.DomainFunction where
 
 import ClassyPrelude
 
@@ -7,8 +7,8 @@ import Control.Monad.Free           (Free(Free))
 import Control.Monad.Free           (Free(Pure))
 import Text.Show.Pretty             (ppShow)
 
-import QUBS                         (Symbol)
-import QSToken                      (QSToken(QSTokenSymbol))
+import Oscar.QUBS                   (Symbol)
+import Oscar.QSToken                (QSToken(QSTokenSymbol))
 
 data DomainFunction
     = DomainFunction Symbol [DomainFunction]

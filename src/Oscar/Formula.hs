@@ -5,7 +5,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE PatternSynonyms #-}
-module Formula where
+module Oscar.Formula where
 
 import ClassyPrelude hiding (
     try,
@@ -15,20 +15,20 @@ import Control.Monad.Free           (Free(Free))
 import Control.Monad.Free           (Free(Pure))
 import Text.Show.Pretty             (ppShow)
 
-import Parenthesis                  (freeFromParentheses)
-import QUBS                         (Quantifier)
-import QUBS                         (UnaryOp)
-import QUBS                         (BinaryOp)
-import QUBS                         (Symbol)
-import PQToken                      (makePQTokens)
-import QSToken                      (QSToken(QSTokenUnaryOp))
-import QSToken                      (QSToken(QSTokenBinaryOp))
-import QSToken                      (QSToken(QSTokenQuantifier))
-import QSToken                      (QSToken(QSTokenSymbol))
-import QSToken                      (makeQSTokenTree)
-import QSToken                      (reformQSTokenTree)
-import DomainFunction               (DomainFunction)
-import DomainFunction               (makeDomainFunction)
+import Oscar.Parenthesis            (freeFromParentheses)
+import Oscar.QUBS                   (Quantifier)
+import Oscar.QUBS                   (UnaryOp)
+import Oscar.QUBS                   (BinaryOp)
+import Oscar.QUBS                   (Symbol)
+import Oscar.PQToken                (makePQTokens)
+import Oscar.QSToken                (QSToken(QSTokenUnaryOp))
+import Oscar.QSToken                (QSToken(QSTokenBinaryOp))
+import Oscar.QSToken                (QSToken(QSTokenQuantifier))
+import Oscar.QSToken                (QSToken(QSTokenSymbol))
+import Oscar.QSToken                (makeQSTokenTree)
+import Oscar.QSToken                (reformQSTokenTree)
+import Oscar.DomainFunction         (DomainFunction)
+import Oscar.DomainFunction         (makeDomainFunction)
 
 data Predication = Predication Symbol [DomainFunction]
     deriving (Show)

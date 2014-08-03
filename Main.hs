@@ -40,8 +40,8 @@ import Text.Show.Pretty (ppShow)
 
 --import qualified Data.Set as Set
 
-import Formula (formulaFromText)
-import Utilities
+import Oscar.Formula (formulaFromText)
+import Oscar.Utilities
 --import FormulaLexer (lexemesFromText)
 
 --
