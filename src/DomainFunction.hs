@@ -24,4 +24,3 @@ makeDomainFunction (Free [x]) =
     makeDomainFunction x
 makeDomainFunction x =
     error $ "makeDomainFunction: unexpected structure\n" ++ ppShow x
-
