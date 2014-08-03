@@ -42,17 +42,10 @@ import QUBS                         (BinaryOp(Conditional))
 import QUBS                         (BinaryOp(Biconditional))
 import QUBS                         (BinaryOp(Defeater))
 import QUBS                         (Symbol(Symbol))
-
--- module QToken
--- import QToken
--- import QUBS
-data QToken
-    = QTokenUnaryOp UnaryOp
-    | QTokenBinaryOp BinaryOp
-    | QTokenQuantifier Quantifier
-    | QTokenSymbol Symbol
-    deriving (Show)
-
+import QToken                       (QToken(QTokenUnaryOp))
+import QToken                       (QToken(QTokenBinaryOp))
+import QToken                       (QToken(QTokenQuantifier))
+import QToken                       (QToken(QTokenSymbol))
 
 -- PQToken
 -- import Parenthesis (Parenthesis)
