@@ -5,11 +5,20 @@ maintainer:          martin.stone.davis@gmail.com
 build-type:          Simple
 extra-source-files:  extras/Combined-problems
 cabal-version:       >= 1.10
+description:         This a description of the OSCAR program.
 
 executable OSCAR
     main-is: ../Main.hs
 
     other-modules:
+        Oscar.DomainFunction
+        Oscar.Formula
+        Oscar.Parenthesis
+        Oscar.PQToken
+        Oscar.QSToken
+        Oscar.QToken
+        Oscar.QUBS
+        Oscar.Utilities
 
     build-depends: 
             base                            ==  4.7.*

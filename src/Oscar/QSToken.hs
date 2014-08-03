@@ -16,10 +16,10 @@ import Oscar.QToken                       (QToken(QTokenQuantifier))
 import Oscar.QToken                       (QToken(QTokenSymbol))
 
 data QSToken
-    = QSTokenUnaryOp UnaryOp
-    | QSTokenBinaryOp BinaryOp
-    | QSTokenQuantifier Quantifier Symbol
-    | QSTokenSymbol Symbol
+    = QSTokenUnaryOp !UnaryOp
+    | QSTokenBinaryOp !BinaryOp
+    | QSTokenQuantifier !Quantifier !Symbol
+    | QSTokenSymbol !Symbol
     deriving (Show)
 
 makeQSTokenTree :: Free [] QToken -> Free [] QSToken

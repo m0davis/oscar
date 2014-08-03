@@ -5,7 +5,40 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE PatternSynonyms #-}
-module Oscar.Formula where
+-----------------------------------------------------------------------------
+-- |
+--   Description : import me
+--   Copyright   : (C) 2004, Oleg Kiselyov, Ralf Laemmel, Keean Schupke
+--
+--   The HList library
+--
+--   This module re-exports everything needed to use HList.
+--
+-- You can derive lenses automatically for many data types:
+--
+-- @
+-- import Control.Lens
+-- data Foo a = Foo { _fooArgs :: ['String'], _fooValue :: a }
+-- 'makeLenses' ''Foo
+-- @
+--
+-- This defines the following lenses:
+-- 
+-- > (++) = mappend
+-- | > (++) = mappend
+module Oscar.Formula ( 
+    -- * header
+    -- ** subheader
+    -- | the \"public\" parts. More examples are in the module documentation.
+    Predication(..),
+    Formula(..),
+    pattern BinaryOpP,
+    -- * functionswtf
+    makeFormula,
+    -- ** subssubfunctions
+    formulaFromText,            
+    )
+    where
 
 import ClassyPrelude hiding (
     try,
@@ -34,10 +67,10 @@ data Predication = Predication Symbol [DomainFunction]
     deriving (Show)
 
 data Formula
-    = FormulaBinary BinaryOp Formula Formula
-    | FormulaUnary UnaryOp Formula
-    | FormulaQuantification Quantifier Symbol Formula
-    | FormulaPredication Predication
+    = FormulaBinary !BinaryOp !Formula !Formula
+    | FormulaUnary !UnaryOp !Formula
+    | FormulaQuantification !Quantifier !Symbol !Formula
+    | FormulaPredication !Predication
     deriving (Show)
 
 
@@ -59,6 +92,16 @@ pattern SimplePredicationP predication
 pattern RedundantParenthesesP x
         = Free [x]
 
+-- You can derive lenses automatically for many data types:
+--
+-- @
+-- import Control.Lens
+-- data Foo a = Foo { _fooArgs :: ['String'], _fooValue :: a }
+-- 'makeLenses' ''Foo
+-- @
+--
+-- This defines the following lenses:
+-- | > (++) = mappend
 makeFormula :: Free [] QSToken -> Formula
 makeFormula = mk
   where
@@ -77,7 +120,21 @@ makeFormula = mk
         x -> error $ "makeFormula: unexpected structure\n" ++ ppShow x
 
 
---
+
+{- $label6demo #label6demo#
+
+ Instances from "Data.HList.Label6"
+
+>>> :set -XDataKinds
+>>> (Label :: Label "x") .=. (5::Int) .*. emptyRecord
+Record{x=5}
+
+>>> let x = Label :: Label "x"
+>>> let r = x .=. (5::Int) .*. emptyRecord
+>>> r .!. x
+5
+
+-}
 formulaFromText :: Text -> Formula
 formulaFromText = id
     . makeFormula

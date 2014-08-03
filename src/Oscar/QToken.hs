@@ -9,8 +9,8 @@ import Oscar.QUBS                   (BinaryOp)
 import Oscar.QUBS                   (Symbol)
 
 data QToken
-    = QTokenUnaryOp UnaryOp
-    | QTokenBinaryOp BinaryOp
-    | QTokenQuantifier Quantifier
-    | QTokenSymbol Symbol
+    = QTokenUnaryOp !UnaryOp
+    | QTokenBinaryOp !BinaryOp
+    | QTokenQuantifier !Quantifier
+    | QTokenSymbol !Symbol
     deriving (Show)

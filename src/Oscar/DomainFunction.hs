@@ -10,9 +10,10 @@ import Text.Show.Pretty             (ppShow)
 import Oscar.QUBS                   (Symbol)
 import Oscar.QSToken                (QSToken(QSTokenSymbol))
 
+-- | A DomainFunction represents 
 data DomainFunction
-    = DomainFunction Symbol [DomainFunction]
-    | DomainVariable Symbol
+    = DomainFunction !Symbol ![DomainFunction] -- ^ `g' in (g x)
+    | DomainVariable !Symbol                   -- ^ `x' in (g x)
     deriving (Show)
 
 makeDomainFunction :: Free [] QSToken -> DomainFunction

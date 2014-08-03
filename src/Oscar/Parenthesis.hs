@@ -9,6 +9,7 @@ import Control.Monad.Free           (Free(Free))
 import Control.Monad.Free           (Free(Pure))
 import Numeric.Natural              (Natural)
 
+-- | Parentheses are like this y(). See 'freeFromParentheses'
 data Parenthesis = OpenParenthesis | CloseParenthesis
     deriving (Bounded, Eq, Read, Show)
 
