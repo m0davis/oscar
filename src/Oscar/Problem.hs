@@ -49,37 +49,37 @@ import Oscar.Utilities                  (simpleParse)
 
 --
 newtype ProblemsText = ProblemsText Text
-    deriving (Show)
+  deriving (Show)
 
 problemsTextM :: FilePath -> IO ProblemsText
 problemsTextM = map ProblemsText . readFile
 
 --
 newtype ProblemText = ProblemText Text
-    deriving (Show)
+  deriving (Show)
 
 problemTexts :: ProblemsText -> [ProblemText]
 problemTexts = map ProblemText . simpleParse (many p) . coerce
-    where
-        p :: Parser Text
-        p = do
-            spaces
-            _ <- string "Problem #"
-            pack <$> manyTill anyChar endP
+  where
+    p :: Parser Text
+    p = do
+        spaces
+        _ <- string "Problem #"
+        pack <$> manyTill anyChar endP
 
-        endP :: Parser ()
-        endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
+    endP :: Parser ()
+    endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
 --
 newtype AfterProblemNumberText = AfterProblemNumberText Text
-    deriving (Show)
+  deriving (Show)
 
 newtype ProblemNumber = ProblemNumber Int
-    deriving (Show)
+  deriving (Show)
 
 splitAfterProblemNumber :: ProblemText -> (ProblemNumber, AfterProblemNumberText)
 splitAfterProblemNumber = simpleParse p . coerce
-    where
+  where
         p :: Parser (ProblemNumber, AfterProblemNumberText)
         p = do
             n <- ProblemNumber . read <$> manyTill anyChar (lookAhead . try $ space)
@@ -94,7 +94,7 @@ data Section
     |   Section'ForwardsConclusiveReasons
     |   Section'BackwardsPrimaFacieReasons
     |   Section'BackwardsConclusiveReasons
-    deriving (Eq, Show)
+  deriving (Eq, Show)
 
 sectionParser :: Parser Section
 sectionParser =
@@ -111,14 +111,14 @@ sectionParser =
 
 --
 newtype AfterProblemDescriptionText = AfterProblemDescriptionText Text
-    deriving (Show)
+  deriving (Show)
 
 newtype ProblemDescription = ProblemDescription Text
-    deriving (Show)
+  deriving (Show)
 
 splitAfterProblemNumberText :: AfterProblemNumberText -> (ProblemDescription, AfterProblemDescriptionText)
 splitAfterProblemNumberText = simpleParse p . coerce
-    where
+  where
         p :: Parser (ProblemDescription, AfterProblemDescriptionText)
         p = do
             _ <- many space
@@ -134,7 +134,7 @@ instance IsAKind UltimateEpistemicInterests
 instance IsAKind (Reasons direction defeasible)
 
 newtype IsAKind kind => ProblemSectionText kind = ProblemSectionText Text
-    deriving (Show)
+  deriving (Show)
 
 class HasSection s where
     section :: s -> Section
@@ -143,10 +143,10 @@ data GivenPremises              = GivenPremises
 data UltimateEpistemicInterests = UltimateEpistemicInterests
 
 data Direction = Forwards | Backwards
-    deriving (Show)
+  deriving (Show)
 
 data Defeasibility = PrimaFacie | Conclusive
-    deriving (Show)
+  deriving (Show)
 
 data Reasons (direction :: Direction) (defeasible :: Defeasibility) = Reasons
 
@@ -174,7 +174,7 @@ problemSectionText = coerce . rawSection (section kind) . coerce
 
 --
 newtype LispPositiveDouble = LispPositiveDouble Double
-    deriving (Show)
+  deriving (Show)
 
 parserLispPositiveDouble :: Parser LispPositiveDouble
 parserLispPositiveDouble = do
@@ -191,18 +191,18 @@ parserLispPositiveDouble = do
 
 --
 newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
-    deriving (Show)
+  deriving (Show)
 
 parserProblemJustificationDegree :: Parser ProblemJustificationDegree
 parserProblemJustificationDegree = ProblemJustificationDegree <$> (many space *> string "justification" *> many space *> char '=' *> parserLispPositiveDouble)
 
 --
 newtype ProblemGivenPremiseText = ProblemGivenPremiseText Text
-    deriving (Show)
+  deriving (Show)
 
 problemGivenPremiseTextAndProblemJustificationDegrees :: ProblemSectionText GivenPremises -> [(ProblemGivenPremiseText, ProblemJustificationDegree)]
 problemGivenPremiseTextAndProblemJustificationDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
-    where
+  where
         p :: Parser (ProblemGivenPremiseText, ProblemJustificationDegree)
         p = do
             spaces
@@ -211,14 +211,14 @@ problemGivenPremiseTextAndProblemJustificationDegrees = either (error . ppShow) 
 
 --
 newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
-    deriving (Show)
+  deriving (Show)
 
 parserProblemInterestDegree :: Parser ProblemInterestDegree
 parserProblemInterestDegree = ProblemInterestDegree <$> (many space *> string "interest" *> many space *> char '=' *> parserLispPositiveDouble)
 
 --
 newtype ProblemUltimateEpistemicInterestText = ProblemUltimateEpistemicInterestText Text
-    deriving (Show)
+  deriving (Show)
 
 problemUltimateEpistemicInterestTextAndProblemInterestDegrees :: ProblemSectionText UltimateEpistemicInterests -> [(ProblemUltimateEpistemicInterestText, ProblemInterestDegree)]
 problemUltimateEpistemicInterestTextAndProblemInterestDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
@@ -231,28 +231,28 @@ problemUltimateEpistemicInterestTextAndProblemInterestDegrees = either (error . 
 
 --
 newtype ProblemVariablesText = ProblemVariablesText Text
-    deriving (Show)
+  deriving (Show)
 
 parserProblemVariablesText :: Parser ProblemVariablesText
 parserProblemVariablesText = ProblemVariablesText . pack <$> (option "" . try $ many space *> string "variables" *> many space *> char '=' *> many space *> char '{' *> manyTill anyChar (lookAhead . try $ char '}') <* char '}')
 
 --
 newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
-    deriving (Show)
+  deriving (Show)
 
 parserProblemStrengthDegree :: Parser ProblemStrengthDegree
 parserProblemStrengthDegree = ProblemStrengthDegree <$> (many space *> string "strength" *> many space *> char '=' *> parserLispPositiveDouble)
 
 --
 newtype ProblemReasonName = ProblemReasonName Text
-    deriving (Show)
+  deriving (Show)
 
 parserProblemReasonName :: Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
 
 --
 newtype ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility) = ProblemReasonText Text
-    deriving (Show)
+  deriving (Show)
 
 data ReasonBlock (direction :: Direction) (defeasible :: Defeasibility) = ReasonBlock
     {   _rbProblemReasonName     :: ProblemReasonName
@@ -275,12 +275,12 @@ instance ToDegree (ReasonBlock direction defeasible) where
 
 extractFromProblemReasonTextForwards :: ProblemReasonText Forwards defeasible -> ([Text], Text)
 extractFromProblemReasonTextForwards = simpleParse p . coerce
-    where
-        p :: Parser ([Text], Text)
-        p = do
-            (premiseTexts, _) <- enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
-            conclusionText <- pack <$> many anyChar
-            return (premiseTexts, conclusionText)
+  where
+    p :: Parser ([Text], Text)
+    p = do
+        (premiseTexts, _) <- enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
+        conclusionText <- pack <$> many anyChar
+        return (premiseTexts, conclusionText)
 
 enbracedListParser :: Parser [Text]
 enbracedListParser = do
@@ -288,37 +288,37 @@ enbracedListParser = do
     (inner, _) <- (pack <$> many anyChar) `precededBy` char '}'
     let texts = simpleParse p inner
     return texts
-    where
-        p :: Parser [Text]
-        p = do
-            (firstText, restText) <- (many space *> (pack <$> manyTill anyChar (lookAhead (many space >> eof))) <* many space) `precededBy` (lookAhead $ (eof *> pure False) <|> (char ',' *> many anyChar *> pure True))
-            if restText then do
-                _ <- char ','
-                restTexts <- p
-                return $ firstText : restTexts
-            else do
-                return [firstText]
+  where
+    p :: Parser [Text]
+    p = do
+        (firstText, restText) <- (many space *> (pack <$> manyTill anyChar (lookAhead (many space >> eof))) <* many space) `precededBy` (lookAhead $ (eof *> pure False) <|> (char ',' *> many anyChar *> pure True))
+        if restText then do
+            _ <- char ','
+            restTexts <- p
+            return $ firstText : restTexts
+        else do
+            return [firstText]
 
 reasonBlocks :: forall direction defeasible.
     (ProblemSectionText (Reasons (direction :: Direction) (defeasible :: Defeasibility))) ->
     [ReasonBlock (direction :: Direction) (defeasible :: Defeasibility)]
     --  [(ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)]
 reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
-    where
-        --p :: Parser (ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)
-        p :: Parser (ReasonBlock (direction :: Direction) (defeasible :: Defeasibility))
-        p = do
-            n <- parserProblemReasonName
-            spaces
-            (t, (v, d)) <- many anyChar `precededBy` p'
-            --return (n, coerce  . (pack :: String -> Text) $ t, v, d)
-            return $ ReasonBlock n (coerce  . (pack :: String -> Text) $ t) v d
-            where
-                p' :: Parser (ProblemVariablesText, ProblemStrengthDegree)
-                p' = do
-                    t <- parserProblemVariablesText
-                    d <- parserProblemStrengthDegree
-                    return (t, d)
+  where
+    --p :: Parser (ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)
+    p :: Parser (ReasonBlock (direction :: Direction) (defeasible :: Defeasibility))
+    p = do
+        n <- parserProblemReasonName
+        spaces
+        (t, (v, d)) <- many anyChar `precededBy` p'
+        --return (n, coerce  . (pack :: String -> Text) $ t, v, d)
+        return $ ReasonBlock n (coerce  . (pack :: String -> Text) $ t) v d
+      where
+            p' :: Parser (ProblemVariablesText, ProblemStrengthDegree)
+            p' = do
+                t <- parserProblemVariablesText
+                d <- parserProblemStrengthDegree
+                return (t, d)
 
 --
 data ForwardsReason = ForwardsReason [Formula] Formula
@@ -355,16 +355,18 @@ ndProblemsM :: FilePath -> IO [NDProblem]
 ndProblemsM filePath = do
     combinedProblems <- problemsTextM filePath
     return $ ndProblem <$> problemTexts combinedProblems
-
   where
     ndProblem :: ProblemText -> NDProblem
     ndProblem t = (number, description, problem)
       where
         (number, afterNumber) = splitAfterProblemNumber t
+
         (description, afterDescription) = splitAfterProblemNumberText afterNumber
+
         givenPremisesTextAndProblemJustificationDegrees = 
             problemGivenPremiseTextAndProblemJustificationDegrees $ 
                 problemSectionText afterDescription
+
         ultimateEpistemicInterestTextAndProblemInterestDegrees =
             problemUltimateEpistemicInterestTextAndProblemInterestDegrees $
                 problemSectionText afterDescription
