@@ -338,12 +338,10 @@ type Strength = Double
 data Named r = Named Text r
 data Degreed r = Degreed Degree r
 
-data Problem = Problem {
-    _premises :: [(Formula, Degree)]
-    ,
-    _interests :: [(Formula, Degree)]
-    ,
-    _forwardsPrimaFacieReasons :: [((ForwardsReason, Degree), Text)]
+data Problem = Problem 
+    { _premises                  :: [(Formula, Degree)]
+    , _interests                 :: [(Formula, Degree)]
+    , _forwardsPrimaFacieReasons :: [((ForwardsReason, Degree), Text)]
     }
   deriving (Show)
 
