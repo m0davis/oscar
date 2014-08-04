@@ -49,15 +49,15 @@ import Oscar.Utilities                  (simpleParse)
 newtype ProblemsText = ProblemsText Text
     deriving (Show)
 
-ioProblemsTextFromFilePath :: FilePath -> IO ProblemsText
-ioProblemsTextFromFilePath = map ProblemsText . readFile
+problemsTextM :: FilePath -> IO ProblemsText
+problemsTextM = map ProblemsText . readFile
 
 --
 newtype ProblemText = ProblemText Text
     deriving (Show)
 
-problemTextsFromProblemsText :: ProblemsText -> [ProblemText]
-problemTextsFromProblemsText = map ProblemText . simpleParse (many p) . coerce
+problemTexts :: ProblemsText -> [ProblemText]
+problemTexts = map ProblemText . simpleParse (many p) . coerce
     where
         p :: Parser Text
         p = do
@@ -308,13 +308,13 @@ reasonBlocksFromProblemSectionText = simpleParse (many (try p) <* many space <* 
 
 main :: IO ()
 main = do
-    combinedProblems <- ioProblemsTextFromFilePath $ fpFromString "combined-problems"
+    combinedProblems <- problemsTextM $ fpFromString "combined-problems"
     messageFromShow combinedProblems
 
-    let problemTexts = problemTextsFromProblemsText combinedProblems
-    messageFromShows problemTexts
+    let problemTexts' = problemTexts combinedProblems
+    messageFromShows problemTexts'
 
-    let problemNumberAndAfterProblemNumberTexts = problemNumberAndAfterProblemNumberTextFromProblemText <$> problemTexts
+    let problemNumberAndAfterProblemNumberTexts = problemNumberAndAfterProblemNumberTextFromProblemText <$> problemTexts'
     let problemNumbers = fst <$> problemNumberAndAfterProblemNumberTexts
     let afterProblemNumberTexts = snd <$> problemNumberAndAfterProblemNumberTexts
     messageFromShows problemNumbers
