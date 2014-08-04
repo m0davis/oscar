@@ -14,35 +14,49 @@
 module Main where
 
 import ClassyPrelude hiding (
-    --Text, 
     try, 
     undefined,
     )
 import Prelude (undefined)
 
-import Control.Applicative
+import Control.Applicative (many)
+import Control.Applicative (empty)
 import Control.Conditional hiding (unlessM)
-import Control.Monad
---import Control.Monad.Free
---import Data.Char
-import Data.Coerce
---import Data.Maybe (fromJust)
---import Data.Set (Set)
---import Data.Tagged
---import Data.Text.Internal.Lazy (Text)
---import Numeric (readFloat, readSigned)
+import Control.Monad (mzero)
+import Data.Coerce (coerce) 
 import Prelude (read)
---import Safe
-import Text.Parsec hiding ((<|>), many)
---import Text.Parsec.Text.Lazy
-import Text.Parsec.Text
+
+--import Text.Parsec.Char             (alphaNum)
+--import Text.Parsec.Char             (char)
+--import Text.Parsec.Char             (space)
+--import Text.Parsec.Char             (string)
+--import Text.Parsec.Combinator       (many1)
+--import Text.Parsec.Prim             (try)
+import Text.Parsec.Text             (Parser)
+--import Text.Parsec.Combinator       (many1)
+
+--import Text.Parsec (alphaNum)
+import Text.Parsec (anyChar)
+import Text.Parsec (char)
+import Text.Parsec (eof)
+import Text.Parsec (lookAhead)
+--import Text.Parsec (many1)
+import Text.Parsec (manyTill)
+import Text.Parsec (option)
+import Text.Parsec (runParser)
+import Text.Parsec (space)
+import Text.Parsec (spaces)
+import Text.Parsec (string)
+import Text.Parsec (try)
+
 import Text.Show.Pretty (ppShow)
 
---import qualified Data.Set as Set
-
 import Oscar.Formula (formulaFromText)
-import Oscar.Utilities
---import FormulaLexer (lexemesFromText)
+import Oscar.Utilities (simpleParse)
+import Oscar.Utilities (messageFromShow)
+import Oscar.Utilities (messageFromShows)
+import Oscar.Utilities (messageFromShows10)
+import Oscar.Utilities (precededBy)
 
 --
 newtype ProblemsText = ProblemsText Text

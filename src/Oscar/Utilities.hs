@@ -3,22 +3,32 @@
 module Oscar.Utilities where
 
 import ClassyPrelude hiding (
-    --Text, 
     try,
     )
 import Text.Show.Pretty (ppShow)
 
-import Control.Applicative
+import Control.Applicative (liftA2)
 import Control.Conditional hiding (unlessM)
-import Control.Monad
-import Control.Monad.Free
+import Control.Monad (MonadPlus)
+import Control.Monad (mzero)
+import Control.Monad.Free           (Free(Free))
+import Control.Monad.Free           (Free(Pure))
 import Data.Either.Utils (maybeToEither)
-import Data.Pointed
+import Data.Pointed (point)
+import Data.Pointed (Pointed)
 --import Data.Text.Internal.Lazy (Text)
-import Text.Parsec.Char
-import Text.Parsec.Combinator
-import Text.Parsec.Prim hiding ((<|>), many, uncons)
-import Text.Parsec.String ()
+import Text.Parsec (manyTill)
+import Text.Parsec (getInput)
+import Text.Parsec (setInput)
+import Text.Parsec (lookAhead)
+import Text.Parsec (ParsecT)
+import Text.Parsec (anyChar)
+import Text.Parsec (runParser)
+import Text.Parsec (satisfy)
+import Text.Parsec (try)
+--import Text.Parsec.Combinator ()
+--import Text.Parsec.Prim ()
+--import Text.Parsec.String ()
 --import Text.Parsec.Text.Lazy
 import Text.Parsec.Text
 
