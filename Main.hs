@@ -75,8 +75,8 @@ newtype AfterProblemNumberText = AfterProblemNumberText Text
 newtype ProblemNumber = ProblemNumber Int
     deriving (Show)
 
-problemNumberAndAfterProblemNumberTextFromProblemText :: ProblemText -> (ProblemNumber, AfterProblemNumberText)
-problemNumberAndAfterProblemNumberTextFromProblemText = simpleParse p . coerce
+splitAfterProblemNumber :: ProblemText -> (ProblemNumber, AfterProblemNumberText)
+splitAfterProblemNumber = simpleParse p . coerce
     where
         p :: Parser (ProblemNumber, AfterProblemNumberText)
         p = do
@@ -314,7 +314,7 @@ main = do
     let problemTexts' = problemTexts combinedProblems
     messageFromShows problemTexts'
 
-    let problemNumberAndAfterProblemNumberTexts = problemNumberAndAfterProblemNumberTextFromProblemText <$> problemTexts'
+    let problemNumberAndAfterProblemNumberTexts = splitAfterProblemNumber <$> problemTexts'
     let problemNumbers = fst <$> problemNumberAndAfterProblemNumberTexts
     let afterProblemNumberTexts = snd <$> problemNumberAndAfterProblemNumberTexts
     messageFromShows problemNumbers
