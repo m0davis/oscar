@@ -114,8 +114,8 @@ newtype AfterProblemDescriptionText = AfterProblemDescriptionText Text
 newtype ProblemDescription = ProblemDescription Text
     deriving (Show)
 
-problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText :: AfterProblemNumberText -> (ProblemDescription, AfterProblemDescriptionText)
-problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText = simpleParse p . coerce
+splitAfterProblemNumberText :: AfterProblemNumberText -> (ProblemDescription, AfterProblemDescriptionText)
+splitAfterProblemNumberText = simpleParse p . coerce
     where
         p :: Parser (ProblemDescription, AfterProblemDescriptionText)
         p = do
@@ -155,8 +155,8 @@ instance HasSection (Reasons Forwards  Conclusive) where section _ = Section'For
 instance HasSection (Reasons Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
 instance HasSection (Reasons Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
-problemSectionTextFromAfterProblemDescriptionText :: forall kind. (HasSection kind) => AfterProblemDescriptionText -> ProblemSectionText kind
-problemSectionTextFromAfterProblemDescriptionText = coerce . rawSection (section kind) . coerce
+problemSectionText :: forall kind. (HasSection kind) => AfterProblemDescriptionText -> ProblemSectionText kind
+problemSectionText = coerce . rawSection (section kind) . coerce
   where
     kind :: kind = undefined
 
@@ -198,8 +198,8 @@ parserProblemJustificationDegree = ProblemJustificationDegree <$> (many space *>
 newtype ProblemGivenPremiseText = ProblemGivenPremiseText Text
     deriving (Show)
 
-problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText :: ProblemSectionText GivenPremises -> [(ProblemGivenPremiseText, ProblemJustificationDegree)]
-problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
+problemGivenPremiseTextAndProblemJustificationDegrees :: ProblemSectionText GivenPremises -> [(ProblemGivenPremiseText, ProblemJustificationDegree)]
+problemGivenPremiseTextAndProblemJustificationDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
     where
         p :: Parser (ProblemGivenPremiseText, ProblemJustificationDegree)
         p = do
@@ -218,8 +218,8 @@ parserProblemInterestDegree = ProblemInterestDegree <$> (many space *> string "i
 newtype ProblemUltimateEpistemicInterestText = ProblemUltimateEpistemicInterestText Text
     deriving (Show)
 
-problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText :: ProblemSectionText UltimateEpistemicInterests -> [(ProblemUltimateEpistemicInterestText, ProblemInterestDegree)]
-problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
+problemUltimateEpistemicInterestTextAndProblemInterestDegrees :: ProblemSectionText UltimateEpistemicInterests -> [(ProblemUltimateEpistemicInterestText, ProblemInterestDegree)]
+problemUltimateEpistemicInterestTextAndProblemInterestDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . coerce
     where
         p :: Parser (ProblemUltimateEpistemicInterestText, ProblemInterestDegree)
         p = do
@@ -285,11 +285,11 @@ enbracedListParser = do
             else do
                 return [firstText]
 
-reasonBlocksFromProblemSectionText :: forall direction defeasible.
+reasonBlocks :: forall direction defeasible.
     (ProblemSectionText (Reasons (direction :: Direction) (defeasible :: Defeasibility))) ->
     [ReasonBlock (direction :: Direction) (defeasible :: Defeasibility)]
     --  [(ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)]
-reasonBlocksFromProblemSectionText = simpleParse (many (try p) <* many space <* eof) . coerce
+reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
     where
         --p :: Parser (ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)
         p :: Parser (ReasonBlock (direction :: Direction) (defeasible :: Defeasibility))
@@ -320,46 +320,46 @@ main = do
     messageFromShows problemNumbers
     messageFromShows afterProblemNumberTexts
 
-    let problemDescriptionAndAfterProblemDescriptionTexts = problemDescriptionAndAfterProblemDescriptionTextFromAfterProblemNumberText <$> afterProblemNumberTexts
+    let problemDescriptionAndAfterProblemDescriptionTexts = splitAfterProblemNumberText <$> afterProblemNumberTexts
     let problemDescriptions = fst <$> problemDescriptionAndAfterProblemDescriptionTexts
     let afterProblemDescriptionTexts = snd <$> problemDescriptionAndAfterProblemDescriptionTexts
     messageFromShows problemDescriptions
     messageFromShows afterProblemDescriptionTexts
 
-    let problemGivenPremisesTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
+    let problemGivenPremisesTexts = problemSectionText <$> afterProblemDescriptionTexts
     messageFromShows problemGivenPremisesTexts
 
-    let problemUltimateEpistemicInterestsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
+    let problemUltimateEpistemicInterestsTexts = problemSectionText <$> afterProblemDescriptionTexts
     messageFromShows problemUltimateEpistemicInterestsTexts
 
-    let problemForwardsPrimaFacieReasonsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
+    let problemForwardsPrimaFacieReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
     messageFromShows problemForwardsPrimaFacieReasonsTexts
 
-    let problemForwardsConclusiveReasonsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
+    let problemForwardsConclusiveReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
     messageFromShows problemForwardsConclusiveReasonsTexts
 
-    let problemBackwardsPrimaFacieReasonsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
+    let problemBackwardsPrimaFacieReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
     messageFromShows problemBackwardsPrimaFacieReasonsTexts
 
-    let problemBackwardsConclusiveReasonsTexts = problemSectionTextFromAfterProblemDescriptionText <$> afterProblemDescriptionTexts
+    let problemBackwardsConclusiveReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
     messageFromShows problemBackwardsConclusiveReasonsTexts
 
-    let problemGivenPremiseTextAndProblemJustificationDegrees = problemGivenPremiseTextAndProblemJustificationDegreesFromProblemGivenPremisesText <$> problemGivenPremisesTexts
-    messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees
+    let problemGivenPremiseTextAndProblemJustificationDegrees' = problemGivenPremiseTextAndProblemJustificationDegrees <$> problemGivenPremisesTexts
+    messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees'
 
-    let problemUltimateEpistemicInterestTextAndProblemJustificationDegrees = problemUltimateEpistemicInterestTextAndProblemInterestDegreesFromProblemUltimateEpistemicInterestsText <$> problemUltimateEpistemicInterestsTexts
-    messageFromShows problemUltimateEpistemicInterestTextAndProblemJustificationDegrees
+    let problemUltimateEpistemicInterestTextAndProblemInterestDegrees' = problemUltimateEpistemicInterestTextAndProblemInterestDegrees <$> problemUltimateEpistemicInterestsTexts
+    messageFromShows problemUltimateEpistemicInterestTextAndProblemInterestDegrees'
 
-    let reasonBlocksFromForwardsPrimaFacieReasonsTexts :: [[ReasonBlock Forwards PrimaFacie]] = reasonBlocksFromProblemSectionText <$> problemForwardsPrimaFacieReasonsTexts
+    let reasonBlocksFromForwardsPrimaFacieReasonsTexts :: [[ReasonBlock Forwards PrimaFacie]] = reasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
     messageFromShows reasonBlocksFromForwardsPrimaFacieReasonsTexts
 
-    let reasonBlocksFromForwardsConclusiveReasonsTexts :: [[ReasonBlock Forwards Conclusive]] = reasonBlocksFromProblemSectionText <$> problemForwardsConclusiveReasonsTexts
+    let reasonBlocksFromForwardsConclusiveReasonsTexts :: [[ReasonBlock Forwards Conclusive]] = reasonBlocks <$> problemForwardsConclusiveReasonsTexts
     messageFromShows reasonBlocksFromForwardsConclusiveReasonsTexts
 
-    let reasonBlocksFromBackwardsPrimaFacieReasonsTexts :: [[ReasonBlock Backwards PrimaFacie]] = reasonBlocksFromProblemSectionText <$> problemBackwardsPrimaFacieReasonsTexts
+    let reasonBlocksFromBackwardsPrimaFacieReasonsTexts :: [[ReasonBlock Backwards PrimaFacie]] = reasonBlocks <$> problemBackwardsPrimaFacieReasonsTexts
     messageFromShows reasonBlocksFromBackwardsPrimaFacieReasonsTexts
 
-    let reasonBlocksFromBackwardsConclusiveReasonsTexts :: [[ReasonBlock Backwards Conclusive]] = reasonBlocksFromProblemSectionText <$> problemBackwardsConclusiveReasonsTexts
+    let reasonBlocksFromBackwardsConclusiveReasonsTexts :: [[ReasonBlock Backwards Conclusive]] = reasonBlocks <$> problemBackwardsConclusiveReasonsTexts
     messageFromShows reasonBlocksFromBackwardsConclusiveReasonsTexts
 
     --let reasonBlocksFromForwardsPrimaFacieReasonsTexts :: [[(ProblemReasonName, ProblemReasonText Forwards PrimaFacie, ProblemVariablesText, ProblemStrengthDegree)]] = fromReasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
