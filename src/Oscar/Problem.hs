@@ -289,7 +289,7 @@ enbracedListParser = do
     where
         p :: Parser [Text]
         p = do
-            (firstText, restText) <- (many space *> (pack <$> many anyChar) <* many space) `precededBy` (lookAhead $ (eof *> pure False) <|> (char ',' *> many anyChar *> pure True))
+            (firstText, restText) <- (many space *> (pack <$> manyTill anyChar (lookAhead (many space >> eof))) <* many space) `precededBy` (lookAhead $ (eof *> pure False) <|> (char ',' *> many anyChar *> pure True))
             if restText then do
                 _ <- char ','
                 restTexts <- p
@@ -319,6 +319,16 @@ reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
                     return (t, d)
 
 --
+data ForwardsReason = ForwardsReason [Formula] Formula
+  deriving (Show)
+
+--foo :: ProblemReasonText Forwards PrimaFacie -> ([Formula], Formula)
+--foo = simpleParse p . coerce
+--  where
+--    p :: Parser ([Formula], Formula)
+--    p = do
+
+--
 
 type Degree = Double
 type Strength = Double
@@ -326,7 +336,7 @@ type Strength = Double
 data Problem = Problem
     [(Formula, Degree)]        -- ^ premises
     [(Formula, Degree)]        -- ^ interest
-    [(Formula, Strength)]      -- ^ forwards p.f.
+    [(ForwardsReason, Strength)]      -- ^ forwards p.f.
     [(Formula, Strength)]      -- ^ forwards conclusive
     [(Formula, Strength)]      -- ^ backwards p.f.
     [(Formula, Strength)]      -- ^ backwards conclusive
@@ -364,8 +374,10 @@ ndProblemsM filePath = do
             reasonBlocks $
                 problemSectionText afterDescription
 
-        fpfrts :: ReasonBlock Forwards PrimaFacie -> (Formula, Strength)
-        fpfrts rb = (formulaFromText $ coerce $ _rbProblemReasonText rb, toDegree rb)
+        fpfrts :: ReasonBlock Forwards PrimaFacie -> (ForwardsReason, Strength)
+        fpfrts rb = (booyah $ extractFromProblemReasonTextForwards $ _rbProblemReasonText rb, toDegree rb)
+          where
+            booyah (prems,concl) = ForwardsReason (formulaFromText <$> prems) (formulaFromText concl)
 
         problem = Problem
             (gpjd <$> givenPremisesTextAndProblemJustificationDegrees)
@@ -374,87 +386,3 @@ ndProblemsM filePath = do
             [] 
             [] 
             []
-
-testProblemsM :: FilePath -> IO ()
-testProblemsM filePath = do
-    combinedProblems <- problemsTextM filePath
-    messageFromShow combinedProblems
-
-    let problemTexts' = problemTexts combinedProblems
-    messageFromShows problemTexts'
-
-    let problemNumberAndAfterProblemNumberTexts = splitAfterProblemNumber <$> problemTexts'
-    let problemNumbers = fst <$> problemNumberAndAfterProblemNumberTexts
-    let afterProblemNumberTexts = snd <$> problemNumberAndAfterProblemNumberTexts
-    messageFromShows problemNumbers
-    messageFromShows afterProblemNumberTexts
-
-    let problemDescriptionAndAfterProblemDescriptionTexts = splitAfterProblemNumberText <$> afterProblemNumberTexts
-    let problemDescriptions = fst <$> problemDescriptionAndAfterProblemDescriptionTexts
-    let afterProblemDescriptionTexts = snd <$> problemDescriptionAndAfterProblemDescriptionTexts
-    messageFromShows problemDescriptions
-    messageFromShows afterProblemDescriptionTexts
-
-    let problemGivenPremisesTexts = problemSectionText <$> afterProblemDescriptionTexts
-    messageFromShows problemGivenPremisesTexts
-
-    let problemUltimateEpistemicInterestsTexts = problemSectionText <$> afterProblemDescriptionTexts
-    messageFromShows problemUltimateEpistemicInterestsTexts
-
-    let problemForwardsPrimaFacieReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
-    messageFromShows problemForwardsPrimaFacieReasonsTexts
-
-    let problemForwardsConclusiveReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
-    messageFromShows problemForwardsConclusiveReasonsTexts
-
-    let problemBackwardsPrimaFacieReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
-    messageFromShows problemBackwardsPrimaFacieReasonsTexts
-
-    let problemBackwardsConclusiveReasonsTexts = problemSectionText <$> afterProblemDescriptionTexts
-    messageFromShows problemBackwardsConclusiveReasonsTexts
-
-    let problemGivenPremiseTextAndProblemJustificationDegrees' = problemGivenPremiseTextAndProblemJustificationDegrees <$> problemGivenPremisesTexts
-    messageFromShows problemGivenPremiseTextAndProblemJustificationDegrees'
-
-    let problemUltimateEpistemicInterestTextAndProblemInterestDegrees' = problemUltimateEpistemicInterestTextAndProblemInterestDegrees <$> problemUltimateEpistemicInterestsTexts
-    messageFromShows problemUltimateEpistemicInterestTextAndProblemInterestDegrees'
-
-    let reasonBlocksFromForwardsPrimaFacieReasonsTexts :: [[ReasonBlock Forwards PrimaFacie]] = reasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
-    messageFromShows reasonBlocksFromForwardsPrimaFacieReasonsTexts
-
-    let reasonBlocksFromForwardsConclusiveReasonsTexts :: [[ReasonBlock Forwards Conclusive]] = reasonBlocks <$> problemForwardsConclusiveReasonsTexts
-    messageFromShows reasonBlocksFromForwardsConclusiveReasonsTexts
-
-    let reasonBlocksFromBackwardsPrimaFacieReasonsTexts :: [[ReasonBlock Backwards PrimaFacie]] = reasonBlocks <$> problemBackwardsPrimaFacieReasonsTexts
-    messageFromShows reasonBlocksFromBackwardsPrimaFacieReasonsTexts
-
-    let reasonBlocksFromBackwardsConclusiveReasonsTexts :: [[ReasonBlock Backwards Conclusive]] = reasonBlocks <$> problemBackwardsConclusiveReasonsTexts
-    messageFromShows reasonBlocksFromBackwardsConclusiveReasonsTexts
-
-    --let reasonBlocksFromForwardsPrimaFacieReasonsTexts :: [[(ProblemReasonName, ProblemReasonText Forwards PrimaFacie, ProblemVariablesText, ProblemStrengthDegree)]] = fromReasonBlocks <$> problemForwardsPrimaFacieReasonsTexts
-    --messageFromShows reasonBlocksFromForwardsPrimaFacieReasonsTexts
-
-    --let reasonBlocksFromForwardsConclusiveReasonsTexts :: [[(ProblemReasonName, ProblemReasonText Forwards Conclusive, ProblemVariablesText, ProblemStrengthDegree)]] = fromReasonBlocks <$> problemForwardsConclusiveReasonsTexts
-    --messageFromShows reasonBlocksFromForwardsConclusiveReasonsTexts
-
-    --let reasonBlocksFromBackwardsPrimaFacieReasonsTexts :: [[(ProblemReasonName, ProblemReasonText Backwards PrimaFacie, ProblemVariablesText, ProblemStrengthDegree)]] = fromReasonBlocks <$> problemBackwardsPrimaFacieReasonsTexts
-    --messageFromShows reasonBlocksFromBackwardsPrimaFacieReasonsTexts
-
-    --let reasonBlocksFromBackwardsConclusiveReasonsTexts :: [[(ProblemReasonName, ProblemReasonText Backwards Conclusive, ProblemVariablesText, ProblemStrengthDegree)]] = fromReasonBlocks <$> problemBackwardsConclusiveReasonsTexts
-    --messageFromShows reasonBlocksFromBackwardsConclusiveReasonsTexts
-
-    messageFromShows10 "***ForwardsPrimaFacieReasons***" $ map _rbProblemReasonText <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts
-
-    let forwardsPremisesTexts :: [[([Text], Text)]] = map extractFromProblemReasonTextForwards . map _rbProblemReasonText <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts
-    messageFromShows forwardsPremisesTexts
-    messageFromShows10 "forwardsPremisesTexts" forwardsPremisesTexts
-
-    let forwardsPremisesTexts' :: [[([Text], Text)]] = map extractFromProblemReasonTextForwards . map _rbProblemReasonText <$> reasonBlocksFromForwardsConclusiveReasonsTexts
-    messageFromShows forwardsPremisesTexts'
-
-    let testFormula2 :: Text = pack "[~~(all x)~~[((F a) & ((F x) -> (F (g x)))) -> (F (g (g x)))] ->\n          (all x)[[(~(F a) v (F x)) v (F (g (g x)))] &\n               [(~(F a) v ~~~(F (g x))) v (F (g ((g x))))]]]"
-
-    let tf2 = formulaFromText testFormula2
-    putStrLn . pack . ppShow $ tf2
-
-    return ()
