@@ -38,6 +38,7 @@ import Text.Parsec.Text                 (Parser)
 import Text.Show.Pretty                 (ppShow)
 
 import Oscar.Formula                    (formulaFromText)
+import Oscar.Formula                    (Formula)
 import Oscar.Utilities                  (messageFromShow)
 import Oscar.Utilities                  (messageFromShows)
 import Oscar.Utilities                  (messageFromShows10)
@@ -258,6 +259,18 @@ data ReasonBlock (direction :: Direction) (defeasible :: Defeasibility) = Reason
     ,   _rbProblemStrengthDegree :: ProblemStrengthDegree
     }   deriving (Show)
 
+class ToDegree a where
+    toDegree :: a -> Degree
+
+instance ToDegree LispPositiveDouble where
+    toDegree = coerce
+
+instance ToDegree ProblemStrengthDegree where
+    toDegree = toDegree . (coerce :: ProblemStrengthDegree -> LispPositiveDouble)
+
+instance ToDegree (ReasonBlock direction defeasible) where
+    toDegree = toDegree . _rbProblemStrengthDegree
+
 extractFromProblemReasonTextForwards :: ProblemReasonText Forwards defeasible -> ([Text], Text)
 extractFromProblemReasonTextForwards = simpleParse p . coerce
     where
@@ -305,8 +318,65 @@ reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
                     d <- parserProblemStrengthDegree
                     return (t, d)
 
-testProblems :: FilePath -> IO ()
-testProblems filePath = do
+--
+
+type Degree = Double
+type Strength = Double
+
+data Problem = Problem
+    [(Formula, Degree)]        -- ^ premises
+    [(Formula, Degree)]        -- ^ interest
+    [(Formula, Strength)]      -- ^ forwards p.f.
+    [(Formula, Strength)]      -- ^ forwards conclusive
+    [(Formula, Strength)]      -- ^ backwards p.f.
+    [(Formula, Strength)]      -- ^ backwards conclusive
+  deriving (Show)
+
+type NDProblem = (ProblemNumber, ProblemDescription, Problem)
+
+ndProblemsM :: FilePath -> IO [NDProblem]
+ndProblemsM filePath = do
+    combinedProblems <- problemsTextM filePath
+    return $ ndProblem <$> problemTexts combinedProblems
+
+  where
+    ndProblem :: ProblemText -> NDProblem
+    ndProblem t = (number, description, problem)
+      where
+        (number, afterNumber) = splitAfterProblemNumber t
+        (description, afterDescription) = splitAfterProblemNumberText afterNumber
+        givenPremisesTextAndProblemJustificationDegrees = 
+            problemGivenPremiseTextAndProblemJustificationDegrees $ 
+                problemSectionText afterDescription
+        ultimateEpistemicInterestTextAndProblemInterestDegrees =
+            problemUltimateEpistemicInterestTextAndProblemInterestDegrees $
+                problemSectionText afterDescription
+
+        gpjd :: (ProblemGivenPremiseText, ProblemJustificationDegree) -> (Formula, Degree)
+        gpjd (gpt, ProblemJustificationDegree (LispPositiveDouble jd)) = 
+            (formulaFromText $ coerce gpt, jd)
+
+        ueiid :: (ProblemUltimateEpistemicInterestText, ProblemInterestDegree) -> (Formula, Degree)
+        ueiid (uei, ProblemInterestDegree (LispPositiveDouble iD)) = 
+            (formulaFromText $ coerce uei, iD)
+
+        reasonBlocksFromForwardsPrimaFacieReasonsTexts =
+            reasonBlocks $
+                problemSectionText afterDescription
+
+        fpfrts :: ReasonBlock Forwards PrimaFacie -> (Formula, Strength)
+        fpfrts rb = (formulaFromText $ coerce $ _rbProblemReasonText rb, toDegree rb)
+
+        problem = Problem
+            (gpjd <$> givenPremisesTextAndProblemJustificationDegrees)
+            (ueiid <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
+            (fpfrts <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts)
+            [] 
+            [] 
+            []
+
+testProblemsM :: FilePath -> IO ()
+testProblemsM filePath = do
     combinedProblems <- problemsTextM filePath
     messageFromShow combinedProblems
 
