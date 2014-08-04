@@ -5,10 +5,12 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ViewPatterns #-}
 module Oscar.Problem where
 
 import ClassyPrelude hiding (
@@ -333,14 +335,19 @@ data ForwardsReason = ForwardsReason [Formula] Formula
 type Degree = Double
 type Strength = Double
 
-data Problem = Problem
-    [(Formula, Degree)]        -- ^ premises
-    [(Formula, Degree)]        -- ^ interest
-    [(ForwardsReason, Strength)]      -- ^ forwards p.f.
-    [(Formula, Strength)]      -- ^ forwards conclusive
-    [(Formula, Strength)]      -- ^ backwards p.f.
-    [(Formula, Strength)]      -- ^ backwards conclusive
+data Named r = Named Text r
+data Degreed r = Degreed Degree r
+
+data Problem = Problem {
+    _premises :: [(Formula, Degree)]
+    ,
+    _interests :: [(Formula, Degree)]
+    ,
+    _forwardsPrimaFacieReasons :: [((ForwardsReason, Degree), Text)]
+    }
   deriving (Show)
+
+pattern BaseProblem p i fpfr <- Problem p i (map fst -> fpfr)
 
 type NDProblem = (ProblemNumber, ProblemDescription, Problem)
 
@@ -374,8 +381,8 @@ ndProblemsM filePath = do
             reasonBlocks $
                 problemSectionText afterDescription
 
-        fpfrts :: ReasonBlock Forwards PrimaFacie -> (ForwardsReason, Strength)
-        fpfrts rb = (booyah $ extractFromProblemReasonTextForwards $ _rbProblemReasonText rb, toDegree rb)
+        fpfrts :: ReasonBlock Forwards PrimaFacie -> ((ForwardsReason, Strength), Text)
+        fpfrts rb = ((booyah $ extractFromProblemReasonTextForwards $ _rbProblemReasonText rb, toDegree rb), case _rbProblemReasonName rb of ProblemReasonName x -> x)
           where
             booyah (prems,concl) = ForwardsReason (formulaFromText <$> prems) (formulaFromText concl)
 
@@ -383,6 +390,3 @@ ndProblemsM filePath = do
             (gpjd <$> givenPremisesTextAndProblemJustificationDegrees)
             (ueiid <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
             (fpfrts <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts)
-            [] 
-            [] 
-            []
