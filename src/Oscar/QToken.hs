@@ -3,10 +3,10 @@ module Oscar.QToken where
 
 import ClassyPrelude
 
-import Oscar.QUBS                   (Quantifier)
-import Oscar.QUBS                   (UnaryOp)
-import Oscar.QUBS                   (BinaryOp)
-import Oscar.QUBS                   (Symbol)
+import Oscar.QUBS                       (BinaryOp)
+import Oscar.QUBS                       (Quantifier)
+import Oscar.QUBS                       (Symbol)
+import Oscar.QUBS                       (UnaryOp)
 
 data QToken
     = QTokenUnaryOp !UnaryOp

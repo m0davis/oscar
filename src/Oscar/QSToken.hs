@@ -3,17 +3,17 @@ module Oscar.QSToken where
 
 import ClassyPrelude
 
-import Control.Monad.Free           (Free(Free))
-import Control.Monad.Free           (Free(Pure))
+import Control.Monad.Free               (Free(Free))
+import Control.Monad.Free               (Free(Pure))
 
-import Oscar.QUBS                         (Quantifier)
-import Oscar.QUBS                         (UnaryOp)
-import Oscar.QUBS                         (BinaryOp)
-import Oscar.QUBS                         (Symbol)
-import Oscar.QToken                       (QToken(QTokenUnaryOp))
-import Oscar.QToken                       (QToken(QTokenBinaryOp))
-import Oscar.QToken                       (QToken(QTokenQuantifier))
-import Oscar.QToken                       (QToken(QTokenSymbol))
+import Oscar.QToken                     (QToken(QTokenBinaryOp))
+import Oscar.QToken                     (QToken(QTokenQuantifier))
+import Oscar.QToken                     (QToken(QTokenSymbol))
+import Oscar.QToken                     (QToken(QTokenUnaryOp))
+import Oscar.QUBS                       (BinaryOp)
+import Oscar.QUBS                       (Quantifier)
+import Oscar.QUBS                       (Symbol)
+import Oscar.QUBS                       (UnaryOp)
 
 data QSToken
     = QSTokenUnaryOp !UnaryOp

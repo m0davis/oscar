@@ -3,12 +3,12 @@ module Oscar.DomainFunction where
 
 import ClassyPrelude
 
-import Control.Monad.Free           (Free(Free))
-import Control.Monad.Free           (Free(Pure))
-import Text.Show.Pretty             (ppShow)
+import Control.Monad.Free               (Free(Free))
+import Control.Monad.Free               (Free(Pure))
+import Text.Show.Pretty                 (ppShow)
 
-import Oscar.QUBS                   (Symbol)
-import Oscar.QSToken                (QSToken(QSTokenSymbol))
+import Oscar.QUBS                       (Symbol)
+import Oscar.QSToken                    (QSToken(QSTokenSymbol))
 
 -- | A DomainFunction represents 
 data DomainFunction

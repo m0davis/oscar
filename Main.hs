@@ -1,14 +1,13 @@
-{-# LANGUAGE NoImplicitPrelude #-}
---{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE NoMonomorphismRestriction #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Main where
@@ -17,46 +16,34 @@ import ClassyPrelude hiding (
     try, 
     undefined,
     )
-import Prelude (undefined)
+import Prelude                          (undefined)
 
-import Control.Applicative (many)
-import Control.Applicative (empty)
-import Control.Conditional hiding (unlessM)
-import Control.Monad (mzero)
-import Data.Coerce (coerce) 
-import Prelude (read)
+import Control.Applicative              (empty)
+import Control.Applicative              (many)
+import Control.Conditional              (guardM)
+import Control.Monad                    (mzero)
+import Data.Coerce                      (coerce) 
+import Prelude                          (read)
+import Text.Parsec                      (anyChar)
+import Text.Parsec                      (char)
+import Text.Parsec                      (eof)
+import Text.Parsec                      (lookAhead)
+import Text.Parsec                      (manyTill)
+import Text.Parsec                      (option)
+import Text.Parsec                      (runParser)
+import Text.Parsec                      (space)
+import Text.Parsec                      (spaces)
+import Text.Parsec                      (string)
+import Text.Parsec                      (try)
+import Text.Parsec.Text                 (Parser)
+import Text.Show.Pretty                 (ppShow)
 
---import Text.Parsec.Char             (alphaNum)
---import Text.Parsec.Char             (char)
---import Text.Parsec.Char             (space)
---import Text.Parsec.Char             (string)
---import Text.Parsec.Combinator       (many1)
---import Text.Parsec.Prim             (try)
-import Text.Parsec.Text             (Parser)
---import Text.Parsec.Combinator       (many1)
-
---import Text.Parsec (alphaNum)
-import Text.Parsec (anyChar)
-import Text.Parsec (char)
-import Text.Parsec (eof)
-import Text.Parsec (lookAhead)
---import Text.Parsec (many1)
-import Text.Parsec (manyTill)
-import Text.Parsec (option)
-import Text.Parsec (runParser)
-import Text.Parsec (space)
-import Text.Parsec (spaces)
-import Text.Parsec (string)
-import Text.Parsec (try)
-
-import Text.Show.Pretty (ppShow)
-
-import Oscar.Formula (formulaFromText)
-import Oscar.Utilities (simpleParse)
-import Oscar.Utilities (messageFromShow)
-import Oscar.Utilities (messageFromShows)
-import Oscar.Utilities (messageFromShows10)
-import Oscar.Utilities (precededBy)
+import Oscar.Formula                    (formulaFromText)
+import Oscar.Utilities                  (messageFromShow)
+import Oscar.Utilities                  (messageFromShows)
+import Oscar.Utilities                  (messageFromShows10)
+import Oscar.Utilities                  (precededBy)
+import Oscar.Utilities                  (simpleParse)
 
 --
 newtype ProblemsText = ProblemsText Text

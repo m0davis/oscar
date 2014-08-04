@@ -5,9 +5,9 @@ module Oscar.Parenthesis where
 
 import ClassyPrelude
 
-import Control.Monad.Free           (Free(Free))
-import Control.Monad.Free           (Free(Pure))
-import Numeric.Natural              (Natural)
+import Control.Monad.Free               (Free(Free))
+import Control.Monad.Free               (Free(Pure))
+import Numeric.Natural                  (Natural)
 
 -- | Parentheses are like this y(). See 'freeFromParentheses'
 data Parenthesis = OpenParenthesis | CloseParenthesis
