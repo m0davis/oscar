@@ -1,5 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
 module Main where
 
 import ClassyPrelude
@@ -18,8 +19,8 @@ import Oscar.Problem                    (Problems)
 import Oscar.Utilities                  (simpleParse)
 import Oscar.Utilities                  ((:::))
 
-
-
+combinedProblems :: FilePath ::: Problems
+combinedProblems = Tagged $ fpFromString "combined-problems"
 
 --
 testR :: ProblemReasonText Backwards Conclusive
@@ -33,5 +34,5 @@ main = do
     ----print $ simpleParse enbracedListParser (pack "{Q1 & Q2, ~(Q1 & (Q2 & Q3))}")
     --print $ extractFromProblemReasonTextBackwards testR
     
-    problems <- problemsM $ Tagged $ fpFromString "combined-problems"
+    problems <- problemsM combinedProblems
     sequence_ $ putStrLn . pack . ppShow <$> problems
