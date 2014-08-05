@@ -34,6 +34,7 @@ import Text.Parsec                      (eof)
 import Text.Parsec                      (getInput)
 import Text.Parsec                      (lookAhead)
 import Text.Parsec                      (manyTill)
+import Text.Parsec                      (notFollowedBy)
 import Text.Parsec                      (option)
 import Text.Parsec                      (runParser)
 import Text.Parsec                      (space)
@@ -50,6 +51,7 @@ import Oscar.Utilities                  (messageFromShows)
 import Oscar.Utilities                  (messageFromShows10)
 import Oscar.Utilities                  (precededBy)
 import Oscar.Utilities                  (simpleParse)
+import Oscar.Utilities                  (withInput)
 
 --
 newtype ProblemsText = ProblemsText Text
@@ -255,10 +257,6 @@ parserProblemReasonName :: Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
 
 --
-testR :: ProblemReasonText Forwards Conclusive
-testR = ProblemReasonText $ pack "{(Q1 & Q2) , ~(Q1 & (Q2 & Q3))} ||=> ~Q3"
-
---
 newtype ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility) = ProblemReasonText Text
   deriving (Show)
 
@@ -294,17 +292,37 @@ extractFromProblemReasonTextForwards = Tagged . simpleParse p . coerce
         conclusionText <- pack <$> many anyChar
         return (premiseTexts, conclusionText)
 
+extractFromProblemReasonTextBackwards ::
+    ProblemReasonText Backwards defeasible ->
+    ([Text], [Text], Text) ::: ProblemReasonText Backwards defeasible
+extractFromProblemReasonTextBackwards = Tagged . simpleParse p . coerce
+  where
+    p :: Parser ([Text], [Text], Text)
+    p = do
+        forwardsPremiseTextsText <- manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
+        forwardsPremiseTexts <- withInput (pack forwardsPremiseTextsText) enbracedListParser
+        spaces
+        (backwardsPremiseTexts, _) <- enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
+        --let backwardsPremiseTexts = [pack ""]
+        conclusionText <- pack <$> many anyChar
+        return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
+      where
+
+
 enbracedListParser :: Parser [Text]
 enbracedListParser = do
     _ <- char '{'
     (inner, _) <- (pack <$> many anyChar) `precededBy` char '}'
-    let texts = simpleParse p inner
+    let texts = simpleParse (try emptylist <|> p) inner
     return texts
   where
+    emptylist :: Parser [Text]
+    emptylist = spaces >> eof >> return []
+
     p :: Parser [Text]
     p = do
         (firstText, restText) <- 
-            (many space *> (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <* many space) 
+            (many space *> (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <* many space)
                 `precededBy` 
             (lookAhead $ (try (many space >> eof) *> pure False) <|> try (char ',' *> many anyChar *> pure True))
         if restText then do
@@ -337,6 +355,9 @@ reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
 data ForwardsReason = ForwardsReason ![Formula] !Formula
   deriving (Show)
 
+data BackwardsReason = BackwardsReason ![Formula] ![Formula] !Formula
+  deriving (Show)
+
 --
 
 type Degree = Double
@@ -347,19 +368,24 @@ data Named r = Named { _value :: !r, _namedValue :: !Text }
 data Degreed r = Degreed Degree r
 
 data Problem = Problem
-    { _problemNumber             :: !ProblemNumber
-    , _problemDescription        :: !ProblemDescription
-    , _premises                  :: ![(Formula, ProblemJustificationDegree)]
-    , _interests                 :: ![(Formula, ProblemInterestDegree)]
-    , _forwardsPrimaFacieReasons :: ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
-    , _forwardsConclusiveReasons :: ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+    { _problemNumber              :: !ProblemNumber
+    , _problemDescription         :: !ProblemDescription
+    , _premises                   :: ![(Formula, ProblemJustificationDegree)]
+    , _interests                  :: ![(Formula, ProblemInterestDegree)]
+    , _forwardsPrimaFacieReasons  :: ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+    , _forwardsConclusiveReasons  :: ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)] -- TODO: strength must always be 1
+    , _backwardsPrimaFacieReasons :: ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
+    , _backwardsConclusiveReasons :: ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)] -- TODO: strength must always be 1
     }
   deriving (Show)
 
 stripMeta :: (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) -> (ForwardsReason, ProblemStrengthDegree)
 stripMeta (_, r, d) = (r, d)
 
-pattern BaseProblem p i fpfr fcr <- Problem n d p i (map stripMeta -> fpfr) (map stripMeta -> fcr)
+stripMeta' :: (ProblemReasonName, BackwardsReason, ProblemStrengthDegree) -> (BackwardsReason, ProblemStrengthDegree)
+stripMeta' (_, r, d) = (r, d)
+
+pattern BaseProblem p i fpfr fcr bpfr bcr <- Problem n d p i (map stripMeta -> fpfr) (map stripMeta -> fcr) (map stripMeta' -> bpfr) (map stripMeta' -> bcr)
 
 problemsM :: FilePath -> IO [Problem]
 problemsM filePath = do
@@ -374,6 +400,8 @@ problemsM filePath = do
         (first (formulaFromText . coerce) <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
         (fpfrts <$> (reasonBlocksFromForwardsPrimaFacieReasonsTexts))
         (fpfrts <$> (reasonBlocksFromForwardsConclusiveReasonsTexts))
+        (bpfrts <$> (reasonBlocksFromBackwardsPrimaFacieReasonsTexts))
+        (bpfrts <$> (reasonBlocksFromBackwardsConclusiveReasonsTexts))
       where
         (number, afterNumber) = splitAfterProblemNumber t
 
@@ -397,6 +425,16 @@ problemsM filePath = do
             reasonBlocks $
                 problemSectionText afterDescription
 
+        reasonBlocksFromBackwardsPrimaFacieReasonsTexts :: [ReasonBlock Backwards PrimaFacie]
+        reasonBlocksFromBackwardsPrimaFacieReasonsTexts =
+            reasonBlocks $
+                problemSectionText afterDescription
+
+        reasonBlocksFromBackwardsConclusiveReasonsTexts :: [ReasonBlock Backwards Conclusive]
+        reasonBlocksFromBackwardsConclusiveReasonsTexts =
+            reasonBlocks $
+                problemSectionText afterDescription
+
 fpfrts :: ReasonBlock Forwards defeasible -> (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,)
     (_rbProblemReasonName rb)
@@ -405,3 +443,14 @@ fpfrts rb = (,,)
   where
     fr = uncurry ForwardsReason . booyah . untag . extractFromProblemReasonTextForwards
     booyah = first (map formulaFromText) . second formulaFromText
+
+
+bpfrts :: forall defeasible. ReasonBlock Backwards defeasible -> (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+bpfrts rb = (,,)
+    (_rbProblemReasonName rb)
+    (br $ _rbProblemReasonText rb)
+    (_rbProblemStrengthDegree rb)
+  where
+    br = booyah . untag . extractFromProblemReasonTextBackwards 
+
+    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
