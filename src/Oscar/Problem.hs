@@ -52,13 +52,16 @@ import Oscar.Utilities                  (messageFromShows10)
 import Oscar.Utilities                  (precededBy)
 import Oscar.Utilities                  (simpleParse)
 import Oscar.Utilities                  (withInput)
+import Oscar.Utilities                  ((:::))
 
 --
 newtype ProblemsText = ProblemsText Text
   deriving (Show)
 
-problemsTextM :: FilePath -> IO ProblemsText
-problemsTextM = map ProblemsText . readFile
+data Problems
+
+problemsTextM :: FilePath ::: Problems -> IO ProblemsText
+problemsTextM = map ProblemsText . readFile . untag
 
 --
 newtype ProblemText = ProblemText Text
@@ -279,8 +282,6 @@ instance ToDegree ProblemStrengthDegree where
 instance ToDegree (ReasonBlock direction defeasible) where
     toDegree = toDegree . _rbProblemStrengthDegree
 
-type a ::: b = Tagged b a
-
 extractFromProblemReasonTextForwards ::
     ProblemReasonText Forwards defeasible ->
     ([Text], Text) ::: ProblemReasonText Forwards defeasible
@@ -387,7 +388,7 @@ stripMeta' (_, r, d) = (r, d)
 
 pattern BaseProblem p i fpfr fcr bpfr bcr <- Problem n d p i (map stripMeta -> fpfr) (map stripMeta -> fcr) (map stripMeta' -> bpfr) (map stripMeta' -> bcr)
 
-problemsM :: FilePath -> IO [Problem]
+problemsM :: FilePath ::: Problems -> IO [Problem]
 problemsM filePath = do
     combinedProblems <- problemsTextM filePath
     return $ problem <$> problemTexts combinedProblems

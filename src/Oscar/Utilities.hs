@@ -1,5 +1,6 @@
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 module Oscar.Utilities where
 
 import ClassyPrelude hiding (
@@ -16,6 +17,7 @@ import Control.Monad.Free               (Free(Pure))
 import Data.Either.Utils                (maybeToEither)
 import Data.Pointed                     (point)
 import Data.Pointed                     (Pointed)
+import Data.Tagged                      (Tagged(Tagged))
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (getInput)
 import Text.Parsec                      (lookAhead)
@@ -27,6 +29,8 @@ import Text.Parsec                      (setInput)
 import Text.Parsec                      (try)
 import Text.Parsec.Text                 (Parser)
 import Text.Show.Pretty                 (ppShow)
+
+type a ::: b = Tagged b a
 
 simplify :: Free [] a -> Free [] a
 simplify (Free [a]) = simplify a
