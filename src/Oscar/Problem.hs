@@ -9,6 +9,7 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 module Oscar.Problem where
@@ -24,6 +25,8 @@ import Control.Applicative              (many)
 import Control.Conditional              (guardM)
 import Control.Monad                    (mzero)
 import Data.Coerce                      (coerce) 
+import Data.Tagged                      (Tagged(Tagged))
+import Data.Tagged                      (untag)
 import Prelude                          (read)
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (char)
@@ -273,8 +276,12 @@ instance ToDegree ProblemStrengthDegree where
 instance ToDegree (ReasonBlock direction defeasible) where
     toDegree = toDegree . _rbProblemStrengthDegree
 
-extractFromProblemReasonTextForwards :: ProblemReasonText Forwards defeasible -> ([Text], Text)
-extractFromProblemReasonTextForwards = simpleParse p . coerce
+type a ::: b = Tagged b a
+
+extractFromProblemReasonTextForwards :: 
+    ProblemReasonText Forwards defeasible -> 
+    ([Text], Text) ::: ProblemReasonText Forwards defeasible
+extractFromProblemReasonTextForwards = Tagged . simpleParse p . coerce
   where
     p :: Parser ([Text], Text)
     p = do
@@ -335,17 +342,19 @@ data ForwardsReason = ForwardsReason [Formula] Formula
 type Degree = Double
 type Strength = Double
 
-data Named r = Named Text r
+data Named r = Named { _value :: r, _namedValue :: Text }
+  deriving (Show)
 data Degreed r = Degreed Degree r
 
 data Problem = Problem 
-    { _premises                  :: [(Formula, Degree)]
-    , _interests                 :: [(Formula, Degree)]
-    , _forwardsPrimaFacieReasons :: [((ForwardsReason, Degree), Text)]
+    { _premises                  :: [(Formula, ProblemJustificationDegree)]
+    , _interests                 :: [(Formula, ProblemInterestDegree)]
+    --, _forwardsPrimaFacieReasons :: [((ForwardsReason, Degree), Text)]
+    , _forwardsPrimaFacieReasons :: [Named (ForwardsReason, Degree)]
     }
   deriving (Show)
 
-pattern BaseProblem p i fpfr <- Problem p i (map fst -> fpfr)
+pattern BaseProblem p i fpfr <- Problem p i (map _namedValue -> fpfr)
 
 type NDProblem = (ProblemNumber, ProblemDescription, Problem)
 
@@ -369,24 +378,21 @@ ndProblemsM filePath = do
             problemUltimateEpistemicInterestTextAndProblemInterestDegrees $
                 problemSectionText afterDescription
 
-        gpjd :: (ProblemGivenPremiseText, ProblemJustificationDegree) -> (Formula, Degree)
-        gpjd (gpt, ProblemJustificationDegree (LispPositiveDouble jd)) = 
-            (formulaFromText $ coerce gpt, jd)
-
-        ueiid :: (ProblemUltimateEpistemicInterestText, ProblemInterestDegree) -> (Formula, Degree)
-        ueiid (uei, ProblemInterestDegree (LispPositiveDouble iD)) = 
-            (formulaFromText $ coerce uei, iD)
-
         reasonBlocksFromForwardsPrimaFacieReasonsTexts =
             reasonBlocks $
                 problemSectionText afterDescription
 
-        fpfrts :: ReasonBlock Forwards PrimaFacie -> ((ForwardsReason, Strength), Text)
-        fpfrts rb = ((booyah $ extractFromProblemReasonTextForwards $ _rbProblemReasonText rb, toDegree rb), case _rbProblemReasonName rb of ProblemReasonName x -> x)
-          where
-            booyah (prems,concl) = ForwardsReason (formulaFromText <$> prems) (formulaFromText concl)
-
         problem = Problem
-            (gpjd <$> givenPremisesTextAndProblemJustificationDegrees)
-            (ueiid <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
+            --(gpjd <$> givenPremisesTextAndProblemJustificationDegrees)
+            (first (formulaFromText . coerce) <$> givenPremisesTextAndProblemJustificationDegrees)
+            (first (formulaFromText . coerce) <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
             (fpfrts <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts)
+
+fpfrts :: ReasonBlock Forwards PrimaFacie -> Named (ForwardsReason, Strength)
+fpfrts rb = 
+        (uncurry ForwardsReason $ booyah $ untag . extractFromProblemReasonTextForwards $ _rbProblemReasonText rb, toDegree rb)
+        `Named`
+        (case _rbProblemReasonName rb of ProblemReasonName x -> x)
+  where
+    booyah = first (map formulaFromText) . second formulaFromText
+    --booyah (prems,concl) = ForwardsReason (formulaFromText <$> prems) (formulaFromText concl)
