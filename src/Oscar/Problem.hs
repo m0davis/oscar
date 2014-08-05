@@ -258,10 +258,10 @@ newtype ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility)
   deriving (Show)
 
 data ReasonBlock (direction :: Direction) (defeasible :: Defeasibility) = ReasonBlock
-    {   _rbProblemReasonName     :: ProblemReasonName
-    ,   _rbProblemReasonText     :: (ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility))
-    ,   _rbProblemVariablesText  :: ProblemVariablesText
-    ,   _rbProblemStrengthDegree :: ProblemStrengthDegree
+    {   _rbProblemReasonName     :: !ProblemReasonName
+    ,   _rbProblemReasonText     :: !(ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility))
+    ,   _rbProblemVariablesText  :: !ProblemVariablesText
+    ,   _rbProblemStrengthDegree :: !ProblemStrengthDegree
     }   deriving (Show)
 
 class ToDegree a where
@@ -325,7 +325,7 @@ reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
                 return (t, d)
 
 --
-data ForwardsReason = ForwardsReason [Formula] Formula
+data ForwardsReason = ForwardsReason ![Formula] !Formula
   deriving (Show)
 
 --
@@ -333,16 +333,16 @@ data ForwardsReason = ForwardsReason [Formula] Formula
 type Degree = Double
 type Strength = Double
 
-data Named r = Named { _value :: r, _namedValue :: Text }
+data Named r = Named { _value :: !r, _namedValue :: !Text }
   deriving (Show)
 data Degreed r = Degreed Degree r
 
 data Problem = Problem 
-    { _problemNumber             :: ProblemNumber
-    , _problemDescription        :: ProblemDescription
-    , _premises                  :: [(Formula, ProblemJustificationDegree)]
-    , _interests                 :: [(Formula, ProblemInterestDegree)]
-    , _forwardsPrimaFacieReasons :: [(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+    { _problemNumber             :: !ProblemNumber
+    , _problemDescription        :: !ProblemDescription
+    , _premises                  :: ![(Formula, ProblemJustificationDegree)]
+    , _interests                 :: ![(Formula, ProblemInterestDegree)]
+    , _forwardsPrimaFacieReasons :: ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
     }
   deriving (Show)
 
@@ -379,7 +379,7 @@ problemsM filePath = do
         reasonBlocksFromForwardsPrimaFacieReasonsTexts =
             reasonBlocks $
                 problemSectionText afterDescription
-                
+
 fpfrts :: ReasonBlock Forwards PrimaFacie -> (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,) 
     (_rbProblemReasonName rb) 
