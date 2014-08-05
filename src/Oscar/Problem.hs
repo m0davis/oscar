@@ -309,16 +309,13 @@ enbracedListParser = do
 reasonBlocks :: forall direction defeasible.
     (ProblemSectionText (Reasons (direction :: Direction) (defeasible :: Defeasibility))) ->
     [ReasonBlock (direction :: Direction) (defeasible :: Defeasibility)]
-    --  [(ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)]
 reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
   where
-    --p :: Parser (ProblemReasonName, ProblemReasonText (direction :: Direction) (defeasible :: Defeasibility), ProblemVariablesText, ProblemStrengthDegree)
     p :: Parser (ReasonBlock (direction :: Direction) (defeasible :: Defeasibility))
     p = do
         n <- parserProblemReasonName
         spaces
         (t, (v, d)) <- many anyChar `precededBy` p'
-        --return (n, coerce  . (pack :: String -> Text) $ t, v, d)
         return $ ReasonBlock n (coerce  . (pack :: String -> Text) $ t) v d
       where
             p' :: Parser (ProblemVariablesText, ProblemStrengthDegree)
@@ -330,12 +327,6 @@ reasonBlocks = simpleParse (many (try p) <* many space <* eof) . coerce
 --
 data ForwardsReason = ForwardsReason [Formula] Formula
   deriving (Show)
-
---foo :: ProblemReasonText Forwards PrimaFacie -> ([Formula], Formula)
---foo = simpleParse p . coerce
---  where
---    p :: Parser ([Formula], Formula)
---    p = do
 
 --
 
@@ -385,7 +376,6 @@ ndProblemsM filePath = do
                 problemSectionText afterDescription
 
         problem = Problem
-            --(gpjd <$> givenPremisesTextAndProblemJustificationDegrees)
             (first (formulaFromText . coerce) <$> givenPremisesTextAndProblemJustificationDegrees)
             (first (formulaFromText . coerce) <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
             (fpfrts <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts)
@@ -398,4 +388,3 @@ fpfrts rb = (,,)
   where
     fr = uncurry ForwardsReason . booyah . untag . extractFromProblemReasonTextForwards
     booyah = first (map formulaFromText) . second formulaFromText
-    --booyah (prems,concl) = ForwardsReason (formulaFromText <$> prems) (formulaFromText concl)
