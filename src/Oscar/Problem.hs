@@ -349,12 +349,14 @@ data Degreed r = Degreed Degree r
 data Problem = Problem 
     { _premises                  :: [(Formula, ProblemJustificationDegree)]
     , _interests                 :: [(Formula, ProblemInterestDegree)]
-    --, _forwardsPrimaFacieReasons :: [((ForwardsReason, Degree), Text)]
-    , _forwardsPrimaFacieReasons :: [Named (ForwardsReason, Degree)]
+    , _forwardsPrimaFacieReasons :: [(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
     }
   deriving (Show)
 
-pattern BaseProblem p i fpfr <- Problem p i (map _namedValue -> fpfr)
+stripMeta :: (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) -> (ForwardsReason, ProblemStrengthDegree)
+stripMeta (_, r, d) = (r, d)
+
+pattern BaseProblem p i fpfr <- Problem p i (map stripMeta -> fpfr)
 
 type NDProblem = (ProblemNumber, ProblemDescription, Problem)
 
@@ -388,11 +390,12 @@ ndProblemsM filePath = do
             (first (formulaFromText . coerce) <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
             (fpfrts <$> reasonBlocksFromForwardsPrimaFacieReasonsTexts)
 
-fpfrts :: ReasonBlock Forwards PrimaFacie -> Named (ForwardsReason, Strength)
-fpfrts rb = 
-        (uncurry ForwardsReason $ booyah $ untag . extractFromProblemReasonTextForwards $ _rbProblemReasonText rb, toDegree rb)
-        `Named`
-        (case _rbProblemReasonName rb of ProblemReasonName x -> x)
+fpfrts :: ReasonBlock Forwards PrimaFacie -> (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+fpfrts rb = (,,) 
+    (_rbProblemReasonName rb) 
+    (fr $ _rbProblemReasonText rb) 
+    (_rbProblemStrengthDegree rb)
   where
+    fr = uncurry ForwardsReason . booyah . untag . extractFromProblemReasonTextForwards
     booyah = first (map formulaFromText) . second formulaFromText
     --booyah (prems,concl) = ForwardsReason (formulaFromText <$> prems) (formulaFromText concl)
