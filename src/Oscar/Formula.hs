@@ -103,7 +103,7 @@ pattern RedundantParenthesesP x
 -- This defines the following lenses:
 -- | > (++) = mappend
 makeFormula :: Free [] QSToken -> Formula
-makeFormula = mk . traceShowId
+makeFormula = mk
   where
     mk = \case
         BinaryOpP l o r             -> FormulaBinary 
@@ -142,4 +142,3 @@ formulaFromText = id
     . makeQSTokenTree
     . freeFromParentheses id
     . makePQTokens
-    . traceShowId
