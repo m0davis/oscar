@@ -5,9 +5,9 @@ import ClassyPrelude
 
 import Text.Show.Pretty                 (ppShow)
 
-import Oscar.Problem                    (ndProblemsM)
+import Oscar.Problem                    (problemsM)
 
 main :: IO ()
 main = do
-    problems <- ndProblemsM $ fpFromString "combined-problems"
+    problems <- problemsM $ fpFromString "combined-problems"
     putStrLn . pack . ppShow $ problems
