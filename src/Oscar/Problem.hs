@@ -379,6 +379,7 @@ problemsM filePath = do
         reasonBlocksFromForwardsPrimaFacieReasonsTexts =
             reasonBlocks $
                 problemSectionText afterDescription
+                
 fpfrts :: ReasonBlock Forwards PrimaFacie -> (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,) 
     (_rbProblemReasonName rb) 
