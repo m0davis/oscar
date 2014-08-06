@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
---{-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
 import ClassyPrelude
@@ -18,14 +18,15 @@ import Oscar.Problem                    (Direction(Backwards))
 import Oscar.Problem                    (Defeasibility(Conclusive))
 import Oscar.Problem                    (ƮProblem)
 import Oscar.Utilities                  (simpleParse)
-import Oscar.Utilities                  ((:::))
+--import Oscar.Utilities                  ((⁞)) -- TODO report bug in GHC
+import Oscar.Utilities                  
 import Oscar.Utilities                  (ƭ)
 
-combinedProblems :: FilePath ::: [ƮProblem]
+combinedProblems :: FilePath ⁞ [ƮProblem]
 combinedProblems = Tagged $ fpFromString "combined-problems"
 
 --
-testR :: Text ::: ƮReason Backwards Conclusive
+testR :: Text ⁞ ƮReason Backwards Conclusive
 testR = ƭ $ pack "{P} {(Q1 & Q2) , ~(Q1 & (Q2 & Q3))} ||=> ~Q3"
 
 main :: IO ()
