@@ -18,6 +18,7 @@ import Data.Either.Utils                (maybeToEither)
 import Data.Pointed                     (point)
 import Data.Pointed                     (Pointed)
 import Data.Tagged                      (Tagged(Tagged))
+import Data.Tagged                      (unTagged)
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (getInput)
 import Text.Parsec                      (lookAhead)
@@ -31,6 +32,12 @@ import Text.Parsec.Text                 (Parser)
 import Text.Show.Pretty                 (ppShow)
 
 type a ::: b = Tagged b a
+
+ƭ :: a -> Tagged b a
+ƭ = Tagged
+
+unƭ :: Tagged b a -> a
+unƭ = unTagged
 
 simplify :: Free [] a -> Free [] a
 simplify (Free [a]) = simplify a
