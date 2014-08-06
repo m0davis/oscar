@@ -307,16 +307,16 @@ enbracedListParser = do
             return [firstText]
 
 reasonBlocks ∷ forall direction defeasible.
-    Text ::: ƮSection (Reasons direction defeasible) →
-    [ReasonBlock direction defeasible]
+    (Text ::: ƮSection (Reasons (direction ∷ Direction) (defeasible ∷ Defeasibility))) →
+    [ReasonBlock (direction ∷ Direction) (defeasible ∷ Defeasibility)]
 reasonBlocks = simpleParse (many (try p) <* many space <* eof) . unƭ
   where
-    p ∷ Parser (ReasonBlock direction defeasible)
+    p ∷ Parser (ReasonBlock (direction ∷ Direction) (defeasible ∷ Defeasibility))
     p = do
         n ← parserProblemReasonName
         spaces
         (t, (v, d)) ← many anyChar `precededBy` p'
-        return $ ReasonBlock n (coerce . (pack ∷ String → Text) $ t) v d
+        return $ ReasonBlock n (coerce  . (pack ∷ String → Text) $ t) v d
       where
         p' ∷ Parser (Text ::: ƮProblemVariables, ProblemStrengthDegree)
         p' = do
