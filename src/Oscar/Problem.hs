@@ -130,13 +130,7 @@ splitAfterProblemNumberText = simpleParse p . coerce
         return (n, ƭ t)
 
 --
-class IsAKind k where
-
-instance IsAKind GivenPremises
-instance IsAKind UltimateEpistemicInterests
-instance IsAKind (Reasons direction defeasible)
-
-data IsAKind kind => ƮSection kind
+data ƮSection kind
 
 class HasSection s where
     section ∷ s → Section
