@@ -86,20 +86,20 @@ newtype ProblemNumber = ProblemNumber Int
 splitAfterProblemNumber :: Text ::: ƮProblem -> (ProblemNumber, Text ::: ƮAfter ProblemNumber)
 splitAfterProblemNumber = simpleParse p . unƭ
   where
-        p :: Parser (ProblemNumber, Text ::: ƮAfter ProblemNumber)
-        p = do
-            n <- ProblemNumber . read <$> manyTill anyChar (lookAhead . try $ space)
-            t <- pack <$> many anyChar
-            return (n, ƭ t)
+    p :: Parser (ProblemNumber, Text ::: ƮAfter ProblemNumber)
+    p = do
+        n <- ProblemNumber . read <$> manyTill anyChar (lookAhead . try $ space)
+        t <- pack <$> many anyChar
+        return (n, ƭ t)
 
 --
 data Section
-    =   Section'GivenPremises
-    |   Section'UltimateEpistemicInterests
-    |   Section'ForwardsPrimaFacieReasons
-    |   Section'ForwardsConclusiveReasons
-    |   Section'BackwardsPrimaFacieReasons
-    |   Section'BackwardsConclusiveReasons
+    = Section'GivenPremises
+    | Section'UltimateEpistemicInterests
+    | Section'ForwardsPrimaFacieReasons
+    | Section'ForwardsConclusiveReasons
+    | Section'BackwardsPrimaFacieReasons
+    | Section'BackwardsConclusiveReasons
   deriving (Eq, Show)
 
 sectionParser :: Parser Section
