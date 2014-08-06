@@ -1,0 +1,4 @@
+Version history:
+
+0.1.0.0: 
+    (feature) The file 'combined-problems' is now parsed into [Problems], which encodes the full syntactic structure.
