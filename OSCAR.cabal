@@ -14,6 +14,7 @@ executable OSCAR
         Oscar.DomainFunction
         Oscar.Formula
         Oscar.Parenthesis
+        Oscar.Problem
         Oscar.PQToken
         Oscar.QSToken
         Oscar.QToken
