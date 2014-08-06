@@ -58,15 +58,13 @@ import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  (unƭ)
 
 --
-data ƮProblems
+data ƮProblem
 
-problemsTextM :: FilePath ::: ƮProblems -> IO (Text ::: ƮProblems)
+problemsTextM :: FilePath ::: [ƮProblem] -> IO (Text ::: [ƮProblem])
 problemsTextM = map ƭ . readFile . unƭ
 
 --
-data ƮProblem
-
-problemTexts :: Text ::: ƮProblems -> [Text ::: ƮProblem]
+problemTexts :: Text ::: [ƮProblem] -> [Text ::: ƮProblem]
 problemTexts = simpleParse (many p) . unƭ
   where
     p :: Parser (Text ::: ƮProblem)
@@ -382,7 +380,7 @@ stripMeta' (_, r, d) = (r, d)
 
 pattern BaseProblem p i fpfr fcr bpfr bcr <- Problem n d p i (map stripMeta -> fpfr) (map stripMeta -> fcr) (map stripMeta' -> bpfr) (map stripMeta' -> bcr)
 
-problemsM :: FilePath ::: ƮProblems -> IO [Problem]
+problemsM :: FilePath ::: [ƮProblem] -> IO [Problem]
 problemsM filePath = do
     combinedProblems <- problemsTextM filePath
     return $ problem <$> problemTexts combinedProblems

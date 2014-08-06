@@ -16,12 +16,12 @@ import Oscar.Problem                    (enbracedListParser)
 import Oscar.Problem                    (ƮReason)
 import Oscar.Problem                    (Direction(Backwards))
 import Oscar.Problem                    (Defeasibility(Conclusive))
-import Oscar.Problem                    (ƮProblems)
+import Oscar.Problem                    (ƮProblem)
 import Oscar.Utilities                  (simpleParse)
 import Oscar.Utilities                  ((:::))
 import Oscar.Utilities                  (ƭ)
 
-combinedProblems :: FilePath ::: ƮProblems
+combinedProblems :: FilePath ::: [ƮProblem]
 combinedProblems = Tagged $ fpFromString "combined-problems"
 
 --
