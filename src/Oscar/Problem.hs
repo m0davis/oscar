@@ -105,15 +105,15 @@ data Section
 sectionParser ∷ Parser Section
 sectionParser =
     empty
-    <|> string "Given premises:"               `if_then` Section'GivenPremises
-    <|> string "Ultimate epistemic interests:" `if_then` Section'UltimateEpistemicInterests
-    <|> string "FORWARDS PRIMA FACIE REASONS"  `if_then` Section'ForwardsPrimaFacieReasons
-    <|> string "FORWARDS CONCLUSIVE REASONS"   `if_then` Section'ForwardsConclusiveReasons
-    <|> string "BACKWARDS PRIMA FACIE REASONS" `if_then` Section'BackwardsPrimaFacieReasons
-    <|> string "BACKWARDS CONCLUSIVE REASONS"  `if_then` Section'BackwardsConclusiveReasons
+    <|> string "Given premises:"               **> Section'GivenPremises
+    <|> string "Ultimate epistemic interests:" **> Section'UltimateEpistemicInterests
+    <|> string "FORWARDS PRIMA FACIE REASONS"  **> Section'ForwardsPrimaFacieReasons
+    <|> string "FORWARDS CONCLUSIVE REASONS"   **> Section'ForwardsConclusiveReasons
+    <|> string "BACKWARDS PRIMA FACIE REASONS" **> Section'BackwardsPrimaFacieReasons
+    <|> string "BACKWARDS CONCLUSIVE REASONS"  **> Section'BackwardsConclusiveReasons
   where
-    if_then ∷ forall a b. Parser a → b → Parser b
-    if_then p t = pure t <* try p
+    (**>) ∷ Parser a → b → Parser b
+    p **> t = try p *> pure t
 
 --
 newtype ProblemDescription = ProblemDescription Text
@@ -122,12 +122,12 @@ newtype ProblemDescription = ProblemDescription Text
 splitAfterProblemNumberText ∷ Text ::: ƮAfter ProblemNumber → (ProblemDescription, Text ::: ƮAfter ProblemDescription)
 splitAfterProblemNumberText = simpleParse p . coerce
   where
-        p ∷ Parser (ProblemDescription, Text ::: ƮAfter ProblemDescription)
-        p = do
-            _ ← many space
-            n ← ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
-            t ← pack <$> many anyChar
-            return (n, ƭ t)
+    p ∷ Parser (ProblemDescription, Text ::: ƮAfter ProblemDescription)
+    p = do
+        _ ← many space
+        n ← ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
+        t ← pack <$> many anyChar
+        return (n, ƭ t)
 
 --
 class IsAKind k where
@@ -138,14 +138,11 @@ instance IsAKind (Reasons direction defeasible)
 
 data IsAKind kind => ƮSection kind
 
---newtype IsAKind kind => ProblemSectionText kind = ProblemSectionText Text
---  deriving (Show)
-
 class HasSection s where
     section ∷ s → Section
 
-data GivenPremises              = GivenPremises
-data UltimateEpistemicInterests = UltimateEpistemicInterests
+data GivenPremises
+data UltimateEpistemicInterests
 
 data Direction = Forwards | Backwards
   deriving (Show)
@@ -153,7 +150,7 @@ data Direction = Forwards | Backwards
 data Defeasibility = PrimaFacie | Conclusive
   deriving (Show)
 
-data Reasons (direction ∷ Direction) (defeasible ∷ Defeasibility) = Reasons
+data Reasons (direction ∷ Direction) (defeasible ∷ Defeasibility)
 
 instance HasSection GivenPremises                  where section _ = Section'GivenPremises
 instance HasSection UltimateEpistemicInterests     where section _ = Section'UltimateEpistemicInterests
