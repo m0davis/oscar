@@ -207,11 +207,11 @@ data ƮGivenPremise
 problemGivenPremiseTextAndProblemJustificationDegrees ∷ Text ::: ƮSection GivenPremises → [(Text ::: ƮGivenPremise, ProblemJustificationDegree)]
 problemGivenPremiseTextAndProblemJustificationDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . unƭ
   where
-        p ∷ Parser (Text ::: ƮGivenPremise, ProblemJustificationDegree)
-        p = do
-            spaces
-            (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
-            return (ƭ . pack $ t, d)
+    p ∷ Parser (Text ::: ƮGivenPremise, ProblemJustificationDegree)
+    p = do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+        return (ƭ . pack $ t, d)
 
 --
 newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
@@ -225,12 +225,12 @@ data ƮUltimateEpistemicInterest
 
 problemUltimateEpistemicInterestTextAndProblemInterestDegrees ∷ Text ::: ƮSection UltimateEpistemicInterests → [(Text ::: ƮUltimateEpistemicInterest, ProblemInterestDegree)]
 problemUltimateEpistemicInterestTextAndProblemInterestDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . unƭ
-    where
-        p ∷ Parser (Text ::: ƮUltimateEpistemicInterest, ProblemInterestDegree)
-        p = do
-            spaces
-            (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
-            return (ƭ . pack $ t, d)
+  where
+    p ∷ Parser (Text ::: ƮUltimateEpistemicInterest, ProblemInterestDegree)
+    p = do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
+        return (ƭ . pack $ t, d)
 
 --
 data ƮProblemVariables
@@ -257,22 +257,11 @@ data ƮReason (direction ∷ Direction) (defeasible ∷ Defeasibility)
 
 data ReasonBlock (direction ∷ Direction) (defeasible ∷ Defeasibility) = ReasonBlock
     {   _rbProblemReasonName     ∷ !ProblemReasonName
-    ,   _rbProblemReasonText     ∷ !(Text ::: ƮReason (direction ∷ Direction) (defeasible ∷ Defeasibility))
+    ,   _rbProblemReasonText     ∷ !(Text ::: ƮReason direction defeasible)
     ,   _rbProblemVariablesText  ∷ !(Text ::: ƮProblemVariables)
     ,   _rbProblemStrengthDegree ∷ !ProblemStrengthDegree
-    }   deriving (Show)
-
-class ToDegree a where
-    toDegree ∷ a → Degree
-
-instance ToDegree LispPositiveDouble where
-    toDegree = coerce
-
-instance ToDegree ProblemStrengthDegree where
-    toDegree = toDegree . (coerce ∷ ProblemStrengthDegree → LispPositiveDouble)
-
-instance ToDegree (ReasonBlock direction defeasible) where
-    toDegree = toDegree . _rbProblemStrengthDegree
+    }
+  deriving (Show)
 
 extractFromProblemReasonTextForwards ::
     Text ::: ƮReason Forwards defeasible →
@@ -335,11 +324,11 @@ reasonBlocks = simpleParse (many (try p) <* many space <* eof) . unƭ
         (t, (v, d)) ← many anyChar `precededBy` p'
         return $ ReasonBlock n (coerce  . (pack ∷ String → Text) $ t) v d
       where
-            p' ∷ Parser (Text ::: ƮProblemVariables, ProblemStrengthDegree)
-            p' = do
-                t ← parserProblemVariablesText
-                d ← parserProblemStrengthDegree
-                return (t, d)
+        p' ∷ Parser (Text ::: ƮProblemVariables, ProblemStrengthDegree)
+        p' = do
+            t ← parserProblemVariablesText
+            d ← parserProblemStrengthDegree
+            return (t, d)
 
 --
 data ForwardsReason = ForwardsReason ![Formula] !Formula
