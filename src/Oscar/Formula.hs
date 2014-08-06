@@ -7,22 +7,22 @@
 {-# LANGUAGE PatternSynonyms #-}
 -----------------------------------------------------------------------------
 -- |
---   Description : import me
---   Copyright   : (C) 2004, Oleg Kiselyov, Ralf Laemmel, Keean Schupke
+--   Description : TODO
+--   Copyright   : TODO
 --
---   The HList library
+--   TODO A title
 --
---   This module re-exports everything needed to use HList.
+--   TODO A description
 --
--- You can derive lenses automatically for many data types:
+-- TODO Some prose
 --
 -- @
--- import Control.Lens
+-- TODO sample code
 -- data Foo a = Foo { _fooArgs :: ['String'], _fooValue :: a }
 -- 'makeLenses' ''Foo
 -- @
 --
--- This defines the following lenses:
+-- blah blah blah
 -- 
 -- > (++) = mappend
 -- | > (++) = mappend
