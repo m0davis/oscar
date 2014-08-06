@@ -6,7 +6,13 @@ Version history:
 TODO for 0.2.0.0:
     * refactoring
         - use Tagged instead of newtypes?
+            unicode utility: http://www.cs.tut.fi/~jkorpela/fui.html8
+            Ʈ U+01AE latin capital T retroflex hook
+                for empty types (i.e. no value constructors) that are often used with Tagged
+            ⁞ for Tagged type constructor
+            ƭ for Tagged value constructor
     * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
         - remove Oleg's "copyright"
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
     * git automation
+
