@@ -1,26 +1,44 @@
 name:                OSCAR
-version:             0.0.0.0
+version:             0.1.0.0
 author:              Martin Stone Davis
 maintainer:          martin.stone.davis@gmail.com
 build-type:          Simple
 extra-source-files:  extras/Combined-problems
 cabal-version:       >= 1.10
+description:         This a description of the OSCAR program.
 
 executable OSCAR
-    main-is: Main.hs
+    main-is: ../Main.hs
 
     other-modules:
+        Oscar.DomainFunction
+        Oscar.Formula
+        Oscar.Parenthesis
+        Oscar.PQToken
+        Oscar.QSToken
+        Oscar.QToken
+        Oscar.QUBS
+        Oscar.Utilities
 
     build-depends: 
-            base                            == 4.7.*
-        ,   classy-prelude                  == 0.9.*
-        ,   parsec                          == 3.1.*
-        ,   cond                            == 0.4.*
-        ,   containers                      == 0.5.*
-        ,   text                            == 1.1.*
-        ,   pretty-show                     == 1.6.*
-        ,   safe                            == 0.3.*
-        ,   tagged                          == 0.7.*
+            base                            ==  4.7.*
+        ,   classy-prelude                  ==  0.9.*
+        ,   parsec                          ==  3.1.*
+        ,   cond                            ==  0.4.*
+        ,   containers                      ==  0.5.*
+        ,   text                            ==  1.1.*
+        ,   pretty-show                     ==  1.6.*
+        ,   safe                            ==  0.3.*
+        ,   tagged                          ==  0.7.*
+        ,   free                            ==  4.7.*
+        ,   pointed                         ==  4.0.*
+        ,   nats                            ==  0.1.*
+        ,   lens                            ==  4.1.*
+        ,   MissingH                        ==  1.2.*
+        ,   split                           ==  0.2.*
+
+    hs-source-dirs:      
+        src
 
     default-language:    
         Haskell2010
