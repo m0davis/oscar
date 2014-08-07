@@ -18,8 +18,7 @@ import Oscar.Problem                    (Direction(Backwards))
 import Oscar.Problem                    (Defeasibility(Conclusive))
 import Oscar.Problem                    (ƮProblem)
 import Oscar.Utilities                  (simpleParse)
---import Oscar.Utilities                  ((⁞)) -- TODO report bug in GHC
-import Oscar.Utilities                  
+import Oscar.Utilities                  (type (⁞))
 import Oscar.Utilities                  (ƭ)
 
 combinedProblems :: FilePath ⁞ [ƮProblem]

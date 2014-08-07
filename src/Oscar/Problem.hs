@@ -53,8 +53,7 @@ import Oscar.Utilities                  (messageFromShows10)
 import Oscar.Utilities                  (precededBy)
 import Oscar.Utilities                  (simpleParse)
 import Oscar.Utilities                  (withInput)
---import Oscar.Utilities                  ((⁞))
-import Oscar.Utilities                  
+import Oscar.Utilities                  (type (⁞))
 import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  (unƭ)
 
@@ -89,16 +88,21 @@ data ƇPlace place => ƮAfter place
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
---splitAfterPlace ∷ Text ⁞ ƮProblem → (ProblemNumber, Text ⁞ ƮAfter ProblemNumber)
+class StatefulParse value state1 state2 | value state1 → state2 where
+    statefulParse ∷ Parser value ⁞ (state1, state2)
 
-splitAfterProblemNumber ∷ Text ⁞ ƮProblem → (ProblemNumber, Text ⁞ ƮAfter ProblemNumber)
-splitAfterProblemNumber = simpleParse p . unƭ
-  where
-    p ∷ Parser (ProblemNumber, Text ⁞ ƮAfter ProblemNumber)
-    p = do
-        n ← ProblemNumber . read <$> manyTill anyChar (lookAhead . try $ space)
-        t ← pack <$> many anyChar
-        return (n, ƭ t)
+    runStatefulParse ∷ Text ⁞ state1 → (value, Text ⁞ state2)
+    runStatefulParse = simpleParse p' . unƭ
+      where
+        p' ∷ Parser (value, Text ⁞ state2)
+        p' = do
+            v ← unƭ (statefulParse ∷ Parser value ⁞ (state1, state2))
+            r ← pack <$> many anyChar
+            return (v, ƭ r)
+
+instance StatefulParse ProblemNumber ƮProblem (ƮAfter ProblemNumber) where
+    statefulParse = ƭ $ ProblemNumber . read <$> 
+        manyTill anyChar (lookAhead . try $ space)
 
 --
 data Section
@@ -127,15 +131,10 @@ sectionParser =
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
-splitAfterProblemNumberText ∷ Text ⁞ ƮAfter ProblemNumber → (ProblemDescription, Text ⁞ ƮAfter ProblemDescription)
-splitAfterProblemNumberText = simpleParse p . coerce
-  where
-    p ∷ Parser (ProblemDescription, Text ⁞ ƮAfter ProblemDescription)
-    p = do
-        _ ← many space
-        n ← ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
-        t ← pack <$> many anyChar
-        return (n, ƭ t)
+instance StatefulParse ProblemDescription (ƮAfter ProblemNumber) (ƮAfter ProblemDescription) where
+    statefulParse = ƭ $ do 
+        spaces
+        ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
 
 --
 class IsAKind k where
@@ -390,9 +389,9 @@ problemsM filePath = do
         (bpfrts <$> (reasonBlocksFromBackwardsPrimaFacieReasonsTexts))
         (bpfrts <$> (reasonBlocksFromBackwardsConclusiveReasonsTexts))
       where
-        (number, afterNumber) = splitAfterProblemNumber t
+        (number, afterNumber) = runStatefulParse t
 
-        (description, afterDescription) = splitAfterProblemNumberText afterNumber
+        (description, afterDescription) = runStatefulParse afterNumber
 
         givenPremisesTextAndProblemJustificationDegrees =
             problemGivenPremiseTextAndProblemJustificationDegrees $

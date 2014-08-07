@@ -15,5 +15,3 @@ TODO for 0.2.0.0:
         - remove Oleg's "copyright"
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
     * git automation
-    * bug reports to GHC: ⁞ is reported as not exported when importing the symbol. workaround: import the entire module
-
