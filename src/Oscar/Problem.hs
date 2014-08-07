@@ -25,35 +25,28 @@ import Control.Applicative              (empty)
 import Control.Applicative              (many)
 import Control.Conditional              (guardM)
 import Control.Monad                    (mzero)
-import Data.Coerce                      (coerce)
 import Prelude                          (read)
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (char)
 import Text.Parsec                      (eof)
-import Text.Parsec                      (getInput)
 import Text.Parsec                      (lookAhead)
 import Text.Parsec                      (manyTill)
 import Text.Parsec                      (notFollowedBy)
 import Text.Parsec                      (option)
-import Text.Parsec                      (runParser)
 import Text.Parsec                      (space)
 import Text.Parsec                      (spaces)
 import Text.Parsec                      (string)
 import Text.Parsec                      (try)
 import Text.Parsec.Text                 (Parser)
-import Text.Show.Pretty                 (ppShow)
 
-import Oscar.Formula                    (formulaFromText)
 import Oscar.Formula                    (Formula)
-import Oscar.Utilities                  (messageFromShow)
-import Oscar.Utilities                  (messageFromShows)
-import Oscar.Utilities                  (messageFromShows10)
+import Oscar.Formula                    (formulaFromText)
 import Oscar.Utilities                  (precededBy)
 import Oscar.Utilities                  (simpleParse)
-import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (type (⁞))
-import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  (unƭ)
+import Oscar.Utilities                  (withInput)
+import Oscar.Utilities                  (ƭ)
 
 --
 data ƮProblem
@@ -375,7 +368,7 @@ stripMeta (_, r, d) = (r, d)
 stripMeta' ∷ (ProblemReasonName, BackwardsReason, ProblemStrengthDegree) → (BackwardsReason, ProblemStrengthDegree)
 stripMeta' (_, r, d) = (r, d)
 
-pattern BaseProblem p i fpfr fcr bpfr bcr ← Problem n d p i (map stripMeta → fpfr) (map stripMeta → fcr) (map stripMeta' → bpfr) (map stripMeta' → bcr)
+pattern BaseProblem p i fpfr fcr bpfr bcr ← Problem _ _ p i (map stripMeta → fpfr) (map stripMeta → fcr) (map stripMeta' → bpfr) (map stripMeta' → bcr)
 
 problemsM ∷ FilePath ⁞ [ƮProblem] → IO [Problem]
 problemsM filePath = do
@@ -399,9 +392,6 @@ problemsM filePath = do
 
         decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
         decodedSection = decodeSection $ problemSectionText afterDescription
-
-        pSTaD :: (HasSection kind) => Text ⁞ ƮSection kind
-        pSTaD = problemSectionText afterDescription
 
 fpfrts ∷ ReasonBlock Forwards defeasible → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,)
