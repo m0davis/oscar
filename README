@@ -15,3 +15,4 @@ TODO for 0.2.0.0:
         - remove Oleg's "copyright"
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
     * git automation
+    * write sample code that shows how this will work: use injective type families in, e.g. DecodedSection when GHC 7.10 is released; this should allow some simplification
