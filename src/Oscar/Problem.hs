@@ -83,7 +83,7 @@ class ƇPlace place where
 instance ƇPlace ProblemNumber where
 instance ƇPlace ProblemDescription where
 
-data ƇPlace place => ƮAfter place
+data ƇPlace place ⇒ ƮAfter place
 
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
@@ -143,7 +143,53 @@ instance IsAKind GivenPremises
 instance IsAKind UltimateEpistemicInterests
 instance IsAKind (Reasons direction defeasible)
 
-data IsAKind kind => ƮSection kind
+class InjectiveSection kind decode | kind -> decode, decode -> kind where
+    decodeSection ∷ Text ⁞ ƮSection kind → decode
+
+type family DecodedSection kind
+type instance DecodedSection GivenPremises = [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
+
+instance (DecodedSection GivenPremises ~ d) ⇒ InjectiveSection GivenPremises d where -- [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] where
+    decodeSection = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . unƭ
+      where
+        p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
+        p = do
+            spaces
+            (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+            return (ƭ . pack $ t, d)
+
+--class SectionParser kind where
+--    sectionParser' ∷ Parser (ƮSection kind)
+
+--    runSectionParser ∷ Text ⁞ ƮSection kind → ƮSection kind
+--    runSectionParser = simpleParse sectionParser' . unƭ
+
+--instance SectionParser GivenPremises where
+--    sectionParser' = many (try p) <* many space <* eof
+--      where
+--        p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
+--        p = do
+--            spaces
+--            (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+--            return (ƭ . pack $ t, d)
+
+--problemGivenPremiseTextAndProblemJustificationDegrees = runSectionParser
+
+--problemGivenPremiseTextAndProblemJustificationDegrees ∷ Text ⁞ ƮSection GivenPremises → [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
+--problemGivenPremiseTextAndProblemJustificationDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . unƭ
+--  where
+--    p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
+--    p = do
+--        spaces
+--        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+--        return (ƭ . pack $ t, d)
+
+
+
+--instance InjectiveSection UltimateEpistemicInterests [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
+--instance InjectiveSection (Reasons direction defeasible) [ReasonBlock direction defeasible]
+
+data IsAKind kind ⇒ ƮSection kind
 
 class HasSection s where
     section ∷ s → Section
@@ -167,7 +213,7 @@ instance HasSection (Reasons Backwards PrimaFacie) where section _ = Section'Bac
 instance HasSection (Reasons Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
 problemSectionText ∷ 
-    ∀ kind. (HasSection kind) => 
+    ∀ kind. (HasSection kind) ⇒
     Text ⁞ ƮAfter ProblemDescription → 
     Text ⁞ ƮSection kind
 problemSectionText = ƭ . rawSection (section kind) . unƭ
@@ -210,15 +256,6 @@ parserProblemJustificationDegree = ProblemJustificationDegree <$> (many space *>
 
 --
 data ƮGivenPremise
-
-problemGivenPremiseTextAndProblemJustificationDegrees ∷ Text ⁞ ƮSection GivenPremises → [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
-problemGivenPremiseTextAndProblemJustificationDegrees = either (error . ppShow) id . runParser (many (try p) <* many space <* eof) () "" . unƭ
-  where
-    p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
-    p = do
-        spaces
-        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
-        return (ƭ . pack $ t, d)
 
 --
 newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
@@ -382,7 +419,7 @@ problemsM filePath = do
     problem t = Problem
         number
         description
-        (first (formulaFromText . coerce) <$> givenPremisesTextAndProblemJustificationDegrees)
+        (first (formulaFromText . unƭ) <$> givenPremisesTextAndProblemJustificationDegrees)
         (first (formulaFromText . coerce) <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
         (fpfrts <$> (reasonBlocksFromForwardsPrimaFacieReasonsTexts))
         (fpfrts <$> (reasonBlocksFromForwardsConclusiveReasonsTexts))
@@ -393,8 +430,9 @@ problemsM filePath = do
 
         (description, afterDescription) = runStatefulParse afterNumber
 
+        --givenPremisesTextAndProblemJustificationDegrees ∷ DecodedSection GivenPremises
         givenPremisesTextAndProblemJustificationDegrees =
-            problemGivenPremiseTextAndProblemJustificationDegrees $
+            decodeSection $
                 problemSectionText afterDescription
 
         ultimateEpistemicInterestTextAndProblemInterestDegrees =
