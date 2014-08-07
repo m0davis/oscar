@@ -26,8 +26,6 @@ import Control.Applicative              (many)
 import Control.Conditional              (guardM)
 import Control.Monad                    (mzero)
 import Data.Coerce                      (coerce)
-import Data.Tagged                      (Tagged(Tagged))
---import Data.Tagged                      (untag)
 import Prelude                          (read)
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (char)
@@ -177,7 +175,7 @@ instance InjectiveSection (Reasons direction defeasible) [ReasonBlock direction 
             n ← parserProblemReasonName
             spaces
             (t, (v, d)) ← many anyChar `precededBy` p'
-            return $ ReasonBlock n (coerce . (pack ∷ String → Text) $ t) v d
+            return $ ReasonBlock n (ƭ . (pack ∷ String → Text) $ t) v d
           where
             p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
             p' = do
@@ -294,10 +292,10 @@ data ReasonBlock (direction ∷ Direction) (defeasible ∷ Defeasibility) = Reas
     }
   deriving (Show)
 
-extractFromProblemReasonTextForwards ::
+extractFromProblemReasonTextForwards ∷
     Text ⁞ ƮReason Forwards defeasible →
     ([Text], Text) ⁞ ƮReason Forwards defeasible
-extractFromProblemReasonTextForwards = ƭ . simpleParse p . coerce
+extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
   where
     p ∷ Parser ([Text], Text)
     p = do
@@ -305,10 +303,10 @@ extractFromProblemReasonTextForwards = ƭ . simpleParse p . coerce
         conclusionText ← pack <$> many anyChar
         return (premiseTexts, conclusionText)
 
-extractFromProblemReasonTextBackwards ::
+extractFromProblemReasonTextBackwards ∷
     Text ⁞ ƮReason Backwards defeasible →
     ([Text], [Text], Text) ⁞ ƮReason Backwards defeasible
-extractFromProblemReasonTextBackwards = ƭ . simpleParse p . coerce
+extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
   where
     p ∷ Parser ([Text], [Text], Text)
     p = do
@@ -388,8 +386,8 @@ problemsM filePath = do
     problem t = Problem
         number
         description
-        (first (formulaFromText . coerce) <$> (decodedSection ∷ DecodedSection GivenPremises))
-        (first (formulaFromText . coerce) <$> (decodedSection ∷ DecodedSection UltimateEpistemicInterests))
+        (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection GivenPremises))
+        (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection UltimateEpistemicInterests))
         (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards PrimaFacie)))
         (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards Conclusive)))
         (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
@@ -399,7 +397,7 @@ problemsM filePath = do
 
         (description, afterDescription) = runStatefulParse afterNumber
 
-        decodedSection :: (HasSection kind, InjectiveSection kind decode) => decode
+        decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
         decodedSection = decodeSection $ problemSectionText afterDescription
 
         pSTaD :: (HasSection kind) => Text ⁞ ƮSection kind
