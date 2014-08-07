@@ -1,6 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UnicodeSyntax #-}
 module Oscar.Utilities where
 
 import ClassyPrelude hiding (
@@ -31,7 +32,7 @@ import Text.Parsec                      (try)
 import Text.Parsec.Text                 (Parser)
 import Text.Show.Pretty                 (ppShow)
 
-type a ::: b = Tagged b a
+type a ⁞ b = Tagged b a
 
 ƭ :: a -> Tagged b a
 ƭ = Tagged
