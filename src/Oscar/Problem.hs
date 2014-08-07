@@ -89,14 +89,14 @@ newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
 class StatefulParse value state1 state2 | value state1 → state2 where
-    statefulParse ∷ Parser value ⁞ (state1, state2)
+    statefulParse ∷ Parser value ⁞ state1
 
     runStatefulParse ∷ Text ⁞ state1 → (value, Text ⁞ state2)
     runStatefulParse = simpleParse p' . unƭ
       where
         p' ∷ Parser (value, Text ⁞ state2)
         p' = do
-            v ← unƭ (statefulParse ∷ Parser value ⁞ (state1, state2))
+            v ← unƭ (statefulParse ∷ Parser value ⁞ state1)
             r ← pack <$> many anyChar
             return (v, ƭ r)
 
