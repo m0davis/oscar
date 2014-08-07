@@ -149,8 +149,8 @@ class InjectiveSection kind decode | {-kind → decode,-} decode → kind where
 type family DecodedSection kind
 type instance DecodedSection GivenPremises = [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
 type instance DecodedSection UltimateEpistemicInterests = [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
+type instance DecodedSection (Reasons direction defeasible) = [ReasonBlock direction defeasible]
 
---instance (DecodedSection GivenPremises ~ d) ⇒ InjectiveSection GivenPremises d where
 instance InjectiveSection GivenPremises [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] where
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
@@ -160,7 +160,6 @@ instance InjectiveSection GivenPremises [(Text ⁞ ƮGivenPremise, ProblemJustif
             (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
             return (ƭ . pack $ t, d)
 
---instance (DecodedSection UltimateEpistemicInterests ~ d) ⇒ InjectiveSection UltimateEpistemicInterests d where
 instance InjectiveSection UltimateEpistemicInterests [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)] where
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
@@ -170,7 +169,21 @@ instance InjectiveSection UltimateEpistemicInterests [(Text ⁞ ƮUltimateEpiste
             (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
             return (ƭ . pack $ t, d)
 
-
+instance InjectiveSection (Reasons direction defeasible) [ReasonBlock direction defeasible] where
+    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
+      where
+        p ∷ Parser (ReasonBlock direction defeasible)
+        p = do
+            n ← parserProblemReasonName
+            spaces
+            (t, (v, d)) ← many anyChar `precededBy` p'
+            return $ ReasonBlock n (coerce . (pack ∷ String → Text) $ t) v d
+          where
+            p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
+            p' = do
+                t ← parserProblemVariablesText
+                d ← parserProblemStrengthDegree
+                return (t, d)
 
 data IsAKind kind ⇒ ƮSection kind
 
@@ -330,24 +343,6 @@ enbracedListParser = do
         else do
             return [firstText]
 
-reasonBlocks ∷ forall direction defeasible.
-    Text ⁞ ƮSection (Reasons direction defeasible) →
-    [ReasonBlock direction defeasible]
-reasonBlocks = simpleParse (many (try p) <* many space <* eof) . unƭ
-  where
-    p ∷ Parser (ReasonBlock direction defeasible)
-    p = do
-        n ← parserProblemReasonName
-        spaces
-        (t, (v, d)) ← many anyChar `precededBy` p'
-        return $ ReasonBlock n (coerce . (pack ∷ String → Text) $ t) v d
-      where
-        p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
-        p' = do
-            t ← parserProblemVariablesText
-            d ← parserProblemStrengthDegree
-            return (t, d)
-
 --
 data ForwardsReason = ForwardsReason ![Formula] !Formula
   deriving (Show)
@@ -393,46 +388,22 @@ problemsM filePath = do
     problem t = Problem
         number
         description
-        (first (formulaFromText . unƭ) <$> givenPremisesTextAndProblemJustificationDegrees)
-        (first (formulaFromText . coerce) <$> ultimateEpistemicInterestTextAndProblemInterestDegrees)
-        (fpfrts <$> (reasonBlocksFromForwardsPrimaFacieReasonsTexts))
-        (fpfrts <$> (reasonBlocksFromForwardsConclusiveReasonsTexts))
-        (bpfrts <$> (reasonBlocksFromBackwardsPrimaFacieReasonsTexts))
-        (bpfrts <$> (reasonBlocksFromBackwardsConclusiveReasonsTexts))
+        (first (formulaFromText . coerce) <$> (decodedSection ∷ DecodedSection GivenPremises))
+        (first (formulaFromText . coerce) <$> (decodedSection ∷ DecodedSection UltimateEpistemicInterests))
+        (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards PrimaFacie)))
+        (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards Conclusive)))
+        (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
+        (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
       where
         (number, afterNumber) = runStatefulParse t
 
         (description, afterDescription) = runStatefulParse afterNumber
 
-        givenPremisesTextAndProblemJustificationDegrees ∷ DecodedSection GivenPremises
-        givenPremisesTextAndProblemJustificationDegrees =
-            decodeSection $
-                problemSectionText afterDescription
+        decodedSection :: (HasSection kind, InjectiveSection kind decode) => decode
+        decodedSection = decodeSection $ problemSectionText afterDescription
 
-        ultimateEpistemicInterestTextAndProblemInterestDegrees ∷ DecodedSection UltimateEpistemicInterests
-        ultimateEpistemicInterestTextAndProblemInterestDegrees =
-            decodeSection $
-                problemSectionText afterDescription
-
-        reasonBlocksFromForwardsPrimaFacieReasonsTexts ∷ [ReasonBlock Forwards PrimaFacie]
-        reasonBlocksFromForwardsPrimaFacieReasonsTexts =
-            reasonBlocks $
-                problemSectionText afterDescription
-
-        reasonBlocksFromForwardsConclusiveReasonsTexts ∷ [ReasonBlock Forwards Conclusive]
-        reasonBlocksFromForwardsConclusiveReasonsTexts =
-            reasonBlocks $
-                problemSectionText afterDescription
-
-        reasonBlocksFromBackwardsPrimaFacieReasonsTexts ∷ [ReasonBlock Backwards PrimaFacie]
-        reasonBlocksFromBackwardsPrimaFacieReasonsTexts =
-            reasonBlocks $
-                problemSectionText afterDescription
-
-        reasonBlocksFromBackwardsConclusiveReasonsTexts ∷ [ReasonBlock Backwards Conclusive]
-        reasonBlocksFromBackwardsConclusiveReasonsTexts =
-            reasonBlocks $
-                problemSectionText afterDescription
+        pSTaD :: (HasSection kind) => Text ⁞ ƮSection kind
+        pSTaD = problemSectionText afterDescription
 
 fpfrts ∷ ReasonBlock Forwards defeasible → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,)
