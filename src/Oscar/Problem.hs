@@ -106,10 +106,10 @@ problem t = Problem
     description
     (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection ƮGivenPremise))
     (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
-    (fpfrts <$> (decodedSection ∷ DecodedSection (ReasonBlock Forwards PrimaFacie)))
-    (fpfrts <$> (decodedSection ∷ DecodedSection (ReasonBlock Forwards Conclusive)))
-    (bpfrts <$> (decodedSection ∷ DecodedSection (ReasonBlock Backwards Conclusive)))
-    (bpfrts <$> (decodedSection ∷ DecodedSection (ReasonBlock Backwards Conclusive)))
+    (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards PrimaFacie)))
+    (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards Conclusive)))
+    (bpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Backwards Conclusive)))
+    (bpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Backwards Conclusive)))
   where
     (number, afterNumber) = runStatefulParse t
 
@@ -163,8 +163,8 @@ instance InjectiveSection ƮUltimateEpistemicInterest [(Text ⁞ ƮUltimateEpist
             (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
             return (ƭ . pack $ t, d)
 
-instance InjectiveSection (ReasonBlock direction defeasible) [ReasonBlock direction defeasible] where
-    type DecodedSection (ReasonBlock direction defeasible) = [ReasonBlock direction defeasible]
+instance InjectiveSection (ƮReason direction defeasible) [ReasonBlock direction defeasible] where
+    type DecodedSection (ƮReason direction defeasible) = [ReasonBlock direction defeasible]
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
         p ∷ Parser (ReasonBlock direction defeasible)
@@ -188,10 +188,10 @@ data Defeasibility = PrimaFacie | Conclusive
 
 instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
 instance HasSection ƮUltimateEpistemicInterest     where section _ = Section'UltimateEpistemicInterests
-instance HasSection (ReasonBlock Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons
-instance HasSection (ReasonBlock Forwards  Conclusive) where section _ = Section'ForwardsConclusiveReasons
-instance HasSection (ReasonBlock Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
-instance HasSection (ReasonBlock Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
+instance HasSection (ƮReason Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons
+instance HasSection (ƮReason Forwards  Conclusive) where section _ = Section'ForwardsConclusiveReasons
+instance HasSection (ƮReason Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
+instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
 problemSectionText ∷ 
     ∀ kind. (HasSection kind) ⇒
