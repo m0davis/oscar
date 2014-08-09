@@ -74,20 +74,15 @@ instance ƇPlace ProblemNumber where
 instance ƇPlace ProblemDescription where
 
 -- | Read a file.
-problemsTextM ∷ (FilePath ⁞ [Problem])  
-              -- ^ The input file is presumed to represent one or more
-              --   problems...
-              → IO (Text ⁞ [Problem])   
-              -- ^ as 'Text'. 'IO' obtained via 'readFile'.
-problemsTextM = map ƭ . readFile . unƭ
+readProblemsTextFile ∷ (FilePath ⁞ [Problem])  -- ^ The input file is presumed to represent one or more problems...
+                     → IO (Text ⁞ [Problem])   -- ^ as 'Text'. 'IO' obtained via 'readFile'.
+readProblemsTextFile = map ƭ . readFile . unƭ
 
 -- | Partition the concatenated problems so that each 'Text' block contains 
 --   one 'Text' block for each 'Problem'.
-problemTexts ∷ (Text ⁞ [Problem])  -- ^ 'Text'ual 'Problem's, possibly 
-                                   --    obtained from 'problemsTextM'
-             → [Text ⁞ Problem]    -- ^ Results in one 'Text' block for each 
-                                   --  'Problem'.
-problemTexts = simpleParse (many p) . unƭ
+partitionProblemsText ∷ (Text ⁞ [Problem])  -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
+                      → [Text ⁞ Problem]    -- ^ Results in one 'Text' block for each 'Problem'.
+partitionProblemsText = simpleParse (many p) . unƭ
   where
     p ∷ Parser (Text ⁞ Problem)
     p = do
@@ -99,9 +94,9 @@ problemTexts = simpleParse (many p) . unƭ
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
 -- | The formatting of the input is documented here (TODO).
-problem ∷ (Text ⁞ Problem)  -- ^ possibly as obtained from 'problemTexts'
-        → Problem
-problem t = Problem
+problemFromText ∷ (Text ⁞ Problem)  -- ^ possibly as obtained from 'partitionProblemsText'
+                → Problem
+problemFromText t = Problem
     number
     description
     (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection ƮGivenPremise))
@@ -353,4 +348,4 @@ bpfrts rb = (,,)
 
 -- | This is the highest-level problem decoder available in this module.
 problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
-problemsM = return . map problem . problemTexts <=< problemsTextM
+problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
