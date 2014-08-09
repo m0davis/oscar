@@ -15,6 +15,12 @@ executable OSCAR
         Oscar.Formula
         Oscar.Parenthesis
         Oscar.Problem
+        Oscar.ProblemBase
+        Oscar.ProblemDoubleParser
+        Oscar.ProblemLocation
+        Oscar.ProblemSection
+        Oscar.ProblemSectionDecoder
+        Oscar.ProblemStatefulParse
         Oscar.PQToken
         Oscar.QSToken
         Oscar.QToken

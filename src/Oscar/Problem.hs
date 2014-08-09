@@ -19,13 +19,11 @@ import ClassyPrelude hiding (
     try,
     undefined,
     )
+import Prelude                          (read)
 import Prelude                          (undefined)
 
-import Control.Applicative              (empty)
 import Control.Applicative              (many)
 import Control.Conditional              (guardM)
-import Control.Monad                    (mzero)
-import Prelude                          (read)
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (char)
 import Text.Parsec                      (eof)
@@ -41,6 +39,27 @@ import Text.Parsec.Text                 (Parser)
 
 import Oscar.Formula                    (Formula)
 import Oscar.Formula                    (formulaFromText)
+import Oscar.ProblemDoubleParser        (LispPositiveDouble)
+import Oscar.ProblemDoubleParser        (parserLispPositiveDouble)
+import Oscar.ProblemLocation            (ƇPlace)
+import Oscar.ProblemLocation            (ƮAfter)
+import Oscar.ProblemSection             (Section(Section'BackwardsConclusiveReasons))
+import Oscar.ProblemSection             (Section(Section'BackwardsPrimaFacieReasons))
+import Oscar.ProblemSection             (Section(Section'ForwardsConclusiveReasons))
+import Oscar.ProblemSection             (Section(Section'ForwardsPrimaFacieReasons))
+import Oscar.ProblemSection             (Section(Section'GivenPremises))
+import Oscar.ProblemSection             (Section(Section'UltimateEpistemicInterests))
+import Oscar.ProblemSection             (sectionParser)
+import Oscar.ProblemSectionDecoder      (DecodedSection)
+import Oscar.ProblemSectionDecoder      (decodeSection)
+import Oscar.ProblemSectionDecoder      (HasSection)
+import Oscar.ProblemSectionDecoder      (InjectiveSection)
+import Oscar.ProblemSectionDecoder      (IsAKind)
+import Oscar.ProblemSectionDecoder      (section)
+import Oscar.ProblemSectionDecoder      (ƮSection)
+import Oscar.ProblemStatefulParse       (runStatefulParse)
+import Oscar.ProblemStatefulParse       (StatefulParse)
+import Oscar.ProblemStatefulParse       (statefulParse)
 import Oscar.Utilities                  (precededBy)
 import Oscar.Utilities                  (simpleParse)
 import Oscar.Utilities                  (type (⁞))
@@ -48,17 +67,26 @@ import Oscar.Utilities                  (unƭ)
 import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (ƭ)
 
---
-data ƮProblem
+instance ƇPlace ProblemNumber where
+instance ƇPlace ProblemDescription where
 
-problemsTextM ∷ FilePath ⁞ [ƮProblem] → IO (Text ⁞ [ƮProblem])
+-- | Read a file.
+problemsTextM ∷ (FilePath ⁞ [Problem])  
+              -- ^ The input file is presumed to represent one or more
+              --   problems...
+              → IO (Text ⁞ [Problem])   
+              -- ^ as 'Text'. 'IO' obtained via 'readFile'.
 problemsTextM = map ƭ . readFile . unƭ
 
---
-problemTexts ∷ Text ⁞ [ƮProblem] → [Text ⁞ ƮProblem]
+-- | Partition the concatenated problems so that each 'Text' block contains 
+--   one 'Text' block for each 'Problem'.
+problemTexts ∷ (Text ⁞ [Problem])  -- ^ 'Text'ual 'Problem's, possibly 
+                                  --    obtained from 'problemsTextM'
+             → [Text ⁞ Problem]    -- ^ Results in one 'Text' block for each 
+                                   --  'Problem'.
 problemTexts = simpleParse (many p) . unƭ
   where
-    p ∷ Parser (Text ⁞ ƮProblem)
+    p ∷ Parser (Text ⁞ Problem)
     p = do
         spaces
         _ ← string "Problem #"
@@ -69,80 +97,40 @@ problemTexts = simpleParse (many p) . unƭ
 
 --
 
-class ƇPlace place where
-
-instance ƇPlace ProblemNumber where
-instance ƇPlace ProblemDescription where
-
-data ƇPlace place ⇒ ƮAfter place
-
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
-class StatefulParse value state1 state2 | value state1 → state2 where
-    statefulParse ∷ Parser value ⁞ state1
-
-    runStatefulParse ∷ Text ⁞ state1 → (value, Text ⁞ state2)
-    runStatefulParse = simpleParse p' . unƭ
-      where
-        p' ∷ Parser (value, Text ⁞ state2)
-        p' = do
-            v ← unƭ (statefulParse ∷ Parser value ⁞ state1)
-            r ← pack <$> many anyChar
-            return (v, ƭ r)
-
-instance StatefulParse ProblemNumber ƮProblem (ƮAfter ProblemNumber) where
+instance StatefulParse ProblemNumber Problem (ƮAfter ProblemNumber) where
     statefulParse = ƭ $ ProblemNumber . read <$> 
         manyTill anyChar (lookAhead . try $ space)
-
---
-data Section
-    = Section'GivenPremises
-    | Section'UltimateEpistemicInterests
-    | Section'ForwardsPrimaFacieReasons
-    | Section'ForwardsConclusiveReasons
-    | Section'BackwardsPrimaFacieReasons
-    | Section'BackwardsConclusiveReasons
-  deriving (Eq, Show)
-
-sectionParser ∷ Parser Section
-sectionParser =
-    empty
-    <|> string "Given premises:"               **> Section'GivenPremises
-    <|> string "Ultimate epistemic interests:" **> Section'UltimateEpistemicInterests
-    <|> string "FORWARDS PRIMA FACIE REASONS"  **> Section'ForwardsPrimaFacieReasons
-    <|> string "FORWARDS CONCLUSIVE REASONS"   **> Section'ForwardsConclusiveReasons
-    <|> string "BACKWARDS PRIMA FACIE REASONS" **> Section'BackwardsPrimaFacieReasons
-    <|> string "BACKWARDS CONCLUSIVE REASONS"  **> Section'BackwardsConclusiveReasons
-  where
-    (**>) ∷ Parser a → b → Parser b
-    p **> t = try p *> pure t
 
 --
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
-instance StatefulParse ProblemDescription (ƮAfter ProblemNumber) (ƮAfter ProblemDescription) where
-    statefulParse = ƭ $ do 
-        spaces
-        ProblemDescription . pack <$> manyTill anyChar (lookAhead . try $ many space >> sectionParser)
+instance StatefulParse ProblemDescription 
+                       (ƮAfter ProblemNumber) 
+                       (ƮAfter ProblemDescription) 
+  where
+    statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
+      where
+        p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
 
 --
-class IsAKind k where
-
 instance IsAKind GivenPremises
 instance IsAKind UltimateEpistemicInterests
 instance IsAKind (Reasons direction defeasible)
 
-class InjectiveSection kind decode | {-kind → decode,-} decode → kind where
-    decodeSection ∷ Text ⁞ ƮSection kind → decode
+type instance DecodedSection GivenPremises = 
+                [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
+type instance DecodedSection UltimateEpistemicInterests = 
+                [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
+type instance DecodedSection (Reasons direction defeasible) = 
+                [ReasonBlock direction defeasible]
 
-type family DecodedSection kind
-type instance DecodedSection GivenPremises = [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
-type instance DecodedSection UltimateEpistemicInterests = [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
-type instance DecodedSection (Reasons direction defeasible) = [ReasonBlock direction defeasible]
-
-instance InjectiveSection GivenPremises [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] where
+instance InjectiveSection GivenPremises 
+                          [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] 
+  where
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
         p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
@@ -175,11 +163,6 @@ instance InjectiveSection (Reasons direction defeasible) [ReasonBlock direction 
                 t ← parserProblemVariablesText
                 d ← parserProblemStrengthDegree
                 return (t, d)
-
-data IsAKind kind ⇒ ƮSection kind
-
-class HasSection s where
-    section ∷ s → Section
 
 data GivenPremises
 data UltimateEpistemicInterests
@@ -216,23 +199,6 @@ problemSectionText = ƭ . rawSection (section kind) . unƭ
         p' = do
             guardM (map (== _section) sectionParser)
             pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
-
---
-newtype LispPositiveDouble = LispPositiveDouble Double
-  deriving (Show)
-
-parserLispPositiveDouble ∷ Parser LispPositiveDouble
-parserLispPositiveDouble = do
-    d ← many space *> manyTill anyChar ((space *> pure ()) <|> eof)
-    if null d then
-        mzero
-    else
-        if headEx d == '.' then
-            return . LispPositiveDouble . read $ "0" ++ d
-        else if headEx d == '-' then
-            error "LispPositiveDouble negative number?"
-        else
-            return . LispPositiveDouble . read $ d
 
 --
 newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
@@ -362,20 +328,12 @@ data Problem = Problem
     }
   deriving (Show)
 
-stripMeta ∷ (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) → (ForwardsReason, ProblemStrengthDegree)
-stripMeta (_, r, d) = (r, d)
-
-stripMeta' ∷ (ProblemReasonName, BackwardsReason, ProblemStrengthDegree) → (BackwardsReason, ProblemStrengthDegree)
-stripMeta' (_, r, d) = (r, d)
-
-pattern BaseProblem p i fpfr fcr bpfr bcr ← Problem _ _ p i (map stripMeta → fpfr) (map stripMeta → fcr) (map stripMeta' → bpfr) (map stripMeta' → bcr)
-
-problemsM ∷ FilePath ⁞ [ƮProblem] → IO [Problem]
+problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
 problemsM filePath = do
     combinedProblems ← problemsTextM filePath
     return $ problem <$> problemTexts combinedProblems
   where
-    problem ∷ Text ⁞ ƮProblem → Problem
+    problem ∷ Text ⁞ Problem → Problem
     problem t = Problem
         number
         description
