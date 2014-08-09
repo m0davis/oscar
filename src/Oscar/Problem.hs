@@ -369,7 +369,7 @@ fpfrts rb = (,,)
     booyah = first (map formulaFromText) . second formulaFromText
 
 
-bpfrts ∷ ∀ defeasibility. ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+bpfrts ∷ ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
 bpfrts rb = (,,)
     (_rbProblemReasonName rb)
     (br $ _rbProblemReasonText rb)
