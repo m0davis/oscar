@@ -11,10 +11,9 @@ import ClassyPrelude
 import Oscar.ProblemSection             (Section)
 import Oscar.Utilities                  (type (⁞))
 
-class InjectiveSection kind decode | decode → kind where
+class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode → kind, kind → decode where
+    type DecodedSection kind :: *
     decodeSection ∷ Text ⁞ ƮSection kind → decode
-
-type family DecodedSection kind
 
 data IsAKind kind ⇒ ƮSection kind
 

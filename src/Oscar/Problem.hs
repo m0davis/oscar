@@ -94,7 +94,7 @@ problemTexts = simpleParse (many p) . unƭ
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
 -- | The formatting of the input is documented here (TODO).
-problem ∷ Text ⁞ Problem  -- ^ possibly as obtained from 'problemTexts'
+problem ∷ (Text ⁞ Problem)  -- ^ possibly as obtained from 'problemTexts'
         → Problem
 problem t = Problem
     number
@@ -139,16 +139,17 @@ instance IsAKind GivenPremises
 instance IsAKind UltimateEpistemicInterests
 instance IsAKind (Reasons direction defeasible)
 
-type instance DecodedSection GivenPremises = 
-                [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
-type instance DecodedSection UltimateEpistemicInterests = 
-                [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
-type instance DecodedSection (Reasons direction defeasible) = 
-                [ReasonBlock direction defeasible]
+--type instance DecodedSection GivenPremises = 
+--                [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
+--type instance DecodedSection UltimateEpistemicInterests = 
+--                [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
+--type instance DecodedSection (Reasons direction defeasible) = 
+--                [ReasonBlock direction defeasible]
 
 instance InjectiveSection GivenPremises 
                           [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] 
   where
+    type DecodedSection GivenPremises = [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
         p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
@@ -158,6 +159,7 @@ instance InjectiveSection GivenPremises
             return (ƭ . pack $ t, d)
 
 instance InjectiveSection UltimateEpistemicInterests [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)] where
+    type DecodedSection UltimateEpistemicInterests = [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
         p ∷ Parser (Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)
@@ -167,6 +169,7 @@ instance InjectiveSection UltimateEpistemicInterests [(Text ⁞ ƮUltimateEpiste
             return (ƭ . pack $ t, d)
 
 instance InjectiveSection (Reasons direction defeasible) [ReasonBlock direction defeasible] where
+    type DecodedSection (Reasons direction defeasible) = [ReasonBlock direction defeasible]
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
         p ∷ Parser (ReasonBlock direction defeasible)
