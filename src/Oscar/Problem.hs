@@ -85,7 +85,7 @@ problemsTextM = map ƭ . readFile . unƭ
 -- | Partition the concatenated problems so that each 'Text' block contains 
 --   one 'Text' block for each 'Problem'.
 problemTexts ∷ (Text ⁞ [Problem])  -- ^ 'Text'ual 'Problem's, possibly 
-                                  --    obtained from 'problemsTextM'
+                                   --    obtained from 'problemsTextM'
              → [Text ⁞ Problem]    -- ^ Results in one 'Text' block for each 
                                    --  'Problem'.
 problemTexts = simpleParse (many p) . unƭ
