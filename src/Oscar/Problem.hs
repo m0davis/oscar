@@ -22,6 +22,7 @@ import Prelude                          (undefined)
 
 import Control.Applicative              (many)
 import Control.Conditional              (guardM)
+import Control.Monad                    ((<=<))
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (char)
 import Text.Parsec                      (eof)
@@ -356,6 +357,4 @@ bpfrts rb = (,,)
 
 -- | This is the highest-level problem decoder available in this module.
 problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
-problemsM filePath = do
-    combinedProblems ← problemsTextM filePath
-    return $ problem <$> problemTexts combinedProblems
+problemsM = return . map problem . problemTexts <=< problemsTextM
