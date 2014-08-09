@@ -59,7 +59,6 @@ import Oscar.ProblemSectionDecoder      (decodeSection)
 import Oscar.ProblemSectionDecoder      (HasSection)
 import Oscar.ProblemSectionDecoder      (InjectiveSection)
 import Oscar.ProblemSectionDecoder      (section)
-import Oscar.ProblemSectionDecoder      (ƮSection)
 import Oscar.ProblemStatefulParse       (runStatefulParse)
 import Oscar.ProblemStatefulParse       (StatefulParse)
 import Oscar.ProblemStatefulParse       (statefulParse)
@@ -191,7 +190,7 @@ instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'Ba
 problemSectionText ∷ 
     ∀ kind. (HasSection kind) ⇒
     Text ⁞ ƮAfter ProblemDescription → 
-    Text ⁞ ƮSection kind
+    Text ⁞ kind
 problemSectionText = ƭ . rawSection (section kind) . unƭ
   where
     kind ∷ kind = undefined

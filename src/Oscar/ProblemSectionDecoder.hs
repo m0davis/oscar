@@ -17,10 +17,7 @@ class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode �
     type DecodedSection kind
 
     -- | decode (or parse) the text block in a section
-    decodeSection ∷ Text ⁞ ƮSection kind → decode
-
--- | 
-data ƮSection kind
+    decodeSection ∷ Text ⁞ kind → decode
 
 -- | 
 class HasSection s where
