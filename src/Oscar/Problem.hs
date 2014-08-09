@@ -11,7 +11,12 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE UnicodeSyntax #-}
-module Oscar.Problem where
+module Oscar.Problem (
+    -- * highest-level
+    problemsM,
+    -- * internal
+    module Oscar.Problem
+    ) where
 
 import ClassyPrelude hiding (
     try,
