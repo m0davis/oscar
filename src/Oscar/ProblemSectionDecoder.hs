@@ -20,12 +20,9 @@ class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode �
     decodeSection ∷ Text ⁞ ƮSection kind → decode
 
 -- | 
-data IsAKind kind ⇒ ƮSection kind
+data ƮSection kind
 
 -- | 
 class HasSection s where
     -- | 
     section ∷ s → Section
-
--- | Kinds that represent 'Section's
-class IsAKind k where

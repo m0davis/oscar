@@ -58,7 +58,6 @@ import Oscar.ProblemSectionDecoder      (DecodedSection)
 import Oscar.ProblemSectionDecoder      (decodeSection)
 import Oscar.ProblemSectionDecoder      (HasSection)
 import Oscar.ProblemSectionDecoder      (InjectiveSection)
-import Oscar.ProblemSectionDecoder      (IsAKind)
 import Oscar.ProblemSectionDecoder      (section)
 import Oscar.ProblemSectionDecoder      (ƮSection)
 import Oscar.ProblemStatefulParse       (runStatefulParse)
@@ -142,10 +141,6 @@ instance StatefulParse ProblemDescription
         p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
 
 -- | 
-instance IsAKind GivenPremises
-instance IsAKind UltimateEpistemicInterests
-instance IsAKind (Reasons direction defeasible)
-
 instance InjectiveSection GivenPremises 
                           [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] 
   where
