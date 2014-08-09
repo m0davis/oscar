@@ -72,6 +72,10 @@ import Oscar.Utilities                  (ƭ)
 instance ƇPlace ProblemNumber where
 instance ƇPlace ProblemDescription where
 
+-- | This is the highest-level problem decoder available in this module.
+problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
+problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
+
 -- | Read a file.
 readProblemsTextFile ∷ (FilePath ⁞ [Problem])  -- ^ The input file is presumed to represent one or more problems...
                      → IO (Text ⁞ [Problem])   -- ^ as 'Text'. 'IO' obtained via 'readFile'.
@@ -341,7 +345,3 @@ bpfrts rb = (,,)
     br = booyah . unƭ . extractFromProblemReasonTextBackwards 
 
     booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
-
--- | This is the highest-level problem decoder available in this module.
-problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
-problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
