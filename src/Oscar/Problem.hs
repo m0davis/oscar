@@ -94,6 +94,24 @@ problemTexts = simpleParse (many p) . unƭ
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
 --
+problem ∷ Text ⁞ Problem → Problem
+problem t = Problem
+    number
+    description
+    (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection GivenPremises))
+    (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection UltimateEpistemicInterests))
+    (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards PrimaFacie)))
+    (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards Conclusive)))
+    (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
+    (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
+  where
+    (number, afterNumber) = runStatefulParse t
+
+    (description, afterDescription) = runStatefulParse afterNumber
+
+    decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
+    decodedSection = decodeSection $ problemSectionText afterDescription
+
 
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
@@ -319,29 +337,6 @@ data Problem = Problem
     }
   deriving (Show)
 
-problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
-problemsM filePath = do
-    combinedProblems ← problemsTextM filePath
-    return $ problem <$> problemTexts combinedProblems
-  where
-    problem ∷ Text ⁞ Problem → Problem
-    problem t = Problem
-        number
-        description
-        (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection GivenPremises))
-        (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection UltimateEpistemicInterests))
-        (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards PrimaFacie)))
-        (fpfrts <$> (decodedSection ∷ DecodedSection (Reasons Forwards Conclusive)))
-        (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
-        (bpfrts <$> (decodedSection ∷ DecodedSection (Reasons Backwards Conclusive)))
-      where
-        (number, afterNumber) = runStatefulParse t
-
-        (description, afterDescription) = runStatefulParse afterNumber
-
-        decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
-        decodedSection = decodeSection $ problemSectionText afterDescription
-
 fpfrts ∷ ReasonBlock Forwards defeasible → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,)
     (_rbProblemReasonName rb)
@@ -361,3 +356,9 @@ bpfrts rb = (,,)
     br = booyah . unƭ . extractFromProblemReasonTextBackwards 
 
     booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+
+-- | This is the highest-level problem decoder available in this module.
+problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
+problemsM filePath = do
+    combinedProblems ← problemsTextM filePath
+    return $ problem <$> problemTexts combinedProblems
