@@ -163,11 +163,11 @@ instance InjectiveSection ƮUltimateEpistemicInterest [(Text ⁞ ƮUltimateEpist
             (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
             return (ƭ . pack $ t, d)
 
-instance InjectiveSection (ƮReason direction defeasible) [ReasonBlock direction defeasible] where
-    type DecodedSection (ƮReason direction defeasible) = [ReasonBlock direction defeasible]
+instance InjectiveSection (ƮReason direction defeasibility) [ReasonBlock direction defeasibility] where
+    type DecodedSection (ƮReason direction defeasibility) = [ReasonBlock direction defeasibility]
     decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
       where
-        p ∷ Parser (ReasonBlock direction defeasible)
+        p ∷ Parser (ReasonBlock direction defeasibility)
         p = do
             n ← parserProblemReasonName
             spaces
@@ -252,19 +252,19 @@ parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
 
 --
-data ƮReason (direction ∷ Direction) (defeasible ∷ Defeasibility)
+data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
-data ReasonBlock (direction ∷ Direction) (defeasible ∷ Defeasibility) = ReasonBlock
+data ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = ReasonBlock
     {   _rbProblemReasonName     ∷ !ProblemReasonName
-    ,   _rbProblemReasonText     ∷ !(Text ⁞ ƮReason direction defeasible)
+    ,   _rbProblemReasonText     ∷ !(Text ⁞ ƮReason direction defeasibility)
     ,   _rbProblemVariablesText  ∷ !(Text ⁞ ƮProblemVariables)
     ,   _rbProblemStrengthDegree ∷ !ProblemStrengthDegree
     }
   deriving (Show)
 
 extractFromProblemReasonTextForwards ∷
-    Text ⁞ ƮReason Forwards defeasible →
-    ([Text], Text) ⁞ ƮReason Forwards defeasible
+    Text ⁞ ƮReason Forwards defeasibility →
+    ([Text], Text) ⁞ ƮReason Forwards defeasibility
 extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
   where
     p ∷ Parser ([Text], Text)
@@ -274,8 +274,8 @@ extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
         return (premiseTexts, conclusionText)
 
 extractFromProblemReasonTextBackwards ∷
-    Text ⁞ ƮReason Backwards defeasible →
-    ([Text], [Text], Text) ⁞ ƮReason Backwards defeasible
+    Text ⁞ ƮReason Backwards defeasibility →
+    ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
 extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
   where
     p ∷ Parser ([Text], [Text], Text)
@@ -331,7 +331,7 @@ data Problem = Problem
     }
   deriving (Show)
 
-fpfrts ∷ ReasonBlock Forwards defeasible → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+fpfrts ∷ ReasonBlock Forwards defeasibility → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,)
     (_rbProblemReasonName rb)
     (fr $ _rbProblemReasonText rb)
@@ -341,7 +341,7 @@ fpfrts rb = (,,)
     booyah = first (map formulaFromText) . second formulaFromText
 
 
-bpfrts ∷ ∀ defeasible. ReasonBlock Backwards defeasible → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+bpfrts ∷ ∀ defeasibility. ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
 bpfrts rb = (,,)
     (_rbProblemReasonName rb)
     (br $ _rbProblemReasonText rb)
