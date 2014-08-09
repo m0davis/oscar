@@ -54,4 +54,3 @@ class StatefulParse value state1 state2 | value state1 → state2 where
             v ← unƭ (statefulParse ∷ Parser value ⁞ state1)
             r ← pack <$> many anyChar
             return (v, ƭ r)
-
