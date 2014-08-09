@@ -93,8 +93,9 @@ problemTexts = simpleParse (many p) . unƭ
     endP ∷ Parser ()
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
---
-problem ∷ Text ⁞ Problem → Problem
+-- | The formatting of the input is documented here (TODO).
+problem ∷ Text ⁞ Problem  -- ^ possibly as obtained from 'problemTexts'
+        → Problem
 problem t = Problem
     number
     description
