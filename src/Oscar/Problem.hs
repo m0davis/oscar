@@ -106,9 +106,10 @@ instance StatefulParse ProblemNumber Problem (ƮAfter ProblemNumber) where
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
+-- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
 instance StatefulParse ProblemDescription 
-                       (ƮAfter ProblemNumber) 
-                       (ƮAfter ProblemDescription) 
+                       (ƮAfter ProblemNumber)
+                       (ƮAfter ProblemDescription)
   where
     statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
       where
