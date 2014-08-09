@@ -307,14 +307,6 @@ data BackwardsReason = BackwardsReason ![Formula] ![Formula] !Formula
   deriving (Show)
 
 --
-
-type Degree = Double
-type Strength = Double
-
-data Named r = Named { _value ∷ !r, _namedValue ∷ !Text }
-  deriving (Show)
-data Degreed r = Degreed Degree r
-
 data Problem = Problem
     { _problemNumber              ∷ !ProblemNumber
     , _problemDescription         ∷ !ProblemDescription
