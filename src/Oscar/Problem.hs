@@ -139,13 +139,6 @@ instance IsAKind GivenPremises
 instance IsAKind UltimateEpistemicInterests
 instance IsAKind (Reasons direction defeasible)
 
---type instance DecodedSection GivenPremises = 
---                [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
---type instance DecodedSection UltimateEpistemicInterests = 
---                [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
---type instance DecodedSection (Reasons direction defeasible) = 
---                [ReasonBlock direction defeasible]
-
 instance InjectiveSection GivenPremises 
                           [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] 
   where
@@ -351,7 +344,7 @@ fpfrts rb = (,,)
     booyah = first (map formulaFromText) . second formulaFromText
 
 
-bpfrts ∷ forall defeasible. ReasonBlock Backwards defeasible → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+bpfrts ∷ ∀ defeasible. ReasonBlock Backwards defeasible → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
 bpfrts rb = (,,)
     (_rbProblemReasonName rb)
     (br $ _rbProblemReasonText rb)
