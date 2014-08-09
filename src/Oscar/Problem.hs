@@ -119,15 +119,16 @@ problem t = Problem
     decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
     decodedSection = decodeSection $ problemSectionText afterDescription
 
-
+-- | A (hopefully) unique identifier of a 'Problem'.
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
+-- | The 'ProblemNumber' is identified at the top of the text block
 instance StatefulParse ProblemNumber Problem (ƮAfter ProblemNumber) where
     statefulParse = ƭ $ ProblemNumber . read <$> 
         manyTill anyChar (lookAhead . try $ space)
 
---
+-- | 
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
@@ -140,7 +141,7 @@ instance StatefulParse ProblemDescription
       where
         p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
 
---
+-- | 
 instance IsAKind GivenPremises
 instance IsAKind UltimateEpistemicInterests
 instance IsAKind (Reasons direction defeasible)
@@ -321,7 +322,7 @@ enbracedListParser = do
             return [firstText]
 
 --
-data ForwardsReason = ForwardsReason ![Formula] !Formula
+data ForwardsReason = ForwardsReason ![Formula] !Formula -- TODO [] -> Set
   deriving (Show)
 
 data BackwardsReason = BackwardsReason ![Formula] ![Formula] !Formula

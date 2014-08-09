@@ -1,0 +1,30 @@
+∀
+⇒
+∷
+⁞
+→
+←
+ƭ
+Ʈ
+Ƈ
+
+git checkout -b feature-name
+git add -A :/ 
+git commit -m 
+
+import philosophy:
+    use highest-level available (easier to write; less likely to need changes when API changes)
+    separate 
+
+module creation philosophy:
+    reasons to place identifiers in separate modules
+        to reduce the need for name mangling (e.g. lazy and strict Text would need different names if they were placed in the same module)
+    reasons to place identifiers in the same module
+        to avoid orphan instances
+        to collect related "functionality"
+        instances go with data or class
+
+    identifiers should be placed in separate modules when they are:
+        responsible for different domains of a problem
+
+export philosophy:

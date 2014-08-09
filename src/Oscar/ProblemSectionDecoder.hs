@@ -11,13 +11,21 @@ import ClassyPrelude
 import Oscar.ProblemSection             (Section)
 import Oscar.Utilities                  (type (⁞))
 
+-- | 
 class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode → kind where
+    -- | We would write @type DecodedSection kind = decode@, but GHC complains.
     type DecodedSection kind
+
+    -- | decode (or parse) the text block in a section
     decodeSection ∷ Text ⁞ ƮSection kind → decode
 
+-- | 
 data IsAKind kind ⇒ ƮSection kind
 
+-- | 
 class HasSection s where
+    -- | 
     section ∷ s → Section
 
+-- | Kinds that represent 'Section's
 class IsAKind k where
