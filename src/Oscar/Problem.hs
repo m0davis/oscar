@@ -116,14 +116,73 @@ problemFromText t = Problem
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
+-- | 
+newtype ProblemDescription = ProblemDescription Text
+  deriving (Show)
+
+data Direction = Forwards | Backwards
+  deriving (Show)
+
+data Defeasibility = PrimaFacie | Conclusive
+  deriving (Show)
+
+newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
+  deriving (Show)
+
+newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
+  deriving (Show)
+
+newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
+  deriving (Show)
+
+newtype ProblemReasonName = ProblemReasonName Text
+  deriving (Show)
+
+data ƮGivenPremise
+
+data ƮUltimateEpistemicInterest
+
+data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
+
+data ƮProblemVariables
+
+data ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = ReasonBlock
+    { _rbProblemReasonName     ∷ !ProblemReasonName
+    , _rbProblemReasonText     ∷ !(Text ⁞ ƮReason direction defeasibility)
+    , _rbProblemVariablesText  ∷ !(Text ⁞ ƮProblemVariables)
+    , _rbProblemStrengthDegree ∷ !ProblemStrengthDegree
+    }
+  deriving (Show)
+
+data ForwardsReason = ForwardsReason 
+    { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] -> Set
+    , _frConclusion       ∷ !Formula    -- ^ conclusion
+    }
+  deriving (Show)
+
+data BackwardsReason = BackwardsReason 
+    { _brForwardsPremises  ∷ ![Formula] 
+    , _brBackwardsPremises ∷ ![Formula]
+    , _brConclusion        ∷ !Formula
+    }
+  deriving (Show)
+
+data Problem = Problem
+    { _problemNumber              ∷ !ProblemNumber
+    , _problemDescription         ∷ !ProblemDescription
+    , _premises                   ∷ ![(Formula, ProblemJustificationDegree)]
+    , _interests                  ∷ ![(Formula, ProblemInterestDegree)]
+    , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)] -- ^ TODO: strength must always be 1
+    , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
+    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)] -- ^ TODO: strength must always be 1
+    }
+  deriving (Show)
+
 -- | The 'ProblemNumber' is identified at the top of the text block
 instance StatefulParse ProblemNumber Problem (ƮAfter ProblemNumber) where
     statefulParse = ƭ $ ProblemNumber . read <$> 
         manyTill anyChar (lookAhead . try $ space)
-
--- | 
-newtype ProblemDescription = ProblemDescription Text
-  deriving (Show)
 
 -- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
 instance StatefulParse ProblemDescription 
@@ -174,12 +233,6 @@ instance InjectiveSection (ƮReason direction defeasibility) [ReasonBlock direct
                 d ← parserProblemStrengthDegree
                 return (t, d)
 
-data Direction = Forwards | Backwards
-  deriving (Show)
-
-data Defeasibility = PrimaFacie | Conclusive
-  deriving (Show)
-
 instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
 instance HasSection ƮUltimateEpistemicInterest     where section _ = Section'UltimateEpistemicInterests
 instance HasSection (ƮReason Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons
@@ -205,56 +258,20 @@ problemSectionText = ƭ . rawSection (section kind) . unƭ
             guardM (map (== _section) sectionParser)
             pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
---
-newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
-  deriving (Show)
-
 parserProblemJustificationDegree ∷ Parser ProblemJustificationDegree
 parserProblemJustificationDegree = ProblemJustificationDegree <$> (many space *> string "justification" *> many space *> char '=' *> parserLispPositiveDouble)
-
---
-data ƮGivenPremise
-
---
-newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
-  deriving (Show)
 
 parserProblemInterestDegree ∷ Parser ProblemInterestDegree
 parserProblemInterestDegree = ProblemInterestDegree <$> (many space *> string "interest" *> many space *> char '=' *> parserLispPositiveDouble)
 
---
-data ƮUltimateEpistemicInterest
-
---
-data ƮProblemVariables
-
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮProblemVariables)
 parserProblemVariablesText = ƭ . pack <$> (option "" . try $ many space *> string "variables" *> many space *> char '=' *> many space *> char '{' *> manyTill anyChar (lookAhead . try $ char '}') <* char '}')
-
---
-newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
-  deriving (Show)
 
 parserProblemStrengthDegree ∷ Parser ProblemStrengthDegree
 parserProblemStrengthDegree = ProblemStrengthDegree <$> (many space *> string "strength" *> many space *> char '=' *> parserLispPositiveDouble)
 
---
-newtype ProblemReasonName = ProblemReasonName Text
-  deriving (Show)
-
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
-
---
-data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
-
-data ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = ReasonBlock
-    {   _rbProblemReasonName     ∷ !ProblemReasonName
-    ,   _rbProblemReasonText     ∷ !(Text ⁞ ƮReason direction defeasibility)
-    ,   _rbProblemVariablesText  ∷ !(Text ⁞ ƮProblemVariables)
-    ,   _rbProblemStrengthDegree ∷ !ProblemStrengthDegree
-    }
-  deriving (Show)
 
 extractFromProblemReasonTextForwards ∷
     Text ⁞ ƮReason Forwards defeasibility →
@@ -304,26 +321,6 @@ enbracedListParser = do
             return $ firstText : restTexts
         else do
             return [firstText]
-
---
-data ForwardsReason = ForwardsReason ![Formula] !Formula -- TODO [] -> Set
-  deriving (Show)
-
-data BackwardsReason = BackwardsReason ![Formula] ![Formula] !Formula
-  deriving (Show)
-
---
-data Problem = Problem
-    { _problemNumber              ∷ !ProblemNumber
-    , _problemDescription         ∷ !ProblemDescription
-    , _premises                   ∷ ![(Formula, ProblemJustificationDegree)]
-    , _interests                  ∷ ![(Formula, ProblemInterestDegree)]
-    , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
-    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)] -- TODO: strength must always be 1
-    , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
-    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)] -- TODO: strength must always be 1
-    }
-  deriving (Show)
 
 fpfrts ∷ ReasonBlock Forwards defeasibility → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 fpfrts rb = (,,)
