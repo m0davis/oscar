@@ -12,7 +12,7 @@ import Oscar.ProblemSection             (Section)
 import Oscar.Utilities                  (type (⁞))
 
 class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode → kind where
-    type DecodedSection kind :: *
+    type DecodedSection kind
     decodeSection ∷ Text ⁞ ƮSection kind → decode
 
 data IsAKind kind ⇒ ƮSection kind
