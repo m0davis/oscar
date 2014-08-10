@@ -6,7 +6,9 @@ module Oscar.Utilities where
 
 import ClassyPrelude hiding (
     try,
+    undefined
     )
+import Prelude                          (undefined)
 
 import Control.Applicative              (liftA2)
 import Control.Conditional              (ifM)
@@ -31,6 +33,9 @@ import Text.Parsec                      (setInput)
 import Text.Parsec                      (try)
 import Text.Parsec.Text                 (Parser)
 import Text.Show.Pretty                 (ppShow)
+
+(⊥) :: a
+(⊥) = undefined
 
 type a ⁞ b = Tagged b a
 

@@ -53,10 +53,8 @@ module Oscar.Problem (
 
 import ClassyPrelude hiding (
     try,
-    undefined,
     )
 import Prelude                          (read)
-import Prelude                          (undefined)
 
 import Control.Applicative              (many)
 import Control.Conditional              (guardM)
@@ -101,6 +99,7 @@ import Oscar.Utilities                  (type (⁞))
 import Oscar.Utilities                  (unƭ)
 import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (ƭ)
+import Oscar.Utilities                  ((⊥))
 
 instance ƇPlace ProblemNumber where
 instance ƇPlace ProblemDescription where
@@ -281,10 +280,8 @@ problemSectionText ∷
     ∀ kind. (HasSection kind) ⇒
     Text ⁞ ƮAfter ProblemDescription → 
     Text ⁞ kind
-problemSectionText = ƭ . rawSection (section kind) . unƭ
+problemSectionText = ƭ . rawSection (section $ ((⊥) ∷ kind)) . unƭ
   where
-    kind ∷ kind = undefined
-
     rawSection ∷ Section → Text → Text
     rawSection _section = simpleParse $ do
         _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== _section) sectionParser)
