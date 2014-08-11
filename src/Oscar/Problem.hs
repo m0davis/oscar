@@ -101,6 +101,8 @@ import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  ((⊥))
 
+data ƮProblemAfterNumberLabel
+
 instance ƇPlace ProblemNumber where
 instance ƇPlace ProblemDescription where
 
@@ -115,11 +117,11 @@ readProblemsTextFile = map ƭ . readFile . unƭ
 
 -- | Partition the concatenated problems so that each 'Text' block contains 
 --   one 'Text' block for each 'Problem'.
-partitionProblemsText ∷ (Text ⁞ [Problem])  -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
-                      → [Text ⁞ Problem]    -- ^ Results in one 'Text' block for each 'Problem'.
+partitionProblemsText ∷ (Text ⁞ [Problem])                 -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
+                      → [Text ⁞ ƮProblemAfterNumberLabel]  -- ^ Results in one 'Text' block for each 'Problem'.
 partitionProblemsText = simpleParse (many p) . unƭ
   where
-    p ∷ Parser (Text ⁞ Problem)
+    p ∷ Parser (Text ⁞ ƮProblemAfterNumberLabel)
     p = do
         spaces
         _ ← string "Problem #"
@@ -129,7 +131,7 @@ partitionProblemsText = simpleParse (many p) . unƭ
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
 -- | The formatting of the input is documented here (TODO).
-problemFromText ∷ (Text ⁞ Problem)  -- ^ possibly as obtained from 'partitionProblemsText'
+problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'
                 → Problem
 problemFromText t = Problem
     number
@@ -216,7 +218,7 @@ data Problem = Problem
   deriving (Show)
 
 -- | The 'ProblemNumber' is identified at the top of the text block
-instance StatefulParse ProblemNumber Problem (ƮAfter ProblemNumber) where
+instance StatefulParse ProblemNumber ƮProblemAfterNumberLabel (ƮAfter ProblemNumber) where
     statefulParse = ƭ $ ProblemNumber . read <$> 
         manyTill anyChar (lookAhead . try $ space)
 

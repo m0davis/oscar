@@ -29,3 +29,56 @@ module creation philosophy:
         responsible for different domains of a problem
 
 export philosophy:
+
+
+
+
+
+--class FromTo from to | from → to, to → from where
+--class FromTo from to | from → to where
+--class FromTo from to where
+
+class FromTo from to | from → to, to → from where
+    fromTo ∷ from → to
+
+class PullFrom from to | to → from where
+    pullFrom ∷ from → to
+
+class PushTo from to | from → to where
+--class FromTo from to where
+    pushTo ∷ from → to
+
+data A = A
+data B = B
+data C = C
+data D = D
+
+foo ∷ A → C
+foo = pushTo . pushTo
+
+instance PushTo A B where
+    pushTo A = B
+
+instance PushTo B C where
+    pushTo B = C
+
+instance PushTo D C where
+    pushTo D = C
+
+instance PushTo (ReasonBlock Forwards defeasibility) (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) where
+    pushTo = fpfrts
+
+instance FromTo (Text ⁞ ƮReason Backwards defeasibility) (([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility) where
+    fromTo = extractFromProblemReasonTextBackwards
+
+instance ∀ kind. (HasSection kind) ⇒ PullFrom (Text ⁞ ƮAfter ProblemDescription) (Text ⁞ kind) where
+    pullFrom = problemSectionText
+
+class IsAKind kind where
+
+instance IsAKind ƮGivenPremise where
+instance IsAKind ƮUltimateEpistemicInterest where
+instance IsAKind (ƮReason direction defeasibility) where
+
+instance (IsAKind kind, InjectiveSection kind decode) ⇒ PullFrom (Text ⁞ kind) decode where
+    pullFrom = decodeSection
