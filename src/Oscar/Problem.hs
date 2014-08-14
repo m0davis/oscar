@@ -47,8 +47,6 @@ module Oscar.Problem (
         extractFromProblemReasonTextForwards,
         extractFromProblemReasonTextBackwards,
         enbracedListParser,
-        fpfrts,
-        bpfrts,
     ) where
 
 import ClassyPrelude hiding (
@@ -149,6 +147,26 @@ problemFromText t = Problem
 
     decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
     decodedSection = decodeSection $ problemSectionText afterDescription
+
+    fpfrts ∷ ReasonBlock Forwards defeasibility → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+    fpfrts rb = (,,)
+        (_rbProblemReasonName rb)
+        (fr $ _rbProblemReasonText rb)
+        (_rbProblemStrengthDegree rb)
+      where
+        fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+        booyah = first (map formulaFromText) . second formulaFromText
+
+
+    bpfrts ∷ ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+    bpfrts rb = (,,)
+        (_rbProblemReasonName rb)
+        (br $ _rbProblemReasonText rb)
+        (_rbProblemStrengthDegree rb)
+      where
+        br = booyah . unƭ . extractFromProblemReasonTextBackwards 
+
+        booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
 
 -- | A (hopefully) unique identifier of a 'Problem'.
 newtype ProblemNumber = ProblemNumber Int
@@ -357,23 +375,3 @@ enbracedListParser = do
             return $ firstText : restTexts
         else do
             return [firstText]
-
-fpfrts ∷ ReasonBlock Forwards defeasibility → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
-fpfrts rb = (,,)
-    (_rbProblemReasonName rb)
-    (fr $ _rbProblemReasonText rb)
-    (_rbProblemStrengthDegree rb)
-  where
-    fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-    booyah = first (map formulaFromText) . second formulaFromText
-
-
-bpfrts ∷ ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
-bpfrts rb = (,,)
-    (_rbProblemReasonName rb)
-    (br $ _rbProblemReasonText rb)
-    (_rbProblemStrengthDegree rb)
-  where
-    br = booyah . unƭ . extractFromProblemReasonTextBackwards 
-
-    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
