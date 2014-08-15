@@ -134,8 +134,8 @@ problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtai
 problemFromText t = Problem
     number
     description
-    (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection ƮGivenPremise))
-    (first (formulaFromText . unƭ) <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
+    (ffmt   <$> (decodedSection ∷ DecodedSection ƮGivenPremise))
+    (ffmt   <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
     (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards PrimaFacie)))
     (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards Conclusive)))
     (bpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Backwards Conclusive)))
@@ -145,8 +145,13 @@ problemFromText t = Problem
 
     (description, afterDescription) = runStatefulParse afterNumber
 
+
+
     decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
     decodedSection = decodeSection $ problemSectionText afterDescription
+
+    ffmt ∷ (Text ⁞ a, b) -> (Formula, b)
+    ffmt = first (formulaFromText . unƭ)
 
     fpfrts ∷ ReasonBlock Forwards defeasibility → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
     fpfrts rb = (,,)
@@ -167,6 +172,10 @@ problemFromText t = Problem
         br = booyah . unƭ . extractFromProblemReasonTextBackwards 
 
         booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+    
+    _rbProblemReasonName     (n, _, _, _) = n
+    _rbProblemReasonText     (_, t, _, _) = t
+    _rbProblemStrengthDegree (_, _, _, d) = d
 
 -- | A (hopefully) unique identifier of a 'Problem'.
 newtype ProblemNumber = ProblemNumber Int
@@ -208,13 +217,8 @@ data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
 data ƮProblemVariables
 
-data ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = ReasonBlock
-    { _rbProblemReasonName     ∷ !ProblemReasonName
-    , _rbProblemReasonText     ∷ !(Text ⁞ ƮReason direction defeasibility)
-    , _rbProblemVariablesText  ∷ !(Text ⁞ ƮProblemVariables)
-    , _rbProblemStrengthDegree ∷ !ProblemStrengthDegree
-    }
-  deriving (Show)
+type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
+    (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
 
 data ForwardsReason = ForwardsReason 
     { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] -> Set
@@ -229,11 +233,29 @@ data BackwardsReason = BackwardsReason
     }
   deriving (Show)
 
+--type Name = Text
+--newtype Named a = Named (a, Name)
+
+-- (a -> b) -> Named a -> b
+
+--Named a -> Name
+
+--instance Functor Named where
+
+type family Named a ∷ *
+type instance Named ForwardsPrimaFacieReason = (ProblemReasonName, ForwardsPrimaFacieReason)
+
+type ProblemPremise                  = (Formula, ProblemJustificationDegree)
+type ProblemInterest                 = (Formula, ProblemInterestDegree)
+type ForwardsPrimaFacieReason        = (ForwardsReason, ProblemStrengthDegree)
+type ProblemForwardsPrimaFacieReason = Named ForwardsPrimaFacieReason
+type ProblemForwardsConclusiveReason = (ProblemReasonName, ForwardsReason)
+
 data Problem = Problem
     { _problemNumber              ∷ !ProblemNumber
     , _problemDescription         ∷ !ProblemDescription
-    , _premises                   ∷ ![(Formula, ProblemJustificationDegree)]
-    , _interests                  ∷ ![(Formula, ProblemInterestDegree)]
+    , _premises                   ∷ ![ProblemPremise]
+    , _interests                  ∷ ![ProblemInterest]
     , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
     , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)] -- ^ TODO: strength must always be 1
     , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
@@ -287,7 +309,7 @@ instance InjectiveSection (ƮReason direction defeasibility) [ReasonBlock direct
             n ← parserProblemReasonName
             spaces
             (t, (v, d)) ← many anyChar `precededBy` p'
-            return $ ReasonBlock n (ƭ . (pack ∷ String → Text) $ t) v d
+            return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
           where
             p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
             p' = do
