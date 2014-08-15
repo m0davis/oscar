@@ -172,14 +172,20 @@ problemFromText t = Problem
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
--- | 
+-- | A (possibly empty) description of the problem.
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
-data Direction = Forwards | Backwards
+-- | The orientation of a reason.
+data Direction 
+    = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
+    | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
   deriving (Show)
 
-data Defeasibility = PrimaFacie | Conclusive
+-- | 
+data Defeasibility 
+    = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
+    | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
   deriving (Show)
 
 newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
