@@ -145,8 +145,6 @@ problemFromText t = Problem
 
     (description, afterDescription) = runStatefulParse afterNumber
 
-
-
     decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
     decodedSection = decodeSection $ problemSectionText afterDescription
 
@@ -161,7 +159,6 @@ problemFromText t = Problem
       where
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
-
 
     bpfrts ∷ ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
     bpfrts rb = (,,)
