@@ -123,9 +123,6 @@ import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  ((⊥))
 
-instance ƇPlace ProblemNumber where
-instance ƇPlace ProblemDescription where
-
 data Problem = Problem
     { _problemNumber                     ∷ !ProblemNumber
     , _problemDescription                ∷ !ProblemDescription
@@ -248,9 +245,13 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
+instance ƇPlace ProblemNumber where
+
 -- | A (possibly empty) description of the problem.
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
+
+instance ƇPlace ProblemDescription where
 
 newtype ProblemReasonName = ProblemReasonName Text
   deriving (Show)
