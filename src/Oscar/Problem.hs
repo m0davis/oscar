@@ -141,9 +141,9 @@ problemFromText t = Problem
     --(ffmt   <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
     (decodeUltimateEpistemicInterestsSection pSTaD)
     (decodeForwardsPrimaFacieReasonSection pSTaD)
-    (fpfrts' <$> decodeReasonSection pSTaD)
-    (bpfrts <$> decodeReasonSection pSTaD)
-    (bpfrts' <$> decodeReasonSection pSTaD)
+    (decodeForwardsConclusiveReasonSection pSTaD)
+    (decodeBackwardsPrimaFacieReasonSection pSTaD)
+    (decodeBackwardsConclusiveReasonSection pSTaD)
   where
     (number, afterNumber) = runStatefulParse t
 
@@ -161,46 +161,57 @@ _rbProblemStrengthDegree (_, _, _, d) = d
 
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
-
-fpfrts ∷ ReasonBlock Forwards PrimaFacie → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
-fpfrts rb = (,,)
-    (_rbProblemReasonName rb)
-    (fr $ _rbProblemReasonText rb)
-    (_rbProblemStrengthDegree rb)
   where
-    fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-    booyah = first (map formulaFromText) . second formulaFromText
-
-fpfrts' ∷ ReasonBlock Forwards Conclusive → (ProblemReasonName, ForwardsReason)
-fpfrts' rb = case _rbProblemStrengthDegree rb of
-    ProblemStrengthDegree (LispPositiveDouble 1) -> result
-    _ -> error "conclusive strength must = 1"
-  where
-    result = (,)
+    fpfrts ∷ ReasonBlock Forwards PrimaFacie → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+    fpfrts rb = (,,)
         (_rbProblemReasonName rb)
         (fr $ _rbProblemReasonText rb)
-    fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-    booyah = first (map formulaFromText) . second formulaFromText
+        (_rbProblemStrengthDegree rb)
+      where
+        fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+        booyah = first (map formulaFromText) . second formulaFromText
 
-bpfrts ∷ ReasonBlock Backwards PrimaFacie → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
-bpfrts rb = (,,)
-    (_rbProblemReasonName rb)
-    (br $ _rbProblemReasonText rb)
-    (_rbProblemStrengthDegree rb)
+decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [(ProblemReasonName, ForwardsReason)]
+decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
-    br = booyah . unƭ . extractFromProblemReasonTextBackwards 
+    fpfrts' ∷ ReasonBlock Forwards Conclusive → (ProblemReasonName, ForwardsReason)
+    fpfrts' rb = case _rbProblemStrengthDegree rb of
+        ProblemStrengthDegree (LispPositiveDouble 1) -> result
+        _ -> error "conclusive strength must = 1"
+      where
+        result = (,)
+            (_rbProblemReasonName rb)
+            (fr $ _rbProblemReasonText rb)
+        fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+        booyah = first (map formulaFromText) . second formulaFromText
 
-    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
-
-bpfrts' ∷ ReasonBlock Backwards Conclusive → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
-bpfrts' rb = (,,)
-    (_rbProblemReasonName rb)
-    (br $ _rbProblemReasonText rb)
-    (_rbProblemStrengthDegree rb)
+decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
+decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
   where
-    br = booyah . unƭ . extractFromProblemReasonTextBackwards 
+    bpfrts ∷ ReasonBlock Backwards PrimaFacie → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+    bpfrts rb = (,,)
+        (_rbProblemReasonName rb)
+        (br $ _rbProblemReasonText rb)
+        (_rbProblemStrengthDegree rb)
+      where
+        br = booyah . unƭ . extractFromProblemReasonTextBackwards 
 
-    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+        booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+
+decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [(ProblemReasonName, BackwardsReason)]
+decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
+  where
+    bpfrts' ∷ ReasonBlock Backwards Conclusive → (ProblemReasonName, BackwardsReason)
+    bpfrts' rb = case (_rbProblemStrengthDegree rb) of 
+        ProblemStrengthDegree (LispPositiveDouble 1) -> result
+        _ -> error "conclusive strength must = 1"
+        
+      where
+        result = (,)
+            (_rbProblemReasonName rb)
+            (br $ _rbProblemReasonText rb)
+        br = booyah . unƭ . extractFromProblemReasonTextBackwards 
+        booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
 
 
 -- | A (hopefully) unique identifier of a 'Problem'.
@@ -285,7 +296,7 @@ data Problem = Problem
     , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
     , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
     , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
-    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)] -- ^ TODO: strength must always be 1
+    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
     }
   deriving (Show)
 
