@@ -19,6 +19,15 @@ module Oscar.Problem (
         readProblemsTextFile,
         partitionProblemsText,
         problemFromText,
+    -- * misc. picky stuff
+        _rbProblemReasonName,
+        _rbProblemReasonText,
+        _rbProblemStrengthDegree,
+    -- * section decoders
+        decodeForwardsPrimaFacieReasonSection,
+        decodeForwardsConclusiveReasonSection,
+        decodeBackwardsPrimaFacieReasonSection,
+        decodeBackwardsConclusiveReasonSection,
     -- * parts of a problem
         ProblemNumber(..),
         ProblemDescription(..),
@@ -36,8 +45,19 @@ module Oscar.Problem (
         ƮUltimateEpistemicInterest,
         ƮReason,
         ƮProblemVariables,
-        ReasonBlock(..),
+    -- * misc. don't know
+        ReasonBlock,
+        type Named,
+        ProblemPremise,
+        ProblemInterest,
+        ForwardsPrimaFacieReason,
+        ProblemForwardsPrimaFacieReason,
+        ProblemForwardsConclusiveReason,
     -- * all the rest
+        runSectionParser,
+        decodeGivenPremisesSection,
+        decodeUltimateEpistemicInterestsSection,
+        decodeReasonSection,
         problemSectionText,
         parserProblemJustificationDegree,
         parserProblemInterestDegree,
@@ -109,6 +129,18 @@ instance ƇPlace ProblemDescription where
 -- | This is the highest-level problem decoder available in this module.
 problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
 problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
+
+data Problem = Problem
+    { _problemNumber              ∷ !ProblemNumber
+    , _problemDescription         ∷ !ProblemDescription
+    , _premises                   ∷ ![ProblemPremise]
+    , _interests                  ∷ ![ProblemInterest]
+    , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
+    , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
+    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
+    }
+  deriving (Show)
 
 -- | Read a file.
 readProblemsTextFile ∷ (FilePath ⁞ [Problem])  -- ^ The input file is presumed to represent one or more problems...
@@ -220,40 +252,8 @@ newtype ProblemNumber = ProblemNumber Int
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
--- | The orientation of a reason.
-data Direction 
-    = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
-    | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
-  deriving (Show)
-
--- | 
-data Defeasibility 
-    = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
-    | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
-  deriving (Show)
-
-newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
-  deriving (Show)
-
-newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
-  deriving (Show)
-
-newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
-  deriving (Show)
-
 newtype ProblemReasonName = ProblemReasonName Text
   deriving (Show)
-
-data ƮGivenPremise
-
-data ƮUltimateEpistemicInterest
-
-data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
-
-data ƮProblemVariables
-
-type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
-    (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
 
 data ForwardsReason = ForwardsReason 
     { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] -> Set
@@ -268,14 +268,37 @@ data BackwardsReason = BackwardsReason
     }
   deriving (Show)
 
---type Name = Text
---newtype Named a = Named (a, Name)
+newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
+  deriving (Show)
 
--- (a -> b) -> Named a -> b
+newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
+  deriving (Show)
 
---Named a -> Name
+newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
+  deriving (Show)
 
---instance Functor Named where
+-- | The orientation of a reason.
+data Direction 
+    = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
+    | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
+  deriving (Show)
+
+-- | 
+data Defeasibility 
+    = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
+    | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
+  deriving (Show)
+
+data ƮGivenPremise
+
+data ƮUltimateEpistemicInterest
+
+data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
+
+data ƮProblemVariables
+
+type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
+    (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
 
 type family Named a ∷ *
 type instance Named ForwardsPrimaFacieReason = (ProblemReasonName, ForwardsPrimaFacieReason)
@@ -285,18 +308,6 @@ type ProblemInterest                 = (Formula, ProblemInterestDegree)
 type ForwardsPrimaFacieReason        = (ForwardsReason, ProblemStrengthDegree)
 type ProblemForwardsPrimaFacieReason = Named ForwardsPrimaFacieReason
 type ProblemForwardsConclusiveReason = (ProblemReasonName, ForwardsReason)
-
-data Problem = Problem
-    { _problemNumber              ∷ !ProblemNumber
-    , _problemDescription         ∷ !ProblemDescription
-    , _premises                   ∷ ![ProblemPremise]
-    , _interests                  ∷ ![ProblemInterest]
-    , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
-    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
-    , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
-    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
-    }
-  deriving (Show)
 
 -- | The 'ProblemNumber' is identified at the top of the text block
 instance StatefulParse ProblemNumber ƮProblemAfterNumberLabel (ƮAfter ProblemNumber) where
