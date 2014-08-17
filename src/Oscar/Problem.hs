@@ -135,8 +135,10 @@ problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtai
 problemFromText t = Problem
     number
     description
-    (ffmt   <$> (decodedSection ∷ DecodedSection ƮGivenPremise))
-    (ffmt   <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
+    --(decodedSection ∷ DecodedSection ƮGivenPremise)
+    (decodeGivenPremisesSection pSTaD)
+    --(ffmt   <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
+    (decodeUltimateEpistemicInterestsSection pSTaD)
     (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards PrimaFacie)))
     (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards Conclusive)))
     (bpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Backwards Conclusive)))
@@ -148,6 +150,9 @@ problemFromText t = Problem
 
     decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
     decodedSection = decodeSection $ problemSectionText afterDescription
+
+    pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
+    pSTaD = problemSectionText afterDescription
 
     ffmt ∷ (Text ⁞ a, b) -> (Formula, b)
     ffmt = first (formulaFromText . unƭ)
@@ -275,28 +280,49 @@ instance StatefulParse ProblemDescription
       where
         p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
 
--- | 
-instance InjectiveSection ƮGivenPremise 
-                          [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)] 
-  where
-    type DecodedSection ƮGivenPremise = [(Text ⁞ ƮGivenPremise, ProblemJustificationDegree)]
-    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
-      where
-        p ∷ Parser (Text ⁞ ƮGivenPremise, ProblemJustificationDegree)
-        p = do
-            spaces
-            (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
-            return (ƭ . pack $ t, d)
+runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
+runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ
 
-instance InjectiveSection ƮUltimateEpistemicInterest [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)] where
-    type DecodedSection ƮUltimateEpistemicInterest = [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
-    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
-      where
-        p ∷ Parser (Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)
-        p = do
-            spaces
-            (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
-            return (ƭ . pack $ t, d)
+-- | 
+decodeGivenPremisesSection ∷ Text ⁞ ƮSection ƮGivenPremise 
+                           → [(Formula, ProblemJustificationDegree)]
+decodeGivenPremisesSection = runSectionParser p
+  where
+    p ∷ Parser (Formula, ProblemJustificationDegree)
+    p = do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+        return (formulaFromText . pack $ t, d)
+
+--instance InjectiveSection ƮGivenPremise 
+--                          [(Formula, ProblemJustificationDegree)] 
+--  where
+--    type DecodedSection ƮGivenPremise = [(Formula, ProblemJustificationDegree)]
+--    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
+--      where
+--        p ∷ Parser (Formula, ProblemJustificationDegree)
+--        p = do
+--            spaces
+--            (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+--            return (formulaFromText . pack $ t, d)
+
+decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest 
+                                        → [(Formula, ProblemInterestDegree)]
+decodeUltimateEpistemicInterestsSection = runSectionParser $ do
+    spaces
+    (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
+    return (formulaFromText . pack $ t, d)
+    
+
+--instance InjectiveSection ƮUltimateEpistemicInterest [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)] where
+--    type DecodedSection ƮUltimateEpistemicInterest = [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
+--    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
+--      where
+--        p ∷ Parser (Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)
+--        p = do
+--            spaces
+--            (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
+--            return (ƭ . pack $ t, d)
 
 instance InjectiveSection (ƮReason direction defeasibility) [ReasonBlock direction defeasibility] where
     type DecodedSection (ƮReason direction defeasibility) = [ReasonBlock direction defeasibility]
