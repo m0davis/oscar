@@ -6,3 +6,5 @@ class ƇPlace place where
 
 -- | For use in 'Tagged' (or '`⁞`') annotations. `⁞`
 data ƇPlace place ⇒ ƮAfter place
+
+data ƮSection section

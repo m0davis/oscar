@@ -76,6 +76,7 @@ import Oscar.ProblemDoubleParser        (LispPositiveDouble)
 import Oscar.ProblemDoubleParser        (parserLispPositiveDouble)
 import Oscar.ProblemLocation            (ƇPlace)
 import Oscar.ProblemLocation            (ƮAfter)
+import Oscar.ProblemLocation            (ƮSection)
 import Oscar.ProblemSection             (Section(Section'BackwardsConclusiveReasons))
 import Oscar.ProblemSection             (Section(Section'BackwardsPrimaFacieReasons))
 import Oscar.ProblemSection             (Section(Section'ForwardsConclusiveReasons))
@@ -324,7 +325,7 @@ instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'Ba
 problemSectionText ∷ 
     ∀ kind. (HasSection kind) ⇒
     Text ⁞ ƮAfter ProblemDescription → 
-    Text ⁞ kind
+    Text ⁞ ƮSection kind
 problemSectionText = ƭ . rawSection (section $ ((⊥) ∷ kind)) . unƭ
   where
     rawSection ∷ Section → Text → Text

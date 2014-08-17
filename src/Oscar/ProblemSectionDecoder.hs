@@ -10,6 +10,7 @@ import ClassyPrelude
 
 import Oscar.ProblemSection             (Section)
 import Oscar.Utilities                  (type (⁞))
+import Oscar.ProblemLocation            (ƮSection)
 
 -- | 
 class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode → kind where
@@ -17,7 +18,7 @@ class (DecodedSection kind ~ decode) ⇒ InjectiveSection kind decode | decode �
     type DecodedSection kind
 
     -- | decode (or parse) the text block in a section
-    decodeSection ∷ Text ⁞ kind → decode
+    decodeSection ∷ Text ⁞ ƮSection kind → decode
 
 -- | 
 class HasSection s where
