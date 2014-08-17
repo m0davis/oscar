@@ -136,9 +136,7 @@ problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtai
 problemFromText t = Problem
     number
     description
-    --(decodedSection ∷ DecodedSection ƮGivenPremise)
     (decodeGivenPremisesSection pSTaD)
-    --(ffmt   <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
     (decodeUltimateEpistemicInterestsSection pSTaD)
     (decodeForwardsPrimaFacieReasonSection pSTaD)
     (decodeForwardsConclusiveReasonSection pSTaD)
