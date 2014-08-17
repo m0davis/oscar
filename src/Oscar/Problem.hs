@@ -73,6 +73,7 @@ import Text.Parsec.Text                 (Parser)
 import Oscar.Formula                    (Formula)
 import Oscar.Formula                    (formulaFromText)
 import Oscar.ProblemDoubleParser        (LispPositiveDouble)
+import Oscar.ProblemDoubleParser        (LispPositiveDouble(LispPositiveDouble))
 import Oscar.ProblemDoubleParser        (parserLispPositiveDouble)
 import Oscar.ProblemLocation            (ƇPlace)
 import Oscar.ProblemLocation            (ƮAfter)
@@ -154,9 +155,6 @@ problemFromText t = Problem
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
     pSTaD = problemSectionText afterDescription
 
-    ffmt ∷ (Text ⁞ a, b) -> (Formula, b)
-    ffmt = first (formulaFromText . unƭ)
-
     fpfrts ∷ ReasonBlock Forwards PrimaFacie → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
     fpfrts rb = (,,)
         (_rbProblemReasonName rb)
@@ -166,12 +164,14 @@ problemFromText t = Problem
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
-    fpfrts' ∷ ReasonBlock Forwards Conclusive → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
-    fpfrts' rb = (,,)
-        (_rbProblemReasonName rb)
-        (fr $ _rbProblemReasonText rb)
-        (_rbProblemStrengthDegree rb)
+    fpfrts' ∷ ReasonBlock Forwards Conclusive → (ProblemReasonName, ForwardsReason)
+    fpfrts' rb = case _rbProblemStrengthDegree rb of
+        ProblemStrengthDegree (LispPositiveDouble 1) -> result
+        _ -> error "conclusive strength must = 1"
       where
+        result = (,)
+            (_rbProblemReasonName rb)
+            (fr $ _rbProblemReasonText rb)
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
@@ -279,7 +279,7 @@ data Problem = Problem
     , _premises                   ∷ ![ProblemPremise]
     , _interests                  ∷ ![ProblemInterest]
     , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
-    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)] -- ^ TODO: strength must always be 1
+    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
     , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
     , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)] -- ^ TODO: strength must always be 1
     }

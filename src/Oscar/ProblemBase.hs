@@ -15,7 +15,10 @@ import Oscar.Problem                    (ProblemStrengthDegree)
 stripMeta ∷ (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) → (ForwardsReason, ProblemStrengthDegree)
 stripMeta (_, r, d) = (r, d)
 
+stripMeta1 ∷ (ProblemReasonName, ForwardsReason) → ForwardsReason
+stripMeta1 (_, r) = r
+
 stripMeta' ∷ (ProblemReasonName, BackwardsReason, ProblemStrengthDegree) → (BackwardsReason, ProblemStrengthDegree)
 stripMeta' (_, r, d) = (r, d)
 
-pattern BaseProblem p i fpfr fcr bpfr bcr ← Problem _ _ p i (map stripMeta → fpfr) (map stripMeta → fcr) (map stripMeta' → bpfr) (map stripMeta' → bcr)
+pattern BaseProblem p i fpfr fcr bpfr bcr ← Problem _ _ p i (map stripMeta → fpfr) (map stripMeta1 → fcr) (map stripMeta' → bpfr) (map stripMeta' → bcr)
