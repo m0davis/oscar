@@ -131,14 +131,14 @@ problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
 problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
 
 data Problem = Problem
-    { _problemNumber              ∷ !ProblemNumber
-    , _problemDescription         ∷ !ProblemDescription
-    , _premises                   ∷ ![ProblemPremise]
-    , _interests                  ∷ ![ProblemInterest]
-    , _forwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
-    , _forwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
-    , _backwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
-    , _backwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
+    { _problemNumber                     ∷ !ProblemNumber
+    , _problemDescription                ∷ !ProblemDescription
+    , _problemPremises                   ∷ ![ProblemPremise]
+    , _problemInterests                  ∷ ![ProblemInterest]
+    , _problemForwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+    , _problemForwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
+    , _problemBackwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
+    , _problemBackwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
     }
   deriving (Show)
 
