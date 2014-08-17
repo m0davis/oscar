@@ -12,9 +12,10 @@
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE UnicodeSyntax #-}
 module Oscar.Problem (
+    -- * Problem data
+        Problem(..),
     -- * highest-level
         problemsM,
-        Problem(..),
     -- * API
         readProblemsTextFile,
         partitionProblemsText,
@@ -41,6 +42,7 @@ module Oscar.Problem (
         Direction(..),
         Defeasibility(..),
     -- * useful for tags
+        ƮProblemAfterNumberLabel,
         ƮGivenPremise,
         ƮUltimateEpistemicInterest,
         ƮReason,
@@ -121,14 +123,8 @@ import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  ((⊥))
 
-data ƮProblemAfterNumberLabel
-
 instance ƇPlace ProblemNumber where
 instance ƇPlace ProblemDescription where
-
--- | This is the highest-level problem decoder available in this module.
-problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
-problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
 
 data Problem = Problem
     { _problemNumber                     ∷ !ProblemNumber
@@ -141,6 +137,10 @@ data Problem = Problem
     , _problemBackwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
     }
   deriving (Show)
+
+-- | This is the highest-level problem decoder available in this module.
+problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
+problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
 
 -- | Read a file.
 readProblemsTextFile ∷ (FilePath ⁞ [Problem])  -- ^ The input file is presumed to represent one or more problems...
@@ -288,6 +288,8 @@ data Defeasibility
     = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
     | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
   deriving (Show)
+
+data ƮProblemAfterNumberLabel
 
 data ƮGivenPremise
 
