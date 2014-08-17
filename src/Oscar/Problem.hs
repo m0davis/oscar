@@ -139,10 +139,10 @@ problemFromText t = Problem
     (decodeGivenPremisesSection pSTaD)
     --(ffmt   <$> (decodedSection ∷ DecodedSection ƮUltimateEpistemicInterest))
     (decodeUltimateEpistemicInterestsSection pSTaD)
-    (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards PrimaFacie)))
-    (fpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Forwards Conclusive)))
-    (bpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Backwards Conclusive)))
-    (bpfrts <$> (decodedSection ∷ DecodedSection (ƮReason Backwards Conclusive)))
+    (fpfrts <$> decodeReasonSection pSTaD)
+    (fpfrts' <$> decodeReasonSection pSTaD)
+    (bpfrts <$> decodeReasonSection pSTaD)
+    (bpfrts' <$> decodeReasonSection pSTaD)
   where
     (number, afterNumber) = runStatefulParse t
 
@@ -157,7 +157,7 @@ problemFromText t = Problem
     ffmt ∷ (Text ⁞ a, b) -> (Formula, b)
     ffmt = first (formulaFromText . unƭ)
 
-    fpfrts ∷ ReasonBlock Forwards defeasibility → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+    fpfrts ∷ ReasonBlock Forwards PrimaFacie → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
     fpfrts rb = (,,)
         (_rbProblemReasonName rb)
         (fr $ _rbProblemReasonText rb)
@@ -166,8 +166,27 @@ problemFromText t = Problem
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
-    bpfrts ∷ ReasonBlock Backwards defeasibility → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+    fpfrts' ∷ ReasonBlock Forwards Conclusive → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+    fpfrts' rb = (,,)
+        (_rbProblemReasonName rb)
+        (fr $ _rbProblemReasonText rb)
+        (_rbProblemStrengthDegree rb)
+      where
+        fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+        booyah = first (map formulaFromText) . second formulaFromText
+
+    bpfrts ∷ ReasonBlock Backwards PrimaFacie → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
     bpfrts rb = (,,)
+        (_rbProblemReasonName rb)
+        (br $ _rbProblemReasonText rb)
+        (_rbProblemStrengthDegree rb)
+      where
+        br = booyah . unƭ . extractFromProblemReasonTextBackwards 
+
+        booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+    
+    bpfrts' ∷ ReasonBlock Backwards Conclusive → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+    bpfrts' rb = (,,)
         (_rbProblemReasonName rb)
         (br $ _rbProblemReasonText rb)
         (_rbProblemStrengthDegree rb)
@@ -294,52 +313,27 @@ decodeGivenPremisesSection = runSectionParser p
         (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
         return (formulaFromText . pack $ t, d)
 
---instance InjectiveSection ƮGivenPremise 
---                          [(Formula, ProblemJustificationDegree)] 
---  where
---    type DecodedSection ƮGivenPremise = [(Formula, ProblemJustificationDegree)]
---    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
---      where
---        p ∷ Parser (Formula, ProblemJustificationDegree)
---        p = do
---            spaces
---            (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
---            return (formulaFromText . pack $ t, d)
-
 decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest 
                                         → [(Formula, ProblemInterestDegree)]
 decodeUltimateEpistemicInterestsSection = runSectionParser $ do
     spaces
     (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
     return (formulaFromText . pack $ t, d)
-    
 
---instance InjectiveSection ƮUltimateEpistemicInterest [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)] where
---    type DecodedSection ƮUltimateEpistemicInterest = [(Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)]
---    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
---      where
---        p ∷ Parser (Text ⁞ ƮUltimateEpistemicInterest, ProblemInterestDegree)
---        p = do
---            spaces
---            (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
---            return (ƭ . pack $ t, d)
 
-instance InjectiveSection (ƮReason direction defeasibility) [ReasonBlock direction defeasibility] where
-    type DecodedSection (ƮReason direction defeasibility) = [ReasonBlock direction defeasibility]
-    decodeSection = simpleParse (many (try p) <* many space <* eof) . unƭ
-      where
-        p ∷ Parser (ReasonBlock direction defeasibility)
-        p = do
-            n ← parserProblemReasonName
-            spaces
-            (t, (v, d)) ← many anyChar `precededBy` p'
-            return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
-          where
-            p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
-            p' = do
-                t ← parserProblemVariablesText
-                d ← parserProblemStrengthDegree
-                return (t, d)
+decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
+                    → [(ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)]
+decodeReasonSection = runSectionParser $ do
+    n ← parserProblemReasonName
+    spaces
+    (t, (v, d)) ← many anyChar `precededBy` p'
+    return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
+  where
+    p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
+    p' = do
+        t ← parserProblemVariablesText
+        d ← parserProblemStrengthDegree
+        return (t, d)
 
 instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
 instance HasSection ƮUltimateEpistemicInterest     where section _ = Section'UltimateEpistemicInterests
