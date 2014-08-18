@@ -43,9 +43,9 @@ module Oscar.Problem (
             ProblemJustificationDegree(..),
             ProblemInterestDegree(..),
             ProblemStrengthDegree(..),
-    -- * highest-level
-        problemsM,
     -- * API
+        -- ** highest-level
+            problemsM,
         readProblemsTextFile,
         partitionProblemsText,
         problemFromText,
