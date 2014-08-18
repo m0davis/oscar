@@ -15,24 +15,24 @@ module Oscar.Problem (
     -- * Problem data
         Problem(..),
     -- * parts of a problem
-    -- ** meta info
-        ProblemNumber(..),
-        ProblemDescription(..),
-    -- ** premises, interests, reasons
-        ProblemPremise,
-        ProblemInterest,
-        ProblemForwardsPrimaFacieReason,
-        ProblemForwardsConclusiveReason,
-        ProblemBackwardsPrimaFacieReason,
-        ProblemBackwardsConclusiveReason,
-    -- *** parts of a reason
-        ProblemReasonName(..),
-        ForwardsReason(..),
-        BackwardsReason(..),
-    -- ** degrees
-        ProblemJustificationDegree(..),
-        ProblemInterestDegree(..),
-        ProblemStrengthDegree(..),
+        -- ** meta info
+            ProblemNumber(..),
+            ProblemDescription(..),
+        -- ** premises, interests, reasons
+            ProblemPremise,
+            ProblemInterest,
+            ProblemForwardsPrimaFacieReason,
+            ProblemForwardsConclusiveReason,
+            ProblemBackwardsPrimaFacieReason,
+            ProblemBackwardsConclusiveReason,
+            -- *** parts of a reason
+                ProblemReasonName(..),
+                ForwardsReason(..),
+                BackwardsReason(..),
+        -- ** degrees
+            ProblemJustificationDegree(..),
+            ProblemInterestDegree(..),
+            ProblemStrengthDegree(..),
     -- * highest-level
         problemsM,
     -- * API
