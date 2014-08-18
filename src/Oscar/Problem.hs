@@ -43,6 +43,7 @@ module Oscar.Problem (
         decodeGivenPremisesSection,
         decodeUltimateEpistemicInterestsSection,
         decodeReasonSection,
+        getForwardsReason,
         decodeForwardsPrimaFacieReasonSection,
         decodeForwardsConclusiveReasonSection,
         decodeBackwardsPrimaFacieReasonSection,
@@ -52,6 +53,8 @@ module Oscar.Problem (
         Defeasibility(..),
     -- * useful for tags
         ƮProblemAfterNumberLabel,
+        ƮProblemAfterNumber,
+        ƮProblemAfterDescription,
         ƮGivenPremise,
         ƮUltimateEpistemicInterest,
         ƮReason,
@@ -292,6 +295,12 @@ decodeReasonSection = runSectionParser $ do
         d ← parserProblemStrengthDegree
         return (t, d)
 
+-- | A helper function
+getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
+getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+  where
+    booyah = first (map formulaFromText) . second formulaFromText
+
 -- | 
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
@@ -299,11 +308,8 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
     fpfrts ∷ ReasonBlock Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
     fpfrts rb = (,,)
         (_rbProblemReasonName rb)
-        (fr $ _rbProblemReasonText rb)
+        (getForwardsReason $ _rbProblemReasonText rb)
         (_rbProblemStrengthDegree rb)
-      where
-        fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-        booyah = first (map formulaFromText) . second formulaFromText
 
 -- | 
 decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
@@ -316,9 +322,7 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
       where
         result = (,)
             (_rbProblemReasonName rb)
-            (fr $ _rbProblemReasonText rb)
-        fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-        booyah = first (map formulaFromText) . second formulaFromText
+            (getForwardsReason $ _rbProblemReasonText rb)
 
 -- | 
 decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
