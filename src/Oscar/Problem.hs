@@ -239,11 +239,7 @@ problemFromText t = Problem
     (decodeBackwardsConclusiveReasonSection pSTaD)
   where
     (number, afterNumber) = runStatefulParse t
-
     (description, afterDescription) = runStatefulParse afterNumber
-
-    decodedSection ∷ (HasSection kind, InjectiveSection kind decode) ⇒ decode
-    decodedSection = decodeSection $ problemSectionText afterDescription
 
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
     pSTaD = problemSectionText afterDescription
@@ -259,6 +255,7 @@ decodeGivenPremisesSection = runSectionParser p
         (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
         return (formulaFromText . pack $ t, d)
 
+-- | 
 decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest 
                                         → [(Formula, ProblemInterestDegree)]
 decodeUltimateEpistemicInterestsSection = runSectionParser $ do
@@ -267,6 +264,7 @@ decodeUltimateEpistemicInterestsSection = runSectionParser $ do
     return (formulaFromText . pack $ t, d)
 
 
+-- | 
 decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
                     → [ReasonBlock direction defeasibility]
 decodeReasonSection = runSectionParser $ do
@@ -281,6 +279,7 @@ decodeReasonSection = runSectionParser $ do
         d ← parserProblemStrengthDegree
         return (t, d)
 
+-- | 
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
@@ -293,6 +292,7 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
+-- | 
 decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
 decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
@@ -307,6 +307,7 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
+-- | 
 decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
 decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
   where
@@ -317,9 +318,9 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
         (_rbProblemStrengthDegree rb)
       where
         br = booyah . unƭ . extractFromProblemReasonTextBackwards 
-
         booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
 
+-- | 
 decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
 decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
   where
@@ -334,7 +335,6 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
             (br $ _rbProblemReasonText rb)
         br = booyah . unƭ . extractFromProblemReasonTextBackwards 
         booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
-
 
 -- | The orientation of a reason.
 data Direction 
@@ -374,7 +374,11 @@ data ƮProblemVariables
 
 -- | A partially-processed reason section
 type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
-    (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
+    ( ProblemReasonName                          
+    , Text ⁞ ƮReason direction defeasibility
+    , Text ⁞ ƮProblemVariables
+    , ProblemStrengthDegree
+    )
 
 _rbProblemReasonName ∷ ReasonBlock direction defeasibility → ProblemReasonName
 _rbProblemReasonName (n, _, _, _) = n
