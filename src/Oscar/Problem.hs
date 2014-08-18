@@ -40,6 +40,9 @@ module Oscar.Problem (
         partitionProblemsText,
         problemFromText,
     -- * section decoders
+        decodeGivenPremisesSection,
+        decodeUltimateEpistemicInterestsSection,
+        decodeReasonSection,
         decodeForwardsPrimaFacieReasonSection,
         decodeForwardsConclusiveReasonSection,
         decodeBackwardsPrimaFacieReasonSection,
@@ -61,9 +64,6 @@ module Oscar.Problem (
         _rbProblemStrengthDegree,
     -- * all the rest
         runSectionParser,
-        decodeGivenPremisesSection,
-        decodeUltimateEpistemicInterestsSection,
-        decodeReasonSection,
         problemSectionText,
         parserProblemJustificationDegree,
         parserProblemInterestDegree,
@@ -248,6 +248,39 @@ problemFromText t = Problem
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
     pSTaD = problemSectionText afterDescription
 
+-- | 
+decodeGivenPremisesSection ∷ Text ⁞ ƮSection ƮGivenPremise 
+                           → [(Formula, ProblemJustificationDegree)]
+decodeGivenPremisesSection = runSectionParser p
+  where
+    p ∷ Parser (Formula, ProblemJustificationDegree)
+    p = do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+        return (formulaFromText . pack $ t, d)
+
+decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest 
+                                        → [(Formula, ProblemInterestDegree)]
+decodeUltimateEpistemicInterestsSection = runSectionParser $ do
+    spaces
+    (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
+    return (formulaFromText . pack $ t, d)
+
+
+decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
+                    → [ReasonBlock direction defeasibility]
+decodeReasonSection = runSectionParser $ do
+    n ← parserProblemReasonName
+    spaces
+    (t, (v, d)) ← many anyChar `precededBy` p'
+    return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
+  where
+    p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
+    p' = do
+        t ← parserProblemVariablesText
+        d ← parserProblemStrengthDegree
+        return (t, d)
+
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
@@ -321,11 +354,20 @@ data ƮProblemAfterNumberLabel
 -- | The premise section
 data ƮGivenPremise
 
+instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
+
 -- | The interest section
 data ƮUltimateEpistemicInterest
 
+instance HasSection ƮUltimateEpistemicInterest     where section _ = Section'UltimateEpistemicInterests
+
 -- | A reason section
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
+
+instance HasSection (ƮReason Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons
+instance HasSection (ƮReason Forwards  Conclusive) where section _ = Section'ForwardsConclusiveReasons
+instance HasSection (ƮReason Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
+instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
 -- | Variables for a reason
 data ƮProblemVariables
@@ -362,47 +404,6 @@ instance StatefulParse ProblemDescription
 
 runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
 runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ
-
--- | 
-decodeGivenPremisesSection ∷ Text ⁞ ƮSection ƮGivenPremise 
-                           → [(Formula, ProblemJustificationDegree)]
-decodeGivenPremisesSection = runSectionParser p
-  where
-    p ∷ Parser (Formula, ProblemJustificationDegree)
-    p = do
-        spaces
-        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
-        return (formulaFromText . pack $ t, d)
-
-decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest 
-                                        → [(Formula, ProblemInterestDegree)]
-decodeUltimateEpistemicInterestsSection = runSectionParser $ do
-    spaces
-    (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
-    return (formulaFromText . pack $ t, d)
-
-
-decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
---                    → [(ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)]
-                    → [ReasonBlock direction defeasibility]
-decodeReasonSection = runSectionParser $ do
-    n ← parserProblemReasonName
-    spaces
-    (t, (v, d)) ← many anyChar `precededBy` p'
-    return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
-  where
-    p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
-    p' = do
-        t ← parserProblemVariablesText
-        d ← parserProblemStrengthDegree
-        return (t, d)
-
-instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
-instance HasSection ƮUltimateEpistemicInterest     where section _ = Section'UltimateEpistemicInterests
-instance HasSection (ƮReason Forwards  PrimaFacie) where section _ = Section'ForwardsPrimaFacieReasons
-instance HasSection (ƮReason Forwards  Conclusive) where section _ = Section'ForwardsConclusiveReasons
-instance HasSection (ƮReason Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
-instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
 problemSectionText ∷ 
     ∀ kind. (HasSection kind) ⇒
