@@ -14,6 +14,25 @@
 module Oscar.Problem (
     -- * Problem data
         Problem(..),
+    -- * parts of a problem
+    -- ** meta info
+        ProblemNumber(..),
+        ProblemDescription(..),
+    -- ** premises, interests, reasons
+        ProblemPremise,
+        ProblemInterest,
+        ProblemForwardsPrimaFacieReason,
+        ProblemForwardsConclusiveReason,
+        ProblemBackwardsPrimaFacieReason,
+        ProblemBackwardsConclusiveReason,
+    -- *** parts of a reason
+        ProblemReasonName(..),
+        ForwardsReason(..),
+        BackwardsReason(..),
+    -- ** degrees
+        ProblemJustificationDegree(..),
+        ProblemInterestDegree(..),
+        ProblemStrengthDegree(..),
     -- * highest-level
         problemsM,
     -- * API
@@ -29,15 +48,6 @@ module Oscar.Problem (
         decodeForwardsConclusiveReasonSection,
         decodeBackwardsPrimaFacieReasonSection,
         decodeBackwardsConclusiveReasonSection,
-    -- * parts of a problem
-        ProblemNumber(..),
-        ProblemDescription(..),
-        ProblemReasonName(..),
-        ForwardsReason(..),
-        BackwardsReason(..),
-        ProblemJustificationDegree(..),
-        ProblemInterestDegree(..),
-        ProblemStrengthDegree(..),
     -- * reason modifiers
         Direction(..),
         Defeasibility(..),
@@ -49,12 +59,6 @@ module Oscar.Problem (
         ƮProblemVariables,
     -- * misc. don't know
         ReasonBlock,
-        type Named,
-        ProblemPremise,
-        ProblemInterest,
-        ForwardsPrimaFacieReason,
-        ProblemForwardsPrimaFacieReason,
-        ProblemForwardsConclusiveReason,
     -- * all the rest
         runSectionParser,
         decodeGivenPremisesSection,
@@ -123,16 +127,78 @@ import Oscar.Utilities                  (withInput)
 import Oscar.Utilities                  (ƭ)
 import Oscar.Utilities                  ((⊥))
 
+-- | A Problem reflects exactly as much information as is parsed from a Text of an OSCAR problem
 data Problem = Problem
     { _problemNumber                     ∷ !ProblemNumber
     , _problemDescription                ∷ !ProblemDescription
     , _problemPremises                   ∷ ![ProblemPremise]
     , _problemInterests                  ∷ ![ProblemInterest]
-    , _problemForwardsPrimaFacieReasons  ∷ ![(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
-    , _problemForwardsConclusiveReasons  ∷ ![(ProblemReasonName, ForwardsReason)]
-    , _problemBackwardsPrimaFacieReasons ∷ ![(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
-    , _problemBackwardsConclusiveReasons ∷ ![(ProblemReasonName, BackwardsReason)]
+    , _problemForwardsPrimaFacieReasons  ∷ ![ProblemForwardsPrimaFacieReason]
+    , _problemForwardsConclusiveReasons  ∷ ![ProblemForwardsConclusiveReason]
+    , _problemBackwardsPrimaFacieReasons ∷ ![ProblemBackwardsPrimaFacieReason]
+    , _problemBackwardsConclusiveReasons ∷ ![ProblemBackwardsConclusiveReason]
     }
+  deriving (Show)
+
+-- | A (hopefully) unique identifier of a 'Problem'.
+newtype ProblemNumber = ProblemNumber Int
+  deriving (Show)
+
+instance ƇPlace ProblemNumber where
+
+-- | A (possibly empty) description of the problem.
+newtype ProblemDescription = ProblemDescription Text
+  deriving (Show)
+
+instance ƇPlace ProblemDescription where
+
+-- | A formula for a premise with its justification
+type ProblemPremise                   = (Formula, ProblemJustificationDegree)
+
+-- | A formula for an interest with its degree of interest
+type ProblemInterest                  = (Formula, ProblemInterestDegree)
+
+-- | A forwards p.f. reason with its name and strength
+type ProblemForwardsPrimaFacieReason  = (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+
+-- | A forwards conclusive reason with its name (the strength is unity, implicitly)
+type ProblemForwardsConclusiveReason  = (ProblemReasonName, ForwardsReason)
+
+-- | A backwards p.f. reason with its name and strength
+type ProblemBackwardsPrimaFacieReason = (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+
+-- | A backwards conclusive reason with its name (the strength is unity, implicitly)
+type ProblemBackwardsConclusiveReason = (ProblemReasonName, BackwardsReason)
+
+-- | A name for a reason
+newtype ProblemReasonName = ProblemReasonName Text
+  deriving (Show)
+
+-- | A forwards reason
+data ForwardsReason = ForwardsReason 
+    { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] -> Set
+    , _frConclusion       ∷ !Formula    -- ^ conclusion
+    }
+  deriving (Show)
+
+-- | A backwards reason
+data BackwardsReason = BackwardsReason 
+    { _brForwardsPremises  ∷ ![Formula] 
+    , _brBackwardsPremises ∷ ![Formula]
+    , _brConclusion        ∷ !Formula
+    }
+  deriving (Show)
+
+-- | The degree of justification (of a premise)
+newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
+  deriving (Show)
+
+-- | The degree of interest (of an interest)
+newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
+  deriving (Show)
+
+-- | The strength (of a reason)
+newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
   deriving (Show)
 
 -- | This is the highest-level problem decoder available in this module.
@@ -241,43 +307,6 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
         booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
 
 
--- | A (hopefully) unique identifier of a 'Problem'.
-newtype ProblemNumber = ProblemNumber Int
-  deriving (Show)
-
-instance ƇPlace ProblemNumber where
-
--- | A (possibly empty) description of the problem.
-newtype ProblemDescription = ProblemDescription Text
-  deriving (Show)
-
-instance ƇPlace ProblemDescription where
-
-newtype ProblemReasonName = ProblemReasonName Text
-  deriving (Show)
-
-data ForwardsReason = ForwardsReason 
-    { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] -> Set
-    , _frConclusion       ∷ !Formula    -- ^ conclusion
-    }
-  deriving (Show)
-
-data BackwardsReason = BackwardsReason 
-    { _brForwardsPremises  ∷ ![Formula] 
-    , _brBackwardsPremises ∷ ![Formula]
-    , _brConclusion        ∷ !Formula
-    }
-  deriving (Show)
-
-newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
-  deriving (Show)
-
-newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
-  deriving (Show)
-
-newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
-  deriving (Show)
-
 -- | The orientation of a reason.
 data Direction 
     = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
@@ -302,15 +331,6 @@ data ƮProblemVariables
 
 type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
     (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
-
-type family Named a ∷ *
-type instance Named ForwardsPrimaFacieReason = (ProblemReasonName, ForwardsPrimaFacieReason)
-
-type ProblemPremise                  = (Formula, ProblemJustificationDegree)
-type ProblemInterest                 = (Formula, ProblemInterestDegree)
-type ForwardsPrimaFacieReason        = (ForwardsReason, ProblemStrengthDegree)
-type ProblemForwardsPrimaFacieReason = Named ForwardsPrimaFacieReason
-type ProblemForwardsConclusiveReason = (ProblemReasonName, ForwardsReason)
 
 -- | The 'ProblemNumber' is identified at the top of the text block
 instance StatefulParse ProblemNumber ƮProblemAfterNumberLabel (ƮAfter ProblemNumber) where
