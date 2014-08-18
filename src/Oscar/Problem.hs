@@ -57,6 +57,7 @@ module Oscar.Problem (
         ReasonBlock,
         _rbProblemReasonName,
         _rbProblemReasonText,
+        _rbProblemVariables,
         _rbProblemStrengthDegree,
     -- * all the rest
         runSectionParser,
@@ -247,10 +248,10 @@ problemFromText t = Problem
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
     pSTaD = problemSectionText afterDescription
 
-decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
+decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
-    fpfrts ∷ ReasonBlock Forwards PrimaFacie → (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+    fpfrts ∷ ReasonBlock Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
     fpfrts rb = (,,)
         (_rbProblemReasonName rb)
         (fr $ _rbProblemReasonText rb)
@@ -259,10 +260,10 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
-decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [(ProblemReasonName, ForwardsReason)]
+decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
 decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
-    fpfrts' ∷ ReasonBlock Forwards Conclusive → (ProblemReasonName, ForwardsReason)
+    fpfrts' ∷ ReasonBlock Forwards Conclusive → ProblemForwardsConclusiveReason
     fpfrts' rb = case _rbProblemStrengthDegree rb of
         ProblemStrengthDegree (LispPositiveDouble 1) -> result
         _ -> error "conclusive strength must = 1"
@@ -273,10 +274,10 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
         fr = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
         booyah = first (map formulaFromText) . second formulaFromText
 
-decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [(ProblemReasonName, BackwardsReason, ProblemStrengthDegree)]
+decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
 decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
   where
-    bpfrts ∷ ReasonBlock Backwards PrimaFacie → (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
+    bpfrts ∷ ReasonBlock Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
     bpfrts rb = (,,)
         (_rbProblemReasonName rb)
         (br $ _rbProblemReasonText rb)
@@ -286,10 +287,10 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
 
         booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
 
-decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [(ProblemReasonName, BackwardsReason)]
+decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
 decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
   where
-    bpfrts' ∷ ReasonBlock Backwards Conclusive → (ProblemReasonName, BackwardsReason)
+    bpfrts' ∷ ReasonBlock Backwards Conclusive → ProblemBackwardsConclusiveReason
     bpfrts' rb = case (_rbProblemStrengthDegree rb) of 
         ProblemStrengthDegree (LispPositiveDouble 1) -> result
         _ -> error "conclusive strength must = 1"
@@ -308,27 +309,41 @@ data Direction
     | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
   deriving (Show)
 
--- | 
+-- | The defeasibility of a reason
 data Defeasibility 
     = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
     | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
   deriving (Show)
 
+-- | Stuff after the "Problem #"
 data ƮProblemAfterNumberLabel
 
+-- | The premise section
 data ƮGivenPremise
 
+-- | The interest section
 data ƮUltimateEpistemicInterest
 
+-- | A reason section
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
+-- | Variables for a reason
 data ƮProblemVariables
 
+-- | A partially-processed reason section
 type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
     (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
 
-_rbProblemReasonName     (n, _, _, _) = n
-_rbProblemReasonText     (_, t, _, _) = t
+_rbProblemReasonName ∷ ReasonBlock direction defeasibility → ProblemReasonName
+_rbProblemReasonName (n, _, _, _) = n
+
+_rbProblemReasonText ∷ ReasonBlock direction defeasibility → Text ⁞ ƮReason direction defeasibility
+_rbProblemReasonText (_, t, _, _) = t
+
+_rbProblemVariables ∷ ReasonBlock direction defeasibility → Text ⁞ ƮProblemVariables
+_rbProblemVariables (_, _, v, _) = v
+
+_rbProblemStrengthDegree ∷ ReasonBlock direction defeasibility → ProblemStrengthDegree
 _rbProblemStrengthDegree (_, _, _, d) = d
 
 -- | The 'ProblemNumber' is identified at the top of the text block
@@ -368,7 +383,8 @@ decodeUltimateEpistemicInterestsSection = runSectionParser $ do
 
 
 decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
-                    → [(ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)]
+--                    → [(ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)]
+                    → [ReasonBlock direction defeasibility]
 decodeReasonSection = runSectionParser $ do
     n ← parserProblemReasonName
     spaces
