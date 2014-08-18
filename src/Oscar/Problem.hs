@@ -21,12 +21,12 @@ module Oscar.Problem (
         -- ** ProblemDescription
         ProblemDescription(..),
         statefulParseProblemDescription,
-        -- ** ReasonSection
+        -- ** ReasonSection  
             ReasonSection,
-            _rbProblemReasonName,
-            _rbProblemReasonText,
-            _rbProblemVariables,
-            _rbProblemStrengthDegree,
+            _rsProblemReasonName,
+            _rsProblemReasonText,
+            _rsProblemVariables,
+            _rsProblemStrengthDegree,
             decodeReasonSection,
         -- ** premises, interests, reasons
             ProblemPremise,
@@ -309,22 +309,22 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
     fpfrts ∷ ReasonSection Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
     fpfrts rb = (,,)
-        (_rbProblemReasonName rb)
-        (getForwardsReason $ _rbProblemReasonText rb)
-        (_rbProblemStrengthDegree rb)
+        (_rsProblemReasonName rb)
+        (getForwardsReason $ _rsProblemReasonText rb)
+        (_rsProblemStrengthDegree rb)
 
 -- | 
 decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
 decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
     fpfrts' ∷ ReasonSection Forwards Conclusive → ProblemForwardsConclusiveReason
-    fpfrts' rb = case _rbProblemStrengthDegree rb of
+    fpfrts' rb = case _rsProblemStrengthDegree rb of
         ProblemStrengthDegree (LispPositiveDouble 1) -> result
         _ -> error "conclusive strength must = 1"
       where
         result = (,)
-            (_rbProblemReasonName rb)
-            (getForwardsReason $ _rbProblemReasonText rb)
+            (_rsProblemReasonName rb)
+            (getForwardsReason $ _rsProblemReasonText rb)
 
 -- | 
 decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
@@ -332,23 +332,23 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
   where
     bpfrts ∷ ReasonSection Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
     bpfrts rb = (,,)
-        (_rbProblemReasonName rb)
-        (getBackwardsReason $ _rbProblemReasonText rb)
-        (_rbProblemStrengthDegree rb)
+        (_rsProblemReasonName rb)
+        (getBackwardsReason $ _rsProblemReasonText rb)
+        (_rsProblemStrengthDegree rb)
 
 -- | 
 decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
 decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
   where
     bpfrts' ∷ ReasonSection Backwards Conclusive → ProblemBackwardsConclusiveReason
-    bpfrts' rb = case (_rbProblemStrengthDegree rb) of 
+    bpfrts' rb = case (_rsProblemStrengthDegree rb) of 
         ProblemStrengthDegree (LispPositiveDouble 1) -> result
         _ -> error "conclusive strength must = 1"
         
       where
         result = (,)
-            (_rbProblemReasonName rb)
-            (getBackwardsReason $ _rbProblemReasonText rb)
+            (_rsProblemReasonName rb)
+            (getBackwardsReason $ _rsProblemReasonText rb)
 
 -- | A helper function
 getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
@@ -438,17 +438,17 @@ type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
     , ProblemStrengthDegree
     )
 
-_rbProblemReasonName ∷ ReasonSection direction defeasibility → ProblemReasonName
-_rbProblemReasonName (n, _, _, _) = n
+_rsProblemReasonName ∷ ReasonSection direction defeasibility → ProblemReasonName
+_rsProblemReasonName (n, _, _, _) = n
 
-_rbProblemReasonText ∷ ReasonSection direction defeasibility → Text ⁞ ƮReason direction defeasibility
-_rbProblemReasonText (_, t, _, _) = t
+_rsProblemReasonText ∷ ReasonSection direction defeasibility → Text ⁞ ƮReason direction defeasibility
+_rsProblemReasonText (_, t, _, _) = t
 
-_rbProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮProblemVariables
-_rbProblemVariables (_, _, v, _) = v
+_rsProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮProblemVariables
+_rsProblemVariables (_, _, v, _) = v
 
-_rbProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
-_rbProblemStrengthDegree (_, _, _, d) = d
+_rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
+_rsProblemStrengthDegree (_, _, _, d) = d
 
 runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
 runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ
