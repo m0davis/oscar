@@ -70,15 +70,16 @@ module Oscar.Problem (
         ƮUltimateEpistemicInterest,
         ƮReason,
         ƮProblemVariables,
-    -- * all the rest
-        runSectionParser,
-        problemSectionText,
+    -- * parsers
         parserProblemJustificationDegree,
         parserProblemInterestDegree,
         parserProblemVariablesText,
         parserProblemStrengthDegree,
         parserProblemReasonName,
         parserEnbracedTexts,
+    -- * all the rest
+        runSectionParser,
+        problemSectionText,
     ) where
 
 import ClassyPrelude hiding (
