@@ -262,7 +262,7 @@ problemFromText t = Problem
 
 -- | 
 decodeGivenPremisesSection ∷ Text ⁞ ƮSection ƮGivenPremise 
-                           → [(Formula, ProblemJustificationDegree)]
+                           → [ProblemPremise]
 decodeGivenPremisesSection = runSectionParser p
   where
     p ∷ Parser (Formula, ProblemJustificationDegree)
@@ -273,7 +273,7 @@ decodeGivenPremisesSection = runSectionParser p
 
 -- | 
 decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest 
-                                        → [(Formula, ProblemInterestDegree)]
+                                        → [ProblemInterest]
 decodeUltimateEpistemicInterestsSection = runSectionParser $ do
     spaces
     (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
