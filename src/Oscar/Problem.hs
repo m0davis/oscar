@@ -78,7 +78,7 @@ module Oscar.Problem (
         parserProblemVariablesText,
         parserProblemStrengthDegree,
         parserProblemReasonName,
-        enbracedListParser,
+        parserEnbracedTexts,
     ) where
 
 import ClassyPrelude hiding (
@@ -364,7 +364,7 @@ getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemR
       where
         p ∷ Parser ([Text], Text)
         p = do
-            (premiseTexts, _) ← enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
+            (premiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
             conclusionText ← pack <$> many anyChar
             return (premiseTexts, conclusionText)
 
@@ -382,9 +382,9 @@ getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
         p ∷ Parser ([Text], [Text], Text)
         p = do
             forwardsPremiseTextsText ← manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
-            forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) enbracedListParser
+            forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
             spaces
-            (backwardsPremiseTexts, _) ← enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
+            (backwardsPremiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
             conclusionText ← pack <$> many anyChar
             return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
 
@@ -508,8 +508,8 @@ parserProblemStrengthDegree = ProblemStrengthDegree <$> (many space *> string "s
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
 
-enbracedListParser ∷ Parser [Text]
-enbracedListParser = do
+parserEnbracedTexts ∷ Parser [Text]
+parserEnbracedTexts = do
     _ ← char '{'
     (inner, _) ← (pack <$> many anyChar) `precededBy` char '}'
     let texts = simpleParse (try emptylist <|> p) inner
