@@ -144,13 +144,26 @@ data Problem = Problem
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
-instance ƇPlace ProblemNumber where
+-- | The 'ProblemNumber' is identified at the top of the text block
+instance StatefulParse ProblemNumber 
+                       ƮProblemAfterNumberLabel 
+                       ƮProblemAfterNumber 
+  where
+    statefulParse = ƭ $ ProblemNumber . read <$> 
+        manyTill anyChar (lookAhead . try $ space)
 
 -- | A (possibly empty) description of the problem.
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
-instance ƇPlace ProblemDescription where
+-- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
+instance StatefulParse ProblemDescription 
+                       ƮProblemAfterNumber
+                       ƮProblemAfterDescription
+  where
+    statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
+      where
+        p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
 
 -- | A formula for a premise with its justification
 type ProblemPremise                   = (Formula, ProblemJustificationDegree)
@@ -351,6 +364,12 @@ data Defeasibility
 -- | Stuff after the "Problem #"
 data ƮProblemAfterNumberLabel
 
+-- | Stuff after the "Problem #<number>"
+data ƮProblemAfterNumber
+
+-- | Stuff after the "Problem #<number>\n<description>" (and starting at the first section)
+data ƮProblemAfterDescription
+
 -- | The premise section
 data ƮGivenPremise
 
@@ -392,26 +411,36 @@ _rbProblemVariables (_, _, v, _) = v
 _rbProblemStrengthDegree ∷ ReasonBlock direction defeasibility → ProblemStrengthDegree
 _rbProblemStrengthDegree (_, _, _, d) = d
 
--- | The 'ProblemNumber' is identified at the top of the text block
-instance StatefulParse ProblemNumber ƮProblemAfterNumberLabel (ƮAfter ProblemNumber) where
-    statefulParse = ƭ $ ProblemNumber . read <$> 
-        manyTill anyChar (lookAhead . try $ space)
-
--- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
-instance StatefulParse ProblemDescription 
-                       (ƮAfter ProblemNumber)
-                       (ƮAfter ProblemDescription)
-  where
-    statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
-      where
-        p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
-
 runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
 runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ
 
+-- | Gets the text of a particular section from all of the text following the description
+-- e.g. given the input @ Text ⁞ ƮProblemAfterDescription @:
+-- 
+-- @
+-- Given premises:
+--      P    justification = 1.0
+--      A    justification = 1.0
+-- Ultimate epistemic interests:
+--      R    interest = 1.0
+--
+--    FORWARDS PRIMA FACIE REASONS
+--      pf-reason_1:   {P} ||=> Q   strength = 1.0
+--      pf-reason_2:   {Q} ||=> R   strength = 1.0
+--      pf-reason_3:   {C} ||=> ~R   strength = 1.0
+--      pf-reason_4:   {B} ||=> C   strength = 1.0
+--      pf-reason_5:   {A} ||=> B   strength = 1.0
+-- @
+--
+-- we get the @ Text ⁞ ƮSection ƮGivenPremise @:
+--
+-- @
+--      P    justification = 1.0
+--      A    justification = 1.0
+-- @
 problemSectionText ∷ 
     ∀ kind. (HasSection kind) ⇒
-    Text ⁞ ƮAfter ProblemDescription → 
+    Text ⁞ ƮProblemAfterDescription → 
     Text ⁞ ƮSection kind
 problemSectionText = ƭ . rawSection (section $ ((⊥) ∷ kind)) . unƭ
   where
