@@ -43,11 +43,13 @@ module Oscar.Problem (
         decodeGivenPremisesSection,
         decodeUltimateEpistemicInterestsSection,
         decodeReasonSection,
-        getForwardsReason,
         decodeForwardsPrimaFacieReasonSection,
         decodeForwardsConclusiveReasonSection,
         decodeBackwardsPrimaFacieReasonSection,
         decodeBackwardsConclusiveReasonSection,
+    -- * reason parsers
+        getForwardsReason,
+        getBackwardsReason,
     -- * reason modifiers
         Direction(..),
         Defeasibility(..),
@@ -73,8 +75,6 @@ module Oscar.Problem (
         parserProblemVariablesText,
         parserProblemStrengthDegree,
         parserProblemReasonName,
-        extractFromProblemReasonTextForwards,
-        extractFromProblemReasonTextBackwards,
         enbracedListParser,
     ) where
 
@@ -295,12 +295,6 @@ decodeReasonSection = runSectionParser $ do
         d ← parserProblemStrengthDegree
         return (t, d)
 
--- | A helper function
-getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
-getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-  where
-    booyah = first (map formulaFromText) . second formulaFromText
-
 -- | 
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
@@ -331,11 +325,8 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
     bpfrts ∷ ReasonBlock Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
     bpfrts rb = (,,)
         (_rbProblemReasonName rb)
-        (br $ _rbProblemReasonText rb)
+        (getBackwardsReason $ _rbProblemReasonText rb)
         (_rbProblemStrengthDegree rb)
-      where
-        br = booyah . unƭ . extractFromProblemReasonTextBackwards 
-        booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
 
 -- | 
 decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
@@ -349,9 +340,45 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
       where
         result = (,)
             (_rbProblemReasonName rb)
-            (br $ _rbProblemReasonText rb)
-        br = booyah . unƭ . extractFromProblemReasonTextBackwards 
-        booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+            (getBackwardsReason $ _rbProblemReasonText rb)
+
+-- | A helper function
+getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
+getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+  where
+    booyah = first (map formulaFromText) . second formulaFromText
+
+    -- | Needs refactoring?
+    extractFromProblemReasonTextForwards ∷
+        Text ⁞ ƮReason Forwards defeasibility →
+        ([Text], Text) ⁞ ƮReason Forwards defeasibility
+    extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
+      where
+        p ∷ Parser ([Text], Text)
+        p = do
+            (premiseTexts, _) ← enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
+            conclusionText ← pack <$> many anyChar
+            return (premiseTexts, conclusionText)
+
+-- | Another helper function
+getBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
+getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards 
+  where
+    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+
+    extractFromProblemReasonTextBackwards ∷
+        Text ⁞ ƮReason Backwards defeasibility →
+        ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
+    extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
+      where
+        p ∷ Parser ([Text], [Text], Text)
+        p = do
+            forwardsPremiseTextsText ← manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
+            forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) enbracedListParser
+            spaces
+            (backwardsPremiseTexts, _) ← enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
+            conclusionText ← pack <$> many anyChar
+            return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
 
 -- | The orientation of a reason.
 data Direction 
@@ -472,31 +499,6 @@ parserProblemStrengthDegree = ProblemStrengthDegree <$> (many space *> string "s
 
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
-
-extractFromProblemReasonTextForwards ∷
-    Text ⁞ ƮReason Forwards defeasibility →
-    ([Text], Text) ⁞ ƮReason Forwards defeasibility
-extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
-  where
-    p ∷ Parser ([Text], Text)
-    p = do
-        (premiseTexts, _) ← enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
-        conclusionText ← pack <$> many anyChar
-        return (premiseTexts, conclusionText)
-
-extractFromProblemReasonTextBackwards ∷
-    Text ⁞ ƮReason Backwards defeasibility →
-    ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
-extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
-  where
-    p ∷ Parser ([Text], [Text], Text)
-    p = do
-        forwardsPremiseTextsText ← manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
-        forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) enbracedListParser
-        spaces
-        (backwardsPremiseTexts, _) ← enbracedListParser `precededBy` (many space >> string "||=>" >> many space)
-        conclusionText ← pack <$> many anyChar
-        return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
 
 enbracedListParser ∷ Parser [Text]
 enbracedListParser = do
