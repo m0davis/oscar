@@ -15,9 +15,19 @@ module Oscar.Problem (
     -- * Problem data
         Problem(..),
     -- * parts of a problem
-        -- ** meta info
-            ProblemNumber(..),
-            ProblemDescription(..),
+        -- ** ProblemNumber
+        ProblemNumber(..),
+        statefulParseProblemNumber,
+        -- ** ProblemDescription
+        ProblemDescription(..),
+        statefulParseProblemDescription,
+        -- ** ReasonSection
+            ReasonSection,
+            _rbProblemReasonName,
+            _rbProblemReasonText,
+            _rbProblemVariables,
+            _rbProblemStrengthDegree,
+            decodeReasonSection,
         -- ** premises, interests, reasons
             ProblemPremise,
             ProblemInterest,
@@ -42,7 +52,6 @@ module Oscar.Problem (
     -- * section decoders
         decodeGivenPremisesSection,
         decodeUltimateEpistemicInterestsSection,
-        decodeReasonSection,
         decodeForwardsPrimaFacieReasonSection,
         decodeForwardsConclusiveReasonSection,
         decodeBackwardsPrimaFacieReasonSection,
@@ -61,12 +70,6 @@ module Oscar.Problem (
         ƮUltimateEpistemicInterest,
         ƮReason,
         ƮProblemVariables,
-    -- * misc. don't know
-        ReasonBlock,
-        _rbProblemReasonName,
-        _rbProblemReasonText,
-        _rbProblemVariables,
-        _rbProblemStrengthDegree,
     -- * all the rest
         runSectionParser,
         problemSectionText,
@@ -147,6 +150,9 @@ data Problem = Problem
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
+statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
+statefulParseProblemNumber = runStatefulParse
+
 -- | The 'ProblemNumber' is identified at the top of the text block
 instance StatefulParse ProblemNumber 
                        ƮProblemAfterNumberLabel 
@@ -158,6 +164,9 @@ instance StatefulParse ProblemNumber
 -- | A (possibly empty) description of the problem.
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
+
+statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
+statefulParseProblemDescription = runStatefulParse
 
 -- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
 instance StatefulParse ProblemDescription 
@@ -254,8 +263,8 @@ problemFromText t = Problem
     (decodeBackwardsPrimaFacieReasonSection pSTaD)
     (decodeBackwardsConclusiveReasonSection pSTaD)
   where
-    (number, afterNumber) = runStatefulParse t
-    (description, afterDescription) = runStatefulParse afterNumber
+    (number, afterNumber) = statefulParseProblemNumber t
+    (description, afterDescription) = statefulParseProblemDescription afterNumber
 
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
     pSTaD = problemSectionText afterDescription
@@ -281,7 +290,7 @@ decodeUltimateEpistemicInterestsSection = runSectionParser $ do
 
 -- | 
 decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
-                    → [ReasonBlock direction defeasibility]
+                    → [ReasonSection direction defeasibility]
 decodeReasonSection = runSectionParser $ do
     n ← parserProblemReasonName
     spaces
@@ -298,7 +307,7 @@ decodeReasonSection = runSectionParser $ do
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
-    fpfrts ∷ ReasonBlock Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
+    fpfrts ∷ ReasonSection Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
     fpfrts rb = (,,)
         (_rbProblemReasonName rb)
         (getForwardsReason $ _rbProblemReasonText rb)
@@ -308,7 +317,7 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
 decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
 decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
-    fpfrts' ∷ ReasonBlock Forwards Conclusive → ProblemForwardsConclusiveReason
+    fpfrts' ∷ ReasonSection Forwards Conclusive → ProblemForwardsConclusiveReason
     fpfrts' rb = case _rbProblemStrengthDegree rb of
         ProblemStrengthDegree (LispPositiveDouble 1) -> result
         _ -> error "conclusive strength must = 1"
@@ -321,7 +330,7 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
 decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
 decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
   where
-    bpfrts ∷ ReasonBlock Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
+    bpfrts ∷ ReasonSection Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
     bpfrts rb = (,,)
         (_rbProblemReasonName rb)
         (getBackwardsReason $ _rbProblemReasonText rb)
@@ -331,7 +340,7 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
 decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
 decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
   where
-    bpfrts' ∷ ReasonBlock Backwards Conclusive → ProblemBackwardsConclusiveReason
+    bpfrts' ∷ ReasonSection Backwards Conclusive → ProblemBackwardsConclusiveReason
     bpfrts' rb = case (_rbProblemStrengthDegree rb) of 
         ProblemStrengthDegree (LispPositiveDouble 1) -> result
         _ -> error "conclusive strength must = 1"
@@ -422,23 +431,23 @@ instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'Ba
 data ƮProblemVariables
 
 -- | A partially-processed reason section
-type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
+type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
     ( ProblemReasonName                          
     , Text ⁞ ƮReason direction defeasibility
     , Text ⁞ ƮProblemVariables
     , ProblemStrengthDegree
     )
 
-_rbProblemReasonName ∷ ReasonBlock direction defeasibility → ProblemReasonName
+_rbProblemReasonName ∷ ReasonSection direction defeasibility → ProblemReasonName
 _rbProblemReasonName (n, _, _, _) = n
 
-_rbProblemReasonText ∷ ReasonBlock direction defeasibility → Text ⁞ ƮReason direction defeasibility
+_rbProblemReasonText ∷ ReasonSection direction defeasibility → Text ⁞ ƮReason direction defeasibility
 _rbProblemReasonText (_, t, _, _) = t
 
-_rbProblemVariables ∷ ReasonBlock direction defeasibility → Text ⁞ ƮProblemVariables
+_rbProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮProblemVariables
 _rbProblemVariables (_, _, v, _) = v
 
-_rbProblemStrengthDegree ∷ ReasonBlock direction defeasibility → ProblemStrengthDegree
+_rbProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
 _rbProblemStrengthDegree (_, _, _, d) = d
 
 runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
