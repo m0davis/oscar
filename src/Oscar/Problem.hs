@@ -39,10 +39,6 @@ module Oscar.Problem (
         readProblemsTextFile,
         partitionProblemsText,
         problemFromText,
-    -- * misc. picky stuff
-        _rbProblemReasonName,
-        _rbProblemReasonText,
-        _rbProblemStrengthDegree,
     -- * section decoders
         decodeForwardsPrimaFacieReasonSection,
         decodeForwardsConclusiveReasonSection,
@@ -59,6 +55,9 @@ module Oscar.Problem (
         ƮProblemVariables,
     -- * misc. don't know
         ReasonBlock,
+        _rbProblemReasonName,
+        _rbProblemReasonText,
+        _rbProblemStrengthDegree,
     -- * all the rest
         runSectionParser,
         decodeGivenPremisesSection,
@@ -248,10 +247,6 @@ problemFromText t = Problem
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind 
     pSTaD = problemSectionText afterDescription
 
-_rbProblemReasonName     (n, _, _, _) = n
-_rbProblemReasonText     (_, t, _, _) = t
-_rbProblemStrengthDegree (_, _, _, d) = d
-
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [(ProblemReasonName, ForwardsReason, ProblemStrengthDegree)]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
@@ -331,6 +326,10 @@ data ƮProblemVariables
 
 type ReasonBlock (direction ∷ Direction) (defeasibility ∷ Defeasibility) = 
     (ProblemReasonName, (Text ⁞ ƮReason direction defeasibility), Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
+
+_rbProblemReasonName     (n, _, _, _) = n
+_rbProblemReasonText     (_, t, _, _) = t
+_rbProblemStrengthDegree (_, _, _, d) = d
 
 -- | The 'ProblemNumber' is identified at the top of the text block
 instance StatefulParse ProblemNumber ƮProblemAfterNumberLabel (ƮAfter ProblemNumber) where
