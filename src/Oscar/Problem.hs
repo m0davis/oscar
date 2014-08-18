@@ -279,7 +279,6 @@ decodeUltimateEpistemicInterestsSection = runSectionParser $ do
     (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
     return (formulaFromText . pack $ t, d)
 
-
 -- | 
 decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
                     → [ReasonBlock direction defeasibility]
