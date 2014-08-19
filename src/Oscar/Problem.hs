@@ -14,6 +14,10 @@
 module Oscar.Problem (
     -- * Problem data
         Problem(..),
+    -- * stateful stuff
+        runStatefulParse',
+        parseProblemNumber,
+        parseProblemDescription,
     -- * parts of a problem
         -- ** ProblemNumber
         ProblemNumber(..),
@@ -152,32 +156,57 @@ data Problem = Problem
 newtype ProblemNumber = ProblemNumber Int
   deriving (Show)
 
-statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
-statefulParseProblemNumber = runStatefulParse
+statefulParseProblemNumber ∷ 
+    Text ⁞ ƮProblemAfterNumberLabel → 
+    (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
+statefulParseProblemNumber = runStatefulParse' parseProblemNumber
+
+parseProblemNumber ∷ Parser ProblemNumber ⁞ ƮProblemAfterNumberLabel
+parseProblemNumber = ƭ $ ProblemNumber . read <$> 
+    manyTill anyChar (lookAhead . try $ space)
+
+-- | The default implementation uses 'simpleParse'.
+runStatefulParse' ∷ ∀ value state1 state2. 
+    Parser value ⁞ state1 → 
+    Text ⁞ state1 → 
+    (value, Text ⁞ state2)
+runStatefulParse' statefulParser = simpleParse p' . unƭ
+  where
+    p' ∷ Parser (value, Text ⁞ state2)
+    p' = do
+        v ← unƭ statefulParser
+        r ← pack <$> many anyChar
+        return (v, ƭ r)
+
 
 -- | The 'ProblemNumber' is identified at the top of the text block
-instance StatefulParse ProblemNumber 
-                       ƮProblemAfterNumberLabel 
-                       ƮProblemAfterNumber 
-  where
-    statefulParse = ƭ $ ProblemNumber . read <$> 
-        manyTill anyChar (lookAhead . try $ space)
+--instance StatefulParse ProblemNumber 
+--                       ƮProblemAfterNumberLabel 
+--                       ƮProblemAfterNumber 
+--  where
+--    statefulParse = ƭ $ ProblemNumber . read <$> 
+--        manyTill anyChar (lookAhead . try $ space)
 
 -- | A (possibly empty) description of the problem.
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
 statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
-statefulParseProblemDescription = runStatefulParse
+statefulParseProblemDescription = runStatefulParse' parseProblemDescription
 
--- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
-instance StatefulParse ProblemDescription 
-                       ƮProblemAfterNumber
-                       ƮProblemAfterDescription
+---- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
+--instance StatefulParse ProblemDescription 
+--                       ƮProblemAfterNumber
+--                       ƮProblemAfterDescription
+--  where
+--    statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
+--      where
+--        p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
+
+parseProblemDescription ∷ Parser ProblemDescription ⁞ ƮProblemAfterNumber
+parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$> p
   where
-    statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
-      where
-        p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
+    p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
 
 -- | A formula for a premise with its justification
 type ProblemPremise                   = (Formula, ProblemJustificationDegree)
