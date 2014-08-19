@@ -29,6 +29,9 @@ module Oscar.Problem (
     parseProblemNumber,
     parseProblemDescription,
     -- * helper API for decode...Section
+    -- ** all sections
+    runSectionParser,
+    -- ** reason sections
     decodeReasonSection,    
     getForwardsReason,
     getBackwardsReason,
