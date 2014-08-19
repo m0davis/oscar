@@ -1,4 +1,6 @@
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE UnicodeSyntax #-}
 module Oscar.Problem (
     -- * readers
     problemsM,
@@ -28,6 +30,12 @@ module Oscar.Problem (
     LispPositiveDouble(..),
     ) where
 
+import ClassyPrelude
+
+import Control.Monad                    ((<=<))
+
+import Oscar.Utilities                  (type (⁞))
+
 import Oscar.DomainFunction             (DomainFunction(..))
 import Oscar.Formula                    (Formula(..))
 import Oscar.Formula                    (Predication(..))
@@ -45,10 +53,14 @@ import Oscar.Problem.Internal.Internal  (ProblemJustificationDegree(..))
 import Oscar.Problem.Internal.Internal  (ProblemNumber(..))
 import Oscar.Problem.Internal.Internal  (ProblemPremise)
 import Oscar.Problem.Internal.Internal  (ProblemReasonName(..))
-import Oscar.Problem.Internal.Internal  (problemsM)
 import Oscar.Problem.Internal.Internal  (ProblemStrengthDegree(..))
+import Oscar.Problem.Parser             
 import Oscar.ProblemDoubleParser        (LispPositiveDouble(LispPositiveDouble))
 import Oscar.QUBS                       (BinaryOp(..))
 import Oscar.QUBS                       (Quantifier(..))
 import Oscar.QUBS                       (Symbol(..))
 import Oscar.QUBS                       (UnaryOp(..))
+
+-- | This is the highest-level problem decoder available in this module.
+problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
+problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile

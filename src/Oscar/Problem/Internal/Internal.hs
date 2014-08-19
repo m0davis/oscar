@@ -71,8 +71,6 @@ module Oscar.Problem.Internal.Internal (
         ProblemInterestDegree(..),
         ProblemStrengthDegree(..),
     -- * API
-        -- ** highest-level
-        problemsM,
         -- ** other
         readProblemsTextFile,
         partitionProblemsText,
@@ -279,10 +277,6 @@ newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
 -- | The strength (of a reason)
 newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
   deriving (Show)
-
--- | This is the highest-level problem decoder available in this module.
-problemsM ∷ FilePath ⁞ [Problem] → IO [Problem]
-problemsM = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
 
 -- | Read a file.
 readProblemsTextFile ∷ (FilePath ⁞ [Problem])  -- ^ The input file is presumed to represent one or more problems...

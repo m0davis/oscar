@@ -14,6 +14,7 @@
 module Oscar.Problem.Parser (
     -- * primitive API, in order of intended usage
     readProblemsTextFile,
+    problemFromText,
     partitionProblemsText,
     statefulParseProblemNumber,
     statefulParseProblemDescription,
