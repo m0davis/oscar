@@ -15,6 +15,8 @@ executable OSCAR
         Oscar.Formula
         Oscar.Parenthesis
         Oscar.Problem
+        Oscar.Problem.Parser
+        Oscar.Problem.Internal.Internal
         Oscar.ProblemBase
         Oscar.ProblemDoubleParser
         Oscar.ProblemLocation

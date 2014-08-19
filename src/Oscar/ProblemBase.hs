@@ -6,11 +6,11 @@ module Oscar.ProblemBase where
 
 import ClassyPrelude
 
-import Oscar.Problem                    (BackwardsReason)
-import Oscar.Problem                    (ForwardsReason)
-import Oscar.Problem                    (Problem(Problem))
-import Oscar.Problem                    (ProblemReasonName)
-import Oscar.Problem                    (ProblemStrengthDegree)
+import Oscar.Problem.Internal.Internal  (BackwardsReason)
+import Oscar.Problem.Internal.Internal  (ForwardsReason)
+import Oscar.Problem.Internal.Internal  (Problem(Problem))
+import Oscar.Problem.Internal.Internal  (ProblemReasonName)
+import Oscar.Problem.Internal.Internal  (ProblemStrengthDegree)
 
 stripMeta ∷ (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) → (ForwardsReason, ProblemStrengthDegree)
 stripMeta (_, r, d) = (r, d)

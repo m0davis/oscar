@@ -14,6 +14,16 @@ git checkout -b feature-name
 git add -A :/ 
 git commit -m 
 
+Oscar.Problem
+Oscar.Problem.Internal
+Oscar.Problem.Internal.StatefulParse
+Oscar.Problem.Internal.SectionDecode
+
+Oscar.Problem.Data
+Oscar.Problem.Data
+Oscar.Problem.Parser
+
+
 import philosophy:
     use highest-level available (easier to write; less likely to need changes when API changes)
     separate 
