@@ -46,9 +46,10 @@ module Oscar.Problem (
     -- * API
         -- ** highest-level
             problemsM,
-        readProblemsTextFile,
-        partitionProblemsText,
-        problemFromText,
+        -- ** other
+            readProblemsTextFile,
+            partitionProblemsText,
+            problemFromText,
     -- * section decoders
         decodeGivenPremisesSection,
         decodeUltimateEpistemicInterestsSection,
