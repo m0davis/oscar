@@ -6,7 +6,7 @@
 
 module Oscar.ProblemParser.Internal.Section (
     Section(..),
-    HasSection(..), -- ?
+    HasSection(..),
     sectionParser,
     runSectionParser,    
     ) where
