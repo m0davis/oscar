@@ -1,0 +1,699 @@
+⊥
+∀
+⇒
+∷
+⁞
+→
+←
+ƭ
+Ʈ
+Ƈ
+★
+↦
+
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE PatternSynonyms #-}
+
+ProblemParser.Internal (provides "external" API, for use by ProblemParser)
+ProblemParser.Internal.ProblemNumber
+ProblemParser.Internal.ProblemDescription
+ProblemParser.Internal.Premises
+ProblemParser.Internal.Interests
+ProblemParser.Internal.Reasons
+ProblemParser.Internal.Strategies.Stateful
+ProblemParser.Internal.Strategies.Sectional
+ProblemParser.Internal.Variables
+ProblemParser.Internal.UnitInterval (degrees?)
+
+git checkout -b feature-name
+git add -A :/ 
+git commit -m 
+
+{-
+import philosophy:
+    use highest-level available (easier to write; less likely to need changes when API changes)
+    separate 
+
+module creation philosophy:
+    reasons to place identifiers in separate modules
+        to reduce the need for name mangling (e.g. lazy and strict Text would need different names if they were placed in the same module)
+    reasons to place identifiers in the same module
+        to avoid orphan instances
+        to collect related "functionality"
+        instances go with data or class
+
+    identifiers should be placed in separate modules when they are:
+        responsible for different domains of a problem
+
+export philosophy:
+-}
+
+
+
+
+
+--class FromTo from to | from → to, to → from where
+--class FromTo from to | from → to where
+--class FromTo from to where
+
+class FromTo from to | from → to, to → from where
+    fromTo ∷ from → to
+
+class PullFrom from to | to → from where
+    pullFrom ∷ from → to
+
+class PushTo from to | from → to where
+--class FromTo from to where
+    pushTo ∷ from → to
+
+data A = A
+data B = B
+data C = C
+data D = D
+
+foo ∷ A → C
+foo = pushTo . pushTo
+
+instance PushTo A B where
+    pushTo A = B
+
+instance PushTo B C where
+    pushTo B = C
+
+instance PushTo D C where
+    pushTo D = C
+
+instance PushTo (ReasonBlock Forwards defeasibility) (ProblemReasonName, ForwardsReason, ProblemStrengthDegree) where
+    pushTo = fpfrts
+
+instance FromTo (Text ⁞ ƮReason Backwards defeasibility) (([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility) where
+    fromTo = extractFromProblemReasonTextBackwards
+
+instance ∀ kind. (HasSection kind) ⇒ PullFrom (Text ⁞ ƮAfter ProblemDescription) (Text ⁞ kind) where
+    pullFrom = problemSectionText
+
+class IsAKind kind where
+
+instance IsAKind ƮGivenPremise where
+instance IsAKind ƮUltimateEpistemicInterest where
+instance IsAKind (ƮReason direction defeasibility) where
+
+instance (IsAKind kind, InjectiveSection kind decode) ⇒ PullFrom (Text ⁞ kind) decode where
+    pullFrom = decodeSection
+
+
+
+
+
+
+
+
+
+
+
+
+-- | The 'ProblemNumber' is identified at the top of the text block
+--instance StatefulParse ProblemNumber
+--                       ƮProblemAfterNumberLabel
+--                       ƮProblemAfterNumber
+--  where
+--    statefulParse = ƭ $ ProblemNumber . read <$>
+--        manyTill anyChar (lookAhead . try $ space)
+
+
+---- | Parsing of the problem description starts immediately after the problem number and leaves the parser in a location immediately after the description.
+--instance StatefulParse ProblemDescription
+--                       ƮProblemAfterNumber
+--                       ƮProblemAfterDescription
+--  where
+--    statefulParse = ƭ $ spaces >> ProblemDescription . pack <$> p
+--      where
+--        p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
+
+
+module Oscar.ProblemParser.Tags where
+
+
+import ClassyPrelude hiding (
+    try,
+    )
+import Prelude                          (read)
+
+import Control.Applicative              (many)
+import Control.Monad                    ((<=<))
+import Text.Parsec                      (anyChar)
+import Text.Parsec                      (char)
+import Text.Parsec                      (eof)
+import Text.Parsec                      (lookAhead)
+import Text.Parsec                      (manyTill)
+import Text.Parsec                      (notFollowedBy)
+import Text.Parsec                      (option)
+import Text.Parsec                      (space)
+import Text.Parsec                      (spaces)
+import Text.Parsec                      (string)
+import Text.Parsec                      (try)
+import Text.Parsec.Text                 (Parser)
+
+import Oscar.Formula                    (Formula)
+import Oscar.Formula                    (formulaFromText)
+import Oscar.ProblemDoubleParser        (LispPositiveDouble)
+import Oscar.ProblemDoubleParser        (LispPositiveDouble(LispPositiveDouble))
+import Oscar.ProblemDoubleParser        (parserLispPositiveDouble)
+import Oscar.ProblemLocation            (ƇPlace)
+import Oscar.ProblemLocation            (ƮAfter)
+import Oscar.ProblemLocation            (ƮSection)
+import Oscar.ProblemSection             (Section(Section'BackwardsConclusiveReasons))
+import Oscar.ProblemSection             (Section(Section'BackwardsPrimaFacieReasons))
+import Oscar.ProblemSection             (Section(Section'ForwardsConclusiveReasons))
+import Oscar.ProblemSection             (Section(Section'ForwardsPrimaFacieReasons))
+import Oscar.ProblemSection             (Section(Section'GivenPremises))
+import Oscar.ProblemSection             (Section(Section'UltimateEpistemicInterests))
+import Oscar.ProblemSection             (sectionParser)
+import Oscar.ProblemSectionDecoder      (DecodedSection)
+import Oscar.ProblemSectionDecoder      (decodeSection)
+import Oscar.ProblemSectionDecoder      (HasSection)
+import Oscar.ProblemSectionDecoder      (InjectiveSection)
+import Oscar.ProblemSectionDecoder      (section)
+import Oscar.ProblemStatefulParse       (runStatefulParse)
+import Oscar.ProblemStatefulParse       (StatefulParse)
+import Oscar.ProblemStatefulParse       (statefulParse)
+import Oscar.Utilities                  (precededBy)
+import Oscar.Utilities                  (simpleParse)
+import Oscar.Utilities                  (type (⁞))
+import Oscar.Utilities                  (unƭ)
+import Oscar.Utilities                  (withInput)
+import Oscar.Utilities                  (ƭ)
+import Oscar.Utilities                  ((⊥))
+
+
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE UnicodeSyntax #-}
+
+module Oscar.ProblemParser.Internal (
+    -- * primitive API, in order of intended usage
+    -- * module "Oscar.ProblemParser.Internal.ProblemNumber",
+    statefulParseProblemNumber,
+    -- * module "Oscar.ProblemParser.Internal.ProblemDescription",
+    statefulParseProblemDescription,
+
+    -- * using "Oscar.ProblemParser.Internal.SectionDecoder"
+    problemSectionText,
+    decodeGivenPremisesSection,
+    decodeUltimateEpistemicInterestsSection,
+    decodeForwardsPrimaFacieReasonSection,
+    decodeForwardsConclusiveReasonSection,
+    decodeBackwardsPrimaFacieReasonSection,
+    decodeBackwardsConclusiveReasonSection,
+  ) where
+
+import Oscar.ProblemParser.Internal.ProblemNumber       (statefulParseProblemNumber)
+import Oscar.ProblemParser.Internal.ProblemDescription  (statefulParseProblemDescription)
+import Oscar.ProblemParser.Internal.SectionDecoder      (problemSectionText)
+import Oscar.ProblemParser.Internal.SectionDecoder      (decodeGivenPremisesSection)
+import Oscar.ProblemParser.Internal.SectionDecoder      (decodeUltimateEpistemicInterestsSection)
+import Oscar.ProblemParser.Internal.SectionDecoder      (decodeForwardsPrimaFacieReasonSection)
+import Oscar.ProblemParser.Internal.SectionDecoder      (decodeForwardsConclusiveReasonSection)
+import Oscar.ProblemParser.Internal.SectionDecoder      (decodeBackwardsPrimaFacieReasonSection)
+import Oscar.ProblemParser.Internal.SectionDecoder      (decodeBackwardsConclusiveReasonSection)
+
+-- | A partially-processed reason section
+type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
+    ( ProblemReasonName
+    , Text ⁞ ƮReason direction defeasibility
+    , Text ⁞ ƮProblemVariables
+    , ProblemStrengthDegree
+    )
+
+_rsProblemReasonName ∷ ReasonSection direction defeasibility → ProblemReasonName
+_rsProblemReasonName (n, _, _, _) = n
+
+_rsProblemReasonText ∷ ReasonSection direction defeasibility → Text ⁞ ƮReason direction defeasibility
+_rsProblemReasonText (_, t, _, _) = t
+
+_rsProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮProblemVariables
+_rsProblemVariables (_, _, v, _) = v
+
+_rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
+_rsProblemStrengthDegree (_, _, _, d) = d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE UnicodeSyntax #-}
+module Oscar.ProblemParser.Internal.Internal (
+    -- * helper API for statefulParse...
+    runStatefulParse',
+    parseProblemNumber,
+    parseProblemDescription,
+    -- * helper API for decode...Section
+    -- ** all sections
+    runSectionParser,
+    -- ** reason sections
+    decodeReasonSection,
+    getForwardsReason,
+    getBackwardsReason,
+    -- * Problem data
+    Problem(..),
+    -- * stateful stuff
+    runStatefulParse',
+    parseProblemNumber,
+    parseProblemDescription,
+    -- * parts of a problem
+        -- ** ProblemNumber
+        ProblemNumber(..),
+        statefulParseProblemNumber,
+        -- ** ProblemDescription
+        ProblemDescription(..),
+        statefulParseProblemDescription,
+        -- ** ReasonSection
+        ReasonSection,
+        _rsProblemReasonName,
+        _rsProblemReasonText,
+        _rsProblemVariables,
+        _rsProblemStrengthDegree,
+        decodeReasonSection,
+        -- ** premises, interests, reasons
+        ProblemPremise,
+        ProblemInterest,
+        ProblemForwardsPrimaFacieReason,
+        ProblemForwardsConclusiveReason,
+        ProblemBackwardsPrimaFacieReason,
+        ProblemBackwardsConclusiveReason,
+            -- *** parts of a reason
+            ProblemReasonName(..),
+            ForwardsReason(..),
+            BackwardsReason(..),
+        -- ** degrees
+        ProblemJustificationDegree(..),
+        ProblemInterestDegree(..),
+        ProblemStrengthDegree(..),
+    -- * API
+        -- ** other
+        readProblemsTextFile,
+        partitionProblemsText,
+        problemFromText,
+    -- * section decoders
+    decodeGivenPremisesSection,
+    decodeUltimateEpistemicInterestsSection,
+    decodeForwardsPrimaFacieReasonSection,
+    decodeForwardsConclusiveReasonSection,
+    decodeBackwardsPrimaFacieReasonSection,
+    decodeBackwardsConclusiveReasonSection,
+    -- * reason parsers
+    getForwardsReason,
+    getBackwardsReason,
+    -- * reason modifiers
+    Direction(..),
+    Defeasibility(..),
+    -- * useful for tags
+    ƮProblemAfterNumberLabel,
+    ƮProblemAfterNumber,
+    ƮProblemAfterDescription,
+    ƮGivenPremise,
+    ƮUltimateEpistemicInterest,
+    ƮReason,
+    ƮProblemVariables,
+    -- * parsers
+    parserProblemJustificationDegree,
+    parserProblemInterestDegree,
+    parserProblemVariablesText,
+    parserProblemStrengthDegree,
+    parserProblemReasonName,
+    parserEnbracedTexts,
+    -- * all the rest
+    runSectionParser,
+    problemSectionText,
+    ) where
+
+import ClassyPrelude hiding (
+    try,
+    )
+import Prelude                          (read)
+
+import Control.Applicative              (many)
+import Control.Conditional              (guardM)
+import Control.Monad                    ((<=<))
+import Text.Parsec                      (anyChar)
+import Text.Parsec                      (char)
+import Text.Parsec                      (eof)
+import Text.Parsec                      (lookAhead)
+import Text.Parsec                      (manyTill)
+import Text.Parsec                      (notFollowedBy)
+import Text.Parsec                      (option)
+import Text.Parsec                      (space)
+import Text.Parsec                      (spaces)
+import Text.Parsec                      (string)
+import Text.Parsec                      (try)
+import Text.Parsec.Text                 (Parser)
+
+import Oscar.Formula                    (Formula)
+import Oscar.Formula                    (formulaFromText)
+import Oscar.ProblemDoubleParser        (LispPositiveDouble)
+import Oscar.ProblemDoubleParser        (LispPositiveDouble(LispPositiveDouble))
+import Oscar.ProblemDoubleParser        (parserLispPositiveDouble)
+import Oscar.ProblemLocation            (ƇPlace)
+import Oscar.ProblemLocation            (ƮAfter)
+import Oscar.ProblemLocation            (ƮSection)
+import Oscar.ProblemSection             (Section(Section'BackwardsConclusiveReasons))
+import Oscar.ProblemSection             (Section(Section'BackwardsPrimaFacieReasons))
+import Oscar.ProblemSection             (Section(Section'ForwardsConclusiveReasons))
+import Oscar.ProblemSection             (Section(Section'ForwardsPrimaFacieReasons))
+import Oscar.ProblemSection             (Section(Section'GivenPremises))
+import Oscar.ProblemSection             (Section(Section'UltimateEpistemicInterests))
+import Oscar.ProblemSection             (sectionParser)
+import Oscar.ProblemSectionDecoder      (DecodedSection)
+import Oscar.ProblemSectionDecoder      (decodeSection)
+import Oscar.ProblemSectionDecoder      (HasSection)
+import Oscar.ProblemSectionDecoder      (InjectiveSection)
+import Oscar.ProblemSectionDecoder      (section)
+import Oscar.ProblemStatefulParse       (runStatefulParse)
+import Oscar.ProblemStatefulParse       (StatefulParse)
+import Oscar.ProblemStatefulParse       (statefulParse)
+import Oscar.Utilities                  (precededBy)
+import Oscar.Utilities                  (simpleParse)
+import Oscar.Utilities                  (type (⁞))
+import Oscar.Utilities                  (unƭ)
+import Oscar.Utilities                  (withInput)
+import Oscar.Utilities                  (ƭ)
+import Oscar.Utilities                  ((⊥))
+
+-- | The orientation of a reason.
+data Direction
+    = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
+    | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
+  deriving (Show)
+
+-- | The defeasibility of a reason
+data Defeasibility
+    = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
+    | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
+  deriving (Show)
+
+
+
+
+
+
+
+class ƇPlace place where
+
+-- | For use in 'Tagged' (or '`⁞`') annotations. `⁞`
+data ƇPlace place ⇒ ƮAfter place
+
+-- | Stuff after the "Problem #"
+data ƮProblemAfterNumberLabel
+
+-- | Stuff after the "Problem #<number>"
+data ƮProblemAfterNumber
+
+-- | Stuff after the "Problem #<number>\n<description>" (and starting at the first section)
+data ƮProblemAfterDescription
+
+-- | Variables for a reason
+data ƮProblemVariables
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE UnicodeSyntax #-}
+
+module Oscar.ProblemParser.Internal.SectionDecoder (
+    Section(..),
+    sectionParser,
+    HasSection,
+    ƮGivenPremise,
+    ƮUltimateEpistemicInterest,
+    ƮReason,
+    problemSectionText,
+    decodeGivenPremisesSection,
+    decodeUltimateEpistemicInterestsSection,
+    decodeReasonSection,
+    decodeForwardsPrimaFacieReasonSection,
+    decodeForwardsConclusiveReasonSection,
+    decodeBackwardsPrimaFacieReasonSection,
+    decodeBackwardsConclusiveReasonSection,
+  ) where
+
+import ClassyPrelude hiding (
+    try,
+    )
+
+import Control.Applicative              (empty)
+import Text.Parsec                      (string)
+import Text.Parsec                      (try)
+import Text.Parsec.Text                 (Parser)
+
+-- |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UnicodeSyntax #-}
+
+module Oscar.ProblemParser.Internal.StatefulParse (
+    runStatefulParse',
+  ) where
+
+import ClassyPrelude
+
+import Control.Applicative              (many)
+import Text.Parsec                      (anyChar)
+import Text.Parsec.Text                 (Parser)
+
+import Oscar.Utilities                  (simpleParse)
+import Oscar.Utilities                  (type (⁞))
+import Oscar.Utilities                  (unƭ)
+import Oscar.Utilities                  (ƭ)
+
+-- | Allows for parsing with type-level state transitions.
+--
+-- For example:
+--
+-- @
+-- data AtTheBeginning
+-- data SomewhereInTheMiddle
+-- data AtTheEnd
+--
+--     instance StatefulParse Text Beginning Middle where
+--         statefulParse = ƭ $ string "Hello, " *>
+--
+--     instance StatefulParse Text Middle End where
+--         statefulParse = ƭ $ pack <$> many anyChar
+--
+--     fullText ∷ Text ⁞ AtTheBeginning
+--     fullText = pack $ "Hello, World!"
+--
+--     parseHelloSomeone ∷ (Text ⁞ SomewhereInTheMiddle, Text ⁞ AtTheEnd)
+--     parseHelloSomeone = do
+--         (beginningToMiddleValue, middleToEndText) ← runStatefulParse fullText
+--         (middleToEndValue, _) ← runStatefulParse fullText
+-- @
+--
+-- Don't you love type safety?
+class StatefulParse value state1 state2 | value state1 → state2 where
+    statefulParse ∷ Parser value ⁞ state1
+
+    -- | The default implementation uses 'simpleParse'.
+    runStatefulParse ∷ Text ⁞ state1 → (value, Text ⁞ state2)
+    runStatefulParse = simpleParse p' . unƭ
+      where
+        p' ∷ Parser (value, Text ⁞ state2)
+        p' = do
+            v ← unƭ (statefulParse ∷ Parser value ⁞ state1)
+            r ← pack <$> many anyChar
+            return (v, ƭ r)
+
+
+
+
+
+
+
+
+
+
+
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UnicodeSyntax #-}
+module Oscar.Utilities where
+
+import ClassyPrelude hiding (
+    try,
+    undefined,
+    )
+import Prelude                          (undefined)
+
+import Control.Applicative              (liftA2)
+import Control.Conditional              (ifM)
+import Control.Conditional              (ToBool)
+import Control.Monad                    (MonadPlus)
+import Control.Monad                    (mzero)
+import Control.Monad.Free               (Free(Free))
+import Control.Monad.Free               (Free(Pure))
+import Data.Either.Utils                (maybeToEither)
+import Data.Pointed                     (point)
+import Data.Pointed                     (Pointed)
+import Text.Parsec                      (anyChar)
+import Text.Parsec                      (getInput)
+import Text.Parsec                      (lookAhead)
+import Text.Parsec                      (manyTill)
+import Text.Parsec                      (ParsecT)
+import Text.Parsec                      (runParser)
+import Text.Parsec                      (satisfy)
+import Text.Parsec                      (setInput)
+import Text.Parsec                      (try)
+import Text.Parsec.Text                 (Parser)
+import Text.Show.Pretty                 (ppShow)
+
+simplify :: Free [] a -> Free [] a
+simplify (Free [a]) = simplify a
+simplify (Free as)  = Free $ map simplify as
+simplify (Pure a)   = Pure a
+
+eitherOr ::
+    a ->
+    (a -> Maybe b) ->
+    Either a b
+eitherOr a f = maybeToEither a (f a)
+
+mconcatRightPoints ::
+    (Pointed p, Semigroup s, p r ~ s) =>
+    [Either l r] ->
+    [Either l s]
+mconcatRightPoints [] = []
+mconcatRightPoints (Left l : xs) = Left l : mconcatRightPoints xs
+mconcatRightPoints (Right r : xs) = case mconcatRightPoints xs of
+    (Right rs : ys) -> Right (point r <> rs) : ys
+    ys              -> Right (point r      ) : ys
+
+joinFree :: Functor f => Free f (f a) -> Free f a
+joinFree (Pure as) = Free (map Pure as)
+joinFree (Free fs) = Free $ map joinFree fs
+
+--
+eol :: Parser String
+eol = map pure lf <|> (try $ liftA2 (:) cr (map pure lf))
+
+lf :: Parser Char
+lf = satisfy (== '\n')
+
+cr :: Parser Char
+cr = satisfy (== '\r')
+
+unlessM :: (ToBool bool, MonadPlus m) => m bool -> m a -> m a
+unlessM c a = ifM c mzero a
+
+--
+messageFromShow :: Show a => a -> IO ()
+messageFromShow = putStrLn . pack . ppShow
+
+messageFromShows :: Show a => [a] -> IO ()
+messageFromShows = sequence_ . map messageFromShow
+
+messageFromShows10 :: Show a => String -> [a] -> IO ()
+messageFromShows10 s xs = do
+    print s
+    messageFromShows $ take 10 xs

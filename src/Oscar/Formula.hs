@@ -1,144 +1,49 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE PatternSynonyms #-}
------------------------------------------------------------------------------
--- |
---   Description : TODO
---   Copyright   : TODO
---
---   TODO A title
---
---   TODO A description
---
--- TODO Some prose
---
--- @
--- TODO sample code
--- data Foo a = Foo { _fooArgs :: ['String'], _fooValue :: a }
--- 'makeLenses' ''Foo
--- @
---
--- blah blah blah
--- 
--- > (++) = mappend
--- | > (++) = mappend
-module Oscar.Formula ( 
-    -- * header
-    -- ** subheader
-    -- | the \"public\" parts. More examples are in the module documentation.
-    Predication(..),
+
+module Oscar.Formula (
     Formula(..),
-    pattern BinaryOpP,
-    -- * functionswtf
-    makeFormula,
-    -- ** subssubfunctions
-    formulaFromText,            
-    )
-    where
+    Quantifier(..),
+    UnaryOp(..),
+    BinaryOp(..),
+    Symbol(..),
+    Predication(..),
+    DomainFunction(..),
+  ) where
 
-import ClassyPrelude hiding (
-    try,
-    )
-
-import Control.Monad.Free               (Free(Free))
-import Control.Monad.Free               (Free(Pure))
-import Text.Show.Pretty                 (ppShow)
-
-import Oscar.DomainFunction             (DomainFunction)
-import Oscar.DomainFunction             (makeDomainFunction)
-import Oscar.Parenthesis                (freeFromParentheses)
-import Oscar.PQToken                    (makePQTokens)
-import Oscar.QSToken                    (makeQSTokenTree)
-import Oscar.QSToken                    (QSToken(QSTokenBinaryOp))
-import Oscar.QSToken                    (QSToken(QSTokenQuantifier))
-import Oscar.QSToken                    (QSToken(QSTokenSymbol))
-import Oscar.QSToken                    (QSToken(QSTokenUnaryOp))
-import Oscar.QSToken                    (reformQSTokenTree)
-import Oscar.QUBS                       (BinaryOp)
-import Oscar.QUBS                       (Quantifier)
-import Oscar.QUBS                       (Symbol)
-import Oscar.QUBS                       (UnaryOp)
-
-data Predication = Predication Symbol [DomainFunction]
-    deriving (Show)
+import ClassyPrelude
 
 data Formula
     = FormulaBinary !BinaryOp !Formula !Formula
     | FormulaUnary !UnaryOp !Formula
     | FormulaQuantification !Quantifier !Symbol !Formula
     | FormulaPredication !Predication
-    deriving (Show)
+  deriving (Show)
 
+data Quantifier
+    = Universal
+    | Existential
+  deriving (Show, Eq)
 
-pattern BinaryOpP left op right 
-        = Free [left,Pure (QSTokenBinaryOp op), right]
+data UnaryOp
+    = Negation
+    | Whether
+  deriving (Show, Eq)
 
-pattern UnaryOpP op right 
-        = Free [Pure (QSTokenUnaryOp op), right]
+data BinaryOp
+    = Conjunction
+    | Disjunction
+    | Conditional
+    | Biconditional
+    | Defeater
+  deriving (Show, Eq)
 
-pattern QuantifierP quantifier variable formula
-        = Free [Pure (QSTokenQuantifier quantifier variable), formula]
+newtype Symbol = Symbol Text
+  deriving (Show, Eq)
 
-pattern ComplexPredicationP predication domainFunctions
-        = Free (Pure (QSTokenSymbol predication):domainFunctions)
+data Predication = Predication Symbol [DomainFunction]
+  deriving (Show)
 
-pattern SimplePredicationP predication     
-        = Pure (QSTokenSymbol predication)
-
-pattern RedundantParenthesesP x
-        = Free [x]
-
--- You can derive lenses automatically for many data types:
---
--- @
--- import Control.Lens
--- data Foo a = Foo { _fooArgs :: ['String'], _fooValue :: a }
--- 'makeLenses' ''Foo
--- @
---
--- This defines the following lenses:
--- | > (++) = mappend
-makeFormula :: Free [] QSToken -> Formula
-makeFormula = mk
-  where
-    mk = \case
-        BinaryOpP l o r             -> FormulaBinary 
-            o (mk l) (mk r)
-        UnaryOpP o r                -> FormulaUnary 
-            o (mk r)
-        QuantifierP q v f           -> FormulaQuantification 
-            q v (mk f)
-        ComplexPredicationP p dfs   -> FormulaPredication $ 
-            Predication p $ makeDomainFunction <$> dfs
-        SimplePredicationP p        -> FormulaPredication $ 
-            Predication p []
-        RedundantParenthesesP f -> mk f
-        x -> error $ "makeFormula: unexpected structure\n" ++ ppShow x
-
-
-
-{- $label6demo #label6demo#
-
- Instances from "Data.HList.Label6"
-
->>> :set -XDataKinds
->>> (Label :: Label "x") .=. (5::Int) .*. emptyRecord
-Record{x=5}
-
->>> let x = Label :: Label "x"
->>> let r = x .=. (5::Int) .*. emptyRecord
->>> r .!. x
-5
-
--}
-formulaFromText :: Text -> Formula
-formulaFromText = id
-    . makeFormula
-    . reformQSTokenTree
-    . makeQSTokenTree
-    . freeFromParentheses id
-    . makePQTokens
+data DomainFunction
+    = DomainFunction !Symbol ![DomainFunction] -- ^ `g' in (g x)
+    | DomainVariable !Symbol                   -- ^ `x' in (g x)
+  deriving (Show)

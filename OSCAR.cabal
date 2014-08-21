@@ -11,15 +11,20 @@ executable OSCAR
     main-is: ../Main.hs
 
     other-modules:
-        Oscar.DomainFunction
+        Oscar.Main
+        Oscar.Main.Prelude
+        Oscar.Main.ProblemBase
         Oscar.Formula
-        Oscar.Parenthesis
         Oscar.Problem
-        Oscar.PQToken
-        Oscar.QSToken
-        Oscar.QToken
-        Oscar.QUBS
-        Oscar.Utilities
+        Oscar.ProblemParser
+        Oscar.ProblemParser.Internal
+        Oscar.ProblemParser.Internal.ReasonSection
+        Oscar.ProblemParser.Internal.Section
+        Oscar.ProblemParser.Internal.StatefulParse
+        Oscar.ProblemParser.Internal.Tags
+        Oscar.ProblemParser.Internal.UnitIntervalParsers
+        Oscar.FormulaParser
+        Oscar.FormulaParser.Internal
 
     build-depends: 
             base                            ==  4.7.*
