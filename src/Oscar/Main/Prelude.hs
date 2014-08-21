@@ -4,8 +4,7 @@
 
 module Oscar.Main.Prelude (
     module ClassyPrelude,
-    --ppShow,
-    module Text.Show.Pretty,
+    ppShow,
     ClassyPrelude.undefined,
     (⊥),
     type (⁞),
