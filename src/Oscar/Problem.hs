@@ -95,7 +95,7 @@ newtype ProblemReasonName = ProblemReasonName Text
 
 -- | A forwards reason
 data ForwardsReason = ForwardsReason
-    { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] -> Set
+    { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] → Set
     , _frConclusion       ∷ !Formula    -- ^ conclusion
     }
   deriving (Show)

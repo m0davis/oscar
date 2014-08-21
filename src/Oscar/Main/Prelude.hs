@@ -42,13 +42,13 @@ import Control.Monad.Free               (Free(Free))
 import Control.Monad.Free               (Free(Pure))
 import Numeric.Natural                  (Natural)
 
-(⊥) :: a
+(⊥) ∷ a
 (⊥) = undefined
 
 type a ⁞ b = Tagged b a
 
-ƭ :: a -> Tagged b a
+ƭ ∷ a → Tagged b a
 ƭ = Tagged
 
-unƭ :: Tagged b a -> a
+unƭ ∷ Tagged b a → a
 unƭ = unTagged

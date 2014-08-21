@@ -173,8 +173,8 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
     fpfrts' ∷ ReasonSection Forwards Conclusive → ProblemForwardsConclusiveReason
     fpfrts' rb = case _rsProblemStrengthDegree rb of
-        ProblemStrengthDegree (LispPositiveDouble 1) -> result
-        _ -> error "conclusive strength must = 1"
+        ProblemStrengthDegree (LispPositiveDouble 1) → result
+        _ → error "conclusive strength must = 1"
       where
         result = (,)
             (_rsProblemReasonName rb)
@@ -196,8 +196,8 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
   where
     bpfrts' ∷ ReasonSection Backwards Conclusive → ProblemBackwardsConclusiveReason
     bpfrts' rb = case (_rsProblemStrengthDegree rb) of
-        ProblemStrengthDegree (LispPositiveDouble 1) -> result
-        _ -> error "conclusive strength must = 1"
+        ProblemStrengthDegree (LispPositiveDouble 1) → result
+        _ → error "conclusive strength must = 1"
 
       where
         result = (,)

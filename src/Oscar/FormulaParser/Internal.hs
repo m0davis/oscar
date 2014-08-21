@@ -6,6 +6,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.FormulaParser.Internal (
     QToken(..),
@@ -54,10 +55,10 @@ data QToken
     | QTokenSymbol !Symbol
   deriving (Show)
 
-makePQTokens :: Text -> [Either Parenthesis QToken]
+makePQTokens ∷ Text → [Either Parenthesis QToken]
 makePQTokens = simpleParse $ many $ many space *> parsePQToken
   where
-    parsePQToken :: Parser (Either Parenthesis QToken)
+    parsePQToken ∷ Parser (Either Parenthesis QToken)
     parsePQToken = empty
         <|> Left                     <$> parenthesis
         <|> Right . QTokenUnaryOp    <$> unaryOp
@@ -68,60 +69,60 @@ makePQTokens = simpleParse $ many $ many space *> parsePQToken
         p ↦ v = try p *> pure v
         infixl 4 ↦
 
-        parenthesis :: Parser Parenthesis
+        parenthesis ∷ Parser Parenthesis
         parenthesis = empty
             <|> char '('            ↦ OpenParenthesis
             <|> char '['            ↦ OpenParenthesis
             <|> char ')'            ↦ CloseParenthesis
             <|> char ']'            ↦ CloseParenthesis
 
-        unaryOp :: Parser UnaryOp
+        unaryOp ∷ Parser UnaryOp
         unaryOp = empty
             <|> char '?'            ↦ Whether
             <|> char '~'            ↦ Negation
 
-        binaryOp :: Parser BinaryOp
+        binaryOp ∷ Parser BinaryOp
         binaryOp = empty
             <|> char 'v' *> space   ↦ Disjunction
             <|> char '&'            ↦ Conjunction
             <|> char '@'            ↦ Defeater
-            <|> string "->"         ↦ Conditional
-            <|> string "<->"        ↦ Biconditional
+            <|> string "→"         ↦ Conditional
+            <|> string "<→"        ↦ Biconditional
 
-        quantifier :: Parser Quantifier
+        quantifier ∷ Parser Quantifier
         quantifier = empty
             <|> string "all"        ↦ Universal
             <|> string "some"       ↦ Existential
 
-        symbol :: Parser Symbol
+        symbol ∷ Parser Symbol
         symbol = Symbol . pack <$> many1 alphaNum
 
 -- | Parentheses are like this y(). See 'freeFromParentheses'
 data Parenthesis = OpenParenthesis | CloseParenthesis
   deriving (Bounded, Eq, Read, Show)
 
-freeFromParentheses ::
-    forall as a b.
-    (IsSequence as, Element as ~ a) =>
-    (a -> Either Parenthesis b) ->
-    as ->
+freeFromParentheses ∷
+    ∀ as a b.
+    (IsSequence as, Element as ~ a) ⇒
+    (a → Either Parenthesis b) →
+    as →
     Free [] b
 freeFromParentheses f = fst . ffp 0 []
   where
 
-    ffp :: Natural -> [Free [] b] -> as -> (Free [] b, as)
+    ffp ∷ Natural → [Free [] b] → as → (Free [] b, as)
     ffp d prev ass
         | onull ass =
             (Free prev, mempty)
-        | Left OpenParenthesis <- f a =
+        | Left OpenParenthesis ← f a =
             let (paren, rest) = ffp (succ d) [] as
             in  ffp d (prev ++ [paren]) rest
-        | Left CloseParenthesis <- f a
+        | Left CloseParenthesis ← f a
         , d == 0 =
             error "unexpected CloseParenthesis at depth 0"
-        | Left CloseParenthesis <- f a =
+        | Left CloseParenthesis ← f a =
             (Free prev, as)
-        | Right b <- f a =
+        | Right b ← f a =
             ffp d (prev ++ [Pure b]) as
         | otherwise = error ""
           -- suppresses invalid ghc warning about non-exhaustive pattern match
@@ -138,23 +139,23 @@ data QSToken
 data Reformed
 data Unreformed
 
-makeQSTokenTree :: Free [] QToken -> Free [] QSToken ⁞ Unreformed
+makeQSTokenTree ∷ Free [] QToken → Free [] QSToken ⁞ Unreformed
 makeQSTokenTree = ƭ . \case
-    (Pure (QTokenUnaryOp  u)) -> Pure $ QSTokenUnaryOp u
-    (Pure (QTokenBinaryOp b)) -> Pure $ QSTokenBinaryOp b
-    (Pure (QTokenSymbol   s)) -> Pure $ QSTokenSymbol s
-    (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) ->
+    (Pure (QTokenUnaryOp  u)) → Pure $ QSTokenUnaryOp u
+    (Pure (QTokenBinaryOp b)) → Pure $ QSTokenBinaryOp b
+    (Pure (QTokenSymbol   s)) → Pure $ QSTokenSymbol s
+    (Free [Pure (QTokenQuantifier q), Pure (QTokenSymbol s)]) →
         Pure $ QSTokenQuantifier q s
-    (Free ts)                 -> Free $ map (unƭ . makeQSTokenTree) ts
-    _ -> error "makeQSTokenTree: unexpected QTokenQuantifier"
+    (Free ts)                 → Free $ map (unƭ . makeQSTokenTree) ts
+    _ → error "makeQSTokenTree: unexpected QTokenQuantifier"
 
-reformQSTokenTree :: (Free [] QSToken) ⁞ Unreformed -> (Free [] QSToken) ⁞ Reformed
+reformQSTokenTree ∷ (Free [] QSToken) ⁞ Unreformed → (Free [] QSToken) ⁞ Reformed
 reformQSTokenTree = ƭ . ref . unƭ 
   where 
-    ref :: Free [] QSToken -> Free [] QSToken
+    ref ∷ Free [] QSToken → Free [] QSToken
     ref t@(Pure _) = t
     ref (Free ts) = Free $ reverse . rqstt . reverse $ ts where
-        rqstt :: [Free [] QSToken] -> [Free [] QSToken]
+        rqstt ∷ [Free [] QSToken] → [Free [] QSToken]
         rqstt [] =
             []
         rqstt [a, u@(Pure (QSTokenQuantifier _ _))] =
@@ -189,24 +190,24 @@ pattern SimplePredicationP predication
 pattern RedundantParenthesesP x
         = Free [x]
 
-makeFormula :: (Free [] QSToken) ⁞ Reformed -> Formula
+makeFormula ∷ (Free [] QSToken) ⁞ Reformed → Formula
 makeFormula = mk . unƭ
   where
     mk = \case
-        BinaryOpP l o r             -> FormulaBinary
+        BinaryOpP l o r             → FormulaBinary
             o (mk l) (mk r)
-        UnaryOpP o r                -> FormulaUnary
+        UnaryOpP o r                → FormulaUnary
             o (mk r)
-        QuantifierP q v f           -> FormulaQuantification
+        QuantifierP q v f           → FormulaQuantification
             q v (mk f)
-        ComplexPredicationP p dfs   -> FormulaPredication $
+        ComplexPredicationP p dfs   → FormulaPredication $
             Predication p $ makeDomainFunction <$> dfs
-        SimplePredicationP p        -> FormulaPredication $
+        SimplePredicationP p        → FormulaPredication $
             Predication p []
-        RedundantParenthesesP f -> mk f
-        x -> error $ "makeFormula: unexpected structure\n" ++ ppShow x
+        RedundantParenthesesP f → mk f
+        x → error $ "makeFormula: unexpected structure\n" ++ ppShow x
       where
-        makeDomainFunction :: Free [] QSToken -> DomainFunction
+        makeDomainFunction ∷ Free [] QSToken → DomainFunction
         makeDomainFunction (Pure (QSTokenSymbol s)) =
             DomainVariable s
         makeDomainFunction (Free (Pure (QSTokenSymbol s):ss)) =

@@ -44,18 +44,18 @@ import Text.Parsec                      (setInput)
 import Text.Parsec                      (runParser)
 import Text.Parsec                      (ParsecT)
 
-simpleParse :: Parser a -> Text -> a
+simpleParse ∷ Parser a → Text → a
 simpleParse p = either (error . ppShow) id . runParser p () ""
 
-precededBy :: Parser p1 -> Parser p2 -> Parser (p1, p2)
+precededBy ∷ Parser p1 → Parser p2 → Parser (p1, p2)
 precededBy p1 p2 = do
-    firstInput <- pack <$> manyTill anyChar (lookAhead . try $ p2)
+    firstInput ← pack <$> manyTill anyChar (lookAhead . try $ p2)
     liftA2 (,) (withInput firstInput p1) p2
 
-withInput :: Monad m => s -> ParsecT s u m a -> ParsecT s u m a
+withInput ∷ Monad m ⇒ s → ParsecT s u m a → ParsecT s u m a
 withInput s p = do
-    s' <- getInput
+    s' ← getInput
     setInput s
-    p' <- p
+    p' ← p
     setInput s'
     return p'

@@ -1,4 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.FormulaParser (
     formulaFromText,
@@ -13,7 +14,7 @@ import Oscar.FormulaParser.Internal     (makeQSTokenTree)
 import Oscar.FormulaParser.Internal     (reformQSTokenTree)
 import Oscar.Formula                    (Formula)
 
-formulaFromText :: Text -> Formula
+formulaFromText ∷ Text → Formula
 formulaFromText = id
     . makeFormula
     . reformQSTokenTree
