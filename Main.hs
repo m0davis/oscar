@@ -1,47 +1,16 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UnicodeSyntax #-}
+
 module Main where
 
-import ClassyPrelude
+import Oscar.Main.Prelude
 
-import Data.Tagged                      (Tagged(Tagged))
-import Text.Show.Pretty                 (ppShow)
+import Oscar.Main                       (combinedProblems)
+import Oscar.Main                       (getBaseProblem)
 
---import Oscar.Problem                    (enbracedListParser)
---import Oscar.Problem                    (extractFromProblemReasonTextBackwards)
---import Oscar.Problem                    (extractFromProblemReasonTextForwards)
---import Oscar.Utilities                  (simpleParse)
-import Oscar.Problem.Internal.Internal    (Defeasibility(Conclusive))
-import Oscar.Problem.Internal.Internal    (Direction(Backwards))
-import Oscar.Problem.Internal.Internal    (Problem)
-import Oscar.Problem                      (problemsM)
-import Oscar.Problem.Internal.Internal    (ƮReason)
-import Oscar.ProblemBase                (pattern BaseProblem)
-import Oscar.Utilities                  (type (⁞))
-import Oscar.Utilities                  (ƭ)
-
-combinedProblems ∷ FilePath ⁞ [Problem]
-combinedProblems = Tagged $ fpFromString "combined-problems"
-
---
-testR :: Text ⁞ ƮReason Backwards Conclusive
-testR = ƭ $ pack "{P} {(Q1 & Q2) , ~(Q1 & (Q2 & Q3))} ||=> ~Q3"
+import Oscar.ProblemParser              (readFileProblems)
 
 main ∷ IO ()
 main = do
-    --print $ simpleParse enbracedListParser (pack "{P v Q}")
-    --print $ simpleParse enbracedListParser (pack "{}")
-    ----print $ simpleParse enbracedListParser (pack "{P v Q}")
-    ----print $ simpleParse enbracedListParser (pack "{Q1 & Q2, ~(Q1 & (Q2 & Q3))}")
-    --print $ extractFromProblemReasonTextBackwards testR
-    
-    problems <- problemsM combinedProblems
-    --sequence_ $ putStrLn . pack . ppShow <$> problems
-    sequence_ $ putStrLn . pack . ppShow . bp <$> problems
-  where
-    --bp ∷ Problem -> BaseProblem 
-    bp bp'@(BaseProblem _ _ _ _ _ _) = bp'
-    bp _ = error "impossible? Problem does not match BaseProblem"
+    problems ← readFileProblems combinedProblems
+    sequence_ $ putStrLn . pack . ppShow . getBaseProblem <$> problems
