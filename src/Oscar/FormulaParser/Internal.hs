@@ -14,8 +14,8 @@ module Oscar.FormulaParser.Internal (
     Parenthesis(..),
     freeFromParentheses,
     QSToken,
-    Reformed,
-    Unreformed,
+    ƮReformed,
+    ƮUnreformed,
     makeQSTokenTree,
     reformQSTokenTree,
     pattern BinaryOpP,
@@ -136,10 +136,10 @@ data QSToken
     | QSTokenSymbol !Symbol
   deriving (Show)
 
-data Reformed
-data Unreformed
+data ƮReformed
+data ƮUnreformed
 
-makeQSTokenTree ∷ Free [] QToken → Free [] QSToken ⁞ Unreformed
+makeQSTokenTree ∷ Free [] QToken → Free [] QSToken ⁞ ƮUnreformed
 makeQSTokenTree = ƭ . \case
     (Pure (QTokenUnaryOp  u)) → Pure $ QSTokenUnaryOp u
     (Pure (QTokenBinaryOp b)) → Pure $ QSTokenBinaryOp b
@@ -149,7 +149,7 @@ makeQSTokenTree = ƭ . \case
     (Free ts)                 → Free $ map (unƭ . makeQSTokenTree) ts
     _ → error "makeQSTokenTree: unexpected QTokenQuantifier"
 
-reformQSTokenTree ∷ (Free [] QSToken) ⁞ Unreformed → (Free [] QSToken) ⁞ Reformed
+reformQSTokenTree ∷ (Free [] QSToken) ⁞ ƮUnreformed → (Free [] QSToken) ⁞ ƮReformed
 reformQSTokenTree = ƭ . ref . unƭ 
   where 
     ref ∷ Free [] QSToken → Free [] QSToken
@@ -190,7 +190,7 @@ pattern SimplePredicationP predication
 pattern RedundantParenthesesP x
         = Free [x]
 
-makeFormula ∷ (Free [] QSToken) ⁞ Reformed → Formula
+makeFormula ∷ (Free [] QSToken) ⁞ ƮReformed → Formula
 makeFormula = mk . unƭ
   where
     mk = \case
