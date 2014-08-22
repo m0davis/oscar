@@ -11,10 +11,12 @@ executable OSCAR
     main-is: ../Main.hs
 
     other-modules:
+        Oscar.Formula
+        Oscar.FormulaParser
+        Oscar.FormulaParser.Internal
         Oscar.Main
         Oscar.Main.Prelude
         Oscar.Main.ProblemBase
-        Oscar.Formula
         Oscar.Problem
         Oscar.ProblemParser
         Oscar.ProblemParser.Internal
@@ -23,8 +25,6 @@ executable OSCAR
         Oscar.ProblemParser.Internal.StatefulParse
         Oscar.ProblemParser.Internal.Tags
         Oscar.ProblemParser.Internal.UnitIntervalParsers
-        Oscar.FormulaParser
-        Oscar.FormulaParser.Internal
 
     build-depends: 
             base                            ==  4.7.*

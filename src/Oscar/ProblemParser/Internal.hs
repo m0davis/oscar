@@ -71,8 +71,38 @@ import Oscar.Problem                    (LispPositiveDouble(LispPositiveDouble))
 import Oscar.Formula                    (Formula)
 import Oscar.FormulaParser              (formulaFromText)
 
--- | Partition the concatenated problems so that each 'Text' block contains
---   one 'Text' block for each 'Problem'.
+{- | Separate the text of concatenated problems. Each resulant problem starts after the number label, "Problem #". "ƮProblemAfterNumberLabel"
+
+E.g., given this input
+
+@
+Problem #1
+This is a case of collective rebutting defeat
+Given premises:
+     P    justification = 1.0
+...etc...
+
+Problem #2
+Description of the second problem
+...etc...
+@
+
+we get these outputs
+
+@
+1
+This is a case of collective rebutting defeat
+Given premises:
+     P    justification = 1.0
+...etc...
+@
+ 
+@
+2
+Description of the second problem
+...etc...
+@
+-}
 partitionProblemsText ∷ (Text ⁞ [Problem])                 -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
                       → [Text ⁞ ƮProblemAfterNumberLabel]  -- ^ Results in one 'Text' block for each 'Problem'.
 partitionProblemsText = simpleParse (many p) . unƭ
@@ -86,36 +116,75 @@ partitionProblemsText = simpleParse (many p) . unƭ
     endP ∷ Parser ()
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
+{- | E.g., given this input
+
+@
+1
+This is a case of collective rebutting defeat
+...etc...
+@
+
+we get this output:
+@ 
+ (1, \\nThis is a case of collective rebutting defeat\\n...etc...\\n) 
+@
+-}
 statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
 statefulParseProblemNumber = runStatefulParse' parseProblemNumber
 
+{- | E.g., given this input
+
+@
+This is a case of collective rebutting defeat
+Given premises:
+...etc...
+@
+
+we get this output:
+@ 
+ (This is a case of collective rebutting defeat, Given premises:\\n...etc...\\n) 
+@
+-}
 statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
 statefulParseProblemDescription = runStatefulParse' parseProblemDescription
 
--- | Gets the text of a particular section from all of the text following the description
--- e.g. given the input @ Text ⁞ ƮProblemAfterDescription @:
---
--- @
--- Given premises:
---      P    justification = 1.0
---      A    justification = 1.0
--- Ultimate epistemic interests:
---      R    interest = 1.0
---
---    FORWARDS PRIMA FACIE REASONS
---      pf-reason_1:   {P} ||=> Q   strength = 1.0
---      pf-reason_2:   {Q} ||=> R   strength = 1.0
---      pf-reason_3:   {C} ||=> ~R   strength = 1.0
---      pf-reason_4:   {B} ||=> C   strength = 1.0
---      pf-reason_5:   {A} ||=> B   strength = 1.0
--- @
---
--- we get the @ Text ⁞ ƮSection ƮGivenPremise @:
---
--- @
---      P    justification = 1.0
---      A    justification = 1.0
--- @
+{-
+ | Gets the text of a particular section from all of the text following the description
+ e.g. given the input @ Text ⁞ ƮProblemAfterDescription @:
+
+@
+Given premises:
+     P    justification = 1.0
+     A    justification = 1.0
+Ultimate epistemic interests:
+     R    interest = 1.0
+
+   FORWARDS PRIMA FACIE REASONS
+     pf-reason_1:   {P} ||=> Q   strength = 1.0
+     pf-reason_2:   {Q} ||=> R   strength = 1.0
+     pf-reason_3:   {C} ||=> ~R   strength = 1.0
+     pf-reason_4:   {B} ||=> C   strength = 1.0
+     pf-reason_5:   {A} ||=> B   strength = 1.0
+@
+
+we get the @ Text ⁞ ƮSection ƮGivenPremise @:
+
+@
+     P    justification = 1.0
+     A    justification = 1.0
+@
+
+That's only if the returned kind is Text ⁞ ƮSection (ƮReason Forwards PrimaFacie), then the returned value is
+
+@
+     pf-reason_1:   {P} ||=> Q   strength = 1.0
+     pf-reason_2:   {Q} ||=> R   strength = 1.0
+     pf-reason_3:   {C} ||=> ~R   strength = 1.0
+     pf-reason_4:   {B} ||=> C   strength = 1.0
+     pf-reason_5:   {A} ||=> B   strength = 1.0
+@
+ 
+-}
 problemSectionText ∷
     ∀ kind. (HasSection kind) ⇒
     Text ⁞ ƮProblemAfterDescription →
@@ -135,8 +204,19 @@ problemSectionText = ƭ . simpleParse p . unƭ
             guardM (map (== theSection) sectionParser)
             pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
+{- | Examples
 
--- |
+@
+     P    justification = 1.0
+     A    justification = 1.0
+@
+
+@
+    [(\<formula for P>, \<justification 1.0>)
+    ,(\<formula for A\>, \<justification 1.0>)
+    ]
+@
+-}
 decodeGivenPremisesSection ∷ Text ⁞ ƮSection ƮGivenPremise
                            → [ProblemPremise]
 decodeGivenPremisesSection = runSectionParser p
@@ -147,7 +227,7 @@ decodeGivenPremisesSection = runSectionParser p
         (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
         return (formulaFromText . pack $ t, d)
 
--- |
+-- | similar to 'decodeGivenPremisesSection'
 decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest
                                         → [ProblemInterest]
 decodeUltimateEpistemicInterestsSection = runSectionParser $ do
@@ -157,7 +237,7 @@ decodeUltimateEpistemicInterestsSection = runSectionParser $ do
 
 
 
--- |
+-- | similar to 'decodeGivenPremisesSection'
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
 decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
   where
@@ -167,7 +247,7 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
         (getForwardsReason $ _rsProblemReasonText rb)
         (_rsProblemStrengthDegree rb)
 
--- |
+-- | similar to "decodeGivenPremisesSection"
 decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
 decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
   where
@@ -180,7 +260,7 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
             (_rsProblemReasonName rb)
             (getForwardsReason $ _rsProblemReasonText rb)
 
--- |
+-- | similar to "decodeGivenPremisesSection"
 decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
 decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
   where
@@ -190,7 +270,7 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
         (getBackwardsReason $ _rsProblemReasonText rb)
         (_rsProblemStrengthDegree rb)
 
--- |
+-- | similar to "decodeGivenPremisesSection"
 decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
 decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
   where
