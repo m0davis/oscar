@@ -6,7 +6,7 @@
 module Oscar.ProblemParser.Internal.StatefulParse (
     runStatefulParse',
     parseProblemNumber,
-    parseProblemDescription,    
+    parseProblemDescription,
     ) where
 
 import Oscar.Main.Prelude
@@ -36,10 +36,10 @@ parseProblemNumber = ƭ $ ProblemNumber . read <$>
     manyTill anyChar (lookAhead . try $ space)
 
 parseProblemDescription ∷ Parser ProblemDescription ⁞ ƮProblemAfterNumber
-parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$> 
+parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$>
     (try emptyDescription <|> filledDescription)
   where
-    emptyDescription = do 
+    emptyDescription = do
         manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
-    filledDescription = do 
+    filledDescription = do
         manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline

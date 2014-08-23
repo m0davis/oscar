@@ -8,7 +8,7 @@ module Oscar.ProblemParser.Internal.Section (
     Section(..),
     HasSection(..),
     sectionParser,
-    runSectionParser,    
+    runSectionParser,
     ) where
 
 import Oscar.Main.Prelude

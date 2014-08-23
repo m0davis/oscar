@@ -150,8 +150,8 @@ makeQSTokenTree = ƭ . \case
     _ → error "makeQSTokenTree: unexpected QTokenQuantifier"
 
 reformQSTokenTree ∷ (Free [] QSToken) ⁞ ƮUnreformed → (Free [] QSToken) ⁞ ƮReformed
-reformQSTokenTree = ƭ . ref . unƭ 
-  where 
+reformQSTokenTree = ƭ . ref . unƭ
+  where
     ref ∷ Free [] QSToken → Free [] QSToken
     ref t@(Pure _) = t
     ref (Free ts) = Free $ reverse . rqstt . reverse $ ts where

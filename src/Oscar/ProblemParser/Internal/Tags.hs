@@ -20,10 +20,10 @@ module Oscar.ProblemParser.Internal.Tags (
 
 import Oscar.Main.Prelude
 
--- | 
+-- |
 data ƮProblemsWithLineComments
 
--- | 
+-- |
 data ƮProblemsWithoutLineComments
 
 -- | Stuff after the "Problem #"

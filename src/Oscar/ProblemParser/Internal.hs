@@ -18,7 +18,7 @@ module Oscar.ProblemParser.Internal (
     decodeBackwardsPrimaFacieReasonSection,
     decodeBackwardsConclusiveReasonSection,
     -- * Problem construction
-    problemFromText,    
+    problemFromText,
     ) where
 
 import Oscar.Main.Prelude
@@ -93,7 +93,7 @@ Given premises:
      P    justification = 1.0
 ...etc...
 @
- 
+
 @
 2
 Description of the second problem
@@ -122,8 +122,8 @@ This is a case of collective rebutting defeat
 @
 
 we get this output:
-@ 
- (1, \\nThis is a case of collective rebutting defeat\\n...etc...\\n) 
+@
+ (1, \\nThis is a case of collective rebutting defeat\\n...etc...\\n)
 @
 -}
 statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
@@ -138,8 +138,8 @@ Given premises:
 @
 
 we get this output:
-@ 
- (This is a case of collective rebutting defeat, Given premises:\\n...etc...\\n) 
+@
+ (This is a case of collective rebutting defeat, Given premises:\\n...etc...\\n)
 @
 -}
 statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
@@ -180,7 +180,7 @@ That's only if the returned kind is Text ⁞ ƮSection (ƮReason Forwards PrimaF
      pf-reason_4:   {B} ||=> C   strength = 1.0
      pf-reason_5:   {A} ||=> B   strength = 1.0
 @
- 
+
 -}
 problemSectionText ∷
     ∀ kind. (HasSection kind) ⇒
@@ -191,7 +191,7 @@ problemSectionText = ƭ . simpleParse p . unƭ
     theSection ∷ Section
     theSection = section ((⊥) ∷ kind)
 
-    p ∷ Parser Text 
+    p ∷ Parser Text
     p = do
         _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
         p' <|> pure (pack "")
