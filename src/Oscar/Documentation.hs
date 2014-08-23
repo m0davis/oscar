@@ -2,7 +2,7 @@
 
 {- | __So, you want to write an OSCAR problem__
 
-Here is an example of a valid Problem (i.e.  @'Text ⁞ ƮProblemsWithLineComments'@)
+Here is an example of a valid Problem, represented as a Text ⁞ ƮProblemsWithLineComments.
 
 @
 ; This is a line comment, starting with a semicolon. All such comments are 
@@ -12,7 +12,7 @@ Problem #42 ; The 'ProblemNumber' must be given as an integer.
 Here is a 'ProblemDescription', which may be given starting on a line 
 following the 'ProblemNumber'.
 
-The description ends at the first 'Section' identifier (c.f. 'sectionParser').
+The description ends at the first 'Section' identifier.
 
 A (case-sensitive) section identifier is a line containing __exactly one__ 
 (sans whitespace, which is ignored) of the following bulleted items:
