@@ -59,7 +59,7 @@ Ultimate epistemic interests:
     ~(Cat fido)                           interest = 1.0
     P v ~P                                interest = 1.0
 
-FORWARDS PRIMA FACIE REASONS ; '_problemForwardsPrimaFacieReasons'
+FORWARDS PRIMA FACIE REASONS
     ; A 'ProblemForwardsPrimaFacieReason' is a 'ProblemReasonName', 
     ; a 'ForwardsReason', and a 'ProblemStrengthDegree'.
     ;
@@ -72,11 +72,9 @@ FORWARDS PRIMA FACIE REASONS ; '_problemForwardsPrimaFacieReasons'
     ;   the forwards premises.
     ; * a conclusion.
 
-    fpf-reason_1:       ; the 'ProblemReasonName', which may be any sequence 
-                        ; of characters preceded by a colon
-                        ; 
-        {A,             ; a Formula of the forwards premises
-         B}             ; another forwards premise ('_frForwardsPremises')
+    fpf-reason_1:       ; the 'ProblemReasonName', which may be any sequence
+                        ; of characters up to a colon.
+        {A,B}           ; 'Formula's of the '_frForwardsPremises'
         ||=>            ; an arrow separating the premises from the conclusion
         Z               ; '_frConclusion'
         strength = 1.0
@@ -85,10 +83,7 @@ FORWARDS PRIMA FACIE REASONS ; '_problemForwardsPrimaFacieReasons'
 
 FORWARDS CONCLUSIVE REASONS
     ; A 'ProblemForwardsConclusiveReason' is similar to a prima facie one, 
-    ; except that:
-    ;   * Its strength must be 1.0
-    ;   * It is treated differently from the perspective of defeasible 
-    ;     reasoning. The link between premise and conclusion
+    ; except that its strength must be 1.0.
     fcon-reason_1:   {TheCatWasJustFed} ||=> ~TheCatIsHungry   strength = 1.0
 
     ; TODO Specification of the strength of conclusive reasons should be
@@ -96,8 +91,8 @@ FORWARDS CONCLUSIVE REASONS
 
 BACKWARDS PRIMA FACIE REASONS
     ; A 'ProblemBackwardsPrimaFacieReason' is similar to a forwards one,
-    ; except that:
-    ;   * It also contains a set of backwards premises.
+    ; except that it contains a 'BackwardsReason' instead of a 
+    ; 'ForwardsReason'.
     bpf-reason_1:       ; 'ProblemReasonName'
         {A}             ; '_brForwardsPremises'
         {B,C}           ; '_brBackwardsPremises'
