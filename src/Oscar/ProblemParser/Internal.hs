@@ -58,6 +58,7 @@ import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFaci
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
+import Oscar.ProblemParser.Internal.Tags                (ƮProblemsWithoutLineComments)
 import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterDescription)
 import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterNumber)
 import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterNumberLabel)
@@ -99,8 +100,8 @@ Description of the second problem
 ...etc...
 @
 -}
-partitionProblemsText ∷ (Text ⁞ [Problem])                 -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
-                      → [Text ⁞ ƮProblemAfterNumberLabel]  -- ^ Results in one 'Text' block for each 'Problem'.
+partitionProblemsText ∷ (Text ⁞ ƮProblemsWithoutLineComments) -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
+                      → [Text ⁞ ƮProblemAfterNumberLabel]      -- ^ Results in one 'Text' block for each 'Problem'.
 partitionProblemsText = simpleParse (many p) . unƭ
   where
     p ∷ Parser (Text ⁞ ƮProblemAfterNumberLabel)

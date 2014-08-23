@@ -4,6 +4,8 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.ProblemParser.Internal.Tags (
+    ƮProblemsWithLineComments,
+    ƮProblemsWithoutLineComments,
     ƮProblemAfterNumberLabel,
     ƮProblemAfterNumber,
     ƮProblemAfterDescription,
@@ -17,6 +19,12 @@ module Oscar.ProblemParser.Internal.Tags (
     ) where
 
 import Oscar.Main.Prelude
+
+-- | 
+data ƮProblemsWithLineComments
+
+-- | 
+data ƮProblemsWithoutLineComments
 
 -- | Stuff after the "Problem #"
 data ƮProblemAfterNumberLabel

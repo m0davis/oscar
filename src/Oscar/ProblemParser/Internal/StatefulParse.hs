@@ -36,6 +36,10 @@ parseProblemNumber = ƭ $ ProblemNumber . read <$>
     manyTill anyChar (lookAhead . try $ space)
 
 parseProblemDescription ∷ Parser ProblemDescription ⁞ ƮProblemAfterNumber
-parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$> p
+parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$> 
+    (try emptyDescription <|> filledDescription)
   where
-    p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
+    emptyDescription = do 
+        manyTill space (lookAhead . try $ sectionParser)
+    filledDescription = do 
+        manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser

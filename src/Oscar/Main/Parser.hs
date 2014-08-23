@@ -7,6 +7,7 @@ module Oscar.Main.Parser (
     char,
     eof,
     lookAhead,
+    newline,
     space,
     spaces,
     string,
@@ -36,6 +37,7 @@ import Text.Parsec.Text                 (Parser)
 import Text.Parsec                      (anyChar)
 import Text.Parsec                      (eof)
 import Text.Parsec                      (lookAhead)
+import Text.Parsec                      (newline)
 import Text.Parsec                      (option)
 import Text.Parsec                      (manyTill)
 import Text.Parsec                      (getInput)

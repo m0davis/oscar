@@ -1,6 +1,7 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE ExplicitNamespaces #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.Main.Prelude (
     module ClassyPrelude,
@@ -10,6 +11,7 @@ module Oscar.Main.Prelude (
     type (⁞),
     ƭ,
     unƭ,        
+    reƭ,        
     empty,
     many,
     mzero,
@@ -32,6 +34,7 @@ import qualified ClassyPrelude
 
 import Data.Tagged                      (Tagged(Tagged))
 import Data.Tagged                      (unTagged)
+import Data.Tagged                      (retag)
 import Control.Conditional              (guardM)
 import Control.Applicative              (empty)
 import Control.Applicative              (many)
@@ -47,8 +50,11 @@ import Numeric.Natural                  (Natural)
 
 type a ⁞ b = Tagged b a
 
-ƭ ∷ a → Tagged b a
+ƭ ∷ a → a ⁞ b
 ƭ = Tagged
 
-unƭ ∷ Tagged b a → a
+unƭ ∷ a ⁞ b → a
 unƭ = unTagged
+
+reƭ ∷ a ⁞ b → a ⁞ c
+reƭ = retag

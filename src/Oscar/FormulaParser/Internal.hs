@@ -86,8 +86,8 @@ makePQTokens = simpleParse $ many $ many space *> parsePQToken
             <|> char 'v' *> space   ↦ Disjunction
             <|> char '&'            ↦ Conjunction
             <|> char '@'            ↦ Defeater
-            <|> string "→"         ↦ Conditional
-            <|> string "<→"        ↦ Biconditional
+            <|> string "->"         ↦ Conditional
+            <|> string "<->"        ↦ Biconditional
 
         quantifier ∷ Parser Quantifier
         quantifier = empty
