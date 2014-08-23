@@ -11,6 +11,7 @@ executable OSCAR
     main-is: ../Main.hs
 
     other-modules:
+        Oscar.Documentation
         Oscar.Formula
         Oscar.FormulaParser
         Oscar.FormulaParser.Internal
