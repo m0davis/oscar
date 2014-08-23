@@ -40,6 +40,6 @@ parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$>
     (try emptyDescription <|> filledDescription)
   where
     emptyDescription = do 
-        manyTill space (lookAhead . try $ sectionParser)
+        manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
     filledDescription = do 
-        manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser
+        manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline

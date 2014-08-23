@@ -6,40 +6,48 @@
 
 Documentation for ProblemParser
 
-
-
-Here is an example of a valid Problem (i.e. @Text \⁞ [Problem]@)
+Here is an example of a valid Problem (i.e. @'Text' '\(⁞)' 'ƮProblemsWithLineComments'@)
 
 @
-Problem #42
-Some description of this problem.
-The description ends at the first section identifier.
-A section identifier is a line containing one of the following bulleted items:
-    * Given premises:
-    * Ultimate epistemic interests:
-    * FORWARDS PRIMA FACIE REASONS
-    * FORWARDS CONCLUSIVE REASONS
-    * BACKWARDS PRIMA FACIE REASONS
-    * BACKWARDS CONCLUSIVE REASONS
+; This is a line comment, starting with a semicolon. All such comments are 
+; ignored when parsing an Oscar 'Problem'.
+Problem #42 ; The 'ProblemNumber' must be given as an integer.
 
-Note that the section identifier is case sensitive. 
+Here is a 'ProblemDescription', which may be given starting on a line 
+following the 'ProblemNumber'.
 
-The premise and interest sections __must__ be present. No repeats of sections is allowed.
+The description ends at the first 'Section' identifier (c.f. 'sectionParser').
 
-Given premises:
-     ; This is a line comment.
-     APremiseFormula       justification = 0.9 ; Note that justifications take on valid values between 0 (exclusive) and 1 (inclusive).
-     AnotherPremiseFormula justification = 0.5 ; The names of premises are usually given by a single letter, but may be any sequence of alpha-numeric characters.
-     AnotherPremiseFormula -> APremiseFormula 
+A (case-sensitive) section identifier is a line containing __exactly one__ 
+(sans whitespace) of the following bulleted items:
+    * Ultimate epistemic interests:      ; (required)
+    * Given premises:                    ; (optional)
+    * FORWARDS PRIMA FACIE REASONS       ; (optional)
+    * FORWARDS CONCLUSIVE REASONS        ; (optional)
+    * BACKWARDS PRIMA FACIE REASONS      ; (optional)
+    * BACKWARDS CONCLUSIVE REASONS       ; (optional)
+
+No repeats of sections are allowed.
+
+Given premises: ; Here's a section identifier. 
+                ; Note that the "Given premises:" above in the description is 
+                ; __not__ a Section identifier since it does not occur by 
+                ; itself (it is preceded by a "*").
+     ; A 'Premise' is a 'Formula' and a 'ProblemJustificationDegree'.
+     TheCatIsOnTheMat       justification = 0.9
+     TheMatIsOnTheFloor     justification = 0.5
+     ~TheCatIsOnTheMat -> TheCatIsHungry
                      ; Newlines are ignored when reading formulas, so long formulas may be split
                      ; across lines, ending with its justification.
                      justification = 1.0
+
 Ultimate epistemic interests:
-     J    interest = 1.0 ; 
-     K    interest = 1.0
-     L    interest = 1.0
+     ; An 'Interest' is a 'Formula' and a 'ProblemInterestDegree'
+     ~TheCatIsHungry v TheCatIsOnTheMat    interest = 1.0
+     K v ~K                                interest = 1.0
 
     FORWARDS PRIMA FACIE REASONS
+      ; A 'ProblemForwardsPrimaFacieReason' is a 'ProblemReasonName', a 'ForwardsReason', and a 'ProblemStrengthDegree'.
       pf-reason_1:   {A} ||=> D   strength = 1.0
       pf-reason_2:   {D} ||=> G   strength = 1.0
       pf-reason_3:   {B} ||=> ~D   strength = 1.0
@@ -47,14 +55,17 @@ Ultimate epistemic interests:
       pf-reason_5:   {I} ||=> L   strength = 1.0
 
     FORWARDS CONCLUSIVE REASONS
+      ; A 'ProblemForwardsConclusiveReason' is similar to a prima facie one, except that 
+      ; * its strength must be 1.0
+      ; * it is treated differently from the perspective of defeasible reasoning.
       con-reason_1:   {G} ||=> J   strength = 1.0
       con-reason_2:   {~D} ||=> H   strength = 1.0
       con-reason_3:   {H} ||=> K   strength = 1.0
       con-reason_4:   {F} ||=> I   strength = 1.0
       con-reason_5:   {~D} ||=> M   strength = 1.0
       con-reason_6:   {M} ||=> N   strength = 1.0
-      con-reason_7:   {N} ||=> (C @ F)   strength = 1.0
-      con-reason_8:   {F} ||=> (B @ ~D)   strength = 1.0
+      con-reason_7:   {N} ||=> (C \@ F)   strength = 1.0
+      con-reason_8:   {F} ||=> (B \@ ~D)   strength = 1.0
 
     BACKWARDS PRIMA FACIE REASONS
       pf-reason_4:   {} {C} ||=> ~R   strength = 1.0

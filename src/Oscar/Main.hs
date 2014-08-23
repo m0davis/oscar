@@ -31,6 +31,7 @@ testProblemFromProblemParser = ƭ . pack $ "Problem #42 \n\
 \    * FORWARDS CONCLUSIVE REASONS \n\
 \    * BACKWARDS PRIMA FACIE REASONS \n\
 \    * BACKWARDS CONCLUSIVE REASONS \n\
+\    FORWARDS PRIMA FACIE REASONSS \n\
 \ \n\
 \Note that the section identifier is case sensitive.  \n\
 \ \n\
@@ -40,7 +41,7 @@ testProblemFromProblemParser = ƭ . pack $ "Problem #42 \n\
 \     ; This is a line comment. \n\
 \     APremiseFormula       justification = 0.9 ; Note that justifications take on valid values between 0 (exclusive) and 1 (inclusive). \n\
 \     AnotherPremiseFormula justification = 0.5 ; The names of premises are usually given by a single letter, but may be any sequence of alpha-numeric characters. \n\
-\     BnotherPremiseFormula  \n\
+\     AnotherPremiseFormula -> APremiseFormula   \n\
 \                     ; Newlines are ignored when reading formulas, so long formulas may be split \n\
 \                     ; across lines, ending with its justification. \n\
 \                     justification = 1.0 \n\
