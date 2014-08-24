@@ -5,7 +5,7 @@ maintainer:          martin.stone.davis@gmail.com
 build-type:          Simple
 extra-source-files:  extras/Combined-problems
 cabal-version:       >= 1.10
-description:         This a description of the OSCAR program.
+description:         "The objective of the OSCAR Project is twofold. On the one hand, it is to construct a general theory of rational cognition. On the other hand, it is to construct an artificial rational agent (an \'artilect\') implementing that theory. This is a joint project in philosophy and AI." -- John L. Pollock
 
 executable OSCAR
     main-is: ../Main.hs
