@@ -3,7 +3,7 @@
 
 module Oscar.FormulaParser (
     formulaFromText,
-  ) where
+    ) where
 
 import Oscar.Main.Prelude
 

@@ -9,15 +9,19 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.FormulaParser.Internal (
+    -- * First-pass tokenization
     QToken(..),
-    makePQTokens,
     Parenthesis(..),
+    makePQTokens,
+    -- * Structuring according to parentheses
     freeFromParentheses,
-    QSToken,
+    -- * Re-structuring according to quantifiers
+    QSToken(..),
     ƮReformed,
     ƮUnreformed,
     makeQSTokenTree,
     reformQSTokenTree,
+    -- * Formula construction
     pattern BinaryOpP,
     pattern UnaryOpP,
     pattern QuantifierP,
@@ -25,7 +29,7 @@ module Oscar.FormulaParser.Internal (
     pattern SimplePredicationP,
     pattern RedundantParenthesesP,
     makeFormula,
-  ) where
+    ) where
 
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
@@ -48,13 +52,43 @@ import Oscar.Formula                    (Symbol(Symbol))
 import Oscar.Formula                    (UnaryOp(Negation))
 import Oscar.Formula                    (UnaryOp(Whether))
 
+{- | Compare to 'QSToken'. The `Q' in QToken indicates that, at this stage
+     in the parsing of a 'Formula', we tokenize the 'Quantifier' separately
+     from the quantification variable (a 'Symbol').
+-}
 data QToken
     = QTokenUnaryOp !UnaryOp
     | QTokenBinaryOp !BinaryOp
     | QTokenQuantifier !Quantifier
     | QTokenSymbol !Symbol
-  deriving (Show)
+  deriving (Eq, Read, Show)
 
+data Parenthesis = OpenParenthesis | CloseParenthesis
+  deriving (Bounded, Enum, Eq, Ord, Read, Show)
+
+{- | Parses the alleged formula text into a sequence of tokens.
+
+Sample input
+
+@
+~(all x)(P x)
+@
+
+Sample output
+
+@
+[Right (QTokenBinaryOp Negation)
+,Left OpenParenthesis
+,Right (QTokenQuantifier Universal)
+,Right (QTokenSymbol "x")
+,Left CloseParenthesis
+,Left OpenParenthesis
+,Right (QTokenSymbol "P")
+,Right (QTokenSymbol "x")
+,Left CloseParenthesis
+]
+@
+-}
 makePQTokens ∷ Text → [Either Parenthesis QToken]
 makePQTokens = simpleParse $ many $ many space *> parsePQToken
   where
@@ -97,10 +131,39 @@ makePQTokens = simpleParse $ many $ many space *> parsePQToken
         symbol ∷ Parser Symbol
         symbol = Symbol . pack <$> many1 alphaNum
 
--- | Parentheses are like this y(). See 'freeFromParentheses'
-data Parenthesis = OpenParenthesis | CloseParenthesis
-  deriving (Bounded, Eq, Read, Show)
+{- | freeFromParentheses f xs applies f to each of the xs and creates a tree, 
+respecting the structure indicated by the parentheses. 
 
+Here's an example where f = id.
+
+Sample input
+
+@
+[Right (QTokenBinaryOp Negation)
+,Left OpenParenthesis
+,Right (QTokenQuantifier Universal)
+,Right (QTokenSymbol "x")
+,Left CloseParenthesis
+,Left OpenParenthesis
+,Right (QTokenSymbol "P")
+,Right (QTokenSymbol "x")
+,Left CloseParenthesis
+]
+@
+
+Sample output
+
+@
+Free [Pure (QTokenBinaryOp Negation)
+     ,Free [Pure (QTokenQuantifier Universal)
+           ,Pure (QTokenSymbol "x")
+           ]
+     ,Free [Pure (QTokenSymbol "P")
+           ,Pure (QTokenSymbol "x")
+           ]
+     ]
+@
+-}
 freeFromParentheses ∷
     ∀ as a b.
     (IsSequence as, Element as ~ a) ⇒
@@ -109,7 +172,6 @@ freeFromParentheses ∷
     Free [] b
 freeFromParentheses f = fst . ffp 0 []
   where
-
     ffp ∷ Natural → [Free [] b] → as → (Free [] b, as)
     ffp d prev ass
         | onull ass =
@@ -124,19 +186,21 @@ freeFromParentheses f = fst . ffp 0 []
             (Free prev, as)
         | Right b ← f a =
             ffp d (prev ++ [Pure b]) as
-        | otherwise = error ""
-          -- suppresses invalid ghc warning about non-exhaustive pattern match
-        where
-            Just (a, as) = uncons ass
+        | otherwise = (⊥)
+          -- suppresses an invalid non-exhaustive pattern match warning 
+          -- (ghc 7.8.2)
+      where
+        Just (a, as) = uncons ass
 
 data QSToken
     = QSTokenUnaryOp !UnaryOp
     | QSTokenBinaryOp !BinaryOp
     | QSTokenQuantifier !Quantifier !Symbol
     | QSTokenSymbol !Symbol
-  deriving (Show)
+  deriving (Eq, Read, Show)
 
 data ƮReformed
+
 data ƮUnreformed
 
 makeQSTokenTree ∷ Free [] QToken → Free [] QSToken ⁞ ƮUnreformed
