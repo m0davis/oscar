@@ -12,7 +12,7 @@ module Oscar.Documentation (
 
     -- * So, you want to write an OSCAR @Formula@
     -- $ExampleOfFormula
-    )where
+    ) where
 
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
@@ -27,19 +27,19 @@ import Oscar.ProblemParser.Internal.Tags
 Oscar is the agent implemented as part of the
 <http://johnpollock.us/ftp/OSCAR-web-page/oscar.html OSCAR Project>.
 
-Oscar is capable of
+Oscar is (potentially) capable of
 
     * first-order theorem proving
     * defeasible reasoning
     * probabilistic reasoning
     * planning
 
-TODO Actually, the above is a bit of a lie. There are known bugs in Oscar's
-theorem-proving engine as well as in its code for probabilistic reasoning.
-After John L. Pollock's untimely death, one of his students, Martin Stone
-Davis (me), took up the challenge to fix Oscar. I have elected to rewrite
-Oscar in Haskell, in the hopes that Haskell's strong typing will facilitate
-writing a more robust codebase.
+Originally written in LISP, there are known bugs in Oscar's theorem-proving 
+engine as well as in its code for probabilistic reasoning. After John L. 
+Pollock's untimely death, one of his students, Martin Stone Davis (me), took 
+up the challenge to fix Oscar. I have elected to rewrite Oscar in Haskell, in 
+the hopes that Haskell's strong typing will facilitate writing a more robust 
+codebase.
 
 -}
 
@@ -63,11 +63,11 @@ Reasoning defeasibly, you may make a __prima facie__ inference to the
 conclusion that there is a red ball before you, allowing for the possibility
 that that inference may later be undercut or rebutted.
 
-Knowing that you are wearing rose-colored glasses gives you an __undercutting
-defeater__ to link between the premise that the ball appears to be red and the
-conclusion that the ball actually is red. Importantly, you do not conclude
-that there is no ball or that the ball isn't red. You simply withhold belief
-in the proposition that it is red.
+Knowing that you are wearing rose-colored glasses gives you an 
+__undercutting defeater__ to link between the premise that the ball appears 
+to be red and the conclusion that the ball actually is red. Importantly, you 
+do not conclude that there is no ball or that the ball isn't red. You simply 
+withhold belief in the proposition that it is red.
 
 There are also __rebutting defeaters__. Suppose Alice tells you that it's
 raining. You consider Alice to be trustworthy and so infer that it's raining.
@@ -176,7 +176,7 @@ BACKWARDS PRIMA FACIE REASONS
         ||=>            ; an arrow separating the premises from the conclusion
         Z               ; '_brConclusion'
         strength = 1.0
-    bpf-reason_2:   {} {C} ||=> ~R   strength = 1.0
+    bpf-reason_2:   {}  {C} ||=> ~R   strength = 1.0
     bpf-reason_3:   {B} {D} ||=> C    strength = 1.0
 
 BACKWARDS CONCLUSIVE REASONS
@@ -197,6 +197,7 @@ Here are some examples:
     P                 ; a simple 'Predication'
     P a               ; predication of a constant
     P (g a) b         ; predication of a 'DomainFunction' of a constant
+                      ; and another constant
     ~P                ; 'Negation'
     P v Q             ; 'Disjunction'
     P & Q             ; 'Conjunction'
@@ -208,4 +209,7 @@ Here are some examples:
     ?P                ; a 'Whether' operator
                       ; TODO Explain the semantics of this operator.
 @
+
+Since "v" is used as a symbol for disjunction, it may not be used as a 
+constant or quantification variable.
 -}

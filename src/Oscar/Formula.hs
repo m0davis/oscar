@@ -8,42 +8,42 @@ module Oscar.Formula (
     Symbol(..),
     Predication(..),
     DomainFunction(..),
-  ) where
+    ) where
 
-import ClassyPrelude
+import Oscar.Main.Prelude
 
 data Formula
     = FormulaBinary !BinaryOp !Formula !Formula
     | FormulaUnary !UnaryOp !Formula
     | FormulaQuantification !Quantifier !Symbol !Formula
     | FormulaPredication !Predication
-  deriving (Show)
+  deriving (Eq, Read, Show)
 
 data Quantifier
-    = Universal
-    | Existential
-  deriving (Show, Eq)
+    = Universal    -- ^ (all ...)
+    | Existential  -- ^ (some ...)
+  deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 data UnaryOp
-    = Negation
-    | Whether
-  deriving (Show, Eq)
+    = Negation  -- ^ ~
+    | Whether   -- ^ ?
+  deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 data BinaryOp
-    = Conjunction
-    | Disjunction
-    | Conditional
-    | Biconditional
-    | Defeater
-  deriving (Show, Eq)
+    = Conjunction   -- ^ &
+    | Disjunction   -- ^ v
+    | Conditional   -- ^ \->
+    | Biconditional -- ^ \<->
+    | Defeater      -- ^ @
+  deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 newtype Symbol = Symbol Text
-  deriving (Show, Eq)
+  deriving (Eq, Read, Show)
 
 data Predication = Predication Symbol [DomainFunction]
-  deriving (Show)
+  deriving (Eq, Read, Show)
 
 data DomainFunction
-    = DomainFunction !Symbol ![DomainFunction] -- ^ `g' in (g x)
-    | DomainVariable !Symbol                   -- ^ `x' in (g x)
-  deriving (Show)
+    = DomainFunction !Symbol ![DomainFunction] -- ^ `g' in P (g x)
+    | DomainVariable !Symbol                   -- ^ `x' or `y' in P (g x) y
+  deriving (Eq, Read, Show)

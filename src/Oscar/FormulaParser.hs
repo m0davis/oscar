@@ -14,7 +14,7 @@ import Oscar.FormulaParser.Internal     (makeQSTokenTree)
 import Oscar.FormulaParser.Internal     (reformQSTokenTree)
 import Oscar.Formula                    (Formula)
 
--- | See 'Oscar.Documentation' for examples of how to write a Formula.
+-- | See "Oscar.Documentation" for examples of how to write a Formula.
 formulaFromText ∷ Text → Formula
 formulaFromText = id
     . makeFormula
