@@ -5,7 +5,7 @@ module Oscar.FormulaParser (
     formulaFromText,
   ) where
 
-import ClassyPrelude
+import Oscar.Main.Prelude
 
 import Oscar.FormulaParser.Internal     (freeFromParentheses)
 import Oscar.FormulaParser.Internal     (makeFormula)
