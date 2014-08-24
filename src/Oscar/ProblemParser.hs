@@ -2,7 +2,7 @@
 {-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE TypeOperators #-}
 
-{- See 'module Oscar.Documentation'. -}
+{- See 'Oscar.Documentation' for an example of how to write a 'Problem' -}
 
 module Oscar.ProblemParser (
     readFileProblems,

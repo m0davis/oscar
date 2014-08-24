@@ -39,7 +39,6 @@ import Oscar.Formula                    (Quantifier(..))
 import Oscar.Formula                    (Symbol(..))
 import Oscar.Formula                    (UnaryOp(..))
 
--- | A Problem reflects exactly as much information as is parsed from a Text of an OSCAR problem
 data Problem = Problem
     { _problemNumber                     ∷ !ProblemNumber
     , _problemDescription                ∷ !ProblemDescription
@@ -60,15 +59,14 @@ newtype ProblemNumber = ProblemNumber Int
 newtype ProblemDescription = ProblemDescription Text
   deriving (Show)
 
--- | A formula for a premise with its justification
+-- | A formula of a premise with its justification
 type ProblemPremise                   = (Formula, ProblemJustificationDegree)
 
 -- | The degree of justification (of a premise)
 newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
   deriving (Show)
 
-
--- | A formula for an interest with its degree of interest
+-- | A formula of an interest with its degree of interest
 type ProblemInterest                  = (Formula, ProblemInterestDegree)
 
 -- | The degree of interest (of an interest)
@@ -77,26 +75,26 @@ newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
 
 
 
--- | A forwards p.f. reason with its name and strength
+-- | A forwards prima facie reason with its name and strength
 type ProblemForwardsPrimaFacieReason  = (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
 
 -- | A forwards conclusive reason with its name (the strength is unity, implicitly)
 type ProblemForwardsConclusiveReason  = (ProblemReasonName, ForwardsReason)
 
--- | A backwards p.f. reason with its name and strength
+-- | A backwards prima facie reason with its name and strength
 type ProblemBackwardsPrimaFacieReason = (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
 
 -- | A backwards conclusive reason with its name (the strength is unity, implicitly)
 type ProblemBackwardsConclusiveReason = (ProblemReasonName, BackwardsReason)
 
--- | A name for a reason
+-- | A name of a reason
 newtype ProblemReasonName = ProblemReasonName Text
   deriving (Show)
 
 -- | A forwards reason
 data ForwardsReason = ForwardsReason
     { _frForwardsPremises ∷ ![Formula]  -- ^ TODO [] → Set
-    , _frConclusion       ∷ !Formula    -- ^ conclusion
+    , _frConclusion       ∷ !Formula
     }
   deriving (Show)
 

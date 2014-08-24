@@ -1,8 +1,85 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-{- | __So, you want to write an OSCAR problem__
+module Oscar.Documentation (
+    -- * Who is Oscar?
+    -- $WhoIsOscar
 
-Here is an example of a valid Problem, represented as a Text ⁞ ƮProblemsWithLineComments.
+    -- * What is defeasible reasoning?
+    -- $WhatIsDefeasibleReasoning
+
+    -- * So, you want to write an OSCAR @Problem@
+    -- $ExampleOfProblem
+
+    -- * So, you want to write an OSCAR @Formula@
+    -- $ExampleOfFormula
+    )where
+
+import Oscar.Main.Prelude
+import Oscar.Main.Parser
+
+import Oscar.Problem
+import Oscar.Formula
+import Oscar.ProblemParser.Internal.Section
+import Oscar.ProblemParser.Internal.Tags
+
+{- $WhoIsOscar
+
+Oscar is the agent implemented as part of the
+<http://johnpollock.us/ftp/OSCAR-web-page/oscar.html OSCAR Project>.
+
+Oscar is capable of
+
+    * first-order theorem proving
+    * defeasible reasoning
+    * probabilistic reasoning
+    * planning
+
+TODO Actually, the above is a bit of a lie. There are known bugs in Oscar's
+theorem-proving engine as well as in its code for probabilistic reasoning.
+After John L. Pollock's untimely death, one of his students, Martin Stone
+Davis (me), took up the challenge to fix Oscar. I have elected to rewrite
+Oscar in Haskell, in the hopes that Haskell's strong typing will facilitate
+writing a more robust codebase.
+
+-}
+
+{- $WhatIsDefeasibleReasoning
+
+Defeasible reasoning was pioneered by the original author, progenitor, and
+brother of Oscar, John L. Pollock. I will illustrate it with an example.
+
+__Seeing is believing?__
+
+You see before you what appears to be a reddish-colored ball. Is it reasonable
+for you to infer that there actually __is__ a red ball before you? Under what
+circumstances is it not?
+
+Perhaps you have rose-colored glasses on! If that were the case, you would
+see a red ball even if the ball were white. Perhaps you recall that you
+recently injested a strong hallucinogen. In that case, you would be
+well-advised to mistrust almost all of your perceptions.
+
+Reasoning defeasibly, you may make a __prima facie__ inference to the
+conclusion that there is a red ball before you, allowing for the possibility
+that that inference may later be undercut or rebutted.
+
+Knowing that you are wearing rose-colored glasses gives you an __undercutting
+defeater__ to link between the premise that the ball appears to be red and the
+conclusion that the ball actually is red. Importantly, you do not conclude
+that there is no ball or that the ball isn't red. You simply withhold belief
+in the proposition that it is red.
+
+There are also __rebutting defeaters__. Suppose Alice tells you that it's
+raining. You consider Alice to be trustworthy and so infer that it's raining.
+But then Bob tells you that it isn't. If you consider Bob to be equally as
+trustworthy as Alice, your inference that it is raining is rebutted by another
+inference that it is not raining.
+
+-}
+
+{- $ExampleOfProblem
+
+Here is an example of a valid 'Problem', represented as a Text ⁞ ƮProblemsWithLineComments.
 
 @
 ; This is a line comment, starting with a semicolon. All such comments are
@@ -108,12 +185,27 @@ BACKWARDS CONCLUSIVE REASONS
 @
 -}
 
-module Oscar.Documentation where
+{- $ExampleOfFormula
 
-import Oscar.Main.Prelude
-import Oscar.Main.Parser
+An 'Formula' represents a superset of standard first-order logic.
+In addition to quantification, conjunction, negation, etc., there are also
+defeat relations between formulas and a unary "whether-or-not" operator.
 
-import Oscar.Problem
-import Oscar.Formula
-import Oscar.ProblemParser.Internal.Section
-import Oscar.ProblemParser.Internal.Tags
+Here are some examples:
+
+@
+    P                 ; a simple 'Predication'
+    P a               ; predication of a constant
+    P (g a) b         ; predication of a 'DomainFunction' of a constant
+    ~P                ; 'Negation'
+    P v Q             ; 'Disjunction'
+    P & Q             ; 'Conjunction'
+    P -> Q            ; 'Conditional' (material implication)
+    P \<-> Q           ; 'Biconditional'
+    (all x)(P x)      ; a 'Universal' 'Quantifier'
+    (some x)(P x)     ; an 'Existential' 'Quantifier'
+    P @ Q             ; a 'Defeater', read as "P defeats Q"
+    ?P                ; a 'Whether' operator
+                      ; TODO Explain the semantics of this operator.
+@
+-}
