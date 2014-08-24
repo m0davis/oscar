@@ -20,13 +20,13 @@ import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithLineComments)
 import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithoutLineComments)
 import Oscar.Problem                        (Problem)
 
--- | This is the highest-level problem decoder available in this module. Uses "readProblemsTextFile".
+-- | This is the highest-level problem decoder available in this module. Uses 'readProblemsTextFile'.
 readFileProblems ∷ FilePath ⁞ ƮProblemsWithLineComments → IO [Problem]
 readFileProblems = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
 
--- | Wrapper around "readFile". Strips line comments.
-readProblemsTextFile ∷ (FilePath ⁞ ƮProblemsWithLineComments)  -- ^ The input file is presumed to represent one or more problems...
-                     → IO (Text ⁞ ƮProblemsWithoutLineComments)   -- ^ as 'Text'. 'IO' obtained via 'readFile'.
+-- | Wrapper around 'readFile'. Strips line comments.
+readProblemsTextFile ∷ (FilePath ⁞ ƮProblemsWithLineComments)    -- ^ The input file is presumed to represent one or more problems...
+                     → IO (Text ⁞ ƮProblemsWithoutLineComments)  -- ^ as 'Text'. 'IO' obtained via 'readFile'.
 readProblemsTextFile = (map $ reƭ . stripLineComments . ƭ) . readFile . unƭ
 
 stripLineComments ∷ Text ⁞ ƮProblemsWithLineComments → Text ⁞ ƮProblemsWithoutLineComments

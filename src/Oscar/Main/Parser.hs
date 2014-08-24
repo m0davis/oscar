@@ -5,9 +5,9 @@
 -}
 
 module Oscar.Main.Parser (
-    -- * From "Text.Parsec.Text"
+    -- * "Text.Parsec.Text"
     Parser,
-    -- * From "Text.Parsec"
+    -- * "Text.Parsec"
     ParsecT,
     alphaNum,
     anyChar,
