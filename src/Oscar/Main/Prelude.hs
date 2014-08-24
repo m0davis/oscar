@@ -3,6 +3,9 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+{- | A convenient Prelude, used by all modules in this system.
+-}
+
 module Oscar.Main.Prelude (
     module ClassyPrelude,
     ppShow,
