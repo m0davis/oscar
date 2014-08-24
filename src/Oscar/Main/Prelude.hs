@@ -20,6 +20,7 @@ module Oscar.Main.Prelude (
     (<=<),
     Free(..),
     Natural,
+    ppPrint,
     ) where
 
 import ClassyPrelude hiding (
@@ -58,3 +59,6 @@ unƭ = unTagged
 
 reƭ ∷ a ⁞ b → a ⁞ c
 reƭ = retag
+
+ppPrint ∷ (Show a) => a → IO ()
+ppPrint = putStrLn . pack . ppShow
