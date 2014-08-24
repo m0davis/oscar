@@ -9,7 +9,7 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.FormulaParser.Internal (
-    -- * First-pass tokenization
+    -- * Linear tokenization
     QToken(..),
     Parenthesis(..),
     makePQTokens,
@@ -17,11 +17,12 @@ module Oscar.FormulaParser.Internal (
     freeFromParentheses,
     -- * Re-structuring according to quantifiers
     QSToken(..),
-    ƮReformed,
     ƮUnreformed,
+    ƮReformed,
     makeQSTokenTree,
     reformQSTokenTree,
     -- * Formula construction
+    -- $Patterns
     pattern BinaryOpP,
     pattern UnaryOpP,
     pattern QuantifierP,
@@ -77,14 +78,14 @@ Sample input
 Sample output
 
 @
-[Right (QTokenBinaryOp Negation)
+[Right (QTokenUnaryOp Negation)
 ,Left OpenParenthesis
 ,Right (QTokenQuantifier Universal)
-,Right (QTokenSymbol "x")
+,Right (QTokenSymbol \"x")
 ,Left CloseParenthesis
 ,Left OpenParenthesis
-,Right (QTokenSymbol "P")
-,Right (QTokenSymbol "x")
+,Right (QTokenSymbol \"P")
+,Right (QTokenSymbol \"x")
 ,Left CloseParenthesis
 ]
 @
@@ -139,14 +140,14 @@ Here's an example where f = id.
 Sample input
 
 @
-[Right (QTokenBinaryOp Negation)
+[Right (QTokenUnaryOp Negation)
 ,Left OpenParenthesis
 ,Right (QTokenQuantifier Universal)
-,Right (QTokenSymbol "x")
+,Right (QTokenSymbol \"x")
 ,Left CloseParenthesis
 ,Left OpenParenthesis
-,Right (QTokenSymbol "P")
-,Right (QTokenSymbol "x")
+,Right (QTokenSymbol \"P")
+,Right (QTokenSymbol \"x")
 ,Left CloseParenthesis
 ]
 @
@@ -154,12 +155,12 @@ Sample input
 Sample output
 
 @
-Free [Pure (QTokenBinaryOp Negation)
+Free [Pure (QTokenUnaryOp Negation)
      ,Free [Pure (QTokenQuantifier Universal)
-           ,Pure (QTokenSymbol "x")
+           ,Pure (QTokenSymbol \"x")
            ]
-     ,Free [Pure (QTokenSymbol "P")
-           ,Pure (QTokenSymbol "x")
+     ,Free [Pure (QTokenSymbol \"P")
+           ,Pure (QTokenSymbol \"x")
            ]
      ]
 @
@@ -167,9 +168,9 @@ Free [Pure (QTokenBinaryOp Negation)
 freeFromParentheses ∷
     ∀ as a b.
     (IsSequence as, Element as ~ a) ⇒
-    (a → Either Parenthesis b) →
-    as →
-    Free [] b
+    (a → Either Parenthesis b)  {- ^ discriminate parentheses -} →
+    as                          {- ^ input sequence -} →
+    Free [] b                   {- ^ a tree, sans parentheses -}
 freeFromParentheses f = fst . ffp 0 []
   where
     ffp ∷ Natural → [Free [] b] → as → (Free [] b, as)
@@ -192,6 +193,9 @@ freeFromParentheses f = fst . ffp 0 []
       where
         Just (a, as) = uncons ass
 
+{- | Compare to 'QToken'. Here, we associate each quantifier with its 
+     variable.
+-}
 data QSToken
     = QSTokenUnaryOp !UnaryOp
     | QSTokenBinaryOp !BinaryOp
@@ -199,10 +203,38 @@ data QSToken
     | QSTokenSymbol !Symbol
   deriving (Eq, Read, Show)
 
-data ƮReformed
-
+-- | Converted to a QSToken tree (by 'makeQSTokenTree') but not yet reformed.
 data ƮUnreformed
 
+-- | Reformed by 'reformQSTokenTree'
+data ƮReformed
+
+{- | A simple transformation that associates the quantifier with its variable.
+
+Sample input
+
+@
+Free [Pure (QTokenUnaryOp Negation)
+     ,Free [Pure (QTokenQuantifier Universal)
+           ,Pure (QTokenSymbol \"x")
+           ]
+     ,Free [Pure (QTokenSymbol \"P")
+           ,Pure (QTokenSymbol \"x")
+           ]
+     ]
+@
+
+Sample output
+
+@
+Free [Pure (QSTokenUnaryOp Negation)
+     ,Pure (QSTokenQuantifier Universal (QSTokenSymbol \"x"))
+     ,Free [Pure (QSTokenSymbol \"P")
+           ,Pure (QSTokenSymbol \"x")
+           ]
+     ]
+@
+-}
 makeQSTokenTree ∷ Free [] QToken → Free [] QSToken ⁞ ƮUnreformed
 makeQSTokenTree = ƭ . \case
     (Pure (QTokenUnaryOp  u)) → Pure $ QSTokenUnaryOp u
@@ -213,7 +245,34 @@ makeQSTokenTree = ƭ . \case
     (Free ts)                 → Free $ map (unƭ . makeQSTokenTree) ts
     _ → error "makeQSTokenTree: unexpected QTokenQuantifier"
 
-reformQSTokenTree ∷ (Free [] QSToken) ⁞ ƮUnreformed → (Free [] QSToken) ⁞ ƮReformed
+{- | Restructure the tree, respecting quantifiers and unary operators.
+
+Sample input
+
+@
+Free [Pure (QSTokenUnaryOp Negation)
+     ,Pure (QSTokenQuantifier Universal (QSTokenSymbol \"x"))
+     ,Free [Pure (QSTokenSymbol \"P")
+           ,Pure (QSTokenSymbol \"x")
+           ]
+     ]
+@
+
+Sample output
+
+@
+Free [Free [Pure (QSTokenUnaryOp Negation)
+           ,Free [Free [Pure (QSTokenQuantifier Universal \"x")
+                       ,Free [Pure (QSTokenSymbol \"P")
+                             ,Pure (QSTokenSymbol \"x")
+                             ]
+                       ]
+                 ]
+           ]
+     ]
+@
+-}
+reformQSTokenTree ∷ Free [] QSToken ⁞ ƮUnreformed → Free [] QSToken ⁞ ƮReformed
 reformQSTokenTree = ƭ . ref . unƭ
   where
     ref ∷ Free [] QSToken → Free [] QSToken
@@ -222,8 +281,8 @@ reformQSTokenTree = ƭ . ref . unƭ
         rqstt ∷ [Free [] QSToken] → [Free [] QSToken]
         rqstt [] =
             []
-        rqstt [a, u@(Pure (QSTokenQuantifier _ _))] =
-            [Free [u, ref a]]
+        rqstt [a, q@(Pure (QSTokenQuantifier _ _))] =
+            [Free [q, ref a]]
         rqstt (a:u@(Pure (QSTokenUnaryOp _)):as) =
             let chunk = Free [u, ref a]
             in
@@ -231,10 +290,15 @@ reformQSTokenTree = ƭ . ref . unƭ
                     [chunk]
                 else
                     rqstt (chunk : as)
-        rqstt (a:u@(Pure (QSTokenQuantifier _ _)):as) =
-            rqstt $ Free [u, ref a] : as
+        rqstt (a:q@(Pure (QSTokenQuantifier _ _)):as) =
+            rqstt $ Free [q, ref a] : as
         rqstt (a:as) =
             ref a : rqstt as
+
+{- $Patterns
+
+These patterns are for use by 'makeFormula'.
+-}
 
 pattern BinaryOpP left op right
         = Free [left,Pure (QSTokenBinaryOp op), right]
@@ -254,6 +318,35 @@ pattern SimplePredicationP predication
 pattern RedundantParenthesesP x
         = Free [x]
 
+{- | Construct a Formula from the reformed tree.
+
+Sample input
+
+@
+Free [Free [Pure (QSTokenUnaryOp Negation)
+           ,Free [Free [Pure (QSTokenQuantifier Universal \"x")
+                       ,Free [Pure (QSTokenSymbol \"P")
+                             ,Pure (QSTokenSymbol \"x")
+                             ]
+                       ]
+                 ]
+           ]
+     ]
+@
+
+Sample output
+
+@
+FormulaUnary Negation 
+    (FormulaQuantification Universal
+        (FormulaPredication 
+            (Predication \"P")
+            [DomainVariable \"x"]
+        )
+    )
+@
+
+-}
 makeFormula ∷ (Free [] QSToken) ⁞ ƮReformed → Formula
 makeFormula = mk . unƭ
   where
