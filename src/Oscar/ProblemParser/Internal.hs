@@ -68,13 +68,14 @@ import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInte
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 
-{- | Separate the text of concatenated problems. Each resulant problem starts after the number label, "Problem #". "ƮProblemAfterNumberLabel"
+{- | Separate the text of concatenated problems. Each resulant problem starts 
+     after the number label, \"Problem #". 'ƮProblemAfterNumberLabel'
 
-E.g., given this input
+Sample input
 
 @
 Problem #1
-This is a case of collective rebutting defeat
+Description of the first problem
 Given premises:
      P    justification = 1.0
 ...etc...
@@ -84,11 +85,11 @@ Description of the second problem
 ...etc...
 @
 
-we get these outputs
+Sample outputs
 
 @
 1
-This is a case of collective rebutting defeat
+Description of the first problem
 Given premises:
      P    justification = 1.0
 ...etc...
@@ -100,8 +101,8 @@ Description of the second problem
 ...etc...
 @
 -}
-partitionProblemsText ∷ (Text ⁞ ƮProblemsWithoutLineComments) -- ^ 'Text'ual 'Problem's, possibly obtained from 'readProblemsTextFile'
-                      → [Text ⁞ ƮProblemAfterNumberLabel]      -- ^ Results in one 'Text' block for each 'Problem'.
+partitionProblemsText ∷ (Text ⁞ ƮProblemsWithoutLineComments) -- ^ The text of the problem(s), possibly obtained from 'Oscar.ProblemParser.readProblemsTextFile'
+                      → [Text ⁞ ƮProblemAfterNumberLabel]     -- ^ Each resultant text text block starts after the "Problem #" label.
 partitionProblemsText = simpleParse (many p) . unƭ
   where
     p ∷ Parser (Text ⁞ ƮProblemAfterNumberLabel)
@@ -113,41 +114,48 @@ partitionProblemsText = simpleParse (many p) . unƭ
     endP ∷ Parser ()
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
-{- | E.g., given this input
+{- | 
+
+Sample Input
 
 @
-1
-This is a case of collective rebutting defeat
-...etc...
+\"1 \\n Description\\n...etc...\\n"
 @
 
-we get this output:
+Sample Output
+
 @
- (1, \\nThis is a case of collective rebutting defeat\\n...etc...\\n)
+(1, \" \\n Description\\n...etc...\\n")
 @
 -}
 statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
 statefulParseProblemNumber = runStatefulParse' parseProblemNumber
 
-{- | E.g., given this input
+{- | 
+
+Sample Input
 
 @
-This is a case of collective rebutting defeat
+
+Description
+
 Given premises:
 ...etc...
 @
 
-we get this output:
+Sample Output
+
 @
- (This is a case of collective rebutting defeat, Given premises:\\n...etc...\\n)
+("Description", "Given premises:\\n...etc...\\n")
 @
 -}
 statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
 statefulParseProblemDescription = runStatefulParse' parseProblemDescription
 
-{-
- | Gets the text of a particular section from all of the text following the description
- e.g. given the input @ Text ⁞ ƮProblemAfterDescription @:
+{- | Gets the text of a particular section from all of the text following the 
+     description.
+
+Sample Input
 
 @
 Given premises:
@@ -164,14 +172,14 @@ Ultimate epistemic interests:
      pf-reason_5:   {A} ||=> B   strength = 1.0
 @
 
-we get the @ Text ⁞ ƮSection ƮGivenPremise @:
+Sample Output (with kind = ƮGivenPremise):
 
 @
      P    justification = 1.0
      A    justification = 1.0
 @
 
-That's only if the returned kind is Text ⁞ ƮSection (ƮReason Forwards PrimaFacie), then the returned value is
+Sample Output (with kind = ƮReason Forwards PrimaFacie):
 
 @
      pf-reason_1:   {P} ||=> Q   strength = 1.0
@@ -180,7 +188,6 @@ That's only if the returned kind is Text ⁞ ƮSection (ƮReason Forwards PrimaF
      pf-reason_4:   {B} ||=> C   strength = 1.0
      pf-reason_5:   {A} ||=> B   strength = 1.0
 @
-
 -}
 problemSectionText ∷
     ∀ kind. (HasSection kind) ⇒
@@ -201,12 +208,16 @@ problemSectionText = ƭ . simpleParse p . unƭ
             guardM (map (== theSection) sectionParser)
             pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
-{- | Examples
+{- | 
+
+Sample Input (possibly obtained from 'problemSectionText')
 
 @
      P    justification = 1.0
      A    justification = 1.0
 @
+
+Sample Output
 
 @
     [(\<formula for P>, \<justification 1.0>)
@@ -282,7 +293,10 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
             (getBackwardsReason $ _rsProblemReasonText rb)
 
 
--- | The formatting of the input is documented here (TODO).
+{- | The formatting of the input is documented at "Oscar.Documentation".
+  
+The input must begin with the problem number (after the label, "Problem #")
+-}
 problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'
                 → Problem
 problemFromText t = Problem

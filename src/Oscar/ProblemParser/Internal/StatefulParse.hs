@@ -18,7 +18,7 @@ import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterNumberLabel)
 import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterNumber)
 import Oscar.ProblemParser.Internal.Section (sectionParser)
 
--- | The default implementation uses 'simpleParse'.
+-- | Uses 'simpleParse'.
 runStatefulParse' ∷ ∀ value state1 state2.
     Parser value ⁞ state1 →
     Text ⁞ state1 →
@@ -31,10 +31,12 @@ runStatefulParse' statefulParser = simpleParse p' . unƭ
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
+-- | ƮProblemAfterNumberLabel = after the "Problem #"
 parseProblemNumber ∷ Parser ProblemNumber ⁞ ƮProblemAfterNumberLabel
 parseProblemNumber = ƭ $ ProblemNumber . read <$>
     manyTill anyChar (lookAhead . try $ space)
 
+-- | ƮProblemAfterNumber = immediately after the integer after "Problem #".
 parseProblemDescription ∷ Parser ProblemDescription ⁞ ƮProblemAfterNumber
 parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$>
     (try emptyDescription <|> filledDescription)

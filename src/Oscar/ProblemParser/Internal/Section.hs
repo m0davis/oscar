@@ -4,6 +4,10 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+{- | Relating to any of the six possible sections of a 'Problem'. See 
+     "Oscar.Documentation".
+-}
+
 module Oscar.ProblemParser.Internal.Section (
     Section(..),
     HasSection(..),
