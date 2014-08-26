@@ -8,8 +8,6 @@ module Oscar.ProblemParser.Internal (
     -- * text of problems
     partitionProblemsText,
     -- * parsing problem parts
-    statefulParseProblemNumber,
-    statefulParseProblemDescription,
     problemSectionText,
     decodeGivenPremisesSection,
     decodeUltimateEpistemicInterestsSection,
@@ -50,9 +48,7 @@ import Oscar.ProblemParser.Internal.Section             (Section)
 import Oscar.ProblemParser.Internal.Section             (runSectionParser)
 import Oscar.ProblemParser.Internal.Section             (section)
 import Oscar.ProblemParser.Internal.Section             (sectionParser)
-import Oscar.ProblemParser.Internal.StatefulParse       (parseProblemDescription)
-import Oscar.ProblemParser.Internal.StatefulParse       (parseProblemNumber)
-import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParse')
+import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser)
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
@@ -113,44 +109,6 @@ partitionProblemsText = simpleParse (many p) . unƭ
 
     endP ∷ Parser ()
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
-
-{- |
-
-Sample Input
-
-@
-\"1 \\n Description\\n...etc...\\n"
-@
-
-Sample Output
-
-@
-(1, \" \\n Description\\n...etc...\\n")
-@
--}
-statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
-statefulParseProblemNumber = runStatefulParse' parseProblemNumber
-
-{- |
-
-Sample Input
-
-@
-
-Description
-
-Given premises:
-...etc...
-@
-
-Sample Output
-
-@
-("Description", "Given premises:\\n...etc...\\n")
-@
--}
-statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
-statefulParseProblemDescription = runStatefulParse' parseProblemDescription
 
 {- | Gets the text of a particular section from all of the text following the
      description.
@@ -309,8 +267,10 @@ problemFromText t = Problem
     (decodeBackwardsPrimaFacieReasonSection pSTaD)
     (decodeBackwardsConclusiveReasonSection pSTaD)
   where
-    (number, afterNumber) = statefulParseProblemNumber t
-    (description, afterDescription) = statefulParseProblemDescription afterNumber
+    (number, (afterNumber ∷ Text ⁞ ƮProblemAfterNumber)) = 
+        runStatefulParser t
+    (description, (afterDescription ∷ Text ⁞ ƮProblemAfterDescription)) = 
+        runStatefulParser afterNumber
 
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
     pSTaD = problemSectionText afterDescription

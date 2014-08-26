@@ -69,7 +69,7 @@ _rsProblemVariables (_, _, v, _) = v
 _rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
 _rsProblemStrengthDegree (_, _, _, d) = d
 
-decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility) -- ^ possibly obtained from 'problemSectionText'
+decodeReasonSection ∷ (Text ⁞ ƮSection (ƮReason direction defeasibility)) -- ^ possibly obtained from 'problemSectionText'
                     → [ReasonSection direction defeasibility]
 decodeReasonSection = runSectionParser $ do
     n ← parserProblemReasonName
@@ -120,7 +120,7 @@ parserEnbracedTexts = do
         else do
             return [firstText]
 
-getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility  -- ^ possibly as obtained from 'decodeReasonSection'
+getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'decodeReasonSection'
                   → ForwardsReason
 getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
   where
@@ -138,7 +138,7 @@ getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemR
             conclusionText ← pack <$> many anyChar
             return (premiseTexts, conclusionText)
 
-getBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility  -- ^ possibly as obtained from 'decodeReasonSection'
+getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'decodeReasonSection'
                    → BackwardsReason
 getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
   where
