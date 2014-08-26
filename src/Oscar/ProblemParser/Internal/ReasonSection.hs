@@ -5,8 +5,8 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 {- | A 'ReasonSection' represents a partial decode of one of the four kinds
-     of sections (described in "Oscar.Documentation") pertaining to reasons. 
-     One of those sections, for example, starts with 
+     of sections (described in "Oscar.Documentation") pertaining to reasons.
+     One of those sections, for example, starts with
      \"FORWARDS PRIMA FACIE REASONS\".
 
      This module provides for a partial decode of each of those sections.
@@ -47,9 +47,9 @@ import Oscar.Problem                        (ForwardsReason(ForwardsReason))
 import Oscar.Problem                        (BackwardsReason(BackwardsReason))
 import Oscar.FormulaParser                  (formulaFromText)
 
-{- | This represents a partial parse of one of the four kinds of 
+{- | This represents a partial parse of one of the four kinds of
      reason sections.
--} 
+-}
 type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
     ( ProblemReasonName
     , Text ⁞ ƮReason direction defeasibility
@@ -83,8 +83,8 @@ decodeReasonSection = runSectionParser $ do
         d ← parserProblemStrengthDegree
         return (t, d)
 
-{- | Expects something like \"variables = {A,B,...}\". Accepts preceding 
-     whitespace. Resultant parse is that between the curly braces (e.g. 
+{- | Expects something like \"variables = {A,B,...}\". Accepts preceding
+     whitespace. Resultant parse is that between the curly braces (e.g.
      \"A,B,...\").
 -}
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮProblemVariables)

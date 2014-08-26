@@ -132,8 +132,8 @@ makePQTokens = simpleParse $ many $ many space *> parsePQToken
         symbol ∷ Parser Symbol
         symbol = Symbol . pack <$> many1 alphaNum
 
-{- | freeFromParentheses f xs applies f to each of the xs and creates a tree, 
-respecting the structure indicated by the parentheses. 
+{- | freeFromParentheses f xs applies f to each of the xs and creates a tree,
+respecting the structure indicated by the parentheses.
 
 Here's an example where f = id.
 
@@ -188,12 +188,12 @@ freeFromParentheses f = fst . ffp 0 []
         | Right b ← f a =
             ffp d (prev ++ [Pure b]) as
         | otherwise = (⊥)
-          -- suppresses an invalid non-exhaustive pattern match warning 
+          -- suppresses an invalid non-exhaustive pattern match warning
           -- (ghc 7.8.2)
       where
         Just (a, as) = uncons ass
 
-{- | Compare to 'QToken'. Here, we associate each quantifier with its 
+{- | Compare to 'QToken'. Here, we associate each quantifier with its
      variable.
 -}
 data QSToken
@@ -337,9 +337,9 @@ Free [Free [Pure (QSTokenUnaryOp Negation)
 Sample output
 
 @
-FormulaUnary Negation 
+FormulaUnary Negation
     (FormulaQuantification Universal
-        (FormulaPredication 
+        (FormulaPredication
             (Predication \"P")
             [DomainVariable \"x"]
         )

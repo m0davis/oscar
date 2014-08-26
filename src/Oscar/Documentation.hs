@@ -34,11 +34,11 @@ Oscar is (potentially) capable of
     * probabilistic reasoning
     * planning
 
-Originally written in LISP, there are known bugs in Oscar's theorem-proving 
-engine as well as in its code for probabilistic reasoning. After John L. 
-Pollock's untimely death, one of his students, Martin Stone Davis (me), took 
-up the challenge to fix Oscar. I have elected to rewrite Oscar in Haskell, in 
-the hopes that Haskell's strong typing will facilitate writing a more robust 
+Originally written in LISP, there are known bugs in Oscar's theorem-proving
+engine as well as in its code for probabilistic reasoning. After John L.
+Pollock's untimely death, one of his students, Martin Stone Davis (me), took
+up the challenge to fix Oscar. I have elected to rewrite Oscar in Haskell, in
+the hopes that Haskell's strong typing will facilitate writing a more robust
 codebase.
 
 -}
@@ -63,10 +63,10 @@ Reasoning defeasibly, you may make a __prima facie__ inference to the
 conclusion that there is a red ball before you, allowing for the possibility
 that that inference may later be undercut or rebutted.
 
-Knowing that you are wearing rose-colored glasses gives you an 
-__undercutting defeater__ to link between the premise that the ball appears 
-to be red and the conclusion that the ball actually is red. Importantly, you 
-do not conclude that there is no ball or that the ball isn't red. You simply 
+Knowing that you are wearing rose-colored glasses gives you an
+__undercutting defeater__ to link between the premise that the ball appears
+to be red and the conclusion that the ball actually is red. Importantly, you
+do not conclude that there is no ball or that the ball isn't red. You simply
 withhold belief in the proposition that it is red.
 
 There are also __rebutting defeaters__. Suppose Alice tells you that it's
@@ -210,6 +210,6 @@ Here are some examples:
                       ; TODO Explain the semantics of this operator.
 @
 
-Since "v" is used as a symbol for disjunction, it may not be used as a 
+Since "v" is used as a symbol for disjunction, it may not be used as a
 constant or quantification variable.
 -}

@@ -68,7 +68,7 @@ import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInte
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 
-{- | Separate the text of concatenated problems. Each resulant problem starts 
+{- | Separate the text of concatenated problems. Each resulant problem starts
      after the number label, \"Problem #". 'ƮProblemAfterNumberLabel'
 
 Sample input
@@ -114,7 +114,7 @@ partitionProblemsText = simpleParse (many p) . unƭ
     endP ∷ Parser ()
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
-{- | 
+{- |
 
 Sample Input
 
@@ -131,7 +131,7 @@ Sample Output
 statefulParseProblemNumber ∷ Text ⁞ ƮProblemAfterNumberLabel → (ProblemNumber, Text ⁞ ƮProblemAfterNumber)
 statefulParseProblemNumber = runStatefulParse' parseProblemNumber
 
-{- | 
+{- |
 
 Sample Input
 
@@ -152,7 +152,7 @@ Sample Output
 statefulParseProblemDescription ∷ Text ⁞ ƮProblemAfterNumber → (ProblemDescription, Text ⁞ ƮProblemAfterDescription)
 statefulParseProblemDescription = runStatefulParse' parseProblemDescription
 
-{- | Gets the text of a particular section from all of the text following the 
+{- | Gets the text of a particular section from all of the text following the
      description.
 
 Sample Input
@@ -208,7 +208,7 @@ problemSectionText = ƭ . simpleParse p . unƭ
             guardM (map (== theSection) sectionParser)
             pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
 
-{- | 
+{- |
 
 Sample Input (possibly obtained from 'problemSectionText')
 
@@ -294,7 +294,7 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
 
 
 {- | The formatting of the input is documented at "Oscar.Documentation".
-  
+
 The input must begin with the problem number (after the label, "Problem #")
 -}
 problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'

@@ -4,7 +4,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
-{- | Relating to any of the six possible sections of a 'Problem'. See 
+{- | Relating to any of the six possible sections of a 'Problem'. See
      "Oscar.Documentation".
 -}
 

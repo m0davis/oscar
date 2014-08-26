@@ -12,10 +12,10 @@ import Oscar.Main                       (combinedProblemsPath)
 
 import Oscar.ProblemParser              (readFileProblems)
 
-{- | At the moment, the executable simply reads from a file called 
+{- | At the moment, the executable simply reads from a file called
      "combined-probems", parses the problems, and prints a structured
      representation.
- 
+
     TODO implement the rest of Oscar
 -}
 main ∷ IO ()
