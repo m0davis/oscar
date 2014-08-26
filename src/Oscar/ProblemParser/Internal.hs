@@ -8,6 +8,7 @@ module Oscar.ProblemParser.Internal (
     -- * text of problems
     partitionProblemsText,
     -- * parsing problem parts
+    -- $StatefulParse
     problemSectionText,
     decodeGivenPremisesSection,
     decodeUltimateEpistemicInterestsSection,
@@ -109,6 +110,14 @@ partitionProblemsText = simpleParse (many p) . unƭ
 
     endP ∷ Parser ()
     endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
+
+{- $StatefulParse
+
+See "Oscar.ProblemParser.Internal.StatefulParse" for the polymorphic 
+runStatefulParser, which can be used to obtain a 'ProblemNumber', 
+'ProblemDescription', Text ⁞ ƮProblemAfterDescription, and Text ⁞ 
+ƮProblemAfterNumber.
+-}
 
 {- | Gets the text of a particular section from all of the text following the
      description.
