@@ -1,20 +1,22 @@
 name:                OSCAR
-version:             0.2.0.0
+version:             0.2.1.0
 author:              Martin Stone Davis
 maintainer:          martin.stone.davis@gmail.com
 build-type:          Simple
 extra-source-files:  extras/Combined-problems
 cabal-version:       >= 1.10
-description:         This a description of the OSCAR program.
+description:         "The objective of the OSCAR Project is twofold. On the one hand, it is to construct a general theory of rational cognition. On the other hand, it is to construct an artificial rational agent (an \'artilect\') implementing that theory. This is a joint project in philosophy and AI." -- John L. Pollock
 
 executable OSCAR
     main-is: ../Main.hs
 
     other-modules:
+        Oscar.Documentation
+        Oscar.Formula
+        Oscar.FormulaParser
+        Oscar.FormulaParser.Internal
         Oscar.Main
         Oscar.Main.Prelude
-        Oscar.Main.ProblemBase
-        Oscar.Formula
         Oscar.Problem
         Oscar.ProblemParser
         Oscar.ProblemParser.Internal
@@ -23,8 +25,6 @@ executable OSCAR
         Oscar.ProblemParser.Internal.StatefulParse
         Oscar.ProblemParser.Internal.Tags
         Oscar.ProblemParser.Internal.UnitIntervalParsers
-        Oscar.FormulaParser
-        Oscar.FormulaParser.Internal
 
     build-depends: 
             base                            ==  4.7.*

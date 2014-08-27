@@ -1,10 +1,11 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.FormulaParser (
     formulaFromText,
-  ) where
+    ) where
 
-import ClassyPrelude
+import Oscar.Main.Prelude
 
 import Oscar.FormulaParser.Internal     (freeFromParentheses)
 import Oscar.FormulaParser.Internal     (makeFormula)
@@ -13,7 +14,8 @@ import Oscar.FormulaParser.Internal     (makeQSTokenTree)
 import Oscar.FormulaParser.Internal     (reformQSTokenTree)
 import Oscar.Formula                    (Formula)
 
-formulaFromText :: Text -> Formula
+-- | See "Oscar.Documentation" for examples of how to write a Formula.
+formulaFromText ∷ Text → Formula
 formulaFromText = id
     . makeFormula
     . reformQSTokenTree

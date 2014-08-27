@@ -2,22 +2,44 @@
 {-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE TypeOperators #-}
 
+{- See 'Oscar.Documentation' for an example of how to write a 'Problem' -}
+
 module Oscar.ProblemParser (
     readFileProblems,
     readProblemsTextFile,
+    stripLineComments,
     ) where
 
 import Oscar.Main.Prelude
 
-import Oscar.ProblemParser.Internal     (partitionProblemsText)
-import Oscar.ProblemParser.Internal     (problemFromText)
-import Oscar.Problem                    (Problem)
+import Data.List.Split                      (splitOn)
 
--- | This is the highest-level problem decoder available in this module. Uses "readProblemsTextFile".
-readFileProblems ∷ FilePath ⁞ [Problem] → IO [Problem]
-readFileProblems = return . map problemFromText . partitionProblemsText <=< readProblemsTextFile
+import Oscar.Problem                        (Problem)
+import Oscar.ProblemParser.Internal         (partitionProblemsText)
+import Oscar.ProblemParser.Internal         (problemFromText)
+import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithLineComments)
+import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithoutLineComments)
 
--- | Wrapper around "readFile".
-readProblemsTextFile ∷ (FilePath ⁞ [Problem])  -- ^ The input file is presumed to represent one or more problems...
-                     → IO (Text ⁞ [Problem])   -- ^ as 'Text'. 'IO' obtained via 'readFile'.
-readProblemsTextFile = map ƭ . readFile . unƭ
+{- | This is the highest-level problem decoder available in this module.
+     Uses 'readProblemsTextFile'.
+-}
+readFileProblems ∷ FilePath ⁞ ƮProblemsWithLineComments → IO [Problem]
+readFileProblems =
+        return . map problemFromText . partitionProblemsText
+    <=<
+        readProblemsTextFile
+
+-- | Wrapper around 'readFile' and 'stripLineComments'.
+readProblemsTextFile ∷ (FilePath ⁞ ƮProblemsWithLineComments)    -- ^ The input file is presumed to represent one or more problems...
+                     → IO (Text ⁞ ƮProblemsWithoutLineComments)  -- ^ as 'Text'. 'IO' obtained via 'readFile'.
+readProblemsTextFile = (map $ reƭ . stripLineComments . ƭ) . readFile . unƭ
+
+{- | Strips line comments. That is, any characters on or after \";" on each
+     given line.
+-}
+stripLineComments ∷ Text ⁞ ƮProblemsWithLineComments
+                  → Text ⁞ ƮProblemsWithoutLineComments
+stripLineComments = reƭ . map (unlines . map stripLineComment . lines)
+  where
+    stripLineComment ∷ Text → Text
+    stripLineComment = pack . headEx . splitOn ";" . unpack

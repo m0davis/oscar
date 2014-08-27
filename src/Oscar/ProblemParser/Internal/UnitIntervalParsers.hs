@@ -17,6 +17,7 @@ import Oscar.Problem                    (ProblemInterestDegree(ProblemInterestDe
 import Oscar.Problem                    (ProblemStrengthDegree(ProblemStrengthDegree))
 import Oscar.Problem                    (LispPositiveDouble(LispPositiveDouble))
 
+-- | TODO rename LispPositiveDouble to ...? require the number to lie in (0,1]
 parserLispPositiveDouble ∷ Parser LispPositiveDouble
 parserLispPositiveDouble = do
     d ← many space *> manyTill anyChar ((space *> pure ()) <|> eof)

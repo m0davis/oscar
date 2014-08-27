@@ -1,12 +1,12 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.ProblemParser.Internal.StatefulParse (
-    runStatefulParse',
-    parseProblemNumber,
-    parseProblemDescription,    
+    StatefulParser(..),
+    runStatefulParser,
     ) where
 
 import Oscar.Main.Prelude
@@ -16,26 +16,64 @@ import Oscar.Problem                        (ProblemNumber(ProblemNumber))
 import Oscar.Problem                        (ProblemDescription(ProblemDescription))
 import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterNumberLabel)
 import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterNumber)
+import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterDescription)
 import Oscar.ProblemParser.Internal.Section (sectionParser)
 
--- | The default implementation uses 'simpleParse'.
-runStatefulParse' ∷ ∀ value state1 state2.
-    Parser value ⁞ state1 →
-    Text ⁞ state1 →
-    (value, Text ⁞ state2)
-runStatefulParse' statefulParser = simpleParse p' . unƭ
+class StatefulParser a inState outState where
+    statefulParser ∷ Parser a ⁞ (inState, outState)
+
+-- | Uses 'simpleParse'.
+runStatefulParser ∷ ∀ a inState outState.
+    (StatefulParser a inState outState) ⇒ Text ⁞ inState → (a, Text ⁞ outState)
+runStatefulParser = simpleParse p' . unƭ
   where
-    p' ∷ Parser (value, Text ⁞ state2)
+    p' ∷ Parser (a, Text ⁞ outState)
     p' = do
-        v ← unƭ statefulParser
+        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
-parseProblemNumber ∷ Parser ProblemNumber ⁞ ƮProblemAfterNumberLabel
-parseProblemNumber = ƭ $ ProblemNumber . read <$>
-    manyTill anyChar (lookAhead . try $ space)
+{- | ƮProblemAfterNumberLabel = after the "Problem #"
 
-parseProblemDescription ∷ Parser ProblemDescription ⁞ ƮProblemAfterNumber
-parseProblemDescription = ƭ $ spaces >> ProblemDescription . pack <$> p
-  where
-    p = manyTill anyChar $ lookAhead . try $ spaces >> sectionParser
+Sample Input
+
+@
+\"1 \\n Description\\n...etc...\\n"
+@
+
+Sample Output
+
+@
+(1, \" \\n Description\\n...etc...\\n")
+@
+-}
+instance StatefulParser ProblemNumber ƮProblemAfterNumberLabel ƮProblemAfterNumber where
+    statefulParser = ƭ $ ProblemNumber . read <$>
+        manyTill anyChar (lookAhead . try $ space)
+
+{- | ƮProblemAfterNumber = immediately after the integer after "Problem #".
+
+Sample Input
+
+@
+
+Description
+
+Given premises:
+...etc...
+@
+
+Sample Output
+
+@
+("Description", "Given premises:\\n...etc...\\n")
+@
+-}
+instance StatefulParser ProblemDescription ƮProblemAfterNumber ƮProblemAfterDescription where
+    statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
+        (try emptyDescription <|> filledDescription)
+      where
+        emptyDescription = do
+            manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
+        filledDescription = do
+            manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline

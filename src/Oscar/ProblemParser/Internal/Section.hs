@@ -4,11 +4,15 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+{- | Relating to any of the six possible sections of a 'Problem'. See
+     "Oscar.Documentation".
+-}
+
 module Oscar.ProblemParser.Internal.Section (
     Section(..),
-    HasSection(..), -- ?
+    HasSection(..),
     sectionParser,
-    runSectionParser,    
+    runSectionParser,
     ) where
 
 import Oscar.Main.Prelude
@@ -46,15 +50,15 @@ instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'Ba
 sectionParser ∷ Parser Section
 sectionParser =
     empty
-    <|> "Given premises:"               **> Section'GivenPremises
-    <|> "Ultimate epistemic interests:" **> Section'UltimateEpistemicInterests
-    <|> "FORWARDS PRIMA FACIE REASONS"  **> Section'ForwardsPrimaFacieReasons
-    <|> "FORWARDS CONCLUSIVE REASONS"   **> Section'ForwardsConclusiveReasons
-    <|> "BACKWARDS PRIMA FACIE REASONS" **> Section'BackwardsPrimaFacieReasons
-    <|> "BACKWARDS CONCLUSIVE REASONS"  **> Section'BackwardsConclusiveReasons
+    <|> "Given premises:"               ↦ Section'GivenPremises
+    <|> "Ultimate epistemic interests:" ↦ Section'UltimateEpistemicInterests
+    <|> "FORWARDS PRIMA FACIE REASONS"  ↦ Section'ForwardsPrimaFacieReasons
+    <|> "FORWARDS CONCLUSIVE REASONS"   ↦ Section'ForwardsConclusiveReasons
+    <|> "BACKWARDS PRIMA FACIE REASONS" ↦ Section'BackwardsPrimaFacieReasons
+    <|> "BACKWARDS CONCLUSIVE REASONS"  ↦ Section'BackwardsConclusiveReasons
   where
-    (**>) ∷ String → a → Parser a
-    s **> t = try (string s) *> pure t
+    (↦) ∷ String → a → Parser a
+    s ↦ t = try (string s) *> pure t
 
 runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
 runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ

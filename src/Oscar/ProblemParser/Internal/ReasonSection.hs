@@ -4,18 +4,29 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+{- | A 'ReasonSection' represents a partial decode of one of the four kinds
+     of sections (described in "Oscar.Documentation") pertaining to reasons.
+     One of those sections, for example, starts with
+     \"FORWARDS PRIMA FACIE REASONS\".
+
+     This module provides for a partial decode of each of those sections.
+-}
+
 module Oscar.ProblemParser.Internal.ReasonSection (
+    -- * decoding a 'ReasonSection'
     ReasonSection,
     _rsProblemReasonName,
     _rsProblemReasonText,
-    _rsProblemVariables,        
+    _rsProblemVariables,
     _rsProblemStrengthDegree,
+    decodeReasonSection,
+    -- * helpers
     parserProblemVariablesText,
     parserProblemReasonName,
-    decodeReasonSection,            
+    parserEnbracedTexts,
+    -- * further decoding of parts of a 'ReasonSection'
     getForwardsReason,
     getBackwardsReason,
-    parserEnbracedTexts,
     ) where
 
 import Oscar.Main.Prelude
@@ -36,7 +47,9 @@ import Oscar.Problem                        (ForwardsReason(ForwardsReason))
 import Oscar.Problem                        (BackwardsReason(BackwardsReason))
 import Oscar.FormulaParser                  (formulaFromText)
 
--- | A partially-processed reason section
+{- | This represents a partial parse of one of the four kinds of
+     reason sections.
+-}
 type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
     ( ProblemReasonName
     , Text ⁞ ƮReason direction defeasibility
@@ -56,14 +69,7 @@ _rsProblemVariables (_, _, v, _) = v
 _rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
 _rsProblemStrengthDegree (_, _, _, d) = d
 
-parserProblemVariablesText ∷ Parser (Text ⁞ ƮProblemVariables)
-parserProblemVariablesText = ƭ . pack <$> (option "" . try $ many space *> string "variables" *> many space *> char '=' *> many space *> char '{' *> manyTill anyChar (lookAhead . try $ char '}') <* char '}')
-
-parserProblemReasonName ∷ Parser ProblemReasonName
-parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
-
--- | a helper for the various below decoders
-decodeReasonSection ∷ Text ⁞ ƮSection (ƮReason direction defeasibility)
+decodeReasonSection ∷ (Text ⁞ ƮSection (ƮReason direction defeasibility)) -- ^ possibly obtained from 'problemSectionText'
                     → [ReasonSection direction defeasibility]
 decodeReasonSection = runSectionParser $ do
     n ← parserProblemReasonName
@@ -77,44 +83,19 @@ decodeReasonSection = runSectionParser $ do
         d ← parserProblemStrengthDegree
         return (t, d)
 
--- | A helper function
-getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
-getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
-  where
-    booyah = first (map formulaFromText) . second formulaFromText
+{- | Expects something like \"variables = {A,B,...}\". Accepts preceding
+     whitespace. Resultant parse is that between the curly braces (e.g.
+     \"A,B,...\").
+-}
+parserProblemVariablesText ∷ Parser (Text ⁞ ƮProblemVariables)
+parserProblemVariablesText = ƭ . pack <$> (option "" . try $ many space *> string "variables" *> many space *> char '=' *> many space *> char '{' *> manyTill anyChar (lookAhead . try $ char '}') <* char '}')
 
-    -- | Needs refactoring?
-    extractFromProblemReasonTextForwards ∷
-        Text ⁞ ƮReason Forwards defeasibility →
-        ([Text], Text) ⁞ ƮReason Forwards defeasibility
-    extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
-      where
-        p ∷ Parser ([Text], Text)
-        p = do
-            (premiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
-            conclusionText ← pack <$> many anyChar
-            return (premiseTexts, conclusionText)
+parserProblemReasonName ∷ Parser ProblemReasonName
+parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
 
--- | Another helper function
-getBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
-getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
-  where
-    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
-
-    extractFromProblemReasonTextBackwards ∷
-        Text ⁞ ƮReason Backwards defeasibility →
-        ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
-    extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
-      where
-        p ∷ Parser ([Text], [Text], Text)
-        p = do
-            forwardsPremiseTextsText ← manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
-            forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
-            spaces
-            (backwardsPremiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
-            conclusionText ← pack <$> many anyChar
-            return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
-
+{- | Expects to start at the beginning of the curly braces. Parses each of
+     the comma-delimited items within.
+-}
 parserEnbracedTexts ∷ Parser [Text]
 parserEnbracedTexts = do
     _ ← char '{'
@@ -138,3 +119,41 @@ parserEnbracedTexts = do
             return $ firstText : restTexts
         else do
             return [firstText]
+
+getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'decodeReasonSection'
+                  → ForwardsReason
+getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+  where
+    booyah = first (map formulaFromText) . second formulaFromText
+
+    -- | Needs refactoring?
+    extractFromProblemReasonTextForwards ∷
+        Text ⁞ ƮReason Forwards defeasibility →
+        ([Text], Text) ⁞ ƮReason Forwards defeasibility
+    extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
+      where
+        p ∷ Parser ([Text], Text)
+        p = do
+            (premiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
+            conclusionText ← pack <$> many anyChar
+            return (premiseTexts, conclusionText)
+
+getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'decodeReasonSection'
+                   → BackwardsReason
+getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
+  where
+    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+
+    extractFromProblemReasonTextBackwards ∷
+        Text ⁞ ƮReason Backwards defeasibility →
+        ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
+    extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
+      where
+        p ∷ Parser ([Text], [Text], Text)
+        p = do
+            forwardsPremiseTextsText ← manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
+            forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
+            spaces
+            (backwardsPremiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
+            conclusionText ← pack <$> many anyChar
+            return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
