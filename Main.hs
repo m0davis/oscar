@@ -25,4 +25,4 @@ main = do
     problems ← readFileProblems combinedProblemsPath
     sequence_ $ ppPrint <$> problems
 
-    print $ foo 0
+    --print $ foo 0
