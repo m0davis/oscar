@@ -300,34 +300,34 @@ instance DecodeableSectionResult ProblemPremise where
         s = evalStatefulParser t
 
 instance DecodeableSectionResult ProblemInterest where
-    realSectionDecoder t = evalSectionWithStatefulParser st
+    realSectionDecoder t = evalSectionWithStatefulParser s
       where
-        st :: Text ⁞ ƮSection ƮUltimateEpistemicInterest
-        st = evalStatefulParser t
+        s :: Text ⁞ ƮSection ƮUltimateEpistemicInterest
+        s = evalStatefulParser t
 
 instance DecodeableSectionResult ProblemForwardsPrimaFacieReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+    realSectionDecoder t = evalReasonSectionWithStatefulParser s
       where
-        st :: Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
-        st = evalStatefulParser t
+        s :: Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
+        s = evalStatefulParser t
 
 instance DecodeableSectionResult ProblemForwardsConclusiveReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+    realSectionDecoder t = evalReasonSectionWithStatefulParser s
       where
-        st :: Text ⁞ ƮSection (ƮReason Forwards Conclusive)
-        st = evalStatefulParser t
+        s :: Text ⁞ ƮSection (ƮReason Forwards Conclusive)
+        s = evalStatefulParser t
 
 instance DecodeableSectionResult ProblemBackwardsPrimaFacieReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+    realSectionDecoder t = evalReasonSectionWithStatefulParser s
       where
-        st :: Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
-        st = evalStatefulParser t
+        s :: Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
+        s = evalStatefulParser t
 
 instance DecodeableSectionResult ProblemBackwardsConclusiveReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+    realSectionDecoder t = evalReasonSectionWithStatefulParser s
       where
-        st :: Text ⁞ ƮSection (ƮReason Backwards Conclusive)
-        st = evalStatefulParser t
+        s :: Text ⁞ ƮSection (ƮReason Backwards Conclusive)
+        s = evalStatefulParser t
 
 -- | Uses 'simpleParse'.
 runStatefulParser ∷ ∀ a inState outState.
