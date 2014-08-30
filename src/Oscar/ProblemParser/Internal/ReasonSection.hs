@@ -19,7 +19,7 @@ module Oscar.ProblemParser.Internal.ReasonSection (
     _rsProblemReasonText,
     _rsProblemVariables,
     _rsProblemStrengthDegree,
-    -- decodeReasonSection,
+    -- fromReasonSection,
     -- * helpers
     parserProblemVariablesText,
     parserProblemReasonName,
@@ -102,7 +102,7 @@ parserEnbracedTexts = do
         else do
             return [firstText]
 
-getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'TODO decodeReasonSection'
+getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'TODO fromReasonSection'
                   → ForwardsReason
 getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
   where
@@ -120,7 +120,7 @@ getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemR
             conclusionText ← pack <$> many anyChar
             return (premiseTexts, conclusionText)
 
-getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'TODO decodeReasonSection'
+getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'TODO fromReasonSection'
                    → BackwardsReason
 getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
   where
