@@ -54,10 +54,10 @@ data ƮSection section
 data Direction
     = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
     | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
-  deriving (Show)
+  deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 -- | The defeasibility of a reason
 data Defeasibility
     = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
     | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
-  deriving (Show)
+  deriving (Bounded, Enum, Eq, Ord, Read, Show)
