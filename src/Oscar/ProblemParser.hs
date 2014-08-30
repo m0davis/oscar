@@ -16,7 +16,7 @@ import Data.List.Split                              (splitOn)
 
 import Oscar.Problem                                (Problem)
 import Oscar.ProblemParser.Internal                 (problemFromText)
-import Oscar.ProblemParser.Internal.StatefulParse   (evalStatefulParser)
+import Oscar.ProblemParser.Internal                 (evalStatefulParser)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithLineComments)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 

@@ -32,17 +32,16 @@ module Oscar.ProblemParser.Internal.ReasonSection (
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
-import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
-import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
-import Oscar.ProblemParser.Internal.Tags    (Defeasibility)
-import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
-import Oscar.ProblemParser.Internal.Tags    (ƮReason)
-
+import Oscar.FormulaParser                  (formulaFromText)
+import Oscar.Problem                        (BackwardsReason(BackwardsReason))
+import Oscar.Problem                        (ForwardsReason(ForwardsReason))
 import Oscar.Problem                        (ProblemReasonName(ProblemReasonName))
 import Oscar.Problem                        (ProblemStrengthDegree)
-import Oscar.Problem                        (ForwardsReason(ForwardsReason))
-import Oscar.Problem                        (BackwardsReason(BackwardsReason))
-import Oscar.FormulaParser                  (formulaFromText)
+import Oscar.ProblemParser.Internal.Tags    (Defeasibility)
+import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
+import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
+import Oscar.ProblemParser.Internal.Tags    (ƮReason)
+import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 
 {- | This represents a partial parse of one of the four kinds of
      reason sections.
