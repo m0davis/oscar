@@ -19,7 +19,7 @@ module Oscar.ProblemParser.Internal.ReasonSection (
     _rsProblemReasonText,
     _rsProblemVariables,
     _rsProblemStrengthDegree,
-    decodeReasonSection,
+    -- decodeReasonSection,
     -- * helpers
     parserProblemVariablesText,
     parserProblemReasonName,
@@ -37,9 +37,6 @@ import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility)
 import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
-import Oscar.ProblemParser.Internal.Tags    (ƮSection)
-import Oscar.ProblemParser.Internal.Section    (runSectionParser)
-import Oscar.ProblemParser.Internal.UnitIntervalParsers    (parserProblemStrengthDegree)
 
 import Oscar.Problem                        (ProblemReasonName(ProblemReasonName))
 import Oscar.Problem                        (ProblemStrengthDegree)
@@ -68,20 +65,6 @@ _rsProblemVariables (_, _, v, _) = v
 
 _rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
 _rsProblemStrengthDegree (_, _, _, d) = d
-
-decodeReasonSection ∷ (Text ⁞ ƮSection (ƮReason direction defeasibility)) -- ^ possibly obtained from 'TODO problemSectionText'
-                    → [ReasonSection direction defeasibility]
-decodeReasonSection = runSectionParser $ do
-    n ← parserProblemReasonName
-    spaces
-    (t, (v, d)) ← many anyChar `precededBy` p'
-    return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
-  where
-    p' ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
-    p' = do
-        t ← parserProblemVariablesText
-        d ← parserProblemStrengthDegree
-        return (t, d)
 
 {- | Expects something like \"variables = {A,B,...}\". Accepts preceding
      whitespace. Resultant parse is that between the curly braces (e.g.
@@ -120,7 +103,7 @@ parserEnbracedTexts = do
         else do
             return [firstText]
 
-getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'decodeReasonSection'
+getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'TODO decodeReasonSection'
                   → ForwardsReason
 getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
   where
@@ -138,7 +121,7 @@ getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemR
             conclusionText ← pack <$> many anyChar
             return (premiseTexts, conclusionText)
 
-getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'decodeReasonSection'
+getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'TODO decodeReasonSection'
                    → BackwardsReason
 getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
   where

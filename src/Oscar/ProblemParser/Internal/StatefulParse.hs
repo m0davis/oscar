@@ -17,23 +17,30 @@ import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
 import Oscar.FormulaParser                              (formulaFromText)
-import Oscar.Problem                        (ProblemDescription(ProblemDescription))
-import Oscar.Problem                        (ProblemNumber(ProblemNumber))
-import Oscar.Problem                        (ProblemPremise)
-import Oscar.Problem                        (ProblemInterest)
-import Oscar.ProblemParser.Internal.Section (HasSection)
-import Oscar.ProblemParser.Internal.Section (Section)
-import Oscar.ProblemParser.Internal.Section (section)
-import Oscar.ProblemParser.Internal.Section (sectionParser)
-import Oscar.ProblemParser.Internal.Tags    (ƮAfterDescription)
-import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumber)
-import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags    (ƮGivenPremise)
-import Oscar.ProblemParser.Internal.Tags    (ƮSection)
-import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
-import Oscar.ProblemParser.Internal.Tags    (ƮUltimateEpistemicInterest)
+import Oscar.Problem                                    (ProblemDescription(ProblemDescription))
+import Oscar.Problem                                    (ProblemNumber(ProblemNumber))
+import Oscar.Problem                                    (ProblemPremise)
+import Oscar.Problem                                    (ProblemInterest)
+import Oscar.Problem                                    (ProblemStrengthDegree)
+import Oscar.ProblemParser.Internal.Section             (HasSection)
+import Oscar.ProblemParser.Internal.Section             (Section)
+import Oscar.ProblemParser.Internal.Section             (section)
+import Oscar.ProblemParser.Internal.Section             (sectionParser)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterDescription)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
+import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
+import Oscar.ProblemParser.Internal.Tags                (ƮSection)
+import Oscar.ProblemParser.Internal.Tags                (ƮWithoutLineComments)
+import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInterest)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
+import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDegree)
+import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
+import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
+import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
+import Oscar.ProblemParser.Internal.Tags                (ƮReason)
+import Oscar.ProblemParser.Internal.Tags                (ƮVariables)
 
 class StatefulParser a inState outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
@@ -231,3 +238,16 @@ instance StatefulParser ProblemInterest (ƮSection ƮUltimateEpistemicInterest) 
         spaces
         (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
         return (formulaFromText . pack $ t, d)
+
+instance StatefulParser (ReasonSection direction defeasibility) (ƮSection (ƮReason direction defeasibility)) () where
+    statefulParser = ƭ $ do
+        n ← parserProblemReasonName
+        spaces
+        (t, (v, d)) ← many anyChar `precededBy` p'
+        return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
+      where
+        p' ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
+        p' = do
+            t ← parserProblemVariablesText
+            d ← parserProblemStrengthDegree
+            return (t, d)

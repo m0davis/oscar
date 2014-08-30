@@ -33,7 +33,6 @@ import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
 import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonName)
 import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonText)
 import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemStrengthDegree)
-import Oscar.ProblemParser.Internal.ReasonSection       (decodeReasonSection)
 import Oscar.ProblemParser.Internal.ReasonSection       (getBackwardsReason)
 import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
@@ -62,7 +61,7 @@ runStatefulParser, which can be used to obtain [Text ⁞ ƮAfterNumberLabel],
 
 -- | similar to 'TODO decodeGivenPremisesSection'
 decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
-decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
+decodeForwardsPrimaFacieReasonSection = map fpfrts . evalSectionWithStatefulParser
   where
     fpfrts ∷ ReasonSection Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
     fpfrts rb = (,,)
@@ -72,7 +71,7 @@ decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
 
 -- | similar to "TODO decodeGivenPremisesSection"
 decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
-decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
+decodeForwardsConclusiveReasonSection = map fpfrts' . evalSectionWithStatefulParser
   where
     fpfrts' ∷ ReasonSection Forwards Conclusive → ProblemForwardsConclusiveReason
     fpfrts' rb = case _rsProblemStrengthDegree rb of
@@ -85,7 +84,7 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
 
 -- | similar to "TODO decodeGivenPremisesSection"
 decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
-decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
+decodeBackwardsPrimaFacieReasonSection = map bpfrts . evalSectionWithStatefulParser
   where
     bpfrts ∷ ReasonSection Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
     bpfrts rb = (,,)
@@ -95,7 +94,7 @@ decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
 
 -- | similar to "TODO decodeGivenPremisesSection"
 decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
-decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
+decodeBackwardsConclusiveReasonSection = map bpfrts' . evalSectionWithStatefulParser
   where
     bpfrts' ∷ ReasonSection Backwards Conclusive → ProblemBackwardsConclusiveReason
     bpfrts' rb = case (_rsProblemStrengthDegree rb) of
