@@ -21,8 +21,11 @@ import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumberLabel)
 import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumber)
 import Oscar.ProblemParser.Internal.Tags    (ƮAfterDescription)
 import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
-import Oscar.ProblemParser.Internal.Tags    (ƮEof)
 import Oscar.ProblemParser.Internal.Section (sectionParser)
+import Oscar.ProblemParser.Internal.Section (HasSection)
+import Oscar.ProblemParser.Internal.Tags    (ƮSection)
+import Oscar.ProblemParser.Internal.Section (Section)
+import Oscar.ProblemParser.Internal.Section (section)
 
 class StatefulParser a inState outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
@@ -39,14 +42,11 @@ runStatefulParser = simpleParse p' . unƭ
         return (v, ƭ r)
 
 runStatefulParser' ∷ ∀ a inState.
-    (StatefulParser a inState ƮEof) ⇒ Text ⁞ inState → a
+    (StatefulParser a inState ()) ⇒ Text ⁞ inState → a
 runStatefulParser' = simpleParse p' . unƭ
   where
     p' ∷ Parser a
-    p' = do
-        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, ƮEof))
-        eof
-        return v
+    p' = unƭ (statefulParser ∷ Parser a ⁞ (inState, ()))
 
 {- | ƮAfterNumberLabel = after the "Problem #"
 
@@ -126,7 +126,7 @@ Description of the second problem
 ...etc...
 @
 -}
-instance StatefulParser [Text ⁞ ƮAfterNumberLabel] ƮWithoutLineComments ƮEof where
+instance StatefulParser [Text ⁞ ƮAfterNumberLabel] ƮWithoutLineComments () where
     statefulParser = ƭ . many $ do
         spaces
         _ ← string "Problem #"
@@ -134,3 +134,53 @@ instance StatefulParser [Text ⁞ ƮAfterNumberLabel] ƮWithoutLineComments ƮEo
       where
         endP ∷ Parser ()
         endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
+
+{- | Gets the text of a particular section from all of the text following the
+     description.
+
+Sample Input
+
+@
+Given premises:
+     P    justification = 1.0
+     A    justification = 1.0
+Ultimate epistemic interests:
+     R    interest = 1.0
+
+   FORWARDS PRIMA FACIE REASONS
+     pf-reason_1:   {P} ||=> Q   strength = 1.0
+     pf-reason_2:   {Q} ||=> R   strength = 1.0
+     pf-reason_3:   {C} ||=> ~R   strength = 1.0
+     pf-reason_4:   {B} ||=> C   strength = 1.0
+     pf-reason_5:   {A} ||=> B   strength = 1.0
+@
+
+Sample Output (with kind = ƮGivenPremise):
+
+@
+     P    justification = 1.0
+     A    justification = 1.0
+@
+
+Sample Output (with kind = ƮReason Forwards PrimaFacie):
+
+@
+     pf-reason_1:   {P} ||=> Q   strength = 1.0
+     pf-reason_2:   {Q} ||=> R   strength = 1.0
+     pf-reason_3:   {C} ||=> ~R   strength = 1.0
+     pf-reason_4:   {B} ||=> C   strength = 1.0
+     pf-reason_5:   {A} ||=> B   strength = 1.0
+@
+-}
+instance ∀ kind. (HasSection kind) ⇒ StatefulParser (Text ⁞ ƮSection kind) ƮAfterDescription () where
+    statefulParser = ƭ $ do
+        _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
+        p' <|> pure (ƭ $ pack "")
+      where
+        p' ∷ Parser (Text ⁞ ƮSection kind)
+        p' = do
+            guardM (map (== theSection) sectionParser)
+            ƭ . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
+
+        theSection ∷ Section
+        theSection = section ((⊥) ∷ kind)

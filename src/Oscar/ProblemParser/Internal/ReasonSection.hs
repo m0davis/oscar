@@ -69,7 +69,7 @@ _rsProblemVariables (_, _, v, _) = v
 _rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
 _rsProblemStrengthDegree (_, _, _, d) = d
 
-decodeReasonSection ∷ (Text ⁞ ƮSection (ƮReason direction defeasibility)) -- ^ possibly obtained from 'problemSectionText'
+decodeReasonSection ∷ (Text ⁞ ƮSection (ƮReason direction defeasibility)) -- ^ possibly obtained from 'TODO problemSectionText'
                     → [ReasonSection direction defeasibility]
 decodeReasonSection = runSectionParser $ do
     n ← parserProblemReasonName

@@ -9,7 +9,7 @@ module Oscar.ProblemParser.Internal (
     -- TODO partitionProblemsText,
     -- * parsing problem parts
     -- $StatefulParse
-    problemSectionText,
+    -- problemSectionText,
     decodeGivenPremisesSection,
     decodeUltimateEpistemicInterestsSection,
     decodeForwardsPrimaFacieReasonSection,
@@ -43,11 +43,9 @@ import Oscar.ProblemParser.Internal.ReasonSection       (decodeReasonSection)
 import Oscar.ProblemParser.Internal.ReasonSection       (getBackwardsReason)
 import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
-import Oscar.ProblemParser.Internal.Section             (Section)
 import Oscar.ProblemParser.Internal.Section             (runSectionParser)
-import Oscar.ProblemParser.Internal.Section             (section)
-import Oscar.ProblemParser.Internal.Section             (sectionParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser)
+import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser')
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
@@ -70,65 +68,9 @@ runStatefulParser, which can be used to obtain [Text ⁞ ƮAfterNumberLabel],
 ƮAfterNumber.
 -}
 
-{- | Gets the text of a particular section from all of the text following the
-     description.
-
-Sample Input
-
-@
-Given premises:
-     P    justification = 1.0
-     A    justification = 1.0
-Ultimate epistemic interests:
-     R    interest = 1.0
-
-   FORWARDS PRIMA FACIE REASONS
-     pf-reason_1:   {P} ||=> Q   strength = 1.0
-     pf-reason_2:   {Q} ||=> R   strength = 1.0
-     pf-reason_3:   {C} ||=> ~R   strength = 1.0
-     pf-reason_4:   {B} ||=> C   strength = 1.0
-     pf-reason_5:   {A} ||=> B   strength = 1.0
-@
-
-Sample Output (with kind = ƮGivenPremise):
-
-@
-     P    justification = 1.0
-     A    justification = 1.0
-@
-
-Sample Output (with kind = ƮReason Forwards PrimaFacie):
-
-@
-     pf-reason_1:   {P} ||=> Q   strength = 1.0
-     pf-reason_2:   {Q} ||=> R   strength = 1.0
-     pf-reason_3:   {C} ||=> ~R   strength = 1.0
-     pf-reason_4:   {B} ||=> C   strength = 1.0
-     pf-reason_5:   {A} ||=> B   strength = 1.0
-@
--}
-problemSectionText ∷
-    ∀ kind. (HasSection kind) ⇒
-    Text ⁞ ƮAfterDescription →
-    Text ⁞ ƮSection kind
-problemSectionText = ƭ . simpleParse p . unƭ
-  where
-    theSection ∷ Section
-    theSection = section ((⊥) ∷ kind)
-
-    p ∷ Parser Text
-    p = do
-        _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
-        p' <|> pure (pack "")
-      where
-        p' ∷ Parser Text
-        p' = do
-            guardM (map (== theSection) sectionParser)
-            pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
-
 {- |
 
-Sample Input (possibly obtained from 'problemSectionText')
+Sample Input (possibly obtained from 'TODO problemSectionText')
 
 @
      P    justification = 1.0
@@ -233,4 +175,4 @@ problemFromText t = Problem
         runStatefulParser afterNumber
 
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
-    pSTaD = problemSectionText afterDescription
+    pSTaD = runStatefulParser' afterDescription

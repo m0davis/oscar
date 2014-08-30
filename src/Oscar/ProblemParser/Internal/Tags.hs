@@ -13,7 +13,6 @@ module Oscar.ProblemParser.Internal.Tags (
     ƮUltimateEpistemicInterest,
     ƮVariables,
     ƮReason,
-    ƮEof,
     Direction(..),
     Defeasibility(..),
     ƮSection,
@@ -47,9 +46,6 @@ data ƮUltimateEpistemicInterest
 
 -- | A reason section
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
-
--- | End of file
-data ƮEof
 
 -- | The only types that make sense here are one of the three Ʈ...\'s above
 data ƮSection section
