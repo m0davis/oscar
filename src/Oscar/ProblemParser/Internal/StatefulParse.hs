@@ -10,22 +10,30 @@ module Oscar.ProblemParser.Internal.StatefulParse (
     StatefulParser(..),
     runStatefulParser,
     evalStatefulParser,
+    evalSectionWithStatefulParser,
     ) where
 
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
-import Oscar.Problem                        (ProblemNumber(ProblemNumber))
+import Oscar.FormulaParser                              (formulaFromText)
 import Oscar.Problem                        (ProblemDescription(ProblemDescription))
-import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumber)
-import Oscar.ProblemParser.Internal.Tags    (ƮAfterDescription)
-import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
-import Oscar.ProblemParser.Internal.Section (sectionParser)
+import Oscar.Problem                        (ProblemNumber(ProblemNumber))
+import Oscar.Problem                        (ProblemPremise)
+import Oscar.Problem                        (ProblemInterest)
 import Oscar.ProblemParser.Internal.Section (HasSection)
-import Oscar.ProblemParser.Internal.Tags    (ƮSection)
 import Oscar.ProblemParser.Internal.Section (Section)
 import Oscar.ProblemParser.Internal.Section (section)
+import Oscar.ProblemParser.Internal.Section (sectionParser)
+import Oscar.ProblemParser.Internal.Tags    (ƮAfterDescription)
+import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumber)
+import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumberLabel)
+import Oscar.ProblemParser.Internal.Tags    (ƮGivenPremise)
+import Oscar.ProblemParser.Internal.Tags    (ƮSection)
+import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
+import Oscar.ProblemParser.Internal.Tags    (ƮUltimateEpistemicInterest)
+import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
+import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
 
 class StatefulParser a inState outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
@@ -41,12 +49,21 @@ runStatefulParser = simpleParse p' . unƭ
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
+-- | Uses 'simpleParse'.
 evalStatefulParser ∷ ∀ a inState.
     (StatefulParser a inState ()) ⇒ Text ⁞ inState → a
 evalStatefulParser = simpleParse p' . unƭ
   where
     p' ∷ Parser a
     p' = unƭ (statefulParser ∷ Parser a ⁞ (inState, ()))
+
+-- | Uses 'simpleParse'.
+evalSectionWithStatefulParser ∷ ∀ a inSection.
+    (StatefulParser a (ƮSection inSection) ()) ⇒ Text ⁞ ƮSection inSection → [a]
+evalSectionWithStatefulParser = simpleParse (many (try p') <* many space <* eof) . unƭ
+  where
+    p' ∷ Parser a
+    p' = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
 {- | ƮAfterNumberLabel = after the "Problem #"
 
@@ -184,3 +201,33 @@ instance ∀ kind. (HasSection kind) ⇒ StatefulParser (Text ⁞ ƮSection kind
 
         theSection ∷ Section
         theSection = section ((⊥) ∷ kind)
+
+{- |
+
+Sample Input (possibly obtained from 'TODO problemSectionText')
+
+@
+     P    justification = 1.0
+     A    justification = 1.0
+@
+
+Sample Output
+
+@
+    [(\<formula for P>, \<justification 1.0>)
+    ,(\<formula for A\>, \<justification 1.0>)
+    ]
+@
+-}
+instance StatefulParser ProblemPremise (ƮSection ƮGivenPremise) () where
+    statefulParser = ƭ $ do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+        return (formulaFromText . pack $ t, d)
+
+-- | similar to 'TODO decodeGivenPremisesSection'
+instance StatefulParser ProblemInterest (ƮSection ƮUltimateEpistemicInterest) () where
+    statefulParser = ƭ $ do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
+        return (formulaFromText . pack $ t, d)
