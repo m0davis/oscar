@@ -4,6 +4,13 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+
 module Oscar.ProblemParser.Internal (
     -- * text of problems
     -- TODO partitionProblemsText,
@@ -12,10 +19,10 @@ module Oscar.ProblemParser.Internal (
     -- problemSectionText,
     -- decodeGivenPremisesSection,
     -- decodeUltimateEpistemicInterestsSection,
-    decodeForwardsPrimaFacieReasonSection,
-    decodeForwardsConclusiveReasonSection,
-    decodeBackwardsPrimaFacieReasonSection,
-    decodeBackwardsConclusiveReasonSection,
+    -- decodeForwardsPrimaFacieReasonSection,
+    -- decodeForwardsConclusiveReasonSection,
+    -- decodeBackwardsPrimaFacieReasonSection,
+    -- decodeBackwardsConclusiveReasonSection,
     -- * Problem construction
     problemFromText,
     ) where
@@ -36,6 +43,7 @@ import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemStrengthDegre
 import Oscar.ProblemParser.Internal.ReasonSection       (getBackwardsReason)
 import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
+import Oscar.ProblemParser.Internal.StatefulParse       (StatefulParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (evalStatefulParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (evalSectionWithStatefulParser)
@@ -59,22 +67,17 @@ runStatefulParser, which can be used to obtain [Text ⁞ ƮAfterNumberLabel],
 ƮAfterNumber.
 -}
 
--- | similar to 'TODO decodeGivenPremisesSection'
-decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
-decodeForwardsPrimaFacieReasonSection = map fpfrts . evalSectionWithStatefulParser
-  where
-    fpfrts ∷ ReasonSection Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
-    fpfrts rb = (,,)
+class ReasonSectionDecoder direction defeasibility decode | decode -> direction defeasibility where
+    decodeReasonSection :: ReasonSection direction defeasibility -> decode
+
+instance ReasonSectionDecoder Forwards PrimaFacie ProblemForwardsPrimaFacieReason where
+    decodeReasonSection rb = (,,)
         (_rsProblemReasonName rb)
         (getForwardsReason $ _rsProblemReasonText rb)
         (_rsProblemStrengthDegree rb)
 
--- | similar to "TODO decodeGivenPremisesSection"
-decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
-decodeForwardsConclusiveReasonSection = map fpfrts' . evalSectionWithStatefulParser
-  where
-    fpfrts' ∷ ReasonSection Forwards Conclusive → ProblemForwardsConclusiveReason
-    fpfrts' rb = case _rsProblemStrengthDegree rb of
+instance ReasonSectionDecoder Forwards Conclusive ProblemForwardsConclusiveReason where
+    decodeReasonSection rb = case _rsProblemStrengthDegree rb of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
       where
@@ -82,30 +85,26 @@ decodeForwardsConclusiveReasonSection = map fpfrts' . evalSectionWithStatefulPar
             (_rsProblemReasonName rb)
             (getForwardsReason $ _rsProblemReasonText rb)
 
--- | similar to "TODO decodeGivenPremisesSection"
-decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
-decodeBackwardsPrimaFacieReasonSection = map bpfrts . evalSectionWithStatefulParser
-  where
-    bpfrts ∷ ReasonSection Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
-    bpfrts rb = (,,)
+instance ReasonSectionDecoder Backwards PrimaFacie ProblemBackwardsPrimaFacieReason where
+    decodeReasonSection rb = (,,)
         (_rsProblemReasonName rb)
         (getBackwardsReason $ _rsProblemReasonText rb)
         (_rsProblemStrengthDegree rb)
 
--- | similar to "TODO decodeGivenPremisesSection"
-decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
-decodeBackwardsConclusiveReasonSection = map bpfrts' . evalSectionWithStatefulParser
-  where
-    bpfrts' ∷ ReasonSection Backwards Conclusive → ProblemBackwardsConclusiveReason
-    bpfrts' rb = case (_rsProblemStrengthDegree rb) of
+instance ReasonSectionDecoder Backwards Conclusive ProblemBackwardsConclusiveReason where
+    decodeReasonSection rb = case (_rsProblemStrengthDegree rb) of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
-
       where
         result = (,)
             (_rsProblemReasonName rb)
             (getBackwardsReason $ _rsProblemReasonText rb)
 
+-- | Uses 'simpleParse'.
+evalReasonSectionWithStatefulParser ∷ ∀ direction defeasibility decode inSection.
+    (StatefulParser (ReasonSection direction defeasibility) (ƮSection inSection) (), ReasonSectionDecoder direction defeasibility decode) ⇒ 
+    Text ⁞ ƮSection inSection → [decode]
+evalReasonSectionWithStatefulParser = map decodeReasonSection . evalSectionWithStatefulParser
 
 {- | The formatting of the input is documented at "Oscar.Documentation".
 
@@ -118,10 +117,10 @@ problemFromText t = Problem
     description
     (evalSectionWithStatefulParser (pSTaD :: Text ⁞ ƮSection ƮGivenPremise))
     (evalSectionWithStatefulParser (pSTaD :: Text ⁞ ƮSection ƮUltimateEpistemicInterest))
-    (decodeForwardsPrimaFacieReasonSection pSTaD)
-    (decodeForwardsConclusiveReasonSection pSTaD)
-    (decodeBackwardsPrimaFacieReasonSection pSTaD)
-    (decodeBackwardsConclusiveReasonSection pSTaD)
+    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Forwards PrimaFacie))))
+    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Forwards Conclusive))))
+    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Backwards PrimaFacie))))
+    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Backwards Conclusive))))
   where
     (number, (afterNumber ∷ Text ⁞ ƮAfterNumber)) = 
         runStatefulParser t
