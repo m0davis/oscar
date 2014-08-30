@@ -14,13 +14,13 @@ module Oscar.ProblemParser.Internal (
     problemFromText,
     -- * Helpers
     -- $StatefulParse
-    StatefulParser(..),
+    StatefullyParsed(..),
     ReasonSectionDecoder(..),
-    DecodeableSectionResult(..),
-    runStatefulParser,
-    evalStatefulParser,
-    evalSectionWithStatefulParser,
-    evalReasonSectionWithStatefulParser,    
+    SectionElement(..),
+    runStatefullyParsed,
+    evalStatefullyParsed,
+    evalSectionWithStatefullyParsed,
+    evalReasonSectionWithStatefullyParsed,    
     ) where
 
 import Oscar.Main.Prelude
@@ -69,12 +69,12 @@ import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDe
 
 {- $StatefulParse
 
-See 'runStatefulParser', which can be used to obtain 
+See 'runStatefullyParsed', which can be used to obtain 
 [Text ⁞ ƮAfterNumberLabel], 'ProblemNumber', 'ProblemDescription', 
 Text ⁞ ƮAfterDescription, and Text ⁞ ƮAfterNumber.
 -}
 
-class StatefulParser a inState outState | a inState -> outState where
+class StatefullyParsed a inState outState | a -> inState outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
 
 {- | ƮAfterNumberLabel = after the "Problem #"
@@ -91,7 +91,7 @@ Sample Output
 (1, \" \\n Description\\n...etc...\\n")
 @
 -}
-instance StatefulParser ProblemNumber ƮAfterNumberLabel ƮAfterNumber where
+instance StatefullyParsed ProblemNumber ƮAfterNumberLabel ƮAfterNumber where
     statefulParser = ƭ $ ProblemNumber . read <$>
         manyTill anyChar (lookAhead . try $ space)
 
@@ -113,7 +113,7 @@ Sample Output
 ("Description", "Given premises:\\n...etc...\\n")
 @
 -}
-instance StatefulParser ProblemDescription ƮAfterNumber ƮAfterDescription where
+instance StatefullyParsed ProblemDescription ƮAfterNumber ƮAfterDescription where
     statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
         (try emptyDescription <|> filledDescription)
       where
@@ -155,7 +155,7 @@ Description of the second problem
 ...etc...
 @
 -}
-instance StatefulParser [Text ⁞ ƮAfterNumberLabel] ƮWithoutLineComments () where
+instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel] ƮWithoutLineComments () where
     statefulParser = ƭ . many $ do
         spaces
         _ ← string "Problem #"
@@ -201,7 +201,7 @@ Sample Output (with kind = ƮReason Forwards PrimaFacie):
      pf-reason_5:   {A} ||=> B   strength = 1.0
 @
 -}
-instance ∀ kind. (HasSection kind) ⇒ StatefulParser (Text ⁞ ƮSection kind) ƮAfterDescription () where
+instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind) ƮAfterDescription () where
     statefulParser = ƭ $ do
         _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
         p' <|> pure (ƭ $ pack "")
@@ -231,20 +231,20 @@ Sample Output
     ]
 @
 -}
-instance StatefulParser ProblemPremise (ƮSection ƮGivenPremise) () where
+instance StatefullyParsed ProblemPremise (ƮSection ƮGivenPremise) () where
     statefulParser = ƭ $ do
         spaces
         (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
         return (formulaFromText . pack $ t, d)
 
 -- | similar to 'TODO decodeGivenPremisesSection'
-instance StatefulParser ProblemInterest (ƮSection ƮUltimateEpistemicInterest) () where
+instance StatefullyParsed ProblemInterest (ƮSection ƮUltimateEpistemicInterest) () where
     statefulParser = ƭ $ do
         spaces
         (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
         return (formulaFromText . pack $ t, d)
 
-instance StatefulParser (ReasonSection direction defeasibility) (ƮSection (ƮReason direction defeasibility)) () where
+instance StatefullyParsed (ReasonSection direction defeasibility) (ƮSection (ƮReason direction defeasibility)) () where
     statefulParser = ƭ $ do
         n ← parserProblemReasonName
         spaces
@@ -257,16 +257,16 @@ instance StatefulParser (ReasonSection direction defeasibility) (ƮSection (ƮRe
             d ← parserProblemStrengthDegree
             return (t, d)
 
-class ReasonSectionDecoder direction defeasibility decode | decode -> direction defeasibility where
+class ReasonSectionDecoder decode direction defeasibility | decode -> direction defeasibility where
     decodeReasonSection :: ReasonSection direction defeasibility -> decode
 
-instance ReasonSectionDecoder Forwards PrimaFacie ProblemForwardsPrimaFacieReason where
+instance ReasonSectionDecoder ProblemForwardsPrimaFacieReason Forwards PrimaFacie where
     decodeReasonSection rb = (,,)
         (_rsProblemReasonName rb)
         (getForwardsReason $ _rsProblemReasonText rb)
         (_rsProblemStrengthDegree rb)
 
-instance ReasonSectionDecoder Forwards Conclusive ProblemForwardsConclusiveReason where
+instance ReasonSectionDecoder ProblemForwardsConclusiveReason Forwards Conclusive where
     decodeReasonSection rb = case _rsProblemStrengthDegree rb of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
@@ -275,13 +275,13 @@ instance ReasonSectionDecoder Forwards Conclusive ProblemForwardsConclusiveReaso
             (_rsProblemReasonName rb)
             (getForwardsReason $ _rsProblemReasonText rb)
 
-instance ReasonSectionDecoder Backwards PrimaFacie ProblemBackwardsPrimaFacieReason where
+instance ReasonSectionDecoder ProblemBackwardsPrimaFacieReason Backwards PrimaFacie where
     decodeReasonSection rb = (,,)
         (_rsProblemReasonName rb)
         (getBackwardsReason $ _rsProblemReasonText rb)
         (_rsProblemStrengthDegree rb)
 
-instance ReasonSectionDecoder Backwards Conclusive ProblemBackwardsConclusiveReason where
+instance ReasonSectionDecoder ProblemBackwardsConclusiveReason Backwards Conclusive where
     decodeReasonSection rb = case (_rsProblemStrengthDegree rb) of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
@@ -290,49 +290,49 @@ instance ReasonSectionDecoder Backwards Conclusive ProblemBackwardsConclusiveRea
             (_rsProblemReasonName rb)
             (getBackwardsReason $ _rsProblemReasonText rb)
 
-class DecodeableSectionResult decode where
-    realSectionDecoder :: Text ⁞ ƮAfterDescription -> [decode]
+class SectionElement element where
+    sectionElements :: Text ⁞ ƮAfterDescription -> [element]
 
-instance DecodeableSectionResult ProblemPremise where
-    realSectionDecoder t = evalSectionWithStatefulParser s
+instance SectionElement ProblemPremise where
+    sectionElements t = evalSectionWithStatefullyParsed s
       where
         s :: Text ⁞ ƮSection ƮGivenPremise
-        s = evalStatefulParser t
+        s = evalStatefullyParsed t
 
-instance DecodeableSectionResult ProblemInterest where
-    realSectionDecoder t = evalSectionWithStatefulParser s
+instance SectionElement ProblemInterest where
+    sectionElements t = evalSectionWithStatefullyParsed s
       where
         s :: Text ⁞ ƮSection ƮUltimateEpistemicInterest
-        s = evalStatefulParser t
+        s = evalStatefullyParsed t
 
-instance DecodeableSectionResult ProblemForwardsPrimaFacieReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser s
+instance SectionElement ProblemForwardsPrimaFacieReason where
+    sectionElements t = evalReasonSectionWithStatefullyParsed s
       where
         s :: Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
-        s = evalStatefulParser t
+        s = evalStatefullyParsed t
 
-instance DecodeableSectionResult ProblemForwardsConclusiveReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser s
+instance SectionElement ProblemForwardsConclusiveReason where
+    sectionElements t = evalReasonSectionWithStatefullyParsed s
       where
         s :: Text ⁞ ƮSection (ƮReason Forwards Conclusive)
-        s = evalStatefulParser t
+        s = evalStatefullyParsed t
 
-instance DecodeableSectionResult ProblemBackwardsPrimaFacieReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser s
+instance SectionElement ProblemBackwardsPrimaFacieReason where
+    sectionElements t = evalReasonSectionWithStatefullyParsed s
       where
         s :: Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
-        s = evalStatefulParser t
+        s = evalStatefullyParsed t
 
-instance DecodeableSectionResult ProblemBackwardsConclusiveReason where
-    realSectionDecoder t = evalReasonSectionWithStatefulParser s
+instance SectionElement ProblemBackwardsConclusiveReason where
+    sectionElements t = evalReasonSectionWithStatefullyParsed s
       where
         s :: Text ⁞ ƮSection (ƮReason Backwards Conclusive)
-        s = evalStatefulParser t
+        s = evalStatefullyParsed t
 
 -- | Uses 'simpleParse'.
-runStatefulParser ∷ ∀ a inState outState.
-    (StatefulParser a inState outState) ⇒ Text ⁞ inState → (a, Text ⁞ outState)
-runStatefulParser = simpleParse p' . unƭ
+runStatefullyParsed ∷ ∀ a inState outState.
+    (StatefullyParsed a inState outState) ⇒ Text ⁞ inState → (a, Text ⁞ outState)
+runStatefullyParsed = simpleParse p' . unƭ
   where
     p' ∷ Parser (a, Text ⁞ outState)
     p' = do
@@ -341,26 +341,26 @@ runStatefulParser = simpleParse p' . unƭ
         return (v, ƭ r)
 
 -- | Uses 'simpleParse'.
-evalStatefulParser ∷ ∀ a inState.
-    (StatefulParser a inState ()) ⇒ Text ⁞ inState → a
-evalStatefulParser = simpleParse p' . unƭ
+evalStatefullyParsed ∷ ∀ a inState.
+    (StatefullyParsed a inState ()) ⇒ Text ⁞ inState → a
+evalStatefullyParsed = simpleParse p' . unƭ
   where
     p' ∷ Parser a
     p' = unƭ (statefulParser ∷ Parser a ⁞ (inState, ()))
 
 -- | Uses 'simpleParse'.
-evalSectionWithStatefulParser ∷ ∀ a inSection.
-    (StatefulParser a (ƮSection inSection) ()) ⇒ Text ⁞ ƮSection inSection → [a]
-evalSectionWithStatefulParser = simpleParse (many (try p') <* many space <* eof) . unƭ
+evalSectionWithStatefullyParsed ∷ ∀ a inSection.
+    (StatefullyParsed a (ƮSection inSection) ()) ⇒ Text ⁞ ƮSection inSection → [a]
+evalSectionWithStatefullyParsed = simpleParse (many (try p') <* many space <* eof) . unƭ
   where
     p' ∷ Parser a
     p' = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
 -- | Uses 'simpleParse'.
-evalReasonSectionWithStatefulParser ∷ ∀ direction defeasibility decode inSection.
-    (StatefulParser (ReasonSection direction defeasibility) (ƮSection inSection) (), ReasonSectionDecoder direction defeasibility decode) ⇒ 
+evalReasonSectionWithStatefullyParsed ∷ ∀ direction defeasibility decode inSection.
+    (StatefullyParsed (ReasonSection direction defeasibility) (ƮSection inSection) (), ReasonSectionDecoder decode direction defeasibility) ⇒ 
     Text ⁞ ƮSection inSection → [decode]
-evalReasonSectionWithStatefulParser = map decodeReasonSection . evalSectionWithStatefulParser
+evalReasonSectionWithStatefullyParsed = map decodeReasonSection . evalSectionWithStatefullyParsed
 
 {- | The formatting of the input is documented at "Oscar.Documentation".
 
@@ -371,12 +371,12 @@ problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained fro
 problemFromText t = Problem
     number
     description
-    (realSectionDecoder afterDescription)
-    (realSectionDecoder afterDescription)
-    (realSectionDecoder afterDescription)
-    (realSectionDecoder afterDescription)
-    (realSectionDecoder afterDescription)
-    (realSectionDecoder afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
   where
-    (number     , afterNumber     ) = runStatefulParser t
-    (description, afterDescription) = runStatefulParser afterNumber
+    (number     , afterNumber     ) = runStatefullyParsed t
+    (description, afterDescription) = runStatefullyParsed afterNumber

@@ -16,7 +16,7 @@ import Data.List.Split                              (splitOn)
 
 import Oscar.Problem                                (Problem)
 import Oscar.ProblemParser.Internal                 (problemFromText)
-import Oscar.ProblemParser.Internal                 (evalStatefulParser)
+import Oscar.ProblemParser.Internal                 (evalStatefullyParsed)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithLineComments)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 
@@ -25,7 +25,7 @@ import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 -}
 readFileProblems ∷ FilePath ⁞ ƮWithLineComments → IO [Problem]
 readFileProblems =
-        return . map problemFromText . evalStatefulParser
+        return . map problemFromText . evalStatefullyParsed
     <=<
         readProblemsTextFile
 
