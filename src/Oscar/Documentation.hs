@@ -79,7 +79,7 @@ inference that it is not raining.
 
 {- $ExampleOfProblem
 
-Here is an example of a valid 'Problem', represented as a Text ⁞ ƮProblemsWithLineComments.
+Here is an example of a valid 'Problem', represented as a Text ⁞ ƮWithLineComments.
 
 @
 ; This is a line comment, starting with a semicolon. All such comments are

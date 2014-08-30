@@ -4,14 +4,14 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.ProblemParser.Internal.Tags (
-    ƮProblemsWithLineComments,
-    ƮProblemsWithoutLineComments,
-    ƮProblemAfterNumberLabel,
-    ƮProblemAfterNumber,
-    ƮProblemAfterDescription,
+    ƮWithLineComments,
+    ƮWithoutLineComments,
+    ƮAfterNumberLabel,
+    ƮAfterNumber,
+    ƮAfterDescription,
     ƮGivenPremise,
     ƮUltimateEpistemicInterest,
-    ƮProblemVariables,
+    ƮVariables,
     ƮReason,
     Direction(..),
     Defeasibility(..),
@@ -21,22 +21,22 @@ module Oscar.ProblemParser.Internal.Tags (
 import Oscar.Main.Prelude
 
 -- | Prior to stripping those ;...\'s
-data ƮProblemsWithLineComments
+data ƮWithLineComments
 
 -- | After stripping those ;...\'s
-data ƮProblemsWithoutLineComments
+data ƮWithoutLineComments
 
 -- | Stuff after the \"Problem #\"
-data ƮProblemAfterNumberLabel
+data ƮAfterNumberLabel
 
 -- | Stuff after the \"Problem #\<number>\"
-data ƮProblemAfterNumber
+data ƮAfterNumber
 
 -- | Stuff after the \"Problem #\<number>\\n\<description>\" (and starting at the first section)
-data ƮProblemAfterDescription
+data ƮAfterDescription
 
 -- | Variables for a reason
-data ƮProblemVariables
+data ƮVariables
 
 -- | The premise section
 data ƮGivenPremise

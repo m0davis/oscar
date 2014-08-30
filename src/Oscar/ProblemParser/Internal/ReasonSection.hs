@@ -35,7 +35,7 @@ import Oscar.Main.Parser
 import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility)
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemVariables)
+import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
 import Oscar.ProblemParser.Internal.Tags    (ƮSection)
 import Oscar.ProblemParser.Internal.Section    (runSectionParser)
@@ -53,7 +53,7 @@ import Oscar.FormulaParser                  (formulaFromText)
 type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
     ( ProblemReasonName
     , Text ⁞ ƮReason direction defeasibility
-    , Text ⁞ ƮProblemVariables
+    , Text ⁞ ƮVariables
     , ProblemStrengthDegree
     )
 
@@ -63,7 +63,7 @@ _rsProblemReasonName (n, _, _, _) = n
 _rsProblemReasonText ∷ ReasonSection direction defeasibility → Text ⁞ ƮReason direction defeasibility
 _rsProblemReasonText (_, t, _, _) = t
 
-_rsProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮProblemVariables
+_rsProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮVariables
 _rsProblemVariables (_, _, v, _) = v
 
 _rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
@@ -77,7 +77,7 @@ decodeReasonSection = runSectionParser $ do
     (t, (v, d)) ← many anyChar `precededBy` p'
     return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
   where
-    p' ∷ Parser (Text ⁞ ƮProblemVariables, ProblemStrengthDegree)
+    p' ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
     p' = do
         t ← parserProblemVariablesText
         d ← parserProblemStrengthDegree
@@ -87,7 +87,7 @@ decodeReasonSection = runSectionParser $ do
      whitespace. Resultant parse is that between the curly braces (e.g.
      \"A,B,...\").
 -}
-parserProblemVariablesText ∷ Parser (Text ⁞ ƮProblemVariables)
+parserProblemVariablesText ∷ Parser (Text ⁞ ƮVariables)
 parserProblemVariablesText = ƭ . pack <$> (option "" . try $ many space *> string "variables" *> many space *> char '=' *> many space *> char '{' *> manyTill anyChar (lookAhead . try $ char '}') <* char '}')
 
 parserProblemReasonName ∷ Parser ProblemReasonName

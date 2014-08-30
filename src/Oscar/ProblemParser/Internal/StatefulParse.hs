@@ -14,9 +14,9 @@ import Oscar.Main.Parser
 
 import Oscar.Problem                        (ProblemNumber(ProblemNumber))
 import Oscar.Problem                        (ProblemDescription(ProblemDescription))
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterNumber)
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemAfterDescription)
+import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumberLabel)
+import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumber)
+import Oscar.ProblemParser.Internal.Tags    (ƮAfterDescription)
 import Oscar.ProblemParser.Internal.Section (sectionParser)
 
 class StatefulParser a inState outState where
@@ -33,7 +33,7 @@ runStatefulParser = simpleParse p' . unƭ
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
-{- | ƮProblemAfterNumberLabel = after the "Problem #"
+{- | ƮAfterNumberLabel = after the "Problem #"
 
 Sample Input
 
@@ -47,11 +47,11 @@ Sample Output
 (1, \" \\n Description\\n...etc...\\n")
 @
 -}
-instance StatefulParser ProblemNumber ƮProblemAfterNumberLabel ƮProblemAfterNumber where
+instance StatefulParser ProblemNumber ƮAfterNumberLabel ƮAfterNumber where
     statefulParser = ƭ $ ProblemNumber . read <$>
         manyTill anyChar (lookAhead . try $ space)
 
-{- | ƮProblemAfterNumber = immediately after the integer after "Problem #".
+{- | ƮAfterNumber = immediately after the integer after "Problem #".
 
 Sample Input
 
@@ -69,7 +69,7 @@ Sample Output
 ("Description", "Given premises:\\n...etc...\\n")
 @
 -}
-instance StatefulParser ProblemDescription ƮProblemAfterNumber ƮProblemAfterDescription where
+instance StatefulParser ProblemDescription ƮAfterNumber ƮAfterDescription where
     statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
         (try emptyDescription <|> filledDescription)
       where

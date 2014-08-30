@@ -17,28 +17,28 @@ import Data.List.Split                      (splitOn)
 import Oscar.Problem                        (Problem)
 import Oscar.ProblemParser.Internal         (partitionProblemsText)
 import Oscar.ProblemParser.Internal         (problemFromText)
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithLineComments)
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithoutLineComments)
+import Oscar.ProblemParser.Internal.Tags    (ƮWithLineComments)
+import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
 
 {- | This is the highest-level problem decoder available in this module.
      Uses 'readProblemsTextFile'.
 -}
-readFileProblems ∷ FilePath ⁞ ƮProblemsWithLineComments → IO [Problem]
+readFileProblems ∷ FilePath ⁞ ƮWithLineComments → IO [Problem]
 readFileProblems =
         return . map problemFromText . partitionProblemsText
     <=<
         readProblemsTextFile
 
 -- | Wrapper around 'readFile' and 'stripLineComments'.
-readProblemsTextFile ∷ (FilePath ⁞ ƮProblemsWithLineComments)    -- ^ The input file is presumed to represent one or more problems...
-                     → IO (Text ⁞ ƮProblemsWithoutLineComments)  -- ^ as 'Text'. 'IO' obtained via 'readFile'.
+readProblemsTextFile ∷ (FilePath ⁞ ƮWithLineComments)    -- ^ The input file is presumed to represent one or more problems...
+                     → IO (Text ⁞ ƮWithoutLineComments)  -- ^ as 'Text'. 'IO' obtained via 'readFile'.
 readProblemsTextFile = (map $ reƭ . stripLineComments . ƭ) . readFile . unƭ
 
 {- | Strips line comments. That is, any characters on or after \";" on each
      given line.
 -}
-stripLineComments ∷ Text ⁞ ƮProblemsWithLineComments
-                  → Text ⁞ ƮProblemsWithoutLineComments
+stripLineComments ∷ Text ⁞ ƮWithLineComments
+                  → Text ⁞ ƮWithoutLineComments
 stripLineComments = reƭ . map (unlines . map stripLineComment . lines)
   where
     stripLineComment ∷ Text → Text

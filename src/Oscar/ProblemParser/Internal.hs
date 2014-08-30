@@ -53,10 +53,10 @@ import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFaci
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterDescription)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterNumber)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemsWithoutLineComments)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterDescription)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
+import Oscar.ProblemParser.Internal.Tags                (ƮWithoutLineComments)
 import Oscar.ProblemParser.Internal.Tags                (ƮReason)
 import Oscar.ProblemParser.Internal.Tags                (ƮSection)
 import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInterest)
@@ -64,7 +64,7 @@ import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDe
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 
 {- | Separate the text of concatenated problems. Each resulant problem starts
-     after the number label, \"Problem #". 'ƮProblemAfterNumberLabel'
+     after the number label, \"Problem #". 'ƮAfterNumberLabel'
 
 Sample input
 
@@ -96,11 +96,11 @@ Description of the second problem
 ...etc...
 @
 -}
-partitionProblemsText ∷ (Text ⁞ ƮProblemsWithoutLineComments) -- ^ The text of the problem(s), possibly obtained from 'Oscar.ProblemParser.readProblemsTextFile'
-                      → [Text ⁞ ƮProblemAfterNumberLabel]     -- ^ Each resultant text text block starts after the "Problem #" label.
+partitionProblemsText ∷ (Text ⁞ ƮWithoutLineComments) -- ^ The text of the problem(s), possibly obtained from 'Oscar.ProblemParser.readProblemsTextFile'
+                      → [Text ⁞ ƮAfterNumberLabel]     -- ^ Each resultant text text block starts after the "Problem #" label.
 partitionProblemsText = simpleParse (many p) . unƭ
   where
-    p ∷ Parser (Text ⁞ ƮProblemAfterNumberLabel)
+    p ∷ Parser (Text ⁞ ƮAfterNumberLabel)
     p = do
         spaces
         _ ← string "Problem #"
@@ -113,8 +113,8 @@ partitionProblemsText = simpleParse (many p) . unƭ
 
 See "Oscar.ProblemParser.Internal.StatefulParse" for the polymorphic 
 runStatefulParser, which can be used to obtain a 'ProblemNumber', 
-'ProblemDescription', Text ⁞ ƮProblemAfterDescription, and Text ⁞ 
-ƮProblemAfterNumber.
+'ProblemDescription', Text ⁞ ƮAfterDescription, and Text ⁞ 
+ƮAfterNumber.
 -}
 
 {- | Gets the text of a particular section from all of the text following the
@@ -156,7 +156,7 @@ Sample Output (with kind = ƮReason Forwards PrimaFacie):
 -}
 problemSectionText ∷
     ∀ kind. (HasSection kind) ⇒
-    Text ⁞ ƮProblemAfterDescription →
+    Text ⁞ ƮAfterDescription →
     Text ⁞ ƮSection kind
 problemSectionText = ƭ . simpleParse p . unƭ
   where
@@ -262,7 +262,7 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
 
 The input must begin with the problem number (after the label, "Problem #")
 -}
-problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'
                 → Problem
 problemFromText t = Problem
     number
@@ -274,9 +274,9 @@ problemFromText t = Problem
     (decodeBackwardsPrimaFacieReasonSection pSTaD)
     (decodeBackwardsConclusiveReasonSection pSTaD)
   where
-    (number, (afterNumber ∷ Text ⁞ ƮProblemAfterNumber)) = 
+    (number, (afterNumber ∷ Text ⁞ ƮAfterNumber)) = 
         runStatefulParser t
-    (description, (afterDescription ∷ Text ⁞ ƮProblemAfterDescription)) = 
+    (description, (afterDescription ∷ Text ⁞ ƮAfterDescription)) = 
         runStatefulParser afterNumber
 
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
