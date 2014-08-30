@@ -5,7 +5,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
@@ -75,10 +74,8 @@ See 'runStatefulParser', which can be used to obtain
 Text ⁞ ƮAfterDescription, and Text ⁞ ƮAfterNumber.
 -}
 
-class StatefullyParsed a where
-    type InParseState a
-    type OutParseState a
-    statefulParser ∷ Parser a ⁞ (InParseState a, OutParseState a)
+class StatefullyParsed a inState outState | a → inState outState where
+    statefulParser ∷ Parser a ⁞ (inState, outState)
 
 {- | ƮAfterNumberLabel = after the "Problem #"
 
@@ -94,9 +91,10 @@ Sample Output
 (1, \" \\n Description\\n...etc...\\n")
 @
 -}
-instance StatefullyParsed ProblemNumber where
-    type InParseState  ProblemNumber = ƮAfterNumberLabel 
-    type OutParseState ProblemNumber = ƮAfterNumber 
+instance StatefullyParsed ProblemNumber 
+                          ƮAfterNumberLabel 
+                          ƮAfterNumber 
+  where
     statefulParser = ƭ $ ProblemNumber . read <$>
         manyTill anyChar (lookAhead . try $ space)
 
@@ -118,9 +116,10 @@ Sample Output
 ("Description", "Given premises:\\n...etc...\\n")
 @
 -}
-instance StatefullyParsed ProblemDescription where
-    type InParseState  ProblemDescription = ƮAfterNumber 
-    type OutParseState ProblemDescription = ƮAfterDescription 
+instance StatefullyParsed ProblemDescription 
+                          ƮAfterNumber 
+                          ƮAfterDescription 
+  where                        
     statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
         (try emptyDescription <|> filledDescription)
       where
@@ -162,9 +161,10 @@ Description of the second problem
 ...etc...
 @
 -}
-instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel] where
-    type InParseState  [Text ⁞ ƮAfterNumberLabel] = ƮWithoutLineComments
-    type OutParseState [Text ⁞ ƮAfterNumberLabel] = ()
+instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel]
+                          ƮWithoutLineComments
+                          ()
+  where
     statefulParser = ƭ . many $ do
         spaces
         _ ← string "Problem #"
@@ -210,9 +210,10 @@ Sample Output (with kind = ƮReason Forwards PrimaFacie):
      pf-reason_5:   {A} ||=> B   strength = 1.0
 @
 -}
-instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind) where
-    type InParseState  (Text ⁞ ƮSection kind) = ƮAfterDescription
-    type OutParseState (Text ⁞ ƮSection kind) = ()
+instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind) 
+                                                      ƮAfterDescription
+                                                      ()
+  where
     statefulParser = ƭ $ do
         _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
         p' <|> pure (ƭ $ pack "")
@@ -242,26 +243,29 @@ Sample Output
     ]
 @
 -}
-instance StatefullyParsed ProblemPremise where
-    type InParseState  ProblemPremise = ƮSection ƮGivenPremise
-    type OutParseState ProblemPremise = ()
+instance StatefullyParsed ProblemPremise 
+                          (ƮSection ƮGivenPremise)
+                          ()
+  where
     statefulParser = ƭ $ do
         spaces
         (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
         return (formulaFromText . pack $ t, d)
 
 -- | similar to 'TODO decodeGivenPremisesSection'
-instance StatefullyParsed ProblemInterest where
-    type InParseState  ProblemInterest = ƮSection ƮUltimateEpistemicInterest
-    type OutParseState ProblemInterest = ()
+instance StatefullyParsed ProblemInterest
+                          (ƮSection ƮUltimateEpistemicInterest)
+                          ()
+  where
     statefulParser = ƭ $ do
         spaces
         (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
         return (formulaFromText . pack $ t, d)
 
-instance StatefullyParsed (ReasonSection direction defeasibility) where
-    type InParseState  (ReasonSection direction defeasibility) = ƮSection (ƮReason direction defeasibility)
-    type OutParseState (ReasonSection direction defeasibility) = ()
+instance StatefullyParsed (ReasonSection direction defeasibility)
+                          (ƮSection (ƮReason direction defeasibility))
+                          ()
+  where
     statefulParser = ƭ $ do
         n ← parserProblemReasonName
         spaces
@@ -347,41 +351,36 @@ instance SectionElement ProblemBackwardsConclusiveReason where
         s = evalStatefulParser t
 
 -- | Uses 'simpleParse'.
-runStatefulParser ∷ ∀ a.
-    (StatefullyParsed a) ⇒ 
-    Text ⁞ InParseState a → (a, Text ⁞ OutParseState a)
+runStatefulParser ∷ ∀ a inState outState.
+    (StatefullyParsed a inState outState) ⇒ 
+    Text ⁞ inState → (a, Text ⁞ outState)
 runStatefulParser = simpleParse p' . unƭ
   where
-    p' ∷ Parser (a, Text ⁞ OutParseState a)
+    p' ∷ Parser (a, Text ⁞ outState)
     p' = do
-        v ← unƭ (statefulParser ∷ Parser a ⁞ (InParseState a, OutParseState a))
+        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
 -- | Uses 'simpleParse'.
-evalStatefulParser ∷ ∀ a.
-    (StatefullyParsed a
-    ,OutParseState a ~ ()
-    ) ⇒ 
-    Text ⁞ InParseState a → a
+evalStatefulParser ∷ ∀ a inState.
+    (StatefullyParsed a inState ()) ⇒ 
+    Text ⁞ inState → a
 evalStatefulParser = fst . runStatefulParser
 
 -- | Uses 'simpleParse'.
-evalStatefulParserOnSection ∷ ∀ a inSection.
-    (StatefullyParsed a
-    ,InParseState a ~ ƮSection inSection
-    ) ⇒ 
-    Text ⁞ ƮSection inSection → [a]
+evalStatefulParserOnSection ∷ 
+    ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
+    ⇒ Text ⁞ ƮSection inSection 
+    → [a]
 evalStatefulParserOnSection = simpleParse (many (try p') <* many space <* eof) . unƭ
   where
     p' ∷ Parser a
-    p' = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, OutParseState a))
+    p' = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
 -- | Uses 'simpleParse'.
 evalReasonSection ∷ 
-    (StatefullyParsed (ReasonSection direction defeasibility)
-    ,InParseState (ReasonSection direction defeasibility) ~ ƮSection inSection
-    ,OutParseState (ReasonSection direction defeasibility) ~ ()
+    (StatefullyParsed (ReasonSection direction defeasibility) (ƮSection inSection) ()
     ,FromReasonSection decode direction defeasibility
     ) ⇒ 
     Text ⁞ ƮSection inSection → [decode]
