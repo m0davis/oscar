@@ -25,6 +25,10 @@ module Oscar.ProblemParser.Internal (
     -- decodeBackwardsConclusiveReasonSection,
     -- * Problem construction
     problemFromText,
+    -- * Helpers
+    ReasonSectionDecoder(..),
+    DecodeableSectionResult(..),
+    evalReasonSectionWithStatefulParser,    
     ) where
 
 import Oscar.Main.Prelude
@@ -42,7 +46,7 @@ import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonText)
 import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemStrengthDegree)
 import Oscar.ProblemParser.Internal.ReasonSection       (getBackwardsReason)
 import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
-import Oscar.ProblemParser.Internal.Section             (HasSection)
+--import Oscar.ProblemParser.Internal.Section             (HasSection)
 import Oscar.ProblemParser.Internal.StatefulParse       (StatefulParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (evalStatefulParser)
@@ -53,11 +57,14 @@ import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterDescription)
-import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
+--import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
 import Oscar.ProblemParser.Internal.Tags                (ƮReason)
 import Oscar.ProblemParser.Internal.Tags                (ƮSection)
 import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInterest)
+
+import Oscar.Problem                                    (ProblemPremise)
+import Oscar.Problem                                    (ProblemInterest)
 
 {- $StatefulParse
 
@@ -100,6 +107,45 @@ instance ReasonSectionDecoder Backwards Conclusive ProblemBackwardsConclusiveRea
             (_rsProblemReasonName rb)
             (getBackwardsReason $ _rsProblemReasonText rb)
 
+class DecodeableSectionResult decode where
+    realSectionDecoder :: Text ⁞ ƮAfterDescription -> [decode]
+
+instance DecodeableSectionResult ProblemPremise where
+    realSectionDecoder t = evalSectionWithStatefulParser s
+      where
+        s :: Text ⁞ ƮSection ƮGivenPremise
+        s = evalStatefulParser t
+
+instance DecodeableSectionResult ProblemInterest where
+    realSectionDecoder t = evalSectionWithStatefulParser st
+      where
+        st :: Text ⁞ ƮSection ƮUltimateEpistemicInterest
+        st = evalStatefulParser t
+
+instance DecodeableSectionResult ProblemForwardsPrimaFacieReason where
+    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+      where
+        st :: Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
+        st = evalStatefulParser t
+
+instance DecodeableSectionResult ProblemForwardsConclusiveReason where
+    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+      where
+        st :: Text ⁞ ƮSection (ƮReason Forwards Conclusive)
+        st = evalStatefulParser t
+
+instance DecodeableSectionResult ProblemBackwardsPrimaFacieReason where
+    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+      where
+        st :: Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
+        st = evalStatefulParser t
+
+instance DecodeableSectionResult ProblemBackwardsConclusiveReason where
+    realSectionDecoder t = evalReasonSectionWithStatefulParser st
+      where
+        st :: Text ⁞ ƮSection (ƮReason Backwards Conclusive)
+        st = evalStatefulParser t
+
 -- | Uses 'simpleParse'.
 evalReasonSectionWithStatefulParser ∷ ∀ direction defeasibility decode inSection.
     (StatefulParser (ReasonSection direction defeasibility) (ƮSection inSection) (), ReasonSectionDecoder direction defeasibility decode) ⇒ 
@@ -115,17 +161,21 @@ problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained fro
 problemFromText t = Problem
     number
     description
-    (evalSectionWithStatefulParser (pSTaD :: Text ⁞ ƮSection ƮGivenPremise))
-    (evalSectionWithStatefulParser (pSTaD :: Text ⁞ ƮSection ƮUltimateEpistemicInterest))
-    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Forwards PrimaFacie))))
-    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Forwards Conclusive))))
-    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Backwards PrimaFacie))))
-    (evalReasonSectionWithStatefulParser ((pSTaD :: Text ⁞ ƮSection (ƮReason Backwards Conclusive))))
+    (realSectionDecoder afterDescription)
+    (realSectionDecoder afterDescription)
+    (realSectionDecoder afterDescription)
+    (realSectionDecoder afterDescription)
+    (realSectionDecoder afterDescription)
+    (realSectionDecoder afterDescription)
   where
-    (number, (afterNumber ∷ Text ⁞ ƮAfterNumber)) = 
+    --(number, (afterNumber ∷ Text ⁞ ƮAfterNumber)) = 
+    --    runStatefulParser t
+    (number, afterNumber) = 
         runStatefulParser t
-    (description, (afterDescription ∷ Text ⁞ ƮAfterDescription)) = 
+    --(description, (afterDescription ∷ Text ⁞ ƮAfterDescription)) = 
+    --    runStatefulParser afterNumber
+    (description, afterDescription) = 
         runStatefulParser afterNumber
 
-    pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
-    pSTaD = evalStatefulParser afterDescription
+    --pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
+    --pSTaD = evalStatefulParser afterDescription

@@ -6,6 +6,8 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
+{-# LANGUAGE FunctionalDependencies #-}
+
 module Oscar.ProblemParser.Internal.StatefulParse (
     StatefulParser(..),
     runStatefulParser,
@@ -42,7 +44,7 @@ import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesT
 import Oscar.ProblemParser.Internal.Tags                (ƮReason)
 import Oscar.ProblemParser.Internal.Tags                (ƮVariables)
 
-class StatefulParser a inState outState where
+class StatefulParser a inState outState | a inState -> outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
 
 -- | Uses 'simpleParse'.
