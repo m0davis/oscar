@@ -9,7 +9,7 @@
 module Oscar.ProblemParser.Internal.StatefulParse (
     StatefulParser(..),
     runStatefulParser,
-    runStatefulParser',
+    evalStatefulParser,
     ) where
 
 import Oscar.Main.Prelude
@@ -41,9 +41,9 @@ runStatefulParser = simpleParse p' . unƭ
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
-runStatefulParser' ∷ ∀ a inState.
+evalStatefulParser ∷ ∀ a inState.
     (StatefulParser a inState ()) ⇒ Text ⁞ inState → a
-runStatefulParser' = simpleParse p' . unƭ
+evalStatefulParser = simpleParse p' . unƭ
   where
     p' ∷ Parser a
     p' = unƭ (statefulParser ∷ Parser a ⁞ (inState, ()))

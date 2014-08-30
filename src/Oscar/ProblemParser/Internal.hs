@@ -45,7 +45,7 @@ import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
 import Oscar.ProblemParser.Internal.Section             (runSectionParser)
 import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser)
-import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser')
+import Oscar.ProblemParser.Internal.StatefulParse       (evalStatefulParser)
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
@@ -175,4 +175,4 @@ problemFromText t = Problem
         runStatefulParser afterNumber
 
     pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
-    pSTaD = runStatefulParser' afterDescription
+    pSTaD = evalStatefulParser afterDescription
