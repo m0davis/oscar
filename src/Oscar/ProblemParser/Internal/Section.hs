@@ -12,7 +12,6 @@ module Oscar.ProblemParser.Internal.Section (
     Section(..),
     HasSection(..),
     sectionParser,
-    runSectionParser,
     ) where
 
 import Oscar.Main.Prelude
@@ -21,7 +20,6 @@ import Oscar.Main.Parser
 import Oscar.ProblemParser.Internal.Tags    (ƮGivenPremise)
 import Oscar.ProblemParser.Internal.Tags    (ƮUltimateEpistemicInterest)
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
-import Oscar.ProblemParser.Internal.Tags    (ƮSection)
 import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility(PrimaFacie))
@@ -59,6 +57,3 @@ sectionParser =
   where
     (↦) ∷ String → a → Parser a
     s ↦ t = try (string s) *> pure t
-
-runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
-runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ
