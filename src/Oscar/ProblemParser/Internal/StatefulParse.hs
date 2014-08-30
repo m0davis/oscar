@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -7,6 +9,7 @@
 module Oscar.ProblemParser.Internal.StatefulParse (
     StatefulParser(..),
     runStatefulParser,
+    runStatefulParser',
     ) where
 
 import Oscar.Main.Prelude
@@ -17,6 +20,8 @@ import Oscar.Problem                        (ProblemDescription(ProblemDescripti
 import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumberLabel)
 import Oscar.ProblemParser.Internal.Tags    (ƮAfterNumber)
 import Oscar.ProblemParser.Internal.Tags    (ƮAfterDescription)
+import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
+import Oscar.ProblemParser.Internal.Tags    (ƮEof)
 import Oscar.ProblemParser.Internal.Section (sectionParser)
 
 class StatefulParser a inState outState where
@@ -32,6 +37,16 @@ runStatefulParser = simpleParse p' . unƭ
         v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
         r ← pack <$> many anyChar
         return (v, ƭ r)
+
+runStatefulParser' ∷ ∀ a inState.
+    (StatefulParser a inState ƮEof) ⇒ Text ⁞ inState → a
+runStatefulParser' = simpleParse p' . unƭ
+  where
+    p' ∷ Parser a
+    p' = do
+        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, ƮEof))
+        eof
+        return v
 
 {- | ƮAfterNumberLabel = after the "Problem #"
 
@@ -77,3 +92,45 @@ instance StatefulParser ProblemDescription ƮAfterNumber ƮAfterDescription wher
             manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
         filledDescription = do
             manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline
+
+{- | Separate the text of concatenated problems. Each resulant problem starts
+     after the number label, \"Problem #". 'ƮAfterNumberLabel'
+
+Sample input
+
+@
+Problem #1
+Description of the first problem
+Given premises:
+     P    justification = 1.0
+...etc...
+
+Problem #2
+Description of the second problem
+...etc...
+@
+
+Sample outputs
+
+@
+1
+Description of the first problem
+Given premises:
+     P    justification = 1.0
+...etc...
+@
+
+@
+2
+Description of the second problem
+...etc...
+@
+-}
+instance StatefulParser [Text ⁞ ƮAfterNumberLabel] ƮWithoutLineComments ƮEof where
+    statefulParser = ƭ . many $ do
+        spaces
+        _ ← string "Problem #"
+        ƭ . pack <$> manyTill anyChar endP
+      where
+        endP ∷ Parser ()
+        endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))

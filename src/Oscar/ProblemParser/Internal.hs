@@ -6,7 +6,7 @@
 
 module Oscar.ProblemParser.Internal (
     -- * text of problems
-    partitionProblemsText,
+    -- TODO partitionProblemsText,
     -- * parsing problem parts
     -- $StatefulParse
     problemSectionText,
@@ -56,64 +56,17 @@ import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterDescription)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags                (ƮWithoutLineComments)
 import Oscar.ProblemParser.Internal.Tags                (ƮReason)
 import Oscar.ProblemParser.Internal.Tags                (ƮSection)
 import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInterest)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 
-{- | Separate the text of concatenated problems. Each resulant problem starts
-     after the number label, \"Problem #". 'ƮAfterNumberLabel'
-
-Sample input
-
-@
-Problem #1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-
-Problem #2
-Description of the second problem
-...etc...
-@
-
-Sample outputs
-
-@
-1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-@
-
-@
-2
-Description of the second problem
-...etc...
-@
--}
-partitionProblemsText ∷ (Text ⁞ ƮWithoutLineComments) -- ^ The text of the problem(s), possibly obtained from 'Oscar.ProblemParser.readProblemsTextFile'
-                      → [Text ⁞ ƮAfterNumberLabel]     -- ^ Each resultant text text block starts after the "Problem #" label.
-partitionProblemsText = simpleParse (many p) . unƭ
-  where
-    p ∷ Parser (Text ⁞ ƮAfterNumberLabel)
-    p = do
-        spaces
-        _ ← string "Problem #"
-        ƭ . pack <$> manyTill anyChar endP
-
-    endP ∷ Parser ()
-    endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
-
 {- $StatefulParse
 
 See "Oscar.ProblemParser.Internal.StatefulParse" for the polymorphic 
-runStatefulParser, which can be used to obtain a 'ProblemNumber', 
-'ProblemDescription', Text ⁞ ƮAfterDescription, and Text ⁞ 
+runStatefulParser, which can be used to obtain [Text ⁞ ƮAfterNumberLabel], 
+'ProblemNumber', 'ProblemDescription', Text ⁞ ƮAfterDescription, and Text ⁞ 
 ƮAfterNumber.
 -}
 
@@ -262,7 +215,7 @@ decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
 
 The input must begin with the problem number (after the label, "Problem #")
 -}
-problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained from 'TODO partitionProblemsText'
                 → Problem
 problemFromText t = Problem
     number

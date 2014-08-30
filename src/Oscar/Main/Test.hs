@@ -13,7 +13,7 @@
 
 module Oscar.Main.Test where
 
-import Oscar.Main.Prelude
+--import Oscar.Main.Prelude
 
 --data A = A Int
 --data B = B Int

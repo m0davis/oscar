@@ -12,20 +12,20 @@ module Oscar.ProblemParser (
 
 import Oscar.Main.Prelude
 
-import Data.List.Split                      (splitOn)
+import Data.List.Split                              (splitOn)
 
-import Oscar.Problem                        (Problem)
-import Oscar.ProblemParser.Internal         (partitionProblemsText)
-import Oscar.ProblemParser.Internal         (problemFromText)
-import Oscar.ProblemParser.Internal.Tags    (ƮWithLineComments)
-import Oscar.ProblemParser.Internal.Tags    (ƮWithoutLineComments)
+import Oscar.Problem                                (Problem)
+import Oscar.ProblemParser.Internal                 (problemFromText)
+import Oscar.ProblemParser.Internal.StatefulParse   (runStatefulParser')
+import Oscar.ProblemParser.Internal.Tags            (ƮWithLineComments)
+import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 
 {- | This is the highest-level problem decoder available in this module.
      Uses 'readProblemsTextFile'.
 -}
 readFileProblems ∷ FilePath ⁞ ƮWithLineComments → IO [Problem]
 readFileProblems =
-        return . map problemFromText . partitionProblemsText
+        return . map problemFromText . runStatefulParser'
     <=<
         readProblemsTextFile
 
