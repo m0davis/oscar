@@ -2,10 +2,11 @@
 {-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE TypeOperators #-}
 
-{- See 'Oscar.Documentation' for an example of how to write a 'Problem' -}
-
 module Oscar.ProblemParser (
+    -- * Quick start
+    -- $QuickStart    
     readFileProblems,
+    -- Helpers
     readProblemsTextFile,
     stripLineComments,
     ) where
@@ -20,8 +21,12 @@ import Oscar.ProblemParser.Internal                 (evalStatefulParser)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithLineComments)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 
-{- | This is the highest-level problem decoder available in this module.
-     Uses 'readProblemsTextFile'.
+{- $QuickStart
+
+See 'Oscar.Documentation' for an example of how to write a 'Problem'. 
+-}
+
+{- | Read problems formatted as decribed in 'Oscar.Documentation.ReadFileProblems'. from the filesystem. Uses 'readProblemsTextFile'.
 -}
 readFileProblems ∷ FilePath ⁞ ƮWithLineComments → IO [Problem]
 readFileProblems =

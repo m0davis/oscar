@@ -20,13 +20,18 @@ module Oscar.ProblemParser.Internal.Tags (
 
 import Oscar.Main.Prelude
 
--- | Prior to stripping those ;...\'s
+{- | a Text ⁞ ƮWithLineComments is a representation of a set of Oscar 
+     'Problem's. The formatting of such a Problem is described in 
+     "Oscar.Documentation".
+-}
 data ƮWithLineComments
 
--- | After stripping those ;...\'s
+{- | The same as above, but with all line comments removed. See 
+     'Oscar.ProblemParser.stripLineComments'.
+-}
 data ƮWithoutLineComments
 
--- | Stuff after the \"Problem #\"
+-- | Stuff after the \"Problem #\".
 data ƮAfterNumberLabel
 
 -- | Stuff after the \"Problem #\<number>\"
