@@ -335,10 +335,10 @@ runStatefulParser (\"1 \\n Description\\n...etc...\\n" :: Text ⁞ ƮAfterNumber
 runStatefulParser ∷ ∀ a inState outState.
     (StatefullyParsed a inState outState) ⇒ 
     Text ⁞ inState → (a, Text ⁞ outState)
-runStatefulParser = simpleParse p' . unƭ
+runStatefulParser = simpleParse p . unƭ
   where
-    p' ∷ Parser (a, Text ⁞ outState)
-    p' = do
+    p ∷ Parser (a, Text ⁞ outState)
+    p = do
         v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
         r ← pack <$> many anyChar
         return (v, ƭ r)
@@ -353,10 +353,10 @@ evalSqqtatefulParserOnSection ∷
     ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
     ⇒ Text ⁞ ƮSection inSection 
     → [a]
-evalStatefulParserOnSection = simpleParse (many (try p') <* many space <* eof) . unƭ
+evalStatefulParserOnSection = simpleParse (many (try p) <* many space <* eof) . unƭ
   where
-    p' ∷ Parser a
-    p' = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
+    p ∷ Parser a
+    p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
 -- | Uses 'simpleParse'.
 evalReasonSection ∷ 
