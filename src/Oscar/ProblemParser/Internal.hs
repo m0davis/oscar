@@ -12,7 +12,7 @@
 module Oscar.ProblemParser.Internal (
     -- * Problem construction
     problemFromText,
-    -- * Helpers
+    -- * Parsing with type-level safety
     -- $StatefulParse
     StatefullyParsed(..),
     FromReasonSection(..),
@@ -67,99 +67,39 @@ import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDe
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDegree)
 
-{- $StatefulParse
+{- | The formatting of the input is documented at "Oscar.Documentation".
 
-See 'runStatefulParser', which can be used to obtain 
-[Text ⁞ ƮAfterNumberLabel], 'ProblemNumber', 'ProblemDescription', 
-Text ⁞ ƮAfterDescription, and Text ⁞ ƮAfterNumber.
+The input must begin at the problem number (after the label, \"Problem #\").
 -}
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained from 'evalStatefulParser'
+                → Problem
+problemFromText t = Problem
+    number
+    description
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+  where
+    (number     , afterNumber     ) = runStatefulParser t
+    (description, afterDescription) = runStatefulParser afterNumber
 
+{- | Using a 'Parser' can be tricky because nothing in the type signature
+     tells what sort of input it is meant to be applied to (excepting that it
+     is 'Text'), nor does it tell us what sort of state the input is in
+     after applying the parser. 'StatefullyParsed' allows us to define a
+     parsed type with respect to these states, giving us a measure of safety
+     at the type level.
+
+     By convention, () is used as the outState when .
+-}
 class StatefullyParsed a inState outState | a → inState outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
 
-{- | ƮAfterNumberLabel = after the "Problem #"
-
-Sample Input
-
-@
-\"1 \\n Description\\n...etc...\\n"
-@
-
-Sample Output
-
-@
-(1, \" \\n Description\\n...etc...\\n")
-@
--}
-instance StatefullyParsed ProblemNumber 
-                          ƮAfterNumberLabel 
-                          ƮAfterNumber 
-  where
-    statefulParser = ƭ $ ProblemNumber . read <$>
-        manyTill anyChar (lookAhead . try $ space)
-
-{- | ƮAfterNumber = immediately after the integer after "Problem #".
-
-Sample Input
-
-@
-
-Description
-
-Given premises:
-...etc...
-@
-
-Sample Output
-
-@
-("Description", "Given premises:\\n...etc...\\n")
-@
--}
-instance StatefullyParsed ProblemDescription 
-                          ƮAfterNumber 
-                          ƮAfterDescription 
-  where                        
-    statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
-        (try emptyDescription <|> filledDescription)
-      where
-        emptyDescription = do
-            manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
-        filledDescription = do
-            manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline
-
 {- | Separate the text of concatenated problems. Each resulant problem starts
-     after the number label, \"Problem #". 'ƮAfterNumberLabel'
-
-Sample input
-
-@
-Problem #1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-
-Problem #2
-Description of the second problem
-...etc...
-@
-
-Sample outputs
-
-@
-1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-@
-
-@
-2
-Description of the second problem
-...etc...
-@
+     after the number label, \"Problem #\".
 -}
 instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel]
                           ƮWithoutLineComments
@@ -173,41 +113,67 @@ instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel]
         endP ∷ Parser ()
         endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
-{- | Gets the text of a particular section from all of the text following the
-     description.
+{- | Given text starting immediately after the number label, parse a 
+     'ProblemNumber'. The parser\'s input then starts immediately after the 
+     number.
+-}
+instance StatefullyParsed ProblemNumber 
+                          ƮAfterNumberLabel 
+                          ƮAfterNumber 
+  where
+    statefulParser = ƭ $ ProblemNumber . read <$>
+        manyTill anyChar (lookAhead . try $ space)
 
-Sample Input
+{- | Given text starting immediately after the problem number, parse a
+     'ProblemDescription'. The parser\'s input then starts immediately after
+     the description.
+-}
+instance StatefullyParsed ProblemDescription 
+                          ƮAfterNumber 
+                          ƮAfterDescription 
+  where                        
+    statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
+        (try emptyDescription <|> filledDescription)
+      where
+        emptyDescription = do
+            manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
+        filledDescription = do
+            manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline
+
+{- | Given text starting immediately after the problem description, parse
+     a text block consisting of a particular section, not including the
+     section label.
+
+Sample parser input Text ⁞ ƮAfterDescription:
 
 @
 Given premises:
-     P    justification = 1.0
      A    justification = 1.0
+     B    justification = 1.0
 Ultimate epistemic interests:
-     R    interest = 1.0
+     C    interest = 1.0
 
    FORWARDS PRIMA FACIE REASONS
-     pf-reason_1:   {P} ||=> Q   strength = 1.0
-     pf-reason_2:   {Q} ||=> R   strength = 1.0
-     pf-reason_3:   {C} ||=> ~R   strength = 1.0
-     pf-reason_4:   {B} ||=> C   strength = 1.0
-     pf-reason_5:   {A} ||=> B   strength = 1.0
+     fpf-reason_1:   {A, B} ||=> C   strength = 1.0
 @
 
 Sample Output (with kind = ƮGivenPremise):
 
 @
-     P    justification = 1.0
      A    justification = 1.0
+     B    justification = 1.0
+@
+
+Sample Output (with kind = ƮUltimateEpistemicInterest):
+
+@
+     C    interest = 1.0
 @
 
 Sample Output (with kind = ƮReason Forwards PrimaFacie):
 
 @
-     pf-reason_1:   {P} ||=> Q   strength = 1.0
-     pf-reason_2:   {Q} ||=> R   strength = 1.0
-     pf-reason_3:   {C} ||=> ~R   strength = 1.0
-     pf-reason_4:   {B} ||=> C   strength = 1.0
-     pf-reason_5:   {A} ||=> B   strength = 1.0
+     fpf-reason_1:   {A, B} ||=> C   strength = 1.0
 @
 -}
 instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind) 
@@ -226,7 +192,8 @@ instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection ki
         theSection ∷ Section
         theSection = section ((⊥) ∷ kind)
 
-{- |
+{- | Given the text of the section containing the \"Given Premises:\",
+     parse 
 
 Sample Input (possibly obtained from 'TODO problemSectionText')
 
@@ -350,7 +317,21 @@ instance SectionElement ProblemBackwardsConclusiveReason where
         s ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive)
         s = evalStatefulParser t
 
--- | Uses 'simpleParse'.
+{- | Runs an appropriate 'statefulParser' on the given input, returning the
+     successfully parsed value and the remainder of the input after the parse.
+
+Pseudocode Example
+
+@
+runStatefulParser (\"1 \\n Description\\n...etc...\\n" :: Text ⁞ ƮAfterNumberLabel)
+
+==
+
+(1                                   :: ProblemNumber
+,\" \\n Description\\n...etc...\\n"  :: Text ⁞ ƮAfterNumber
+)
+@
+-}
 runStatefulParser ∷ ∀ a inState outState.
     (StatefullyParsed a inState outState) ⇒ 
     Text ⁞ inState → (a, Text ⁞ outState)
@@ -362,14 +343,13 @@ runStatefulParser = simpleParse p' . unƭ
         r ← pack <$> many anyChar
         return (v, ƭ r)
 
--- | Uses 'simpleParse'.
 evalStatefulParser ∷ ∀ a inState.
     (StatefullyParsed a inState ()) ⇒ 
     Text ⁞ inState → a
 evalStatefulParser = fst . runStatefulParser
 
 -- | Uses 'simpleParse'.
-evalStatefulParserOnSection ∷ 
+evalSqqtatefulParserOnSection ∷ 
     ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
     ⇒ Text ⁞ ƮSection inSection 
     → [a]
@@ -385,22 +365,3 @@ evalReasonSection ∷
     ) ⇒ 
     Text ⁞ ƮSection inSection → [decode]
 evalReasonSection = map fromReasonSection . evalStatefulParserOnSection
-
-{- | The formatting of the input is documented at "Oscar.Documentation".
-
-The input must begin with the problem number (after the label, "Problem #")
--}
-problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained from 'TODO partitionProblemsText'
-                → Problem
-problemFromText t = Problem
-    number
-    description
-    (sectionElements afterDescription)
-    (sectionElements afterDescription)
-    (sectionElements afterDescription)
-    (sectionElements afterDescription)
-    (sectionElements afterDescription)
-    (sectionElements afterDescription)
-  where
-    (number     , afterNumber     ) = runStatefulParser t
-    (description, afterDescription) = runStatefulParser afterNumber

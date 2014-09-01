@@ -31,16 +31,23 @@ data ƮWithLineComments
 -}
 data ƮWithoutLineComments
 
--- | Stuff after the \"Problem #\".
+-- | Everything after the \"Problem #\".
 data ƮAfterNumberLabel
 
--- | Stuff after the \"Problem #\<number>\"
+-- | Everything after the \"Problem #\<number>\".
 data ƮAfterNumber
 
--- | Stuff after the \"Problem #\<number>\\n\<description>\" (and starting at the first section)
+{- | Everything after the \"Problem #\<number><whitespace>\\n\<description>\" 
+     (and starting at the first section).
+-}
 data ƮAfterDescription
 
--- | Variables for a reason
+{- | The variables optionally defined for a reason, written as
+
+@
+variables = {var1,var2,...,varN}
+@
+-}
 data ƮVariables
 
 -- | The premise section
