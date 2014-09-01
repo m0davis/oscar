@@ -162,8 +162,34 @@ instance StatefullyParsed ProblemNumber
         manyTill anyChar (lookAhead . try $ space)
 
 {- | Given text starting immediately after the problem number, parse a
-     'ProblemDescription'. The parser\'s input then starts immediately after
-     the description.
+     'ProblemDescription'. The parser\'s input then starts at the beginning
+     of the first 'Section' identifier (or at 'eof' if there are no such 
+     identifiers).
+
+     The resultant description is trimmed of whitespace.
+
+__Example__
+
+Input text (ƮAfterNumber)
+@
+    some description
+
+Given premises:
+...etc...
+@
+
+Parsed output (ProblemDescription)
+
+@
+some description
+@
+
+Input state after parsing (ƮAfterDescription)
+
+@
+Given premises:
+...etc...
+@
 -}
 instance StatefullyParsed ProblemDescription 
                           ƮAfterNumber 
