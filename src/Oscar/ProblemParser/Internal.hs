@@ -93,13 +93,50 @@ problemFromText t = Problem
      parsed type with respect to these states, giving us a measure of safety
      at the type level.
 
-     By convention, () is used as the outState when .
+     An instance may be invoked with 'runStatefulParser'.
+
+     Sometimes we care only about the state prior to parsing, and don\'t need 
+     type-level safety on the state afterwards. By convention, in those cases, 
+     () is used as the outState.
 -}
 class StatefullyParsed a inState outState | a → inState outState where
     statefulParser ∷ Parser a ⁞ (inState, outState)
 
 {- | Separate the text of concatenated problems. Each resulant problem starts
      after the number label, \"Problem #\".
+
+Sample input (a Text ⁞ ƮWithoutLineComments, possibly obtained from 
+'Oscar.ProblemParser.stripLineComments'):
+
+@
+Problem #1
+Description of the first problem
+Given premises:
+     P    justification = 1.0
+...etc...
+
+Problem #2
+Description of the second problem
+...etc...
+@
+
+Sample outputs (obtained from 'evalStatefulParser'):
+
+@
+1
+Description of the first problem
+Given premises:
+     P    justification = 1.0
+...etc...
+@
+
+@
+2
+Description of the second problem
+...etc...
+@
+
+
 -}
 instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel]
                           ƮWithoutLineComments
@@ -144,7 +181,7 @@ instance StatefullyParsed ProblemDescription
      a text block consisting of a particular section, not including the
      section label.
 
-Sample parser input Text ⁞ ƮAfterDescription:
+Sample parser input, Text ⁞ ƮAfterDescription:
 
 @
 Given premises:
@@ -193,16 +230,18 @@ instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection ki
         theSection = section ((⊥) ∷ kind)
 
 {- | Given the text of the section containing the \"Given Premises:\",
-     parse 
+     parse a 'ProblemPremise'. Invoke this instance with 
+     'evalStatefulParserOnSection' to obtain all of the premises.
 
-Sample Input (possibly obtained from 'TODO problemSectionText')
+Sample Input (a Text ƮSection ⁞ ƮGivenPremise resulting from another 
+'StatefullyParsed' instance):
 
 @
      P    justification = 1.0
      A    justification = 1.0
 @
 
-Sample Output
+Sample Output (obtained from 'evalStatefulParserOnSection'):
 
 @
     [(\<formula for P>, \<justification 1.0>)
@@ -219,7 +258,7 @@ instance StatefullyParsed ProblemPremise
         (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
         return (formulaFromText . pack $ t, d)
 
--- | similar to 'TODO decodeGivenPremisesSection'
+-- | similar to the 'ProblemPremise' instance
 instance StatefullyParsed ProblemInterest
                           (ƮSection ƮUltimateEpistemicInterest)
                           ()
@@ -229,6 +268,7 @@ instance StatefullyParsed ProblemInterest
         (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
         return (formulaFromText . pack $ t, d)
 
+-- | similar to the 'ProblemPremise' instance
 instance StatefullyParsed (ReasonSection direction defeasibility)
                           (ƮSection (ƮReason direction defeasibility))
                           ()
@@ -245,7 +285,8 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
             d ← parserProblemStrengthDegree
             return (t, d)
 
-class FromReasonSection to fromDirection fromDefeasibility | to → fromDirection fromDefeasibility where
+{- | Defines types that can be constructed from a 'ReasonSection'. -}
+class FromReasonSection to fromDirection fromDefeasibility where
     fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
 
 instance FromReasonSection ProblemForwardsPrimaFacieReason Forwards PrimaFacie where
@@ -339,8 +380,8 @@ runStatefulParser = simpleParse p . unƭ
   where
     p ∷ Parser (a, Text ⁞ outState)
     p = do
-        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
-        r ← pack <$> many anyChar
+        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))        
+        r ← getInput
         return (v, ƭ r)
 
 evalStatefulParser ∷ ∀ a inState.
@@ -349,7 +390,7 @@ evalStatefulParser ∷ ∀ a inState.
 evalStatefulParser = fst . runStatefulParser
 
 -- | Uses 'simpleParse'.
-evalSqqtatefulParserOnSection ∷ 
+evalStatefulParserOnSection ∷ 
     ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
     ⇒ Text ⁞ ƮSection inSection 
     → [a]

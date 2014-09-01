@@ -13,6 +13,7 @@ module Oscar.Main.Parser (
     anyChar,
     char,
     eof,
+    getInput,
     lookAhead,
     many1,
     manyTill,
