@@ -54,7 +54,7 @@ import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusiv
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Forwards))
-import Oscar.ProblemParser.Internal.Tags                (ƮAfterDescription)
+import Oscar.ProblemParser.Internal.Tags                (ƮBeginningOfSections)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
 import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
 import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
@@ -184,7 +184,7 @@ Parsed output (ProblemDescription)
 some description
 @
 
-Input state after parsing (ƮAfterDescription)
+Input state after parsing (ƮBeginningOfSections)
 
 @
 Given premises:
@@ -193,7 +193,7 @@ Given premises:
 -}
 instance StatefullyParsed ProblemDescription 
                           ƮAfterNumber 
-                          ƮAfterDescription 
+                          ƮBeginningOfSections 
   where                        
     statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
         (try emptyDescription <|> filledDescription)
@@ -207,7 +207,7 @@ instance StatefullyParsed ProblemDescription
      a text block consisting of a particular section, not including the
      section label.
 
-Sample parser input, Text ⁞ ƮAfterDescription:
+Sample parser input, Text ⁞ ƮBeginningOfSections:
 
 @
 Given premises:
@@ -240,7 +240,7 @@ Sample Output (with kind = ƮReason Forwards PrimaFacie):
 @
 -}
 instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind) 
-                                                      ƮAfterDescription
+                                                      ƮBeginningOfSections
                                                       ()
   where
     statefulParser = ƭ $ do
@@ -346,7 +346,7 @@ instance FromReasonSection ProblemBackwardsConclusiveReason Backwards Conclusive
             (getBackwardsReason $ _rsProblemReasonText r)
 
 class SectionElement element where
-    sectionElements ∷ Text ⁞ ƮAfterDescription → [element]
+    sectionElements ∷ Text ⁞ ƮBeginningOfSections → [element]
 
 instance SectionElement ProblemPremise where
     sectionElements t = evalStatefulParserOnSection s

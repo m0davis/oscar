@@ -8,7 +8,7 @@ module Oscar.ProblemParser.Internal.Tags (
     ƮWithoutLineComments,
     ƮAfterNumberLabel,
     ƮAfterNumber,
-    ƮAfterDescription,
+    ƮBeginningOfSections,
     ƮGivenPremise,
     ƮUltimateEpistemicInterest,
     ƮVariables,
@@ -40,7 +40,7 @@ data ƮAfterNumber
 {- | Everything after the \"Problem #\<number><whitespace>\\n\<description>\" 
      (and starting at the first section).
 -}
-data ƮAfterDescription
+data ƮBeginningOfSections
 
 {- | The variables optionally defined for a reason, written as
 
