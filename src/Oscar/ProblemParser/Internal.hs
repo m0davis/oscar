@@ -290,34 +290,34 @@ class FromReasonSection to fromDirection fromDefeasibility where
     fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
 
 instance FromReasonSection ProblemForwardsPrimaFacieReason Forwards PrimaFacie where
-    fromReasonSection rb = (,,)
-        (_rsProblemReasonName rb)
-        (getForwardsReason $ _rsProblemReasonText rb)
-        (_rsProblemStrengthDegree rb)
+    fromReasonSection r = (,,)
+        (_rsProblemReasonName r)
+        (getForwardsReason $ _rsProblemReasonText r)
+        (_rsProblemStrengthDegree r)
 
 instance FromReasonSection ProblemForwardsConclusiveReason Forwards Conclusive where
-    fromReasonSection rb = case _rsProblemStrengthDegree rb of
+    fromReasonSection r = case _rsProblemStrengthDegree r of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
       where
         result = (,)
-            (_rsProblemReasonName rb)
-            (getForwardsReason $ _rsProblemReasonText rb)
+            (_rsProblemReasonName r)
+            (getForwardsReason $ _rsProblemReasonText r)
 
 instance FromReasonSection ProblemBackwardsPrimaFacieReason Backwards PrimaFacie where
-    fromReasonSection rb = (,,)
-        (_rsProblemReasonName rb)
-        (getBackwardsReason $ _rsProblemReasonText rb)
-        (_rsProblemStrengthDegree rb)
+    fromReasonSection r = (,,)
+        (_rsProblemReasonName r)
+        (getBackwardsReason $ _rsProblemReasonText r)
+        (_rsProblemStrengthDegree r)
 
 instance FromReasonSection ProblemBackwardsConclusiveReason Backwards Conclusive where
-    fromReasonSection rb = case (_rsProblemStrengthDegree rb) of
+    fromReasonSection r = case (_rsProblemStrengthDegree r) of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
       where
         result = (,)
-            (_rsProblemReasonName rb)
-            (getBackwardsReason $ _rsProblemReasonText rb)
+            (_rsProblemReasonName r)
+            (getBackwardsReason $ _rsProblemReasonText r)
 
 class SectionElement element where
     sectionElements ∷ Text ⁞ ƮAfterDescription → [element]
