@@ -15,7 +15,6 @@ module Oscar.ProblemParser.Internal (
     -- * Parsing with type-level safety
     -- $StatefulParse
     StatefullyParsed(..),
-    FromReasonSection(..),
     SectionElement(..),
     runStatefulParser,
     evalStatefulParser,
@@ -27,7 +26,6 @@ import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
 import Oscar.FormulaParser                              (formulaFromText)
-import Oscar.Problem                                    (LispPositiveDouble(LispPositiveDouble))
 import Oscar.Problem                                    (Problem(Problem))
 import Oscar.Problem                                    (ProblemBackwardsConclusiveReason)
 import Oscar.Problem                                    (ProblemBackwardsPrimaFacieReason)
@@ -37,15 +35,11 @@ import Oscar.Problem                                    (ProblemForwardsPrimaFac
 import Oscar.Problem                                    (ProblemInterest)
 import Oscar.Problem                                    (ProblemNumber(ProblemNumber))
 import Oscar.Problem                                    (ProblemPremise)
-import Oscar.Problem                                    (ProblemStrengthDegree(ProblemStrengthDegree))
+import Oscar.Problem                                    (ProblemStrengthDegree)
 import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
-import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonName)
-import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonText)
-import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemStrengthDegree)
-import Oscar.ProblemParser.Internal.ReasonSection       (getBackwardsReason)
-import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
+import Oscar.ProblemParser.Internal.ReasonSection       (FromReasonSection(fromReasonSection))
 import Oscar.ProblemParser.Internal.Section             (HasSection)
 import Oscar.ProblemParser.Internal.Section             (Section)
 import Oscar.ProblemParser.Internal.Section             (section)
@@ -67,11 +61,8 @@ import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDe
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDegree)
 
-{- | The formatting of the input is documented at "Oscar.Documentation".
-
-The input must begin at the problem number (after the label, \"Problem #\").
--}
-problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ possibly as obtained from 'evalStatefulParser'
+{- | The formatting of the input is documented at "Oscar.Documentation". -}
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ The input must begin at the problem number (after the label, \"Problem #\"). Possibly as obtained from 'evalStatefulParser'.
                 → Problem
 problemFromText t = Problem
     number
@@ -171,6 +162,7 @@ instance StatefullyParsed ProblemNumber
 __Example__
 
 Input text (ƮAfterNumber)
+
 @
     some description
 
@@ -203,9 +195,9 @@ instance StatefullyParsed ProblemDescription
         filledDescription = do
             manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline
 
-{- | Given text starting immediately after the problem description, parse
-     a text block consisting of a particular section, not including the
-     section label.
+{- | Given text starting immediately at the beginning of the first 'Section'
+     identifier, parse a text block consisting of a particular section, not 
+     including the section identifier.
 
 Sample parser input, Text ⁞ ƮBeginningOfSections:
 
@@ -310,40 +302,6 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
             t ← parserProblemVariablesText
             d ← parserProblemStrengthDegree
             return (t, d)
-
-{- | Defines types that can be constructed from a 'ReasonSection'. -}
-class FromReasonSection to fromDirection fromDefeasibility where
-    fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
-
-instance FromReasonSection ProblemForwardsPrimaFacieReason Forwards PrimaFacie where
-    fromReasonSection r = (,,)
-        (_rsProblemReasonName r)
-        (getForwardsReason $ _rsProblemReasonText r)
-        (_rsProblemStrengthDegree r)
-
-instance FromReasonSection ProblemForwardsConclusiveReason Forwards Conclusive where
-    fromReasonSection r = case _rsProblemStrengthDegree r of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
-        _ → error "conclusive strength must = 1"
-      where
-        result = (,)
-            (_rsProblemReasonName r)
-            (getForwardsReason $ _rsProblemReasonText r)
-
-instance FromReasonSection ProblemBackwardsPrimaFacieReason Backwards PrimaFacie where
-    fromReasonSection r = (,,)
-        (_rsProblemReasonName r)
-        (getBackwardsReason $ _rsProblemReasonText r)
-        (_rsProblemStrengthDegree r)
-
-instance FromReasonSection ProblemBackwardsConclusiveReason Backwards Conclusive where
-    fromReasonSection r = case (_rsProblemStrengthDegree r) of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
-        _ → error "conclusive strength must = 1"
-      where
-        result = (,)
-            (_rsProblemReasonName r)
-            (getBackwardsReason $ _rsProblemReasonText r)
 
 class SectionElement element where
     sectionElements ∷ Text ⁞ ƮBeginningOfSections → [element]

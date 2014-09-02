@@ -1,7 +1,10 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 {- | A 'ReasonSection' represents a partial decode of one of the four kinds
@@ -13,18 +16,19 @@
 -}
 
 module Oscar.ProblemParser.Internal.ReasonSection (
-    -- * decoding a 'ReasonSection'
+    -- * 'ReasonSection'
     ReasonSection,
     _rsProblemReasonName,
     _rsProblemReasonText,
     _rsProblemVariables,
     _rsProblemStrengthDegree,
-    -- fromReasonSection,
-    -- * helpers
+    -- ** construction helpers for 'ReasonSection'
     parserProblemVariablesText,
     parserProblemReasonName,
     parserEnbracedTexts,
-    -- * further decoding of parts of a 'ReasonSection'
+    -- * decoding a 'ReasonSection'
+    FromReasonSection(..),
+    -- ** decoding helpers 
     getForwardsReason,
     getBackwardsReason,
     ) where
@@ -33,11 +37,18 @@ import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
 import Oscar.FormulaParser                  (formulaFromText)
+import Oscar.Problem                        (LispPositiveDouble(LispPositiveDouble))
 import Oscar.Problem                        (BackwardsReason(BackwardsReason))
 import Oscar.Problem                        (ForwardsReason(ForwardsReason))
 import Oscar.Problem                        (ProblemReasonName(ProblemReasonName))
 import Oscar.Problem                        (ProblemStrengthDegree)
-import Oscar.ProblemParser.Internal.Tags    (Defeasibility)
+import Oscar.Problem                        (ProblemBackwardsConclusiveReason)
+import Oscar.Problem                        (ProblemBackwardsPrimaFacieReason)
+import Oscar.Problem                        (ProblemForwardsConclusiveReason)
+import Oscar.Problem                        (ProblemForwardsPrimaFacieReason)
+import Oscar.Problem                        (ProblemStrengthDegree(ProblemStrengthDegree))
+import Oscar.ProblemParser.Internal.Tags    (Defeasibility(Conclusive))
+import Oscar.ProblemParser.Internal.Tags    (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
@@ -102,6 +113,40 @@ parserEnbracedTexts = do
         else do
             return [firstText]
 
+{- | Defines types that can be constructed from a 'ReasonSection'. -}
+class FromReasonSection to fromDirection fromDefeasibility where
+    fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
+
+instance FromReasonSection ProblemForwardsPrimaFacieReason Forwards PrimaFacie where
+    fromReasonSection r = (,,)
+        (_rsProblemReasonName r)
+        (getForwardsReason $ _rsProblemReasonText r)
+        (_rsProblemStrengthDegree r)
+
+instance FromReasonSection ProblemForwardsConclusiveReason Forwards Conclusive where
+    fromReasonSection r = case _rsProblemStrengthDegree r of
+        ProblemStrengthDegree (LispPositiveDouble 1) → result
+        _ → error "conclusive strength must = 1"
+      where
+        result = (,)
+            (_rsProblemReasonName r)
+            (getForwardsReason $ _rsProblemReasonText r)
+
+instance FromReasonSection ProblemBackwardsPrimaFacieReason Backwards PrimaFacie where
+    fromReasonSection r = (,,)
+        (_rsProblemReasonName r)
+        (getBackwardsReason $ _rsProblemReasonText r)
+        (_rsProblemStrengthDegree r)
+
+instance FromReasonSection ProblemBackwardsConclusiveReason Backwards Conclusive where
+    fromReasonSection r = case (_rsProblemStrengthDegree r) of
+        ProblemStrengthDegree (LispPositiveDouble 1) → result
+        _ → error "conclusive strength must = 1"
+      where
+        result = (,)
+            (_rsProblemReasonName r)
+            (getBackwardsReason $ _rsProblemReasonText r)
+
 getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'TODO fromReasonSection'
                   → ForwardsReason
 getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
@@ -139,3 +184,4 @@ getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
             (backwardsPremiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
             conclusionText ← pack <$> many anyChar
             return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
+
