@@ -22,7 +22,7 @@ module Oscar.ProblemParser.Internal.ReasonSection (
     _rsProblemReasonText,
     _rsProblemVariables,
     _rsProblemStrengthDegree,
-    -- ** construction helpers for 'ReasonSection'
+    -- ** construction helpers
     parserProblemVariablesText,
     parserProblemReasonName,
     parserEnbracedTexts,
