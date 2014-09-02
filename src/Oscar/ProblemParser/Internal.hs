@@ -303,6 +303,7 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
             d ← parserProblemStrengthDegree
             return (t, d)
 
+{- | Defines a set of elements found at the ƮBeginningOfSections. -}
 class SectionElement element where
     sectionElements ∷ Text ⁞ ƮBeginningOfSections → [element]
 
@@ -350,8 +351,6 @@ Pseudocode Example
 @
 runStatefulParser (\"1 \\n Description\\n...etc...\\n" :: Text ⁞ ƮAfterNumberLabel)
 
-==
-
 (1                                   :: ProblemNumber
 ,\" \\n Description\\n...etc...\\n"  :: Text ⁞ ƮAfterNumber
 )
@@ -368,12 +367,16 @@ runStatefulParser = simpleParse p . unƭ
         r ← getInput
         return (v, ƭ r)
 
+{- | Returns only the first component of 'runStatefulParser'. The 
+     'StatefullyParsed' outState is restricted to () to avoid mistakenly
+     ignoring relevant text following the parsed value.
+-}
 evalStatefulParser ∷ ∀ a inState.
     (StatefullyParsed a inState ()) ⇒ 
     Text ⁞ inState → a
 evalStatefulParser = fst . runStatefulParser
 
--- | Uses 'simpleParse'.
+{- | Special handling for 'ƮSection's. -}
 evalStatefulParserOnSection ∷ 
     ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
     ⇒ Text ⁞ ƮSection inSection 
@@ -383,7 +386,7 @@ evalStatefulParserOnSection = simpleParse (many (try p) <* many space <* eof) . 
     p ∷ Parser a
     p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
--- | Uses 'simpleParse'.
+{- | Special handling for 'ƮSection's associated with reasons. -}
 evalReasonSection ∷ 
     (StatefullyParsed (ReasonSection direction defeasibility) (ƮSection inSection) ()
     ,FromReasonSection decode direction defeasibility
