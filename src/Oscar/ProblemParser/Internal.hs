@@ -187,13 +187,52 @@ instance StatefullyParsed ProblemDescription
                           ƮAfterNumber 
                           ƮBeginningOfSections 
   where                        
-    statefulParser = ƭ $ spaces >> ProblemDescription . pack <$>
-        (try emptyDescription <|> filledDescription)
+    statefulParser = ƭ $ do 
+        -- Collect any remaining whitespace up to a newline
+        _ <- manyTill (notFollowedBy newline *> space) newline
+        
+        -- left-trim whitespace in the description
+        spaces -- (*) see below
+
+        {- parse the description, skipping any following whitespace, so that
+           we end up at the beginning of the first section
+        -}
+        (ProblemDescription . pack <$> description) <* spaces
       where
-        emptyDescription = do
-            manyTill space (lookAhead . try $ sectionParser >> manyTill space newline)
-        filledDescription = do
-            manyTill anyChar $ lookAhead . try $ manyTill space newline >> spaces >> sectionParser  >> manyTill space newline
+        description = emptyDescription <|> otherDescription
+          where
+            {- We've already skipped spaces in (*) above, so if we immediately
+               find ourselves at an apparent 'Section' identifier, the
+               the description must be empty.
+            -}
+            emptyDescription = atSectionFollowedByNewline *> pure ""
+
+            {- The description might yet still be empty and not parsed by
+               'emptyDescription' if there is an additional newline after the
+               problem number. E.g.
+
+               @
+               Problem #42
+
+               Given premises:
+               ...etc...
+               @
+
+               The above description would be successfully parsed as "" by 
+               'otherDescription'.
+            -}
+            otherDescription = manyTill anyChar atSectionAloneOnItsOwnLine
+
+            atSectionFollowedByNewline = lookAhead . try $ do
+                _ <- sectionParser 
+                _ <- manyTill space newline
+                return ()
+
+            atSectionAloneOnItsOwnLine = lookAhead . try $ do
+                _ <- manyTill space newline
+                spaces 
+                atSectionFollowedByNewline
+                return ()
 
 {- | Given text starting immediately at the beginning of the first 'Section'
      identifier, parse a text block consisting of a particular section, not 
