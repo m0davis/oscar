@@ -12,7 +12,9 @@
      One of those sections, for example, starts with
      \"FORWARDS PRIMA FACIE REASONS\".
 
-     This module provides for a partial decode of each of those sections.
+     This module provides for a partial decode of each of those sections into
+     'ReasonSection's as well as a final full decode of those 'ReasonSection's
+     into constituents of a 'Oscar.Problem.Problem'.
 -}
 
 module Oscar.ProblemParser.Internal.ReasonSection (

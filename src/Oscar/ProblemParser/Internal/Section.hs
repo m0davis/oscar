@@ -35,7 +35,6 @@ data Section
   deriving (Eq, Show)
 
 class HasSection s where
-    -- |
     section ∷ s → Section
 
 instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
