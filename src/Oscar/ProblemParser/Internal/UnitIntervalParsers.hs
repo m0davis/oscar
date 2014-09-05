@@ -32,10 +32,28 @@ parserLispPositiveDouble = do
             return . LispPositiveDouble . read $ d
 
 parserProblemJustificationDegree ∷ Parser ProblemJustificationDegree
-parserProblemJustificationDegree = ProblemJustificationDegree <$> (many space *> string "justification" *> many space *> char '=' *> parserLispPositiveDouble)
+parserProblemJustificationDegree = ProblemJustificationDegree <$> 
+    (many space *> 
+     string "justification" *> 
+     many space *> 
+     char '=' *> 
+     parserLispPositiveDouble
+     )
 
 parserProblemInterestDegree ∷ Parser ProblemInterestDegree
-parserProblemInterestDegree = ProblemInterestDegree <$> (many space *> string "interest" *> many space *> char '=' *> parserLispPositiveDouble)
+parserProblemInterestDegree = ProblemInterestDegree <$> 
+    (many space *> 
+     string "interest" *> 
+     many space *> 
+     char '=' *> 
+     parserLispPositiveDouble
+     )
 
 parserProblemStrengthDegree ∷ Parser ProblemStrengthDegree
-parserProblemStrengthDegree = ProblemStrengthDegree <$> (many space *> string "strength" *> many space *> char '=' *> parserLispPositiveDouble)
+parserProblemStrengthDegree = ProblemStrengthDegree <$> 
+    (many space *> 
+     string "strength" *> 
+     many space *> 
+     char '=' *> 
+     parserLispPositiveDouble
+     )

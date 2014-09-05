@@ -65,16 +65,24 @@ type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
     , ProblemStrengthDegree
     )
 
-_rsProblemReasonName ∷ ReasonSection direction defeasibility → ProblemReasonName
+_rsProblemReasonName 
+    ∷ ReasonSection direction defeasibility 
+    → ProblemReasonName
 _rsProblemReasonName (n, _, _, _) = n
 
-_rsProblemReasonText ∷ ReasonSection direction defeasibility → Text ⁞ ƮReason direction defeasibility
+_rsProblemReasonText 
+    ∷ ReasonSection direction defeasibility 
+    → Text ⁞ ƮReason direction defeasibility
 _rsProblemReasonText (_, t, _, _) = t
 
-_rsProblemVariables ∷ ReasonSection direction defeasibility → Text ⁞ ƮVariables
+_rsProblemVariables 
+    ∷ ReasonSection direction defeasibility 
+    → Text ⁞ ƮVariables
 _rsProblemVariables (_, _, v, _) = v
 
-_rsProblemStrengthDegree ∷ ReasonSection direction defeasibility → ProblemStrengthDegree
+_rsProblemStrengthDegree 
+    ∷ ReasonSection direction defeasibility 
+    → ProblemStrengthDegree
 _rsProblemStrengthDegree (_, _, _, d) = d
 
 {- | Expects something like \"variables = {A,B,...}\". Accepts preceding
@@ -82,10 +90,24 @@ _rsProblemStrengthDegree (_, _, _, d) = d
      \"A,B,...\").
 -}
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮVariables)
-parserProblemVariablesText = ƭ . pack <$> (option "" . try $ many space *> string "variables" *> many space *> char '=' *> many space *> char '{' *> manyTill anyChar (lookAhead . try $ char '}') <* char '}')
+parserProblemVariablesText = ƭ . pack <$> 
+    (option "" . try $ 
+        many space *> 
+        string "variables" *> 
+        many space *> 
+        char '=' *> 
+        many space *> 
+        char '{' *> 
+        manyTill anyChar (lookAhead . try $ char '}') <* 
+        char '}'
+        )
 
 parserProblemReasonName ∷ Parser ProblemReasonName
-parserProblemReasonName = ProblemReasonName . pack <$> (many space *> manyTill anyChar (lookAhead . try $ char ':') <* char ':')
+parserProblemReasonName = ProblemReasonName . pack <$> 
+    (many space *> 
+     manyTill anyChar (lookAhead . try $ char ':') <* 
+     char ':'
+     )
 
 {- | Expects to start at the beginning of the curly braces. Parses each of
      the comma-delimited items within.
@@ -103,9 +125,16 @@ parserEnbracedTexts = do
     p ∷ Parser [Text]
     p = do
         (firstText, restText) ←
-            (many space *> (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <* many space)
+            (many space *> 
+                (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <* 
+                many space
+                )
                 `precededBy`
-            (lookAhead $ (try (many space >> eof) *> pure False) <|> try (char ',' *> many anyChar *> pure True))
+            (lookAhead $ 
+                (try (many space >> eof) *> pure False) 
+                    <|> 
+                try (char ',' *> many anyChar *> pure True)
+                )
         if restText then do
             _ ← char ','
             spaces -- TODO: remove if unnecessary
@@ -118,13 +147,19 @@ parserEnbracedTexts = do
 class FromReasonSection to fromDirection fromDefeasibility where
     fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
 
-instance FromReasonSection ProblemForwardsPrimaFacieReason Forwards PrimaFacie where
+instance FromReasonSection ProblemForwardsPrimaFacieReason 
+                           Forwards 
+                           PrimaFacie 
+  where
     fromReasonSection r = (,,)
         (_rsProblemReasonName r)
         (getForwardsReason $ _rsProblemReasonText r)
         (_rsProblemStrengthDegree r)
 
-instance FromReasonSection ProblemForwardsConclusiveReason Forwards Conclusive where
+instance FromReasonSection ProblemForwardsConclusiveReason 
+                           Forwards 
+                           Conclusive 
+  where
     fromReasonSection r = case _rsProblemStrengthDegree r of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
@@ -133,13 +168,19 @@ instance FromReasonSection ProblemForwardsConclusiveReason Forwards Conclusive w
             (_rsProblemReasonName r)
             (getForwardsReason $ _rsProblemReasonText r)
 
-instance FromReasonSection ProblemBackwardsPrimaFacieReason Backwards PrimaFacie where
+instance FromReasonSection ProblemBackwardsPrimaFacieReason 
+                           Backwards 
+                           PrimaFacie 
+  where
     fromReasonSection r = (,,)
         (_rsProblemReasonName r)
         (getBackwardsReason $ _rsProblemReasonText r)
         (_rsProblemStrengthDegree r)
 
-instance FromReasonSection ProblemBackwardsConclusiveReason Backwards Conclusive where
+instance FromReasonSection ProblemBackwardsConclusiveReason 
+                           Backwards 
+                           Conclusive 
+  where
     fromReasonSection r = case (_rsProblemStrengthDegree r) of
         ProblemStrengthDegree (LispPositiveDouble 1) → result
         _ → error "conclusive strength must = 1"
@@ -150,7 +191,11 @@ instance FromReasonSection ProblemBackwardsConclusiveReason Backwards Conclusive
 
 getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'TODO fromReasonSection'
                   → ForwardsReason
-getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemReasonTextForwards
+getForwardsReason = id
+    . uncurry ForwardsReason
+    . booyah
+    . unƭ
+    . extractFromProblemReasonTextForwards
   where
     booyah = first (map formulaFromText) . second formulaFromText
 
@@ -162,7 +207,10 @@ getForwardsReason = uncurry ForwardsReason . booyah . unƭ . extractFromProblemR
       where
         p ∷ Parser ([Text], Text)
         p = do
-            (premiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
+            (premiseTexts, _) ← 
+                parserEnbracedTexts 
+                    `precededBy` 
+                (many space >> string "||=>" >> many space)
             conclusionText ← pack <$> many anyChar
             return (premiseTexts, conclusionText)
 
@@ -170,19 +218,40 @@ getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibl
                    → BackwardsReason
 getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
   where
-    booyah (fps, bps, c) = BackwardsReason (formulaFromText <$> fps) (formulaFromText <$> bps) (formulaFromText c)
+    booyah (fps, bps, c) = 
+        BackwardsReason 
+            (formulaFromText <$> fps) 
+            (formulaFromText <$> bps) 
+            (formulaFromText c)
 
-    extractFromProblemReasonTextBackwards ∷
-        Text ⁞ ƮReason Backwards defeasibility →
-        ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
+    extractFromProblemReasonTextBackwards 
+        ∷ Text ⁞ ƮReason Backwards defeasibility 
+        → ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
     extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
       where
         p ∷ Parser ([Text], [Text], Text)
         p = do
-            forwardsPremiseTextsText ← manyTill anyChar (lookAhead . try $ (many space >> char '{' >> many (notFollowedBy (char '}') >> anyChar) >> char '}' >> many space >> string "||=>" >> many space))
-            forwardsPremiseTexts ← withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
+            forwardsPremiseTextsText ← 
+                manyTill anyChar 
+                         (lookAhead . try $ 
+                            many space >> 
+                            char '{' >> 
+                            many (notFollowedBy (char '}') >> anyChar) >> 
+                            char '}' >> 
+                            many space >> 
+                            string "||=>" >> 
+                            many space
+                            )
+            forwardsPremiseTexts ← 
+                withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
             spaces
-            (backwardsPremiseTexts, _) ← parserEnbracedTexts `precededBy` (many space >> string "||=>" >> many space)
+            (backwardsPremiseTexts, _) ← 
+                parserEnbracedTexts 
+                    `precededBy` 
+                (many space >> string "||=>" >> many space)
             conclusionText ← pack <$> many anyChar
-            return (forwardsPremiseTexts, backwardsPremiseTexts, conclusionText)
-
+            return 
+                (forwardsPremiseTexts
+                ,backwardsPremiseTexts
+                ,conclusionText
+                )
