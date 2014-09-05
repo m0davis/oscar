@@ -211,66 +211,45 @@ instance FromReasonSection ProblemBackwardsConclusiveReason
             (getBackwardsReason $ _rsProblemReasonText r)
 
 getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
-getForwardsReason = id
-    . uncurry ForwardsReason
-    . booyah
-    . unƭ
-    . extractFromProblemReasonTextForwards
+getForwardsReason = simpleParse p . unƭ
   where
-    booyah = first (map formulaFromText) . second formulaFromText
-
-    -- | Needs refactoring?
-    extractFromProblemReasonTextForwards ∷
-        Text ⁞ ƮReason Forwards defeasibility →
-        ([Text], Text) ⁞ ƮReason Forwards defeasibility
-    extractFromProblemReasonTextForwards = ƭ . simpleParse p . unƭ
-      where
-        p ∷ Parser ([Text], Text)
-        p = do
-            (premiseTexts, _) ← 
-                parserEnbracedTexts 
-                    `precededBy` 
-                (many space >> string "||=>" >> many space)
-            conclusionText ← pack <$> many anyChar
-            return (premiseTexts, conclusionText)
+    p ∷ Parser ForwardsReason
+    p = do
+        (premiseTexts, _) ← 
+            parserEnbracedTexts 
+                `precededBy` 
+            (spaces >> string "||=>")
+        spaces
+        conclusionText ← pack <$> many anyChar
+        return $ ForwardsReason 
+            (formulaFromText <$> premiseTexts)
+            (formulaFromText conclusionText)
 
 getBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
-getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
+getBackwardsReason = simpleParse p . unƭ
   where
-    booyah (fps, bps, c) = 
-        BackwardsReason 
-            (formulaFromText <$> fps) 
-            (formulaFromText <$> bps) 
-            (formulaFromText c)
-
-    extractFromProblemReasonTextBackwards 
-        ∷ Text ⁞ ƮReason Backwards defeasibility 
-        → ([Text], [Text], Text) ⁞ ƮReason Backwards defeasibility
-    extractFromProblemReasonTextBackwards = ƭ . simpleParse p . unƭ
-      where
-        p ∷ Parser ([Text], [Text], Text)
-        p = do
-            forwardsPremiseTextsText ← 
-                manyTill anyChar 
-                         (lookAhead . try $ 
-                            many space >> 
-                            char '{' >> 
-                            many (notFollowedBy (char '}') >> anyChar) >> 
-                            char '}' >> 
-                            many space >> 
-                            string "||=>" >> 
-                            many space
-                            )
-            forwardsPremiseTexts ← 
-                withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
-            spaces
-            (backwardsPremiseTexts, _) ← 
-                parserEnbracedTexts 
-                    `precededBy` 
-                (many space >> string "||=>" >> many space)
-            conclusionText ← pack <$> many anyChar
-            return 
-                (forwardsPremiseTexts
-                ,backwardsPremiseTexts
-                ,conclusionText
-                )
+    p ∷ Parser BackwardsReason
+    p = do
+        forwardsPremiseTextsText ← 
+            manyTill anyChar 
+                     (lookAhead . try $ 
+                        many space >> 
+                        char '{' >> 
+                        many (notFollowedBy (char '}') >> anyChar) >> 
+                        char '}' >> 
+                        many space >> 
+                        string "||=>" >> 
+                        many space
+                        )
+        forwardsPremiseTexts ← 
+            withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
+        spaces
+        (backwardsPremiseTexts, _) ← 
+            parserEnbracedTexts 
+                `precededBy` 
+            (many space >> string "||=>" >> many space)
+        conclusionText ← pack <$> many anyChar
+        return $ BackwardsReason 
+            (formulaFromText <$> forwardsPremiseTexts) 
+            (formulaFromText <$> backwardsPremiseTexts) 
+            (formulaFromText conclusionText)
