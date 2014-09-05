@@ -9,12 +9,16 @@
 
 {- | A 'ReasonSection' represents a partial decode of one of the four kinds
      of sections (described in "Oscar.Documentation") pertaining to reasons.
-     One of those sections, for example, starts with
-     \"FORWARDS PRIMA FACIE REASONS\".
+     One of those sections, for example, starts with \"FORWARDS PRIMA FACIE REASONS\". 
+     Text within that section is first decoded into a ReasonSection and then 
+     finally into a 'ProblemForwardsPrimaFacieReason', a constituent of a
+     'Oscar.Problem.Problem'.
 
-     This module provides for a partial decode of each of those sections into
-     'ReasonSection's as well as a final full decode of those 'ReasonSection's
-     into constituents of a 'Oscar.Problem.Problem'.
+     An instance of 'Oscar.ProblemParser.Internal.StatefullyParsed' constructs
+     a 'ReasonSection'. Helper functions for this are provided below.
+
+     Final decoding into constituents of a 'Oscar.Problem.Problem' is provided
+     by 'FromReasonSection'.
 -}
 
 module Oscar.ProblemParser.Internal.ReasonSection (
