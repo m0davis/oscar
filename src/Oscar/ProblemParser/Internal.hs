@@ -19,7 +19,7 @@ module Oscar.ProblemParser.Internal (
     runStatefulParser,
     evalStatefulParser,
     evalStatefulParserOnSection,
-    evalReasonSection,    
+    evalReasonSection,
     ) where
 
 import Oscar.Main.Prelude
@@ -85,8 +85,8 @@ problemFromText t = Problem
 
      An instance may be invoked with 'runStatefulParser'.
 
-     Sometimes we care only about the state prior to parsing, and don\'t need 
-     type-level safety on the state afterwards. By convention, in those cases, 
+     Sometimes we care only about the state prior to parsing, and don\'t need
+     type-level safety on the state afterwards. By convention, in those cases,
      () is used as the outState.
 -}
 class StatefullyParsed a inState outState | a → inState outState where
@@ -97,7 +97,7 @@ class StatefullyParsed a inState outState | a → inState outState where
 
 __Example__
 
-Input text (ƮWithoutLineComments), possibly obtained from 
+Input text (ƮWithoutLineComments), possibly obtained from
 'Oscar.ProblemParser.stripLineComments'):
 
 @
@@ -142,13 +142,13 @@ instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel]
         endP ∷ Parser ()
         endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
 
-{- | Given text starting immediately after the number label, parse a 
-     'ProblemNumber'. The parser\'s input then starts immediately after the 
+{- | Given text starting immediately after the number label, parse a
+     'ProblemNumber'. The parser\'s input then starts immediately after the
      number.
 -}
-instance StatefullyParsed ProblemNumber 
-                          ƮAfterNumberLabel 
-                          ƮAfterNumber 
+instance StatefullyParsed ProblemNumber
+                          ƮAfterNumberLabel
+                          ƮAfterNumber
   where
     statefulParser = ƭ $ ProblemNumber . read <$>
         manyTill anyChar (lookAhead . try $ space)
@@ -184,30 +184,30 @@ Given premises:
 ...etc...
 @
 -}
-instance StatefullyParsed ProblemDescription 
-                          ƮAfterNumber 
-                          ƮEndOfDescription 
-  where                        
+instance StatefullyParsed ProblemDescription
+                          ƮAfterNumber
+                          ƮEndOfDescription
+  where
     statefulParser = ƭ $ ProblemDescription . pack <$> description
       where
         description = emptyDescription <|> filledDescription
-          where 
-            emptyDescription = 
+          where
+            emptyDescription =
                 lookAhead (definitelyAloneOnLine sectionParser) *> pure ""
 
             filledDescription = do
                 spaces
-                manyTillBefore anyChar $ 
-                    {- Here is why we have a separate parser for an empty 
+                manyTillBefore anyChar $
+                    {- Here is why we have a separate parser for an empty
                        description. If the description were empty, we would
-                       have no way of knowing, after skipping the spaces, that 
+                       have no way of knowing, after skipping the spaces, that
                        the first section identifier found was alone on its
                        own line.
                     -}
                     eof <|> definitelyAloneOnLine sectionParser *> pure ()
 
 {- | Given text starting immediately at the beginning of the first 'Section'
-     identifier (or, possibly, 'eof'), parse a text block consisting of a 
+     identifier (or, possibly, 'eof'), parse a text block consisting of a
      particular section, not including the section identifier.
 
 __Example__
@@ -245,17 +245,17 @@ Parsed output (with kind = ƮReason Forwards PrimaFacie):
      fpf-reason_1:   {A, B} ||=> C   strength = 1.0
 @
 -}
-instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind) 
+instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
                                                       ƮEndOfDescription
                                                       ()
   where
     statefulParser = ƭ $ skipToTheSection *> sectionContents
       where
-        theSection = guardM $ 
+        theSection = guardM $
             (== section ((⊥) ∷ kind)) <$> sectionParser
 
-        skipToTheSection = 
-            skipManyTillBefore anyChar $ 
+        skipToTheSection =
+            skipManyTillBefore anyChar $
                 eof <|> definitelyAloneOnLine theSection
 
         sectionContents = empty
@@ -270,12 +270,12 @@ instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection ki
             )
 
 {- | Given the text of the section containing the \"Given Premises:\",
-     parse a 'ProblemPremise'. Invoke this instance with 
+     parse a 'ProblemPremise'. Invoke this instance with
      'evalStatefulParserOnSection' to obtain all of the premises.
 
 __Example__
 
-Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another 
+Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another
 'StatefullyParsed' instance):
 
 @
@@ -291,7 +291,7 @@ Sample Output (obtained from 'evalStatefulParserOnSection'):
     ]
 @
 -}
-instance StatefullyParsed ProblemPremise 
+instance StatefullyParsed ProblemPremise
                           (ƮSection ƮGivenPremise)
                           ()
   where
@@ -381,42 +381,42 @@ runStatefulParser (\"1 \\n Description\\n...etc...\\n" :: Text ⁞ ƮAfterNumber
 @
 -}
 runStatefulParser ∷ ∀ a inState outState.
-    (StatefullyParsed a inState outState) ⇒ 
+    (StatefullyParsed a inState outState) ⇒
     Text ⁞ inState → (a, Text ⁞ outState)
 runStatefulParser = simpleParse p . unƭ
   where
     p ∷ Parser (a, Text ⁞ outState)
     p = do
-        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))        
+        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
         r ← getInput
         return (v, ƭ r)
 
-{- | Returns only the first component of 'runStatefulParser'. The 
+{- | Returns only the first component of 'runStatefulParser'. The
      'StatefullyParsed' outState is restricted to () to avoid mistakenly
      ignoring relevant text following the parsed value.
 -}
 evalStatefulParser ∷ ∀ a inState.
-    (StatefullyParsed a inState ()) ⇒ 
+    (StatefullyParsed a inState ()) ⇒
     Text ⁞ inState → a
 evalStatefulParser = fst . runStatefulParser
 
 {- | Special handling for 'ƮSection's. -}
-evalStatefulParserOnSection ∷ 
-    ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
-    ⇒ Text ⁞ ƮSection inSection 
+evalStatefulParserOnSection ∷
+    ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ())
+    ⇒ Text ⁞ ƮSection inSection
     → [a]
-evalStatefulParserOnSection = 
+evalStatefulParserOnSection =
     simpleParse (many (try p) <* many space <* eof) . unƭ
   where
     p ∷ Parser a
     p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
 {- | Special handling for 'ƮSection's associated with reasons. -}
-evalReasonSection ∷ 
-    (StatefullyParsed (ReasonSection direction defeasibility) 
-                      (ƮSection inSection) 
+evalReasonSection ∷
+    (StatefullyParsed (ReasonSection direction defeasibility)
+                      (ƮSection inSection)
                       ()
     ,FromReasonSection decode direction defeasibility
-    ) ⇒ 
+    ) ⇒
     Text ⁞ ƮSection inSection → [decode]
 evalReasonSection = map fromReasonSection . evalStatefulParserOnSection

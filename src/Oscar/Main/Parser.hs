@@ -74,30 +74,30 @@ import Text.Parsec.Text                 (Parser)
 simpleParse ∷ Parser a → Text → a
 simpleParse p = either (error . ppShow) id . runParser p () ""
 
-{- manyTillBefore p end applies parser p zero or more times until parser 
+{- manyTillBefore p end applies parser p zero or more times until parser
    end succeeds, stopping just ahead of end.
 -}
-manyTillBefore ∷ (Stream s m t) 
-    ⇒ ParsecT s u m a 
-    → ParsecT s u m end 
+manyTillBefore ∷ (Stream s m t)
+    ⇒ ParsecT s u m a
+    → ParsecT s u m end
     → ParsecT s u m [a]
 manyTillBefore p end = manyTill p (lookAhead . try $ end)
 
-{- skipManyTill p end applies parser p zero or more times until parser end 
+{- skipManyTill p end applies parser p zero or more times until parser end
    succeeds, skipping its result.
 -}
-skipManyTill ∷ (Stream s m t) 
-    ⇒ ParsecT s u m a 
-    → ParsecT s u m end 
+skipManyTill ∷ (Stream s m t)
+    ⇒ ParsecT s u m a
+    → ParsecT s u m end
     → ParsecT s u m ()
 skipManyTill p end = manyTillBefore p end *> end *> pure ()
 
-{- skipManyTillBefore p end applies parser p zero or more times until parser 
+{- skipManyTillBefore p end applies parser p zero or more times until parser
    end succeeds, skipping the p\'s, and stopping just ahead of end.
 -}
-skipManyTillBefore ∷ (Stream s m t) 
-    ⇒ ParsecT s u m a 
-    → ParsecT s u m end 
+skipManyTillBefore ∷ (Stream s m t)
+    ⇒ ParsecT s u m a
+    → ParsecT s u m end
     → ParsecT s u m ()
 skipManyTillBefore p end = manyTillBefore p end *> pure ()
 
@@ -124,39 +124,39 @@ withInput s p = do
 nonNewlineSpace ∷ Stream s m Char ⇒ ParsecT s u m Char
 nonNewlineSpace = notFollowedBy newline *> space
 
-{- | spacesUpToEndOfLine consumes the whitespace preceding a 'newline' or 
-     'eof'. If non-whitespace characters are found, the parser fails and does 
+{- | spacesUpToEndOfLine consumes the whitespace preceding a 'newline' or
+     'eof'. If non-whitespace characters are found, the parser fails and does
      not consume anything.
 -}
 spacesUpToEndOfLine ∷ Stream s m Char ⇒ ParsecT s u m [Char]
-spacesUpToEndOfLine = try $ 
+spacesUpToEndOfLine = try $
     manyTillBefore nonNewlineSpace $ eof <|> (newline *> pure ())
 
-{- | spacesUpToEof consumes the whitespace an 'eof'. If non-whitespace 
+{- | spacesUpToEof consumes the whitespace an 'eof'. If non-whitespace
      characters are found, the parser fails and does not consume anything.
 -}
 spacesUpToEof ∷ Stream s m Char ⇒ ParsecT s u m [Char]
-spacesUpToEof = try $ 
+spacesUpToEof = try $
     manyTillBefore nonNewlineSpace eof
 
-{- | apparentlyAloneOnLine p successfully applies parser p only if it is 
-     immediately followed by whitespace up to the next 'newline' or 'eof'. 
-     Upon success, it returns the parsed result without consuming the 
+{- | apparentlyAloneOnLine p successfully applies parser p only if it is
+     immediately followed by whitespace up to the next 'newline' or 'eof'.
+     Upon success, it returns the parsed result without consuming the
      following whitespace. Otherwise, nothing is consumed.
 -}
 apparentlyAloneOnLine ∷ Stream s m Char ⇒ ParsecT s u m a → ParsecT s u m a
-apparentlyAloneOnLine p = try $ 
+apparentlyAloneOnLine p = try $
     p <* lookAhead spacesUpToEndOfLine
-    
-{- | definitelyAloneOnLine p first ensures that there is an upcoming newline 
+
+{- | definitelyAloneOnLine p first ensures that there is an upcoming newline
      not preceded by any anything but whitespace. At the first non-whitespace
      it then applies parser 'apparentlyAloneOnLine' p. If any parse fails,
-     nothing is consumed. If it succeeds, the parser consumes only the 
+     nothing is consumed. If it succeeds, the parser consumes only the
      preceding whitespace and p.
 -}
 definitelyAloneOnLine ∷ Stream s m Char ⇒ ParsecT s u m a → ParsecT s u m a
-definitelyAloneOnLine p = try $ 
-    spacesUpToEndOfLine *> 
-    newline *> 
-    skipMany nonNewlineSpace *> 
+definitelyAloneOnLine p = try $
+    spacesUpToEndOfLine *>
+    newline *>
+    skipMany nonNewlineSpace *>
     apparentlyAloneOnLine p

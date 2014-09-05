@@ -27,12 +27,12 @@ import Oscar.ProblemParser.Internal.Tags    (Defeasibility(Conclusive))
 
 
 data Section
-    = Section'GivenPremises               -- ^ "Given premises:"               
-    | Section'UltimateEpistemicInterests  -- ^ "Ultimate epistemic interests:" 
-    | Section'ForwardsPrimaFacieReasons   -- ^ "FORWARDS PRIMA FACIE REASONS"  
-    | Section'ForwardsConclusiveReasons   -- ^ "FORWARDS CONCLUSIVE REASONS"   
-    | Section'BackwardsPrimaFacieReasons  -- ^ "BACKWARDS PRIMA FACIE REASONS" 
-    | Section'BackwardsConclusiveReasons  -- ^ "BACKWARDS CONCLUSIVE REASONS"  
+    = Section'GivenPremises               -- ^ "Given premises:"
+    | Section'UltimateEpistemicInterests  -- ^ "Ultimate epistemic interests:"
+    | Section'ForwardsPrimaFacieReasons   -- ^ "FORWARDS PRIMA FACIE REASONS"
+    | Section'ForwardsConclusiveReasons   -- ^ "FORWARDS CONCLUSIVE REASONS"
+    | Section'BackwardsPrimaFacieReasons  -- ^ "BACKWARDS PRIMA FACIE REASONS"
+    | Section'BackwardsConclusiveReasons  -- ^ "BACKWARDS CONCLUSIVE REASONS"
   deriving (Eq, Show)
 
 class HasSection s where
