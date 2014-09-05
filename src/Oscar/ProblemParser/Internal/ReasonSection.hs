@@ -15,7 +15,8 @@
      'Oscar.Problem.Problem'.
 
      An instance of 'Oscar.ProblemParser.Internal.StatefullyParsed' constructs
-     a 'ReasonSection'. Helper functions for this are provided below.
+     a 'ReasonSection'. Helper functions for this construction are provided 
+     below.
 
      Final decoding into constituents of a 'Oscar.Problem.Problem' is provided
      by 'FromReasonSection'.
@@ -94,7 +95,7 @@ _rsProblemStrengthDegree (_, _, _, d) = d
      
      Consumes nothing and returns null text if it finds something unexpected.
 
-     Leading whitespace and whitespace around the `=` are acceptable.
+     Leading whitespace and whitespace around the equal sign are acceptable.
 -}
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮVariables)
 parserProblemVariablesText = ƭ . pack <$> 
@@ -110,11 +111,11 @@ parserProblemVariablesText = ƭ . pack <$>
         )
 
 {- | Expects something like \"some name or other:\" and returns the 
-     'ProblemReasonName' as the text prior to the `:`.
+     'ProblemReasonName' as the text prior to the colon.
 
-     Leading whitespace is ignored. Consumes the `:`.
+     Leading whitespace is ignored. Consumes the colon.
 
-     If no `:` is found, the parser will fail without consuming anything.
+     If no colon is found, the parser will fail without consuming anything.
 -}
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> 
@@ -209,8 +210,7 @@ instance FromReasonSection ProblemBackwardsConclusiveReason
             (_rsProblemReasonName r)
             (getBackwardsReason $ _rsProblemReasonText r)
 
-getForwardsReason ∷ (Text ⁞ ƮReason Forwards defeasibility)  -- ^ possibly as obtained from 'TODO fromReasonSection'
-                  → ForwardsReason
+getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
 getForwardsReason = id
     . uncurry ForwardsReason
     . booyah
@@ -234,8 +234,7 @@ getForwardsReason = id
             conclusionText ← pack <$> many anyChar
             return (premiseTexts, conclusionText)
 
-getBackwardsReason ∷ (Text ⁞ ƮReason Backwards defeasibility)  -- ^ possibly as obtained from 'TODO fromReasonSection'
-                   → BackwardsReason
+getBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
 getBackwardsReason = booyah . unƭ . extractFromProblemReasonTextBackwards
   where
     booyah (fps, bps, c) = 
