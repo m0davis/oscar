@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
@@ -5,10 +6,13 @@
 -}
 
 module Oscar.Main.Parser (
+    -- * "Prelude"
+    read,
     -- * "Text.Parsec.Text"
     Parser,
     -- * "Text.Parsec"
     ParsecT,
+    Stream,
     alphaNum,
     anyChar,
     char,
@@ -20,7 +24,9 @@ module Oscar.Main.Parser (
     newline,
     notFollowedBy,
     option,
-    read,
+    runParser,
+    setInput,
+    skipMany,
     space,
     spaces,
     string,
@@ -32,6 +38,11 @@ module Oscar.Main.Parser (
     skipManyTillBefore,
     precededBy,
     withInput,
+    nonNewlineSpace,
+    spacesUpToEndOfLine,
+    spacesUpToEof,
+    apparentlyAloneOnLine,
+    definitelyAloneOnLine,
     ) where
 
 import Oscar.Main.Prelude
@@ -52,6 +63,7 @@ import Text.Parsec                      (ParsecT)
 import Text.Parsec                      (Stream)
 import Text.Parsec                      (runParser)
 import Text.Parsec                      (setInput)
+import Text.Parsec                      (skipMany)
 import Text.Parsec                      (space)
 import Text.Parsec                      (spaces)
 import Text.Parsec                      (string)
@@ -98,3 +110,41 @@ withInput s p = do
     p' ← p
     setInput s'
     return p'
+
+{- | nonNewlineSpace consumes only a 'space' that is not a 'newline'. -}
+nonNewlineSpace ∷ Stream s m Char ⇒ ParsecT s u m Char
+nonNewlineSpace = notFollowedBy newline *> space
+
+{- | spacesUpToEndOfLine consumes the whitespace preceding a 'newline' or 
+     'eof'. If non-whitespace characters are found, the parser fails and does 
+     not consume anything.
+-}
+spacesUpToEndOfLine ∷ Stream s m Char ⇒ ParsecT s u m [Char]
+spacesUpToEndOfLine = try $ 
+    manyTillBefore nonNewlineSpace $ eof <|> (newline *> pure ())
+
+{- | spacesUpToEof consumes the whitespace an 'eof'. If non-whitespace 
+     characters are found, the parser fails and does not consume anything.
+-}
+spacesUpToEof ∷ Stream s m Char ⇒ ParsecT s u m [Char]
+spacesUpToEof = try $ 
+    manyTillBefore nonNewlineSpace eof
+
+{- | apparentlyAloneOnLine p applies parser p if it is followed only by 
+     whitespace up to the next 'newline' or 'eof'. It does not consume the
+     following whitespace. If parser p fails, nothing is consumed. If it
+     succeeds, the parser consumes only p.
+-}
+apparentlyAloneOnLine ∷ Stream s m Char ⇒ ParsecT s u m a → ParsecT s u m a
+apparentlyAloneOnLine p = try $ 
+    p <* lookAhead spacesUpToEndOfLine
+    
+{- | definitelyAloneOnLine p first ensures that there is an upcoming newline 
+     not preceded by any anything but whitespace. At the first non-whitespace
+     it then applies parser 'apparentlyAloneOnLine' p. If any parse fails,
+     nothing is consumed. If it succeeds, the parser consumes only the 
+     preceding whitespace and p.
+-}
+definitelyAloneOnLine ∷ Stream s m Char ⇒ ParsecT s u m a → ParsecT s u m a
+definitelyAloneOnLine p = try $ 
+    spacesUpToEndOfLine *> newline *> skipMany nonNewlineSpace *> apparentlyAloneOnLine p

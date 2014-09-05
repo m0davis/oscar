@@ -25,6 +25,7 @@ import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility(Conclusive))
 
+
 data Section
     = Section'GivenPremises               -- ^ "Given premises:"               
     | Section'UltimateEpistemicInterests  -- ^ "Ultimate epistemic interests:" 
@@ -44,8 +45,9 @@ instance HasSection (ƮReason Forwards  Conclusive) where section _ = Section'Fo
 instance HasSection (ƮReason Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
 instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
+{- | Consumes the identifier of a 'Section', or nothing if the parse fails. -}
 sectionParser ∷ Parser Section
-sectionParser =
+sectionParser = try $
     empty
     <|> "Given premises:"               ↦ Section'GivenPremises
     <|> "Ultimate epistemic interests:" ↦ Section'UltimateEpistemicInterests
