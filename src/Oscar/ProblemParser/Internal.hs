@@ -41,7 +41,6 @@ import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
-import Oscar.ProblemParser.Internal.Section             (Section)
 import Oscar.ProblemParser.Internal.Section             (section)
 import Oscar.ProblemParser.Internal.Section             (sectionParser)
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
@@ -275,16 +274,19 @@ instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection ki
                                                       ()
   where
     statefulParser = ƭ $ do
-        _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
-        p' <|> pure (ƭ $ pack "")
+        skipManyTillBefore anyChar $ eof <|> atTheSection
+        emptySection <|> filledSection
       where
-        p' ∷ Parser (Text ⁞ ƮSection kind)
-        p' = do
-            guardM (map (== theSection) sectionParser)
-            ƭ . pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
+        atTheSection = lookAhead . try . guardM $ 
+            (== section ((⊥) ∷ kind)) <$> sectionParser
 
-        theSection ∷ Section
-        theSection = section ((⊥) ∷ kind)
+        emptySection = eof *> pure (ƭ $ pack "")
+
+        filledSection ∷ Parser (Text ⁞ ƮSection kind)
+        filledSection = do
+            _ <- sectionParser
+            ƭ . pack <$> 
+                manyTillBefore anyChar (eof <|> (space >> sectionParser >> pure ()))
 
 {- | Given the text of the section containing the \"Given Premises:\",
      parse a 'ProblemPremise'. Invoke this instance with 

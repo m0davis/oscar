@@ -27,6 +27,9 @@ module Oscar.Main.Parser (
     try,
     -- * Custom parser functions
     simpleParse,
+    manyTillBefore,
+    skipManyTill,
+    skipManyTillBefore,
     precededBy,
     withInput,
     ) where
@@ -46,6 +49,7 @@ import Text.Parsec                      (newline)
 import Text.Parsec                      (notFollowedBy)
 import Text.Parsec                      (option)
 import Text.Parsec                      (ParsecT)
+import Text.Parsec                      (Stream)
 import Text.Parsec                      (runParser)
 import Text.Parsec                      (setInput)
 import Text.Parsec                      (space)
@@ -57,6 +61,24 @@ import Text.Parsec.Text                 (Parser)
 -- | Mainly, a wrapper around 'runParser'.
 simpleParse ∷ Parser a → Text → a
 simpleParse p = either (error . ppShow) id . runParser p () ""
+
+{- manyTillBefore p end applies parser p zero or more times until parser 
+   end succeeds, stopping just ahead of end.
+-}
+manyTillBefore ∷ (Stream s m t) => ParsecT s u m a → ParsecT s u m end → ParsecT s u m [a]
+manyTillBefore p end = manyTill p (lookAhead . try $ end)
+
+{- skipManyTill p end applies parser p zero or more times until parser end 
+   succeeds, skipping its result.
+-}
+skipManyTill ∷ (Stream s m t) => ParsecT s u m a → ParsecT s u m end → ParsecT s u m ()
+skipManyTill p end = manyTillBefore p end *> end *> pure ()
+
+{- skipManyTillBefore p end applies parser p zero or more times until parser 
+   end succeeds, skipping the p\'s, and stopping just ahead of end.
+-}
+skipManyTillBefore ∷ (Stream s m t) => ParsecT s u m a → ParsecT s u m end → ParsecT s u m ()
+skipManyTillBefore p end = manyTillBefore p end *> pure ()
 
 {- | precededBy p1 p2 finds the first place where p2 succeeds, then runs p1 on
      the text up to (but not including) that that place.
