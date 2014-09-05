@@ -95,7 +95,9 @@ class StatefullyParsed a inState outState | a → inState outState where
 {- | Separate the text of concatenated problems. Each resulant problem starts
      after the number label, \"Problem #\".
 
-Sample input (a Text ⁞ ƮWithoutLineComments, possibly obtained from 
+__Example__
+
+Input text (ƮWithoutLineComments), possibly obtained from 
 'Oscar.ProblemParser.stripLineComments'):
 
 @
@@ -110,7 +112,7 @@ Description of the second problem
 ...etc...
 @
 
-Sample outputs (obtained from 'evalStatefulParser'):
+Parsed outputs (obtained from 'evalStatefulParser'):
 
 @
 1
@@ -159,7 +161,7 @@ instance StatefullyParsed ProblemNumber
 
 __Example__
 
-Input text (ƮAfterNumber)
+Input text (ƮAfterNumber):
 
 @
     some description
@@ -168,15 +170,16 @@ Given premises:
 ...etc...
 @
 
-Parsed output (ProblemDescription)
+Parsed output (ProblemDescription):
 
 @
 some description
 @
 
-Input state after parsing (ƮEndOfDescription)
+Input state after parsing (ƮEndOfDescription):
 
 @
+
 Given premises:
 ...etc...
 @
@@ -207,7 +210,9 @@ instance StatefullyParsed ProblemDescription
      identifier (or, possibly, 'eof'), parse a text block consisting of a 
      particular section, not including the section identifier.
 
-Sample parser input, Text ⁞ ƮEndOfDescription:
+__Example__
+
+Input text (ƮEndOfDescription):
 
 @
 
@@ -221,20 +226,20 @@ Ultimate epistemic interests:
      fpf-reason_1:   {A, B} ||=> C   strength = 1.0
 @
 
-Sample Output (with kind = ƮGivenPremise):
+Parsed output (with kind = ƮGivenPremise):
 
 @
      A    justification = 1.0
      B    justification = 1.0
 @
 
-Sample Output (with kind = ƮUltimateEpistemicInterest):
+Parsed output (with kind = ƮUltimateEpistemicInterest):
 
 @
      C    interest = 1.0
 @
 
-Sample Output (with kind = ƮReason Forwards PrimaFacie):
+Parsed output (with kind = ƮReason Forwards PrimaFacie):
 
 @
      fpf-reason_1:   {A, B} ||=> C   strength = 1.0
@@ -268,7 +273,9 @@ instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection ki
      parse a 'ProblemPremise'. Invoke this instance with 
      'evalStatefulParserOnSection' to obtain all of the premises.
 
-Sample Input (a Text ƮSection ⁞ ƮGivenPremise resulting from another 
+__Example__
+
+Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another 
 'StatefullyParsed' instance):
 
 @
