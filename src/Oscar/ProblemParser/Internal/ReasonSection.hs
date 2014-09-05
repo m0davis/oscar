@@ -59,7 +59,7 @@ import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
 import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 
-{- | This represents a partial parse of one of the four kinds of
+{- | This represents a partial deocde of one of the four kinds of
      reason sections.
 -}
 type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
@@ -89,9 +89,12 @@ _rsProblemStrengthDegree
     → ProblemStrengthDegree
 _rsProblemStrengthDegree (_, _, _, d) = d
 
-{- | Expects something like \"variables = {A,B,...}\". Accepts preceding
-     whitespace. Resultant parse is that between the curly braces (e.g.
-     \"A,B,...\").
+{- | Expects something like \"variables={A, B, ...}\" and returns the
+     text between the curly braces (e.g. \"A, B, ...\").
+     
+     Consumes nothing and returns null text if it finds something unexpected.
+
+     Leading whitespace and whitespace around the `=` are acceptable.
 -}
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮVariables)
 parserProblemVariablesText = ƭ . pack <$> 
@@ -106,25 +109,38 @@ parserProblemVariablesText = ƭ . pack <$>
         char '}'
         )
 
+{- | Expects something like \"some name or other:\" and returns the 
+     'ProblemReasonName' as the text prior to the `:`.
+
+     Leading whitespace is ignored. Consumes the `:`.
+
+     If no `:` is found, the parser will fail without consuming anything.
+-}
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$> 
-    (many space *> 
-     manyTill anyChar (lookAhead . try $ char ':') <* 
-     char ':'
-     )
+    (try $
+        many space *> 
+        manyTill anyChar (lookAhead . try $ char ':') <* 
+        char ':'
+        )
 
-{- | Expects to start at the beginning of the curly braces. Parses each of
-     the comma-delimited items within.
+{- | Expects something like \"{A, B, ...}\" and returns the comma-delimited
+     items within (e.g. [\"A\", \" B\", \" ...\"]). 
+
+     Must start at the open curly-brace. Consumes everything up to and
+     including the closing curly-brace. 
+
+     If the parser fails, nothing is consumed.
 -}
 parserEnbracedTexts ∷ Parser [Text]
-parserEnbracedTexts = do
+parserEnbracedTexts = try $ do
     _ ← char '{'
     (inner, _) ← (pack <$> many anyChar) `precededBy` char '}'
-    let texts = simpleParse (try emptylist <|> p) inner
+    let texts = simpleParse (emptylist <|> p) inner
     return texts
   where
     emptylist ∷ Parser [Text]
-    emptylist = spaces >> eof >> return []
+    emptylist = try $ spaces >> eof >> return []
 
     p ∷ Parser [Text]
     p = do
