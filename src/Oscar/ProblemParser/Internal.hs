@@ -405,14 +405,17 @@ evalStatefulParserOnSection ∷
     ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ()) 
     ⇒ Text ⁞ ƮSection inSection 
     → [a]
-evalStatefulParserOnSection = simpleParse (many (try p) <* many space <* eof) . unƭ
+evalStatefulParserOnSection = 
+    simpleParse (many (try p) <* many space <* eof) . unƭ
   where
     p ∷ Parser a
     p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
 
 {- | Special handling for 'ƮSection's associated with reasons. -}
 evalReasonSection ∷ 
-    (StatefullyParsed (ReasonSection direction defeasibility) (ƮSection inSection) ()
+    (StatefullyParsed (ReasonSection direction defeasibility) 
+                      (ƮSection inSection) 
+                      ()
     ,FromReasonSection decode direction defeasibility
     ) ⇒ 
     Text ⁞ ƮSection inSection → [decode]
