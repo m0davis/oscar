@@ -130,10 +130,10 @@ spacesUpToEof ∷ Stream s m Char ⇒ ParsecT s u m [Char]
 spacesUpToEof = try $ 
     manyTillBefore nonNewlineSpace eof
 
-{- | apparentlyAloneOnLine p applies parser p if it is followed only by 
-     whitespace up to the next 'newline' or 'eof'. It does not consume the
-     following whitespace. If parser p fails, nothing is consumed. If it
-     succeeds, the parser consumes only p.
+{- | apparentlyAloneOnLine p successfully applies parser p only if it is 
+     immediately followed by whitespace up to the next 'newline' or 'eof'. 
+     Upon success, it returns the parsed result without consuming the 
+     following whitespace. Otherwise, nothing is consumed.
 -}
 apparentlyAloneOnLine ∷ Stream s m Char ⇒ ParsecT s u m a → ParsecT s u m a
 apparentlyAloneOnLine p = try $ 
