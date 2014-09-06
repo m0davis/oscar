@@ -23,24 +23,46 @@ import Oscar.Main.Prelude
 {- | a Text ⁞ ƮWithLineComments is a representation of a set of Oscar
      'Problem's. The formatting of such a Problem is described in
      "Oscar.Documentation".
+
+Uses: 
+
+* Text ⁞ ƮWithLineComments
 -}
 data ƮWithLineComments
 
 {- | The same as above, but with all line comments removed. See
      'Oscar.ProblemParser.stripLineComments'.
+
+Uses: 
+
+* Text ⁞ ƮWithoutLineComments
 -}
 data ƮWithoutLineComments
 
--- | Everything after the \"Problem #\".
+{- | Everything after the \"Problem #\".
+
+Uses: 
+
+* Text ⁞ ƮAfterNumberLabel
+-}
 data ƮAfterNumberLabel
 
--- | Everything after the \"Problem #\<number>\".
+{- | Everything after the \"Problem #\<number>\".
+
+Uses: 
+
+* Text ⁞ ƮAfterNumber
+-}
 data ƮAfterNumber
 
 {- | Everything after the end of the description. There are two cases. If
      there is some (non-whitespace) description, this marks the first
      position after it (and, necessarily, prior to any sections). If the
      description is empty, this marks the same location as ƮAfterNumber.
+
+Uses: 
+
+* Text ⁞ ƮEndOfDescription
 -}
 data ƮEndOfDescription
 
@@ -49,16 +71,42 @@ data ƮEndOfDescription
 @
 variables = {var1,var2,...,varN}
 @
+
+Uses: 
+
+* Text ⁞ ƮVariables
 -}
 data ƮVariables
 
--- | The premise section
+{- | The premise section
+
+Uses: 
+
+* Text ⁞ ƮSection ƮGivenPremise
+-}
 data ƮGivenPremise
 
--- | The interest section
+{- | The interest section
+
+Uses: 
+
+* Text ⁞ ƮSection ƮUltimateEpistemicInterest
+-}
 data ƮUltimateEpistemicInterest
 
--- | A reason section
+{- | A reason section
+
+Uses: 
+
+* Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
+* Text ⁞ ƮSection (ƮReason Forwards Conclusive)
+* Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
+* Text ⁞ ƮSection (ƮReason Backwards Conclusive)
+* Text ⁞ ƮReason Forwards PrimaFacie
+* Text ⁞ ƮReason Forwards Conclusive
+* Text ⁞ ƮReason Backwards PrimaFacie
+* Text ⁞ ƮReason Backwards Conclusive
+-}
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
 {- | The only types that make sense here are one of the three Ʈ...\'s above.
@@ -84,6 +132,8 @@ data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 ∘∘↵
 ∘∘some premise text
 @
+
+Uses: (see above, e.g. ƮGivenPremise)
 -}
 data ƮSection section
 
