@@ -36,8 +36,8 @@ module Oscar.ProblemParser.Internal.ReasonSection (
     -- * decoding a 'ReasonSection'
     FromReasonSection(..),
     -- ** decoding helpers
-    getForwardsReason,
-    getBackwardsReason,
+    toForwardsReason,
+    toBackwardsReason,
     ) where
 
 import Oscar.Main.Prelude
@@ -174,7 +174,7 @@ instance FromReasonSection ProblemForwardsPrimaFacieReason
   where
     fromReasonSection r = (,,)
         (_rsProblemReasonName r)
-        (getForwardsReason $ _rsProblemReasonText r)
+        (toForwardsReason $ _rsProblemReasonText r)
         (_rsProblemStrengthDegree r)
 
 instance FromReasonSection ProblemForwardsConclusiveReason
@@ -187,7 +187,7 @@ instance FromReasonSection ProblemForwardsConclusiveReason
       where
         result = (,)
             (_rsProblemReasonName r)
-            (getForwardsReason $ _rsProblemReasonText r)
+            (toForwardsReason $ _rsProblemReasonText r)
 
 instance FromReasonSection ProblemBackwardsPrimaFacieReason
                            Backwards
@@ -195,7 +195,7 @@ instance FromReasonSection ProblemBackwardsPrimaFacieReason
   where
     fromReasonSection r = (,,)
         (_rsProblemReasonName r)
-        (getBackwardsReason $ _rsProblemReasonText r)
+        (toBackwardsReason $ _rsProblemReasonText r)
         (_rsProblemStrengthDegree r)
 
 instance FromReasonSection ProblemBackwardsConclusiveReason
@@ -208,10 +208,10 @@ instance FromReasonSection ProblemBackwardsConclusiveReason
       where
         result = (,)
             (_rsProblemReasonName r)
-            (getBackwardsReason $ _rsProblemReasonText r)
+            (toBackwardsReason $ _rsProblemReasonText r)
 
-getForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
-getForwardsReason = simpleParse p . unƭ
+toForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
+toForwardsReason = simpleParse p . unƭ
   where
     p ∷ Parser ForwardsReason
     p = do
@@ -225,20 +225,20 @@ getForwardsReason = simpleParse p . unƭ
             (formulaFromText <$> premiseTexts)
             (formulaFromText conclusionText)
 
-getBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
-getBackwardsReason = simpleParse p . unƭ
+toBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
+toBackwardsReason = simpleParse p . unƭ
   where
     p ∷ Parser BackwardsReason
     p = do
         forwardsPremiseTextsText ←
             manyTill anyChar
                      (lookAhead . try $
-                        many space >>
-                        char '{' >>
-                        many (notFollowedBy (char '}') >> anyChar) >>
-                        char '}' >>
-                        many space >>
-                        string "||=>" >>
+                        many space *>
+                        char '{' *>
+                        many (notFollowedBy (char '}') *> anyChar) *>
+                        char '}' *>
+                        many space *>
+                        string "||=>" *>
                         many space
                         )
         forwardsPremiseTexts ←

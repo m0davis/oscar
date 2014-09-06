@@ -61,7 +61,30 @@ data ƮUltimateEpistemicInterest
 -- | A reason section
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
--- | The only types that make sense here are one of the three Ʈ...\'s above
+{- | The only types that make sense here are one of the three Ʈ...\'s above.
+     
+     A (Text ⁞ ƮSection section) starts at the end of the section label
+     and continues to the end of that section, discarding trailing whitespace. 
+
+     __Example__     
+     
+     Snippet of a 'Problem'
+
+@
+∘Given premises:∘∘↵
+∘∘some premise text↵
+∘∘↵
+↵
+∘∘Ultimate epistemic interests:↵
+@
+
+    Text ⁞ ƮSection ƮGivenPremise is
+
+     @
+∘∘↵
+∘∘some premise text
+@
+-}
 data ƮSection section
 
 -- | The orientation of a reason.

@@ -61,7 +61,10 @@ import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificat
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDegree)
 
 {- | The formatting of the input is documented at "Oscar.Documentation". -}
-problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  -- ^ The input must begin at the problem number (after the label, \"Problem #\"). Possibly as obtained from 'evalStatefulParser'.
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  
+                  -- ^ The input must begin at the problem number (after the 
+                  --   label, \"Problem #\"). Possibly as obtained from 
+                  --   'evalStatefulParser'.
                 → Problem
 problemFromText t = Problem
     number
@@ -198,7 +201,7 @@ instance StatefullyParsed ProblemDescription
             filledDescription = do
                 spaces
                 manyTillBefore anyChar $
-                    {- Here is why we have a separate parser for an empty
+                    {- Here's why we have a separate parser for an empty
                        description. If the description were empty, we would
                        have no way of knowing, after skipping the spaces, that
                        the first section identifier found was alone on its
@@ -215,34 +218,38 @@ __Example__
 Input text (ƮEndOfDescription):
 
 @
-
-Given premises:
-     A    justification = 1.0
-     B    justification = 1.0
-Ultimate epistemic interests:
-     C    interest = 1.0
-
-   FORWARDS PRIMA FACIE REASONS
-     fpf-reason_1:   {A, B} ||=> C   strength = 1.0
+∘↵
+Given premises:↵
+∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+∘∘∘∘∘B∘∘∘∘justification∘=∘1.0∘↵
+∘∘↵
+Ultimate∘epistemic∘interests:∘∘∘↵
+∘∘∘∘∘C∘∘∘∘interest∘=∘1.0↵
+↵
+∘∘∘FORWARDS∘PRIMA∘FACIE∘REASONS↵
+∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0↵
 @
 
 Parsed output (with kind = ƮGivenPremise):
 
 @
-     A    justification = 1.0
-     B    justification = 1.0
+↵
+∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+∘∘∘∘∘B∘∘∘∘justification∘=∘1.0
 @
 
 Parsed output (with kind = ƮUltimateEpistemicInterest):
 
 @
-     C    interest = 1.0
+∘∘∘↵
+∘∘∘∘∘C∘∘∘∘interest∘=∘1.0
 @
 
 Parsed output (with kind = ƮReason Forwards PrimaFacie):
 
 @
-     fpf-reason_1:   {A, B} ||=> C   strength = 1.0
+↵
+∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0
 @
 -}
 instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
@@ -279,15 +286,15 @@ Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another
 'StatefullyParsed' instance):
 
 @
-     P    justification = 1.0
-     A    justification = 1.0
+∘∘∘∘∘P∘∘∘∘justification∘=∘1.0↵
+∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
 @
 
 Sample Output (obtained from 'evalStatefulParserOnSection'):
 
 @
     [(\<formula for P>, \<justification 1.0>)
-    ,(\<formula for A\>, \<justification 1.0>)
+    ,(\<formula for A>, \<justification 1.0>)
     ]
 @
 -}
@@ -370,13 +377,19 @@ instance SectionElement ProblemBackwardsConclusiveReason where
 {- | Runs an appropriate 'statefulParser' on the given input, returning the
      successfully parsed value and the remainder of the input after the parse.
 
-Pseudocode Example
+__Pseudocode Example__
 
 @
-runStatefulParser (\"1 \\n Description\\n...etc...\\n" :: Text ⁞ ƮAfterNumberLabel)
+-- running this...
 
-(1                                   :: ProblemNumber
-,\" \\n Description\\n...etc...\\n"  :: Text ⁞ ƮAfterNumber
+runStatefulParser ( \"1∘↵∘Description↵...etc...↵" ∷ Text ⁞ ƮAfterNumberLabel )
+
+-- ...yields this
+
+( 1 
+    ∷ ProblemNumber
+, \"∘↵∘Description↵...etc...↵\" 
+    ∷ Text ⁞ ƮAfterNumber
 )
 @
 -}
@@ -400,7 +413,8 @@ evalStatefulParser ∷ ∀ a inState.
     Text ⁞ inState → a
 evalStatefulParser = fst . runStatefulParser
 
-{- | Special handling for 'ƮSection's. -}
+{- | Special handling for 'ƮSection's. Evaluates each element of the section.
+-}
 evalStatefulParserOnSection ∷
     ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ())
     ⇒ Text ⁞ ƮSection inSection

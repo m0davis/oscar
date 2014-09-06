@@ -1,6 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
 module Oscar.Documentation (
+    -- * How can I possibly decipher this code?
+    -- $RTFM
+
     -- * Who is Oscar?
     -- $WhoIsOscar
 
@@ -22,6 +25,16 @@ import Oscar.Formula
 import Oscar.ProblemParser.Internal.Section
 import Oscar.ProblemParser.Internal.Tags
 
+{- $RTFM
+
+The codebase makes heavy use of unicode, so make sure you have an editor or
+browser that is unicode-aware. If you see a funny-looking T here (Ʈ), you
+probably are set.
+
+Examples showing blocks of Text sometimes use ∘ to denote a space and ↵ to 
+denote a newline.
+-}
+
 {- $WhoIsOscar
 
 Oscar is the agent implemented as part of the
@@ -40,7 +53,6 @@ Pollock's untimely death, one of his students, Martin Stone Davis (me), took
 up the challenge to fix Oscar. I have elected to rewrite Oscar in Haskell, in
 the hopes that Haskell's strong typing will facilitate writing a more robust
 codebase.
-
 -}
 
 {- $WhatIsDefeasibleReasoning
@@ -74,7 +86,6 @@ raining. You consider Alice to be trustworthy and so infer that it's raining.
 But then Bob tells you that it isn't. If you consider Bob to be equally as
 trustworthy as Alice, your inference that it is raining is rebutted by another
 inference that it is not raining.
-
 -}
 
 {- $ExampleOfProblem
