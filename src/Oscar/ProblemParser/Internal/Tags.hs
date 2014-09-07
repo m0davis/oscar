@@ -97,11 +97,22 @@ data ƮUltimateEpistemicInterest
 
 * Text ⁞ ƮSection (ƮReason direction defeasibility)
 
-    A reason section
+    A reason section, containing a number of reasons. For example,
+
+    @
+    FORWARDS PRIMA FACIE REASONS
+
+        {A} ||=> B    justification = 1.0
+        {B} ||=> C    justification = 1.0
+    @
 
 * Text ⁞ ƮReason direction defeasibility
 
-    A reason in a reason section
+    An element of a reason section. For example,
+
+    @
+    {A} ||=> B    justification = 1.0
+    @
 -}
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
@@ -136,9 +147,9 @@ data ƮSection section
 -- | The orientation of a reason.
 data Direction
     = Forwards   
-      -- ^ For reasons that, when discharged, creates a new inference
+      -- ^ For reasons that create new inferences
     | Backwards  
-      -- ^ For reasons that, when discharged, creates a new interest
+      -- ^ For reasons that create new interests
   deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 -- | The defeasibility of a reason

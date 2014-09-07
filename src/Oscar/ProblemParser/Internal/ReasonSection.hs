@@ -146,6 +146,7 @@ parserEnbracedTexts = try $ do
     p ∷ Parser [Text]
     p = do
         (firstText, restText) ←
+            -- TODO messy
             (many space *>
                 (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <*
                 many space
