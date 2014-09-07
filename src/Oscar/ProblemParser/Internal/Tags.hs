@@ -20,92 +20,88 @@ module Oscar.ProblemParser.Internal.Tags (
 
 import Oscar.Main.Prelude
 
-{- | a Text ⁞ ƮWithLineComments is a representation of a set of Oscar
-     'Problem's. The formatting of such a Problem is described in
-     "Oscar.Documentation".
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮWithLineComments
+
+    A representation of a set of Oscar 'Oscar.Problem.Problem's. The 
+    formatting of such a Problem is described in "Oscar.Documentation".
 -}
 data ƮWithLineComments
 
-{- | The same as above, but with all line comments removed. See
-     'Oscar.ProblemParser.stripLineComments'.
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮWithoutLineComments
+
+    The same as ƮWithLineComments, but with all line comments removed. See
+    'Oscar.ProblemParser.stripLineComments'.
 -}
 data ƮWithoutLineComments
 
-{- | Everything after the \"Problem #\".
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮAfterNumberLabel
+
+    Everything after the \"Problem #\".
 -}
 data ƮAfterNumberLabel
 
-{- | Everything after the \"Problem #\<number>\".
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮAfterNumber
+
+    Everything after the \"Problem #\<number>\".
 -}
 data ƮAfterNumber
 
-{- | Everything after the end of the description. There are two cases. If
-     there is some (non-whitespace) description, this marks the first
-     position after it (and, necessarily, prior to any sections). If the
-     description is empty, this marks the same location as ƮAfterNumber.
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮEndOfDescription
+
+    Everything after the end of the description. There are two cases. If
+    there is some (non-whitespace) description, this marks the first
+    position after it (and, necessarily, prior to any sections). If the
+    description is empty, this marks the same location as ƮAfterNumber.
 -}
 data ƮEndOfDescription
 
-{- | The variables optionally defined for a reason, written as
-
-@
-variables = {var1,var2,...,varN}
-@
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮVariables
+
+    The variables optionally defined for a reason, written as
+
+    @
+    variables = {var1,var2,...,varN}
+    @
 -}
 data ƮVariables
 
-{- | The premise section
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮSection ƮGivenPremise
+
+    The premise section
 -}
 data ƮGivenPremise
 
-{- | The interest section
-
-Uses: 
+{- | Used as: 
 
 * Text ⁞ ƮSection ƮUltimateEpistemicInterest
+
+    The interest section
 -}
 data ƮUltimateEpistemicInterest
 
-{- | A reason section
+{- | Used as: 
 
-Uses: 
+* Text ⁞ ƮSection (ƮReason direction defeasibility)
 
-* Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
-* Text ⁞ ƮSection (ƮReason Forwards Conclusive)
-* Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
-* Text ⁞ ƮSection (ƮReason Backwards Conclusive)
-* Text ⁞ ƮReason Forwards PrimaFacie
-* Text ⁞ ƮReason Forwards Conclusive
-* Text ⁞ ƮReason Backwards PrimaFacie
-* Text ⁞ ƮReason Backwards Conclusive
+    A reason section
+
+* Text ⁞ ƮReason direction defeasibility
+
+    A reason in a reason section
 -}
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
@@ -133,18 +129,23 @@ data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 ∘∘some premise text
 @
 
-Uses: (see above, e.g. ƮGivenPremise)
+Used as: (see above, e.g. ƮGivenPremise)
 -}
 data ƮSection section
 
 -- | The orientation of a reason.
 data Direction
-    = Forwards   -- ^ For reasons that require matching premises to draw new conclusions
-    | Backwards  -- ^ For reasons that require matching conclusions to draw new interests
+    = Forwards   
+      -- ^ For reasons that, when discharged, creates a new inference
+    | Backwards  
+      -- ^ For reasons that, when discharged, creates a new interest
   deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 -- | The defeasibility of a reason
 data Defeasibility
-    = PrimaFacie  -- ^ For reasons whose conclusions can be undercut or rebutted
-    | Conclusive  -- ^ For reasons whose conclusions are logical consequences of their premises
+    = PrimaFacie  
+      -- ^ For reasons whose conclusions can be undercut or rebutted
+    | Conclusive  
+      -- ^ For reasons whose conclusions are logical consequences of their 
+      ---  premises
   deriving (Bounded, Enum, Eq, Ord, Read, Show)

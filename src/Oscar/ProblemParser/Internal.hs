@@ -79,12 +79,13 @@ problemFromText t = Problem
     (number     , afterNumber     ) = runStatefulParser t
     (description, afterDescription) = runStatefulParser afterNumber
 
-{- | Using a 'Parser' can be tricky because nothing in the type signature
-     tells what sort of input it is meant to be applied to (excepting that it
+{- | Working within a 'Parser' monad can be tricky because nothing at the type
+     level tells us what sort of input we're working with (except that it
      is 'Text'), nor does it tell us what sort of state the input is in
      after applying the parser. 'StatefullyParsed' allows us to define a
      parsed type with respect to these states, giving us a measure of safety
-     at the type level.
+     at the type level. Admittedly, we sacrifice the convenience of binding, 
+     since the 'statefulParser' is not a 'Monad'.
 
      An instance may be invoked with 'runStatefulParser'.
 
@@ -100,36 +101,36 @@ class StatefullyParsed a inState outState | a → inState outState where
 
 __Example__
 
-Input text (ƮWithoutLineComments), possibly obtained from
-'Oscar.ProblemParser.stripLineComments'):
+* Input text (ƮWithoutLineComments), possibly obtained from
+  'Oscar.ProblemParser.stripLineComments'):
 
-@
-Problem #1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
+    @
+    Problem #1
+    Description of the first problem
+    Given premises:
+         P    justification = 1.0
+    ...etc...
+    
+    Problem #2
+    Description of the second problem
+    ...etc...
+    @
 
-Problem #2
-Description of the second problem
-...etc...
-@
+* Parsed outputs (obtained from 'evalStatefulParser'):
 
-Parsed outputs (obtained from 'evalStatefulParser'):
+    @
+    1
+    Description of the first problem
+    Given premises:
+         P    justification = 1.0
+    ...etc...
+    @
 
-@
-1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-@
-
-@
-2
-Description of the second problem
-...etc...
-@
+    @
+    2
+    Description of the second problem
+    ...etc...
+    @
 
 
 -}
@@ -164,28 +165,30 @@ instance StatefullyParsed ProblemNumber
 
 __Example__
 
-Input text (ƮAfterNumber):
+* Input text (ƮAfterNumber):
 
-@
-    some description
+    @
+    ∘∘↵
+    ∘∘∘∘some∘description↵
+    ∘↵
+    Given∘premises:↵
+    ...etc...
+    @
 
-Given premises:
-...etc...
-@
+* Parsed output (ProblemDescription):
 
-Parsed output (ProblemDescription):
+    @
+    some∘description
+    @
 
-@
-some description
-@
+* Parser\'s input state after parsing (ƮEndOfDescription):
 
-Input state after parsing (ƮEndOfDescription):
-
-@
-
-Given premises:
-...etc...
-@
+    @
+    ↵
+    ∘↵
+    Given∘premises:↵
+    ...etc...
+    @
 -}
 instance StatefullyParsed ProblemDescription
                           ƮAfterNumber
@@ -215,42 +218,42 @@ instance StatefullyParsed ProblemDescription
 
 __Example__
 
-Input text (ƮEndOfDescription):
+* Input text (ƮEndOfDescription):
 
-@
-∘↵
-Given premises:↵
-∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
-∘∘∘∘∘B∘∘∘∘justification∘=∘1.0∘↵
-∘∘↵
-Ultimate∘epistemic∘interests:∘∘∘↵
-∘∘∘∘∘C∘∘∘∘interest∘=∘1.0↵
-↵
-∘∘∘FORWARDS∘PRIMA∘FACIE∘REASONS↵
-∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0↵
-@
+    @
+    ∘↵
+    Given premises:↵
+    ∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+    ∘∘∘∘∘B∘∘∘∘justification∘=∘1.0∘↵
+    ∘∘↵
+    Ultimate∘epistemic∘interests:∘∘∘↵
+    ∘∘∘∘∘C∘∘∘∘interest∘=∘1.0↵
+    ↵
+    ∘∘∘FORWARDS∘PRIMA∘FACIE∘REASONS↵
+    ∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0↵
+    @
 
-Parsed output (with kind = ƮGivenPremise):
+* Parsed output (with kind = ƮGivenPremise):
 
-@
-↵
-∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
-∘∘∘∘∘B∘∘∘∘justification∘=∘1.0
-@
+    @
+    ↵
+    ∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+    ∘∘∘∘∘B∘∘∘∘justification∘=∘1.0
+    @
 
-Parsed output (with kind = ƮUltimateEpistemicInterest):
+* Parsed output (with kind = ƮUltimateEpistemicInterest):
 
-@
-∘∘∘↵
-∘∘∘∘∘C∘∘∘∘interest∘=∘1.0
-@
+    @
+    ∘∘∘↵
+    ∘∘∘∘∘C∘∘∘∘interest∘=∘1.0
+    @
 
-Parsed output (with kind = ƮReason Forwards PrimaFacie):
+* Parsed output (with kind = ƮReason Forwards PrimaFacie):
 
-@
-↵
-∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0
-@
+    @
+    ↵
+    ∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0
+    @
 -}
 instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
                                                       ƮEndOfDescription
@@ -282,21 +285,21 @@ instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection ki
 
 __Example__
 
-Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another
-'StatefullyParsed' instance):
+* Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another
+  'StatefullyParsed' instance):
 
-@
-∘∘∘∘∘P∘∘∘∘justification∘=∘1.0↵
-∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
-@
+    @
+    ∘∘∘∘∘P∘∘∘∘justification∘=∘1.0↵
+    ∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+    @
 
-Sample Output (obtained from 'evalStatefulParserOnSection'):
+* Sample Output (obtained from 'evalStatefulParserOnSection'):
 
-@
+    @
     [(\<formula for P>, \<justification 1.0>)
     ,(\<formula for A>, \<justification 1.0>)
     ]
-@
+    @
 -}
 instance StatefullyParsed ProblemPremise
                           (ƮSection ƮGivenPremise)
@@ -334,9 +337,12 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
             d ← parserProblemStrengthDegree
             return (t, d)
 
-{- | Defines a set of elements found at the ƮEndOfDescription. -}
+{- | Defines a set of elements found within a 'Section'. -}
 class SectionElement element where
-    sectionElements ∷ Text ⁞ ƮEndOfDescription → [element]
+    sectionElements ∷ (Text ⁞ ƮEndOfDescription)
+                      -- ^ All sections are found after the problem 
+                      --   description.
+                    → [element]
 
 instance SectionElement ProblemPremise where
     sectionElements t = evalStatefulParserOnSection s

@@ -7,6 +7,9 @@ module Oscar.Documentation (
     -- * Who is Oscar?
     -- $WhoIsOscar
 
+    -- * What is natural deduction?
+    -- $WhatIsNaturalDeduction
+
     -- * What is defeasible reasoning?
     -- $WhatIsDefeasibleReasoning
 
@@ -42,7 +45,7 @@ Oscar is the agent implemented as part of the
 
 Oscar is (potentially) capable of
 
-    * first-order theorem proving
+    * natural deduction (first-order theorem proving)
     * defeasible reasoning
     * probabilistic reasoning
     * planning
@@ -53,6 +56,40 @@ Pollock's untimely death, one of his students, Martin Stone Davis (me), took
 up the challenge to fix Oscar. I have elected to rewrite Oscar in Haskell, in
 the hopes that Haskell's strong typing will facilitate writing a more robust
 codebase.
+-}
+
+{- $WhatIsNaturalDeduction
+
+<http://en.wikipedia.org/wiki/Natural_deduction Natural deduction> refers to 
+a family of methods for proving first-order theorems in which reasoning can
+proceed both forwards and backwards. Given a set of __premises__ and an
+__interest___, one tries to prove that formula for the interest follows
+deductively from the premises.
+
+__'Forwards'__ reasoning
+
+Suppose we have an interest, `A`, and a premise, `A and B`. From `A and B`, we 
+can deduce `A` and we can deduce `B`. The first of these matches the interest,
+so we are done.
+
+__'Backwards'__ reasoning
+
+Suppose we have an interest, `A or B`, and a premise, `A`. Noting that we have 
+interest, `A or B`, we could entertain two new interests. One in `A` and 
+another in `B`. Showing that either of these interests holds is enough to 
+discharge our interest in `A or B`. The first of these matches our premise, 
+`A`, so we are done.
+
+It would not be so good to try to reason forwards from `A` to `A or B` simply
+because there an infinite number of formulas of the form `A or X` that follow
+from `A`.
+
+Consider again the example above of forwards reasoning. Could we perform
+that deduction by reasoning backwards? Noting that we have interest, `A`, 
+we could entertain an interest in `A and B` and another in `B and A`. 
+The premise `A and B` matches the first of these, so we are done. But this 
+strategy doesn\'t work very well since we could equally have entertained 
+interest in `A and C` and a zillion other formulas.
 -}
 
 {- $WhatIsDefeasibleReasoning

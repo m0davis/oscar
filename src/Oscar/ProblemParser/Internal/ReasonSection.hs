@@ -210,7 +210,10 @@ instance FromReasonSection ProblemBackwardsConclusiveReason
             (_rsProblemReasonName r)
             (toBackwardsReason $ _rsProblemReasonText r)
 
-toForwardsReason ∷ Text ⁞ ƮReason Forwards defeasibility → ForwardsReason
+toForwardsReason 
+    ∷ (Text ⁞ ƮReason Forwards defeasibility) 
+      -- ^ a constituent of a 'ReasonSection'
+    → ForwardsReason
 toForwardsReason = simpleParse p . unƭ
   where
     p ∷ Parser ForwardsReason
@@ -225,7 +228,10 @@ toForwardsReason = simpleParse p . unƭ
             (formulaFromText <$> premiseTexts)
             (formulaFromText conclusionText)
 
-toBackwardsReason ∷ Text ⁞ ƮReason Backwards defeasibility → BackwardsReason
+toBackwardsReason 
+    ∷ (Text ⁞ ƮReason Backwards defeasibility)
+      -- ^ a constituent of a 'ReasonSection'
+    → BackwardsReason
 toBackwardsReason = simpleParse p . unƭ
   where
     p ∷ Parser BackwardsReason
