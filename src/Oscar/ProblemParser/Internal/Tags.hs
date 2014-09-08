@@ -26,6 +26,10 @@ import Oscar.Main.Prelude
 
     A representation of a set of Oscar 'Oscar.Problem.Problem's. The 
     formatting of such a Problem is described in "Oscar.Documentation".
+
+* FilePath ⁞ ƮWithLineComments
+
+    A file containing a Text ⁞ ƮWithLineComments.
 -}
 data ƮWithLineComments
 

@@ -36,6 +36,23 @@ probably are set.
 
 Examples showing blocks of Text sometimes use ∘ to denote a space and ↵ to 
 denote a newline.
+
+Once you have read through the documentation in this module, here are some
+key modules in which to drill-down.
+    
+    * "Main"
+
+        Begin at the beginning.
+
+    * "Oscar.Main.Prelude" and "Oscar.Main.Parser"
+
+        Before the beginning, there was Prelude.
+
+    * "Oscar.ProblemParser.Internal.Tags"
+
+        The types defined here provide a kind of roadmap to understanding the
+        conversion from a human-written problem for Oscar to a 'Problem',
+        which is what "Main" does.
 -}
 
 {- $WhoIsOscar
