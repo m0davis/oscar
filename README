@@ -23,6 +23,22 @@ Version history:
 TODO for 0.3.0.0:
     * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
     * LispPositiveDouble et al. -> Degree
+    * ProblemNumber -> Identifier
+    * ProblemDescription -> Description
+    * etc. (ProblemPremise -> Premise)
+    * limit to 80 columns wide
+    * consistent presentation of __Examples__
+    * consistent naming of parsers (as prefix or suffix)
+    * wtf with haddock on data ƮSection section
+    * Replace Tagged Texts with newtype (?); or add a usage example for ƮWithLineComments (FilePath); and what about Symbol? type or newtype?
+    * [] → Set where appropriate
+    * enforce unique names
+    * clean any messy code
+    * check all TODOs
+    * implement Variables
+    * Section -> SectionName (?)
+    * change Premise et al. from types to data (?)
+    * make and use lenses (?)
 
 TODO for 0.4.0.0:
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/

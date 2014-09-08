@@ -6,7 +6,7 @@ module Oscar.ProblemParser (
     -- * Quick start
     -- $QuickStart
     readFileProblems,
-    -- Helpers
+    -- * Helpers
     readProblemsTextFile,
     stripLineComments,
     ) where
@@ -26,7 +26,7 @@ import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 See 'Oscar.Documentation' for an example of how to write a 'Problem'.
 -}
 
-{- | Read problems formatted as decribed in 'Oscar.Documentation.ReadFileProblems'. from the filesystem. Uses 'readProblemsTextFile'.
+{- | Read problems formatted as decribed in 'Oscar.Documentation'. from the filesystem. Uses 'readProblemsTextFile'.
 -}
 readFileProblems ∷ FilePath ⁞ ƮWithLineComments → IO [Problem]
 readFileProblems =

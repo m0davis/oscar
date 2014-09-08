@@ -27,6 +27,7 @@ import Oscar.ProblemParser.Internal.Tags    (Defeasibility(Conclusive))
 
 
 data Section
+    -- TODO is there any better way? I want to avoid this apostrophe ugliness.
     = Section'GivenPremises               -- ^ "Given premises:"
     | Section'UltimateEpistemicInterests  -- ^ "Ultimate epistemic interests:"
     | Section'ForwardsPrimaFacieReasons   -- ^ "FORWARDS PRIMA FACIE REASONS"

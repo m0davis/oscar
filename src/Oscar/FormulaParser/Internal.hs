@@ -271,6 +271,9 @@ Free [Free [Pure (QSTokenUnaryOp Negation)
            ]
      ]
 @
+
+Note that the two Free's at the top of the tree are redundant. When we 
+'makeFormula', they will be removed via 'RedundantParenthesesP'.
 -}
 reformQSTokenTree ∷ Free [] QSToken ⁞ ƮUnreformed → Free [] QSToken ⁞ ƮReformed
 reformQSTokenTree = ƭ . ref . unƭ

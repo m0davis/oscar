@@ -125,20 +125,20 @@ data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
      
      * Snippet of a 'Problem'
 
-        @
-        ∘Given premises:∘∘↵
-        ∘∘some premise text↵
-        ∘∘↵
-        ↵
-        ∘∘Ultimate epistemic interests:↵
-        @
+         @
+         ∘Given premises:∘∘↵
+         ∘∘some premise text↵
+         ∘∘↵
+         ↵
+         ∘∘Ultimate epistemic interests:↵
+         @
 
     * Text ⁞ ƮSection ƮGivenPremise is
 
-        @
-        ∘∘↵
-        ∘∘some premise text
-        @
+         @
+         ∘∘↵
+         ∘∘some premise text
+         @
 
 Used as: (see above, e.g. ƮGivenPremise)
 -}

@@ -63,33 +63,33 @@ codebase.
 <http://en.wikipedia.org/wiki/Natural_deduction Natural deduction> refers to 
 a family of methods for proving first-order theorems in which reasoning can
 proceed both forwards and backwards. Given a set of __premises__ and an
-__interest__, one tries to prove that formula for the interest follows
+__interest__, one tries to prove that the formula for the interest follows
 deductively from the premises.
 
 __'Forwards'__ reasoning
 
-Suppose we have an interest, `A`, and a premise, `A and B`. From `A and B`, we 
-can deduce `A` and we can deduce `B`. The first of these matches the interest,
+Suppose we have an interest, @A@, and a premise, @A and B@. From @A and B@, we 
+can deduce @A@ and we can deduce @B@. The first of these matches the interest,
 so we are done.
 
 __'Backwards'__ reasoning
 
-Suppose we have an interest, `A or B`, and a premise, `A`. Noting that we have 
-interest, `A or B`, we could entertain two new interests. One in `A` and 
-another in `B`. Showing that either of these interests holds is enough to 
-discharge our interest in `A or B`. The first of these matches our premise, 
-`A`, so we are done.
+Suppose we have an interest, @A or B@, and a premise, @A@. Noting that we have 
+interest, @A or B@, we could entertain two new interests. One in @A@ and 
+another in @B@. Showing that either of these interests holds is enough to 
+discharge our interest in @A or B@. The first of these matches our premise, 
+@A@, so we are done.
 
-It would not be so good to try to reason forwards from `A` to `A or B` simply
-because there an infinite number of formulas of the form `A or X` that follow
-from `A`.
+It would not be so good to try to reason forwards from @A@ to @A or B@ simply
+because there an infinite number of formulas of the form @A or X@ that follow
+from @A@.
 
 Consider again the example above of forwards reasoning. Could we perform
-that deduction by reasoning backwards? Noting that we have interest, `A`, 
-we could entertain an interest in `A and B` and another in `B and A`. 
-The premise `A and B` matches the first of these, so we are done. But this 
+that deduction by reasoning backwards? Noting that we have interest, @A@, 
+we could entertain an interest in @A and B@ and another in @B and A@. 
+The premise @A and B@ matches the first of these, so we are done. But this 
 strategy doesn\'t work very well since we could equally have entertained 
-interest in `A and C` and a zillion other formulas.
+interest in @A and C@ and a zillion other formulas.
 -}
 
 {- $WhatIsDefeasibleReasoning
@@ -100,7 +100,7 @@ brother of Oscar, John L. Pollock. I will illustrate it with an example.
 __Seeing is believing?__
 
 You see before you what appears to be a reddish-colored ball. Is it reasonable
-for you to infer that there actually __is__ a red ball before you? Under what
+for you to infer that there actually /is/ a red ball before you? Under what
 circumstances is it not?
 
 Perhaps you have rose-colored glasses on! If that were the case, you would

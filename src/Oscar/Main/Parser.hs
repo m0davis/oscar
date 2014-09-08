@@ -132,7 +132,7 @@ spacesUpToEndOfLine ∷ Stream s m Char ⇒ ParsecT s u m [Char]
 spacesUpToEndOfLine = try $
     manyTillBefore nonNewlineSpace $ eof <|> (newline *> pure ())
 
-{- | spacesUpToEof consumes the whitespace an 'eof'. If non-whitespace
+{- | spacesUpToEof consumes the whitespace before an 'eof'. If non-whitespace
      characters are found, the parser fails and does not consume anything.
 -}
 spacesUpToEof ∷ Stream s m Char ⇒ ParsecT s u m [Char]

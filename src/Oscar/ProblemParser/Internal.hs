@@ -328,11 +328,11 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
     statefulParser = ƭ $ do
         n ← parserProblemReasonName
         spaces
-        (t, (v, d)) ← many anyChar `precededBy` p'
+        (t, (v, d)) ← many anyChar `precededBy` p
         return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
       where
-        p' ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
-        p' = do
+        p ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
+        p = do
             t ← parserProblemVariablesText
             d ← parserProblemStrengthDegree
             return (t, d)
@@ -411,8 +411,8 @@ runStatefulParser = simpleParse p . unƭ
         return (v, ƭ r)
 
 {- | Returns only the first component of 'runStatefulParser'. The
-     'StatefullyParsed' outState is restricted to () to avoid mistakenly
-     ignoring relevant text following the parsed value.
+     'StatefullyParsed' outState is restricted to () to deter us from 
+     mistakenly ignoring relevant text following the parsed value.
 -}
 evalStatefulParser ∷ ∀ a inState.
     (StatefullyParsed a inState ()) ⇒
