@@ -63,7 +63,7 @@ codebase.
 <http://en.wikipedia.org/wiki/Natural_deduction Natural deduction> refers to 
 a family of methods for proving first-order theorems in which reasoning can
 proceed both forwards and backwards. Given a set of __premises__ and an
-__interest___, one tries to prove that formula for the interest follows
+__interest__, one tries to prove that formula for the interest follows
 deductively from the premises.
 
 __'Forwards'__ reasoning
