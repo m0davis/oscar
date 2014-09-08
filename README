@@ -39,6 +39,7 @@ TODO for 0.3.0.0:
     * Section -> SectionName (?)
     * change Premise et al. from types to data (?)
     * make and use lenses (?)
+    * remove any unused build-depends from cabal
 
 TODO for 0.4.0.0:
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
