@@ -24,7 +24,6 @@ TODO for 0.3.0.0:
     * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
     * LispPositiveDouble et al. -> Degree
 
-
 TODO for 0.4.0.0:
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
     * git automation
