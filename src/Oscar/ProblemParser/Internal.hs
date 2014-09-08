@@ -1,285 +1,442 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.ProblemParser.Internal (
-    -- * text of problems
-    partitionProblemsText,
-    -- * parsing problem parts
-    -- $StatefulParse
-    problemSectionText,
-    decodeGivenPremisesSection,
-    decodeUltimateEpistemicInterestsSection,
-    decodeForwardsPrimaFacieReasonSection,
-    decodeForwardsConclusiveReasonSection,
-    decodeBackwardsPrimaFacieReasonSection,
-    decodeBackwardsConclusiveReasonSection,
     -- * Problem construction
     problemFromText,
+    -- * Parsing with type-level safety
+    -- $StatefulParse
+    StatefullyParsed(..),
+    SectionElement(..),
+    runStatefulParser,
+    evalStatefulParser,
+    evalStatefulParserOnSection,
+    evalReasonSection,
     ) where
 
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
-import Oscar.Formula                                    (Formula)
 import Oscar.FormulaParser                              (formulaFromText)
-import Oscar.Problem                                    (LispPositiveDouble(LispPositiveDouble))
 import Oscar.Problem                                    (Problem(Problem))
 import Oscar.Problem                                    (ProblemBackwardsConclusiveReason)
 import Oscar.Problem                                    (ProblemBackwardsPrimaFacieReason)
-import Oscar.Problem                                    (ProblemDescription)
+import Oscar.Problem                                    (ProblemDescription(ProblemDescription))
 import Oscar.Problem                                    (ProblemForwardsConclusiveReason)
 import Oscar.Problem                                    (ProblemForwardsPrimaFacieReason)
 import Oscar.Problem                                    (ProblemInterest)
-import Oscar.Problem                                    (ProblemJustificationDegree)
-import Oscar.Problem                                    (ProblemNumber)
+import Oscar.Problem                                    (ProblemNumber(ProblemNumber))
 import Oscar.Problem                                    (ProblemPremise)
-import Oscar.Problem                                    (ProblemStrengthDegree(ProblemStrengthDegree))
+import Oscar.Problem                                    (ProblemStrengthDegree)
+import Oscar.ProblemParser.Internal.ReasonSection       (FromReasonSection(fromReasonSection))
 import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
-import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonName)
-import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemReasonText)
-import Oscar.ProblemParser.Internal.ReasonSection       (_rsProblemStrengthDegree)
-import Oscar.ProblemParser.Internal.ReasonSection       (decodeReasonSection)
-import Oscar.ProblemParser.Internal.ReasonSection       (getBackwardsReason)
-import Oscar.ProblemParser.Internal.ReasonSection       (getForwardsReason)
+import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
+import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
-import Oscar.ProblemParser.Internal.Section             (Section)
-import Oscar.ProblemParser.Internal.Section             (runSectionParser)
 import Oscar.ProblemParser.Internal.Section             (section)
 import Oscar.ProblemParser.Internal.Section             (sectionParser)
-import Oscar.ProblemParser.Internal.StatefulParse       (runStatefulParser)
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Forwards))
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
+import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
+import Oscar.ProblemParser.Internal.Tags                (ƮEndOfDescription)
 import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterDescription)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterNumber)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags                (ƮProblemsWithoutLineComments)
 import Oscar.ProblemParser.Internal.Tags                (ƮReason)
 import Oscar.ProblemParser.Internal.Tags                (ƮSection)
 import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInterest)
+import Oscar.ProblemParser.Internal.Tags                (ƮVariables)
+import Oscar.ProblemParser.Internal.Tags                (ƮWithoutLineComments)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
 import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
+import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDegree)
 
-{- | Separate the text of concatenated problems. Each resulant problem starts
-     after the number label, \"Problem #". 'ƮProblemAfterNumberLabel'
-
-Sample input
-
-@
-Problem #1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-
-Problem #2
-Description of the second problem
-...etc...
-@
-
-Sample outputs
-
-@
-1
-Description of the first problem
-Given premises:
-     P    justification = 1.0
-...etc...
-@
-
-@
-2
-Description of the second problem
-...etc...
-@
--}
-partitionProblemsText ∷ (Text ⁞ ƮProblemsWithoutLineComments) -- ^ The text of the problem(s), possibly obtained from 'Oscar.ProblemParser.readProblemsTextFile'
-                      → [Text ⁞ ƮProblemAfterNumberLabel]     -- ^ Each resultant text text block starts after the "Problem #" label.
-partitionProblemsText = simpleParse (many p) . unƭ
-  where
-    p ∷ Parser (Text ⁞ ƮProblemAfterNumberLabel)
-    p = do
-        spaces
-        _ ← string "Problem #"
-        ƭ . pack <$> manyTill anyChar endP
-
-    endP ∷ Parser ()
-    endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
-
-{- $StatefulParse
-
-See "Oscar.ProblemParser.Internal.StatefulParse" for the polymorphic 
-runStatefulParser, which can be used to obtain a 'ProblemNumber', 
-'ProblemDescription', Text ⁞ ƮProblemAfterDescription, and Text ⁞ 
-ƮProblemAfterNumber.
--}
-
-{- | Gets the text of a particular section from all of the text following the
-     description.
-
-Sample Input
-
-@
-Given premises:
-     P    justification = 1.0
-     A    justification = 1.0
-Ultimate epistemic interests:
-     R    interest = 1.0
-
-   FORWARDS PRIMA FACIE REASONS
-     pf-reason_1:   {P} ||=> Q   strength = 1.0
-     pf-reason_2:   {Q} ||=> R   strength = 1.0
-     pf-reason_3:   {C} ||=> ~R   strength = 1.0
-     pf-reason_4:   {B} ||=> C   strength = 1.0
-     pf-reason_5:   {A} ||=> B   strength = 1.0
-@
-
-Sample Output (with kind = ƮGivenPremise):
-
-@
-     P    justification = 1.0
-     A    justification = 1.0
-@
-
-Sample Output (with kind = ƮReason Forwards PrimaFacie):
-
-@
-     pf-reason_1:   {P} ||=> Q   strength = 1.0
-     pf-reason_2:   {Q} ||=> R   strength = 1.0
-     pf-reason_3:   {C} ||=> ~R   strength = 1.0
-     pf-reason_4:   {B} ||=> C   strength = 1.0
-     pf-reason_5:   {A} ||=> B   strength = 1.0
-@
--}
-problemSectionText ∷
-    ∀ kind. (HasSection kind) ⇒
-    Text ⁞ ƮProblemAfterDescription →
-    Text ⁞ ƮSection kind
-problemSectionText = ƭ . simpleParse p . unƭ
-  where
-    theSection ∷ Section
-    theSection = section ((⊥) ∷ kind)
-
-    p ∷ Parser Text
-    p = do
-        _ ← manyTill anyChar $ lookAhead . try $ eof <|> guardM (map (== theSection) sectionParser)
-        p' <|> pure (pack "")
-      where
-        p' ∷ Parser Text
-        p' = do
-            guardM (map (== theSection) sectionParser)
-            pack <$> manyTill anyChar (lookAhead . try $ eof <|> (space >> sectionParser >> pure ()))
-
-{- |
-
-Sample Input (possibly obtained from 'problemSectionText')
-
-@
-     P    justification = 1.0
-     A    justification = 1.0
-@
-
-Sample Output
-
-@
-    [(\<formula for P>, \<justification 1.0>)
-    ,(\<formula for A\>, \<justification 1.0>)
-    ]
-@
--}
-decodeGivenPremisesSection ∷ Text ⁞ ƮSection ƮGivenPremise
-                           → [ProblemPremise]
-decodeGivenPremisesSection = runSectionParser p
-  where
-    p ∷ Parser (Formula, ProblemJustificationDegree)
-    p = do
-        spaces
-        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
-        return (formulaFromText . pack $ t, d)
-
--- | similar to 'decodeGivenPremisesSection'
-decodeUltimateEpistemicInterestsSection ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest
-                                        → [ProblemInterest]
-decodeUltimateEpistemicInterestsSection = runSectionParser $ do
-    spaces
-    (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
-    return (formulaFromText . pack $ t, d)
-
-
-
--- | similar to 'decodeGivenPremisesSection'
-decodeForwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie) → [ProblemForwardsPrimaFacieReason]
-decodeForwardsPrimaFacieReasonSection = map fpfrts . decodeReasonSection
-  where
-    fpfrts ∷ ReasonSection Forwards PrimaFacie → ProblemForwardsPrimaFacieReason
-    fpfrts rb = (,,)
-        (_rsProblemReasonName rb)
-        (getForwardsReason $ _rsProblemReasonText rb)
-        (_rsProblemStrengthDegree rb)
-
--- | similar to "decodeGivenPremisesSection"
-decodeForwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive) → [ProblemForwardsConclusiveReason]
-decodeForwardsConclusiveReasonSection = map fpfrts' . decodeReasonSection
-  where
-    fpfrts' ∷ ReasonSection Forwards Conclusive → ProblemForwardsConclusiveReason
-    fpfrts' rb = case _rsProblemStrengthDegree rb of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
-        _ → error "conclusive strength must = 1"
-      where
-        result = (,)
-            (_rsProblemReasonName rb)
-            (getForwardsReason $ _rsProblemReasonText rb)
-
--- | similar to "decodeGivenPremisesSection"
-decodeBackwardsPrimaFacieReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie) → [ProblemBackwardsPrimaFacieReason]
-decodeBackwardsPrimaFacieReasonSection = map bpfrts . decodeReasonSection
-  where
-    bpfrts ∷ ReasonSection Backwards PrimaFacie → ProblemBackwardsPrimaFacieReason
-    bpfrts rb = (,,)
-        (_rsProblemReasonName rb)
-        (getBackwardsReason $ _rsProblemReasonText rb)
-        (_rsProblemStrengthDegree rb)
-
--- | similar to "decodeGivenPremisesSection"
-decodeBackwardsConclusiveReasonSection ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive) → [ProblemBackwardsConclusiveReason]
-decodeBackwardsConclusiveReasonSection = map bpfrts' . decodeReasonSection
-  where
-    bpfrts' ∷ ReasonSection Backwards Conclusive → ProblemBackwardsConclusiveReason
-    bpfrts' rb = case (_rsProblemStrengthDegree rb) of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
-        _ → error "conclusive strength must = 1"
-
-      where
-        result = (,)
-            (_rsProblemReasonName rb)
-            (getBackwardsReason $ _rsProblemReasonText rb)
-
-
-{- | The formatting of the input is documented at "Oscar.Documentation".
-
-The input must begin with the problem number (after the label, "Problem #")
--}
-problemFromText ∷ (Text ⁞ ƮProblemAfterNumberLabel)  -- ^ possibly as obtained from 'partitionProblemsText'
+{- | The formatting of the input is documented at "Oscar.Documentation". -}
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  
+                  -- ^ The input must begin at the problem number (after the 
+                  --   label, \"Problem #\"). Possibly as obtained from 
+                  --   'evalStatefulParser'.
                 → Problem
 problemFromText t = Problem
     number
     description
-    (decodeGivenPremisesSection pSTaD)
-    (decodeUltimateEpistemicInterestsSection pSTaD)
-    (decodeForwardsPrimaFacieReasonSection pSTaD)
-    (decodeForwardsConclusiveReasonSection pSTaD)
-    (decodeBackwardsPrimaFacieReasonSection pSTaD)
-    (decodeBackwardsConclusiveReasonSection pSTaD)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
   where
-    (number, (afterNumber ∷ Text ⁞ ƮProblemAfterNumber)) = 
-        runStatefulParser t
-    (description, (afterDescription ∷ Text ⁞ ƮProblemAfterDescription)) = 
-        runStatefulParser afterNumber
+    (number     , afterNumber     ) = runStatefulParser t
+    (description, afterDescription) = runStatefulParser afterNumber
 
-    pSTaD ∷ (HasSection kind) ⇒ Text ⁞ ƮSection kind
-    pSTaD = problemSectionText afterDescription
+{- | Working within a 'Parser' monad can be tricky because nothing at the type
+     level tells us what sort of input we're working with (except that it
+     is 'Text'), nor does it tell us what sort of state the input is in
+     after applying the parser. 'StatefullyParsed' allows us to define a
+     parsed type with respect to these states, giving us a measure of safety
+     at the type level. Admittedly, we sacrifice the convenience of binding, 
+     since the 'statefulParser' is not a 'Monad'.
+
+     An instance may be invoked with 'runStatefulParser'.
+
+     Sometimes we care only about the state prior to parsing, and don\'t need
+     type-level safety on the state afterwards. By convention, in those cases,
+     () is used as the outState.
+-}
+class StatefullyParsed a inState outState | a → inState outState where
+    statefulParser ∷ Parser a ⁞ (inState, outState)
+
+{- | Separate the text of concatenated problems. Each resulant problem starts
+     after the number label, \"Problem #\".
+
+__Example__
+
+* Input text (ƮWithoutLineComments), possibly obtained from
+  'Oscar.ProblemParser.stripLineComments'):
+
+    @
+    Problem #1
+    Description of the first problem
+    Given premises:
+         P    justification = 1.0
+    ...etc...
+    
+    Problem #2
+    Description of the second problem
+    ...etc...
+    @
+
+* Parsed outputs (obtained from 'evalStatefulParser'):
+
+    @
+    1
+    Description of the first problem
+    Given premises:
+         P    justification = 1.0
+    ...etc...
+    @
+
+    @
+    2
+    Description of the second problem
+    ...etc...
+    @
+
+
+-}
+instance StatefullyParsed [Text ⁞ ƮAfterNumberLabel]
+                          ƮWithoutLineComments
+                          ()
+  where
+    statefulParser = ƭ . many $ do
+        spaces
+        _ ← string "Problem #"
+        ƭ . pack <$> manyTill anyChar endP
+      where
+        endP ∷ Parser ()
+        endP = eof <|> (pure () <* (lookAhead . try $ string "Problem #"))
+
+{- | Given text starting immediately after the number label, parse a
+     'ProblemNumber'. The parser\'s input then starts immediately after the
+     number.
+-}
+instance StatefullyParsed ProblemNumber
+                          ƮAfterNumberLabel
+                          ƮAfterNumber
+  where
+    statefulParser = ƭ $ ProblemNumber . read <$>
+        manyTill anyChar (lookAhead . try $ space)
+
+{- | Given text starting immediately after the problem number, parse a
+     'ProblemDescription'. The parser\'s input then starts at the end of
+      the description.
+
+     The resultant description is trimmed of whitespace.
+
+__Example__
+
+* Input text (ƮAfterNumber):
+
+    @
+    ∘∘↵
+    ∘∘∘∘some∘description↵
+    ∘↵
+    Given∘premises:↵
+    ...etc...
+    @
+
+* Parsed output (ProblemDescription):
+
+    @
+    some∘description
+    @
+
+* Parser\'s input state after parsing (ƮEndOfDescription):
+
+    @
+    ↵
+    ∘↵
+    Given∘premises:↵
+    ...etc...
+    @
+-}
+instance StatefullyParsed ProblemDescription
+                          ƮAfterNumber
+                          ƮEndOfDescription
+  where
+    statefulParser = ƭ $ ProblemDescription . pack <$> description
+      where
+        description = emptyDescription <|> filledDescription
+          where
+            emptyDescription =
+                lookAhead (definitelyAloneOnLine sectionParser) *> pure ""
+
+            filledDescription = do
+                spaces
+                manyTillBefore anyChar $
+                    {- Here's why we have a separate parser for an empty
+                       description. If the description were empty, we would
+                       have no way of knowing, after skipping the spaces, that
+                       the first section identifier found was alone on its
+                       own line.
+                    -}
+                    eof <|> definitelyAloneOnLine sectionParser *> pure ()
+
+{- | Given text starting immediately at the beginning of the first 'Section'
+     identifier (or, possibly, 'eof'), parse a text block consisting of a
+     particular section, not including the section identifier.
+
+__Example__
+
+* Input text (ƮEndOfDescription):
+
+    @
+    ∘↵
+    Given premises:↵
+    ∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+    ∘∘∘∘∘B∘∘∘∘justification∘=∘1.0∘↵
+    ∘∘↵
+    Ultimate∘epistemic∘interests:∘∘∘↵
+    ∘∘∘∘∘C∘∘∘∘interest∘=∘1.0↵
+    ↵
+    ∘∘∘FORWARDS∘PRIMA∘FACIE∘REASONS↵
+    ∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0↵
+    @
+
+* Parsed output (with kind = ƮGivenPremise):
+
+    @
+    ↵
+    ∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+    ∘∘∘∘∘B∘∘∘∘justification∘=∘1.0
+    @
+
+* Parsed output (with kind = ƮUltimateEpistemicInterest):
+
+    @
+    ∘∘∘↵
+    ∘∘∘∘∘C∘∘∘∘interest∘=∘1.0
+    @
+
+* Parsed output (with kind = ƮReason Forwards PrimaFacie):
+
+    @
+    ↵
+    ∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0
+    @
+-}
+instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
+                                                      ƮEndOfDescription
+                                                      ()
+  where
+    statefulParser = ƭ $ skipToTheSection *> sectionContents
+      where
+        theSection = guardM $
+            (== section ((⊥) ∷ kind)) <$> sectionParser
+
+        skipToTheSection =
+            skipManyTillBefore anyChar $
+                eof <|> definitelyAloneOnLine theSection
+
+        sectionContents = empty
+            <|> eof *> nonexistentSection
+            <|> definitelyAloneOnLine theSection *> existentSection
+
+        nonexistentSection = pure . ƭ $ pack ""
+
+        existentSection = ƭ . pack <$>
+            manyTillBefore anyChar (
+                eof <|> (definitelyAloneOnLine sectionParser *> pure ())
+            )
+
+{- | Given the text of the section containing the \"Given Premises:\",
+     parse a 'ProblemPremise'. Invoke this instance with
+     'evalStatefulParserOnSection' to obtain all of the premises.
+
+__Example__
+
+* Input text (ƮSection ⁞ ƮGivenPremise), possibly resulting from another
+  'StatefullyParsed' instance):
+
+    @
+    ∘∘∘∘∘P∘∘∘∘justification∘=∘1.0↵
+    ∘∘∘∘∘A∘∘∘∘justification∘=∘1.0↵
+    @
+
+* Sample Output (obtained from 'evalStatefulParserOnSection'):
+
+    @
+    [(\<formula for P>, \<justification 1.0>)
+    ,(\<formula for A>, \<justification 1.0>)
+    ]
+    @
+-}
+instance StatefullyParsed ProblemPremise
+                          (ƮSection ƮGivenPremise)
+                          ()
+  where
+    statefulParser = ƭ $ do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemJustificationDegree
+        return (formulaFromText . pack $ t, d)
+
+-- | similar to the 'ProblemPremise' instance
+instance StatefullyParsed ProblemInterest
+                          (ƮSection ƮUltimateEpistemicInterest)
+                          ()
+  where
+    statefulParser = ƭ $ do
+        spaces
+        (t, d) ← many anyChar `precededBy` parserProblemInterestDegree
+        return (formulaFromText . pack $ t, d)
+
+-- | similar to the 'ProblemPremise' instance
+instance StatefullyParsed (ReasonSection direction defeasibility)
+                          (ƮSection (ƮReason direction defeasibility))
+                          ()
+  where
+    statefulParser = ƭ $ do
+        n ← parserProblemReasonName
+        spaces
+        (t, (v, d)) ← many anyChar `precededBy` p'
+        return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
+      where
+        p' ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
+        p' = do
+            t ← parserProblemVariablesText
+            d ← parserProblemStrengthDegree
+            return (t, d)
+
+{- | Defines a set of elements found within a 'Section'. -}
+class SectionElement element where
+    sectionElements ∷ (Text ⁞ ƮEndOfDescription)
+                      -- ^ All sections are found after the problem 
+                      --   description.
+                    → [element]
+
+instance SectionElement ProblemPremise where
+    sectionElements t = evalStatefulParserOnSection s
+      where
+        s ∷ Text ⁞ ƮSection ƮGivenPremise
+        s = evalStatefulParser t
+
+instance SectionElement ProblemInterest where
+    sectionElements t = evalStatefulParserOnSection s
+      where
+        s ∷ Text ⁞ ƮSection ƮUltimateEpistemicInterest
+        s = evalStatefulParser t
+
+instance SectionElement ProblemForwardsPrimaFacieReason where
+    sectionElements t = evalReasonSection s
+      where
+        s ∷ Text ⁞ ƮSection (ƮReason Forwards PrimaFacie)
+        s = evalStatefulParser t
+
+instance SectionElement ProblemForwardsConclusiveReason where
+    sectionElements t = evalReasonSection s
+      where
+        s ∷ Text ⁞ ƮSection (ƮReason Forwards Conclusive)
+        s = evalStatefulParser t
+
+instance SectionElement ProblemBackwardsPrimaFacieReason where
+    sectionElements t = evalReasonSection s
+      where
+        s ∷ Text ⁞ ƮSection (ƮReason Backwards PrimaFacie)
+        s = evalStatefulParser t
+
+instance SectionElement ProblemBackwardsConclusiveReason where
+    sectionElements t = evalReasonSection s
+      where
+        s ∷ Text ⁞ ƮSection (ƮReason Backwards Conclusive)
+        s = evalStatefulParser t
+
+{- | Runs an appropriate 'statefulParser' on the given input, returning the
+     successfully parsed value and the remainder of the input after the parse.
+
+__Pseudocode Example__
+
+@
+-- running this...
+
+runStatefulParser ( \"1∘↵∘Description↵...etc...↵" ∷ Text ⁞ ƮAfterNumberLabel )
+
+-- ...yields this
+
+( 1 
+    ∷ ProblemNumber
+, \"∘↵∘Description↵...etc...↵\" 
+    ∷ Text ⁞ ƮAfterNumber
+)
+@
+-}
+runStatefulParser ∷ ∀ a inState outState.
+    (StatefullyParsed a inState outState) ⇒
+    Text ⁞ inState → (a, Text ⁞ outState)
+runStatefulParser = simpleParse p . unƭ
+  where
+    p ∷ Parser (a, Text ⁞ outState)
+    p = do
+        v ← unƭ (statefulParser ∷ Parser a ⁞ (inState, outState))
+        r ← getInput
+        return (v, ƭ r)
+
+{- | Returns only the first component of 'runStatefulParser'. The
+     'StatefullyParsed' outState is restricted to () to avoid mistakenly
+     ignoring relevant text following the parsed value.
+-}
+evalStatefulParser ∷ ∀ a inState.
+    (StatefullyParsed a inState ()) ⇒
+    Text ⁞ inState → a
+evalStatefulParser = fst . runStatefulParser
+
+{- | Special handling for 'ƮSection's. Evaluates each element of the section.
+-}
+evalStatefulParserOnSection ∷
+    ∀ a inSection. (StatefullyParsed a (ƮSection inSection) ())
+    ⇒ Text ⁞ ƮSection inSection
+    → [a]
+evalStatefulParserOnSection =
+    simpleParse (many (try p) <* many space <* eof) . unƭ
+  where
+    p ∷ Parser a
+    p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
+
+{- | Special handling for 'ƮSection's associated with reasons. -}
+evalReasonSection ∷
+    (StatefullyParsed (ReasonSection direction defeasibility)
+                      (ƮSection inSection)
+                      ()
+    ,FromReasonSection decode direction defeasibility
+    ) ⇒
+    Text ⁞ ƮSection inSection → [decode]
+evalReasonSection = map fromReasonSection . evalStatefulParserOnSection

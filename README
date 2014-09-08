@@ -12,10 +12,23 @@ Version history:
             ⁞ for Tagged type constructor
             ƭ for Tagged value constructor
 
+0.2.1.0:
+    * refactoring, using StatefulParser
+    * lots of haddock
+
+0.2.2.0:
+    * more refactoring, using StatefulParser
+    * haddock
+
 TODO for 0.3.0.0:
     * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
-        - remove Oleg's "copyright"
+    * LispPositiveDouble et al. -> Degree
+
+TODO for 0.4.0.0:
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
     * git automation
-    * write sample code that shows how this will work: use injective type families in, e.g. DecodedSection when GHC 7.10 is released; this should allow some simplification
+    * Make use of injective type families when GHC 7.10 is released
+
+TODO for later:
     * report haddock bug: unable to provide documentation of a function argument involving an infix type operator unless the type is enclosed in parentheses.
+    * implement the rest of Oscar

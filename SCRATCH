@@ -14,6 +14,7 @@
 ∘
 ⫴
 ≫=
+↵
 
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -701,3 +702,66 @@ messageFromShows10 :: Show a => String -> [a] -> IO ()
 messageFromShows10 s xs = do
     print s
     messageFromShows $ take 10 xs
+
+
+
+
+
+
+
+
+
+
+
+(>>)
+    :: Tagged (state1, state2) (Parser a) 
+    -> Tagged (state2, state3) (Parser b)
+    -> Tagged (state1, state3) (Parser b)
+
+return
+    :: a
+    -> Tagged (state1, state2) (Parser a)
+
+(>>=)
+    :: Tagged (state1, state2) (Parser a)
+    -> (a -> Tagged (state2, state3) (Parser b))
+    -> Tagged (state1, state3) (Parser b)
+
+runTaggedParser 
+    :: Tagged (state1, state2) (Parser a)
+    -> Tagged state1 Text
+    -> (a, Tagged state2 Text)
+
+numberParser :: Tagged (ƮAfterNumberLabel, ƮAfterNumber) (Parser ProblemNumber)
+
+descriptionParser :: Tagged (ƮAfterNumber, ƮEndOfDescription) (Parser ProblemDescription)
+
+thing1Parser :: Tagged (ƮEndOfDescription, ()) (Parser Thing1)
+
+thing2Parser :: Tagged (ƮEndOfDescription, ()) (Parser Thing2)
+
+foo :: Tagged (ƮAfterNumberLabel, ()) (Parser Problem)
+foo = do
+    number <- numberParser
+    description <- descriptionParser    
+    thing1 <- thing1Parser
+    thing2 <- thing2Parser
+    return $ Problem number description thing1 thing2
+
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  
+                  -- ^ The input must begin at the problem number (after the 
+                  --   label, \"Problem #\"). Possibly as obtained from 
+                  --   'evalStatefulParser'.
+                → Problem
+problemFromText t = Problem
+    number
+    description
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+    (sectionElements afterDescription)
+  where
+    (number     , afterNumber     ) = runStatefulParser t
+    (description, afterDescription) = runStatefulParser afterNumber

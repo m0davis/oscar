@@ -61,7 +61,7 @@ import Text.Show.Pretty                 (ppShow)
 (⊥) = undefined
 
 -- | A wrapper around 'ppShow'
-ppPrint ∷ (Show a) => a → IO ()
+ppPrint ∷ (Show a) ⇒ a → IO ()
 ppPrint = putStrLn . pack . ppShow
 
 type a ⁞ b = Tagged b a

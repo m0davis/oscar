@@ -3,7 +3,7 @@ version:             0.2.1.0
 author:              Martin Stone Davis
 maintainer:          martin.stone.davis@gmail.com
 build-type:          Simple
-extra-source-files:  extras/Combined-problems
+extra-source-files:  combined-problems
 cabal-version:       >= 1.10
 description:         "The objective of the OSCAR Project is twofold. On the one hand, it is to construct a general theory of rational cognition. On the other hand, it is to construct an artificial rational agent (an \'artilect\') implementing that theory. This is a joint project in philosophy and AI." -- John L. Pollock
 
@@ -22,7 +22,6 @@ executable OSCAR
         Oscar.ProblemParser.Internal
         Oscar.ProblemParser.Internal.ReasonSection
         Oscar.ProblemParser.Internal.Section
-        Oscar.ProblemParser.Internal.StatefulParse
         Oscar.ProblemParser.Internal.Tags
         Oscar.ProblemParser.Internal.UnitIntervalParsers
 

@@ -8,8 +8,8 @@ module Oscar.Main (
 
 import Oscar.Main.Prelude
 
-import Oscar.ProblemParser.Internal.Tags    (ƮProblemsWithLineComments)
+import Oscar.ProblemParser.Internal.Tags    (ƮWithLineComments)
 
 -- | The "combined-problems" file in the current working directory.
-combinedProblemsPath ∷ FilePath ⁞ ƮProblemsWithLineComments
+combinedProblemsPath ∷ FilePath ⁞ ƮWithLineComments
 combinedProblemsPath = ƭ $ fpFromString "combined-problems"

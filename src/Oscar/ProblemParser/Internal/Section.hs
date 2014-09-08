@@ -12,7 +12,6 @@ module Oscar.ProblemParser.Internal.Section (
     Section(..),
     HasSection(..),
     sectionParser,
-    runSectionParser,
     ) where
 
 import Oscar.Main.Prelude
@@ -21,23 +20,22 @@ import Oscar.Main.Parser
 import Oscar.ProblemParser.Internal.Tags    (ƮGivenPremise)
 import Oscar.ProblemParser.Internal.Tags    (ƮUltimateEpistemicInterest)
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
-import Oscar.ProblemParser.Internal.Tags    (ƮSection)
 import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (Direction(Backwards))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags    (Defeasibility(Conclusive))
 
+
 data Section
-    = Section'GivenPremises
-    | Section'UltimateEpistemicInterests
-    | Section'ForwardsPrimaFacieReasons
-    | Section'ForwardsConclusiveReasons
-    | Section'BackwardsPrimaFacieReasons
-    | Section'BackwardsConclusiveReasons
+    = Section'GivenPremises               -- ^ "Given premises:"
+    | Section'UltimateEpistemicInterests  -- ^ "Ultimate epistemic interests:"
+    | Section'ForwardsPrimaFacieReasons   -- ^ "FORWARDS PRIMA FACIE REASONS"
+    | Section'ForwardsConclusiveReasons   -- ^ "FORWARDS CONCLUSIVE REASONS"
+    | Section'BackwardsPrimaFacieReasons  -- ^ "BACKWARDS PRIMA FACIE REASONS"
+    | Section'BackwardsConclusiveReasons  -- ^ "BACKWARDS CONCLUSIVE REASONS"
   deriving (Eq, Show)
 
 class HasSection s where
-    -- |
     section ∷ s → Section
 
 instance HasSection ƮGivenPremise                  where section _ = Section'GivenPremises
@@ -47,8 +45,9 @@ instance HasSection (ƮReason Forwards  Conclusive) where section _ = Section'Fo
 instance HasSection (ƮReason Backwards PrimaFacie) where section _ = Section'BackwardsPrimaFacieReasons
 instance HasSection (ƮReason Backwards Conclusive) where section _ = Section'BackwardsConclusiveReasons
 
+{- | Consumes the identifier of a 'Section', or nothing if the parse fails. -}
 sectionParser ∷ Parser Section
-sectionParser =
+sectionParser = try $
     empty
     <|> "Given premises:"               ↦ Section'GivenPremises
     <|> "Ultimate epistemic interests:" ↦ Section'UltimateEpistemicInterests
@@ -59,6 +58,3 @@ sectionParser =
   where
     (↦) ∷ String → a → Parser a
     s ↦ t = try (string s) *> pure t
-
-runSectionParser ∷ Parser s → Text ⁞ ƮSection a → [s]
-runSectionParser p = simpleParse (many (try p) <* many space <* eof) . unƭ
