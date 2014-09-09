@@ -289,9 +289,8 @@ some developement notes.
 
 * Usage of "Control.Lens" was just implemented recently (as of version 0.2.2).
 Not all data types are connected with it, and it's bothersome to me how many
-export lines it requires. E.g., "Oscar.Problem". Think of the current 
-implementation as a proof-of-concept. It's not clear to me that we need it at
-all.
+export lines it requires. E.g., "Oscar.Problem". Also, there's a problem 
+making lenses for 'ReasonSection'.
 
 * It's not clear to me yet how the 'Whether' operator is supposed to be used.
 I've seen clues that it can be applied to a domain variable. Investigate this

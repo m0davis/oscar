@@ -21,10 +21,11 @@ Version history:
     * haddock
 
 0.3.0.0:
-    * add a usage example for ƮWithLineComments (FilePath); 
+    * add a usage example for ƮWithLineComments (FilePath)
+    * first implementation of Control.Lens
+    * ReasonSection changed from type to data
 
 TODO for 0.3.0.0:
-    * make and use lenses (?)
     * Section -> SectionName (?)
     * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
     * LispPositiveDouble et al. -> Degree
@@ -43,6 +44,7 @@ TODO for 0.3.0.0:
     * remove any unused build-depends from cabal
 
 TODO for 0.4.0.0:
+    * Fix a problem with making lenses for ReasonSection
     * Should Symbol be a type or a newtype?
     * Should Premise et al. be types or data?
 

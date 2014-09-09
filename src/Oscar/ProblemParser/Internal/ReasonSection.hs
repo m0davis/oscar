@@ -3,6 +3,8 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+--{-# LANGUAGE TemplateHaskell #-} -- TODO commented-out until we figure out
+                                   -- how to make lenses for ReasonSection
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
@@ -24,11 +26,7 @@
 
 module Oscar.ProblemParser.Internal.ReasonSection (
     -- * 'ReasonSection'
-    ReasonSection,
-    _rsProblemReasonName,
-    _rsProblemReasonText,
-    _rsProblemVariables,
-    _rsProblemStrengthDegree,
+    ReasonSection(..),
     -- ** construction helpers
     parserProblemVariablesText,
     parserProblemReasonName,
@@ -38,10 +36,17 @@ module Oscar.ProblemParser.Internal.ReasonSection (
     -- ** decoding helpers
     toForwardsReason,
     toBackwardsReason,
+    ---- * "Control.Lens"
+    --rsProblemReasonName,
+    --rsProblemReasonText,
+    --rsProblemVariables,
+    --rsProblemStrengthDegree,
     ) where
 
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
+
+--import Control.Lens
 
 import Oscar.FormulaParser                  (formulaFromText)
 import Oscar.Problem                        (BackwardsReason(BackwardsReason))
@@ -63,32 +68,13 @@ import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 {- | This represents a partial deocde of one of the four kinds of
      reason sections.
 -}
-type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
-    ( ProblemReasonName
-    , Text ⁞ ƮReason direction defeasibility
-    , Text ⁞ ƮVariables
-    , ProblemStrengthDegree
-    )
-
-_rsProblemReasonName
-    ∷ ReasonSection direction defeasibility
-    → ProblemReasonName
-_rsProblemReasonName (n, _, _, _) = n
-
-_rsProblemReasonText
-    ∷ ReasonSection direction defeasibility
-    → Text ⁞ ƮReason direction defeasibility
-_rsProblemReasonText (_, t, _, _) = t
-
-_rsProblemVariables
-    ∷ ReasonSection direction defeasibility
-    → Text ⁞ ƮVariables
-_rsProblemVariables (_, _, v, _) = v
-
-_rsProblemStrengthDegree
-    ∷ ReasonSection direction defeasibility
-    → ProblemStrengthDegree
-_rsProblemStrengthDegree (_, _, _, d) = d
+data ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
+    ReasonSection 
+        { _rsProblemReasonName ∷ ProblemReasonName
+        , _rsProblemReasonText ∷ (Text ⁞ ƮReason direction defeasibility)
+        , _rsProblemVariables ∷ (Text ⁞ ƮVariables)
+        , _rsProblemStrengthDegree ∷ ProblemStrengthDegree
+        }
 
 {- | Expects something like \"variables={A, B, ...}\" and returns the
      text between the curly braces (e.g. \"A, B, ...\").
@@ -260,3 +246,6 @@ toBackwardsReason = simpleParse p . unƭ
             (formulaFromText <$> forwardsPremiseTexts)
             (formulaFromText <$> backwardsPremiseTexts)
             (formulaFromText conclusionText)
+
+-- TODO This doesn't work! Apparently, there's a problem with handling ⁞.
+--makeLenses ''ReasonSection

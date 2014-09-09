@@ -36,7 +36,7 @@ import Oscar.Problem                                    (ProblemNumber(ProblemNu
 import Oscar.Problem                                    (ProblemPremise)
 import Oscar.Problem                                    (ProblemStrengthDegree)
 import Oscar.ProblemParser.Internal.ReasonSection       (FromReasonSection(fromReasonSection))
-import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
+import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection(ReasonSection))
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
 import Oscar.ProblemParser.Internal.Section             (HasSection)
@@ -328,7 +328,7 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
         n ← parserProblemReasonName
         spaces
         (t, (v, d)) ← many anyChar `precededBy` p
-        return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
+        return $ ReasonSection n (ƭ . (pack ∷ String → Text) $ t) v d
       where
         p ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
         p = do
