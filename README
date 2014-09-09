@@ -29,9 +29,9 @@ Version history:
     * LispPositiveDouble -> Degree
     * require degrees to lie in the interval (0,1]
     * limit to 80 columns wide
+    * consistent presentation of __Examples__
 
 TODO for 0.3.0.0:
-    * consistent presentation of __Examples__
     * wtf with haddock on data ƮSection section
     * [] → Set where appropriate
     * enforce unique names
