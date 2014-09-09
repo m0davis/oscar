@@ -1,5 +1,6 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.Problem (
@@ -26,9 +27,25 @@ module Oscar.Problem (
     Predication(..),
     DomainFunction(..),
     LispPositiveDouble(..),
+    -- * "Control.Lens"
+    problemNumber,
+    problemDescription,
+    problemPremises,
+    problemInterests,
+    problemForwardsPrimaFacieReasons,
+    problemForwardsConclusiveReasons,
+    problemBackwardsPrimaFacieReasons,
+    problemBackwardsConclusiveReasons,
+    frForwardsPremises,
+    frConclusion,
+    brForwardsPremises,
+    brBackwardsPremises,
+    brConclusion,
     ) where
 
 import Oscar.Main.Prelude
+
+import Control.Lens
 
 import Oscar.Formula                    (BinaryOp(..))
 import Oscar.Formula                    (DomainFunction(..))
@@ -112,3 +129,7 @@ newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
 -- | This should only hold values in the interval (0,1]. TODO enforce this
 newtype LispPositiveDouble = LispPositiveDouble Double
   deriving (Eq, Ord, Read, Show)
+
+makeLenses ''Problem
+makeLenses ''ForwardsReason
+makeLenses ''BackwardsReason

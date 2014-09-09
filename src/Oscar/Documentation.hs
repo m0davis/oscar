@@ -13,11 +13,14 @@ module Oscar.Documentation (
     -- * What is defeasible reasoning?
     -- $WhatIsDefeasibleReasoning
 
-    -- * So, you want to write an OSCAR @Problem@
+    -- * So, you want to write an OSCAR @Problem@.
     -- $ExampleOfProblem
 
-    -- * So, you want to write an OSCAR @Formula@
+    -- * So, you want to write an OSCAR @Formula@.
     -- $ExampleOfFormula
+
+    -- * So, you want to help.
+    -- $ThanksForHelping
     ) where
 
 import Oscar.Main.Prelude
@@ -277,4 +280,30 @@ Here are some examples:
 
 Since "v" is used as a symbol for disjunction, it may not be used as a
 constant or quantification variable.
+-}
+
+{- $ThanksForHelping
+
+Help with extending or refactoring would be greatly appreciated. Here are
+some developement notes.
+
+* Usage of "Control.Lens" was just implemented recently (as of version 0.2.2).
+Not all data types are connected with it, and it's bothersome to me how many
+export lines it requires. E.g., "Oscar.Problem". Think of the current 
+implementation as a proof-of-concept. It's not clear to me that we need it at
+all.
+
+* It's not clear to me yet how the 'Whether' operator is supposed to be used.
+I've seen clues that it can be applied to a domain variable. Investigate this
+and, if necessary, adjust the current parser.
+
+* Only the parsing of problems has been (mostly) implemented, but there's a 
+lot more to Oscar. We need to implement:
+
+    * natural deduction
+    * defeasible reasoning
+    * probable probabilities
+    * planning
+
+* Look for \"TODO\" in the source for more.
 -}

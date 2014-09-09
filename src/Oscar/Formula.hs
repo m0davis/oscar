@@ -1,4 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.Formula (
     Formula(..),
@@ -8,20 +10,41 @@ module Oscar.Formula (
     Symbol(..),
     Predication(..),
     DomainFunction(..),
+    -- * "Control.Lens"
+    formulaBinaryOp,
+    formulaBinaryLeftFormula,
+    formulaBinaryRightFormula,
+    formulaUnaryOp,
+    formulaUnaryFormula,
+    formulaQuantifier,
+    formulaQuantifierSymbol,
+    formulaQuantifierFormula,
+    formulaPredication,
     ) where
 
 import Oscar.Main.Prelude
 
+import Control.Lens
+
 {- | See "Oscar.Documentation" for a guide to writing 'Formula's.
 -}
 data Formula
-    = FormulaBinary !BinaryOp !Formula !Formula
-    | FormulaUnary !UnaryOp !Formula
-    | FormulaQuantification !Quantifier !Symbol !Formula
-    | FormulaPredication !Predication
+    = FormulaBinary { _formulaBinaryOp ∷ !BinaryOp
+                    , _formulaBinaryLeftFormula ∷ !Formula
+                    , _formulaBinaryRightFormula ∷ !Formula
+                    }
+    | FormulaUnary { _formulaUnaryOp ∷ !UnaryOp
+                   , _formulaUnaryFormula ∷ !Formula
+                   }
+    | FormulaQuantification { _formulaQuantifier ∷ !Quantifier
+                            , _formulaQuantifierSymbol ∷ !Symbol
+                            , _formulaQuantifierFormula ∷ !Formula
+                            }
+    | FormulaPredication { _formulaPredication ∷ !Predication }
   deriving (Eq, Read, Show)
 
 {- | a la first-order logic -}
+-- TODO rename this to QuantifierOp, for consistency?
 data Quantifier
     = Universal    -- ^ (all ...)
     | Existential  -- ^ (some ...)
@@ -69,3 +92,5 @@ data DomainFunction
     = DomainFunction !Symbol ![DomainFunction] -- ^ `g' in P (g x)
     | DomainVariable !Symbol                   -- ^ `x' or `y' in P (g x) y
   deriving (Eq, Read, Show)
+
+makeLenses ''Formula

@@ -13,7 +13,6 @@ module Oscar.ProblemParser.Internal (
     -- * Problem construction
     problemFromText,
     -- * Parsing with type-level safety
-    -- $StatefulParse
     StatefullyParsed(..),
     SectionElement(..),
     runStatefulParser,
