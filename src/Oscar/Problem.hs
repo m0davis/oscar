@@ -90,18 +90,29 @@ newtype ProblemInterestDegree = ProblemInterestDegree Degree
   deriving (Eq, Ord, Read, Show)
 
 
+{- | A forwards prima facie reason with its name and strength -}
+type ProblemForwardsPrimaFacieReason  = (ProblemReasonName
+                                        ,ForwardsReason
+                                        ,ProblemStrengthDegree
+                                        )
 
--- | A forwards prima facie reason with its name and strength
-type ProblemForwardsPrimaFacieReason  = (ProblemReasonName, ForwardsReason, ProblemStrengthDegree)
+{- | A forwards conclusive reason with its name (the strength is unity, 
+     implicitly)
+-}
+type ProblemForwardsConclusiveReason  = (ProblemReasonName
+                                        ,ForwardsReason)
 
--- | A forwards conclusive reason with its name (the strength is unity, implicitly)
-type ProblemForwardsConclusiveReason  = (ProblemReasonName, ForwardsReason)
+{- | A backwards prima facie reason with its name and strength -}
+type ProblemBackwardsPrimaFacieReason = (ProblemReasonName
+                                        ,BackwardsReason
+                                        ,ProblemStrengthDegree
+                                        )
 
--- | A backwards prima facie reason with its name and strength
-type ProblemBackwardsPrimaFacieReason = (ProblemReasonName, BackwardsReason, ProblemStrengthDegree)
-
--- | A backwards conclusive reason with its name (the strength is unity, implicitly)
-type ProblemBackwardsConclusiveReason = (ProblemReasonName, BackwardsReason)
+{- | A backwards conclusive reason with its name (the strength is unity, 
+     implicitly)
+-}
+type ProblemBackwardsConclusiveReason = (ProblemReasonName
+                                        ,BackwardsReason)
 
 -- | A name of a reason
 newtype ProblemReasonName = ProblemReasonName Text

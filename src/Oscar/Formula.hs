@@ -82,7 +82,8 @@ data Predication = Predication Symbol [DomainFunction]
      Garfield. 
 
      It could also be a variable that could be bound by a quantifier. E.g. x
-     is a domain variable in the formula @(all x)(IsLasagna x -> WantsToEat c x)@.
+     is a domain variable in the formula 
+     @(all x)(IsLasagna x -> WantsToEat c x)@.
      
      It could also be a function that modifies a variable or a constant. E.g.
      the-litter-box-used-by is a domain function in the formula 

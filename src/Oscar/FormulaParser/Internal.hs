@@ -165,12 +165,11 @@ Free [Pure (QTokenUnaryOp Negation)
      ]
 @
 -}
-freeFromParentheses ∷
-    ∀ as a b.
-    (IsSequence as, Element as ~ a) ⇒
-    (a → Either Parenthesis b)  {- ^ discriminate parentheses -} →
-    as                          {- ^ input sequence -} →
-    Free [] b                   {- ^ a tree, sans parentheses -}
+freeFromParentheses 
+    ∷ ∀ as a b. (IsSequence as, Element as ~ a) 
+    ⇒ (a → Either Parenthesis b)  -- ^ discriminate parentheses
+    → as                          -- ^ input sequence
+    → Free [] b                   -- ^ a tree, sans parentheses
 freeFromParentheses f = fst . ffp 0 []
   where
     ffp ∷ Natural → [Free [] b] → as → (Free [] b, as)
