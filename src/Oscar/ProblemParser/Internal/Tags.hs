@@ -122,27 +122,27 @@ data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
 {- | The only types that make sense here are one of the three Ʈ...\'s above.
      
-     A (Text ⁞ ƮSection section) starts at the end of the section label
-     and continues to the end of that section, discarding trailing whitespace. 
+A (Text ⁞ ƮSection section) starts at the end of the section label
+and continues to the end of that section, discarding trailing whitespace. 
 
-     __Example__     
-     
-     * Snippet of a 'Problem'
+__Example__     
 
-         @
-         ∘Given premises:∘∘↵
-         ∘∘some premise text↵
-         ∘∘↵
-         ↵
-         ∘∘Ultimate epistemic interests:↵
-         @
+* Snippet of a 'Problem'
 
-    * Text ⁞ ƮSection ƮGivenPremise is
+    @
+    ∘Given premises:∘∘↵
+    ∘∘some premise text↵
+    ∘∘↵
+    ↵
+    ∘∘Ultimate epistemic interests:↵
+    @
 
-         @
-         ∘∘↵
-         ∘∘some premise text
-         @
+* Text ⁞ ƮSection ƮGivenPremise is
+
+    @
+    ∘∘↵
+    ∘∘some premise text
+    @
 
 Used as: (see above, e.g. ƮGivenPremise)
 -}

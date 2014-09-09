@@ -30,9 +30,9 @@ Version history:
     * require degrees to lie in the interval (0,1]
     * limit to 80 columns wide
     * consistent presentation of __Examples__
+    * fix haddock bug in data ƮSection section
 
 TODO for 0.3.0.0:
-    * wtf with haddock on data ƮSection section
     * [] → Set where appropriate
     * enforce unique names
     * clean any messy code
