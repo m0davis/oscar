@@ -39,9 +39,9 @@ import Oscar.ProblemParser.Internal.ReasonSection       (FromReasonSection(fromR
 import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection(ReasonSection))
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
 import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
-import Oscar.ProblemParser.Internal.Section             (HasSection)
-import Oscar.ProblemParser.Internal.Section             (section)
-import Oscar.ProblemParser.Internal.Section             (sectionParser)
+import Oscar.ProblemParser.Internal.SectionName         (HasSectionName)
+import Oscar.ProblemParser.Internal.SectionName         (section)
+import Oscar.ProblemParser.Internal.SectionName         (parserSectionName)
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
 import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
 import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
@@ -198,7 +198,7 @@ instance StatefullyParsed ProblemDescription
         description = emptyDescription <|> filledDescription
           where
             emptyDescription =
-                lookAhead (definitelyAloneOnLine sectionParser) *> pure ""
+                lookAhead (definitelyAloneOnLine parserSectionName) *> pure ""
 
             filledDescription = do
                 spaces
@@ -206,14 +206,14 @@ instance StatefullyParsed ProblemDescription
                     {- Here's why we have a separate parser for an empty
                        description. If the description were empty, we would
                        have no way of knowing, after skipping the spaces, that
-                       the first section identifier found was alone on its
+                       the first section name found was alone on its
                        own line.
                     -}
-                    eof <|> definitelyAloneOnLine sectionParser *> pure ()
+                    eof <|> definitelyAloneOnLine parserSectionName *> pure ()
 
-{- | Given text starting immediately at the beginning of the first 'Section'
-     identifier (or, possibly, 'eof'), parse a text block consisting of a
-     particular section, not including the section identifier.
+{- | Given text starting immediately at the beginning of the first
+     'SectionName' (or, possibly, 'eof'), parse a text block consisting of a
+     particular section, not including the section name.
 
 __Example__
 
@@ -254,28 +254,28 @@ __Example__
     ∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0
     @
 -}
-instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
+instance ∀ kind. (HasSectionName kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
                                                       ƮEndOfDescription
                                                       ()
   where
-    statefulParser = ƭ $ skipToTheSection *> sectionContents
+    statefulParser = ƭ $ skipToTheSectionName *> sectionContents
       where
-        theSection = guardM $
-            (== section ((⊥) ∷ kind)) <$> sectionParser
+        theSectionName = guardM $
+            (== section ((⊥) ∷ kind)) <$> parserSectionName
 
-        skipToTheSection =
+        skipToTheSectionName =
             skipManyTillBefore anyChar $
-                eof <|> definitelyAloneOnLine theSection
+                eof <|> definitelyAloneOnLine theSectionName
 
         sectionContents = empty
-            <|> eof *> nonexistentSection
-            <|> definitelyAloneOnLine theSection *> existentSection
+            <|> eof *> nonexistentSectionName
+            <|> definitelyAloneOnLine theSectionName *> existentSectionName
 
-        nonexistentSection = pure . ƭ $ pack ""
+        nonexistentSectionName = pure . ƭ $ pack ""
 
-        existentSection = ƭ . pack <$>
+        existentSectionName = ƭ . pack <$>
             manyTillBefore anyChar (
-                eof <|> (definitelyAloneOnLine sectionParser *> pure ())
+                eof <|> (definitelyAloneOnLine parserSectionName *> pure ())
             )
 
 {- | Given the text of the section containing the \"Given Premises:\",
@@ -336,7 +336,7 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
             d ← parserProblemStrengthDegree
             return (t, d)
 
-{- | Defines a set of elements found within a 'Section'. -}
+{- | Defines a set of elements found below a 'SectionName'. -}
 class SectionElement element where
     sectionElements ∷ (Text ⁞ ƮEndOfDescription)
                       -- ^ All sections are found after the problem 

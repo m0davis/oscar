@@ -28,7 +28,7 @@ import Oscar.Main.Parser
 
 import Oscar.Problem
 import Oscar.Formula
-import Oscar.ProblemParser.Internal.Section
+import Oscar.ProblemParser.Internal.SectionName
 import Oscar.ProblemParser.Internal.Tags
 
 {- $RTFM
@@ -157,7 +157,7 @@ Problem #42 ; The 'ProblemNumber' must be given as an integer.
 Here is a 'ProblemDescription', which may be given starting on a line
 following the 'ProblemNumber'.
 
-The description ends at the first 'Section' identifier.
+The description ends at the first 'SectionName'.
 
 A (case-sensitive) section identifier is a line containing __exactly one__
 (sans whitespace, which is ignored) of the following bulleted items:
@@ -172,8 +172,8 @@ No repeats of sections are allowed.
 
 Given premises: ; Here's a section identifier.
                 ; Note that the "Given premises:" above in the description is
-                ; __not__ a Section identifier since it does not occur by
-                ; itself (it's preceded by a "*").
+                ; __not__ a SectionName since it does not occur by itself 
+                ; (it's preceded by a "*").
 
     ; A 'ProblemPremise' is a 'Formula' and a 'ProblemJustificationDegree'.
 

@@ -21,7 +21,7 @@ executable OSCAR
         Oscar.ProblemParser
         Oscar.ProblemParser.Internal
         Oscar.ProblemParser.Internal.ReasonSection
-        Oscar.ProblemParser.Internal.Section
+        Oscar.ProblemParser.Internal.SectionName
         Oscar.ProblemParser.Internal.Tags
         Oscar.ProblemParser.Internal.UnitIntervalParsers
 

@@ -24,17 +24,16 @@ Version history:
     * add a usage example for ƮWithLineComments (FilePath)
     * first implementation of Control.Lens
     * ReasonSection changed from type to data
+    * Section -> SectionName
+    * sectionParser -> parserSectionName
 
 TODO for 0.3.0.0:
-    * Section -> SectionName (?)
-    * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
     * LispPositiveDouble et al. -> Degree
     * ProblemNumber -> Identifier
     * ProblemDescription -> Description
     * etc. (ProblemPremise -> Premise)
     * limit to 80 columns wide
     * consistent presentation of __Examples__
-    * consistent naming of parsers (as prefix or suffix)
     * wtf with haddock on data ƮSection section
     * [] → Set where appropriate
     * enforce unique names
@@ -56,3 +55,7 @@ TODO for 0.5.0.0:
 TODO for later:
     * report haddock bug: unable to provide documentation of a function argument involving an infix type operator unless the type is enclosed in parentheses.
     * implement the rest of Oscar
+
+Meta TODO:
+    * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
+    * unicode utility; see http://www.cs.tut.fi/~jkorpela/fui.html8
