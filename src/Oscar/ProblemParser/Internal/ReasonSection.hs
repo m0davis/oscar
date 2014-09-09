@@ -86,13 +86,13 @@ data ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮVariables)
 parserProblemVariablesText = ƭ . pack <$>
     (option "" . try $
-        many space *>
+        spaces *>
         string "variables" *>
-        many space *>
+        spaces *>
         char '=' *>
-        many space *>
+        spaces *>
         char '{' *>
-        manyTill anyChar (lookAhead . try $ char '}') <*
+        manyTillBefore anyChar (char '}') <*
         char '}'
         )
 
@@ -106,8 +106,8 @@ parserProblemVariablesText = ƭ . pack <$>
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$>
     (try $
-        many space *>
-        manyTill anyChar (lookAhead . try $ char ':') <*
+        spaces *>
+        manyTillBefore anyChar (char ':') <*
         char ':'
         )
 
@@ -123,33 +123,33 @@ parserEnbracedTexts ∷ Parser [Text]
 parserEnbracedTexts = try $ do
     _ ← char '{'
     (inner, _) ← (pack <$> many anyChar) `precededBy` char '}'
-    let texts = simpleParse (emptylist <|> p) inner
+    let texts = simpleParse (emptyList <|> nonEmptyList) inner
     return texts
   where
-    emptylist ∷ Parser [Text]
-    emptylist = try $ spaces >> eof >> return []
+    emptyList ∷ Parser [Text]
+    emptyList = spacesUpToEof *> return []
 
-    p ∷ Parser [Text]
-    p = do
-        (firstText, restText) ←
-            -- TODO messy
-            (many space *>
-                (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <*
-                many space
-                )
-                `precededBy`
-            (lookAhead $
-                (try (many space >> eof) *> pure False)
-                    <|>
-                try (char ',' *> many anyChar *> pure True)
-                )
-        if restText then do
+    nonEmptyList ∷ Parser [Text]
+    nonEmptyList = do
+        (firstText, restExists) ← 
+            parserFirstText `precededBy` parserRestExists
+        if restExists then do  -- there's an element after the first one
             _ ← char ','
-            spaces -- TODO: remove if unnecessary
-            restTexts ← p
+            restTexts ← nonEmptyList
             return $ firstText : restTexts
-        else do
+        else do  -- this is the last element in the list
             return [firstText]
+      where
+        parserFirstText =
+            (spaces *>
+                (pack <$> manyTillBefore anyChar spacesUpToEof) <*
+                spaces
+                )
+
+        parserRestExists = lookAhead $
+            empty
+            <|> spacesUpToEof *> pure False
+            <|> try (char ',' *> pure True)
 
 {- | Defines types that can be constructed from a 'ReasonSection'. -}
 class FromReasonSection to fromDirection fromDefeasibility where
@@ -226,13 +226,13 @@ toBackwardsReason = simpleParse p . unƭ
         forwardsPremiseTextsText ←
             manyTill anyChar
                      (lookAhead . try $
-                        many space *>
+                        spaces *>
                         char '{' *>
                         many (notFollowedBy (char '}') *> anyChar) *>
                         char '}' *>
-                        many space *>
+                        spaces *>
                         string "||=>" *>
-                        many space
+                        spaces
                         )
         forwardsPremiseTexts ←
             withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
@@ -240,7 +240,7 @@ toBackwardsReason = simpleParse p . unƭ
         (backwardsPremiseTexts, _) ←
             parserEnbracedTexts
                 `precededBy`
-            (many space >> string "||=>" >> many space)
+            (spaces >> string "||=>" >> spaces)
         conclusionText ← pack <$> many anyChar
         return $ BackwardsReason
             (formulaFromText <$> forwardsPremiseTexts)

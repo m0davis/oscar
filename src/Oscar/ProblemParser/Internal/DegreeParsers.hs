@@ -22,7 +22,7 @@ import Oscar.Problem                    (Degree(Degree))
 -}
 parserDegree ∷ Parser Degree
 parserDegree = try $ do
-    d ← many space *> manyTill anyChar ((space *> pure ()) <|> eof)
+    d ← spaces *> manyTill anyChar ((space *> pure ()) <|> eof)
     if null d then
         mzero
     else
@@ -43,9 +43,9 @@ parserDegree = try $ do
 -}
 parserProblemJustificationDegree ∷ Parser ProblemJustificationDegree
 parserProblemJustificationDegree = try $ ProblemJustificationDegree <$>
-    (many space *>
+    (spaces *>
      string "justification" *>
-     many space *>
+     spaces *>
      char '=' *>
      parserDegree
      )
@@ -56,9 +56,9 @@ parserProblemJustificationDegree = try $ ProblemJustificationDegree <$>
 -}
 parserProblemInterestDegree ∷ Parser ProblemInterestDegree
 parserProblemInterestDegree = try $ ProblemInterestDegree <$>
-    (many space *>
+    (spaces *>
      string "interest" *>
-     many space *>
+     spaces *>
      char '=' *>
      parserDegree
      )
@@ -69,9 +69,9 @@ parserProblemInterestDegree = try $ ProblemInterestDegree <$>
 -}
 parserProblemStrengthDegree ∷ Parser ProblemStrengthDegree
 parserProblemStrengthDegree = try $ ProblemStrengthDegree <$>
-    (many space *>
+    (spaces *>
      string "strength" *>
-     many space *>
+     spaces *>
      char '=' *>
      parserDegree
      )

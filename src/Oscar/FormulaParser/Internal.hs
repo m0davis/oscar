@@ -93,7 +93,7 @@ __Example__
     @
 -}
 makePQTokens ∷ Text → [Either Parenthesis QToken]
-makePQTokens = simpleParse $ many $ many space *> parsePQToken
+makePQTokens = simpleParse $ many $ spaces *> parsePQToken
   where
     parsePQToken ∷ Parser (Either Parenthesis QToken)
     parsePQToken = empty

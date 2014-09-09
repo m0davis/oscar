@@ -31,10 +31,9 @@ Version history:
     * limit to 80 columns wide
     * consistent presentation of __Examples__
     * fix haddock bug in data ƮSection section
+    * clean some messy code
 
 TODO for 0.3.0.0:
-    * clean any messy code
-    * check all TODOs
     * remove any unused build-depends from cabal
 
 TODO for 0.4.0.0:

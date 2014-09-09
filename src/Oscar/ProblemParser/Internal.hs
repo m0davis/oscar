@@ -425,7 +425,7 @@ evalStatefulParserOnSection ∷
     ⇒ Text ⁞ ƮSection inSection
     → [a]
 evalStatefulParserOnSection =
-    simpleParse (many (try p) <* many space <* eof) . unƭ
+    simpleParse (many (try p) <* spaces <* eof) . unƭ
   where
     p ∷ Parser a
     p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))
