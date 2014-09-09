@@ -26,7 +26,7 @@ module Oscar.Problem (
     UnaryOp(..),
     Predication(..),
     DomainFunction(..),
-    LispPositiveDouble(..),
+    Degree(..),
     -- * "Control.Lens"
     problemNumber,
     problemDescription,
@@ -79,14 +79,14 @@ newtype ProblemDescription = ProblemDescription Text
 type ProblemPremise                   = (Formula, ProblemJustificationDegree)
 
 -- | The degree of justification (of a premise)
-newtype ProblemJustificationDegree = ProblemJustificationDegree LispPositiveDouble
+newtype ProblemJustificationDegree = ProblemJustificationDegree Degree
   deriving (Eq, Ord, Read, Show)
 
 -- | A formula of an interest with its degree of interest
 type ProblemInterest                  = (Formula, ProblemInterestDegree)
 
 -- | The degree of interest (of an interest)
-newtype ProblemInterestDegree = ProblemInterestDegree LispPositiveDouble
+newtype ProblemInterestDegree = ProblemInterestDegree Degree
   deriving (Eq, Ord, Read, Show)
 
 
@@ -123,11 +123,11 @@ data BackwardsReason = BackwardsReason
   deriving (Eq, Read, Show)
 
 -- | The strength (of a reason)
-newtype ProblemStrengthDegree = ProblemStrengthDegree LispPositiveDouble
+newtype ProblemStrengthDegree = ProblemStrengthDegree Degree
   deriving (Eq, Read, Show)
 
 -- | This should only hold values in the interval (0,1]. TODO enforce this
-newtype LispPositiveDouble = LispPositiveDouble Double
+newtype Degree = Degree Double
   deriving (Eq, Ord, Read, Show)
 
 makeLenses ''Problem

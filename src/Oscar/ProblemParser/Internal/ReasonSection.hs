@@ -51,7 +51,7 @@ import Oscar.Main.Parser
 import Oscar.FormulaParser                  (formulaFromText)
 import Oscar.Problem                        (BackwardsReason(BackwardsReason))
 import Oscar.Problem                        (ForwardsReason(ForwardsReason))
-import Oscar.Problem                        (LispPositiveDouble(LispPositiveDouble))
+import Oscar.Problem                        (Degree(Degree))
 import Oscar.Problem                        (ProblemBackwardsConclusiveReason)
 import Oscar.Problem                        (ProblemBackwardsPrimaFacieReason)
 import Oscar.Problem                        (ProblemForwardsConclusiveReason)
@@ -169,7 +169,7 @@ instance FromReasonSection ProblemForwardsConclusiveReason
                            Conclusive
   where
     fromReasonSection r = case _rsProblemStrengthDegree r of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
+        ProblemStrengthDegree (Degree 1) → result
         _ → error "conclusive strength must = 1"
       where
         result = (,)
@@ -190,7 +190,7 @@ instance FromReasonSection ProblemBackwardsConclusiveReason
                            Conclusive
   where
     fromReasonSection r = case (_rsProblemStrengthDegree r) of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
+        ProblemStrengthDegree (Degree 1) → result
         _ → error "conclusive strength must = 1"
       where
         result = (,)

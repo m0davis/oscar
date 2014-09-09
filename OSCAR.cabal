@@ -23,7 +23,7 @@ executable OSCAR
         Oscar.ProblemParser.Internal.ReasonSection
         Oscar.ProblemParser.Internal.SectionName
         Oscar.ProblemParser.Internal.Tags
-        Oscar.ProblemParser.Internal.UnitIntervalParsers
+        Oscar.ProblemParser.Internal.DegreeParsers
 
     build-depends: 
             base                            ==  4.7.*

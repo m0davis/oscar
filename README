@@ -26,9 +26,10 @@ Version history:
     * ReasonSection changed from type to data
     * Section -> SectionName
     * sectionParser -> parserSectionName
+    * LispPositiveDouble -> Degree
+    * require degrees to lie in the interval (0,1]
 
 TODO for 0.3.0.0:
-    * LispPositiveDouble et al. -> Degree
     * ProblemNumber -> Identifier
     * ProblemDescription -> Description
     * etc. (ProblemPremise -> Premise)
@@ -46,6 +47,7 @@ TODO for 0.4.0.0:
     * Fix a problem with making lenses for ReasonSection
     * Should Symbol be a type or a newtype?
     * Should Premise et al. be types or data?
+    * Let's consistently use Inference and Interest, and abandon talk of Justifications, Strengths, Premises, and Conclusions.
 
 TODO for 0.5.0.0:
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
