@@ -2,7 +2,6 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.ProblemParser.Internal.DegreeParsers (
-    Degree(..),
     parserDegree,
     parserProblemJustificationDegree,
     parserProblemInterestDegree,
@@ -38,7 +37,7 @@ parserDegree = try $ do
             else
                 error "Degree must be > 0 and <= 1"
 
-{- | Consumes @justification = <Degree>@, ignoring whitespace.
+{- | Consumes @justification = \<Degree>@, ignoring whitespace.
 
      Consumes nothing upon failure.
 -}
@@ -51,7 +50,7 @@ parserProblemJustificationDegree = try $ ProblemJustificationDegree <$>
      parserDegree
      )
 
-{- | Consumes @interest = <Degree>@, ignoring whitespace.
+{- | Consumes @interest = \<Degree>@, ignoring whitespace.
 
      Consumes nothing upon failure.
 -}
@@ -64,7 +63,7 @@ parserProblemInterestDegree = try $ ProblemInterestDegree <$>
      parserDegree
      )
 
-{- | Consumes @strength = <Degree>@, ignoring whitespace.
+{- | Consumes @strength = \<Degree>@, ignoring whitespace.
 
      Consumes nothing upon failure.
 -}

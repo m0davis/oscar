@@ -137,7 +137,7 @@ data BackwardsReason = BackwardsReason
 newtype ProblemStrengthDegree = ProblemStrengthDegree Degree
   deriving (Eq, Read, Show)
 
--- | This should only hold values in the interval (0,1]. TODO enforce this
+-- | This should only hold values in the interval (0,1].
 newtype Degree = Degree Double
   deriving (Eq, Ord, Read, Show)
 
