@@ -32,8 +32,6 @@ Version history:
     * consistent presentation of __Examples__
     * fix haddock bug in data ƮSection section
     * clean some messy code
-
-TODO for 0.3.0.0:
     * remove any unused build-depends from cabal
 
 TODO for 0.4.0.0:
