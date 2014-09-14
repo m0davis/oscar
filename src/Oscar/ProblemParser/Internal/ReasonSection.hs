@@ -159,43 +159,33 @@ instance FromReasonSection ProblemForwardsPrimaFacieReason
                            Forwards
                            PrimaFacie
   where
-    fromReasonSection r = (,,)
-        (_rsProblemReasonName r)
-        (toForwardsReason $ _rsProblemReasonText r)
-        (_rsProblemStrengthDegree r)
+    fromReasonSection (ReasonSection n t _ d) = (n, toForwardsReason t, d)
 
 instance FromReasonSection ProblemForwardsConclusiveReason
                            Forwards
                            Conclusive
   where
-    fromReasonSection r = case _rsProblemStrengthDegree r of
+    fromReasonSection (ReasonSection n t _ d) = case d of
         ProblemStrengthDegree (Degree 1) → result
         _ → error "conclusive strength must = 1"
       where
-        result = (,)
-            (_rsProblemReasonName r)
-            (toForwardsReason $ _rsProblemReasonText r)
+        result = (n, toForwardsReason t)
 
 instance FromReasonSection ProblemBackwardsPrimaFacieReason
                            Backwards
                            PrimaFacie
   where
-    fromReasonSection r = (,,)
-        (_rsProblemReasonName r)
-        (toBackwardsReason $ _rsProblemReasonText r)
-        (_rsProblemStrengthDegree r)
+    fromReasonSection (ReasonSection n t _ d) = (n, toBackwardsReason t, d)
 
 instance FromReasonSection ProblemBackwardsConclusiveReason
                            Backwards
                            Conclusive
   where
-    fromReasonSection r = case (_rsProblemStrengthDegree r) of
+    fromReasonSection (ReasonSection n t _ d) = case d of
         ProblemStrengthDegree (Degree 1) → result
         _ → error "conclusive strength must = 1"
       where
-        result = (,)
-            (_rsProblemReasonName r)
-            (toBackwardsReason $ _rsProblemReasonText r)
+        result = (n, toBackwardsReason t)
 
 toForwardsReason 
     ∷ (Text ⁞ ƮReason Forwards defeasibility) 

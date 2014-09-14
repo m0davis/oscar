@@ -34,11 +34,13 @@ Version history:
     * clean some messy code
     * remove any unused build-depends from cabal
 
+0.4.0.0:
+    * refactor: favor using patterns instead of accessors for ReasonSection
+
 TODO for 0.4.0.0:
     * feature: implement Variables
     * feature: change [] → Set where appropriate
     * feature: enforce unique names of reasons and numbers of problems
-    * refactor: favor using patterns instead of accessors for ReasonSection
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
 
 TODO for 0.5.0.0:
