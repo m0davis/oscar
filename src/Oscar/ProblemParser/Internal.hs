@@ -255,8 +255,8 @@ __Example__
     @
 -}
 instance ∀ kind. (HasSectionName kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
-                                                      ƮEndOfDescription
-                                                      ()
+                                                          ƮEndOfDescription
+                                                          ()
   where
     statefulParser = ƭ $ skipToTheSectionName *> sectionContents
       where

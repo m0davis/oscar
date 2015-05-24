@@ -119,30 +119,48 @@ brother of Oscar, John L. Pollock. I will illustrate it with an example.
 
 __Seeing is believing?__
 
-You see before you what appears to be a reddish-colored ball. Is it reasonable
-for you to infer that there actually /is/ a red ball before you? Under what
-circumstances is it not?
+It's a dark and stormy night. You sit comfortably in your study, a candelabrum
+illuminating the smoke wafting from your pipe, reading a copy of Meditations
+(Descartes, 1639). On the table before you, sitting next to your inkwell, you
+see what appears to be a bluish-colored ball. As you reflect on what you've
+read, you begin to wonder about the validity of your perceptions. Is the ball
+really blue? Is it perhaps not a ball but really a cube? Or maybe it all is 
+merely a dream. The pipe should be comforting, and the candles should be 
+pleasing. The night is beginning to go badly for your. You pick up your cell 
+and make a call to your trusted advisor and dearest friend, Martin Stone Davis. 
+Yours truly. I tell you this.
 
-Perhaps you have rose-colored glasses on! If that were the case, you would
-see a red ball even if the ball were white. Perhaps you recall that you
-recently injested a strong hallucinogen. In that case, you would be
-well-advised to mistrust almost all of your perceptions.
+There is no end to which one can doubt. I believe that even Descartes' 
+foundational belief, "sum", can itself be doubted. [Digression, c.f. So you 
+think you exist?] If we are to move forward, let us not start from scratch.
+There really *is* a ball before you, I insist. It appears to you that it is 
+blue. That much is clear. Our focus shall now be on whether it is reasonable
+for you to believe that it is really is blue.
 
-Reasoning defeasibly, you may make a __prima facie__ inference to the
-conclusion that there is a red ball before you, allowing for the possibility
-that that inference may later be undercut or rebutted.
+"Have you left on your violet specs, again? Those are for outdoors." I ask 
+politely.
 
-Knowing that you are wearing rose-colored glasses gives you an
-__undercutting defeater__ to link between the premise that the ball appears
-to be red and the conclusion that the ball actually is red. Importantly, you
-do not conclude that there is no ball or that the ball isn't red. You simply
-withhold belief in the proposition that it is red.
+"No, I --- Oh, yes!" Removing your glasses you recognize your lucky golf ball.
+It's white, but appeared blue before your tinted visors.
 
-There are also __rebutting defeaters__. Suppose Alice tells you that it's
-raining. You consider Alice to be trustworthy and so infer that it's raining.
-But then Bob tells you that it isn't. If you consider Bob to be equally as
-trustworthy as Alice, your inference that it is raining is rebutted by another
-inference that it is not raining.
+I summarize what is going on here. It is a case of reasoning defeasibly. Based
+on face-value evidence, you may make a __prima facie__ inference to the 
+conclusion that there is a blue ball before you, allowing for the possibility
+of revision later. Importantly, there is a link between your perception and 
+your conclusion.
+
+Discovering that you were wearing tinted glasses introduced something new, an 
+__undercutting defeater__, which blocked the inference previously allowed by 
+the aforementioned link. 
+
+[TODO edit]
+    There are also __rebutting defeaters__. 
+
+    Suppose Alice tells you that it's
+    raining. You consider Alice to be trustworthy and so infer that it's raining.
+    But then Bob tells you that it isn't. If you consider Bob to be equally as
+    trustworthy as Alice, your inference that it is raining is rebutted by another
+    inference that it is not raining.
 -}
 
 {- $ExampleOfProblem
