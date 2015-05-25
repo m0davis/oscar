@@ -17,6 +17,7 @@ executable OSCAR
         Oscar.FormulaParser
         Oscar.FormulaParser.Internal
         Oscar.Main
+        Oscar.Main.Parser
         Oscar.Main.Prelude
         Oscar.Problem
         Oscar.ProblemParser
@@ -27,17 +28,16 @@ executable OSCAR
         Oscar.ProblemParser.Internal.DegreeParsers
 
     build-depends: 
-            base                            ==  4.7.*
+            base                            ==  4.8.*
         ,   classy-prelude                  ==  0.9.*
         ,   cond                            ==  0.4.*
-        ,   free                            ==  4.7.*
-        ,   lens                            ==  4.1.*
-        ,   nats                            ==  0.1.*
+        ,   free                            ==  4.12.*
+        ,   lens                            ==  4.11.*
         ,   parsec                          ==  3.1.*
         ,   pretty-show                     ==  1.6.*
         ,   split                           ==  0.2.*
         ,   tagged                          ==  0.7.*
-        ,   text                            ==  1.1.*
+        ,   text                            ==  1.2.*
 
     hs-source-dirs:      
         src
@@ -54,6 +54,7 @@ executable OSCARTest
         Oscar.FormulaParser
         Oscar.FormulaParser.Internal
         Oscar.Main
+        Oscar.Main.Parser
         Oscar.Main.Prelude
         Oscar.Problem
         Oscar.ProblemParser
@@ -64,17 +65,16 @@ executable OSCARTest
         Oscar.ProblemParser.Internal.DegreeParsers
 
     build-depends: 
-            base                            ==  4.7.*
+            base                            ==  4.8.*
         ,   classy-prelude                  ==  0.9.*
         ,   cond                            ==  0.4.*
-        ,   free                            ==  4.7.*
-        ,   lens                            ==  4.1.*
-        ,   nats                            ==  0.1.*
+        ,   free                            ==  4.12.*
+        ,   lens                            ==  4.11.*
         ,   parsec                          ==  3.1.*
         ,   pretty-show                     ==  1.6.*
         ,   split                           ==  0.2.*
         ,   tagged                          ==  0.7.*
-        ,   text                            ==  1.1.*
+        ,   text                            ==  1.2.*
         ,   heredoc                         ==  0.2.*
 
     hs-source-dirs:      
