@@ -1,3 +1,4 @@
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE DataKinds #-}
@@ -152,7 +153,7 @@ parserEnbracedTexts = try $ do
             <|> try (char ',' *> pure True)
 
 {- | Defines types that can be constructed from a 'ReasonSection'. -}
-class FromReasonSection to fromDirection fromDefeasibility where
+class FromReasonSection to fromDirection fromDefeasibility | to → fromDirection fromDefeasibility where
     fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
 
 instance FromReasonSection ProblemForwardsPrimaFacieReason
