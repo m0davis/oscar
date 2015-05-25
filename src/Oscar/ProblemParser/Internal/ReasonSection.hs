@@ -66,7 +66,7 @@ import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
 import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 
-{- | This represents a partial deocde of one of the four kinds of
+{- | This represents a partial decode of one of the four kinds of
      reason sections.
 -}
 data ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
