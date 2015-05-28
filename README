@@ -33,9 +33,8 @@ Version history:
     * fix haddock bug in data ƮSection section
     * clean some messy code
     * remove any unused build-depends from cabal
-
-0.4.0.0:
     * refactor: favor using patterns instead of accessors for ReasonSection
+    * fixes for GHC 7.10 compatibility
 
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
