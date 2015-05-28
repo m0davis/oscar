@@ -13,7 +13,6 @@ module Oscar.ProblemParser.Internal (
     -- * Problem construction
     problemFromText,
     -- * Parsing with type-level safety
-    -- $StatefulParse
     StatefullyParsed(..),
     SectionElement(..),
     runStatefulParser,
@@ -25,40 +24,40 @@ module Oscar.ProblemParser.Internal (
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
-import Oscar.FormulaParser                              (formulaFromText)
-import Oscar.Problem                                    (Problem(Problem))
-import Oscar.Problem                                    (ProblemBackwardsConclusiveReason)
-import Oscar.Problem                                    (ProblemBackwardsPrimaFacieReason)
-import Oscar.Problem                                    (ProblemDescription(ProblemDescription))
-import Oscar.Problem                                    (ProblemForwardsConclusiveReason)
-import Oscar.Problem                                    (ProblemForwardsPrimaFacieReason)
-import Oscar.Problem                                    (ProblemInterest)
-import Oscar.Problem                                    (ProblemNumber(ProblemNumber))
-import Oscar.Problem                                    (ProblemPremise)
-import Oscar.Problem                                    (ProblemStrengthDegree)
-import Oscar.ProblemParser.Internal.ReasonSection       (FromReasonSection(fromReasonSection))
-import Oscar.ProblemParser.Internal.ReasonSection       (ReasonSection)
-import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemReasonName)
-import Oscar.ProblemParser.Internal.ReasonSection       (parserProblemVariablesText)
-import Oscar.ProblemParser.Internal.Section             (HasSection)
-import Oscar.ProblemParser.Internal.Section             (section)
-import Oscar.ProblemParser.Internal.Section             (sectionParser)
-import Oscar.ProblemParser.Internal.Tags                (Defeasibility(Conclusive))
-import Oscar.ProblemParser.Internal.Tags                (Defeasibility(PrimaFacie))
-import Oscar.ProblemParser.Internal.Tags                (Direction(Backwards))
-import Oscar.ProblemParser.Internal.Tags                (Direction(Forwards))
-import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumber)
-import Oscar.ProblemParser.Internal.Tags                (ƮAfterNumberLabel)
-import Oscar.ProblemParser.Internal.Tags                (ƮEndOfDescription)
-import Oscar.ProblemParser.Internal.Tags                (ƮGivenPremise)
-import Oscar.ProblemParser.Internal.Tags                (ƮReason)
-import Oscar.ProblemParser.Internal.Tags                (ƮSection)
-import Oscar.ProblemParser.Internal.Tags                (ƮUltimateEpistemicInterest)
-import Oscar.ProblemParser.Internal.Tags                (ƮVariables)
-import Oscar.ProblemParser.Internal.Tags                (ƮWithoutLineComments)
-import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemInterestDegree)
-import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemJustificationDegree)
-import Oscar.ProblemParser.Internal.UnitIntervalParsers (parserProblemStrengthDegree)
+import Oscar.FormulaParser                          (formulaFromText)
+import Oscar.Problem                                (Problem(Problem))
+import Oscar.Problem                                (ProblemBackwardsConclusiveReason)
+import Oscar.Problem                                (ProblemBackwardsPrimaFacieReason)
+import Oscar.Problem                                (ProblemDescription(ProblemDescription))
+import Oscar.Problem                                (ProblemForwardsConclusiveReason)
+import Oscar.Problem                                (ProblemForwardsPrimaFacieReason)
+import Oscar.Problem                                (ProblemInterest)
+import Oscar.Problem                                (ProblemNumber(ProblemNumber))
+import Oscar.Problem                                (ProblemPremise)
+import Oscar.Problem                                (ProblemStrengthDegree)
+import Oscar.ProblemParser.Internal.DegreeParsers   (parserProblemInterestDegree)
+import Oscar.ProblemParser.Internal.DegreeParsers   (parserProblemJustificationDegree)
+import Oscar.ProblemParser.Internal.DegreeParsers   (parserProblemStrengthDegree)
+import Oscar.ProblemParser.Internal.ReasonSection   (FromReasonSection(fromReasonSection))
+import Oscar.ProblemParser.Internal.ReasonSection   (ReasonSection(ReasonSection))
+import Oscar.ProblemParser.Internal.ReasonSection   (parserProblemReasonName)
+import Oscar.ProblemParser.Internal.ReasonSection   (parserProblemVariablesText)
+import Oscar.ProblemParser.Internal.SectionName     (HasSectionName)
+import Oscar.ProblemParser.Internal.SectionName     (parserSectionName)
+import Oscar.ProblemParser.Internal.SectionName     (section)
+import Oscar.ProblemParser.Internal.Tags            (Defeasibility(Conclusive))
+import Oscar.ProblemParser.Internal.Tags            (Defeasibility(PrimaFacie))
+import Oscar.ProblemParser.Internal.Tags            (Direction(Backwards))
+import Oscar.ProblemParser.Internal.Tags            (Direction(Forwards))
+import Oscar.ProblemParser.Internal.Tags            (ƮAfterNumber)
+import Oscar.ProblemParser.Internal.Tags            (ƮAfterNumberLabel)
+import Oscar.ProblemParser.Internal.Tags            (ƮEndOfDescription)
+import Oscar.ProblemParser.Internal.Tags            (ƮGivenPremise)
+import Oscar.ProblemParser.Internal.Tags            (ƮReason)
+import Oscar.ProblemParser.Internal.Tags            (ƮSection)
+import Oscar.ProblemParser.Internal.Tags            (ƮUltimateEpistemicInterest)
+import Oscar.ProblemParser.Internal.Tags            (ƮVariables)
+import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 
 {- | The formatting of the input is documented at "Oscar.Documentation". -}
 problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  
@@ -199,7 +198,7 @@ instance StatefullyParsed ProblemDescription
         description = emptyDescription <|> filledDescription
           where
             emptyDescription =
-                lookAhead (definitelyAloneOnLine sectionParser) *> pure ""
+                lookAhead (definitelyAloneOnLine parserSectionName) *> pure ""
 
             filledDescription = do
                 spaces
@@ -207,14 +206,14 @@ instance StatefullyParsed ProblemDescription
                     {- Here's why we have a separate parser for an empty
                        description. If the description were empty, we would
                        have no way of knowing, after skipping the spaces, that
-                       the first section identifier found was alone on its
+                       the first section name found was alone on its
                        own line.
                     -}
-                    eof <|> definitelyAloneOnLine sectionParser *> pure ()
+                    eof <|> definitelyAloneOnLine parserSectionName *> pure ()
 
-{- | Given text starting immediately at the beginning of the first 'Section'
-     identifier (or, possibly, 'eof'), parse a text block consisting of a
-     particular section, not including the section identifier.
+{- | Given text starting immediately at the beginning of the first
+     'SectionName' (or, possibly, 'eof'), parse a text block consisting of a
+     particular section, not including the section name.
 
 __Example__
 
@@ -255,28 +254,28 @@ __Example__
     ∘∘∘∘∘fpf-reason_1:∘∘∘{A,∘B}∘||=>∘C∘∘∘strength∘=∘1.0
     @
 -}
-instance ∀ kind. (HasSection kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
-                                                      ƮEndOfDescription
-                                                      ()
+instance ∀ kind. (HasSectionName kind) ⇒ StatefullyParsed (Text ⁞ ƮSection kind)
+                                                          ƮEndOfDescription
+                                                          ()
   where
-    statefulParser = ƭ $ skipToTheSection *> sectionContents
+    statefulParser = ƭ $ skipToTheSectionName *> sectionContents
       where
-        theSection = guardM $
-            (== section ((⊥) ∷ kind)) <$> sectionParser
+        theSectionName = guardM $
+            (== section ((⊥) ∷ kind)) <$> parserSectionName
 
-        skipToTheSection =
+        skipToTheSectionName =
             skipManyTillBefore anyChar $
-                eof <|> definitelyAloneOnLine theSection
+                eof <|> definitelyAloneOnLine theSectionName
 
         sectionContents = empty
-            <|> eof *> nonexistentSection
-            <|> definitelyAloneOnLine theSection *> existentSection
+            <|> eof *> nonexistentSectionName
+            <|> definitelyAloneOnLine theSectionName *> existentSectionName
 
-        nonexistentSection = pure . ƭ $ pack ""
+        nonexistentSectionName = pure . ƭ $ pack ""
 
-        existentSection = ƭ . pack <$>
+        existentSectionName = ƭ . pack <$>
             manyTillBefore anyChar (
-                eof <|> (definitelyAloneOnLine sectionParser *> pure ())
+                eof <|> (definitelyAloneOnLine parserSectionName *> pure ())
             )
 
 {- | Given the text of the section containing the \"Given Premises:\",
@@ -328,16 +327,16 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
     statefulParser = ƭ $ do
         n ← parserProblemReasonName
         spaces
-        (t, (v, d)) ← many anyChar `precededBy` p'
-        return $ (,,,) n (ƭ . (pack ∷ String → Text) $ t) v d
+        (t, (v, d)) ← many anyChar `precededBy` p
+        return $ ReasonSection n (ƭ . (pack ∷ String → Text) $ t) v d
       where
-        p' ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
-        p' = do
+        p ∷ Parser (Text ⁞ ƮVariables, ProblemStrengthDegree)
+        p = do
             t ← parserProblemVariablesText
             d ← parserProblemStrengthDegree
             return (t, d)
 
-{- | Defines a set of elements found within a 'Section'. -}
+{- | Defines a set of elements found below a 'SectionName'. -}
 class SectionElement element where
     sectionElements ∷ (Text ⁞ ƮEndOfDescription)
                       -- ^ All sections are found after the problem 
@@ -411,8 +410,8 @@ runStatefulParser = simpleParse p . unƭ
         return (v, ƭ r)
 
 {- | Returns only the first component of 'runStatefulParser'. The
-     'StatefullyParsed' outState is restricted to () to avoid mistakenly
-     ignoring relevant text following the parsed value.
+     'StatefullyParsed' outState is restricted to () to deter us from 
+     mistakenly ignoring relevant text following the parsed value.
 -}
 evalStatefulParser ∷ ∀ a inState.
     (StatefullyParsed a inState ()) ⇒
@@ -426,7 +425,7 @@ evalStatefulParserOnSection ∷
     ⇒ Text ⁞ ƮSection inSection
     → [a]
 evalStatefulParserOnSection =
-    simpleParse (many (try p) <* many space <* eof) . unƭ
+    simpleParse (many (try p) <* spaces <* eof) . unƭ
   where
     p ∷ Parser a
     p = unƭ (statefulParser ∷ Parser a ⁞ (ƮSection inSection, ()))

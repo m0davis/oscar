@@ -12,17 +12,131 @@ import Oscar.Main                       (combinedProblemsPath)
 
 import Oscar.ProblemParser              (readFileProblems)
 
---import Oscar.Main.Test
-
 {- | At the moment, the executable simply reads from a file called
      "combined-probems", parses the problems, and prints a structured
-     representation.
+     representation. Reading and parsing the file is done with 
+     'readFileProblems'. The file itself is denoted by 'combinedProblemsPath'.
+     Printing is done by 'ppPrint'.
 
-    TODO implement the rest of Oscar
+__Example__
+
+* Sample input file
+
+    @
+    Problem #1
+    This is a case of collective rebutting defeat
+    Given premises:
+         P    justification = 1.0
+         A    justification = 1.0
+    Ultimate epistemic interests:
+         R    interest = 1.0
+
+             FORWARDS PRIMA FACIE REASONS
+               pf-reason_1:   {P} ||=> Q   strength = 1.0
+               pf-reason_2:   {Q} ||=> R   strength = 1.0
+               pf-reason_3:   {C} ||=> ~R   strength = 1.0
+               pf-reason_4:   {B} ||=> C   strength = 1.0
+               pf-reason_5:   {A} ||=> B   strength = 1.0
+    @ 
+
+* Sample printed output
+
+    @
+    Problem
+      { _problemNumber = ProblemNumber 1
+      , _problemDescription =
+          ProblemDescription "This is a case of collective rebutting defeat"
+      , _problemPremises =
+          [ ( FormulaPredication
+                { _formulaPredication = Predication (Symbol "P") [] }
+            , ProblemJustificationDegree (Degree 1.0)
+            )
+          , ( FormulaPredication
+                { _formulaPredication = Predication (Symbol "A") [] }
+            , ProblemJustificationDegree (Degree 1.0)
+            )
+          ]
+      , _problemInterests =
+          [ ( FormulaPredication
+                { _formulaPredication = Predication (Symbol "R") [] }
+            , ProblemInterestDegree (Degree 1.0)
+            )
+          ]
+      , _problemForwardsPrimaFacieReasons =
+          [ ( ProblemReasonName "pf-reason_1"
+            , ForwardsReason
+                { _frForwardsPremises =
+                    [ FormulaPredication
+                        { _formulaPredication = Predication (Symbol "P") [] }
+                    ]
+                , _frConclusion =
+                    FormulaPredication
+                      { _formulaPredication = Predication (Symbol "Q") [] }
+                }
+            , ProblemStrengthDegree (Degree 1.0)
+            )
+          , ( ProblemReasonName "pf-reason_2"
+            , ForwardsReason
+                { _frForwardsPremises =
+                    [ FormulaPredication
+                        { _formulaPredication = Predication (Symbol "Q") [] }
+                    ]
+                , _frConclusion =
+                    FormulaPredication
+                      { _formulaPredication = Predication (Symbol "R") [] }
+                }
+            , ProblemStrengthDegree (Degree 1.0)
+            )
+          , ( ProblemReasonName "pf-reason_3"
+            , ForwardsReason
+                { _frForwardsPremises =
+                    [ FormulaPredication
+                        { _formulaPredication = Predication (Symbol "C") [] }
+                    ]
+                , _frConclusion =
+                    FormulaUnary
+                      { _formulaUnaryOp = Negation
+                      , _formulaUnaryFormula =
+                          FormulaPredication
+                            { _formulaPredication = Predication (Symbol "R") [] }
+                      }
+                }
+            , ProblemStrengthDegree (Degree 1.0)
+            )
+          , ( ProblemReasonName "pf-reason_4"
+            , ForwardsReason
+                { _frForwardsPremises =
+                    [ FormulaPredication
+                        { _formulaPredication = Predication (Symbol "B") [] }
+                    ]
+                , _frConclusion =
+                    FormulaPredication
+                      { _formulaPredication = Predication (Symbol "C") [] }
+                }
+            , ProblemStrengthDegree (Degree 1.0)
+            )
+          , ( ProblemReasonName "pf-reason_5"
+            , ForwardsReason
+                { _frForwardsPremises =
+                    [ FormulaPredication
+                        { _formulaPredication = Predication (Symbol "A") [] }
+                    ]
+                , _frConclusion =
+                    FormulaPredication
+                      { _formulaPredication = Predication (Symbol "B") [] }
+                }
+            , ProblemStrengthDegree (Degree 1.0)
+            )
+          ]
+      , _problemForwardsConclusiveReasons = []
+      , _problemBackwardsPrimaFacieReasons = []
+      , _problemBackwardsConclusiveReasons = []
+      }
+    @
+
+TODO implement the rest of Oscar
 -}
 main ∷ IO ()
 main = do
     problems ← readFileProblems combinedProblemsPath
     sequence_ $ ppPrint <$> problems
-
-    --print $ foo 0

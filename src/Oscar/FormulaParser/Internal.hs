@@ -69,29 +69,31 @@ data Parenthesis = OpenParenthesis | CloseParenthesis
 
 {- | Parses the alleged formula text into a sequence of tokens.
 
-Sample input
+__Example__
 
-@
-~(all x)(P x)
-@
+* Sample input
 
-Sample output
+    @
+    ~(all x)(P x)
+    @
 
-@
-[Right (QTokenUnaryOp Negation)
-,Left OpenParenthesis
-,Right (QTokenQuantifier Universal)
-,Right (QTokenSymbol \"x")
-,Left CloseParenthesis
-,Left OpenParenthesis
-,Right (QTokenSymbol \"P")
-,Right (QTokenSymbol \"x")
-,Left CloseParenthesis
-]
-@
+* Sample output
+
+    @
+    [Right (QTokenUnaryOp Negation)
+    ,Left OpenParenthesis
+    ,Right (QTokenQuantifier Universal)
+    ,Right (QTokenSymbol \"x")
+    ,Left CloseParenthesis
+    ,Left OpenParenthesis
+    ,Right (QTokenSymbol \"P")
+    ,Right (QTokenSymbol \"x")
+    ,Left CloseParenthesis
+    ]
+    @
 -}
 makePQTokens ∷ Text → [Either Parenthesis QToken]
-makePQTokens = simpleParse $ many $ many space *> parsePQToken
+makePQTokens = simpleParse $ many $ spaces *> parsePQToken
   where
     parsePQToken ∷ Parser (Either Parenthesis QToken)
     parsePQToken = empty
@@ -135,42 +137,41 @@ makePQTokens = simpleParse $ many $ many space *> parsePQToken
 {- | freeFromParentheses f xs applies f to each of the xs and creates a tree,
 respecting the structure indicated by the parentheses.
 
-Here's an example where f = id.
+__Example__, where f = id.
 
-Sample input
+* Sample input
 
-@
-[Right (QTokenUnaryOp Negation)
-,Left OpenParenthesis
-,Right (QTokenQuantifier Universal)
-,Right (QTokenSymbol \"x")
-,Left CloseParenthesis
-,Left OpenParenthesis
-,Right (QTokenSymbol \"P")
-,Right (QTokenSymbol \"x")
-,Left CloseParenthesis
-]
-@
+    @
+    [Right (QTokenUnaryOp Negation)
+    ,Left OpenParenthesis
+    ,Right (QTokenQuantifier Universal)
+    ,Right (QTokenSymbol \"x")
+    ,Left CloseParenthesis
+    ,Left OpenParenthesis
+    ,Right (QTokenSymbol \"P")
+    ,Right (QTokenSymbol \"x")
+    ,Left CloseParenthesis
+    ]
+    @
 
-Sample output
+* Sample output
 
-@
-Free [Pure (QTokenUnaryOp Negation)
-     ,Free [Pure (QTokenQuantifier Universal)
-           ,Pure (QTokenSymbol \"x")
-           ]
-     ,Free [Pure (QTokenSymbol \"P")
-           ,Pure (QTokenSymbol \"x")
-           ]
-     ]
-@
+    @
+    Free [Pure (QTokenUnaryOp Negation)
+         ,Free [Pure (QTokenQuantifier Universal)
+               ,Pure (QTokenSymbol \"x")
+               ]
+         ,Free [Pure (QTokenSymbol \"P")
+               ,Pure (QTokenSymbol \"x")
+               ]
+         ]
+    @
 -}
-freeFromParentheses ∷
-    ∀ as a b.
-    (IsSequence as, Element as ~ a) ⇒
-    (a → Either Parenthesis b)  {- ^ discriminate parentheses -} →
-    as                          {- ^ input sequence -} →
-    Free [] b                   {- ^ a tree, sans parentheses -}
+freeFromParentheses 
+    ∷ ∀ as a b. (IsSequence as, Element as ~ a) 
+    ⇒ (a → Either Parenthesis b)  -- ^ discriminate parentheses
+    → as                          -- ^ input sequence
+    → Free [] b                   -- ^ a tree, sans parentheses
 freeFromParentheses f = fst . ffp 0 []
   where
     ffp ∷ Natural → [Free [] b] → as → (Free [] b, as)
@@ -211,29 +212,31 @@ data ƮReformed
 
 {- | A simple transformation that associates the quantifier with its variable.
 
-Sample input
+__Example__
 
-@
-Free [Pure (QTokenUnaryOp Negation)
-     ,Free [Pure (QTokenQuantifier Universal)
-           ,Pure (QTokenSymbol \"x")
-           ]
-     ,Free [Pure (QTokenSymbol \"P")
-           ,Pure (QTokenSymbol \"x")
-           ]
-     ]
-@
+* Sample input
 
-Sample output
+    @
+    Free [Pure (QTokenUnaryOp Negation)
+         ,Free [Pure (QTokenQuantifier Universal)
+               ,Pure (QTokenSymbol \"x")
+               ]
+         ,Free [Pure (QTokenSymbol \"P")
+               ,Pure (QTokenSymbol \"x")
+               ]
+         ]
+    @
 
-@
-Free [Pure (QSTokenUnaryOp Negation)
-     ,Pure (QSTokenQuantifier Universal (QSTokenSymbol \"x"))
-     ,Free [Pure (QSTokenSymbol \"P")
-           ,Pure (QSTokenSymbol \"x")
-           ]
-     ]
-@
+* Sample output
+
+    @
+    Free [Pure (QSTokenUnaryOp Negation)
+         ,Pure (QSTokenQuantifier Universal (QSTokenSymbol \"x"))
+         ,Free [Pure (QSTokenSymbol \"P")
+               ,Pure (QSTokenSymbol \"x")
+               ]
+         ]
+    @
 -}
 makeQSTokenTree ∷ Free [] QToken → Free [] QSToken ⁞ ƮUnreformed
 makeQSTokenTree = ƭ . \case
@@ -247,30 +250,35 @@ makeQSTokenTree = ƭ . \case
 
 {- | Restructure the tree, respecting quantifiers and unary operators.
 
-Sample input
+__Example__
 
-@
-Free [Pure (QSTokenUnaryOp Negation)
-     ,Pure (QSTokenQuantifier Universal (QSTokenSymbol \"x"))
-     ,Free [Pure (QSTokenSymbol \"P")
-           ,Pure (QSTokenSymbol \"x")
-           ]
-     ]
-@
+* Sample input
 
-Sample output
+    @
+    Free [Pure (QSTokenUnaryOp Negation)
+         ,Pure (QSTokenQuantifier Universal (QSTokenSymbol \"x"))
+         ,Free [Pure (QSTokenSymbol \"P")
+               ,Pure (QSTokenSymbol \"x")
+               ]
+         ]
+    @
 
-@
-Free [Free [Pure (QSTokenUnaryOp Negation)
-           ,Free [Free [Pure (QSTokenQuantifier Universal \"x")
-                       ,Free [Pure (QSTokenSymbol \"P")
-                             ,Pure (QSTokenSymbol \"x")
-                             ]
-                       ]
-                 ]
-           ]
-     ]
-@
+* Sample output
+
+    @
+    Free [Free [Pure (QSTokenUnaryOp Negation)
+               ,Free [Free [Pure (QSTokenQuantifier Universal \"x")
+                           ,Free [Pure (QSTokenSymbol \"P")
+                                 ,Pure (QSTokenSymbol \"x")
+                                 ]
+                           ]
+                     ]
+               ]
+         ]
+    @
+
+Note that the two Free's at the top of the tree are redundant. When we 
+'makeFormula', they will be removed via 'RedundantParenthesesP'.
 -}
 reformQSTokenTree ∷ Free [] QSToken ⁞ ƮUnreformed → Free [] QSToken ⁞ ƮReformed
 reformQSTokenTree = ƭ . ref . unƭ
@@ -320,31 +328,33 @@ pattern RedundantParenthesesP x
 
 {- | Construct a Formula from the reformed tree.
 
-Sample input
+__Example__
 
-@
-Free [Free [Pure (QSTokenUnaryOp Negation)
-           ,Free [Free [Pure (QSTokenQuantifier Universal \"x")
-                       ,Free [Pure (QSTokenSymbol \"P")
-                             ,Pure (QSTokenSymbol \"x")
-                             ]
-                       ]
-                 ]
-           ]
-     ]
-@
+* Sample input
 
-Sample output
+    @
+    Free [Free [Pure (QSTokenUnaryOp Negation)
+               ,Free [Free [Pure (QSTokenQuantifier Universal \"x")
+                           ,Free [Pure (QSTokenSymbol \"P")
+                                 ,Pure (QSTokenSymbol \"x")
+                                 ]
+                           ]
+                     ]
+               ]
+         ]
+    @
 
-@
-FormulaUnary Negation
-    (FormulaQuantification Universal
-        (FormulaPredication
-            (Predication \"P")
-            [DomainVariable \"x"]
+* Sample output
+
+    @
+    FormulaUnary Negation
+        (FormulaQuantification Universal
+            (FormulaPredication
+                (Predication \"P")
+                [DomainVariable \"x"]
+            )
         )
-    )
-@
+    @
 
 -}
 makeFormula ∷ (Free [] QSToken) ⁞ ƮReformed → Formula

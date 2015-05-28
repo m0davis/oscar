@@ -1,6 +1,4 @@
-.old/
 *.hi
 *.o
-/scratch
-/oscar
+*.swp
 dist/

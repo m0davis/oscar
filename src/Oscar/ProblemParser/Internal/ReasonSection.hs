@@ -1,8 +1,11 @@
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+--{-# LANGUAGE TemplateHaskell #-} -- TODO commented-out until we figure out
+                                   -- how to make lenses for ReasonSection
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
@@ -24,11 +27,7 @@
 
 module Oscar.ProblemParser.Internal.ReasonSection (
     -- * 'ReasonSection'
-    ReasonSection,
-    _rsProblemReasonName,
-    _rsProblemReasonText,
-    _rsProblemVariables,
-    _rsProblemStrengthDegree,
+    ReasonSection(..),
     -- ** construction helpers
     parserProblemVariablesText,
     parserProblemReasonName,
@@ -38,15 +37,22 @@ module Oscar.ProblemParser.Internal.ReasonSection (
     -- ** decoding helpers
     toForwardsReason,
     toBackwardsReason,
+    ---- * "Control.Lens"
+    --rsProblemReasonName,
+    --rsProblemReasonText,
+    --rsProblemVariables,
+    --rsProblemStrengthDegree,
     ) where
 
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
+--import Control.Lens
+
 import Oscar.FormulaParser                  (formulaFromText)
 import Oscar.Problem                        (BackwardsReason(BackwardsReason))
 import Oscar.Problem                        (ForwardsReason(ForwardsReason))
-import Oscar.Problem                        (LispPositiveDouble(LispPositiveDouble))
+import Oscar.Problem                        (Degree(Degree))
 import Oscar.Problem                        (ProblemBackwardsConclusiveReason)
 import Oscar.Problem                        (ProblemBackwardsPrimaFacieReason)
 import Oscar.Problem                        (ProblemForwardsConclusiveReason)
@@ -60,35 +66,16 @@ import Oscar.ProblemParser.Internal.Tags    (Direction(Forwards))
 import Oscar.ProblemParser.Internal.Tags    (ƮReason)
 import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
 
-{- | This represents a partial deocde of one of the four kinds of
+{- | This represents a partial decode of one of the four kinds of
      reason sections.
 -}
-type ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
-    ( ProblemReasonName
-    , Text ⁞ ƮReason direction defeasibility
-    , Text ⁞ ƮVariables
-    , ProblemStrengthDegree
-    )
-
-_rsProblemReasonName
-    ∷ ReasonSection direction defeasibility
-    → ProblemReasonName
-_rsProblemReasonName (n, _, _, _) = n
-
-_rsProblemReasonText
-    ∷ ReasonSection direction defeasibility
-    → Text ⁞ ƮReason direction defeasibility
-_rsProblemReasonText (_, t, _, _) = t
-
-_rsProblemVariables
-    ∷ ReasonSection direction defeasibility
-    → Text ⁞ ƮVariables
-_rsProblemVariables (_, _, v, _) = v
-
-_rsProblemStrengthDegree
-    ∷ ReasonSection direction defeasibility
-    → ProblemStrengthDegree
-_rsProblemStrengthDegree (_, _, _, d) = d
+data ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
+    ReasonSection 
+        { _rsProblemReasonName ∷ ProblemReasonName
+        , _rsProblemReasonText ∷ (Text ⁞ ƮReason direction defeasibility)
+        , _rsProblemVariables ∷ (Text ⁞ ƮVariables)
+        , _rsProblemStrengthDegree ∷ ProblemStrengthDegree
+        }
 
 {- | Expects something like \"variables={A, B, ...}\" and returns the
      text between the curly braces (e.g. \"A, B, ...\").
@@ -100,13 +87,13 @@ _rsProblemStrengthDegree (_, _, _, d) = d
 parserProblemVariablesText ∷ Parser (Text ⁞ ƮVariables)
 parserProblemVariablesText = ƭ . pack <$>
     (option "" . try $
-        many space *>
+        spaces *>
         string "variables" *>
-        many space *>
+        spaces *>
         char '=' *>
-        many space *>
+        spaces *>
         char '{' *>
-        manyTill anyChar (lookAhead . try $ char '}') <*
+        manyTillBefore anyChar (char '}') <*
         char '}'
         )
 
@@ -120,8 +107,8 @@ parserProblemVariablesText = ƭ . pack <$>
 parserProblemReasonName ∷ Parser ProblemReasonName
 parserProblemReasonName = ProblemReasonName . pack <$>
     (try $
-        many space *>
-        manyTill anyChar (lookAhead . try $ char ':') <*
+        spaces *>
+        manyTillBefore anyChar (char ':') <*
         char ':'
         )
 
@@ -137,79 +124,69 @@ parserEnbracedTexts ∷ Parser [Text]
 parserEnbracedTexts = try $ do
     _ ← char '{'
     (inner, _) ← (pack <$> many anyChar) `precededBy` char '}'
-    let texts = simpleParse (emptylist <|> p) inner
+    let texts = simpleParse (emptyList <|> nonEmptyList) inner
     return texts
   where
-    emptylist ∷ Parser [Text]
-    emptylist = try $ spaces >> eof >> return []
+    emptyList ∷ Parser [Text]
+    emptyList = spacesUpToEof *> return []
 
-    p ∷ Parser [Text]
-    p = do
-        (firstText, restText) ←
-            -- TODO messy
-            (many space *>
-                (pack <$> manyTill anyChar (try $ lookAhead (many space >> eof))) <*
-                many space
-                )
-                `precededBy`
-            (lookAhead $
-                (try (many space >> eof) *> pure False)
-                    <|>
-                try (char ',' *> many anyChar *> pure True)
-                )
-        if restText then do
+    nonEmptyList ∷ Parser [Text]
+    nonEmptyList = do
+        (firstText, restExists) ← 
+            parserFirstText `precededBy` parserRestExists
+        if restExists then do  -- there's an element after the first one
             _ ← char ','
-            spaces -- TODO: remove if unnecessary
-            restTexts ← p
+            restTexts ← nonEmptyList
             return $ firstText : restTexts
-        else do
+        else do  -- this is the last element in the list
             return [firstText]
+      where
+        parserFirstText =
+            (spaces *>
+                (pack <$> manyTillBefore anyChar spacesUpToEof) <*
+                spaces
+                )
+
+        parserRestExists = lookAhead $
+            empty
+            <|> spacesUpToEof *> pure False
+            <|> try (char ',' *> pure True)
 
 {- | Defines types that can be constructed from a 'ReasonSection'. -}
-class FromReasonSection to fromDirection fromDefeasibility where
+class FromReasonSection to fromDirection fromDefeasibility | to → fromDirection fromDefeasibility where
     fromReasonSection ∷ ReasonSection fromDirection fromDefeasibility → to
 
 instance FromReasonSection ProblemForwardsPrimaFacieReason
                            Forwards
                            PrimaFacie
   where
-    fromReasonSection r = (,,)
-        (_rsProblemReasonName r)
-        (toForwardsReason $ _rsProblemReasonText r)
-        (_rsProblemStrengthDegree r)
+    fromReasonSection (ReasonSection n t _ d) = (n, toForwardsReason t, d)
 
 instance FromReasonSection ProblemForwardsConclusiveReason
                            Forwards
                            Conclusive
   where
-    fromReasonSection r = case _rsProblemStrengthDegree r of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
+    fromReasonSection (ReasonSection n t _ d) = case d of
+        ProblemStrengthDegree (Degree 1) → result
         _ → error "conclusive strength must = 1"
       where
-        result = (,)
-            (_rsProblemReasonName r)
-            (toForwardsReason $ _rsProblemReasonText r)
+        result = (n, toForwardsReason t)
 
 instance FromReasonSection ProblemBackwardsPrimaFacieReason
                            Backwards
                            PrimaFacie
   where
-    fromReasonSection r = (,,)
-        (_rsProblemReasonName r)
-        (toBackwardsReason $ _rsProblemReasonText r)
-        (_rsProblemStrengthDegree r)
+    fromReasonSection (ReasonSection n t _ d) = (n, toBackwardsReason t, d)
 
 instance FromReasonSection ProblemBackwardsConclusiveReason
                            Backwards
                            Conclusive
   where
-    fromReasonSection r = case (_rsProblemStrengthDegree r) of
-        ProblemStrengthDegree (LispPositiveDouble 1) → result
+    fromReasonSection (ReasonSection n t _ d) = case d of
+        ProblemStrengthDegree (Degree 1) → result
         _ → error "conclusive strength must = 1"
       where
-        result = (,)
-            (_rsProblemReasonName r)
-            (toBackwardsReason $ _rsProblemReasonText r)
+        result = (n, toBackwardsReason t)
 
 toForwardsReason 
     ∷ (Text ⁞ ƮReason Forwards defeasibility) 
@@ -240,13 +217,13 @@ toBackwardsReason = simpleParse p . unƭ
         forwardsPremiseTextsText ←
             manyTill anyChar
                      (lookAhead . try $
-                        many space *>
+                        spaces *>
                         char '{' *>
                         many (notFollowedBy (char '}') *> anyChar) *>
                         char '}' *>
-                        many space *>
+                        spaces *>
                         string "||=>" *>
-                        many space
+                        spaces
                         )
         forwardsPremiseTexts ←
             withInput (pack forwardsPremiseTextsText) parserEnbracedTexts
@@ -254,9 +231,12 @@ toBackwardsReason = simpleParse p . unƭ
         (backwardsPremiseTexts, _) ←
             parserEnbracedTexts
                 `precededBy`
-            (many space >> string "||=>" >> many space)
+            (spaces >> string "||=>" >> spaces)
         conclusionText ← pack <$> many anyChar
         return $ BackwardsReason
             (formulaFromText <$> forwardsPremiseTexts)
             (formulaFromText <$> backwardsPremiseTexts)
             (formulaFromText conclusionText)
+
+-- TODO This doesn't work! Apparently, there's a problem with handling ⁞.
+--makeLenses ''ReasonSection

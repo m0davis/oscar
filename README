@@ -20,11 +20,38 @@ Version history:
     * more refactoring, using StatefulParser
     * haddock
 
-TODO for 0.3.0.0:
-    * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
-    * LispPositiveDouble et al. -> Degree
+0.3.0.0:
+    * add a usage example for ƮWithLineComments (FilePath)
+    * first implementation of Control.Lens
+    * ReasonSection changed from type to data
+    * Section -> SectionName
+    * sectionParser -> parserSectionName
+    * LispPositiveDouble -> Degree
+    * require degrees to lie in the interval (0,1]
+    * limit to 80 columns wide
+    * consistent presentation of __Examples__
+    * fix haddock bug in data ƮSection section
+    * clean some messy code
+    * remove any unused build-depends from cabal
+    * refactor: favor using patterns instead of accessors for ReasonSection
+    * fixes for GHC 7.10 compatibility
 
 TODO for 0.4.0.0:
+    * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
+    * feature: implement Variables
+    * feature: change [] → Set where appropriate
+    * feature: enforce unique names of reasons and numbers of problems
+
+TODO for 0.5.0.0:
+    * Fix a problem with making lenses for ReasonSection
+    * Should Symbol be a type or a newtype?
+    * Should Premise et al. be types or data?
+    * Let's consistently use Inference and Interest, and abandon talk of Justifications, Strengths, Premises, and Conclusions.
+    * ? ProblemNumber -> Identifier
+    * ? ProblemDescription -> Description
+    * ? etc. (ProblemPremise -> Premise)
+
+TODO for 0.6.0.0:
     * decide on versioning & branching strategy; see http://nvie.com/posts/a-successful-git-branching-model/
     * git automation
     * Make use of injective type families when GHC 7.10 is released
@@ -32,3 +59,7 @@ TODO for 0.4.0.0:
 TODO for later:
     * report haddock bug: unable to provide documentation of a function argument involving an infix type operator unless the type is enclosed in parentheses.
     * implement the rest of Oscar
+
+Meta TODO:
+    * documentation; see http://jekor.com/article/what-gets-documented-gets-improved
+    * unicode utility; see http://www.cs.tut.fi/~jkorpela/fui.html8

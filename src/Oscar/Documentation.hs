@@ -13,11 +13,14 @@ module Oscar.Documentation (
     -- * What is defeasible reasoning?
     -- $WhatIsDefeasibleReasoning
 
-    -- * So, you want to write an OSCAR @Problem@
+    -- * So, you want to write an OSCAR @Problem@.
     -- $ExampleOfProblem
 
-    -- * So, you want to write an OSCAR @Formula@
+    -- * So, you want to write an OSCAR @Formula@.
     -- $ExampleOfFormula
+
+    -- * So, you want to help.
+    -- $ThanksForHelping
     ) where
 
 import Oscar.Main.Prelude
@@ -25,7 +28,7 @@ import Oscar.Main.Parser
 
 import Oscar.Problem
 import Oscar.Formula
-import Oscar.ProblemParser.Internal.Section
+import Oscar.ProblemParser.Internal.SectionName
 import Oscar.ProblemParser.Internal.Tags
 
 {- $RTFM
@@ -36,6 +39,23 @@ probably are set.
 
 Examples showing blocks of Text sometimes use ∘ to denote a space and ↵ to 
 denote a newline.
+
+Once you have read through the documentation in this module, here are some
+key modules in which to drill-down.
+    
+    * "Main"
+
+        Begin at the beginning.
+
+    * "Oscar.Main.Prelude" and "Oscar.Main.Parser"
+
+        Before the beginning, there was Prelude.
+
+    * "Oscar.ProblemParser.Internal.Tags"
+
+        The types defined here provide a kind of roadmap to understanding the
+        conversion from a human-written problem for Oscar to a 'Problem',
+        which is what "Main" does.
 -}
 
 {- $WhoIsOscar
@@ -63,33 +83,33 @@ codebase.
 <http://en.wikipedia.org/wiki/Natural_deduction Natural deduction> refers to 
 a family of methods for proving first-order theorems in which reasoning can
 proceed both forwards and backwards. Given a set of __premises__ and an
-__interest___, one tries to prove that formula for the interest follows
+__interest__, one tries to prove that the formula for the interest follows
 deductively from the premises.
 
 __'Forwards'__ reasoning
 
-Suppose we have an interest, `A`, and a premise, `A and B`. From `A and B`, we 
-can deduce `A` and we can deduce `B`. The first of these matches the interest,
+Suppose we have an interest, @A@, and a premise, @A and B@. From @A and B@, we 
+can deduce @A@ and we can deduce @B@. The first of these matches the interest,
 so we are done.
 
 __'Backwards'__ reasoning
 
-Suppose we have an interest, `A or B`, and a premise, `A`. Noting that we have 
-interest, `A or B`, we could entertain two new interests. One in `A` and 
-another in `B`. Showing that either of these interests holds is enough to 
-discharge our interest in `A or B`. The first of these matches our premise, 
-`A`, so we are done.
+Suppose we have an interest, @A or B@, and a premise, @A@. Noting that we have 
+interest, @A or B@, we could entertain two new interests. One in @A@ and 
+another in @B@. Showing that either of these interests holds is enough to 
+discharge our interest in @A or B@. The first of these matches our premise, 
+@A@, so we are done.
 
-It would not be so good to try to reason forwards from `A` to `A or B` simply
-because there an infinite number of formulas of the form `A or X` that follow
-from `A`.
+It would not be so good to try to reason forwards from @A@ to @A or B@ simply
+because there an infinite number of formulas of the form @A or X@ that follow
+from @A@.
 
 Consider again the example above of forwards reasoning. Could we perform
-that deduction by reasoning backwards? Noting that we have interest, `A`, 
-we could entertain an interest in `A and B` and another in `B and A`. 
-The premise `A and B` matches the first of these, so we are done. But this 
+that deduction by reasoning backwards? Noting that we have interest, @A@, 
+we could entertain an interest in @A and B@ and another in @B and A@. 
+The premise @A and B@ matches the first of these, so we are done. But this 
 strategy doesn\'t work very well since we could equally have entertained 
-interest in `A and C` and a zillion other formulas.
+interest in @A and C@ and a zillion other formulas.
 -}
 
 {- $WhatIsDefeasibleReasoning
@@ -99,35 +119,54 @@ brother of Oscar, John L. Pollock. I will illustrate it with an example.
 
 __Seeing is believing?__
 
-You see before you what appears to be a reddish-colored ball. Is it reasonable
-for you to infer that there actually __is__ a red ball before you? Under what
-circumstances is it not?
+It's a dark and stormy night. You sit comfortably in your study, a candelabrum
+illuminating the smoke wafting from your pipe, reading a copy of Meditations
+(Descartes, 1639). On the table before you, sitting next to your inkwell, you
+see what appears to be a bluish-colored ball. As you reflect on what you've
+read, you begin to wonder about the validity of your perceptions. Is the ball
+really blue? Is it perhaps not a ball but really a cube? Or maybe it all is 
+merely a dream. The pipe should be comforting, and the candles should be 
+pleasing. The night is beginning to go badly for your. You pick up your cell 
+and make a call to your trusted advisor and dearest friend, Martin Stone Davis. 
+Yours truly. I tell you this.
 
-Perhaps you have rose-colored glasses on! If that were the case, you would
-see a red ball even if the ball were white. Perhaps you recall that you
-recently injested a strong hallucinogen. In that case, you would be
-well-advised to mistrust almost all of your perceptions.
+There is no end to which one can doubt. I believe that even Descartes' 
+foundational belief, "sum", can itself be doubted. [Digression, c.f. So you 
+think you exist?] If we are to move forward, let us not start from scratch.
+There really *is* a ball before you, I insist. It appears to you that it is 
+blue. That much is clear. Our focus shall now be on whether it is reasonable
+for you to believe that it is really is blue.
 
-Reasoning defeasibly, you may make a __prima facie__ inference to the
-conclusion that there is a red ball before you, allowing for the possibility
-that that inference may later be undercut or rebutted.
+"Have you left on your violet specs, again? Those are for outdoors." I ask 
+politely.
 
-Knowing that you are wearing rose-colored glasses gives you an
-__undercutting defeater__ to link between the premise that the ball appears
-to be red and the conclusion that the ball actually is red. Importantly, you
-do not conclude that there is no ball or that the ball isn't red. You simply
-withhold belief in the proposition that it is red.
+"No, I --- Oh, yes!" Removing your glasses you recognize your lucky golf ball.
+It's white, but appeared blue before your tinted visors.
 
-There are also __rebutting defeaters__. Suppose Alice tells you that it's
-raining. You consider Alice to be trustworthy and so infer that it's raining.
-But then Bob tells you that it isn't. If you consider Bob to be equally as
-trustworthy as Alice, your inference that it is raining is rebutted by another
-inference that it is not raining.
+I summarize what is going on here. It is a case of reasoning defeasibly. Based
+on face-value evidence, you may make a __prima facie__ inference to the 
+conclusion that there is a blue ball before you, allowing for the possibility
+of revision later. Importantly, there is a link between your perception and 
+your conclusion.
+
+Discovering that you were wearing tinted glasses introduced something new, an 
+__undercutting defeater__, which blocked the inference previously allowed by 
+the aforementioned link. 
+
+[TODO edit]
+    There are also __rebutting defeaters__. 
+
+    Suppose Alice tells you that it's
+    raining. You consider Alice to be trustworthy and so infer that it's raining.
+    But then Bob tells you that it isn't. If you consider Bob to be equally as
+    trustworthy as Alice, your inference that it is raining is rebutted by another
+    inference that it is not raining.
 -}
 
 {- $ExampleOfProblem
 
-Here is an example of a valid 'Problem', represented as a Text ⁞ ƮWithLineComments.
+Here is an example of a valid 'Problem', represented as a 
+Text ⁞ ƮWithLineComments.
 
 @
 ; This is a line comment, starting with a semicolon. All such comments are
@@ -137,7 +176,7 @@ Problem #42 ; The 'ProblemNumber' must be given as an integer.
 Here is a 'ProblemDescription', which may be given starting on a line
 following the 'ProblemNumber'.
 
-The description ends at the first 'Section' identifier.
+The description ends at the first 'SectionName'.
 
 A (case-sensitive) section identifier is a line containing __exactly one__
 (sans whitespace, which is ignored) of the following bulleted items:
@@ -152,8 +191,8 @@ No repeats of sections are allowed.
 
 Given premises: ; Here's a section identifier.
                 ; Note that the "Given premises:" above in the description is
-                ; __not__ a Section identifier since it does not occur by
-                ; itself (it's preceded by a "*").
+                ; __not__ a SectionName since it does not occur by itself 
+                ; (it's preceded by a "*").
 
     ; A 'ProblemPremise' is a 'Formula' and a 'ProblemJustificationDegree'.
 
@@ -260,4 +299,29 @@ Here are some examples:
 
 Since "v" is used as a symbol for disjunction, it may not be used as a
 constant or quantification variable.
+-}
+
+{- $ThanksForHelping
+
+Help with extending or refactoring would be greatly appreciated. Here are
+some developement notes.
+
+* Usage of "Control.Lens" was just implemented recently (as of version 0.2.2).
+Not all data types are connected with it, and it's bothersome to me how many
+export lines it requires. E.g., "Oscar.Problem". Also, there's a problem 
+making lenses for 'ReasonSection'.
+
+* It's not clear to me yet how the 'Whether' operator is supposed to be used.
+I've seen clues that it can be applied to a domain variable. Investigate this
+and, if necessary, adjust the current parser.
+
+* Only the parsing of problems has been (mostly) implemented, but there's a 
+lot more to Oscar. We need to implement:
+
+    * natural deduction
+    * defeasible reasoning
+    * probable probabilities
+    * planning
+
+* Look for \"TODO\" in the source for more.
 -}
