@@ -110,7 +110,9 @@ placed the OSCAR files. |#
 ;(setf oscar-pathname "NEWG4\\DOCUMENTS\\OSCAR\\OSCAR FOLDER\\")
 
 ;;USE THIS FORM FOR MACS:
-(setf oscar-pathname "NEWG4:Library:Webserver:DOCUMENTS:ftp:CODE:")
+;(setf oscar-pathname "NEWG4:Library:Webserver:DOCUMENTS:ftp:CODE:")
+
+(setf oscar-pathname "./")
 
 #| This defines a function in the ordinary way, but also keeps a record of
 its arglist and definition on the property list of the function name.  When
@@ -128,4 +130,4 @@ definitions are changed, a record of the changes is kept in *old-definitions*. |
          (setf (get (quote ,fun) 'definition) (quote ,body))
          (defun ,fun ,arg ,@body)))
 
-(load (concatenate 'string oscar-pathname "OSCAR_3-31-acl.lisp"))
+(load (concatenate 'string oscar-pathname "OSCAR_3-31.lisp"))

@@ -113,11 +113,11 @@ fixes some errors in the use of the match in discharging reductios. |#
 (when (not (boundp 'oscar-pathname)) (setf oscar-pathname "G5 backup:Documents:OSCAR:OSCAR FOLDER:"))
 
 (when (null *tools-loaded*)
-     (load (concatenate 'string oscar-pathname "Oscar-tools"))
+     (load (concatenate 'string oscar-pathname "OSCAR-TOOLS.lisp"))
      (setf *tools-loaded* t))
 
 (when (null *syntax-loaded*)
-     (load (concatenate 'string oscar-pathname "Syntax_3"))
+     (load (concatenate 'string oscar-pathname "Syntax_3.lisp"))
      (setf *syntax-loaded* t))
 
 (if (not (fboundp 'gc)) (defun gc () t))
@@ -10203,15 +10203,15 @@ by terms containing those same variables. |#
 ;=====================================================================
 
 (when (null *prob-compiler-loaded*)
-     (load (concatenate 'string oscar-pathname "Reason-macros_3-31"))
-     (load (concatenate 'string oscar-pathname "Prob-compiler_3-24"))
+     (load (concatenate 'string oscar-pathname "Reason-macros_3-31.lisp"))
+     (load (concatenate 'string oscar-pathname "Prob-compiler_3-24.lisp"))
      (setf *prob-compiler-loaded* t))
 
 (when (null *problems-loaded*)
-     (load (concatenate 'string oscar-pathname "Rules_3-30"))
+     (load (concatenate 'string oscar-pathname "Rules_3-30.lisp"))
      ;; combined sentential, defeasible, and first-order problems
      (load (concatenate 'string oscar-pathname "Combined-problems.lisp"))
-     (load (concatenate 'string oscar-pathname "Agent-arguments5"))
+     (load (concatenate 'string oscar-pathname "Agent-arguments5.lisp"))
      (setf *problems-loaded* t))
 
 (setf *comparison-log*

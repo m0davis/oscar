@@ -171,7 +171,7 @@ definition is not saved in "Definitions History".|#
                                         (list def (multiple-value-list (get-decoded-time))))
                              *old-definitions*)
                  (with-open-file
-                      (stream (concatenate 'string oscar-pathname "Definitions History.lisp")
+                      (stream (concatenate 'string oscar-pathname "Definitions-History.lisp")
                                       :direction :output :if-exists :append)
                       (terpri stream) (princ "==============================================" stream)
                       (terpri stream)
@@ -513,7 +513,7 @@ it is set to 1. The list of values is returned.|#
               ((listp s) (+ (number-of-occurrences x (car s)) (number-of-occurrences x (cdr s))))))
 
 (defun substructures (s)
-   (declare (inline unionmapcar))
+;   (declare (inline unionmapcar))
    (cond ((atom s) nil)
              (t (cons s (unionmapcar #'substructures s)))))
 
