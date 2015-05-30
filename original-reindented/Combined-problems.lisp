@@ -2,9 +2,9 @@
 ;(in-package "OSCAR")
 
 (setf *problems*
-         (eval-when (:compile-toplevel :execute)
-             (make-problem-list
-               "
+      (eval-when (:compile-toplevel :execute)
+        (make-problem-list
+          "
 Problem #1
 This is a case of collective rebutting defeat
 Given premises:
@@ -1082,4 +1082,4 @@ Ultimate epistemic interests:
 ))
 )
 
-(defunction test* () (test :skip 86))
+(defun test* () (test :skip 86))

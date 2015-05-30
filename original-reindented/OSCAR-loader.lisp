@@ -7,40 +7,40 @@
 
 (proclaim
   '(special *act-executors* *altered-nodes* *answered-discount*
- *auxiliary-backwards-rules* *auxiliary-forwards-rules*
- *auxiliary-forwards-rules* *backwards-logical-reasons* *backwards-reasons* *backwards-rules*
- *backwards-substantive-reasons* *base-interest* *base-priority* *blocked-conclusions*
- *cancelled-c-lists* *comparison-log* *concluded-interest-priority* *d-trace*
- *dependent-interests* *dependent-nodes* *desires* *direct-reductio-interests*
- *display-inference-queue* *display?* *environmental-input* *executable-operations*
- *forwards-logical-reasons* *forwards-reasons* *forwards-rules* *forwards-substantive-reasons*
- *independent-reductio-suppositions* *inference-graph* *inference-number* *inference-number*
- *inference-queue* *inherited-non-reductio-suppositions* *interest-links* *interest-map*
- *interest-number* *interest-record* *interest-scheme-number* *interest-schemes* *interests*
- *link-number* *log-on* *non-reductio-supposition-nodes* *optative-dispositions* *pause* *percepts*
- *permanent-ultimate-epistemic-interests* *premises* *priority-interests* *prob-compiler-loaded*
- *problem-number* *problems* *problems-loaded* *processed-conclusions* *processed-desires*
- *q&i-modules* *query-number* *queue-number* *reasoning-log* *reductio-discount*
- *reductio-interest* *reductio-supposition-nodes* *skolem-free-suppositions* *skolem-multiplier*
- *start-trace* *support-link-number* *support-links* *test-log* *time-limit* *tools-loaded*
- *trees-loaded* *ultimate-epistemic-interests* *unused-suppositions* *proofs?*
- *use-logic* *use-reductio* *version* ei adjunction is-desire is-inference is-percept oscar-pathname reductio
-  *deleted-arguments* *relevant-nodes* *open-position-for-assignment-tree-window*
- *flash-affected-nodes* *flash-defeatees* *flash-defeaters* *flash-ancestors*
- *flash-consequences* *flash-support-link-bases* *flash-support-links* *deductive-only*
- *flash-relevant-nodes* *graph-ancestors* *graph-relevant-nodes* *menu-dialog*
- *message* *start-display* *cycle* *assignment-tree-window* *assignment-tree-subview*
- *monitor-assignment-tree* *assignment-tree-window-size* *assignment-tree-dialog*
- *graphics-initialized* *graphics-on* *graph-log* *graphics-pause* *nodes-displayed* 
- *og-nodes* *og* *graph-interests* *speak* *d-node-number* *discrimination-net*
- *top-d-node* *operators* *quantifier-number* *conditional-node* *disjunction-node*
- *undercutter-node* *conjunctive-undercutter-node* *ip-number* *is-number* *display-box*
- *quantifier-discount* *package-name* *display-button* *trace-button* *constructed-plans*
-  *constructed-goals* *constructed-desires* *plan-number* *goal-number*
- *fixed-ultimate-epistemic-interests* *temporal-decay* *temporal-projection* *causal-implication*
- *new-links* *used-nodes* *used-interests* *unprocessed-nodes* *unprocessed-interests*
- *interests-used-in-proof* *temporal-decay-minimum* *instantiated-premise-number*
- *strictly-relevant-nodes* *not-strictly-relevant-nodes* ug))
+            *auxiliary-backwards-rules* *auxiliary-forwards-rules*
+            *auxiliary-forwards-rules* *backwards-logical-reasons* *backwards-reasons* *backwards-rules*
+            *backwards-substantive-reasons* *base-interest* *base-priority* *blocked-conclusions*
+            *cancelled-c-lists* *comparison-log* *concluded-interest-priority* *d-trace*
+            *dependent-interests* *dependent-nodes* *desires* *direct-reductio-interests*
+            *display-inference-queue* *display?* *environmental-input* *executable-operations*
+            *forwards-logical-reasons* *forwards-reasons* *forwards-rules* *forwards-substantive-reasons*
+            *independent-reductio-suppositions* *inference-graph* *inference-number* *inference-number*
+            *inference-queue* *inherited-non-reductio-suppositions* *interest-links* *interest-map*
+            *interest-number* *interest-record* *interest-scheme-number* *interest-schemes* *interests*
+            *link-number* *log-on* *non-reductio-supposition-nodes* *optative-dispositions* *pause* *percepts*
+            *permanent-ultimate-epistemic-interests* *premises* *priority-interests* *prob-compiler-loaded*
+            *problem-number* *problems* *problems-loaded* *processed-conclusions* *processed-desires*
+            *q&i-modules* *query-number* *queue-number* *reasoning-log* *reductio-discount*
+            *reductio-interest* *reductio-supposition-nodes* *skolem-free-suppositions* *skolem-multiplier*
+            *start-trace* *support-link-number* *support-links* *test-log* *time-limit* *tools-loaded*
+            *trees-loaded* *ultimate-epistemic-interests* *unused-suppositions* *proofs?*
+            *use-logic* *use-reductio* *version* ei adjunction is-desire is-inference is-percept oscar-pathname reductio
+            *deleted-arguments* *relevant-nodes* *open-position-for-assignment-tree-window*
+            *flash-affected-nodes* *flash-defeatees* *flash-defeaters* *flash-ancestors*
+            *flash-consequences* *flash-support-link-bases* *flash-support-links* *deductive-only*
+            *flash-relevant-nodes* *graph-ancestors* *graph-relevant-nodes* *menu-dialog*
+            *message* *start-display* *cycle* *assignment-tree-window* *assignment-tree-subview*
+            *monitor-assignment-tree* *assignment-tree-window-size* *assignment-tree-dialog*
+            *graphics-initialized* *graphics-on* *graph-log* *graphics-pause* *nodes-displayed* 
+            *og-nodes* *og* *graph-interests* *speak* *d-node-number* *discrimination-net*
+            *top-d-node* *operators* *quantifier-number* *conditional-node* *disjunction-node*
+            *undercutter-node* *conjunctive-undercutter-node* *ip-number* *is-number* *display-box*
+            *quantifier-discount* *package-name* *display-button* *trace-button* *constructed-plans*
+            *constructed-goals* *constructed-desires* *plan-number* *goal-number*
+            *fixed-ultimate-epistemic-interests* *temporal-decay* *temporal-projection* *causal-implication*
+            *new-links* *used-nodes* *used-interests* *unprocessed-nodes* *unprocessed-interests*
+            *interests-used-in-proof* *temporal-decay-minimum* *instantiated-premise-number*
+            *strictly-relevant-nodes* *not-strictly-relevant-nodes* ug))
 
 (defvar *package-name* (package-name *package*))
 
@@ -102,7 +102,7 @@
 #| IMPORTANT!  You must edit the 
 following definition to replace
 the string (enclosed in quotation 
-marks) by the pathname
+                     marks) by the pathname
 of the folder in which you have 
 placed the OSCAR files. |#
 
@@ -117,17 +117,17 @@ placed the OSCAR files. |#
 #| This defines a function in the ordinary way, but also keeps a record of
 its arglist and definition on the property list of the function name.  When
 definitions are changed, a record of the changes is kept in *old-definitions*. |#
-(defmacro defunction (fun arg &rest body)
-    `(progn
-         (when (and (get (quote ,fun) 'definition)
-                               (not (equal (get (quote ,fun) 'definition) (quote ,body))))
-              (push (cons (quote ,fun)
-                                     (list (append (list 'defun (quote ,fun) (get (quote ,fun) 'arglist))
-                                                             (get (quote ,fun) 'definition))
-                                             (multiple-value-list (get-decoded-time))))
-                          *old-definitions*))
-         (setf (get (quote ,fun) 'arglist) (quote ,arg))
-         (setf (get (quote ,fun) 'definition) (quote ,body))
-         (defun ,fun ,arg ,@body)))
+;(defmacro defunction (fun arg &rest body)
+;  `(progn
+;     (when (and (get (quote ,fun) 'definition)
+;                (not (equal (get (quote ,fun) 'definition) (quote ,body))))
+;       (push (cons (quote ,fun)
+;                   (list (append (list 'defun (quote ,fun) (get (quote ,fun) 'arglist))
+;                                 (get (quote ,fun) 'definition))
+;                         (multiple-value-list (get-decoded-time))))
+;             *old-definitions*))
+;     (setf (get (quote ,fun) 'arglist) (quote ,arg))
+;     (setf (get (quote ,fun) 'definition) (quote ,body))
+;     (defun ,fun ,arg ,@body)))
 
-(load (concatenate 'string oscar-pathname "OSCAR_3-31.lisp"))
+(load (concatenate 'string oscar-pathname "OSCAR_3-31"))
