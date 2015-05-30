@@ -5160,23 +5160,23 @@ link being discharged.  |#
                                                        (if (fp-clue? (is-premise is)) (cons node (is-clues is)) (is-clues is))
                                                        instantiations supposition (is-generating-node is)))))
                                                ))))))))))))))
-
-(defunction make-backwards-inference
-    (reason binding interest depth priority supporting-nodes clues instantiations supposition
-                  &optional generating-node)
-    ; (when (eq interest (interest 8)) (setf r reason b binding i interest d depth p priority s supporting-nodes in instantiations u supposition) (break))
-    ;; (step (make-backwards-inference r b i d p s in u))
-    (cond
-      ((or (backwards-premises reason) (backwards-premises-function reason))
-        (construct-initial-interest-link
-          supporting-nodes instantiations reason interest depth priority binding supposition
-          :generating-node generating-node :remaining-premises (backwards-premises reason) :clues clues))
-      ((or (numberp (reason-strength reason))
-             (>= (funcall (reason-strength reason) binding supporting-nodes) (degree-of-interest interest)))
-        (dolist (P (funcall (conclusions-function reason) binding))
-            (draw-conclusion
-              (car P) supporting-nodes reason instantiations (discount-factor reason) depth nil (cdr P)
-              :binding binding :clues clues)))))
+;;;; removed because it is redefined below
+;;;;(defunction make-backwards-inference
+;;;;    (reason binding interest depth priority supporting-nodes clues instantiations supposition
+;;;;                  &optional generating-node)
+;;;;    ; (when (eq interest (interest 8)) (setf r reason b binding i interest d depth p priority s supporting-nodes in instantiations u supposition) (break))
+;;;;    ;; (step (make-backwards-inference r b i d p s in u))
+;;;;    (cond
+;;;;      ((or (backwards-premises reason) (backwards-premises-function reason))
+;;;;        (construct-initial-interest-link
+;;;;          supporting-nodes instantiations reason interest depth priority binding supposition
+;;;;          :generating-node generating-node :remaining-premises (backwards-premises reason) :clues clues))
+;;;;      ((or (numberp (reason-strength reason))
+;;;;             (>= (funcall (reason-strength reason) binding supporting-nodes) (degree-of-interest interest)))
+;;;;        (dolist (P (funcall (conclusions-function reason) binding))
+;;;;            (draw-conclusion
+;;;;              (car P) supporting-nodes reason instantiations (discount-factor reason) depth nil (cdr P)
+;;;;              :binding binding :clues clues)))))
 
 ;(defunction remove-double-negation (P) 
 ;    (if (and (negationp P) (negationp (negand P))) (negand (negand P)) P))
