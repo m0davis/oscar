@@ -5,6 +5,56 @@
       (eval-when (:compile-toplevel :execute)
         (make-problem-list
           "
+Problem #1008
+Zombie problem 8 from Semantics for Defeasible Reasoning (2009)
+Given premises:
+     A    justification = 1.0
+     C    justification = 1.0
+     G    justification = 1.0
+     H    justification = 1.0
+Ultimate epistemic interests:
+     B    interest = 1.0
+     P    interest = 1.0
+     Q    interest = 1.0
+
+    FORWARDS PRIMA FACIE REASONS
+      pf-reason_1:   {A} ||=> B   strength = 1.0
+      pf-reason_2:   {C} ||=> D   strength = 1.0
+      pf-reason_3:   {G} ||=> P   strength = 1.0
+      pf-reason_4:   {H} ||=> Q   strength = 1.0
+      pf-reason_5:   {B} ||=> (C @ D)   strength = 1.0
+      pf-reason_6:   {D} ||=> (A @ B)   strength = 1.0
+      pf-reason_7:   {B} ||=> (G @ P)   strength = 1.0
+      pf-reason_8:   {D} ||=> (G @ P)   strength = 1.0
+      pf-reason_9:   {P} ||=> (H @ Q)   strength = 1.0
+
+Problem #1009
+Zombie problem 9 from Semantics for Defeasible Reasoning (2009)
+Given premises:
+     A    justification = 1.0
+     C    justification = 1.0
+     E    justification = 1.0
+     G    justification = 1.0
+     H    justification = 1.0
+Ultimate epistemic interests:
+     B    interest = 1.0
+     P    interest = 1.0
+     Q    interest = 1.0
+
+    FORWARDS PRIMA FACIE REASONS
+      pf-reason_1:   {A} ||=> B   strength = 1.0
+      pf-reason_2:   {C} ||=> D   strength = 1.0
+      pf-reason_3:   {E} ||=> F   strength = 1.0
+      pf-reason_4:   {G} ||=> P   strength = 1.0
+      pf-reason_5:   {H} ||=> Q   strength = 1.0
+      pf-reason_6:   {B} ||=> (C @ D)   strength = 1.0
+      pf-reason_7:   {D} ||=> (E @ F)   strength = 1.0
+      pf-reason_8:   {F} ||=> (A @ B)   strength = 1.0
+      pf-reason_9:   {B} ||=> (G @ P)   strength = 1.0
+      pf-reason_10:  {D} ||=> (G @ P)   strength = 1.0
+      pf-reason_11:  {F} ||=> (G @ P)   strength = 1.0
+      pf-reason_12:  {P} ||=> (H @ Q)   strength = 1.0
+
 Problem #1
 This is a case of collective rebutting defeat
 Given premises:
