@@ -3,7 +3,7 @@
 which can then be run individually using the function (simulate-oscar n). |#
 
 (proclaim '(special *cycle* *inputs* *substantive-interests* *empty-inference-queue* *msg* **percepts**
-                  *start-time* **premises** *temporal-reason-decay* *simulation-problems*))
+                    *start-time* **premises** *temporal-reason-decay* *simulation-problems*))
 
 (setf *pretty-list* nil *string-symbols* nil)
 
@@ -16,259 +16,260 @@ which can then be run individually using the function (simulate-oscar n). |#
 #| *inputs* is a list of conses (cycle . input) where input is a list of pairs (formula clarity). |#
 
 #| SIMULATE-OSCAR updates *percepts* by looking at a predetermined list *inputs*. |#
-(defunction SIMULATE-OSCAR (n &optional (reductio? nil))
-    (let ((problem (assoc n *simulation-problems*)))
-      (when (null problem)
-           (princ "There is no problem of this number.") (terpri) (return-from simulate-oscar))
-      (setf *use-reductio* reductio?)
-      (setf *problem-number* (mem1 problem))
-      (setf *msg* (mem2 problem))
-      (setf *start-time* (mem3 problem))
-      (setf *forwards-substantive-reasons* (mem4 problem))
-      (setf *backwards-substantive-reasons* (mem5 problem))
-      (setf *inputs* (mem6 problem))
-      (setf **premises** (mem7 problem))
-      (setf *substantive-interests* (mem8 problem))
-      (let ((pp *print-pretty*))
-        (setf *print-pretty* nil)
-        (display-settings)
-        (setf *premises* **premises**)
-        (initialize-reasoner)
+(defun SIMULATE-OSCAR (n &optional (reductio? nil))
+  (let ((problem (assoc n *simulation-problems*)))
+    (when (null problem)
+      (princ "There is no problem of this number.") (terpri) (return-from simulate-oscar))
+    (setf *use-reductio* reductio?)
+    (setf *problem-number* (mem1 problem))
+    (setf *msg* (mem2 problem))
+    (setf *start-time* (mem3 problem))
+    (setf *forwards-substantive-reasons* (mem4 problem))
+    (setf *backwards-substantive-reasons* (mem5 problem))
+    (setf *inputs* (mem6 problem))
+    (setf **premises** (mem7 problem))
+    (setf *substantive-interests* (mem8 problem))
+    (let ((pp *print-pretty*))
+      (setf *print-pretty* nil)
+      (display-settings)
+      (setf *premises* **premises**)
+      (initialize-reasoner)
       (dolist (query *ultimate-epistemic-interests*)
-         (reason-backwards-from-query query (query-strength query) 0))
-        (setf *empty-inference-queue* nil)
-        (setf *cycle* *start-time*)
-        (let* ((max-input-cycle (maximum0 (union= (domain *inputs*) (mapcar #'caddr *premises*))))
-                  (time (get-internal-run-time))
-                  (abort-time (if *time-limit* (+ (* *time-limit* internal-time-units-per-second 60) time))))
-          ; (when (not *display?*) (gc))
-          (catch 'die 
-             (loop
-               (cond (*inference-queue*
-                           (if *empty-inference-queue* (setf *empty-inference-queue* nil)))
-                         ((> *cycle* max-input-cycle)
-                           (return))
-                         ((not *empty-inference-queue*)
-                           (setf *empty-inference-queue* t)
-                           (when *display?*
-                                (terpri) (terpri)
-                                (princ "-------------------------------------------------") (terpri) (terpri)
-                                (princ "                    Waiting for input") (terpri) (terpri)
-                                (princ "-------------------------------------------------") (terpri)
-                                (terpri) (terpri))))
-               (incf *cycle*)
-               (update-percepts)
-               (dolist (percept *percepts*)
+        (reason-backwards-from-query query (query-strength query) 0))
+      (setf *empty-inference-queue* nil)
+      (setf *cycle* *start-time*)
+      (let* ((max-input-cycle (maximum0 (union= (domain *inputs*) (mapcar #'caddr *premises*))))
+             (time (get-internal-run-time))
+             (abort-time (if *time-limit* (+ (* *time-limit* internal-time-units-per-second 60) time))))
+        ; (when (not *display?*) (gc))
+        (catch 'die 
+               (loop
+                 (cond (*inference-queue*
+                         (if *empty-inference-queue* (setf *empty-inference-queue* nil)))
+                       ((> *cycle* max-input-cycle)
+                        (return))
+                       ((not *empty-inference-queue*)
+                        (setf *empty-inference-queue* t)
+                        (when *display?*
+                          (terpri) (terpri)
+                          (princ "-------------------------------------------------") (terpri) (terpri)
+                          (princ "                    Waiting for input") (terpri) (terpri)
+                          (princ "-------------------------------------------------") (terpri)
+                          (terpri) (terpri))))
+                 (incf *cycle*)
+                 (update-percepts)
+                 (dolist (percept *percepts*)
                    (pull percept *percepts*)
                    (queue-percept percept))
-               (dolist (premise *premises*)
+                 (dolist (premise *premises*)
                    (when (eq (mem3 premise) *cycle*)
-                        (pull premise *premises*)
-                        (queue-premise premise)))
-               (think)
-               (when (and abort-time (> (get-internal-run-time) abort-time))
-                    (princ "NO PROOF WAS FOUND WITHIN ") (princ *time-limit*) (princ " MINUTES.")
-                    (throw 'die nil))
-               ; (initiate-actions)
-               ))
-          (setf time (- (get-internal-run-time) time))
-          (display-queries) (terpri)
-          (when (not *display?*)
-               (princ "Elapsed time = ") (display-run-time-in-seconds time) (terpri))
-          (let ((nodes nil))
-            (dolist (query *ultimate-epistemic-interests*)
-                (dolist (N (query-answers query))
-                    (pushnew N nodes)))
-            (compute-relevant-nodes nodes)
-            (let ((argument-length (length *relevant-nodes*)))
-              (cond (*proofs?* (terpri) (show-arguments))
-                        (t (princ "Cumulative size of arguments = ") (princ argument-length) (terpri)
-                            (princ "Size of inference-graph = ") (princ *inference-number*)
-                            (princ " of which ") (princ *unused-suppositions*)
-                            (princ " were unused suppositions.") (terpri)
-                            (princ (truncate (* argument-length 100) *inference-number*))
-                            (princ "% of the inference-graph was used in the argument.") (terpri)))
-              (princ *interest-number*) (princ " interests were adopted.") (terpri)
-              (when *display?*
-                   (princ "The following nodes were used in the arguments:") (terpri)
-                   (print-list (order (mapcar #'inference-number *relevant-nodes*) #'<) 40))))
-          (terpri)
-          (when *log-on* (terpri) (display-reasoning) (display-queries))
-          (princ ")") (terpri)
-          (setf *print-pretty* pp)))))
+                     (pull premise *premises*)
+                     (queue-premise premise)))
+                 (think)
+                 (when (and abort-time (> (get-internal-run-time) abort-time))
+                   (princ "NO PROOF WAS FOUND WITHIN ") (princ *time-limit*) (princ " MINUTES.")
+                   (throw 'die nil))
+                 ; (initiate-actions)
+                 ))
+        (setf time (- (get-internal-run-time) time))
+        (display-queries) (terpri)
+        (when (not *display?*)
+          (princ "Elapsed time = ") (display-run-time-in-seconds time) (terpri))
+        (let ((nodes nil))
+          (dolist (query *ultimate-epistemic-interests*)
+            (dolist (N (query-answers query))
+              (pushnew N nodes)))
+          (compute-relevant-nodes nodes)
+          (let ((argument-length (length *relevant-nodes*)))
+            (cond (*proofs?* (terpri) (show-arguments))
+                  (t (princ "Cumulative size of arguments = ") (princ argument-length) (terpri)
+                     (princ "Size of inference-graph = ") (princ *inference-number*)
+                     (princ " of which ") (princ *unused-suppositions*)
+                     (princ " were unused suppositions.") (terpri)
+                     (princ (truncate (* argument-length 100) *inference-number*))
+                     (princ "% of the inference-graph was used in the argument.") (terpri)))
+            (princ *interest-number*) (princ " interests were adopted.") (terpri)
+            (when *display?*
+              (princ "The following nodes were used in the arguments:") (terpri)
+              (print-list (order (mapcar #'inference-number *relevant-nodes*) #'<) 40))))
+        (terpri)
+        (when *log-on* (terpri) (display-reasoning) (display-queries))
+        (princ ")") (terpri)
+        (setf *print-pretty* pp)))))
 
 (defun SO (n &optional r) (simulate-oscar n r))
 
 #| This is a list of pairs (formula degree-of-interest). |# 
 (defvar *substantive-interests* nil)
 
-(defunction display-settings ()
-    (terpri)
-    (princ "(") (terpri)
-    (princ "======================================================================")
-    (terpri) (terpri)
-    (princ "                                 ") (princ *version*) (princ "          ")
-    (let ((time (multiple-value-list (get-decoded-time))))
-       (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-       (princ (mem6 time)) (princ "          ") (princ (mem3 time))
-       (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
-       (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
-       (terpri) (terpri))
-    (when *msg* (princ *msg*) (terpri) (terpri))
-    (princ "Forwards-substantive-reasons:") (terpri)
-    (dolist (R *forwards-substantive-reasons*)
-        (princ "          ") (princ R) (terpri))
-    (terpri)
-    (princ "Backwards-substantive-reasons:") (terpri)
-    (dolist (R *backwards-substantive-reasons*)
-        (princ "          ") (princ R) (terpri))
-    (terpri)
-    (when (not (zerop *start-time*))
-         (princ "Start reasoning at cycle ") (princ *start-time*) (terpri) (terpri))
-    (princ "Inputs:") (terpri)
-    (dolist (x *inputs*)
-        (princ "          ") (prinp (mem2 x)) (princ " : at cycle ") (princ (mem1 x))
-        (princ " with justification ") (princ (mem3 x)) (terpri))
-    (terpri)
-    (when **premises**
-         (setf **premises** (mapcar #'(lambda (x) (cons (reform-if-string (car x)) (cdr x))) **premises**))
-         (princ "Given:") (terpri)
-         (dolist (P **premises**)
-             (princ "          ") (prinp (mem1 P)) (princ "  : ")
-             (when (mem3 P) (princ " at cycle ") (princ (mem3 P)))
-             (princ " with justification = ") (princ (mem2 P)) (terpri))
-         (terpri))
-   ; (setf *permanent-ultimate-epistemic-interests* *fixed-ultimate-epistemic-interests*)
-    (setf *fixed-ultimate-epistemic-interests* nil)
-    (setf *query-number* 0)
-    (when *substantive-interests*
-         (princ "Ultimate epistemic interests:") (terpri)
-         (dolist (interest *substantive-interests*)
-             (let ((query
-                       (make-query
-                         :query-number (incf *query-number*)
-                         :query-formula (reform-if-string (mem1 interest))
-                         :query-strength (mem2 interest))))
-                (pushnew query *fixed-ultimate-epistemic-interests*
-                                  :test #'(lambda (x y) (equal (query-formula x) (query-formula y))))
-                (princ "     ")
-                (prinp (query-formula query)) (princ "    degree of interest = ") (princ (mem2 interest))
-                (terpri))))
-    (princ "======================================================================")
+(defun display-settings ()
+  (terpri)
+  (princ "(") (terpri)
+  (princ "======================================================================")
+  (terpri) (terpri)
+  (princ "                                 ") (princ *version*) (princ "          ")
+  (let ((time (multiple-value-list (get-decoded-time))))
+    (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
+    (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
+    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
     (terpri) (terpri))
+  (when *msg* (princ *msg*) (terpri) (terpri))
+  (princ "Forwards-substantive-reasons:") (terpri)
+  (dolist (R *forwards-substantive-reasons*)
+    (princ "          ") (princ R) (terpri))
+  (terpri)
+  (princ "Backwards-substantive-reasons:") (terpri)
+  (dolist (R *backwards-substantive-reasons*)
+    (princ "          ") (princ R) (terpri))
+  (terpri)
+  (when (not (zerop *start-time*))
+    (princ "Start reasoning at cycle ") (princ *start-time*) (terpri) (terpri))
+  (princ "Inputs:") (terpri)
+  (dolist (x *inputs*)
+    (princ "          ") (prinp (mem2 x)) (princ " : at cycle ") (princ (mem1 x))
+    (princ " with justification ") (princ (mem3 x)) (terpri))
+  (terpri)
+  (when **premises**
+    (setf **premises** (mapcar #'(lambda (x) (cons (reform-if-string (car x)) (cdr x))) **premises**))
+    (princ "Given:") (terpri)
+    (dolist (P **premises**)
+      (princ "          ") (prinp (mem1 P)) (princ "  : ")
+      (when (mem3 P) (princ " at cycle ") (princ (mem3 P)))
+      (princ " with justification = ") (princ (mem2 P)) (terpri))
+    (terpri))
+  ; (setf *permanent-ultimate-epistemic-interests* *fixed-ultimate-epistemic-interests*)
+  (setf *fixed-ultimate-epistemic-interests* nil)
+  (setf *query-number* 0)
+  (when *substantive-interests*
+    (princ "Ultimate epistemic interests:") (terpri)
+    (dolist (interest *substantive-interests*)
+      (let ((query
+              (make-query
+                :query-number (incf *query-number*)
+                :query-formula (reform-if-string (mem1 interest))
+                :query-strength (mem2 interest))))
+        (pushnew query *fixed-ultimate-epistemic-interests*
+                 :test #'(lambda (x y) (equal (query-formula x) (query-formula y))))
+        (princ "     ")
+        (prinp (query-formula query)) (princ "    degree of interest = ") (princ (mem2 interest))
+        (terpri))))
+  (princ "======================================================================")
+  (terpri) (terpri))
 
-(defunction update-percepts ()
-    (dolist (input (e-assoc *cycle* *inputs*)) (apply #'form-percept input)))
+;;;; removed b/c redefined below
+;;;;(defun update-percepts ()
+;;;;    (dolist (input (e-assoc *cycle* *inputs*)) (apply #'form-percept input)))
 
-(defunction update-percepts ()
-    (dolist (input *inputs*)
-        (when (eq (car input) *cycle*) (apply #'form-percept (cdr input)))))
+(defun update-percepts ()
+  (dolist (input *inputs*)
+    (when (eq (car input) *cycle*) (apply #'form-percept (cdr input)))))
 
-(defunction form-percept (P clarity &optional source)
-    (let* ((percept (make-percept
-                               :percept-content P
-                               :percept-clarity clarity
-                               :percept-date *cycle*)))
-       (push percept *percepts*)
-       (push percept **percepts**)
-       (when *display?*
-            (cond
-              ((eq source :user-report)
-                (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
-                (terpri) (princ "It is reported by the user that ") (prinp P) (princ " at ")
-                (princ (percept-date percept)) (terpri)
-                (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
-                (terpri))
-              (t
-                (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
-                (terpri) (princ "It appears to me that ") (prinp P) (princ " at ")
-                (princ (percept-date percept)) (terpri)
-                (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
-                (terpri))))))
+(defun form-percept (P clarity &optional source)
+  (let* ((percept (make-percept
+                    :percept-content P
+                    :percept-clarity clarity
+                    :percept-date *cycle*)))
+    (push percept *percepts*)
+    (push percept **percepts**)
+    (when *display?*
+      (cond
+        ((eq source :user-report)
+         (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+         (terpri) (princ "It is reported by the user that ") (prinp P) (princ " at ")
+         (princ (percept-date percept)) (terpri)
+         (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+         (terpri))
+        (t
+          (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+          (terpri) (princ "It appears to me that ") (prinp P) (princ " at ")
+          (princ (percept-date percept)) (terpri)
+          (princ "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+          (terpri))))))
 
-(defunction competing-percepts (P Q)
-    (or (equal P (neg Q))
-          (cond
-            ((listp Q)
-              (when (listp P)
-                   (cond  ;; P has the form ('color-of x y)
-                     ((equal (car P) 'color-of)
-                       (and
-                         (equal (car Q) 'color-of)
-                         (equal (mem2 Q) (mem2 P))
-                         (not (equal (mem3 Q) (mem3 P)))))
-                     ))))))
+(defun competing-percepts (P Q)
+  (or (equal P (neg Q))
+      (cond
+        ((listp Q)
+         (when (listp P)
+           (cond  ;; P has the form ('color-of x y)
+             ((equal (car P) 'color-of)
+              (and
+                (equal (car Q) 'color-of)
+                (equal (mem2 Q) (mem2 P))
+                (not (equal (mem3 Q) (mem3 P)))))
+             ))))))
 
-;(defunction arithmetical-value (x)
+;(defun arithmetical-value (x)
 ;    (ignore-errors (eval x)))
 
 (defmacro make-simulation-problem (&rest body)
-    (when (not (boundp '*simulation-problems*)) (setf *simulation-problems* nil))
-    (let* ((newbody (make-clauses body))
-              (number (cadr (find-if #'(lambda (x) (eq (car x) :number)) newbody)))
-              (start-time (cadr (find-if #'(lambda (x) (eq (car x) :start-time)) newbody)))
-              (message 
-                (if number (cat-list
-                                    (list "Problem number " (write-to-string number) ":  "
-                                           (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
-                     (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
-              (reasons
-                (mapcar 'eval (cdr (find-if #'(lambda (x) (eq (car x) :reasons)) newbody))))
-              (forwards-reasons (subset #'forwards-reason-p reasons))
-              (backwards-reasons (subset #'backwards-reason-p reasons))
-              (inputs
-                (mapcar #'(lambda (x) (list (car x) (reform-if-string (mem2 x)) (mem3 x)))
-                               (cdr (find-if #'(lambda (x) (eq (car x) :inputs)) newbody))))
-              (premises (cdr (find-if #'(lambda (x) (eq (car x) :premises)) newbody)))
-              (interests
-                (mapcar #'(lambda (x) (cons (reform-if-string (car x)) (cdr x)))
-                               (cdr (find-if #'(lambda (x) (eq (car x) :interests)) newbody)))))
-      (when premises
-            (setf premises
-                       (mapcar #'(lambda (p) (list (mem1 p) (mem2 p) (mem3 p))) premises)))
-      `(setf *simulation-problems*
-                 (cons (list ,number ,message (or ,start-time 0) ',forwards-reasons
-                                    ',backwards-reasons ',inputs ',premises ',interests)
-                             (remove-if-equal (assoc ,number *simulation-problems*)
-                                                            *simulation-problems*)))))
+  (when (not (boundp '*simulation-problems*)) (setf *simulation-problems* nil))
+  (let* ((newbody (make-clauses body))
+         (number (cadr (find-if #'(lambda (x) (eq (car x) :number)) newbody)))
+         (start-time (cadr (find-if #'(lambda (x) (eq (car x) :start-time)) newbody)))
+         (message 
+           (if number (cat-list
+                        (list "Problem number " (write-to-string number) ":  "
+                              (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
+             (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
+         (reasons
+           (mapcar 'eval (cdr (find-if #'(lambda (x) (eq (car x) :reasons)) newbody))))
+         (forwards-reasons (subset #'forwards-reason-p reasons))
+         (backwards-reasons (subset #'backwards-reason-p reasons))
+         (inputs
+           (mapcar #'(lambda (x) (list (car x) (reform-if-string (mem2 x)) (mem3 x)))
+                   (cdr (find-if #'(lambda (x) (eq (car x) :inputs)) newbody))))
+         (premises (cdr (find-if #'(lambda (x) (eq (car x) :premises)) newbody)))
+         (interests
+           (mapcar #'(lambda (x) (cons (reform-if-string (car x)) (cdr x)))
+                   (cdr (find-if #'(lambda (x) (eq (car x) :interests)) newbody)))))
+    (when premises
+      (setf premises
+            (mapcar #'(lambda (p) (list (mem1 p) (mem2 p) (mem3 p))) premises)))
+    `(setf *simulation-problems*
+           (cons (list ,number ,message (or ,start-time 0) ',forwards-reasons
+                       ',backwards-reasons ',inputs ',premises ',interests)
+                 (remove-if-equal (assoc ,number *simulation-problems*)
+                                  *simulation-problems*)))))
 
-     ; `(pushnew (list ,number ,message (or ,start-time 0) ',forwards-reasons
-     ;                     ',backwards-reasons ',inputs ',premises ',interests)
-     ;                     *simulation-problems* :test 'equal)))
+; `(pushnew (list ,number ,message (or ,start-time 0) ',forwards-reasons
+;                     ',backwards-reasons ',inputs ',premises ',interests)
+;                     *simulation-problems* :test 'equal)))
 
 ;; ======================================================================
 
 (let ((P (gensym)) (Q (gensym)) (x (gensym)) (y (gensym)) (A (gensym)) (z (gensym)) (op (gensym)))
   (setf *reform-list* nil)
   (dolist
-      (pair
-        (list
-          `((,P throughout (,op ,x ,y)) (throughout ,P (,op ,x ,y)) (,P ,op ,x ,y))
-          `((,P at ,x) (throughout ,P (closed ,x ,x)) (,P ,x))
-          `((,P now) (at ,P now) (,P))
-          `(((it appears to me that ,Q) at ,x) (it-appears-to-me-that ,Q (closed ,x ,x)) (,Q ,x))
-          `((the probability of ,P given ,Q) (the-probability-of ,P ,Q) (,P ,Q))
-          `((I  have a percept with content ,Q) (I-have-a-percept-with-content ,Q) (,Q))
-          `((,x < ,y) (< ,x ,y) (,x ,y))
-          `((,x <= ,y) (<= ,x ,y) (,x ,y))
-          `((,x = ,y) (= ,x ,y) (,x ,y))
-          `((,x + ,y) (+ ,x ,y) (,x ,y))
-          `((,x * ,y) (* ,x ,y) (,x ,y))
-          `((,x expt ,y) (expt ,x ,y) (,x ,y))
-          `((,x - ,y) (- ,x ,y) (,x ,y))
-          `((,x is a reliable informant) (reliable-informant ,x) (,x))
-          `((,x reports that ,P) (reports-that ,x ,P) (,x ,P))
-          `((the color of ,x is ,y) (color-of ,x ,y) (,x ,y))
-          `((,P when ,A is causally sufficient for ,Q after an interval ,x) 
-             (causally-sufficient ,P ,A ,Q ,x) (,P ,A ,Q ,x))
-          `((,x and ,y collide) (collide ,x ,y) (,x ,y))
-          `((the position of ,x is (,y ,z)) (position-of ,x ,y ,z) (,x ,y ,z))
-          `((the velocity of ,x is (,y ,z)) (velocity-of ,x ,y ,z) (,x ,y ,z))
-          `((,x is dead) (dead ,x) (,x))
-          `((,x is alive) (alive ,x) (,x))
-          `((,x is a dimensionless billiard ball) (dimensionless-billiard-ball ,x) (,x))
-          ))
-      (pushnew pair *reform-list* :test 'equal)))
+    (pair
+      (list
+        `((,P throughout (,op ,x ,y)) (throughout ,P (,op ,x ,y)) (,P ,op ,x ,y))
+        `((,P at ,x) (throughout ,P (closed ,x ,x)) (,P ,x))
+        `((,P now) (at ,P now) (,P))
+        `(((it appears to me that ,Q) at ,x) (it-appears-to-me-that ,Q (closed ,x ,x)) (,Q ,x))
+        `((the probability of ,P given ,Q) (the-probability-of ,P ,Q) (,P ,Q))
+        `((I  have a percept with content ,Q) (I-have-a-percept-with-content ,Q) (,Q))
+        `((,x < ,y) (< ,x ,y) (,x ,y))
+        `((,x <= ,y) (<= ,x ,y) (,x ,y))
+        `((,x = ,y) (= ,x ,y) (,x ,y))
+        `((,x + ,y) (+ ,x ,y) (,x ,y))
+        `((,x * ,y) (* ,x ,y) (,x ,y))
+        `((,x expt ,y) (expt ,x ,y) (,x ,y))
+        `((,x - ,y) (- ,x ,y) (,x ,y))
+        `((,x is a reliable informant) (reliable-informant ,x) (,x))
+        `((,x reports that ,P) (reports-that ,x ,P) (,x ,P))
+        `((the color of ,x is ,y) (color-of ,x ,y) (,x ,y))
+        `((,P when ,A is causally sufficient for ,Q after an interval ,x) 
+          (causally-sufficient ,P ,A ,Q ,x) (,P ,A ,Q ,x))
+        `((,x and ,y collide) (collide ,x ,y) (,x ,y))
+        `((the position of ,x is (,y ,z)) (position-of ,x ,y ,z) (,x ,y ,z))
+        `((the velocity of ,x is (,y ,z)) (velocity-of ,x ,y ,z) (,x ,y ,z))
+        `((,x is dead) (dead ,x) (,x))
+        `((,x is alive) (alive ,x) (,x))
+        `((,x is a dimensionless billiard ball) (dimensionless-billiard-ball ,x) (,x))
+        ))
+    (pushnew pair *reform-list* :test 'equal)))
 
 (setf (get 'i 'pretty-form) "I")
 ;(setf *operators* '(at ))
@@ -287,9 +288,9 @@ which can then be run individually using the function (simulate-oscar n). |#
     :description "When information is input, it is defeasibly reasonable to believe it.")
 
 #| For now: |#
-(defunction projectible (p)
-    (or (literal p)
-          (and (conjunctionp p) (every #'literal (conjuncts p)))))
+(defun projectible (p)
+  (or (literal p)
+      (and (conjunctionp p) (every #'literal (conjuncts p)))))
 
 (def-backwards-undercutter *PERCEPTUAL-RELIABILITY*
     :defeatee *perception*
@@ -326,7 +327,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 #| For now: |#
 #|
-(defunction temporally-projectible (p)
+(defun temporally-projectible (p)
    (or (literal p)
           (and (conjunctionp p) (every #'literal (conjuncts p)))))
 |#
@@ -335,13 +336,13 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (setf *binary-predicates* '(alive))
 
-(defunction temporally-projectible (p)
-   (or (atomic-formula p)
-         (and (negationp p)
-                  (or (atomic-formula (negand p))
-                        (and (listp (negand p))
-                                 (mem (mem1 (negand p)) *binary-predicates*))))
-         (and (conjunctionp p) (every #'atomic-formula (conjuncts p)))))
+(defun temporally-projectible (p)
+  (or (atomic-formula p)
+      (and (negationp p)
+           (or (atomic-formula (negand p))
+               (and (listp (negand p))
+                    (mem (mem1 (negand p)) *binary-predicates*))))
+      (and (conjunctionp p) (every #'atomic-formula (conjuncts p)))))
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
     :conclusions  "(p throughout (op time* time))"
@@ -921,7 +922,7 @@ is not a reductio-interest. |#
     :variables   x time
     :description "A person is dead iff he is not alive")
 
-;(defunction readopt-interest (interest defeated-links)
+;(defun readopt-interest (interest defeated-links)
 ;    (declare (ignore interest defeated-links)))
 
 (def-backwards-reason *NEW-POSITION-*

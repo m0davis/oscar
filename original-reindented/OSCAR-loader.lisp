@@ -131,3 +131,5 @@ definitions are changed, a record of the changes is kept in *old-definitions*. |
 ;     (defun ,fun ,arg ,@body)))
 
 (load (concatenate 'string oscar-pathname "OSCAR_3-31"))
+(load (concatenate 'string oscar-pathname "Perception-Causes_3-31"))
+(load (concatenate 'string oscar-pathname "PC-examples_3-31"))
