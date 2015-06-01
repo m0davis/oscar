@@ -1,3 +1,4 @@
+(declaim (optimize (debug 3)))
 ;; OSCAR-loader
 
 

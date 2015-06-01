@@ -1,3 +1,4 @@
+
 ;; Definitions for inference hypergraphs.  This is based on OSCAR_3-33.lisp.
 ;; It implements the theory in the paper of 5/28/02
 
@@ -460,8 +461,7 @@
    ;  (when (eq link (hyperlink 11)) (break)))
 
 ;; This adds link to the critical-graph sigma, and closes it under the closure conditions
-(defun add-link-to-critical-graph (link sigma1 sigma2 &optional (indent 0))
-  (declare (optimize (debug 3)))
+(defunction add-link-to-critical-graph (link sigma1 sigma2 &optional (indent 0))
    ;  (when (and (eq link (hyperlink 6)) (equal sigma1 (list (hyperlink 11)))) (setf l link s1 sigma1 s2 sigma2 i indent) (break))
    ;  (step (add-link-to-critical-graph l s1 s2 i))
      (when (not (mem sigma1 (hyperlink-in link)))
