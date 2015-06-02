@@ -1,6 +1,4 @@
 (declaim (optimize (debug 3)))
-;; OSCAR-loader
-
 
 (setf *version* "OSCAR_4.02")
 
@@ -100,37 +98,9 @@
 (defvar *graphics-pause* nil)
 (defvar *graph-interests* nil)
 
-#| IMPORTANT!  You must edit the 
-following definition to replace
-the string (enclosed in quotation 
-                     marks) by the pathname
-of the folder in which you have 
-placed the OSCAR files. |#
-
-;; USE THIS FORM FOR WINDOWS:
-;(setf oscar-pathname "NEWG4\\DOCUMENTS\\OSCAR\\OSCAR FOLDER\\")
-
-;;USE THIS FORM FOR MACS:
-;(setf oscar-pathname "NEWG4:Library:Webserver:DOCUMENTS:ftp:CODE:")
-
 (setf oscar-pathname "./")
 
-#| This defines a function in the ordinary way, but also keeps a record of
-its arglist and definition on the property list of the function name.  When
-definitions are changed, a record of the changes is kept in *old-definitions*. |#
-;(defmacro defunction (fun arg &rest body)
-;  `(progn
-;     (when (and (get (quote ,fun) 'definition)
-;                (not (equal (get (quote ,fun) 'definition) (quote ,body))))
-;       (push (cons (quote ,fun)
-;                   (list (append (list 'defun (quote ,fun) (get (quote ,fun) 'arglist))
-;                                 (get (quote ,fun) 'definition))
-;                         (multiple-value-list (get-decoded-time))))
-;             *old-definitions*))
-;     (setf (get (quote ,fun) 'arglist) (quote ,arg))
-;     (setf (get (quote ,fun) 'definition) (quote ,body))
-;     (defun ,fun ,arg ,@body)))
-
 (load (concatenate 'string oscar-pathname "oscar"))
-(load (concatenate 'string oscar-pathname "perception-cause"))
-(load (concatenate 'string oscar-pathname "perception-cause-example"))
+(load (concatenate 'string oscar-pathname "problem")
+(load (concatenate 'string oscar-pathname "perception-cause")
+(load (concatenate 'string oscar-pathname "plan")
