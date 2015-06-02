@@ -110,4 +110,6 @@
 (load (concatenate 'string oscar-pathname "problem-example"))
 
 ;(load (concatenate 'string oscar-pathname "perception-cause"))
+;(load (concatenate 'string oscar-pathname "perception-cause-example"))
+
 ;(load (concatenate 'string oscar-pathname "plan"))
