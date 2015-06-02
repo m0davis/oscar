@@ -1,4 +1,3 @@
-
 #| This is based on Perception-causes_3.31, but loads the problems into the list *simulation-problems*,
 which can then be run individually using the function (simulate-oscar n). |#
 
@@ -280,12 +279,12 @@ which can then be run individually using the function (simulate-oscar n). |#
 #| This forms conclusions of the form (P at t). |#
 
 (def-forwards-reason *PERCEPTION*
-    :forwards-premises "(p at time)" (:kind :percept)
-    :conclusions "(p at time)"
-    :variables p time
-    :defeasible? t
-    :strength .98
-    :description "When information is input, it is defeasibly reasonable to believe it.")
+                     :forwards-premises "(p at time)" (:kind :percept)
+                     :conclusions "(p at time)"
+                     :variables p time
+                     :defeasible? t
+                     :strength .98
+                     :description "When information is input, it is defeasibly reasonable to believe it.")
 
 #| For now: |#
 (defun projectible (p)
@@ -293,43 +292,43 @@ which can then be run individually using the function (simulate-oscar n). |#
       (and (conjunctionp p) (every #'literal (conjuncts p)))))
 
 (def-backwards-undercutter *PERCEPTUAL-RELIABILITY*
-    :defeatee *perception*
-    :forwards-premises
-    "((the probability of p given ((I have a percept with content p) & R)) <= s)"
-       (:condition (s < 0.99))
-    :backwards-premises "(R at time)"
-    :variables p time R time0 s
-    :defeasible? t
-    :description "When perception is unreliable, it is not reasonable to accept its representations.")
+                           :defeatee *perception*
+                           :forwards-premises
+                           "((the probability of p given ((I have a percept with content p) & R)) <= s)"
+                           (:condition (s < 0.99))
+                           :backwards-premises "(R at time)"
+                           :variables p time R time0 s
+                           :defeasible? t
+                           :description "When perception is unreliable, it is not reasonable to accept its representations.")
 
 (def-forwards-reason *DISCOUNTED-PERCEPTION*
-    :forwards-premises
-    "((the probability of p given ((I have a percept with content p) & R)) <= s)"
-        (:condition (and (projectible R) (0.5 < s) (s < 0.99)))
-    "(p at time)"
-       (:kind :percept)
-    :backwards-premises "(R at time)"
-    :conclusions "(p at time)"
-    :variables p time R time0 s
-    :strength  (2 * (s - 0.5))
-    :defeasible? t
-    :description "When information is input, it is defeasibly reasonable to believe it.")
+                     :forwards-premises
+                     "((the probability of p given ((I have a percept with content p) & R)) <= s)"
+                     (:condition (and (projectible R) (0.5 < s) (s < 0.99)))
+                     "(p at time)"
+                     (:kind :percept)
+                     :backwards-premises "(R at time)"
+                     :conclusions "(p at time)"
+                     :variables p time R time0 s
+                     :strength  (2 * (s - 0.5))
+                     :defeasible? t
+                     :description "When information is input, it is defeasibly reasonable to believe it.")
 
 (def-backwards-undercutter *PERCEPTUAL-UNRELIABILITY*
-    :defeatee *discounted-perception*
-    :forwards-premises
-    "((the probability of p given ((I have a percept with content p) & A)) <= s*)"
-       (:condition (and (projectible A) (s* < s)))
-    :backwards-premises "(A at time)"
-    :variables p time R A time0 time1 s s*
-    :defeasible? t
-    :description "When perception is unreliable, it is not reasonable to accept its representations.")
+                           :defeatee *discounted-perception*
+                           :forwards-premises
+                           "((the probability of p given ((I have a percept with content p) & A)) <= s*)"
+                           (:condition (and (projectible A) (s* < s)))
+                           :backwards-premises "(A at time)"
+                           :variables p time R A time0 time1 s s*
+                           :defeasible? t
+                           :description "When perception is unreliable, it is not reasonable to accept its representations.")
 
 #| For now: |#
 #|
 (defun temporally-projectible (p)
-   (or (literal p)
-          (and (conjunctionp p) (every #'literal (conjuncts p)))))
+  (or (literal p)
+      (and (conjunctionp p) (every #'literal (conjuncts p)))))
 |#
 
 (proclaim '(special *binary-predicates*))
@@ -345,180 +344,180 @@ which can then be run individually using the function (simulate-oscar n). |#
       (and (conjunctionp p) (every #'atomic-formula (conjuncts p)))))
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
-    :conclusions  "(p throughout (op time* time))"
-    :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
-                              (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
-    :forwards-premises
-        "(p at time0)"
-        (:condition (time0 < time))
-    :variables p time0 time* time op
-    :defeasible? T
-    :strength  (expt *temporal-reason-decay* (- time time0))
-    :description
-    "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+                      :conclusions  "(p throughout (op time* time))"
+                      :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
+                                       (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
+                      :forwards-premises
+                      "(p at time0)"
+                      (:condition (time0 < time))
+                      :variables p time0 time* time op
+                      :defeasible? T
+                      :strength  (expt *temporal-reason-decay* (- time time0))
+                      :description
+                      "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 
 #|
 ;; The condition does not work, because there could be a later argument proving such a support-link,
 ;; and the inference would not then be redone.
 (def-backwards-reason *TEMPORAL-PROJECTION*
-    :conclusions  "(p throughout (op time* time))"
-    :forwards-premises
-        "(p at time0)"
-            (:condition (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
-                                          (support-links c)))
-    :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
-                              (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
-    :variables p time0 time* time op
-    :defeasible? T
-    :strength  (expt *temporal-reason-decay* (max (abs (- time* time0)) (abs (- time time0))))
-    :description
-    "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+                      :conclusions  "(p throughout (op time* time))"
+                      :forwards-premises
+                      "(p at time0)"
+                      (:condition (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
+                                        (support-links c)))
+                      :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
+                                       (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
+                      :variables p time0 time* time op
+                      :defeasible? T
+                      :strength  (expt *temporal-reason-decay* (max (abs (- time* time0)) (abs (- time time0))))
+                      :description
+                      "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
-    :conclusions  "(p throughout (op time* time))"
-    :forwards-premises
-        "(p at time0)"
-    :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
-                              (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
-    :variables p time0 time* time op
-    :defeasible? T
-    :strength  (expt *temporal-reason-decay* (max (abs (- time* time0)) (abs (- time time0))))
-    :description
-    "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+                      :conclusions  "(p throughout (op time* time))"
+                      :forwards-premises
+                      "(p at time0)"
+                      :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
+                                       (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
+                      :variables p time0 time* time op
+                      :defeasible? T
+                      :strength  (expt *temporal-reason-decay* (max (abs (- time* time0)) (abs (- time time0))))
+                      :description
+                      "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
-    :conclusions  "(p throughout (op time* time))"
-    :forwards-premises
-        "(p at time0)"
-        (:condition (and  (numberp time*) (time0 <= time*)
-                                   (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
-                                               (support-links c))))
-    :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
-                              (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
-    :variables p time0 time* time op
-    :defeasible? T
-    :strength  (expt *temporal-reason-decay* (- time time0))
-    :description
-    "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+                      :conclusions  "(p throughout (op time* time))"
+                      :forwards-premises
+                      "(p at time0)"
+                      (:condition (and  (numberp time*) (time0 <= time*)
+                                        (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
+                                              (support-links c))))
+                      :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
+                                       (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
+                      :variables p time0 time* time op
+                      :defeasible? T
+                      :strength  (expt *temporal-reason-decay* (- time time0))
+                      :description
+                      "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 |#
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-TEMPORAL-PROJECTION*
-   :defeatee  *temporal-projection*
-    :forwards-premises
-       "((the probability of (p at (t + 1)) given (p at t)) = s)"
-         (:condition (s < *temporal-decay*))
-    :variables  p s time0 time)
+                           :defeatee  *temporal-projection*
+                           :forwards-premises
+                           "((the probability of (p at (t + 1)) given (p at t)) = s)"
+                           (:condition (s < *temporal-decay*))
+                           :variables  p s time0 time)
 
 (def-backwards-reason *INCOMPATIBLE-COLORS*
-    :conclusions "~((the color of x is y) at time)"
-    :forwards-premises
-       "((the color of x is z) at time)"
-       (:condition (not (eq z y)))
-    :variables  x y z time)
+                      :conclusions "~((the color of x is y) at time)"
+                      :forwards-premises
+                      "((the color of x is z) at time)"
+                      (:condition (not (eq z y)))
+                      :variables  x y z time)
 
 (def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*
-    :conclusions "~(the color of x is y)"
-    :forwards-premises
-       "(the color of x is z)"
-       (:condition (not (eq z y)))
-    :variables  x y z time)
+                      :conclusions "~(the color of x is y)"
+                      :forwards-premises
+                      "(the color of x is z)"
+                      (:condition (not (eq z y)))
+                      :variables  x y z time)
 
 (def-forwards-reason *INDEXICAL-PERCEPTION*
-    :forwards-premises "(p at time)"
-          (:kind :percept)
-    :conclusions "p"
-    :variables p time
-    :strength  (min .98 (expt *temporal-reason-decay* (- *cycle* time)))
-    :defeasible? t
-    :temporal? t
-    :description  "When information is input, it is defeasibly reasonable to believe it.")
+                     :forwards-premises "(p at time)"
+                     (:kind :percept)
+                     :conclusions "p"
+                     :variables p time
+                     :strength  (min .98 (expt *temporal-reason-decay* (- *cycle* time)))
+                     :defeasible? t
+                     :temporal? t
+                     :description  "When information is input, it is defeasibly reasonable to believe it.")
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-PERCEPTION*
-   :defeatee  *indexical-perception*
-    :forwards-premises
-       "((the probability of (p at (t + 1)) given (p at t)) = s)"
-         (:condition (s < *temporal-decay*))
-    :variables  p s time0 time)
+                           :defeatee  *indexical-perception*
+                           :forwards-premises
+                           "((the probability of (p at (t + 1)) given (p at t)) = s)"
+                           (:condition (s < *temporal-decay*))
+                           :variables  p s time0 time)
 
 (def-backwards-undercutter *INDEXICAL-PERCEPTUAL-RELIABILITY*
-    :defeatee *indexical-perception*
-    :forwards-premises
-    "((the probability of p given ((I have a percept with content p) & R)) <= s)"
-       (:condition (and (projectible R) (s < 0.99)))
-    :backwards-premises "(R at time)"
-    :variables p time R time0 s
-    :description "When perception is unreliable, it is not reasonable to accept its representations.")
+                           :defeatee *indexical-perception*
+                           :forwards-premises
+                           "((the probability of p given ((I have a percept with content p) & R)) <= s)"
+                           (:condition (and (projectible R) (s < 0.99)))
+                           :backwards-premises "(R at time)"
+                           :variables p time R time0 s
+                           :description "When perception is unreliable, it is not reasonable to accept its representations.")
 
 (def-forwards-reason *DISCOUNTED-INDEXICAL-PERCEPTION*
-    :forwards-premises
-    "((the probability of p given ((I have a percept with content p) & R)) <= s)"
-        (:condition (and (projectible R) (0.5 < s) (s < 0.99)))
-    "(p at time)"
-       (:kind :percept)
-    :backwards-premises "(R at time)"
-    :conclusions "p"
-    :variables p R time0 time s
-    :strength (min (* 2 (s - 0.5)) (expt *temporal-reason-decay* (- *cycle* time)))
-    :defeasible? t
-    :temporal? t
-    :description "When information is input, it is defeasibly reasonable to believe it.")
+                     :forwards-premises
+                     "((the probability of p given ((I have a percept with content p) & R)) <= s)"
+                     (:condition (and (projectible R) (0.5 < s) (s < 0.99)))
+                     "(p at time)"
+                     (:kind :percept)
+                     :backwards-premises "(R at time)"
+                     :conclusions "p"
+                     :variables p R time0 time s
+                     :strength (min (* 2 (s - 0.5)) (expt *temporal-reason-decay* (- *cycle* time)))
+                     :defeasible? t
+                     :temporal? t
+                     :description "When information is input, it is defeasibly reasonable to believe it.")
 
 (def-backwards-undercutter *INDEXICAL-PERCEPTUAL-UNRELIABILITY*
-    :defeatee *discounted-indexical-perception*
-    :forwards-premises
-    "((the probability of p given ((I have a percept with content p) & A)) <= s*)"
-        (:condition (and (projectible A) (s* < s)))
-    :backwards-premises "(A at time)"
-    :variables p time R A time0 time1 s s*
-    :description "When perception is unreliable, it is not reasonable to accept its representations.")
+                           :defeatee *discounted-indexical-perception*
+                           :forwards-premises
+                           "((the probability of p given ((I have a percept with content p) & A)) <= s*)"
+                           (:condition (and (projectible A) (s* < s)))
+                           :backwards-premises "(A at time)"
+                           :variables p time R A time0 time1 s s*
+                           :description "When perception is unreliable, it is not reasonable to accept its representations.")
 
 (def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*
-    :conclusions "~(the color of x is y)"
-    :forwards-premises
-       "(the color of x is z)"
-       (:condition (not (eq z y)))
-    :variables  x y z)
+                      :conclusions "~(the color of x is y)"
+                      :forwards-premises
+                      "(the color of x is z)"
+                      (:condition (not (eq z y)))
+                      :variables  x y z)
 
 (def-backwards-reason *INDEXICAL-TEMPORAL-PROJECTION*
-    :conclusions  "p"
-    :forwards-premises
-    "(p at time0)"
-    (:condition (time0 < now))
-    :condition  (and (temporally-projectible p) (not (occur 'at p)))
-    :variables p time0
-    :defeasible? T
-    :temporal? T
-    :strength  (expt *temporal-reason-decay* (- now time0))
-    :description
-    "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+                      :conclusions  "p"
+                      :forwards-premises
+                      "(p at time0)"
+                      (:condition (time0 < now))
+                      :condition  (and (temporally-projectible p) (not (occur 'at p)))
+                      :variables p time0
+                      :defeasible? T
+                      :temporal? T
+                      :strength  (expt *temporal-reason-decay* (- now time0))
+                      :description
+                      "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-TEMPORAL-PROJECTION*
-   :defeatee  *indexical-temporal-projection*
-    :forwards-premises
-       "((the probability of (p at (t + 1)) given (p at t)) = s)"
-         (:condition (s < *temporal-decay*))
-    :variables  p s time0 time)
+                           :defeatee  *indexical-temporal-projection*
+                           :forwards-premises
+                           "((the probability of (p at (t + 1)) given (p at t)) = s)"
+                           (:condition (s < *temporal-decay*))
+                           :variables  p s time0 time)
 
 (def-forwards-reason *RELIABLE-INFORMANT*
-   :forwards-premises
-    "(x is a reliable informant)"
-    "((x reports that P) at time)"
-    :conclusions "(P at time)"
-    :variables x P time
-    :strength 0.99
-    :defeasible? T
-    :description "it is reasonable to accept the reports of reliable informants.")
+                     :forwards-premises
+                     "(x is a reliable informant)"
+                     "((x reports that P) at time)"
+                     :conclusions "(P at time)"
+                     :variables x P time
+                     :strength 0.99
+                     :defeasible? T
+                     :description "it is reasonable to accept the reports of reliable informants.")
 
 #|  No time reference in the conclusion.
 (def-forwards-reason *RELIABLE-INFORMANT*
-   :forwards-premises
-    "(x is a reliable informant)"
-    "((x reports that P) at time)"
-    :conclusions "P"
-    :variables x P time
-    :strength 0.99
-    :defeasible? T
-    :description "it is reasonable to accept the reports of reliable informants.")
+                     :forwards-premises
+                     "(x is a reliable informant)"
+                     "((x reports that P) at time)"
+                     :conclusions "P"
+                     :variables x P time
+                     :strength 0.99
+                     :defeasible? T
+                     :description "it is reasonable to accept the reports of reliable informants.")
 |#
 
 ;; ======================================================================
@@ -536,232 +535,232 @@ which can then be run individually using the function (simulate-oscar n). |#
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a reductio-interest. |#
 (def-backwards-reason strict-arithmetical-inequality
-    :conclusions  "(x < y)"
-    :condition  (x < y)
-    :variables  x y)
+                      :conclusions  "(x < y)"
+                      :condition  (x < y)
+                      :variables  x y)
 
 #| Given an interest in (x <= y) where x and y are numbers, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a reductio-interest. |#
 (def-backwards-reason arithmetical-inequality
-    :conclusions  "(x <= y)"
-    :condition  (x <= y)
-    :variables  x y)
+                      :conclusions  "(x <= y)"
+                      :condition  (x <= y)
+                      :variables  x y)
 
 #|
 (def-backwards-reason arithmetical-equality
-    :conclusions  "(x = y)"
-    :condition   (catch 'numbers
-                          (cond
-                            ((interest-variable x)
-                              (let ((p* (list '= (arithmetical-value y) y)))
-                                (draw-conclusion
-                                  p* nil arithmetical-equality nil 1 0 nil)))
-                            ((interest-variable y)
-                              (let ((p* (list '= (arithmetical-value x) x)))
-                                (draw-conclusion
-                                  p* nil arithmetical-equality nil 1 0 nil)))
-                            (t
-                              (let ((val1 (arithmetical-value x))
-                                      (val2 (arithmetical-value y)))
-                                (when (and val1 val2 (= val1 val2))
-                                     (let ((p (list '= x y)))
-                                       (draw-conclusion
-                                         p nil arithmetical-equality nil 1 0 nil)))))))
-    :variables  x y)
+                      :conclusions  "(x = y)"
+                      :condition   (catch 'numbers
+                                          (cond
+                                            ((interest-variable x)
+                                             (let ((p* (list '= (arithmetical-value y) y)))
+                                               (draw-conclusion
+                                                 p* nil arithmetical-equality nil 1 0 nil)))
+                                            ((interest-variable y)
+                                             (let ((p* (list '= (arithmetical-value x) x)))
+                                               (draw-conclusion
+                                                 p* nil arithmetical-equality nil 1 0 nil)))
+                                            (t
+                                              (let ((val1 (arithmetical-value x))
+                                                    (val2 (arithmetical-value y)))
+                                                (when (and val1 val2 (= val1 val2))
+                                                  (let ((p (list '= x y)))
+                                                    (draw-conclusion
+                                                      p nil arithmetical-equality nil 1 0 nil)))))))
+                      :variables  x y)
 
 (def-backwards-reason arithmetical-nonequality
-    :conclusions  "~(x = y)"
-    :condition   (catch 'numbers
-                          (let ((val1 (arithmetical-value x))
-                                  (val2 (arithmetical-value y)))
-                            (when (and val1 val2 (not (= val1 val2)))
-                                 (let ((p `(~ (= ,x ,y))))
-                                   (draw-conclusion
-                                     p nil arithmetical-nonequality nil 1 0 nil))))
-                          nil)
-    :variables  x y)
+                      :conclusions  "~(x = y)"
+                      :condition   (catch 'numbers
+                                          (let ((val1 (arithmetical-value x))
+                                                (val2 (arithmetical-value y)))
+                                            (when (and val1 val2 (not (= val1 val2)))
+                                              (let ((p `(~ (= ,x ,y))))
+                                                (draw-conclusion
+                                                  p nil arithmetical-nonequality nil 1 0 nil))))
+                                          nil)
+                      :variables  x y)
 |#
 
 (def-backwards-reason arithmetical-equality
-    :conclusions  "(x = y)"
-    :condition   (x = y)
-    :variables  x y)
+                      :conclusions  "(x = y)"
+                      :condition   (x = y)
+                      :variables  x y)
 
 (def-backwards-reason arithmetical-nonequality
-    :conclusions  "~(x = y)"
-    :condition   (not (x = y))
-    :variables  x y)
+                      :conclusions  "~(x = y)"
+                      :condition   (not (x = y))
+                      :variables  x y)
 
 #| Given an interest in (x <= now) where x is a number, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a reductio-interest. |#
 (def-backwards-reason is-past-or-present
-    :conclusions  "(x <= now)"
-    :condition  (<= x *cycle*)
-    :variables  x)
+                      :conclusions  "(x <= now)"
+                      :condition  (<= x *cycle*)
+                      :variables  x)
 
 #| Given an interest in (x < now) where x is a number, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a reductio-interest. |#
 (def-backwards-reason is-past
-    :conclusions  "(x < now)"
-    :condition  (< x *cycle*)
-    :variables  x)
+                      :conclusions  "(x < now)"
+                      :condition  (< x *cycle*)
+                      :variables  x)
 
 (def-backwards-reason *CAUSAL-IMPLICATION*
-    :conclusions  "(Q throughout (op time* time**))"
-    :condition (and (numberp time*) (<= time* time**))
-    :forwards-premises
-    "(A when P is causally sufficient for Q after an interval interval)"
-       (:condition (every #'temporally-projectible (conjuncts Q)))
-    "(A at time)"
-    (:condition
-      (or (and (eq op 'clopen) ((time + interval) <= time*) (time* < time**))
-            (and (eq op 'closed) ((time + interval) < time*) (time* <= time**))
-            (and (eq op 'open) ((time + interval) <= time*) (time* < time**))))
-    :backwards-premises
-    "(P at time)"
-    :variables  A P Q interval time time* time** op
-    :strength  (expt *temporal-reason-decay* (- time** time))
-    :defeasible?  T)
+                      :conclusions  "(Q throughout (op time* time**))"
+                      :condition (and (numberp time*) (<= time* time**))
+                      :forwards-premises
+                      "(A when P is causally sufficient for Q after an interval interval)"
+                      (:condition (every #'temporally-projectible (conjuncts Q)))
+                      "(A at time)"
+                      (:condition
+                        (or (and (eq op 'clopen) ((time + interval) <= time*) (time* < time**))
+                            (and (eq op 'closed) ((time + interval) < time*) (time* <= time**))
+                            (and (eq op 'open) ((time + interval) <= time*) (time* < time**))))
+                      :backwards-premises
+                      "(P at time)"
+                      :variables  A P Q interval time time* time** op
+                      :strength  (expt *temporal-reason-decay* (- time** time))
+                      :defeasible?  T)
 
 (def-backwards-reason *CAUSAL-IMPLICATION2*
-    :conclusions  "(Q throughout (op time* time**))"
-    :condition (and (numberp time*) (<= time* time**))
-    :forwards-premises
-    "(A when P is causally sufficient for Q after an interval interval)"
-       (:condition (every #'temporally-projectible (conjuncts Q)))
-    "(P at time-)"
-    (:clue? t)
-    :backwards-premises
-    "(A at time)"
-    (:condition
-      (and (time- <= time)
-                (or (and (eq op 'clopen) ((time + interval) <= time*) (time* < time**))
-                      (and (eq op 'closed) ((time + interval) < time*) (time* <= time**))
-                      (and (eq op 'open) ((time + interval) <= time*) (time* < time**)))))
-    "(P at time)"
-    :variables  A P Q interval time time* time** time- op
-    :strength  (expt *temporal-reason-decay* (- time** time))
-    :defeasible?  T)
+                      :conclusions  "(Q throughout (op time* time**))"
+                      :condition (and (numberp time*) (<= time* time**))
+                      :forwards-premises
+                      "(A when P is causally sufficient for Q after an interval interval)"
+                      (:condition (every #'temporally-projectible (conjuncts Q)))
+                      "(P at time-)"
+                      (:clue? t)
+                      :backwards-premises
+                      "(A at time)"
+                      (:condition
+                        (and (time- <= time)
+                             (or (and (eq op 'clopen) ((time + interval) <= time*) (time* < time**))
+                                 (and (eq op 'closed) ((time + interval) < time*) (time* <= time**))
+                                 (and (eq op 'open) ((time + interval) <= time*) (time* < time**)))))
+                      "(P at time)"
+                      :variables  A P Q interval time time* time** time- op
+                      :strength  (expt *temporal-reason-decay* (- time** time))
+                      :defeasible?  T)
 
 (def-backwards-reason *CAUSAL-IMPLICATION+*
-    :conclusions  "(Q throughout (op time* time**))"
-    :condition (and (numberp time*) (<= time* time**))
-    :forwards-premises
-    "((R at time*) -> (Q at time*))"
-    "(A when P is causally sufficient for R after an interval interval)"
-       (:condition (every #'temporally-projectible (conjuncts Q)))
-    "(A at time)"
-    (:condition
-      (or (and (eq op 'clopen) ((time + interval) <= time*) (time* < time**))
-            (and (eq op 'closed) ((time + interval) < time*) (time* <= time**))
-            (and (eq op 'open) ((time + interval) <= time*) (time* < time**))))
-    :backwards-premises
-    "(P at time)"
-    :variables  A P Q R interval time time* time** op
-    :strength  (expt *temporal-reason-decay* (- time** time))
-    :defeasible?  T)
+                      :conclusions  "(Q throughout (op time* time**))"
+                      :condition (and (numberp time*) (<= time* time**))
+                      :forwards-premises
+                      "((R at time*) -> (Q at time*))"
+                      "(A when P is causally sufficient for R after an interval interval)"
+                      (:condition (every #'temporally-projectible (conjuncts Q)))
+                      "(A at time)"
+                      (:condition
+                        (or (and (eq op 'clopen) ((time + interval) <= time*) (time* < time**))
+                            (and (eq op 'closed) ((time + interval) < time*) (time* <= time**))
+                            (and (eq op 'open) ((time + interval) <= time*) (time* < time**))))
+                      :backwards-premises
+                      "(P at time)"
+                      :variables  A P Q R interval time time* time** op
+                      :strength  (expt *temporal-reason-decay* (- time** time))
+                      :defeasible?  T)
 
 (def-backwards-reason *INDEXICAL-CAUSAL-IMPLICATION*
-    :conclusions  "Q"
-    :forwards-premises
-    "(A when P is causally sufficient for Q after an interval interval)"
-       (:condition (every #'temporally-projectible (conjuncts Q)))
-    "(A at time)"
-    (:condition ((time + interval) < now))
-    :backwards-premises
-    "(P at time)"
-    :variables  A P Q interval time
-    :defeasible?  T
-    :strength  (expt *temporal-reason-decay* (- now time))
-    :temporal? T)
+                      :conclusions  "Q"
+                      :forwards-premises
+                      "(A when P is causally sufficient for Q after an interval interval)"
+                      (:condition (every #'temporally-projectible (conjuncts Q)))
+                      "(A at time)"
+                      (:condition ((time + interval) < now))
+                      :backwards-premises
+                      "(P at time)"
+                      :variables  A P Q interval time
+                      :defeasible?  T
+                      :strength  (expt *temporal-reason-decay* (- now time))
+                      :temporal? T)
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER*
-    :defeatee *temporal-projection*
-    :forwards-premises
-    "(define -p (neg p))"
-    "(A when Q is causally sufficient for -p after an interval interval)"
-    "(A at time1)"
-       (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
-    :backwards-premises
-    "(Q at time00)"
-    (:condition (time00 <= time1))
-    :variables  A Q p -p time0 time00 time time* time1 interval op
-    :defeasible?  T)
+                           :defeatee *temporal-projection*
+                           :forwards-premises
+                           "(define -p (neg p))"
+                           "(A when Q is causally sufficient for -p after an interval interval)"
+                           "(A at time1)"
+                           (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
+                           :backwards-premises
+                           "(Q at time00)"
+                           (:condition (time00 <= time1))
+                           :variables  A Q p -p time0 time00 time time* time1 interval op
+                           :defeasible?  T)
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER+*
-    :defeatee *temporal-projection*
-    :forwards-premises
-    "((R at time1) -> ~(p at time1))"
-    "(A when Q is causally sufficient for R after an interval interval)"
-    "(A at time1)"
-    (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
-    :backwards-premises
-    "(Q at time00)"
-    (:condition (time00 <= time1))
-    :variables  A Q p  R time0 time00 time time* time1 interval op
-    :defeasible?  T)
+                           :defeatee *temporal-projection*
+                           :forwards-premises
+                           "((R at time1) -> ~(p at time1))"
+                           "(A when Q is causally sufficient for R after an interval interval)"
+                           "(A at time1)"
+                           (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
+                           :backwards-premises
+                           "(Q at time00)"
+                           (:condition (time00 <= time1))
+                           :variables  A Q p  R time0 time00 time time* time1 interval op
+                           :defeasible?  T)
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER*
-    :defeatee *indexical-temporal-projection*
-    :forwards-premises
-    "(define -p (neg p))"
-    "(A when Q is causally sufficient for -p after an interval interval)"
-    "(A at time1)"
-       (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
-    :backwards-premises
-    "(Q at time00)"
-    (:condition (time00 <= time1))
-    :variables  A Q p -p time0 time00 time time* time1 interval op
-    :defeasible?  T)
+                           :defeatee *indexical-temporal-projection*
+                           :forwards-premises
+                           "(define -p (neg p))"
+                           "(A when Q is causally sufficient for -p after an interval interval)"
+                           "(A at time1)"
+                           (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
+                           :backwards-premises
+                           "(Q at time00)"
+                           (:condition (time00 <= time1))
+                           :variables  A Q p -p time0 time00 time time* time1 interval op
+                           :defeasible?  T)
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER+*
-    :defeatee *indexical-temporal-projection*
-    :forwards-premises
-    "(R -> ~p)"
-    "(A when Q is causally sufficient for R after an interval interval)"
-    "(A at time1)"
-    (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < now)))
-    :backwards-premises
-    "(Q at time00)"
-    (:condition (time00 <= time1))
-    :variables  A Q p R time0 time00 time1 interval
-    :defeasible?  T
-    :temporal? T)
+                           :defeatee *indexical-temporal-projection*
+                           :forwards-premises
+                           "(R -> ~p)"
+                           "(A when Q is causally sufficient for R after an interval interval)"
+                           "(A at time1)"
+                           (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < now)))
+                           :backwards-premises
+                           "(Q at time00)"
+                           (:condition (time00 <= time1))
+                           :variables  A Q p R time0 time00 time1 interval
+                           :defeasible?  T
+                           :temporal? T)
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
-    :defeatee *causal-implication*
-    :forwards-premises
-    "(define -q (neg q))"
-    "(A* when R is causally sufficient for -q after an interval interval*)"
-    "(A* at time1)"
-       (:condition (and ((time + interval) <= (time1 + interval*)) ((time1 + interval*) < time**)))
-    :backwards-premises
-    "(R at time00)"
-    (:condition (time00 <= time1))
-    :variables  A P Q interval time time* time** op A* R -q interval* time1 time00
-    :defeasible?  T)
+                           :defeatee *causal-implication*
+                           :forwards-premises
+                           "(define -q (neg q))"
+                           "(A* when R is causally sufficient for -q after an interval interval*)"
+                           "(A* at time1)"
+                           (:condition (and ((time + interval) <= (time1 + interval*)) ((time1 + interval*) < time**)))
+                           :backwards-premises
+                           "(R at time00)"
+                           (:condition (time00 <= time1))
+                           :variables  A P Q interval time time* time** op A* R -q interval* time1 time00
+                           :defeasible?  T)
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
-    :defeatee *indexical-causal-implication*
-    :forwards-premises
-    "(define -q (neg q))"
-    "(A* when R is causally sufficient for -q after an interval interval*)"
-    "(A* at time1)"
-       (:condition (and ((time + interval) <= (time1 + interval*)) ((time1 + interval*) < now)))
-    :backwards-premises
-    "(R at time00)"
-    (:condition (time00 <= time1))
-    :variables  A P Q interval time time* op A* R -q interval* time1 time00
-    :defeasible?  T)
+                           :defeatee *indexical-causal-implication*
+                           :forwards-premises
+                           "(define -q (neg q))"
+                           "(A* when R is causally sufficient for -q after an interval interval*)"
+                           "(A* at time1)"
+                           (:condition (and ((time + interval) <= (time1 + interval*)) ((time1 + interval*) < now)))
+                           :backwards-premises
+                           "(R at time00)"
+                           (:condition (time00 <= time1))
+                           :variables  A P Q interval time time* op A* R -q interval* time1 time00
+                           :defeasible?  T)
 
 (def-backwards-reason neg-at-intro
-    :conclusions  "~(P at time)"
-    :condition (not (negationp P))
-    :backwards-premises   "(~P at time)"
-    :variables  P time)
+                      :conclusions  "~(P at time)"
+                      :condition (not (negationp P))
+                      :backwards-premises   "(~P at time)"
+                      :variables  P time)
 
 ;(def-backwards-reason neg-at-intro
 ;    :conclusions  "~(P at time)"
@@ -769,195 +768,195 @@ is not a reductio-interest. |#
 ;    :variables  P time)
 
 (def-backwards-reason neg-at-intro2
-    :conclusions  "~(~P at time)"
-    :backwards-premises   "(P at time)"
-    :variables  P time)
+                      :conclusions  "~(~P at time)"
+                      :backwards-premises   "(P at time)"
+                      :variables  P time)
 
 (def-forwards-reason neg-at-elimination
-    :forwards-premises   "~(P at time)"
-    (:condition (not (negationp P)))
-    :conclusions  "(~P at time)"
-    :variables  P time)
+                     :forwards-premises   "~(P at time)"
+                     (:condition (not (negationp P)))
+                     :conclusions  "(~P at time)"
+                     :variables  P time)
 
 (def-backwards-reason &-at-intro
-    :conclusions  "((P & Q) at time)"
-    :backwards-premises   "((P at time) & (Q at time))"
-    :variables  P Q time)
+                      :conclusions  "((P & Q) at time)"
+                      :backwards-premises   "((P at time) & (Q at time))"
+                      :variables  P Q time)
 
 (def-forwards-reason &-at-elimination
-    :forwards-premises   "((P & Q) at time)"
-    :conclusions  "((P at time) & (Q at time))"
-    :variables  P Q time)
+                     :forwards-premises   "((P & Q) at time)"
+                     :conclusions  "((P at time) & (Q at time))"
+                     :variables  P Q time)
 
 (def-backwards-reason ETERNAL-TRUTHS
-    :conclusions  "(P at time)"
-    :backwards-premises  "P"
-    :variables   P time)
+                      :conclusions  "(P at time)"
+                      :backwards-premises  "P"
+                      :variables   P time)
 
 (def-backwards-reason *COLLISION*
-    :conclusions  "((b1 and b2 collide) at time)"
-    :backwards-premises
-    "(some x)(some y)(((the position of b1 is (x y)) at time) & ((the position of b2 is (x y)) at time))"
-    :variables   b1 b2 time)
+                      :conclusions  "((b1 and b2 collide) at time)"
+                      :backwards-premises
+                      "(some x)(some y)(((the position of b1 is (x y)) at time) & ((the position of b2 is (x y)) at time))"
+                      :variables   b1 b2 time)
 
 #| Should this be a degenerate backwards-reason? |#
 (def-forwards-reason COLLISION-SYMMETRY
-    :forwards-premises   "((B1 and B2 collide) at time)"
-    :conclusions  "((B2 and B1 collide) at time)"
-    :variables  B1 B2 time)
+                     :forwards-premises   "((B1 and B2 collide) at time)"
+                     :conclusions  "((B2 and B1 collide) at time)"
+                     :variables  B1 B2 time)
 
 (def-backwards-reason *NEW-POSITION*
-    :conclusions  "((the position of b is (x y)) at time1)"
-    :forwards-premises
-        "((the position of b is (x0 y0)) at time0)"
-          (:condition (time0 < time1))
-    :backwards-premises
-    "(some vx)(some vy)
-      (& ((the velocity of b is (vx vy)) throughout (clopen time0 time1))
-           (x = (x0 + (vx * (time1 - time0))))
-           (y = (y0 + (vy * (time1 - time0)))))"
-    :variables  b time1 x y x0 y0 time0)
+                      :conclusions  "((the position of b is (x y)) at time1)"
+                      :forwards-premises
+                      "((the position of b is (x0 y0)) at time0)"
+                      (:condition (time0 < time1))
+                      :backwards-premises
+                      "(some vx)(some vy)
+                      (& ((the velocity of b is (vx vy)) throughout (clopen time0 time1))
+                         (x = (x0 + (vx * (time1 - time0))))
+                         (y = (y0 + (vy * (time1 - time0)))))"
+                      :variables  b time1 x y x0 y0 time0)
 
 (def-forwards-reason *POSITION-INCOMPATIBILITY*
-    :conclusions  "~((the position of b is (z w)) at time)"
-    :forwards-premises
-    "((the position of b is (x y)) at time)"
-    "((the position of b is (z w)) at time)"
-        (:condition (or (not (x = z)) (not (y = w))))
-        (:clue? t)
-    :variables  b time x y z w)
+                     :conclusions  "~((the position of b is (z w)) at time)"
+                     :forwards-premises
+                     "((the position of b is (x y)) at time)"
+                     "((the position of b is (z w)) at time)"
+                     (:condition (or (not (x = z)) (not (y = w))))
+                     (:clue? t)
+                     :variables  b time x y z w)
 
 #|
 (def-backwards-reason *POSITION-INCOMPATIBILITY*
-    :conclusions  "~((the position of b is (z w)) at time)"
-    :forwards-premises
-    "((the position of b is (x y)) at time)"
-    (:condition (or (not (x = z)) (not (y = w))))
-    :variables  b time x y z w)
+                      :conclusions  "~((the position of b is (z w)) at time)"
+                      :forwards-premises
+                      "((the position of b is (x y)) at time)"
+                      (:condition (or (not (x = z)) (not (y = w))))
+                      :variables  b time x y z w)
 |#
 
 (def-backwards-reason *POSITION-INCOMPATIBILITY-1*
-    :conclusions  "~((the position of b is (z w)) at time)"
-    :forwards-premises
-    "((the position of b is (x y)) at time)"
-    (:condition (not (x = z)))
-    :variables  b time x y z w)
+                      :conclusions  "~((the position of b is (z w)) at time)"
+                      :forwards-premises
+                      "((the position of b is (x y)) at time)"
+                      (:condition (not (x = z)))
+                      :variables  b time x y z w)
 
 (def-backwards-reason *POSITION-INCOMPATIBILITY-2*
-    :conclusions  "~((the position of b is (z w)) at time)"
-    :forwards-premises
-    "((the position of b is (x y)) at time)"
-    (:condition  (not (y = w)))
-    :variables  b time x y z w)
+                      :conclusions  "~((the position of b is (z w)) at time)"
+                      :forwards-premises
+                      "((the position of b is (x y)) at time)"
+                      (:condition  (not (y = w)))
+                      :variables  b time x y z w)
 
 (def-backwards-reason *VELOCITY-INCOMPATIBILITY-1*
-    :conclusions  "~((the velocity of b is (z w)) at time)"
-    :forwards-premises   "((the velocity of b is (x y)) at time)"
-    :backwards-premises  "~(x = z)"
-    :variables  b time x y z w)
+                      :conclusions  "~((the velocity of b is (z w)) at time)"
+                      :forwards-premises   "((the velocity of b is (x y)) at time)"
+                      :backwards-premises  "~(x = z)"
+                      :variables  b time x y z w)
 
 (def-backwards-reason *VELOCITY-INCOMPATIBILITY-2*
-    :conclusions  "~((the velocity of b is (z w)) at time)"
-    :forwards-premises   "((the velocity of b is (x y)) at time)"
-    :backwards-premises  "~(y = w)"
-    :variables  b time x y z w)
+                      :conclusions  "~((the velocity of b is (z w)) at time)"
+                      :forwards-premises   "((the velocity of b is (x y)) at time)"
+                      :backwards-premises  "~(y = w)"
+                      :variables  b time x y z w)
 
 (def-backwards-reason inequality-transitivity
-    :conclusions  "(x < y)"
-    :forwards-premises  "(z < y)"
-    :backwards-premises  "(x <= z)"
-    :variables  x y z)
+                      :conclusions  "(x < y)"
+                      :forwards-premises  "(z < y)"
+                      :backwards-premises  "(x <= z)"
+                      :variables  x y z)
 
 (def-backwards-reason inequality-transitivity2
-    :conclusions  "(x < y)"
-    :forwards-premises  "(x < z)"
-    :backwards-premises  "(z <= y)"
-    :variables  x y z)
+                      :conclusions  "(x < y)"
+                      :forwards-premises  "(x < z)"
+                      :backwards-premises  "(z <= y)"
+                      :variables  x y z)
 
 (def-backwards-reason PAIR-NONIDENTITY-AT-TIME
-    :conclusions  "(~((x y) = (z w)) at time)"
-    :backwards-premises  "~((x y) = (z w))"
-    :condition  (and (numberp x) (numberp y) (numberp z) (numberp w))
-    :variables  b time x y z w )
+                      :conclusions  "(~((x y) = (z w)) at time)"
+                      :backwards-premises  "~((x y) = (z w))"
+                      :condition  (and (numberp x) (numberp y) (numberp z) (numberp w))
+                      :variables  b time x y z w )
 
 (def-backwards-reason PAIR-NONIDENTITY
-    :conclusions  "~((x y) = (z w))"
-    :condition  (and (numberp x) (numberp y) (numberp z) (numberp w)
-                              (or (not (eql x z)) (not (eql y w))))
-    :variables  x y z w)
+                      :conclusions  "~((x y) = (z w))"
+                      :condition  (and (numberp x) (numberp y) (numberp z) (numberp w)
+                                       (or (not (eql x z)) (not (eql y w))))
+                      :variables  x y z w)
 
 (def-forwards-reason not-alive-elimination
-    :forwards-premises  "(~(x is alive) at time)"
-    :conclusions "((x is dead) at time)"
-    :variables   x time
-    :description "A person is dead iff he is not alive.")
+                     :forwards-premises  "(~(x is alive) at time)"
+                     :conclusions "((x is dead) at time)"
+                     :variables   x time
+                     :description "A person is dead iff he is not alive.")
 
 (def-forwards-reason not-dead-elimination
-    :forwards-premises  "(~(x is dead) at time)"
-    :conclusions "((x is alive) at time)"
-    :variables   x time
-    :description "A person is alive iff he is not dead.")
+                     :forwards-premises  "(~(x is dead) at time)"
+                     :conclusions "((x is alive) at time)"
+                     :variables   x time
+                     :description "A person is alive iff he is not dead.")
 
 (def-backwards-reason not-alive-introduction
-    :conclusions  "(~(x is alive) at time)"
-    :backwards-premises  "((x is dead) at time)"
-    :variables   x time
-    :description "A person is dead iff he is not alive.")
+                      :conclusions  "(~(x is alive) at time)"
+                      :backwards-premises  "((x is dead) at time)"
+                      :variables   x time
+                      :description "A person is dead iff he is not alive.")
 
 (def-backwards-reason not-dead-introduction
-    :conclusions  "(~(x is dead) at time)"
-    :backwards-premises  "((x is alive) at time)"
-    :variables   x time
-    :description "A person is alive iff he is not dead.")
+                      :conclusions  "(~(x is dead) at time)"
+                      :backwards-premises  "((x is alive) at time)"
+                      :variables   x time
+                      :description "A person is alive iff he is not dead.")
 
 (def-forwards-reason dead-elimination
-    :forwards-premises  "((x is dead) at time)"
-    :conclusions  "(~(x is alive) at time)"
-    :variables   x time
-    :description "A person is dead iff he is not alive")
+                     :forwards-premises  "((x is dead) at time)"
+                     :conclusions  "(~(x is alive) at time)"
+                     :variables   x time
+                     :description "A person is dead iff he is not alive")
 
 (def-backwards-reason dead-introduction
-    :conclusions  "((x is dead) at time)"
-    :backwards-premises  "(~(x is alive) at time)"
-    :variables   x time
-    :description "A person is dead iff he is not alive")
+                      :conclusions  "((x is dead) at time)"
+                      :backwards-premises  "(~(x is alive) at time)"
+                      :variables   x time
+                      :description "A person is dead iff he is not alive")
 
 ;(defun readopt-interest (interest defeated-links)
 ;    (declare (ignore interest defeated-links)))
 
 (def-backwards-reason *NEW-POSITION-*
-    :conclusions  "((the position of b is (x y)) at time1)"
-    :forwards-premises
-        "((the position of b is (x0 y0)) at time0)"
-        (:condition (time0 < time1))
-    :backwards-premises
-    "(some vx)(some vy)
-      (& ((the velocity of b is (vx vy)) throughout- (time0 time1))
-           (x = (x0 + (vx * (time1 - time0))))
-           (y = (y0 + (vy * (time1 - time0)))))"
-    :variables  b time1 x y x0 y0 time0)
+                      :conclusions  "((the position of b is (x y)) at time1)"
+                      :forwards-premises
+                      "((the position of b is (x0 y0)) at time0)"
+                      (:condition (time0 < time1))
+                      :backwards-premises
+                      "(some vx)(some vy)
+                      (& ((the velocity of b is (vx vy)) throughout- (time0 time1))
+                         (x = (x0 + (vx * (time1 - time0))))
+                         (y = (y0 + (vy * (time1 - time0)))))"
+                      :variables  b time1 x y x0 y0 time0)
 
 (def-backwards-reason *CAUSAL-IMPLICATION-*
-    :conclusions  "(Q throughout- (time* time**))"
-    :forwards-premises
-    "(A when P is causally sufficient for Q after an interval interval)"
-       (:condition (every #'temporally-projectible (conjuncts Q)))
-    "(A at time)"
-    (:condition ((time + interval) <= time*))
-    :backwards-premises
-    "(P at time)"
-    :condition (<= time* time**)
-    :variables  A P Q interval time time* time**
-    :strength  (expt *temporal-reason-decay* (- time** time)))
+                      :conclusions  "(Q throughout- (time* time**))"
+                      :forwards-premises
+                      "(A when P is causally sufficient for Q after an interval interval)"
+                      (:condition (every #'temporally-projectible (conjuncts Q)))
+                      "(A at time)"
+                      (:condition ((time + interval) <= time*))
+                      :backwards-premises
+                      "(P at time)"
+                      :condition (<= time* time**)
+                      :variables  A P Q interval time time* time**
+                      :strength  (expt *temporal-reason-decay* (- time** time)))
 
 (def-backwards-reason *TEMPORAL-PROJECTION-*
-    :conclusions  "(p throughout- (time* time))"
-    :forwards-premises
-    "(p at time0)"
-    (:condition (time0 < time*))
-    :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time))
-    :variables p time0 time* time
-    :defeasible? T
-    :strength  (- (* 2 (expt *temporal-reason-decay* (- now time0))) 1)
-    :description
-    "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+                      :conclusions  "(p throughout- (time* time))"
+                      :forwards-premises
+                      "(p at time0)"
+                      (:condition (time0 < time*))
+                      :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time))
+                      :variables p time0 time* time
+                      :defeasible? T
+                      :strength  (- (* 2 (expt *temporal-reason-decay* (- now time0))) 1)
+                      :description
+                      "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")

@@ -1,7 +1,3 @@
-;                                                                        PROB-COMPILER.lsp
-
-;(in-package "OSCAR")
-
 (defvar *display?* nil)
 (defvar *proofs?* nil)
 

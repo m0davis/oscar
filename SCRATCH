@@ -1,3 +1,8 @@
+(progn (print-hyperlink (hyperlink 7) nil 1) (terpri) (terpri))
+
+
+
+
 ⊥
 ∀
 ⇒

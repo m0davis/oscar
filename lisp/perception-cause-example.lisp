@@ -1,4 +1,3 @@
-
 ;; This runs on OSCAR_3.31
 #| To run these problems, first load Perception-Causes_3.31a.lisp.
 Then load this file. To run problem n, execute (simulate-oscar n). |#
@@ -511,5 +510,3 @@ b1 between 0 and 10, and we are given that 10 is between 0 and 10.
  ; ("(? x)(? y) ((the velocity of b1 is (x y)) throughout (clopen 10 20))" 0.75)
   ("(? x)(? y) ((the position of b1 is (x y)) at 20)" 0.75)
   )
-
-;======================================================================

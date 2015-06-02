@@ -1,9 +1,5 @@
-;                                                   SYNTAX.lisp
-
 #| This is the syntax of a first-order language with function
 symbols.  It uses '@ for undercutting defeaters. |#
-
-;(in-package "OSCAR")
 
 (proclaim '(special *logical-constants* *pretty-list* *string-symbols* *constant-transformation*
                     *bracket-transformation* *reform-list*))

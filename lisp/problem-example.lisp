@@ -1,6 +1,3 @@
-
-;(in-package "OSCAR")
-
 (setf *problems*
       (eval-when (:compile-toplevel :execute)
         (make-problem-list
@@ -941,6 +938,7 @@ Ultimate epistemic interests:
 
 Problem #86
      Half of Pelletier's problem 34
+     TODO this *may* be buggy in OSCAR
 Given premises:
 
 Ultimate epistemic interests:
@@ -1131,5 +1129,3 @@ Ultimate epistemic interests:
 "
 ))
 )
-
-(defun test* () (test :skip 86))

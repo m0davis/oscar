@@ -101,6 +101,13 @@
 (setf oscar-pathname "./")
 
 (load (concatenate 'string oscar-pathname "oscar"))
-(load (concatenate 'string oscar-pathname "problem")
-(load (concatenate 'string oscar-pathname "perception-cause")
-(load (concatenate 'string oscar-pathname "plan")
+
+(load (concatenate 'string oscar-pathname "reason"))
+(load (concatenate 'string oscar-pathname "rule"))
+(load (concatenate 'string oscar-pathname "argument"))
+
+(load (concatenate 'string oscar-pathname "problem"))
+(load (concatenate 'string oscar-pathname "problem-example"))
+
+;(load (concatenate 'string oscar-pathname "perception-cause"))
+;(load (concatenate 'string oscar-pathname "plan"))
