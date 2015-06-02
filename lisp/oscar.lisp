@@ -2082,7 +2082,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
 (defun queue-non-reductio-supposition
   (supposition instance-supposition e-vars discount-factor interest)
   (let* ((sequent (list instance-supposition supposition))
-         (deductive-only (deductive-only interest)))
+         (deductive-only (deductive-interest interest)))
     (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
     (let* ((complexity 
              (max 1 (* 2 (formula-complexity supposition))))
@@ -8927,7 +8927,8 @@ is the old maximal-degree-of-justification  |#
     (dolist (IN (generating-interests node))
       (pull node (generated-suppositions IN)))
     (dolist (IN (generated-direct-reductio-interests node))
-      (pull node (reductio-interests IN)))
+      (setf (direct-reductio-interest IN) nil)) ; TODO why is this in v3.31?
+      ; TODO why is this in v4.02? (pull node (reductio-interests IN)))
     (let ((c-list (hypernode-c-list node)))
       (when c-list
         (pull node (c-list-nodes c-list))
@@ -8957,7 +8958,7 @@ is the old maximal-degree-of-justification  |#
     (when (and *display?* *graphics-on*) (invalidate-view *og* t))))
 
 (defun cancel-instantiated-premise (IP)
-  (let ((dn (is-d-node IP)))
+  (let ((dn (ip-d-node IP)))
     (pull IP (d-node-forwards-reasons dn))
     (when (and (null (d-node-forwards-reasons dn))
                (null (d-node-interest-schemes dn))
