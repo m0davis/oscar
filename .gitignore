@@ -4,3 +4,4 @@
 *.swp
 .cabal-sandbox/
 dist/
+lisp/tags
