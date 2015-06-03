@@ -5,3 +5,4 @@
 .cabal-sandbox/
 dist/
 lisp/tags
+codex.tags
