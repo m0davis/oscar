@@ -14,7 +14,7 @@
      7.  a list of backwards conclusive reasons, which are quintuples
            (name,forwards-premises,backwards-premises,conclusion,variables)
      8.  an optional string describing the problem.
-All formulas can be entered as pretty formulas instead. 
+All formulas can be entered as pretty formulas instead.
 
 Lines can be commented out, and comments are allowed at ends of lines,
 by inserting semicolons in the standard way.
@@ -229,7 +229,7 @@ it displays just problem n. |#
            (problem-description
              (string-trim '(#\Space #\Tab #\Newline) (subseq string 0 pos2))))
       (setf string
-            (string-left-trim '(#\Space #\Tab #\Newline) 
+            (string-left-trim '(#\Space #\Tab #\Newline)
                               (subseq string (+ 16 pos2))))
       (let ((premises (find-premises-from-string string)))
         (setf string

@@ -9,16 +9,16 @@ Then load this file. To run problem n, execute (simulate-oscar n). |#
 (make-simulation-problem
   :number  1
   :message
-  "This is the perceptual updating problem.  First, Fred looks red to me.  Later, Fred looks blue to me.  
+  "This is the perceptual updating problem.  First, Fred looks red to me.  Later, Fred looks blue to me.
 What should I conclude about the color of Fred?"
-  :reasons  
+  :reasons
   *PERCEPTION*
   *TEMPORAL-PROJECTION*
   *incompatible-colors*
-  :inputs  
+  :inputs
   (1   "(the color of Fred is red)" 1.0)
   (30   "(the color of Fred is blue)" 1.0)
-  :interests  
+  :interests
   ("(? x)((the color of Fred is x) at 50)" 0.2)
   )
 
@@ -27,15 +27,15 @@ What should I conclude about the color of Fred?"
 (make-simulation-problem
   :number  2
   :message
-  "This is the perceptual updating problem.  First, Fred looks red to me.  Later, Fred looks blue to me.  
+  "This is the perceptual updating problem.  First, Fred looks red to me.  Later, Fred looks blue to me.
 What should I conclude about the color of Fred?"
-  :reasons  
+  :reasons
   *INDEXICAL-PERCEPTION*
   *indexical-incompatible-colors*
-  :inputs  
+  :inputs
   (1   "(the color of Fred is red)" 1.0)
   (30   "(the color of Fred is blue)" 1.0)
-  :interests  
+  :interests
   ("(? x)(the color of Fred is x)" 0.75)
   )
 
@@ -46,24 +46,24 @@ What should I conclude about the color of Fred?"
   :message
   "First, Fred looks red to me.  Later, I am informed by Merrill that I am then
 wearing blue-tinted glasses.  Later still, Fred looks blue to me.  All along, I know that the
-probability is not high of Fred being blue given that Fred looks blue to me, but I am 
+probability is not high of Fred being blue given that Fred looks blue to me, but I am
 wearing blue tinted glasses.  What should I conclude about the color of Fred?"
-  :reasons  
+  :reasons
   *PERCEPTION*
   *RELIABLE-INFORMANT*
   *PERCEPTUAL-RELIABILITY*
   *TEMPORAL-PROJECTION*
   *INCOMPATIBLE-COLORS*
-  :inputs  
+  :inputs
   (1   "(the color of Fred is red)" 0.8)
   (20   "(Merrill reports that I_am_wearing_blue_tinted_glasses)" 1.0)
   (30   "(the color of Fred is blue)" 0.8)
-  :premises  
+  :premises
   ("((the probability of (the color of Fred is blue) given
     ((I have a percept with content (the color of Fred is blue)) & I_am_wearing_blue_tinted_glasses)) <= .8)"
     1.0)
   ("(Merrill is a reliable informant)" 1.0)
-  :interests  
+  :interests
   ("(? x)((the color of Fred is x) at 50)" 0.55)
   )
 
@@ -74,14 +74,14 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
   :number  4
   :message
   "This illustrates the use of discounted-perception and perceptual-unreliability."
-  :reasons  
+  :reasons
   *perception*
   *discounted-perception*
   *perceptual-reliability*
   *perceptual-unreliability*
   *temporal-projection*
   neg-at-intro
-  :inputs  
+  :inputs
   (10 "(the color of Fred is red)" 1.0)
 
   :premises
@@ -95,7 +95,7 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
   ("(I_am_wearing_red_tinted_glasses at 1)" 1.0 15)
   ("(my_surroundings_are_illuminated_by_red_light at 1)" 1.0 30)
   ("(~my_surroundings_are_illuminated_by_red_light at 8)" 1.0 50)
-  :interests  
+  :interests
   ("((the color of Fred is red) at 10)" 0.5)
   )
 
@@ -106,14 +106,14 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
   :number  5
   :message
   "This illustrates the use of discounted-indexical-perception and indexical-perceptual-unreliability."
-  :reasons  
+  :reasons
   *indexical-perception*
   *discounted-indexical-perception*
   *indexical-perceptual-reliability*
   *indexical-perceptual-unreliability*
   *temporal-projection*
   neg-at-intro
-  :inputs  
+  :inputs
   (10 "(the color of Fred is red)" 1.0)
 
   :premises
@@ -127,7 +127,7 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
   ("(I_am_wearing_red_tinted_glasses at 1)" 1.0 15)
   ("(my_surroundings_are_illuminated_by_red_light at 1)" 1.0 30)
   ("(~my_surroundings_are_illuminated_by_red_light at 8)" 1.0 50)
-  :interests  
+  :interests
   ("(the color of Fred is red)" 0.5)
   )
 
@@ -138,21 +138,21 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
   "This is the Yale Shooting Problem.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
 alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
-  :reasons  
+  :reasons
   neg-at-elimination
   *TEMPORAL-PROJECTION*
   *CAUSAL-UNDERCUTTER+*
   *CAUSAL-IMPLICATION*
   neg-at-intro
-  :inputs  
-  :premises  
+  :inputs
+  :premises
   ("(the_gun_is_loaded at 20)" 1.0)
   ("((Jones is alive) at 20)" 1.0)
   ("(the_gun_is_fired at 30)" 1.0)
   ("(all x)(all time)(((x is dead) at time) <-> ~((x is alive) at time))" 1.0)
   ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
                            (Jones is dead) after an interval 10)" 1.0)
-  :interests  
+  :interests
   ("((Jones is alive) at 50)" 0.75)
   ("((Jones is dead) at 50)" 0.75)
   )
@@ -164,20 +164,20 @@ alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
   "This is the solved Yale Shooting Problem.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
 alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
-  :reasons  
+  :reasons
    neg-at-elimination
    *TEMPORAL-PROJECTION*
    *CAUSAL-UNDERCUTTER*
    *CAUSAL-IMPLICATION*
    neg-at-intro
-   :inputs  
-   :premises  
+   :inputs
+   :premises
    ("(the_gun_is_loaded at 20)" 1.0)
    ("((Jones is alive) at 20)" 1.0)
    ("(the_gun_is_fired at 30)" 1.0)
    ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
                            ~(Jones is alive) after an interval 10)" 1.0)
-   :interests  
+   :interests
     ("(? ((Jones is alive) at 50))" 0.75)
    )
 
@@ -190,15 +190,15 @@ causal implication.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
 alive.  Later, the gun is fired. But I also know that he will be resuscitated later, and then he will
 be alive.  Should I conclude that Jones becomes dead? This version is solved incorrectly."
-  :reasons  
+  :reasons
    neg-at-elimination
    *TEMPORAL-PROJECTION*
    *CAUSAL-UNDERCUTTER*
    *CAUSAL-IMPLICATION*
    neg-at-intro
    neg-at-intro2
-   :inputs  
-   :premises  
+   :inputs
+   :premises
    ("(the_gun_is_loaded at 20)" 1.0)
    ("((Jones is alive) at 20)" 1.0)
    ("(the_gun_is_fired at 30)" 1.0)
@@ -207,7 +207,7 @@ be alive.  Should I conclude that Jones becomes dead? This version is solved inc
                            ~(Jones is alive) after an interval 10)" 1.0)
    ("(Jones_is_resuscitated when ~(Jones is alive) is causally sufficient for
                            (Jones is alive) after an interval 5)" 1.0)
-   :interests  
+   :interests
     ("(? ((Jones is alive) at 60))" 0.75)
    )
 ;======================================================================
@@ -219,7 +219,7 @@ causal implication.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
 alive.  Later, the gun is fired. But I also know that he will be resuscitated later, and then he will
 be alive.  Should I conclude that Jones becomes dead?"
-  :reasons  
+  :reasons
    neg-at-elimination
    *TEMPORAL-PROJECTION*
    *CAUSAL-UNDERCUTTER*
@@ -227,8 +227,8 @@ be alive.  Should I conclude that Jones becomes dead?"
    *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
    neg-at-intro
    neg-at-intro2
-   :inputs  
-   :premises  
+   :inputs
+   :premises
    ("(the_gun_is_loaded at 20)" 1.0)
    ("((Jones is alive) at 20)" 1.0)
    ("(the_gun_is_fired at 30)" 1.0)
@@ -237,7 +237,7 @@ be alive.  Should I conclude that Jones becomes dead?"
                            ~(Jones is alive) after an interval 10)" 1.0)
    ("(Jones_is_resuscitated when ~(Jones is alive) is causally sufficient for
                            (Jones is alive) after an interval 5)" 1.0)
-   :interests  
+   :interests
     ("(? ((Jones is alive) at 60))" 0.75)
    )
 ;======================================================================
@@ -247,20 +247,20 @@ be alive.  Should I conclude that Jones becomes dead?"
   "This is the indexical Yale Shooting Problem.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
 alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
-  :reasons 
+  :reasons
    *INDEXICAL-TEMPORAL-PROJECTION*
    *TEMPORAL-PROJECTION*
    *INDEXICAL-CAUSAL-UNDERCUTTER*
    *INDEXICAL-CAUSAL-IMPLICATION*
    :start-time 50
-   :inputs  
-   :premises  
+   :inputs
+   :premises
    ("((Jones is alive) at 20)" 1.0)
    ("(the_gun_is_loaded at 20)" 1.0)
    ("(the_gun_is_fired at 30)" 1.0)
    ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
                            ~(Jones is alive) after an interval 10)" 1.0)
-   :interests  
+   :interests
    ("(? (Jones is alive))" 0.75)
    )
 
@@ -269,18 +269,18 @@ alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
 (make-simulation-problem
   :number  9
   :message
-  "1.  An interest in whether b1 and b2 collide at 10 generates an interest in their positions at 10.  
+  "1.  An interest in whether b1 and b2 collide at 10 generates an interest in their positions at 10.
 Because we know their positions at 0, we adopt interest in their velocities between 0 and 10.
 
-2.  We know the velocities at 0, and temporal-projection leads to an inference that those velocities 
-remain unchanged between 0 and 10.  From that we can compute the positions at 10, and infer 
+2.  We know the velocities at 0, and temporal-projection leads to an inference that those velocities
+remain unchanged between 0 and 10.  From that we can compute the positions at 10, and infer
 that b1 and b2 collide at 10.
 
-3.  However, temporal projection also leads to an inference that the positions at 10 are the 
-same as those at 0.  Because the velocities at 0 are nonzero, causal undercutting defeats this 
+3.  However, temporal projection also leads to an inference that the positions at 10 are the
+same as those at 0.  Because the velocities at 0 are nonzero, causal undercutting defeats this
 inference, leaving us with a unique conclusion regarding the positions at 10 (they are at (5.0 3.0)).
 "
-  :reasons  
+  :reasons
   neg-at-elimination
   &-at-elimination
   *TEMPORAL-PROJECTION*
@@ -299,8 +299,8 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
   pair-nonidentity-at-time
   &-at-intro
   arithmetical-equality
-  :inputs  
-  :premises  
+  :inputs
+  :premises
   ("((the position of b1 is (0.0 3.0)) at 0)" 1.0)
   ("((the position of b2 is (1.0 0.0)) at 0)" 1.0)
   ("(all b)(all x)(all y)(all vx)(all vy)
@@ -313,8 +313,8 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
   ("(3.0 = (3.0 + (0.0 * (10 - 0))))" 1.0)
   ("(5.0 = (1.0 + (0.4 * (10 - 0))))" 1.0)
   ("(3.0 = (0.0 + (0.3 * (10 - 0))))" 1.0)
-  
-  :interests  
+
+  :interests
 ;  ("(? ((b1 and b2 collide) at 10))" 0.75)
   ("(? x)(? y) ((the position of b1 is (x y)) at 10)" 0.75)
   )
@@ -325,18 +325,18 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
   :number  10
   :message
 "
-1.  An interest in whether b1 and b2 collide at 10 generates an interest in their positions at 10.  
+1.  An interest in whether b1 and b2 collide at 10 generates an interest in their positions at 10.
 Because we know their positions at 0, we adopt interest in their velocities between 0 and 10.
 
-2.  We know the velocities at 0, and temporal-projection leads to an inference that those velocities 
-remain unchanged between 0 and 10.  From that we can compute the positions at 10, and infer 
+2.  We know the velocities at 0, and temporal-projection leads to an inference that those velocities
+remain unchanged between 0 and 10.  From that we can compute the positions at 10, and infer
 that b1 and b2 collide at 10.
 
-3.  However, temporal projection also leads to an inference that the positions at 10 are the 
-same as those at 0.  Because the velocities at 0 are nonzero, causal undercutting defeats this 
+3.  However, temporal projection also leads to an inference that the positions at 10 are the
+same as those at 0.  Because the velocities at 0 are nonzero, causal undercutting defeats this
 inference, leaving us with a unique conclusion regarding the positions at 10 (they are at (5.0 3.0)).
 "
-  :reasons  
+  :reasons
   neg-at-elimination
   &-at-elimination
   *TEMPORAL-PROJECTION*
@@ -358,8 +358,8 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
   ; *CAUSAL-IMPLICATION*
   ; COLLISION-SYMMETRY
   ; *CAUSAL-UNDERCUTTER+*
-  :inputs  
-  :premises  
+  :inputs
+  :premises
   ("((the position of b1 is (0.0 3.0)) at 0)" 1.0)
   ("((the position of b2 is (1.0 0.0)) at 0)" 1.0)
   ("(all b)(all x)(all y)(all vx)(all vy)
@@ -373,8 +373,8 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
   ("(5.0 = (1.0 + (0.4 * (10 - 0))))" 1.0)
   ("(3.0 = (0.0 + (0.3 * (10 - 0))))" 1.0)
  ; ("((0 + 0) < 10)" 1.0)
-  
-  :interests  
+
+  :interests
   ("(? ((b1 and b2 collide) at 10))" 0.75)
   )
 
@@ -389,10 +389,10 @@ We are interested in the velocity of b1 at 20.
 2.  By causal-implication, we can infer that the velocity of b1 at 20 is (.4 .3).
 
 3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).  But this
-is defeated by causal-undercutter+, because we also know that if the velocity is (.4 .3) then 
+is defeated by causal-undercutter+, because we also know that if the velocity is (.4 .3) then
 it is not (.5 .0).
 "
-  :reasons  
+  :reasons
   neg-at-elimination
   *TEMPORAL-PROJECTION*
   *CAUSAL-UNDERCUTTER+*
@@ -406,8 +406,8 @@ it is not (.5 .0).
   neg-at-intro
   arithmetical-nonequality
   inequality-transitivity
-  :inputs  
-  :premises  
+  :inputs
+  :premises
   ("((the velocity of b1 is (.5 0.0)) at 10)" 1.0)
   ("((the velocity of b2 is (.4 .3)) at 10)" 1.0)
   ("(b1 is a dimensionless billiard ball)" 1.0)
@@ -435,8 +435,8 @@ it is not (.5 .0).
          when (the velocity of b1 is (v2x v2y))
         is causally sufficient for (the velocity of b2 is (v2x v2y))
         after an interval 0))" 1.0)
-  
-  :interests  
+
+  :interests
   ("(? x)(? y) ((the velocity of b1 is (x y)) at 20)" 0.75)
   )
 
@@ -454,7 +454,7 @@ this generates an interest in the velocity of b1 between 10 and 20.
 2.  By causal-implication, we can infer that the velocity of b1 between 10 and 20 is (.4 .3).
 From this we can compute that the position of b1 at 20 is (9.0 6.0).
 
-3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).  But this 
+3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).  But this
 is defeated by causal-undercutter, because we also know that if the velocity is (.4 .3) then
 it is not (.5 .0).
 
@@ -466,7 +466,7 @@ is nonzero.
 This is defeated in the same fashion as (4), because we know the velocity of
 b1 between 0 and 10, and we are given that 10 is between 0 and 10.
 "
-  :reasons  
+  :reasons
   *CAUSAL-IMPLICATION*
   *TEMPORAL-PROJECTION*
   *CAUSAL-UNDERCUTTER*
@@ -476,8 +476,8 @@ b1 between 0 and 10, and we are given that 10 is between 0 and 10.
   pair-nonidentity
   pair-nonidentity-at-time
   &-at-intro
-  :inputs  
-  :premises  
+  :inputs
+  :premises
   ("((the position of b1 is (0.0 3.0)) at 0)" 1.0)
   ("((the position of b2 is (1.0 0.0)) at 0)" 1.0)
   ("((the velocity of b1 is (.5 0.0)) at 0)" 1.0)
@@ -504,8 +504,8 @@ b1 between 0 and 10, and we are given that 10 is between 0 and 10.
   ("(9.0 = (5.0 + (0.4 * (20 - 10))))" 1.0)
   ("(6.0 = (3.0 + (0.3 * (20 - 10))))" 1.0)
   ("(((.5 expt 2) + (0.0 expt 2)) = ((.4 expt 2) + (.3 expt 2)))" 1.0)
-  
-  :interests  
+
+  :interests
   ("(? ((b1 and b2 collide) at 10))" 0.75)
  ; ("(? x)(? y) ((the velocity of b1 is (x y)) throughout (clopen 10 20))" 0.75)
   ("(? x)(? y) ((the position of b1 is (x y)) at 20)" 0.75)

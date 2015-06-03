@@ -268,7 +268,7 @@ into a tree of words: |#
 ")
                  (equal (car rest) "	"))
                         (if word-list
-                          (setq parse-list 
+                          (setq parse-list
                                 (cons (convert-to-symbol (implode (reverse word-list)) variables) parse-list)))
                         (setq rest (cdr rest))
                         (setq word-list nil))
@@ -328,7 +328,7 @@ as S-expressions rather than strings. The members of variables are not gensymed.
                     (list (mem1 p) var*
                           (=subst var* var
                                   (resolve-variable-conflicts (mem3 p) variables nil)))))
-                 (t 
+                 (t
                    (list (mem1 p) var
                          (resolve-variable-conflicts (mem3 p) (cons var variables) nil))))))
 
@@ -371,7 +371,7 @@ as S-expressions rather than strings. The members of variables are not gensymed.
 (defun convert-to-prefix-form (P)
   (let ((P* nil))
     (cond ((listp P)
-           (cond 
+           (cond
              ((equal (mem1 P) "~")
               (list '~ (convert-to-prefix-form (mem2 P))))
              ((equal (mem1 P) "?")

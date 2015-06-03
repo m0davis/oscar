@@ -980,7 +980,7 @@ Given premises:
 Ultimate epistemic interests:
     [(all x)[[(P a) & ((P x) -> (some y)((P y) & (R x y)))] ->
                   (some z)(some w)[(P z) & ((R x w) & (R w z))]] <->
-                     (all x)[[(~(P a) v (P x)) v (some z)(some w)((P z) & ((R x w) & (R w z)))] & 
+                     (all x)[[(~(P a) v (P x)) v (some z)(some w)((P z) & ((R x w) & (R w z)))] &
                     [~(P a) v (~(some y)((P y) & (R x y)) v
                      (some z)(some w)((P z) & ((R x w) & (R w z))))]]]    interest = 1.0
 

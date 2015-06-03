@@ -6,7 +6,7 @@
                     modus-tollens2 disj-syl11 disj-syl12 disj-syl21 disj-syl22
                     exportation E-removal A-removal E2-removal A2-removal
                     adjunction neg-intro i-neg-disj i-neg-condit i-neg-bicondit
-                    bicondit-intro disj-cond  i-DM conditionalization reductio 
+                    bicondit-intro disj-cond  i-DM conditionalization reductio
                     neg-ug neg-eg i-neg-ug i-neg-eg ui ei ug eg
                     disj-cond-2 disj-antecedent-simp negation-in
                     disj-simp contraposition i-contraposition conditional-modus-tollens
@@ -75,7 +75,7 @@
 
 (setf (reason-function neg-condit) #'neg-condit)
 
-#| This form must be used to make invert-contradictors work properly by only computing 
+#| This form must be used to make invert-contradictors work properly by only computing
 contradictors in cases syntactically appropriate for adopting reductio-interests. |#
 
 (setf neg-bicondit-simp
@@ -138,7 +138,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
   (declare (ignore ip))
   (when (is-inference c)
     (let* ((p (hypernode-formula c)))
-      (draw-conclusion 
+      (draw-conclusion
         (condit (conjunct1 (antecedent p))
                 (condit (conjunct2 (antecedent p)) (consequent p)))
         (list c) exportation (list t) 1.0 depth nil nil))))
@@ -213,7 +213,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
            (q (consequent p)))
       (when (negationp q)
         (let ((match
-                (catch 'unifier 
+                (catch 'unifier
                        (parallelize-match
                          (mgu (antecedent p) (negand q) (hypernode-variables c)) (hypernode-variables c)))))
           (when match
@@ -306,7 +306,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
            (p-vars (hypernode-variables c)))
       (multiple-value-bind (profile term-list) (formula-code (antecedent p))
         (let* ((binding (list (cons '%p (antecedent p)) (cons '%q (consequent p))))
-               (dn 
+               (dn
                  (ip-d-node
                    (store-instantiated-premise
                      modus-ponens2 c nil binding (list t) ip (cdr (forwards-premises modus-ponens1)) profile))))
@@ -522,7 +522,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
                             (let ((m (match q (c-list-formula cl) (list fun))))
                               (when m
                                 (let ((sup (match-sublis m (hypernode-supposition c))))
-                                  (and 
+                                  (and
                                     (some #'(lambda (c*) (subsetp= (hypernode-supposition c*) sup))
                                           (c-list-nodes cl))
                                     (every
@@ -554,7 +554,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
           exportation
           disj-antecedent-simp
           cond-antecedent-simp
-          disj-simp 
+          disj-simp
           cond-simp1 cond-simp2
           )))
 

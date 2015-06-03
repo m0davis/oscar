@@ -41,10 +41,10 @@
                     (gencrossproduct
                       (append
                         (mapcar
-                          #'(lambda (b) (hypernode-arguments b (cons S used-sequents))) 
+                          #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
                           (motivating-nodes node))
                         (mapcar
-                          #'(lambda (b) (hypernode-arguments b (cons S used-sequents))) 
+                          #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
                           (hyperlink-basis L)))))))
               (list (list L))))
         (hyperlinks node)))
@@ -218,7 +218,7 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
         (princ " thereby providing defeaters for " fw)
         (cond ((> (length d-args) 1)
                (princ "arguments " fw))
-              (t (princ "argument " fw))) 
+              (t (princ "argument " fw)))
         (princ "#" fw) (princ (car d-args) fw)
         (dolist (d-arg (cdr d-args)) (princ ", #" fw) (princ d-arg fw))
         (terpri fw)))
@@ -246,7 +246,7 @@ ancestors are already in lines, and put its supposition in sups-used. |#
       ; (princ nodes) (terpri)
       ; (princ nodes-done) (terpri)
       (let ((next
-              (find-if 
+              (find-if
                 #'(lambda (x)
                     (and
                       (equal (hypernode-supposition x) sup)

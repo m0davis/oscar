@@ -15,7 +15,7 @@ Forwards-reasons can be defined in either of two forms:
 
 (def-forwards-reason symbol
                      :forwards-premises list of formulas or formula-condition pairs (listed one after another)
-                     :backwards-premises  list of formulas or pairs (formula,(condition1,condition2)) 
+                     :backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
                      :conclusions formula
                      :strength number
                      :variables list of symbols
@@ -25,7 +25,7 @@ Forwards-reasons can be defined in either of two forms:
 
 (def-forwards-reason symbol
                      :forwards-premises list of formulas or formula-condition pairs
-                     :backwards-premises  list of formulas or pairs (formula (condition1 condition2)) 
+                     :backwards-premises  list of formulas or pairs (formula (condition1 condition2))
                      :conclusions-function lambda expression or function
                      :strength number
                      :variables list of symbols
@@ -148,7 +148,7 @@ constructs a reason with the reason-function:
                 `#'(lambda (binding)
                      (let (,@ (mapcar #'(lambda (v) `(,v (cdr (assoc ',v binding)))) c-vars))
                        ,(mem2 conclusion-function))))))
-      (t 
+      (t
         (let ((c-vars (subset #'(lambda (v) (o-occur* v (eval conclusion))) (eval variables))))
           (cond
             (c-vars
@@ -156,14 +156,14 @@ constructs a reason with the reason-function:
                     `#'(lambda (binding)
                          (let* ((i-vars nil) ,@ (mapcar
                                                   #'(lambda (v)
-                                                      `(,v 
+                                                      `(,v
                                                          (let ((assoc (assoc ',v binding)))
                                                            (if assoc (cdr assoc)
                                                              (let ((i-var (make-interest-variable)))
                                                                (push i-var i-vars) i-var)))))
                                                   c-vars))
                            (values
-                             ,(cons 'list 
+                             ,(cons 'list
                                     (rectify-conclusions-list
                                       (mapcar
                                         #'(lambda (x) (formula-instantiator x c-vars))
@@ -341,7 +341,7 @@ combinations thereof, without incorporating a check that x and y have arithmetic
 (defun arithmetical-terms (formula &optional terms)
   (cond ((null formula) terms)
         ((listp formula)
-         (cond 
+         (cond
            ((or (eq (car formula) '<) (eq (car formula) '<=) (eq (car formula) '=))
             (union= (remove '*cycle* (cdr formula)) terms))
            (t (arithmetical-terms (cdr formula) (arithmetical-terms (car formula) terms)))))
@@ -391,7 +391,7 @@ combinations thereof, without incorporating a check that x and y have arithmetic
                        (make-backwards-premise
                          :formula premise
                          :condition1
-                         (cond 
+                         (cond
                            ((and (listp premise) (eq (car premise) 'define)) d-condition)
                            (condition1 (backwards-formula-condition condition1))
                            (condition #'(lambda (i) (eq (discharge-condition i) condition*))))
@@ -648,14 +648,14 @@ expands into the following code:
               `#'(lambda (binding)
                    (let (,@ (mapcar #'(lambda (v) `(,v (cdr (assoc ',v binding)))) c-vars))
                      ,(mem2 conclusion-function)))))
-      (t 
+      (t
         (setf c-vars (subset #'(lambda (v) (o-occur* v (eval conclusion))) (eval variables)))
         (cond
           (c-vars
             (setf conclusion-function
                   `#'(lambda (binding)
                        (let (,@ (mapcar #'(lambda (v) `(,v (cdr (assoc ',v binding)))) c-vars))
-                         ,(cons 'list 
+                         ,(cons 'list
                                 (rectify-conclusions-list
                                   (mapcar
                                     #'(lambda (x) (formula-instantiator x c-vars))
@@ -765,7 +765,7 @@ expands into the following code:
             (setf conclusion-function
                   `#'(lambda (binding)
                        (let (,@ (mapcar #'(lambda (v) `(,v (cdr (assoc ',v binding)))) c-vars))
-                         ,(cons 'list 
+                         ,(cons 'list
                                 (mapcar
                                   #'(lambda (x) (formula-instantiator x c-vars))
                                   (eval conclusion)))))))
@@ -900,7 +900,7 @@ expands into the following code:
                       (let ((assoc (assoc Q term-lists :test 'equal)))
                         (cond (assoc (push Q-descriptor (cdr assoc)))
                               (t (push (list Q Q-descriptor) term-lists)))))
-                     ((listp Q) 
+                     ((listp Q)
                       (let ((tl (term-lists Q vars Q-descriptor)))
                         (dolist (term-list tl)
                           (let ((assoc (assoc (car term-list) term-lists :test 'equal)))
@@ -924,7 +924,7 @@ expands into the following code:
                         (cond (assoc (push Q-descriptor (cdr assoc)))
                               (t (push (list Q Q-descriptor) term-lists)))))
                      ((not (listp Q)) (push `(equal ,Q-descriptor ',Q) description))
-                     (t 
+                     (t
                        (multiple-value-bind (d tl) (formula-profile Q vars Q-descriptor)
                          (setf description (append description d))
                          (dolist (term-list tl)
@@ -966,21 +966,21 @@ expands into the following code:
                     ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
                     (values
                       ,(cons 'list
-                             (mapcar 
+                             (mapcar
                                #'(lambda (x) (cons 'cons (cons (list 'quote (car x)) (cdr x))))
                                term-lists))
                       t)))
              `#'(lambda (%z %v)
                   (declare (ignore %v))
-                  (when 
+                  (when
                     ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
                     (values nil t)))))
-         (t 
+         (t
            `#'(lambda (%z %v)
                 (declare (ignore %v))
                 (values
                   ,(cons 'list
-                         (mapcar 
+                         (mapcar
                            #'(lambda (x) (cons 'cons (cons (list 'quote (car x)) (cdr x))))
                            term-lists))
                   t)))))
@@ -1048,7 +1048,7 @@ returns:
     ((unify-list-aux (term terms vars unifier0)
                      (cond ((null terms) (values (match-sublis unifier0 term) unifier0))
                            (t
-                             (let* ((m (parallelize-match 
+                             (let* ((m (parallelize-match
                                          (mgu (match-sublis unifier0 term)
                                               (match-sublis unifier0 (car terms))
                                               vars) vars))

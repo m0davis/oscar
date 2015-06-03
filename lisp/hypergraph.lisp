@@ -53,7 +53,7 @@
   (reductios-discharged (not *use-reductio*))  ;; records whether reductio-interests have been discharged
   (readopted-supposition 0)  ;; number of times the node has been readopted as a supposition
   (hypernode-discount-factor 1.0)  ;; This is the discount-factor provided by the hypernode-rule.
-  ;;  it’s only use is in ei.
+  ;;  its only use is in ei.
   (hypernode-c-list nil)
   (hypernode-queue-node nil)
   (enabling-interests nil)  ;; if the node is obtained by discharging inference-links, this is the
@@ -123,9 +123,9 @@
       (when (and (not (eq link link2)) (not (member link used-links)))
         (let ((target (hyperlink-target link)))
           (dolist (d-path (defeat-paths link link2 (cons link used-links)))
-            (when 
-              (not 
-                (some 
+            (when
+              (not
+                (some
                   #'(lambda (DL)
                       (or (eq target (hyperlink-target (hyper-defeat-link-target DL)))  ;; circularity check
                           (member target1 (hypernode-ancestors (hyper-defeat-link-root DL)))))  ;; bypass check
@@ -140,9 +140,9 @@
                ;; from its target to link2 is a defeat-path provided that does not introduce a bypass
                ;; or a circularity.
                (dolist (d-path (defeat-paths link link2 (cons link used-links)))
-                 (when 
-                   (not 
-                     (some 
+                 (when
+                   (not
+                     (some
                        #'(lambda (DL)
                            (or (eq target (hyperlink-target (hyper-defeat-link-target DL)))  ;; circularity check
                                (member target1 (hypernode-ancestors (hyper-defeat-link-root DL)))))  ;; bypass check
@@ -202,8 +202,8 @@
                 (last-d-link nil)
                 (link nil)
                 (node nil))
-            ;; if DL is the first member of d-loop, let link be L, node be (hyperlink-target L). 
-            ;; If DL is a later member of d-loop, let last-d-link be the previous member and 
+            ;; if DL is the first member of d-loop, let link be L, node be (hyperlink-target L).
+            ;; If DL is a later member of d-loop, let last-d-link be the previous member and
             ;; let link be its target and node its ultimate-target.
             (loop
               (when (eq d-link DL)
@@ -261,10 +261,10 @@
                     (let ((d-link (car d-loop))
                           (d-links d-loop)
                           (last-d-link nil))
-                      ;; if DL is the first member of d-loop, L is not in path and (hyperlink-target L) 
-                      ;; is not a hypernode-ancestor of the first member of path. If DL is a later member 
+                      ;; if DL is the first member of d-loop, L is not in path and (hyperlink-target L)
+                      ;; is not a hypernode-ancestor of the first member of path. If DL is a later member
                       ;;of d-loop, and last-d-link is the previous member, (hyperlink-target last-d-link)
-                      ;;  is not in path and (ultimate-target last-d-link)is not a hypernode-ancestor of the 
+                      ;;  is not in path and (ultimate-target last-d-link)is not a hypernode-ancestor of the
                       ;; first member of path.
                       (loop
                         (when (eq DL d-link)
@@ -332,7 +332,7 @@
 
 ;; set of sigma-subsidiary-hyperlinks for link relative to path, where path is an sigma-support-path
 ;; for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links. It assumes
-;; (not (safe-support-path path sigma DL)), because the recursion would have stopped before 
+;; (not (safe-support-path path sigma DL)), because the recursion would have stopped before
 ;; getting to such a path.
 (defun subsidiary-hyperlinks-for-link (link sigma path DL indent)
   (when (and *display?* *safe-trace*)
@@ -341,7 +341,7 @@
     (princ-sigma path) (terpri))
   (when (not (member link path))
     (let ((new-path (cons link path)))
-      (cond ((or 
+      (cond ((or
                (cond ((and *display?* *safe-trace*)
                       (let ((ind (independent-link-value link sigma)))
                         (when ind
@@ -404,13 +404,13 @@
     (terpri) (princ "------The current hypergraph is-------") (terpri)
     (display-hypergraph)
     (princ "-----------------------------------") (terpri)
-    (terpri) (indent indent) (princ "Splitting the hypergraph ") 
+    (terpri) (indent indent) (princ "Splitting the hypergraph ")
     (princ-sigma sigma) (princ " relative to ") (princ link) (terpri))
   (let ((sigma1 (cons link sigma))             ;; the link-critical graph
         (sigma2 (cons (list link) sigma)))      ;; the link-noncritical graph
     ;; add link to the critical-graph and close under the closure conditions
     (add-link-to-critical-graph link sigma1 sigma2 indent)
-    ;; for each hyperlink that is sigma1-critical for the hyper-defeat-link-root of a link-defeater of link, add it and 
+    ;; for each hyperlink that is sigma1-critical for the hyper-defeat-link-root of a link-defeater of link, add it and
     ;; its target to the critical-graph, and close under the closure conditions.
     (dolist (dl (hyperlink-defeaters link))
       (dolist (L (critical-hyperlinks dl sigma1))
@@ -488,7 +488,7 @@
               (t  (multiple-value-bind
                     (links unsecured-links)
                     (minimal-safe-arguments sigma1 dl indent)
-                    (when links 
+                    (when links
                       (when (and *display?* *s-trace*)
                         (terpri) (indent (1+ indent)) (princ "Inserting ") (princ dl) (princ " in ") (princ-sigma sigma1))
                       (pushnew sigma1 (hyper-defeat-link-in dl)))
@@ -501,7 +501,7 @@
                         )
                       (when (not (mem sigma2 (hyperlink-in L)))
                         (when (and *display?* *s-trace*)
-                          (terpri) (indent (1+ indent)) (princ "Inserting ") (princ L) 
+                          (terpri) (indent (1+ indent)) (princ "Inserting ") (princ L)
                           (princ " in noncritical graph ") (princ-sigma sigma2))
                         (push sigma2 (hyperlink-in L))
                         ))
@@ -528,7 +528,7 @@
     (when (and *display?* *s-trace*)
       (terpri) (indent indent) (princ "Inserting ") (princ dl) (princ " in ") (princ-sigma sigma1))
     (push sigma1 (hyper-defeat-link-in dl))
-    ;; if a hyper-defeat-link is in sigma1 and it is not sigma1-critical then its root is in sigma1. If it is 
+    ;; if a hyper-defeat-link is in sigma1 and it is not sigma1-critical then its root is in sigma1. If it is
     ;; sigma1-critical, then for every hyperlink L in a minimal sigma1-safe argument for the
     ;; root of dl , L and its target are in the noncritical-graph sigma2. If L is (cdr sigma1)-unsecured,
     ;; it is also in the critical-graph sigma1.
@@ -548,7 +548,7 @@
                    (princ " in ") (princ-sigma sigma2))))
              (dolist (L unsecured-links)
                (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))
-          (t 
+          (t
             (add-node-to-critical-graph (hyper-defeat-link-root dl) sigma1 sigma2 (1+ indent))))))
 |#
 
@@ -673,7 +673,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                 (member (hyperlink-target link) (hypernode-ancestors b)))
             (hyperlink-basis L))))
 
-;; Where link has a previously computed value, link is sigma-independent and hence that value 
+;; Where link has a previously computed value, link is sigma-independent and hence that value
 ;; can be reused in computing the degree of justification of the first member of sigma. This returns
 ;; the previously computed value.
 (defun independent-link-value (link sigma)
@@ -681,7 +681,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
        (not (member sigma (hyperlink-dependencies link) :test 'equal))
        (assoc (cdr sigma) (hyperlink-justifications link) :test 'equal)))
 
-;; Where node has a previously computed-value, node is sigma-independent and hence that value 
+;; Where node has a previously computed-value, node is sigma-independent and hence that value
 ;; can be reused in computing the degree of justification of the first member of sigma. This returns
 ;; the previously computed-value.
 (defun independent-hypernode-value (node sigma)
@@ -689,7 +689,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
        (not (member sigma (hypernode-dependencies node) :test 'equal))
        (assoc (cdr sigma) (hypernode-justifications node) :test 'equal)))
 
-;; Where dl has a previously computed-value, dl is L-independent and hence that value 
+;; Where dl has a previously computed-value, dl is L-independent and hence that value
 ;; can be reused in computing the degree of justification of the first member of sigma. This returns
 ;; the previously computed-value.
 (defun independent-hyper-defeat-link-value (dl sigma)
@@ -733,7 +733,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
         (record-dependencies c-link sigma indent)))))
 
 ;; path is the reverse of the  list of hyperlinks through whose defeaters the recursion has
-;;  traversed before getting to node. Link0 is the hyperlink initiating the recursive computation 
+;;  traversed before getting to node. Link0 is the hyperlink initiating the recursive computation
 ;; leading to node. This returns a hyperlink or numerical value.
 (defun compute-hypernode-justification (node sigma &optional link0 (indent 0) case path)
   ;  (when (and (equal sigma (list (list (hyperlink 3)))) (eq node (node 5))) (setf n node l link0 s sigma  i indent c case p path) (break))
@@ -752,10 +752,10 @@ When sigma = ((#<hyperlink #7 for node 8>)):
             (when path (princ " and path ") (princ-sigma path))))
     (terpri))
   (let ((value nil))
-    (cond 
+    (cond
       ;; If the value has already been computed and either link0 = NIL or node is in the hyperlink-basis
       ;; of link0 or the value is link0-independent, use it
-      ((or 
+      ((or
          (and
            (or (null link0) (member node (hyperlink-basis link0)))
            (setf value (cdr (assoc sigma (hypernode-justifications node) :test 'equal))))
@@ -769,7 +769,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
        (push (cons sigma value) (hypernode-justifications node)))
       ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
       ((and sigma
-            (or 
+            (or
               (and (or (null link0) (member node (hyperlink-basis link0)))
                    (setf value (assoc (cdr sigma) (hypernode-justifications node) :test 'equal)))
               (and link0 (setf value (independent-hypernode-value node (cons link0 (cdr sigma)))))))
@@ -843,9 +843,9 @@ When sigma = ((#<hyperlink #7 for node 8>)):
             (when path (princ " and path ") (princ-sigma path))))
     (terpri))
   (let ((value nil))
-    (cond 
+    (cond
       ;; If the value has already been computed and either link0 = NIL or the value is link0-independent, use it
-      ((or 
+      ((or
          (and (null link0) (setf value (cdr (assoc sigma (hyperlink-justifications link) :test 'equal))))
          (and link0 (setf value  (cdr (independent-link-value link (cons link0 sigma))))))
        (when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
@@ -857,11 +857,11 @@ When sigma = ((#<hyperlink #7 for node 8>)):
        (setf value link))
       ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
       ((and sigma
-            (or 
+            (or
               (and (null link0) (setf value (assoc (cdr sigma) (hyperlink-justifications link) :test 'equal)))
               (and link0 (setf value (independent-link-value link (cons link0 (cdr sigma)))))))
        (when (and *display?* *j-trace*)
-         (indent indent)  (princ "This hyperlink is ") (princ sigma) 
+         (indent indent)  (princ "This hyperlink is ") (princ sigma)
          (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
        (setf value (cdr value))
        (push (cons sigma value) (hyperlink-justifications link)))
@@ -880,7 +880,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
       (t
         (block compute-value
                (let ((basis (hyperlink-basis link)))
-                 (cond 
+                 (cond
                    (basis
                      (let ((D nil) (B nil))
                        (cond ((null link0)
@@ -902,7 +902,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                               ;                                                    (hyperlink-defeaters link))))
                               (when (not (every #'numberp D))
                                 (setf link0 link)))
-                             (t 
+                             (t
                                ;; if link0 is not NIL, compute the degrees of justification for the members of the basis
                                ;;and  the hyper-defeat-links requiring link0-independence.
                                (dolist (bs basis)
@@ -919,7 +919,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                               (setf value (~ (min (hyperlink-reason-strength link) (minimum B)) (maximum0 D)))
                               (push (cons sigma value) (hyperlink-justifications link)))
                              ;; if some defeater is assigned a hyperlink, and the path is either empty or contains
-                             ;; no hyperlinks assigned as values to defeaters of link, then then link is self-dependent 
+                             ;; no hyperlinks assigned as values to defeaters of link, then then link is self-dependent
                              ;; and its value is of use in computing the degree of justification of link0. So we split the
                              ;; hypergraph and compute its value accordingly.
                              ((and (every #'(lambda (sl) (and (not (member sl B)) (not (member sl D)))) path))
@@ -951,7 +951,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                                   (push (compute-hypernode-justification D sigma2 link0 (1+ indent) :ind) D1))
                                 (dolist (d dependent-defeaters)
                                   (push (compute-hypernode-justification D sigma1 link0 (1+ indent) :dep) D2))
-                                (setf 
+                                (setf
                                   value
                                   (~ (min (hyperlink-reason-strength link) (minimum B))
                                      (+ (maximum0 D1) (maximum0 D2))))
@@ -983,20 +983,20 @@ When sigma = ((#<hyperlink #7 for node 8>)):
             (when path (princ " and path ") (princ-sigma path))))
     (terpri))
   (let ((value nil))
-    (cond 
+    (cond
       ;; If the value has already been computed and either link0 = NIL or the value is link0-independent, use it
-      ((or 
+      ((or
          (and (null link0) (setf value (cdr (assoc sigma (hyper-defeat-link-justifications DL) :test 'equal))))
          (and link0 (setf value (cdr (independent-hyper-defeat-link-value DL (cons link0 sigma))))))
        (when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
        t)
       ;; If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
       ((and sigma
-            (or 
+            (or
               (and (null link0) (setf value (assoc (cdr sigma) (hyper-defeat-link-justifications DL) :test 'equal)))
               (and link0 (setf value (independent-hyper-defeat-link-value DL (cons  link0 (cdr sigma)))))))
        (when (and *display?* *j-trace*)
-         (indent indent)  (princ "This hyper-defeat-link is ") (princ sigma) 
+         (indent indent)  (princ "This hyper-defeat-link is ") (princ sigma)
          (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
        (setf value (cdr value))
        (push (cons sigma value) (hyper-defeat-link-justifications DL)))

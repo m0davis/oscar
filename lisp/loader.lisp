@@ -30,7 +30,7 @@
             *flash-relevant-nodes* *graph-ancestors* *graph-relevant-nodes* *menu-dialog*
             *message* *start-display* *cycle* *assignment-tree-window* *assignment-tree-subview*
             *monitor-assignment-tree* *assignment-tree-window-size* *assignment-tree-dialog*
-            *graphics-initialized* *graphics-on* *graph-log* *graphics-pause* *nodes-displayed* 
+            *graphics-initialized* *graphics-on* *graph-log* *graphics-pause* *nodes-displayed*
             *og-nodes* *og* *graph-interests* *speak* *d-node-number* *discrimination-net*
             *top-d-node* *operators* *quantifier-number* *conditional-node* *disjunction-node*
             *undercutter-node* *conjunctive-undercutter-node* *ip-number* *is-number* *display-box*
@@ -109,7 +109,5 @@
 (load (concatenate 'string oscar-pathname "problem"))
 (load (concatenate 'string oscar-pathname "problem-example"))
 
-;(load (concatenate 'string oscar-pathname "perception-cause"))
-;(load (concatenate 'string oscar-pathname "perception-cause-example"))
-
-;(load (concatenate 'string oscar-pathname "plan"))
+(load (concatenate 'string oscar-pathname "perception-cause"))
+(load (concatenate 'string oscar-pathname "perception-cause-example"))

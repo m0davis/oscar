@@ -41,7 +41,7 @@ which can then be run individually using the function (simulate-oscar n). |#
              (time (get-internal-run-time))
              (abort-time (if *time-limit* (+ (* *time-limit* internal-time-units-per-second 60) time))))
         ; (when (not *display?*) (gc))
-        (catch 'die 
+        (catch 'die
                (loop
                  (cond (*inference-queue*
                          (if *empty-inference-queue* (setf *empty-inference-queue* nil)))
@@ -98,7 +98,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (defun SO (n &optional r) (simulate-oscar n r))
 
-#| This is a list of pairs (formula degree-of-interest). |# 
+#| This is a list of pairs (formula degree-of-interest). |#
 (defvar *substantive-interests* nil)
 
 (defun display-settings ()
@@ -207,7 +207,7 @@ which can then be run individually using the function (simulate-oscar n). |#
   (let* ((newbody (make-clauses body))
          (number (cadr (find-if #'(lambda (x) (eq (car x) :number)) newbody)))
          (start-time (cadr (find-if #'(lambda (x) (eq (car x) :start-time)) newbody)))
-         (message 
+         (message
            (if number (cat-list
                         (list "Problem number " (write-to-string number) ":  "
                               (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
@@ -259,7 +259,7 @@ which can then be run individually using the function (simulate-oscar n). |#
         `((,x is a reliable informant) (reliable-informant ,x) (,x))
         `((,x reports that ,P) (reports-that ,x ,P) (,x ,P))
         `((the color of ,x is ,y) (color-of ,x ,y) (,x ,y))
-        `((,P when ,A is causally sufficient for ,Q after an interval ,x) 
+        `((,P when ,A is causally sufficient for ,Q after an interval ,x)
           (causally-sufficient ,P ,A ,Q ,x) (,P ,A ,Q ,x))
         `((,x and ,y collide) (collide ,x ,y) (,x ,y))
         `((the position of ,x is (,y ,z)) (position-of ,x ,y ,z) (,x ,y ,z))

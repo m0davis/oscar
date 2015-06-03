@@ -130,7 +130,7 @@
 
 #| This defines a function in the ordinary way, but also keeps a record of
 its arglist and definition on the property list of the function name.  When
-definitions are changed, a record of the changes is kept in *old-definitions*. 
+definitions are changed, a record of the changes is kept in *old-definitions*.
 (defmacro defunction (fun arg &rest body)
   `(progn
      (when (and (get (quote ,fun) 'definition)
@@ -299,8 +299,8 @@ definition is not saved in "Definitions History".|#
               (t (push (list ,fun (list 1 time)) *metered-calls*))))
       value))
 
-#| This displays the values of a function for a specified range of values of the arguments. 
-Ranges is a list of individual values and lists (start end increment) or (start end). If increment is not given, 
+#| This displays the values of a function for a specified range of values of the arguments.
+Ranges is a list of individual values and lists (start end increment) or (start end). If increment is not given,
 it is set to 1. The list of values is returned.|#
 (defun display-values (fun &rest ranges)
   (terpri)
@@ -348,7 +348,7 @@ it is set to 1. The list of values is returned.|#
                             args)
                   (terpri) (terpri)
                   (let ((val ,(cons 'progn definition)))
-                    (terpri) (bar-indent *indent-depth*) (princ "(") (princ n) (princ ") ") 
+                    (terpri) (bar-indent *indent-depth*) (princ "(") (princ n) (princ ") ")
                     (princ "value = ") (princ val) (terpri) (terpri)
                     (decf *indent-depth* 2)
                     val)))))
@@ -494,7 +494,7 @@ it is set to 1. The list of values is returned.|#
 #| This returns the set of all minimal subsets of X that have the property P. |#
 (defun minimal-subsets (X P)
   (cond ((funcall P nil) (list nil))
-        (t 
+        (t
           (let ((S nil))
             (dotimes (i (length X))
               (let ((candidates
@@ -635,7 +635,7 @@ it is set to 1. The list of values is returned.|#
         (t (append (first-n (1- n) y) (list x) (nthcdr (1- n) y)))))
 
 ;This inserts x into its appropriate place in A where A is ordered by R.  If R
-;is a < relation, this puts x at the end of the sublist of equivalent items, and if 
+;is a < relation, this puts x at the end of the sublist of equivalent items, and if
 ;R is a <= relation, this puts it at the start of the sublist.
 (defun insert (x A R)
   (let ((head nil)
@@ -672,13 +672,13 @@ it is set to 1. The list of values is returned.|#
     (dolist (z x)
       (block x+
              (dolist (w y)
-               (cond ((funcall test z w) 
+               (cond ((funcall test z w)
                       (setf x (remove z x :count 1 :test test))
                       (setf y (remove z y :count 1 :test test))
                       (push z xy) (return-from x+ nil))))))
     (values xy x y)))
 
-#| 
+#|
 (compare-lists '(a a b c) '(a b c d)) returns
 (c b a)
 (a)
@@ -1126,7 +1126,7 @@ substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m
   (cond ((characterp x)
          (cond ((characterp y) (char< x y))
                (t t)))
-        ((stringp x) 
+        ((stringp x)
          (cond ((stringp y) (string< x y))
                (t t)))
         ((symbolp x)
@@ -1271,7 +1271,7 @@ substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m
              (when (assoc fun *metered-calls*)
                (princ fun) (princ " already has a metering record.") (terpri))
              (setf definition
-                   (cons 'progn 
+                   (cons 'progn
                          (if (equal (mem1 (mem1 definition)) 'declare)
                            (cdr definition)
                            definition)))
@@ -1279,7 +1279,7 @@ substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m
 
 (defun meter (&rest funs)
   (cond ((null funs)
-         (cond ((or (unboundp '*metered-calls*) 
+         (cond ((or (unboundp '*metered-calls*)
                     (null *metered-calls*))
                 (princ "No functions are being metered") (terpri))
                (t (terpri) (princ "The following functions are being metered:")
@@ -1345,13 +1345,13 @@ substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m
                  (princ (car s)) (princ " . ")  (princ (mem1 (cdr s)))
                  (princ " calls in ")
                  (display-run-time-in-seconds (mem2 (cdr s)))
-                 (princ "  avg ") 
+                 (princ "  avg ")
                  (display-run-time-in-seconds
                    (round (/ (mem1 (cdr s)) (mem2 (cdr s)))))
                  (princ " . ")  (princ (mem1 (cdr s*)))
                  (princ " calls in ")
                  (display-run-time-in-seconds (mem2 (cdr s*)))
-                 (princ "  avg ") 
+                 (princ "  avg ")
                  (display-run-time-in-seconds
                    (round (/ (mem1 (cdr s*)) (mem2 (cdr s*)))))
                  (princ " . ") (princ "DIFFERENCE: ")
@@ -1420,9 +1420,9 @@ substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m
 ;List all callers of f in current package:
 (defun my-who-calls (f)
   (terpri) (princ "The following functions call ") (princ f) (princ ":") (terpri)
-  (let* ((callers 
+  (let* ((callers
            (remove nil
-                   (mapcar 
+                   (mapcar
                      #'(lambda (x)
                          (cond ((occur f (if (not (stringp (definition x))) (cddr (definition x))))
                                 (list x (get-source-files x)))))
@@ -1492,7 +1492,7 @@ substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m
                            (not (equal x '*KILLED-STRINGS*)))
                       (prin1 x) (princ " : ") (prin1 (eval x)) (terpri))))))
 
-#|This returns a list of functions defined by 'defunction' that are called by fun, 
+#|This returns a list of functions defined by 'defunction' that are called by fun,
 provided fun is defined by 'defunction'. |#
 (defun direct-callees (fun &optional symbols)
   (when (listp (definition fun)) (def-symbols (cdddr (definition fun)) symbols)))
@@ -1615,7 +1615,7 @@ provided fun is defined by 'defunction'. |#
   (cond (order  (terpri)
                 (princ "By  the way, how's your sex life these days?") (terpri)
                 (setq *uncalled-callers* (sort *uncalled-callers* 'lessp))))
-  (cond (print 
+  (cond (print
           (terpri) (princ "The following functions are not called:") (terpri)
           (p-print *uncalled-callers*) (terpri))
         (t (princ "Done at last!")))
