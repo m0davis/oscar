@@ -3,13 +3,16 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.Formula (
-    Formula(..),
+    Formula,
+    FormulaY(..),
     Quantifier(..),
     UnaryOp(..),
     BinaryOp(..),
     Symbol(..),
-    Predication(..),
-    DomainFunction(..),
+    Predication,
+    PredicationY(..),
+    DomainFunction,
+    DomainFunctionY(..),
     -- * "Control.Lens"
     formulaBinaryOp,
     formulaBinaryLeftFormula,
@@ -28,20 +31,22 @@ import Control.Lens
 
 {- | See "Oscar.Documentation" for a guide to writing 'Formula's.
 -}
-data Formula
+data FormulaY q p df dv
     = FormulaBinary { _formulaBinaryOp ∷ !BinaryOp
-                    , _formulaBinaryLeftFormula ∷ !Formula
-                    , _formulaBinaryRightFormula ∷ !Formula
+                    , _formulaBinaryLeftFormula ∷ !(FormulaY q p df dv)
+                    , _formulaBinaryRightFormula ∷ !(FormulaY q p df dv)
                     }
     | FormulaUnary { _formulaUnaryOp ∷ !UnaryOp
-                   , _formulaUnaryFormula ∷ !Formula
+                   , _formulaUnaryFormula ∷ !(FormulaY q p df dv)
                    }
     | FormulaQuantification { _formulaQuantifier ∷ !Quantifier
-                            , _formulaQuantifierSymbol ∷ !Symbol
-                            , _formulaQuantifierFormula ∷ !Formula
+                            , _formulaQuantifierSymbol ∷ !q
+                            , _formulaQuantifierFormula ∷ !(FormulaY q p df dv)
                             }
-    | FormulaPredication { _formulaPredication ∷ !Predication }
+    | FormulaPredication { _formulaPredication ∷ !(PredicationY p df dv) }
   deriving (Eq, Read, Show)
+
+type Formula = FormulaY Symbol Symbol Symbol Symbol
 
 {- | a la first-order logic -}
 -- TODO rename this to QuantifierOp, for consistency?
@@ -75,23 +80,27 @@ newtype Symbol = Symbol Text
      doesn't necessarily have a truth value since not all of its variables
      may be bound.
 -}
-data Predication = Predication Symbol [DomainFunction]
+data PredicationY p df dv = Predication p [DomainFunctionY df dv]
   deriving (Eq, Read, Show)
 
-{- | Perhaps the simplest domain function is a constant. E.g. c stands for 
-     Garfield. 
+type Predication = PredicationY Symbol Symbol Symbol
+
+{- | Perhaps the simplest domain function is a constant. E.g. c stands for
+     Garfield.
 
      It could also be a variable that could be bound by a quantifier. E.g. x
-     is a domain variable in the formula 
+     is a domain variable in the formula
      @(all x)(IsLasagna x -> WantsToEat c x)@.
-     
+
      It could also be a function that modifies a variable or a constant. E.g.
-     the-litter-box-used-by is a domain function in the formula 
+     the-litter-box-used-by is a domain function in the formula
      @(all x)(JimDavisDraws x -> ~JimDavisDraws (the-litter-box-used-by x)).
 -}
-data DomainFunction
-    = DomainFunction !Symbol ![DomainFunction] -- ^ `g' in P (g x)
-    | DomainVariable !Symbol                   -- ^ `x' or `y' in P (g x) y
+data DomainFunctionY df dv
+    = DomainFunction !df ![DomainFunctionY df dv] -- ^ `g' in P (g x)
+    | DomainVariable !dv                   -- ^ `x' or `y' in P (g x) y
   deriving (Eq, Read, Show)
 
-makeLenses ''Formula
+type DomainFunction = DomainFunctionY Symbol Symbol
+
+makeLenses ''FormulaY

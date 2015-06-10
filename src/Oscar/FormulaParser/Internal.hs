@@ -35,13 +35,16 @@ module Oscar.FormulaParser.Internal (
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
-import Oscar.Formula                    (Formula(FormulaBinary))
-import Oscar.Formula                    (Formula(FormulaQuantification))
-import Oscar.Formula                    (Formula(FormulaUnary))
-import Oscar.Formula                    (Formula(FormulaPredication))
-import Oscar.Formula                    (Predication(Predication))
-import Oscar.Formula                    (DomainFunction(DomainFunction))
-import Oscar.Formula                    (DomainFunction(DomainVariable))
+import Oscar.Formula                    (FormulaY(FormulaBinary))
+import Oscar.Formula                    (FormulaY(FormulaQuantification))
+import Oscar.Formula                    (FormulaY(FormulaUnary))
+import Oscar.Formula                    (FormulaY(FormulaPredication))
+import Oscar.Formula                    (Formula)
+import Oscar.Formula                    (PredicationY(Predication))
+import Oscar.Formula                    (Predication)
+import Oscar.Formula                    (DomainFunctionY(DomainFunction))
+import Oscar.Formula                    (DomainFunctionY(DomainVariable))
+import Oscar.Formula                    (DomainFunction)
 import Oscar.Formula                    (BinaryOp(Disjunction))
 import Oscar.Formula                    (BinaryOp(Conjunction))
 import Oscar.Formula                    (BinaryOp(Defeater))
