@@ -20,7 +20,7 @@ import Oscar.FormulaCode                (reasonCode)
 
 {- | At the moment, the executable simply reads from a file called
      "combined-probems", parses the problems, and prints a structured
-     representation. Reading and parsing the file is done with 
+     representation. Reading and parsing the file is done with
      'readFileProblems'. The file itself is denoted by 'combinedProblemsPath'.
      Printing is done by 'ppPrint'.
 
@@ -43,7 +43,7 @@ __Example__
                pf-reason_3:   {C} ||=> ~R   strength = 1.0
                pf-reason_4:   {B} ||=> C   strength = 1.0
                pf-reason_5:   {A} ||=> B   strength = 1.0
-    @ 
+    @
 
 * Sample printed output
 
