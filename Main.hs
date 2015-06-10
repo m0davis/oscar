@@ -12,6 +12,12 @@ import Oscar.Main                       (combinedProblemsPath)
 
 import Oscar.ProblemParser              (readFileProblems)
 
+import Oscar.Formula                    (Symbol(Symbol))
+import Oscar.FormulaParser              (formulaFromText)
+import Oscar.FormulaCode                (uFormula)
+import Oscar.FormulaCode                (formulaCode)
+import Oscar.FormulaCode                (reasonCode)
+
 {- | At the moment, the executable simply reads from a file called
      "combined-probems", parses the problems, and prints a structured
      representation. Reading and parsing the file is done with 
@@ -140,3 +146,9 @@ main ∷ IO ()
 main = do
     problems ← readFileProblems combinedProblemsPath
     sequence_ $ ppPrint <$> problems
+    let f = formulaFromText $ pack "(all x)((some z)(Q (g x) y) v ((some y)((H x y z) & (Q (g x) z)) v (J a b)))" in
+      let u = uFormula f in do
+        ppPrint f
+        ppPrint u
+        ppPrint $ formulaCode u
+        ppPrint $ reasonCode u [Symbol $ pack "H"]
