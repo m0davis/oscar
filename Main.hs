@@ -146,7 +146,7 @@ main ∷ IO ()
 main = do
     problems ← readFileProblems combinedProblemsPath
     sequence_ $ ppPrint <$> problems
-    let f = formulaFromText $ pack "(all x)((some z)(Q (g x) y) v ((some y)((H x y z) & (Q (g x) z)) v (J a b)))" in
+    let f = formulaFromText $ pack "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))" in
       let u = uFormula f in do
         ppPrint f
         ppPrint u

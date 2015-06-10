@@ -78,15 +78,15 @@ formulaCode' ∷ UFormula
 formulaCode' (FormulaBinary {..}) is =
   let (l, lt) = formulaCode' _formulaBinaryLeftFormula (2 : is) in
   let (r, rt) = formulaCode' _formulaBinaryRightFormula (3 : is) in
-      (Discriminator (1 : is) (FormulaParticleBinary _formulaBinaryOp) : l ++ r, rt ++ lt)
+      (Discriminator (reverse (1 : is)) (FormulaParticleBinary _formulaBinaryOp) : l ++ r, rt ++ lt)
 formulaCode' (FormulaUnary {..}) is =
-  let (u, ut) = formulaCode' _formulaUnaryFormula (1 : is) in
-      (Discriminator (1 : is) (FormulaParticleUnary _formulaUnaryOp) : u, ut)
+  let (u, ut) = formulaCode' _formulaUnaryFormula (2 : is) in
+      (Discriminator (reverse (1 : is)) (FormulaParticleUnary _formulaUnaryOp) : u, ut)
 formulaCode' (FormulaQuantification {..}) is =
-  let (q, qt) = formulaCode' _formulaQuantifierFormula (1 : is) in
-      (Discriminator (1 : is) (FormulaParticleQuantified _formulaQuantifier) : q, qt)
+  let (q, qt) = formulaCode' _formulaQuantifierFormula (2 : is) in
+      (Discriminator (reverse (1 : is)) (FormulaParticleQuantified _formulaQuantifier) : q, qt)
 formulaCode' (FormulaPredication (Predication p dfs)) is =
-  ([Discriminator (1 : is) (FormulaParticlePredicated p)], map df2ft dfs)
+  ([Discriminator (reverse (1 : is)) (FormulaParticlePredicated p)], map df2ft dfs)
     where
       df2ft ∷ DomainFunctionY Symbol UDomainVariable → FormulaTerm
       df2ft (DomainFunction s dfs) = FormulaTermDomainFunction s $ map df2ft dfs
