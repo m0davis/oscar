@@ -60,9 +60,9 @@ import Oscar.ProblemParser.Internal.Tags            (ƮVariables)
 import Oscar.ProblemParser.Internal.Tags            (ƮWithoutLineComments)
 
 {- | The formatting of the input is documented at "Oscar.Documentation". -}
-problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)  
-                  -- ^ The input must begin at the problem number (after the 
-                  --   label, \"Problem #\"). Possibly as obtained from 
+problemFromText ∷ (Text ⁞ ƮAfterNumberLabel)
+                  -- ^ The input must begin at the problem number (after the
+                  --   label, \"Problem #\"). Possibly as obtained from
                   --   'evalStatefulParser'.
                 → Problem
 problemFromText t = Problem
@@ -83,7 +83,7 @@ problemFromText t = Problem
      is 'Text'), nor does it tell us what sort of state the input is in
      after applying the parser. 'StatefullyParsed' allows us to define a
      parsed type with respect to these states, giving us a measure of safety
-     at the type level. Admittedly, we sacrifice the convenience of binding, 
+     at the type level. Admittedly, we sacrifice the convenience of binding,
      since the 'statefulParser' is not a 'Monad'.
 
      An instance may be invoked with 'runStatefulParser'.
@@ -109,7 +109,7 @@ __Example__
     Given premises:
          P    justification = 1.0
     ...etc...
-    
+
     Problem #2
     Description of the second problem
     ...etc...
@@ -339,7 +339,7 @@ instance StatefullyParsed (ReasonSection direction defeasibility)
 {- | Defines a set of elements found below a 'SectionName'. -}
 class SectionElement element where
     sectionElements ∷ (Text ⁞ ƮEndOfDescription)
-                      -- ^ All sections are found after the problem 
+                      -- ^ All sections are found after the problem
                       --   description.
                     → [element]
 
@@ -391,9 +391,9 @@ runStatefulParser ( \"1∘↵∘Description↵...etc...↵" ∷ Text ⁞ ƮAfter
 
 -- ...yields this
 
-( 1 
+( 1
     ∷ ProblemNumber
-, \"∘↵∘Description↵...etc...↵\" 
+, \"∘↵∘Description↵...etc...↵\"
     ∷ Text ⁞ ƮAfterNumber
 )
 @
@@ -410,7 +410,7 @@ runStatefulParser = simpleParse p . unƭ
         return (v, ƭ r)
 
 {- | Returns only the first component of 'runStatefulParser'. The
-     'StatefullyParsed' outState is restricted to () to deter us from 
+     'StatefullyParsed' outState is restricted to () to deter us from
      mistakenly ignoring relevant text following the parsed value.
 -}
 evalStatefulParser ∷ ∀ a inState.

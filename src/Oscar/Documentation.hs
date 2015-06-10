@@ -37,12 +37,12 @@ The codebase makes heavy use of unicode, so make sure you have an editor or
 browser that is unicode-aware. If you see a funny-looking T here (Ʈ), you
 probably are set.
 
-Examples showing blocks of Text sometimes use ∘ to denote a space and ↵ to 
+Examples showing blocks of Text sometimes use ∘ to denote a space and ↵ to
 denote a newline.
 
 Once you have read through the documentation in this module, here are some
 key modules in which to drill-down.
-    
+
     * "Main"
 
         Begin at the beginning.
@@ -80,7 +80,7 @@ codebase.
 
 {- $WhatIsNaturalDeduction
 
-<http://en.wikipedia.org/wiki/Natural_deduction Natural deduction> refers to 
+<http://en.wikipedia.org/wiki/Natural_deduction Natural deduction> refers to
 a family of methods for proving first-order theorems in which reasoning can
 proceed both forwards and backwards. Given a set of __premises__ and an
 __interest__, one tries to prove that the formula for the interest follows
@@ -88,16 +88,16 @@ deductively from the premises.
 
 __'Forwards'__ reasoning
 
-Suppose we have an interest, @A@, and a premise, @A and B@. From @A and B@, we 
+Suppose we have an interest, @A@, and a premise, @A and B@. From @A and B@, we
 can deduce @A@ and we can deduce @B@. The first of these matches the interest,
 so we are done.
 
 __'Backwards'__ reasoning
 
-Suppose we have an interest, @A or B@, and a premise, @A@. Noting that we have 
-interest, @A or B@, we could entertain two new interests. One in @A@ and 
-another in @B@. Showing that either of these interests holds is enough to 
-discharge our interest in @A or B@. The first of these matches our premise, 
+Suppose we have an interest, @A or B@, and a premise, @A@. Noting that we have
+interest, @A or B@, we could entertain two new interests. One in @A@ and
+another in @B@. Showing that either of these interests holds is enough to
+discharge our interest in @A or B@. The first of these matches our premise,
 @A@, so we are done.
 
 It would not be so good to try to reason forwards from @A@ to @A or B@ simply
@@ -105,10 +105,10 @@ because there an infinite number of formulas of the form @A or X@ that follow
 from @A@.
 
 Consider again the example above of forwards reasoning. Could we perform
-that deduction by reasoning backwards? Noting that we have interest, @A@, 
-we could entertain an interest in @A and B@ and another in @B and A@. 
-The premise @A and B@ matches the first of these, so we are done. But this 
-strategy doesn\'t work very well since we could equally have entertained 
+that deduction by reasoning backwards? Noting that we have interest, @A@,
+we could entertain an interest in @A and B@ and another in @B and A@.
+The premise @A and B@ matches the first of these, so we are done. But this
+strategy doesn\'t work very well since we could equally have entertained
 interest in @A and C@ and a zillion other formulas.
 -}
 
@@ -124,37 +124,37 @@ illuminating the smoke wafting from your pipe, reading a copy of Meditations
 (Descartes, 1639). On the table before you, sitting next to your inkwell, you
 see what appears to be a bluish-colored ball. As you reflect on what you've
 read, you begin to wonder about the validity of your perceptions. Is the ball
-really blue? Is it perhaps not a ball but really a cube? Or maybe it all is 
-merely a dream. The pipe should be comforting, and the candles should be 
-pleasing. The night is beginning to go badly for your. You pick up your cell 
-and make a call to your trusted advisor and dearest friend, Martin Stone Davis. 
+really blue? Is it perhaps not a ball but really a cube? Or maybe it all is
+merely a dream. The pipe should be comforting, and the candles should be
+pleasing. The night is beginning to go badly for your. You pick up your cell
+and make a call to your trusted advisor and dearest friend, Martin Stone Davis.
 Yours truly. I tell you this.
 
-There is no end to which one can doubt. I believe that even Descartes' 
-foundational belief, "sum", can itself be doubted. [Digression, c.f. So you 
+There is no end to which one can doubt. I believe that even Descartes'
+foundational belief, "sum", can itself be doubted. [Digression, c.f. So you
 think you exist?] If we are to move forward, let us not start from scratch.
-There really *is* a ball before you, I insist. It appears to you that it is 
+There really *is* a ball before you, I insist. It appears to you that it is
 blue. That much is clear. Our focus shall now be on whether it is reasonable
 for you to believe that it is really is blue.
 
-"Have you left on your violet specs, again? Those are for outdoors." I ask 
+"Have you left on your violet specs, again? Those are for outdoors." I ask
 politely.
 
 "No, I --- Oh, yes!" Removing your glasses you recognize your lucky golf ball.
 It's white, but appeared blue before your tinted visors.
 
 I summarize what is going on here. It is a case of reasoning defeasibly. Based
-on face-value evidence, you may make a __prima facie__ inference to the 
+on face-value evidence, you may make a __prima facie__ inference to the
 conclusion that there is a blue ball before you, allowing for the possibility
-of revision later. Importantly, there is a link between your perception and 
+of revision later. Importantly, there is a link between your perception and
 your conclusion.
 
-Discovering that you were wearing tinted glasses introduced something new, an 
-__undercutting defeater__, which blocked the inference previously allowed by 
-the aforementioned link. 
+Discovering that you were wearing tinted glasses introduced something new, an
+__undercutting defeater__, which blocked the inference previously allowed by
+the aforementioned link.
 
 [TODO edit]
-    There are also __rebutting defeaters__. 
+    There are also __rebutting defeaters__.
 
     Suppose Alice tells you that it's
     raining. You consider Alice to be trustworthy and so infer that it's raining.
@@ -165,7 +165,7 @@ the aforementioned link.
 
 {- $ExampleOfProblem
 
-Here is an example of a valid 'Problem', represented as a 
+Here is an example of a valid 'Problem', represented as a
 Text ⁞ ƮWithLineComments.
 
 @
@@ -191,7 +191,7 @@ No repeats of sections are allowed.
 
 Given premises: ; Here's a section identifier.
                 ; Note that the "Given premises:" above in the description is
-                ; __not__ a SectionName since it does not occur by itself 
+                ; __not__ a SectionName since it does not occur by itself
                 ; (it's preceded by a "*").
 
     ; A 'ProblemPremise' is a 'Formula' and a 'ProblemJustificationDegree'.
@@ -308,14 +308,14 @@ some developement notes.
 
 * Usage of "Control.Lens" was just implemented recently (as of version 0.2.2).
 Not all data types are connected with it, and it's bothersome to me how many
-export lines it requires. E.g., "Oscar.Problem". Also, there's a problem 
+export lines it requires. E.g., "Oscar.Problem". Also, there's a problem
 making lenses for 'ReasonSection'.
 
 * It's not clear to me yet how the 'Whether' operator is supposed to be used.
 I've seen clues that it can be applied to a domain variable. Investigate this
 and, if necessary, adjust the current parser.
 
-* Only the parsing of problems has been (mostly) implemented, but there's a 
+* Only the parsing of problems has been (mostly) implemented, but there's a
 lot more to Oscar. We need to implement:
 
     * natural deduction

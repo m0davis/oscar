@@ -96,7 +96,7 @@ type ProblemForwardsPrimaFacieReason  = (ProblemReasonName
                                         ,ProblemStrengthDegree
                                         )
 
-{- | A forwards conclusive reason with its name (the strength is unity, 
+{- | A forwards conclusive reason with its name (the strength is unity,
      implicitly)
 -}
 type ProblemForwardsConclusiveReason  = (ProblemReasonName
@@ -108,7 +108,7 @@ type ProblemBackwardsPrimaFacieReason = (ProblemReasonName
                                         ,ProblemStrengthDegree
                                         )
 
-{- | A backwards conclusive reason with its name (the strength is unity, 
+{- | A backwards conclusive reason with its name (the strength is unity,
      implicitly)
 -}
 type ProblemBackwardsConclusiveReason = (ProblemReasonName
@@ -120,7 +120,7 @@ newtype ProblemReasonName = ProblemReasonName Text
 
 -- | A forwards reason
 data ForwardsReason = ForwardsReason
-    { _frForwardsPremises ∷ ![Formula]  
+    { _frForwardsPremises ∷ ![Formula]
       -- TODO change [] to Set where appropriate
     , _frConclusion       ∷ !Formula
     }

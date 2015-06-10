@@ -70,12 +70,12 @@ data BinaryOp
     | Defeater      -- ^ @
   deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
-{- | A name of a predicate or, domain function, domain variable, or constant. 
+{- | A name of a predicate or, domain function, domain variable, or constant.
 -}
 newtype Symbol = Symbol Text
   deriving (Eq, Read, Show)
 
-{- | Predications, a la first-order logic, are statements that can be 
+{- | Predications, a la first-order logic, are statements that can be
      considered to have truth values. Strictly speaking, a 'Predication'
      doesn't necessarily have a truth value since not all of its variables
      may be bound.

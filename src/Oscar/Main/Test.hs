@@ -10,7 +10,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
-{-|  Nothing to see here. Currently, this is simply a scratch area for testing 
+{-|  Nothing to see here. Currently, this is simply a scratch area for testing
      ideas or aiding debugging.
 -}
 

@@ -20,11 +20,11 @@ module Oscar.ProblemParser.Internal.Tags (
 
 import Oscar.Main.Prelude
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮWithLineComments
 
-    A representation of a set of Oscar 'Oscar.Problem.Problem's. The 
+    A representation of a set of Oscar 'Oscar.Problem.Problem's. The
     formatting of such a Problem is described in "Oscar.Documentation".
 
 * FilePath ⁞ ƮWithLineComments
@@ -33,7 +33,7 @@ import Oscar.Main.Prelude
 -}
 data ƮWithLineComments
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮWithoutLineComments
 
@@ -42,7 +42,7 @@ data ƮWithLineComments
 -}
 data ƮWithoutLineComments
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮAfterNumberLabel
 
@@ -50,7 +50,7 @@ data ƮWithoutLineComments
 -}
 data ƮAfterNumberLabel
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮAfterNumber
 
@@ -58,7 +58,7 @@ data ƮAfterNumberLabel
 -}
 data ƮAfterNumber
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮEndOfDescription
 
@@ -69,7 +69,7 @@ data ƮAfterNumber
 -}
 data ƮEndOfDescription
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮVariables
 
@@ -81,7 +81,7 @@ data ƮEndOfDescription
 -}
 data ƮVariables
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮSection ƮGivenPremise
 
@@ -89,7 +89,7 @@ data ƮVariables
 -}
 data ƮGivenPremise
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮSection ƮUltimateEpistemicInterest
 
@@ -97,7 +97,7 @@ data ƮGivenPremise
 -}
 data ƮUltimateEpistemicInterest
 
-{- | Used as: 
+{- | Used as:
 
 * Text ⁞ ƮSection (ƮReason direction defeasibility)
 
@@ -121,11 +121,11 @@ data ƮUltimateEpistemicInterest
 data ƮReason (direction ∷ Direction) (defeasibility ∷ Defeasibility)
 
 {- | The only types that make sense here are one of the three Ʈ...\'s above.
-     
-A (Text ⁞ ƮSection section) starts at the end of the section label
-and continues to the end of that section, discarding trailing whitespace. 
 
-__Example__     
+A (Text ⁞ ƮSection section) starts at the end of the section label
+and continues to the end of that section, discarding trailing whitespace.
+
+__Example__
 
 * Snippet of a 'Problem'
 
@@ -150,17 +150,17 @@ data ƮSection section
 
 -- | The orientation of a reason.
 data Direction
-    = Forwards   
+    = Forwards
       -- ^ For reasons that create new inferences
-    | Backwards  
+    | Backwards
       -- ^ For reasons that create new interests
   deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 -- | The defeasibility of a reason
 data Defeasibility
-    = PrimaFacie  
+    = PrimaFacie
       -- ^ For reasons whose conclusions can be undercut or rebutted
-    | Conclusive  
-      -- ^ For reasons whose conclusions are logical consequences of their 
+    | Conclusive
+      -- ^ For reasons whose conclusions are logical consequences of their
       ---  premises
   deriving (Bounded, Enum, Eq, Ord, Read, Show)

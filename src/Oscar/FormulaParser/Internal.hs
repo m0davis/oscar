@@ -170,8 +170,8 @@ __Example__, where f = id.
          ]
     @
 -}
-freeFromParentheses 
-    ∷ ∀ as a b. (IsSequence as, Element as ~ a) 
+freeFromParentheses
+    ∷ ∀ as a b. (IsSequence as, Element as ~ a)
     ⇒ (a → Either Parenthesis b)  -- ^ discriminate parentheses
     → as                          -- ^ input sequence
     → Free [] b                   -- ^ a tree, sans parentheses
@@ -280,7 +280,7 @@ __Example__
          ]
     @
 
-Note that the two Free's at the top of the tree are redundant. When we 
+Note that the two Free's at the top of the tree are redundant. When we
 'makeFormula', they will be removed via 'RedundantParenthesesP'.
 -}
 reformQSTokenTree ∷ Free [] QSToken ⁞ ƮUnreformed → Free [] QSToken ⁞ ƮReformed

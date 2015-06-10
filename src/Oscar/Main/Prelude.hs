@@ -65,7 +65,7 @@ import Data.Tagged                      (unTagged)
 import Numeric.Natural                  (Natural)
 import Text.Show.Pretty                 (ppShow)
 
-{- TODO Report a haddock bug. 
+{- TODO Report a haddock bug.
 
 The below narratives should be placed in the source above the relevant import
 statements, but doing so triggers an error in haddock.
@@ -74,15 +74,15 @@ statements, but doing so triggers an error in haddock.
 {- $ClassyPrelude
 
 There is a name conflict between 'ClassyPrelude.try' (from "ClassyPrelude")
-and 'Text.Parsec.try' (from "Text.Parsec"). We don't need to do any 
+and 'Text.Parsec.try' (from "Text.Parsec"). We don't need to do any
 exception handling, so, for the moment, we are simply hiding the one from
 ClassyPrelude.
 
 TODO We will eventually have the need for exception-handling. Come up with
 a convenient way to include ClassyPrelude.try.
 
-There is also a name conflict between 'ClassyPrelude.snoc' (ClassyPrelude) 
-and 'Control.Lens.Cons.snoc' (Control.Lens). We don't need either of these, 
+There is also a name conflict between 'ClassyPrelude.snoc' (ClassyPrelude)
+and 'Control.Lens.Cons.snoc' (Control.Lens). We don't need either of these,
 so, for the moment, we simply hide both of them!
 
 TODO Decide what to do with snoc once the need arrives for one of them.

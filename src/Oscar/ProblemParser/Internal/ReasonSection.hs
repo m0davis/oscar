@@ -70,7 +70,7 @@ import Oscar.ProblemParser.Internal.Tags    (ƮVariables)
      reason sections.
 -}
 data ReasonSection (direction ∷ Direction) (defeasibility ∷ Defeasibility) =
-    ReasonSection 
+    ReasonSection
         { _rsProblemReasonName ∷ ProblemReasonName
         , _rsProblemReasonText ∷ (Text ⁞ ƮReason direction defeasibility)
         , _rsProblemVariables ∷ (Text ⁞ ƮVariables)
@@ -132,7 +132,7 @@ parserEnbracedTexts = try $ do
 
     nonEmptyList ∷ Parser [Text]
     nonEmptyList = do
-        (firstText, restExists) ← 
+        (firstText, restExists) ←
             parserFirstText `precededBy` parserRestExists
         if restExists then do  -- there's an element after the first one
             _ ← char ','
@@ -188,8 +188,8 @@ instance FromReasonSection ProblemBackwardsConclusiveReason
       where
         result = (n, toBackwardsReason t)
 
-toForwardsReason 
-    ∷ (Text ⁞ ƮReason Forwards defeasibility) 
+toForwardsReason
+    ∷ (Text ⁞ ƮReason Forwards defeasibility)
       -- ^ a constituent of a 'ReasonSection'
     → ForwardsReason
 toForwardsReason = simpleParse p . unƭ
@@ -206,7 +206,7 @@ toForwardsReason = simpleParse p . unƭ
             (formulaFromText <$> premiseTexts)
             (formulaFromText conclusionText)
 
-toBackwardsReason 
+toBackwardsReason
     ∷ (Text ⁞ ƮReason Backwards defeasibility)
       -- ^ a constituent of a 'ReasonSection'
     → BackwardsReason

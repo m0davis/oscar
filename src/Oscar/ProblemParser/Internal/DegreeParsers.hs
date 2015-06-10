@@ -16,7 +16,7 @@ import Oscar.Problem                    (ProblemInterestDegree(ProblemInterestDe
 import Oscar.Problem                    (ProblemStrengthDegree(ProblemStrengthDegree))
 import Oscar.Problem                    (Degree(Degree))
 
-{- | Reads a Degree, ensuring that it lies in the interval (0,1]. 
+{- | Reads a Degree, ensuring that it lies in the interval (0,1].
 
      Consumes nothing upon failure.
 -}
