@@ -31,6 +31,7 @@ import Control.Lens
 
 {- | See "Oscar.Documentation" for a guide to writing 'Formula's.
 -}
+-- TODO rename FormulaY (et al.) to Formula; modules that import and use Formula should create their own type, Formula (as below) or else add a layer of abstraction for such Formulas (? can we have a module that exports the current Formula type but also provides the current FormulaY constructors?)
 data FormulaY q p df dv
     = FormulaBinary { _formulaBinaryOp ∷ !BinaryOp
                     , _formulaBinaryLeftFormula ∷ !(FormulaY q p df dv)

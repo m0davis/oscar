@@ -11,6 +11,7 @@ type Formula = F.Formula
 
 type UFormula = FormulaY UQuantifier UPredicate UDomainFunction UDomainVariable
 
+{- TODO This is ugly-looking. The U prefix is meant to signify the Uniqueness of quantifier variables a la uFormula. Rename? Separate layers of abstraction? -}
 type U = Int
 type UQuantifier = U
 type UPredicate = Symbol
@@ -20,6 +21,7 @@ data UDomainVariable
     | UFree Symbol
   deriving (Eq, Read, Show)
 
+{- TODO reformat, rename; provide some examples -}
 uFormula ∷ Formula → UFormula
 uFormula = snd . uFormula' 0 []
   where
@@ -50,12 +52,14 @@ uFormula = snd . uFormula' 0 []
                   Just i → UQuantified i
                   Nothing → UFree dv
 
+-- TODO rename
 data Discriminator = Discriminator
     { _discriminationTestIndex ∷ [Int]
     , _discriminationTestPart ∷ FormulaParticle
     }
   deriving (Eq, Read, Show)
 
+-- TODO rename
 data FormulaParticle
     = FormulaParticleQuantified Quantifier
     | FormulaParticleUnary UnaryOp
@@ -63,6 +67,7 @@ data FormulaParticle
     | FormulaParticlePredicated Symbol
   deriving (Eq, Read, Show)
 
+-- TODO rename
 data FormulaTerm
     = FormulaTermDomainFunction Symbol [FormulaTerm]
     | FormulaTermFreeVariable Symbol
@@ -72,6 +77,7 @@ data FormulaTerm
 formulaCode ∷ UFormula → ([Discriminator], [FormulaTerm])
 formulaCode formula = formulaCode' formula []
 
+{- TODO this matches John's formula-code* but probably is overly-complicated. Consider using a single Int for depth instead of an array representing the _discriminatorTestIndex -}
 formulaCode' ∷ UFormula
              → [Int]
              → ([Discriminator], [FormulaTerm])
@@ -93,6 +99,13 @@ formulaCode' (FormulaPredication (Predication p dfs)) is =
       df2ft (DomainVariable (UQuantified u)) = FormulaTermBoundVariable u
       df2ft (DomainVariable (UFree s)) = FormulaTermFreeVariable s
 
+{- TODO it seems arbitrary that the reasonCode ignores the right-hand of a FormulaBinary when the left-hand contains a variable Predication. E.g.
+    let formula = uFormula . formulaFromText $ pack "(F a & G b)"
+    let f = Symbol $ pack "F"
+    let g = Symbol $ pack "G"
+    reasonCode formula f --> results in --> [], whereas
+    reasonCode formula g --> results in --> a single element
+-}
 reasonCode ∷ UFormula → [Symbol] → [Discriminator]
 reasonCode formula variables = fst $ break match $ fst $ formulaCode formula
   where
