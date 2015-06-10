@@ -118,7 +118,7 @@ It requires Hypergraphs11.lisp. |#
   (hyperlink-target nil)   ;; the node supported by the link
   (hyperlink-basis nil)   ;; a list of hypernodes
   (hyperlink-rule nil)  ;; a substantive reason or a string describing an inference rule
-  (defeasible? nil)  ;; t if the inference is a defeasible one
+  (hyperlink-defeasible? nil)  ;; t if the inference is a defeasible one
   (hyperlink-defeaters nil)  ;; a list of hyper-defeat-links
   (hyperlink-degree-of-justification nil)
   (hyperlink-discount-factor 1.0)  ;; This is the discount-factor provided by the link-rule.
@@ -3055,7 +3055,7 @@ to have an undercutting defeater.  |#
                  :hyperlink-basis nil
                  :hyperlink-rule :given
                  :hyperlink-target node
-                 :defeasible? t
+                 :hyperlink-defeasible? t
                  :hyperlink-degree-of-justification (mem2 premise)
                  :hyperlink-nearest-defeasible-ancestors (list (list node)))))
     (setf (hypernode-queue-node node) queue-node)
@@ -6396,7 +6396,7 @@ hypernode-supposition of node*. |#
       (let ((node (car nodes)))
         (setf nodes (cdr nodes))
         (dolist (L (consequent-links node))
-          (when (not (defeasible? L))
+          (when (not (hyperlink-defeasible? L))
             (let ((N (hyperlink-target L)))
               (when (not (member N descendants))
                 (push N descendants)
@@ -6406,7 +6406,7 @@ hypernode-supposition of node*. |#
 (defun cancel-subsumed-links (link depth)
   ; (when (equal link (hyperlink 14)) (break))
   ;; (step (cancel-subsumed-links (hyperlink 14) 0))
-  (when (not (defeasible? link))
+  (when (not (hyperlink-defeasible? link))
     (let* ((node (hyperlink-target link))
            (formula (hypernode-formula node))
            (f-vars (hypernode-variables node)))
@@ -6424,7 +6424,7 @@ hypernode-supposition of node*. |#
                      (dolist (L (hyperlinks M))
                        (when
                          (and (not (eq L link))
-                              (not (defeasible? L)))
+                              (not (hyperlink-defeasible? L)))
                          (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
                            (when (every
                                    #'(lambda (Y)
@@ -6477,7 +6477,7 @@ hypernode-supposition of node*. |#
           (t
             (dolist (L (hyperlinks node))
               (let ((NDA
-                      (cond ((defeasible? node)
+                      (cond ((hyperlink-defeasible? node)
                              (mapcar #'genunion
                                      (gencrossproduct
                                        (mapcar #'nearest-defeasible-ancestors
@@ -6853,7 +6853,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                    :hyperlink-clues clues
                    :hyperlink-rule rule
                    :hyperlink-target node
-                   :defeasible? defeasible?
+                   :hyperlink-defeasible? defeasible?
                    :temporal-hyperlink
                    (if (or (and (not (keywordp rule)) (temporal? rule))
                            (some #'temporal-node basis)) *cycle*)
@@ -6915,7 +6915,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
   (node &optional nodes-done)
   (push node nodes-done)
   (dolist (L (consequent-links node))
-    (when (not (defeasible? L))
+    (when (not (hyperlink-defeasible? L))
       (let ((NDA
               (mapcar #'genunion
                       (gencrossproduct
@@ -7755,7 +7755,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
 (defun adopt-interest-in-defeaters-for (link instantiations &optional bindings)
   ; (when (eq link (hyperlink 34)) (setf l link i instantiations r reason b bindings) (break))
   ;; (step (adopt-interest-in-defeaters-for l i r b))
-  (cond ((defeasible? link)
+  (cond ((hyperlink-defeasible? link)
          (let ((variables nil)
                (reverse-binding nil)
                (reverse-binding* nil)
@@ -8372,7 +8372,7 @@ is the old maximal-degree-of-justification  |#
                         (t
                           (dolist (L (hyperlinks node*))
                             (let ((NDA
-                                    (cond ((defeasible? L)
+                                    (cond ((hyperlink-defeasible? L)
                                            (mapcar #'genunion
                                                    (gencrossproduct
                                                      (mapcar #'nearest-defeasible-ancestors

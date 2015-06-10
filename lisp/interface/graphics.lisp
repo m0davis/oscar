@@ -215,7 +215,7 @@
    ; (when (eq node (node 146)) (setf p position v view n node) (break))
     ;; (step (draw-hyperlinks p v n))
     (dolist (sl (hyperlinks node))
-        (when (defeasible? sl) (set-fore-color view *gray-color*))
+        (when (hyperlink-defeasible? sl) (set-fore-color view *gray-color*))
         (dolist (nb (hyperlink-basis sl))
             (let ((pos-nb (hypernode-position nb view)))
                (when pos-nb 
@@ -364,7 +364,7 @@
            (t (let
                  ((msg
                     (list 
-                      (if (some #'defeasible? (hyperlinks node))
+                      (if (some #'hyperlink-defeasible? (hyperlinks node))
                          "It follows defeasibly that "
                          "It follows that ")
                       (pranc-to-string (pretty (hypernode-formula node))))))
@@ -1770,23 +1770,23 @@ OSCAR graphics window."
                          :argument-strength
                          (if (every #'(lambda (L) (null (defeating-assignment-trees L))) arg)
                             (minimum0 (mapcar #'hyperlink-strength arg)) 0)
-                         :ultimate-interest (mem1 (answered-queries n))
-                         :inclusive-arg-nodes (list n))))
+                         :argument-ultimate-interest (mem1 (answered-queries n))
+                         :argument-inclusive-nodes (list n))))
                 (push argument *arguments*)
                 (dolist (m (motivating-nodes n))
-                    (pushnew m (inclusive-arg-nodes argument))
+                    (pushnew m (argument-inclusive-nodes argument))
                     (pushnew m *nodes-used*))
                 (dolist (L (argument-links argument))
                     (dolist (b (hyperlink-basis L))
-                        (pushnew b (inclusive-arg-nodes argument))
+                        (pushnew b (argument-inclusive-nodes argument))
                         (pushnew b *nodes-used*)
                         (dolist (m (motivating-nodes b))
-                            (pushnew m (inclusive-arg-nodes argument))
+                            (pushnew m (argument-inclusive-nodes argument))
                             (pushnew m *nodes-used*)))))))
     (dolist (argument (reverse *arguments*))
         (display-argument argument)
         (when *graph-arguments*
-             (graph-nodes (inclusive-arg-nodes argument)
+             (graph-nodes (argument-inclusive-nodes argument)
                window
                (cat-list
                  (list "Graph of Argument " (write-to-string (argument-number argument))
@@ -1933,7 +1933,7 @@ OSCAR graphics window."
 
 (defunction draw-abbreviated-hyperlinks (position view node)
     (dolist (L (hyperlinks node))
-        (when (defeasible? L)
+        (when (hyperlink-defeasible? L)
              (set-fore-color view *gray-color*)
              (dolist (b (hyperlink-basis L))
                  (let ((pos-b (hypernode-position b view)))
@@ -1956,7 +1956,7 @@ OSCAR graphics window."
          (dolist (m (motivating-nodes node))
              (add-strongly-relevant-nodes m))
          (dolist (L (hyperlinks node))
-             (when (defeasible? L)
+             (when (hyperlink-defeasible? L)
                   (dolist (b (hyperlink-basis L)) (add-strongly-relevant-nodes b))
                   (dolist (d (hyperlink-hypernode-defeaters L)) (add-strongly-relevant-nodes d))))
          (dolist (b (compute-terminal-deductive-ancestors node))
@@ -1972,10 +1972,10 @@ OSCAR graphics window."
          (push node *nodes-done*)
          (dolist (L (hyperlinks node))
              (when
-               (not (defeasible? L))
+               (not (hyperlink-defeasible? L))
                  (dolist (b (hyperlink-basis L))
                      (when
-                          (or (initial-node b) (some #'defeasible? (hyperlinks b)))
+                          (or (initial-node b) (some #'hyperlink-defeasible? (hyperlinks b)))
                           (pushnew b  *terminal-deductive-ancestors*))
                      (add-terminal-deductive-ancestors b))))))
 

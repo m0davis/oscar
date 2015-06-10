@@ -77,7 +77,7 @@
   (hyperlink-target nil)   ;; the node supported by the link
   (hyperlink-basis nil)   ;; a list of hypernodes
   (hyperlink-rule nil)  ;; a substantive reason or a string describing an inference rule
-  (defeasible? nil)  ;; t if the inference is a defeasible one
+  (hyperlink-defeasible? nil)  ;; t if the inference is a defeasible one
   (hyperlink-defeaters nil)  ;; a list of hyper-defeat-links
   (hyperlink-degree-of-justification nil)
   (hyperlink-discount-factor 1.0)  ;; This is the discount-factor provided by the link-rule.
