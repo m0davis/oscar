@@ -981,11 +981,11 @@ known conclusions matching the formula. |#
   (let ((node
           (make-inference-queue-node
             :queue-number (incf *queue-number*)
-            :enqued-item query
-            :item-kind :query
-            :item-complexity (complexity (query-formula query))
-            :discounted-strength (query-strength query)
-            :degree-of-preference (query-preference query))))
+            :queue-item query
+            :queue-item-kind :query
+            :queue-item-complexity (complexity (query-formula query))
+            :queue-discounted-strength (query-strength query)
+            :queue-degree-of-preference (query-preference query))))
     (setf (query-queue-node query) node)
     (setf *inference-queue* (ordered-insert node *inference-queue* #'i-preferred))))
 
@@ -2044,12 +2044,12 @@ so that the resulting interest satisffies condition1. |#
 
 (defstruct (backwards-reason (:include reason) (:print-function print-reason)
                              (:conc-name nil))
-  (reason-condition nil)  ;; this is a predicate applied to the binding
-  (reason-discharge nil)
-  (reason-length 1)  ;; this is the number of backwards-premises
-  (conclusions-binding-function nil)
-  (conclusion-variables nil)
-  (immediate-reason nil))
+  (b-reason-condition nil)  ;; this is a predicate applied to the binding
+  (b-reason-discharge nil)
+  (b-reason-length 1)  ;; this is the number of backwards-premises
+  (b-reason-conclusions-binding-function nil)
+  (b-reason-conclusion-variables nil)
+  (b-reason-immediate nil))
 
 #| This can be blocked by a prior reductio-supposition, but this then converts it so that it is
 no longer deductive-only.  Any hypernode-descendants not inferred from other deductive-only
@@ -2108,11 +2108,11 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
            (queue-node
              (make-inference-queue-node
                :queue-number (incf *queue-number*)
-               :enqued-item node
-               :item-kind :conclusion
-               :discounted-strength priority
-               :item-complexity complexity
-               :degree-of-preference (/ discount-factor complexity))))
+               :queue-item node
+               :queue-item-kind :conclusion
+               :queue-discounted-strength priority
+               :queue-item-complexity complexity
+               :queue-degree-of-preference (/ discount-factor complexity))))
       (setf (hypernode-non-reductio-supposition node) (list (cons (mem1 instance-supposition) node)))
       (setf (hypernode-queue-node node) queue-node)
       (store-hypernode node (sequent-formula sequent))
@@ -2173,11 +2173,11 @@ converted nodes. |#
 (defstruct (inference-queue-node (:print-function print-inference-queue-node)
                                  (:conc-name nil))
   (queue-number 0)
-  (enqued-item nil)  ;; either an interest or a conclusion or a query
-  (item-kind nil)   ;; this will be :conclusion, :interest, or :query
-  (item-complexity 0)
-  (discounted-strength 0)
-  (degree-of-preference 0))
+  (queue-item nil)  ;; either an interest or a conclusion or a query
+  (queue-item-kind nil)   ;; this will be :conclusion, :interest, or :query
+  (queue-item-complexity 0)
+  (queue-discounted-strength 0)
+  (queue-degree-of-preference 0))
 
 (defun print-inference-queue-node (x stream depth)
   (declare (ignore depth))
@@ -2186,7 +2186,7 @@ converted nodes. |#
 
 #| *inference-queue* is ordered by i-preference: |#
 (defun i-preferred (node1 node2)
-  (> (degree-of-preference node1) (degree-of-preference node2)))
+  (> (queue-degree-of-preference node1) (queue-degree-of-preference node2)))
 
 (defun complexity (x)
   (cond ((null X) 0)
@@ -2364,7 +2364,7 @@ and apply forwards defeasible reasons. |#
   (setf (hypernode-non-reductio-supposition? sup) t)
   (let ((Q (hypernode-queue-node sup)))
     (when Q
-      (setf (degree-of-preference Q) (* discount-factor (/ 1 (item-complexity Q))))
+      (setf (queue-degree-of-preference Q) (* discount-factor (/ 1 (queue-item-complexity Q))))
       (setf *inference-queue*
             (ordered-insert Q (remove Q *inference-queue*) #'i-preferred))))
   (let ((nodes
@@ -2803,7 +2803,7 @@ to have an undercutting defeater.  |#
 
 (defun store-backwards-reason-at-d-node (reason d-node)
   ; (when (eq reason null-plan) (setf r reason d d-node) (break))
-  (cond ((immediate-reason reason)
+  (cond ((b-reason-immediate reason)
          (push reason (d-node-degenerate-backwards-reasons d-node)))
         ((reason-backwards-premises reason)
          (push reason (d-node-backwards-reasons d-node)))
@@ -2887,9 +2887,9 @@ to have an undercutting defeater.  |#
                        (t (is-clues is0)))))
              (discharge (if (and (null basis)
                                  (null (if is0 (is-generating-node is0)))
-                                 (reason-discharge reason))
+                                 (b-reason-discharge reason))
                           (remove-double-negation
-                            (match-sublis binding (reason-discharge reason))))))
+                            (match-sublis binding (b-reason-discharge reason))))))
         (multiple-value-bind
           (generating-node new-sup?)
           (if discharge
@@ -3046,10 +3046,10 @@ to have an undercutting defeater.  |#
          (queue-node
            (make-inference-queue-node
              :queue-number (incf *queue-number*)
-             :enqued-item node
-             :item-kind :conclusion
-             :discounted-strength (mem2 premise)
-             :item-complexity (complexity sequent)))
+             :queue-item node
+             :queue-item-kind :conclusion
+             :queue-discounted-strength (mem2 premise)
+             :queue-item-complexity (complexity sequent)))
          (link (make-hyperlink
                  :hyperlink-number (incf *hyperlink-number*)
                  :hyperlink-basis nil
@@ -3064,7 +3064,7 @@ to have an undercutting defeater.  |#
       (setf (hypernode-nearest-defeasible-ancestors node) (list (list node)))
       (when (not (mem4 premise))
         (adopt-interest-in-premise-defeater sequent node)))
-    (setf (degree-of-preference queue-node) (premise-preference premise))
+    (setf (queue-degree-of-preference queue-node) (premise-preference premise))
     (push node *hypergraph*)
     (if *log-on* (push node *reasoning-log*))
     (when *display?* (display-unsupported-hypernode node))
@@ -3129,7 +3129,7 @@ whose new desire-strengths are zero. |#
                     (t
                       (let ((queue-node (hypernode-queue-node node)))
                         (when queue-node
-                          (setf (degree-of-preference queue-node)
+                          (setf (queue-degree-of-preference queue-node)
                                 (desire-preference desire))
                           (setf *inference-queue*
                                 (ordered-insert queue-node
@@ -3149,12 +3149,12 @@ whose new desire-strengths are zero. |#
                    (queue-node
                      (make-inference-queue-node
                        :queue-number (incf *queue-number*)
-                       :enqued-item node
-                       :item-kind :conclusion
-                       :discounted-strength 1.0
-                       :item-complexity (complexity sequent))))
+                       :queue-item node
+                       :queue-item-kind :conclusion
+                       :queue-discounted-strength 1.0
+                       :queue-item-complexity (complexity sequent))))
               (setf (hypernode-queue-node node) queue-node)
-              (setf (degree-of-preference queue-node) (desire-preference desire))
+              (setf (queue-degree-of-preference queue-node) (desire-preference desire))
               (push node *hypergraph*)
               (when *display?* (display-unsupported-hypernode node))
               (push node *desires*)
@@ -3184,13 +3184,13 @@ for subsequent processing. |#
          (queue-node
            (make-inference-queue-node
              :queue-number (incf *queue-number*)
-             :enqued-item node
-             :item-kind :conclusion
-             :discounted-strength 1.0
-             :item-complexity (sequent-complexity sequent))))
+             :queue-item node
+             :queue-item-kind :conclusion
+             :queue-discounted-strength 1.0
+             :queue-item-complexity (sequent-complexity sequent))))
     (when *log-on* (push node *reasoning-log*))
     (setf (hypernode-queue-node node) queue-node)
-    (setf (degree-of-preference queue-node) (percept-preference percept))
+    (setf (queue-degree-of-preference queue-node) (percept-preference percept))
     (push node *hypergraph*)
     (store-hypernode node (hypernode-formula node))
     (when *display?* (display-unsupported-hypernode node))
@@ -3221,12 +3221,12 @@ for subsequent processing. |#
       (when *display?*
         (princ "---------------------------------------------------------------------------") (terpri)
         (princ *cycle*) (princ ":    ")
-        (princ "Retrieving ") (princ (enqued-item Q))
+        (princ "Retrieving ") (princ (queue-item Q))
         (princ " from the inference-queue.")
         (terpri) (terpri))
       (pause)
-      (cond ((eq (item-kind Q) :conclusion)
-             (let ((node (enqued-item Q)))
+      (cond ((eq (queue-item-kind Q) :conclusion)
+             (let ((node (queue-item Q)))
                (when (eq (hypernode-kind node) :inference)
                  (store-processed-node node)
                  (setf (hypernode-queue-node node) nil))
@@ -3234,13 +3234,13 @@ for subsequent processing. |#
             (t
               (let ((priority
                       (retrieved-interest-priority
-                        (degree-of-preference Q) (item-complexity Q))))
-                (cond ((eq (item-kind Q) :query)
-                       (let ((query (enqued-item Q)))
+                        (queue-degree-of-preference Q) (queue-item-complexity Q))))
+                (cond ((eq (queue-item-kind Q) :query)
+                       (let ((query (queue-item Q)))
                          (setf (query-queue-node query) nil)
                          (reason-backwards-from-query query priority 0)))
-                      ((eq (item-kind Q) :interest)
-                       (let ((interest (enqued-item Q)))
+                      ((eq (queue-item-kind Q) :interest)
+                       (let ((interest (queue-item Q)))
                          (setf (interest-queue-node interest) nil)
                          (reason-backwards-from interest priority 0)
                          (form-epistemic-desires-for interest)))))))))
@@ -4510,26 +4510,26 @@ queued, it goes on the front of the inference-queue. |#
     (when *display?*
       (princ "---------------------------------------------------------------------------") (terpri)
       (princ *cycle*) (princ ":    ")
-      (princ "Retrieving ") (princ (enqued-item Q))
+      (princ "Retrieving ") (princ (queue-item Q))
       (princ " from the inference-queue.  Preference = ")
-      (princ (float (/ (truncate (* 10000 (degree-of-preference Q))) 10000)))
+      (princ (float (/ (truncate (* 10000 (queue-degree-of-preference Q))) 10000)))
       (terpri) (terpri))
     (pause)
     (setf *inference-queue* (cdr *inference-queue*))
     ; (display-inference-queue)
-    (cond ((eq (item-kind Q) :conclusion)
-           (let ((node (enqued-item Q)))
+    (cond ((eq (queue-item-kind Q) :conclusion)
+           (let ((node (queue-item Q)))
              (store-processed-node node)
              (setf (hypernode-queue-node node) nil)
              (reason-forwards-from node 0)))
           (t
-            (let ((priority (retrieved-interest-priority (degree-of-preference Q) (item-complexity Q))))
-              (cond ((eq (item-kind Q) :query)
-                     (let ((query (enqued-item Q)))
+            (let ((priority (retrieved-interest-priority (queue-degree-of-preference Q) (queue-item-complexity Q))))
+              (cond ((eq (queue-item-kind Q) :query)
+                     (let ((query (queue-item Q)))
                        (setf (query-queue-node query) nil)
                        (reason-backwards-from-query query priority 0)))
-                    ((eq (item-kind Q) :interest)
-                     (let ((interest (enqued-item Q)))
+                    ((eq (queue-item-kind Q) :interest)
+                     (let ((interest (queue-item Q)))
                        ; (when (equal interest (interest 58)) (trace-on))
                        (setf (interest-queue-node interest) nil)
                        (reason-backwards-from interest priority 0)
@@ -4541,14 +4541,14 @@ queued, it goes on the front of the inference-queue. |#
 (defun display-inference-queue ()
   (princ "---------------------------------------------------------------------------") (terpri)
   (princ "inference-queue: ") (terpri)
-  (dolist (Q *inference-queue*) (princ "  ") (princ (enqued-item Q))
+  (dolist (Q *inference-queue*) (princ "  ") (princ (queue-item Q))
     (princ "  degree-of-preference = ")
-    (princ (float (/ (truncate (* 10000 (degree-of-preference Q))) 10000)))
+    (princ (float (/ (truncate (* 10000 (queue-degree-of-preference Q))) 10000)))
     (let ((priority
-            (cond ((eq (item-kind q) :conclusion)
-                   (hypernode-discounted-node-strength (enqued-item q)))
-                  ((eq (item-kind q) :query) 1.0)
-                  ((eq (item-kind q) :interest) (interest-priority (enqued-item q))))))
+            (cond ((eq (queue-item-kind q) :conclusion)
+                   (hypernode-discounted-node-strength (queue-item q)))
+                  ((eq (queue-item-kind q) :query) 1.0)
+                  ((eq (queue-item-kind q) :interest) (interest-priority (queue-item q))))))
       (princ "  priority = ")
       (princ (float (/ (truncate (* 1000 priority)) 1000))))
     (terpri)))
@@ -4607,9 +4607,9 @@ queued, it goes on the front of the inference-queue. |#
               (draw-interest positive-interest (interest-position positive-interest *og*) *og*))
             (let ((Q (interest-queue-node positive-interest)))
               (when Q
-                (setf (degree-of-preference Q)
+                (setf (queue-degree-of-preference Q)
                       (maximum
-                        (list (degree-of-preference Q)
+                        (list (queue-degree-of-preference Q)
                               (interest-preference
                                 (query-strength query)
                                 (sequent-complexity sequent)))))
@@ -4663,9 +4663,9 @@ queued, it goes on the front of the inference-queue. |#
               (draw-interest negative-interest (interest-position negative-interest *og*) *og*))
             (let ((Q (interest-queue-node negative-interest)))
               (when Q
-                (setf (degree-of-preference Q)
+                (setf (queue-degree-of-preference Q)
                       (maximum
-                        (list (degree-of-preference Q)
+                        (list (queue-degree-of-preference Q)
                               (interest-preference
                                 (query-strength query)
                                 (sequent-complexity sequent)))))
@@ -4745,9 +4745,9 @@ queued, it goes on the front of the inference-queue. |#
               (draw-interest interest (interest-position interest *og*) *og*))
             (let ((Q (interest-queue-node interest)))
               (when Q
-                (setf (degree-of-preference Q)
+                (setf (queue-degree-of-preference Q)
                       (maximum
-                        (list (degree-of-preference Q)
+                        (list (queue-degree-of-preference Q)
                               (interest-preference
                                 (query-strength query)
                                 (sequent-complexity sequent)))))
@@ -4949,9 +4949,9 @@ discharge-link. |#
     (princ reason) (terpri))
   (multiple-value-bind
     (binding instantiation)
-    (funcall (conclusions-binding-function reason)
+    (funcall (b-reason-conclusions-binding-function reason)
              (interest-formula interest) (interest-variables interest))
-    (when (and instantiation (funcall* (reason-condition reason) binding))
+    (when (and instantiation (funcall* (b-reason-condition reason) binding))
       (let ((supposition (match-sublis instantiation (interest-supposition interest))))
         (cond
           ((reason-forwards-premises reason)
@@ -5170,9 +5170,9 @@ link being discharged.  |#
                 (let ((unifiers
                         (appropriately-related-supposition
                           node (is-target-interest is)
-                          (if (reason-discharge (is-reason is))
+                          (if (b-reason-discharge (is-reason is))
                             (cons (remove-double-negation
-                                    (match-sublis (is-binding is) (reason-discharge (is-reason is))))
+                                    (match-sublis (is-binding is) (b-reason-discharge (is-reason is))))
                                   (is-supposition is))
                             (is-supposition is))
                           (is-supposition-variables is) unifier)))
@@ -5298,9 +5298,9 @@ link being discharged.  |#
                (if (backwards-premise-p premise0) premise0
                  (funcall premise0
                           (interest-defeater-binding resultant-interest) binding)))
-             (discharge (if (and (backwards-reason-p reason) (reason-discharge reason))
+             (discharge (if (and (backwards-reason-p reason) (b-reason-discharge reason))
                           (remove-double-negation
-                            (match-sublis binding (reason-discharge reason))))))
+                            (match-sublis binding (b-reason-discharge reason))))))
         (multiple-value-bind
           (generating-node new?)
           (if (and discharge (null supporting-nodes))
@@ -5673,7 +5673,7 @@ the resultant-interest. |#
                                        (some #'deductive-node (query-answers query))))
                                *ultimate-epistemic-interests*)
                              (not (some
-                                    #'(lambda (Q) (eq (item-kind Q) :query))
+                                    #'(lambda (Q) (eq (queue-item-kind Q) :query))
                                     *inference-queue*)))
                        (setf (hypernode-degree-of-justification node) 1.0)
                        (setf (query-answered? (link-resultant-interest link)) T)
@@ -5789,7 +5789,7 @@ the resultant-interest. |#
                         (some #'deductive-node (query-answers query))))
                 *ultimate-epistemic-interests*)
               (not (some
-                     #'(lambda (Q) (eq (item-kind Q) :query))
+                     #'(lambda (Q) (eq (queue-item-kind Q) :query))
                      *inference-queue*)))
         (setf (hypernode-degree-of-justification C) 1.0)
         (setf (query-answered? Q) T)
@@ -5869,7 +5869,7 @@ the resultant-interest. |#
                     (interest-preference
                       (interest-link-priority link interest-priority interest)
                       (sequent-complexity (interest-sequent interest)))))
-              (when (> preference (degree-of-preference Q))
+              (when (> preference (queue-degree-of-preference Q))
                 (setf *inference-queue*
                       (ordered-insert Q (remove Q *inference-queue*) #'i-preferred)))))
           (t
@@ -6520,7 +6520,7 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
     (setf instantiations (reverse instantiations))
     (let* ((NDA (compute-nearest-defeasible-ancestors basis rule))
            (discharge (if (backwards-reason-p rule)
-                        (remove-double-negation (match-sublis binding (reason-discharge rule)))))
+                        (remove-double-negation (match-sublis binding (b-reason-discharge rule)))))
            (CD (conclusion-data basis instantiations discharge supposition)))
       (when CD
         (let* ((RA (mem1 CD))
@@ -7932,7 +7932,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                (list (cons 'p defeater) (cons 'q antecedent*)) (interest-supposition undercutting-interest)))
            (interest (link-interest i-link)))
           (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
-            (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
+            (when (and (member reason *backwards-reasons*) (funcall* (b-reason-condition reason) binding))
               (let ((supposition (interest-supposition interest)))
                 (cond
                   ((reason-forwards-premises reason)
@@ -7943,7 +7943,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                        reason binding interest 1 *base-priority* nil nil nil supposition))))))))
       (t
         (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
-          (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
+          (when (and (member reason *backwards-reasons*) (funcall* (b-reason-condition reason) binding))
             (let ((supposition (interest-supposition undercutting-interest)))
               (cond
                 ((reason-forwards-premises reason)
@@ -7992,11 +7992,11 @@ sequent-supposition.  Basis is a list of conclusions. |#
          (queue-node
            (make-inference-queue-node
              :queue-number (incf *queue-number*)
-             :enqued-item node
-             :item-kind :conclusion
-             :item-complexity complexity
-             :discounted-strength 1.0
-             :degree-of-preference (/ 1.0 complexity))))
+             :queue-item node
+             :queue-item-kind :conclusion
+             :queue-item-complexity complexity
+             :queue-discounted-strength 1.0
+             :queue-degree-of-preference (/ 1.0 complexity))))
     (setf (hypernode-non-reductio-supposition node) (list (cons supposition node)))
     (setf (hypernode-queue-node node) queue-node)
     (store-hypernode node supposition)
@@ -8042,11 +8042,11 @@ sequent-supposition.  Basis is a list of conclusions. |#
          (queue-node
            (make-inference-queue-node
              :queue-number (incf *queue-number*)
-             :enqued-item interest
-             :item-kind :interest
-             :item-complexity complexity
-             :discounted-strength priority
-             :degree-of-preference (interest-preference priority complexity))))
+             :queue-item interest
+             :queue-item-kind :interest
+             :queue-item-complexity complexity
+             :queue-discounted-strength priority
+             :queue-degree-of-preference (interest-preference priority complexity))))
     (setf (interest-queue-node interest) queue-node)
     (let ((n (interest-number interest)))
       (cond ((member n *priority-interests*)
@@ -8056,7 +8056,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
             (t (setf *inference-queue*
                      (ordered-insert queue-node *inference-queue* #'i-preferred)))))
     ; (when *display?* (princ "                                        Preference = ")
-    ;               (princ (float (/ (truncate (* 10000 (degree-of-preference queue-node))) 10000)))
+    ;               (princ (float (/ (truncate (* 10000 (queue-degree-of-preference queue-node))) 10000)))
     ;               (terpri))
     ))
 
@@ -8093,17 +8093,17 @@ to sequent2. |#
                    (queue-node
                      (make-inference-queue-node
                        :queue-number (incf *queue-number*)
-                       :enqued-item node
-                       :item-kind :conclusion
-                       :item-complexity complexity
-                       :discounted-strength (hypernode-discounted-node-strength node)
-                       :degree-of-preference degree)))
+                       :queue-item node
+                       :queue-item-kind :conclusion
+                       :queue-item-complexity complexity
+                       :queue-discounted-strength (hypernode-discounted-node-strength node)
+                       :queue-degree-of-preference degree)))
               (setf (hypernode-queue-node node) queue-node)
               (when degree
                 (setf *inference-queue*
                       (ordered-insert queue-node *inference-queue* #'i-preferred)))
               ; (when *display?* (princ "  Preference = ")
-              ;               (princ (float (/ (truncate (* 10000 (degree-of-preference queue-node))) 10000)))
+              ;               (princ (float (/ (truncate (* 10000 (queue-degree-of-preference queue-node))) 10000)))
               ;               (terpri))
               )))))
 
@@ -8248,7 +8248,7 @@ is the old maximal-degree-of-justification  |#
                                      (some #'deductive-node (query-answers query))))
                              *ultimate-epistemic-interests*)
                            (not (some
-                                  #'(lambda (Q) (eq (item-kind Q) :query))
+                                  #'(lambda (Q) (eq (queue-item-kind Q) :query))
                                   *inference-queue*)))
                      (setf (hypernode-degree-of-justification node) 1.0)
                      (setf (query-answered? (link-resultant-interest link)) T)
@@ -9671,17 +9671,17 @@ the sequent concluded. |#
                 (when Q (pushnew Q altered-queue))))))))
     ;---------------------------------
     (dolist (Q altered-queue)
-      (cond ((eq (item-kind Q) :conclusion)
-             (setf (discounted-strength Q)
-                   (compute-discounted-node-strength (enqued-item Q)))
-             (setf (degree-of-preference Q)
-                   (/ (discounted-strength Q) (item-complexity Q)))
+      (cond ((eq (queue-item-kind Q) :conclusion)
+             (setf (queue-discounted-strength Q)
+                   (compute-discounted-node-strength (queue-item Q)))
+             (setf (queue-degree-of-preference Q)
+                   (/ (queue-discounted-strength Q) (queue-item-complexity Q)))
              (setf *inference-queue*
                    (ordered-insert Q (remove Q *inference-queue*) #'i-preferred)))
-            ((not (interest-cancelled (enqued-item Q)))
-             (setf (discounted-strength Q) (interest-priority (enqued-item Q)))
-             (setf (degree-of-preference Q)
-                   (/ (discounted-strength Q) (item-complexity Q)))
+            ((not (interest-cancelled (queue-item Q)))
+             (setf (queue-discounted-strength Q) (interest-priority (queue-item Q)))
+             (setf (queue-degree-of-preference Q)
+                   (/ (queue-discounted-strength Q) (queue-item-complexity Q)))
              (setf *inference-queue*
                    (ordered-insert Q (remove Q *inference-queue*) #'i-preferred)))))))
 

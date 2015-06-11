@@ -605,7 +605,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-backwards-premises
         (list (cbp 'p nil nil '(p)) (cbp 'q nil nil '(q)))
         :reason-variables '(p q)
-        :reason-length 2))
+        :b-reason-length 2))
 
 (defun adjunction (interest depth priority)
   (let ((p (interest-formula interest)))
@@ -640,7 +640,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-backwards-premises
         (list (cbp '(~ p) nil nil '(p)) (cbp '(~ q) nil nil '(q)))
         :reason-variables '(p q)
-        :reason-length 2))
+        :b-reason-length 2))
 
 (defun i-neg-disj (interest depth priority)
   (let ((p (interest-formula interest)))
@@ -659,7 +659,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-backwards-premises
         (list (cbp '(~ q) nil nil '(q)) (cbp 'p nil nil '(p)))
         :reason-variables '(p q)
-        :reason-length 2))
+        :b-reason-length 2))
 
 (defun i-neg-condit (interest depth priority)
   ; (when (eq interest (interest 4)) (break))
@@ -679,7 +679,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-backwards-premises
         (list (cbp '(-> q p) nil nil '(p q)) (cbp '(-> p q) nil nil '(p q)))
         :reason-variables '(p q)
-        :reason-length 2))
+        :b-reason-length 2))
 
 (defun bicondit-intro (interest depth priority)
   (let ((p (interest-formula interest)))
@@ -772,7 +772,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-backwards-premises
         (list (cbp '(all x (~ q)) nil nil '(x q)))
         :reason-variables '(x q)
-        :reason-length 1))
+        :b-reason-length 1))
 
 (defun i-neg-eg (interest depth priority)
   (let ((p (interest-formula interest)))
@@ -791,7 +791,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-backwards-premises
         (list (cbp '(some x (~ q)) nil nil '(x q)))
         :reason-variables '(x q)
-        :reason-length 1))
+        :b-reason-length 1))
 
 (defun i-neg-ug (interest depth priority)
   (let ((p (interest-formula interest)))
@@ -809,7 +809,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-conclusions '((all x q))
         :reason-backwards-premises 'q
         :reason-variables '(x q)
-        :reason-length 1))
+        :b-reason-length 1))
 
 (defun UG (interest depth priority)
   (let* ((p (interest-formula interest))
@@ -855,7 +855,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-conclusions '((some x q))
         :reason-backwards-premises 'q
         :reason-variables '(x q)
-        :reason-length 1))
+        :b-reason-length 1))
 
 (defun EG (interest depth priority)
   (let* ((p (interest-formula interest))

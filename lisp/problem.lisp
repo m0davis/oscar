@@ -97,9 +97,9 @@ The listing of strengths in reasons is optional, the default being 1.0.
                :reason-variables ,variables
                :reason-strength ,strength
                :reason-defeasible-rule ,defeasible?
-               :conclusion-variables c-vars
-               :conclusions-binding-function c-binding-function
-               :reason-condition ,condition
+               :b-reason-conclusion-variables c-vars
+               :b-reason-conclusions-binding-function c-binding-function
+               :b-reason-condition ,condition
                :reason-description ,description)))
      ,name))
 

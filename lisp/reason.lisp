@@ -598,11 +598,11 @@ expands into the following code:
             :reason-conclusions '(k x w)
             :reason-conclusions-function nil
             :reason-variables '(x y z w)
-            :reason-length 1
+            :b-reason-length 1
             :reason-strength 0.95
             :reason-defeasible-rule t
-            :conclusions-binding-function c-binding-function
-            :reason-condition nil
+            :b-reason-conclusions-binding-function c-binding-function
+            :b-reason-condition nil
             :reason-description nil)))
   (push r *backwards-substantive-reasons*))
 
@@ -692,17 +692,17 @@ expands into the following code:
                    :reason-forwards-premises ,forwards-premises
                    :reason-backwards-premises ,backwards-premises
                    :reason-conclusions ,conclusion
-                   :reason-discharge ,discharge
+                   :b-reason-discharge ,discharge
                    :reason-conclusions-function ,conclusion-function
                    :reason-variables ,variables
-                   :reason-length ,(length (eval backwards-premises))
+                   :b-reason-length ,(length (eval backwards-premises))
                    :reason-discount-factor (or ,discount 1.0)
                    :reason-strength ,strength
                    :reason-defeasible-rule ,defeasible?
                    :reason-temporal? ,temporal?
-                   :immediate-reason ,immediate
-                   :conclusions-binding-function ,c-binding-function
-                   :reason-condition ,condition
+                   :b-reason-immediate ,immediate
+                   :b-reason-conclusions-binding-function ,c-binding-function
+                   :b-reason-condition ,condition
                    :reason-description ,description))
 
            (setf (reason-undercutting-defeaters ,name) defeaters)
@@ -855,14 +855,14 @@ expands into the following code:
                  :reason-forwards-premises ,forwards-premises
                  :reason-backwards-premises ,backwards-premises
                  :reason-defeatees ,defeatee
-                 :reason-discharge ,discharge
+                 :b-reason-discharge ,discharge
                  :reason-variables ',(union (eval variables) (unionmapcar+ #'reason-variables (eval defeatee)))
-                 :reason-length ,(length (eval backwards-premises))
+                 :b-reason-length ,(length (eval backwards-premises))
                  :reason-strength ,strength
                  :reason-discount-factor (or ,discount 1.0)
                  :reason-defeasible-rule ,defeasible?
                  :reason-temporal? ,temporal?
-                 :reason-condition ,condition
+                 :b-reason-condition ,condition
                  :reason-description ,description))
 
          (setf (reason-undercutting-defeaters ,name) defeaters)
