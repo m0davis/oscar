@@ -394,10 +394,10 @@ combinations thereof, without incorporating a check that x and y have arithmetic
                          (cond
                            ((and (listp premise) (eq (car premise) 'define)) d-condition)
                            (condition1 (backwards-formula-condition condition1))
-                           (condition #'(lambda (i) (eq (discharge-condition i) condition*))))
+                           (condition #'(lambda (i) (eq (interest-discharge-condition i) condition*))))
                          :condition2
                          (cond (condition2 (backwards-formula-condition condition2))
-                               (condition #'(lambda (i) (setf (discharge-condition i) condition*))))
+                               (condition #'(lambda (i) (setf (interest-discharge-condition i) condition*))))
                          :text-condition condition
                          :clue? clue?
                          :hypernode-specifier hypernode-specifier
@@ -418,10 +418,10 @@ combinations thereof, without incorporating a check that x and y have arithmetic
                                   :formula ,premise
                                   :condition1
                                   ,(cond (condition1 (backwards-formula-condition condition1))
-                                         (condition #'(lambda (i) (eq (discharge-condition i) condition*))))
+                                         (condition #'(lambda (i) (eq (interest-discharge-condition i) condition*))))
                                   :condition2
                                   ,(cond (condition2 (backwards-formula-condition condition2))
-                                         (condition #'(lambda (i) (setf (discharge-condition i) condition*))))
+                                         (condition #'(lambda (i) (setf (interest-discharge-condition i) condition*))))
                                   :text-condition condition
                                   :clue? ,clue?
                                   :hypernode-specifier ,hypernode-specifier

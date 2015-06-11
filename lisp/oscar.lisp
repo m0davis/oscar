@@ -1108,35 +1108,35 @@ known conclusions matching the formula. |#
   (interest-right-links nil)
   (interest-left-links nil)
   (interest-degree-of-interest *base-priority*)
-  (last-processed-degree-of-interest nil)
+  (interest-last-processed-degree-of-interest nil)
   (interest-defeat-status nil)
-  (discharged-degree nil)  ;; used in computing priorities
-  (deductive-interest nil)
-  (cancelled-interest nil)
+  (interest-discharged-degree nil)  ;; used in computing priorities
+  (interest-deductive nil)
+  (interest-cancelled nil)
   (interest-queue-node nil)
   (interest-i-list nil)
-  (maximum-degree-of-interest 0)
+  (interest-maximum-degree-of-interest 0)
   (interest-defeatees nil)
-  (reductio-interest nil)
-  (direct-reductio-interest nil)
-  (generated-suppositions nil)
-  (generating-nodes nil)
+  (interest-reductio nil)
+  (interest-direct-reductio nil)
+  (interest-generated-suppositions nil)
+  (interest-generating-nodes nil)
   (interest-priority 0)
   (interest-variables nil)
-  (discharge-condition nil)  ;;a function of node, unifier, and interest-link
+  (interest-discharge-condition nil)  ;;a function of node, unifier, and interest-link
   (interest-supposition-variables nil)
-  (cancelling-node nil)
-  (discharging-nodes nil)
+  (interest-cancelling-node nil)
+  (interest-discharging-nodes nil)
   (interest-supposition-nodes nil)
-  (generated-interest-schemes nil)
-  (defeater-binding nil)
-  (generating-defeat-nodes nil)
-  (cancelled-left-links nil)
-  (non-reductio-interest t)
-  (anchored-nodes nil)
-  (text-discharge-condition nil)  ;; a text statement of the discharge condition
-  (enabled-nodes nil)  ;; the nodes for which this is an enabling-interest
-  (decision-plans nil)  ;; the nodes this interest is relevant to deciding on
+  (interest-generated-interest-schemes nil)
+  (interest-defeater-binding nil)
+  (interest-generating-defeat-nodes nil)
+  (interest-cancelled-left-links nil)
+  (interest-non-reductio? t)
+  (interest-anchored-nodes nil)
+  (interest-text-discharge-condition nil)  ;; a text statement of the discharge condition
+  (interest-enabled-nodes nil)  ;; the nodes for which this is an enabling-interest
+  (interest-decision-plans nil)  ;; the nodes this interest is relevant to deciding on
   )
 
 (defun print-interest (x stream depth)
@@ -1226,7 +1226,7 @@ known conclusions matching the formula. |#
           (let ((reductio-sup (i-list-reductio-supposition i-list)))
             (when reductio-sup
               (push interest  (hypernode-generating-interests reductio-sup))
-              (push reductio-sup (generated-suppositions interest))))
+              (push reductio-sup (interest-generated-suppositions interest))))
           (setf (interest-i-list interest) i-list))
         (t
           (multiple-value-bind (profile term-list) (formula-code (interest-formula interest))
@@ -1261,7 +1261,7 @@ car of a formula-code, and dn is a d-node. |#
             (let ((reductio-sup (i-list-reductio-supposition i-list)))
               (when reductio-sup
                 (push interest  (hypernode-generating-interests reductio-sup))
-                (push reductio-sup (generated-suppositions interest)))))
+                (push reductio-sup (interest-generated-suppositions interest)))))
           (t (let ((c-lists (matching-c-lists-for term-list i-variables dn)))
                (setf i-list (make-i-list
                               :i-list-formula formula
@@ -1350,7 +1350,7 @@ car of a formula-code, and dn is a d-node. |#
                   (let ((reductio-sup (i-list-reductio-supposition i-list)))
                     (when reductio-sup
                       (push interest  (hypernode-generating-interests reductio-sup))
-                      (push reductio-sup (generated-suppositions interest)))))
+                      (push reductio-sup (interest-generated-suppositions interest)))))
                 (t (setf i-list (make-i-list
                                   :i-list-formula formula
                                   :corresponding-c-lists c-lists
@@ -1556,8 +1556,8 @@ car of a formula-code, and dn is a d-node. |#
 (defun display-interest (interest)
   (if (numberp interest) (setf interest (interest interest)))
   (princ "                                        # ") (princ (interest-number interest)) (princ "  ")
-  (when (deductive-interest interest) (princ "deductive "))
-  (when (reductio-interest interest) (princ "reductio "))
+  (when (interest-deductive interest) (princ "deductive "))
+  (when (interest-reductio interest) (princ "reductio "))
   (princ "interest:")
   (terpri)
   (princ "                                           ") (prinp  (interest-formula interest))
@@ -1572,7 +1572,7 @@ car of a formula-code, and dn is a d-node. |#
   (let ((L (lastmember (interest-right-links interest))))
     (when (and L (not (query-p (link-resultant-interest L))))
       (princ "                                        For ")
-      (when (reductio-interest (link-resultant-interest L)) (princ "reductio "))
+      (when (interest-reductio (link-resultant-interest L)) (princ "reductio "))
       (princ "interest ")
       (princ (interest-number (link-resultant-interest L)))
       (princ " by ") (princ (link-rule L))
@@ -1599,7 +1599,7 @@ car of a formula-code, and dn is a d-node. |#
                                     (hypernode-number conclusion))
                                 nodes) 40)))))
       (terpri))
-    (when (discharge-condition interest)
+    (when (interest-discharge-condition interest)
       (princ "                                        Discharge condition: ") (terpri)
       (princ "                                             ")
       (display-discharge-condition interest L) (terpri)))
@@ -1610,7 +1610,7 @@ car of a formula-code, and dn is a d-node. |#
           (mapcar
             #'(lambda (x) (cons (car x) (if (and (cdr x) (listp (cdr x))) (list 'quote (cdr x)) (cdr x))))
             (link-binding link))))
-    (print-pretty  (sublis binding (text-discharge-condition interest)))))
+    (print-pretty  (sublis binding (interest-text-discharge-condition interest)))))
 
 (defun display-interests ()
   (princ "(") (terpri)
@@ -1627,8 +1627,8 @@ car of a formula-code, and dn is a d-node. |#
                       (< (interest-number c1) (interest-number c2))))))
     (dolist (interest interests)
       (princ "#") (princ (interest-number interest))
-      (cond ((deductive-interest interest) (princ "  deductive interest: "))
-            ((reductio-interest interest) (princ "  reductio interest: "))
+      (cond ((interest-deductive interest) (princ "  deductive interest: "))
+            ((interest-reductio interest) (princ "  reductio interest: "))
             (t (princ "  interest: ")))
       (prinp (interest-formula interest))
       (when (interest-supposition interest)
@@ -1642,7 +1642,7 @@ car of a formula-code, and dn is a d-node. |#
       (dolist (L (interest-right-links interest))
         (when (not (query-p (link-resultant-interest L)))
           (princ "     For ")
-          (when (reductio-interest (link-resultant-interest L)) (princ "reductio "))
+          (when (interest-reductio (link-resultant-interest L)) (princ "reductio "))
           (princ "interest ")
           (princ (interest-number (link-resultant-interest L)))
           (princ " by ") (princ (link-rule L))
@@ -1869,7 +1869,7 @@ car of a formula-code, and dn is a d-node. |#
             (when (== (interest-supposition c) sup)
               (princ "    #") (princ (interest-number c)) (princ "  ")
               (prinp (interest-formula c)) (princ "     ")
-              (when (reductio-interest c) (princ "reductio "))
+              (when (interest-reductio c) (princ "reductio "))
               (princ "for  ")
               (print-list
                 (remove-duplicates=
@@ -1896,7 +1896,7 @@ car of a formula-code, and dn is a d-node. |#
         (dolist (c interests)
           (princ "    #") (princ (interest-number c)) (princ "  ")
           (princ "   sup = ") (set-prinp (interest-supposition c)) (princ "     ")
-          (when (reductio-interest c) (princ "reductio "))
+          (when (interest-reductio c) (princ "reductio "))
           (princ "for  ")
           (print-list
             (remove-duplicates=
@@ -2062,8 +2062,8 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
     (cond (sup
             (incf (hypernode-readopted-supposition sup))
             (push interest (hypernode-generating-interests sup))
-            (push sup (generated-suppositions interest))
-            (when (and (hypernode-deductive-only sup) (not (deductive-interest interest)))
+            (push sup (interest-generated-suppositions interest))
+            (when (and (hypernode-deductive-only sup) (not (interest-deductive interest)))
               (let ((nodes (convert-from-deductive-only sup)))
                 (dolist (C nodes)
                   (apply-forwards-defeasible-reasons C))))
@@ -2082,7 +2082,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
 (defun queue-non-reductio-supposition
   (supposition instance-supposition e-vars discount-factor interest)
   (let* ((sequent (list instance-supposition supposition))
-         (deductive-only (deductive-interest interest)))
+         (deductive-only (interest-deductive interest)))
     (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
     (let* ((complexity
              (max 1 (* 2 (formula-complexity supposition))))
@@ -2116,7 +2116,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
       (setf (hypernode-non-reductio-supposition node) (list (cons (mem1 instance-supposition) node)))
       (setf (hypernode-queue-node node) queue-node)
       (store-hypernode node (sequent-formula sequent))
-      (push node (generated-suppositions interest))
+      (push node (interest-generated-suppositions interest))
       (push node *hypergraph*)
       (push node *non-reductio-supposition-nodes*)
       (if *log-on* (push node *reasoning-log*))
@@ -2312,7 +2312,7 @@ Premises are queued for immediate retrieval. |#
   (/ (percept-clarity percept) (complexity (percept-content percept))))
 
 (defun discharged? (interest degree)
-  (let ((discharged-degree (discharged-degree interest)))
+  (let ((discharged-degree (interest-discharged-degree interest)))
     (and discharged-degree
          (>= discharged-degree degree))))
 
@@ -2345,8 +2345,8 @@ from preference. |#
 (defun interest-link-priority (link interest-priority interest)
   (if (or (link-defeat-status link)
           (let ((rn (link-resultant-interest link)))
-            (discharged? rn (maximum-degree-of-interest rn)))
-          (and interest (discharged? interest (maximum-degree-of-interest interest))))
+            (discharged? rn (interest-maximum-degree-of-interest rn)))
+          (and interest (discharged? interest (interest-maximum-degree-of-interest interest))))
     *base-priority*
     interest-priority))
 
@@ -3082,7 +3082,7 @@ to have an undercutting defeater.  |#
            (let ((interests (interests-for (neg formula) nil)))
              (when interests
                (find-if #'(lambda (i)
-                            (and (null (deductive-interest i))
+                            (and (null (interest-deductive i))
                                  (== (interest-supposition i) supposition)))
                         interests)))))
     (cond ((null rebutting-interest)
@@ -4036,18 +4036,18 @@ queued, it goes on the front of the inference-queue. |#
   ; (when (eq interest (interest 8)) (break))
   (pull interest *unprocessed-interests*)
   (cond
-    ((and (direct-reductio-interest interest)
-          (not (some #'(lambda (N)  (member (car N) *used-nodes*)) (direct-reductio-interest interest))))
-     (let ((N (caar (direct-reductio-interest interest))))
+    ((and (interest-direct-reductio interest)
+          (not (some #'(lambda (N)  (member (car N) *used-nodes*)) (interest-direct-reductio interest))))
+     (let ((N (caar (interest-direct-reductio interest))))
        (push N *used-nodes*) (push N *unprocessed-nodes*)))
-    ((not (some #'(lambda (N) (member N *used-nodes*)) (discharging-nodes interest)))
+    ((not (some #'(lambda (N) (member N *used-nodes*)) (interest-discharging-nodes interest)))
      (let ((link (find-if #'(lambda (L) (every #'(lambda (N) (member N *used-interests*)) (link-interests L)))
                           (interest-left-links interest))))
        (when (null link)
          (setf link (find-if #'(lambda (L) (every #'(lambda (N) (member N *used-interests*)) (link-interests L)))
-                             (cancelled-left-links interest))))
+                             (interest-cancelled-left-links interest))))
        (when (null link) (setf link (car (interest-left-links interest))))
-       (when (null link) (setf link (car (cancelled-left-links interest))))
+       (when (null link) (setf link (car (interest-cancelled-left-links interest))))
        (when link
          (dolist (N (link-interests link))
            (when (not (member N *used-interests*))
@@ -4065,13 +4065,13 @@ queued, it goes on the front of the inference-queue. |#
 ;                  #'(lambda (L)
 ;                        (and
 ;                          (member (link-resultant-interest L) used-interests)
-;                          (some #'(lambda (n) (member n used-nodes)) (discharging-nodes (link-interest L)))))
+;                          (some #'(lambda (n) (member n used-nodes)) (interest-discharging-nodes (link-interest L)))))
 ;                  (interest-right-links in))))
 ;       (when (null L)
 ;            (setf L
 ;                     (find-if
 ;                       #'(lambda (L)
-;                             (some #'(lambda (n) (member n used-nodes)) (discharging-nodes (link-interest L))))
+;                             (some #'(lambda (n) (member n used-nodes)) (interest-discharging-nodes (link-interest L))))
 ;                       (interest-right-links in))))
 ;       (when (null L)
 ;            (setf L (mem1
@@ -4162,7 +4162,7 @@ queued, it goes on the front of the inference-queue. |#
                                (mem sup (a-range (hypernode-reductio-ancestors node*)))
                                (not (mem sup (a-range (hypernode-reductio-ancestors n))))))
                          (a-range (hypernode-reductio-ancestors node*)))))
-              ;; (generated-suppositions (car DI)))))
+              ;; (interest-generated-suppositions (car DI)))))
               (when rs
                 (princ " as a result of inferring node #") (princ (hypernode-number node*))
                 (princ " from") (terpri) (princ "  reductio-supposition #")
@@ -4173,7 +4173,7 @@ queued, it goes on the front of the inference-queue. |#
             (subset
               #'(lambda (in)
                   (and
-                    (member n (discharging-nodes in))
+                    (member n (interest-discharging-nodes in))
                     (or
                       (some
                         #'(lambda (dr)
@@ -4186,7 +4186,7 @@ queued, it goes on the front of the inference-queue. |#
                                              (member (car dr) (hyperlink-basis SL))))
                                     (hypernode-hyperlinks pn)))
                               proof-nodes))
-                        (direct-reductio-interest in))
+                        (interest-direct-reductio in))
                       (some #'(lambda (L)
                                 (and
                                   (link-discharged L)
@@ -4212,12 +4212,12 @@ queued, it goes on the front of the inference-queue. |#
                     (subset
                       #'(lambda (in)
                           (and
-                            (member n (discharging-nodes in))
+                            (member n (interest-discharging-nodes in))
                             (not
                               (some
                                 #'(lambda (dn)
                                     (strongly-discharging-node dn in proof-nodes interests-discharged))
-                                (discharging-nodes in)))))
+                                (interest-discharging-nodes in)))))
                       (set-difference interests-used DI)))
               (cond
                 ((> (length interests) 1)
@@ -4241,8 +4241,8 @@ queued, it goes on the front of the inference-queue. |#
     (princ "               NOT USED IN PROOF"))
   (terpri)
   (princ "                                        ")
-  (when (deductive-interest interest) (princ "deductive "))
-  (when (reductio-interest interest) (princ "reductio "))
+  (when (interest-deductive interest) (princ "deductive "))
+  (when (interest-reductio interest) (princ "reductio "))
   (princ "interest: ") (prinp (interest-formula interest))
   (when (interest-supposition interest)
     (princ "    supposition: ")
@@ -4256,7 +4256,7 @@ queued, it goes on the front of the inference-queue. |#
     (when (and (not (query-p (link-resultant-interest L))) (link-discharged L)
                (member (link-resultant-interest L) used-interests))
       (princ "                                        For ")
-      (when (reductio-interest (link-resultant-interest L)) (princ "reductio "))
+      (when (interest-reductio (link-resultant-interest L)) (princ "reductio "))
       (princ "interest ")
       (princ (interest-number (link-resultant-interest L)))
       (princ " by ") (princ (link-rule L))
@@ -4284,7 +4284,7 @@ queued, it goes on the front of the inference-queue. |#
                                 nodes) 40)))))
       (terpri)))
   (let ((direct-reductio-interest
-          (subset #'(lambda (n) (assoc n (direct-reductio-interest interest)))
+          (subset #'(lambda (n) (assoc n (interest-direct-reductio interest)))
                   used-nodes)))
     (cond ((> (length direct-reductio-interest) 1)
            (princ "                                        Reductio interest generated by nodes ")
@@ -4297,7 +4297,7 @@ queued, it goes on the front of the inference-queue. |#
           (subset
             #'(lambda (dn)
                 (strongly-discharging-node dn interest proof-nodes enabling-interests))
-            (intersection (discharging-nodes interest) used-nodes)))
+            (intersection (interest-discharging-nodes interest) used-nodes)))
         (defeatees
           (subset #'(lambda (L)
                       (member (hyperlink-target L) proof-nodes))
@@ -4333,7 +4333,7 @@ queued, it goes on the front of the inference-queue. |#
       ((not (some #'(lambda (L) (and (query-p (link-resultant-interest L)) (link-discharged L)))
                   (interest-right-links interest)))
        (setf discharging-nodes
-             (intersection (discharging-nodes interest) used-nodes))
+             (intersection (interest-discharging-nodes interest) used-nodes))
        (cond
          (discharging-nodes
            (princ "                                        This interest is discharged by")
@@ -4365,7 +4365,7 @@ queued, it goes on the front of the inference-queue. |#
                            (member (car dr) (hyperlink-basis SL))))
                   (hypernode-hyperlinks pn)))
             proof-nodes))
-      (direct-reductio-interest interest))
+      (interest-direct-reductio interest))
     (some #'(lambda (L)
               (and
                 (link-discharged L)
@@ -4422,8 +4422,8 @@ queued, it goes on the front of the inference-queue. |#
 (defun full-display-used-interest (interest)
   (princ "                                        || # ") (princ (interest-number interest)) (terpri)
   (princ "                                        || ")
-  (when (deductive-interest interest) (princ "deductive "))
-  (when (reductio-interest interest) (princ "reductio "))
+  (when (interest-deductive interest) (princ "deductive "))
+  (when (interest-reductio interest) (princ "reductio "))
   (princ "interest: ") (prinp (interest-formula interest))
   (when (interest-supposition interest)
     (princ "    supposition: ")
@@ -4436,12 +4436,12 @@ queued, it goes on the front of the inference-queue. |#
   (dolist (L (interest-right-links interest))
     (when (and (link-discharged L) (not (query-p (link-resultant-interest L))))
       (princ "                                        || For ")
-      (when (reductio-interest (link-resultant-interest L)) (princ "reductio "))
+      (when (interest-reductio (link-resultant-interest L)) (princ "reductio "))
       (princ "interest ")
       (princ (interest-number (link-resultant-interest L)))
       (princ " by ") (princ (link-rule L))
       (terpri)))
-  (let ((direct-reductio-interest (direct-reductio-interest interest)))
+  (let ((direct-reductio-interest (interest-direct-reductio interest)))
     (cond ((> (length direct-reductio-interest) 1)
            (princ "                                        || Reductio interest generated by nodes ")
            (print-list (mapcar #'hypernode-number direct-reductio-interest) 40) (terpri))
@@ -4584,21 +4584,21 @@ queued, it goes on the front of the inference-queue. |#
              (when interests
                (find-if #'(lambda (i)
                             (and (null (interest-supposition i))
-                                 (eq (deductive-interest i) (query-deductive query))))
+                                 (eq (interest-deductive i) (query-deductive query))))
                         interests))))
          (negative-interest
            (let ((interests (interests-for (neg formula) nil)))
              (when interests
                (find-if #'(lambda (i)
                             (and (null (interest-supposition i))
-                                 (eq (deductive-interest i) (query-deductive query))))
+                                 (eq (interest-deductive i) (query-deductive query))))
                         interests)))))
     (cond (positive-interest
             (setf (interest-degree-of-interest positive-interest)
                   (min (query-strength query) (interest-degree-of-interest positive-interest)))
-            (setf (maximum-degree-of-interest positive-interest)
-                  (max (query-strength query) (maximum-degree-of-interest positive-interest)))
-            (setf (interest-priority positive-interest) (maximum-degree-of-interest positive-interest))
+            (setf (interest-maximum-degree-of-interest positive-interest)
+                  (max (query-strength query) (interest-maximum-degree-of-interest positive-interest)))
+            (setf (interest-priority positive-interest) (interest-maximum-degree-of-interest positive-interest))
             (readopt-interest positive-interest nil)
             (setf (link-interest link) positive-interest)
             (push link (interest-right-links positive-interest))
@@ -4625,9 +4625,9 @@ queued, it goes on the front of the inference-queue. |#
                     :interest-supposition nil
                     :interest-right-links (list link)
                     :interest-degree-of-interest (query-strength query)
-                    :maximum-degree-of-interest (query-strength query)
+                    :interest-maximum-degree-of-interest (query-strength query)
                     :interest-priority (query-strength query)
-                    :deductive-interest (query-deductive query)))
+                    :interest-deductive (query-deductive query)))
             (store-interest positive-interest)
             (when *display?* (display-interest positive-interest))
             (when *log-on* (push positive-interest *reasoning-log*))
@@ -4652,9 +4652,9 @@ queued, it goes on the front of the inference-queue. |#
     (cond (negative-interest
             (setf (interest-degree-of-interest negative-interest)
                   (min (query-strength query) (interest-degree-of-interest negative-interest)))
-            (setf (maximum-degree-of-interest negative-interest)
-                  (max (query-strength query) (maximum-degree-of-interest negative-interest)))
-            (setf (interest-priority negative-interest) (maximum-degree-of-interest negative-interest))
+            (setf (interest-maximum-degree-of-interest negative-interest)
+                  (max (query-strength query) (interest-maximum-degree-of-interest negative-interest)))
+            (setf (interest-priority negative-interest) (interest-maximum-degree-of-interest negative-interest))
             (readopt-interest negative-interest nil)
             (setf (link-interest link) negative-interest)
             (push link (interest-right-links negative-interest))
@@ -4681,9 +4681,9 @@ queued, it goes on the front of the inference-queue. |#
                     :interest-supposition nil
                     :interest-right-links (list link)
                     :interest-degree-of-interest (query-strength query)
-                    :maximum-degree-of-interest (query-strength query)
+                    :interest-maximum-degree-of-interest (query-strength query)
                     :interest-priority (query-strength query)
-                    :deductive-interest (query-deductive query)))
+                    :interest-deductive (query-deductive query)))
             (store-interest negative-interest)
             (when *display?* (display-interest negative-interest))
             (when *log-on* (push negative-interest *reasoning-log*))
@@ -4729,14 +4729,14 @@ queued, it goes on the front of the inference-queue. |#
              (when interests
                (find-if #'(lambda (i)
                             (and (null (interest-supposition i))
-                                 (eq (deductive-interest i) (query-deductive query))))
+                                 (eq (interest-deductive i) (query-deductive query))))
                         interests)))))
     (cond (interest
             (setf (interest-degree-of-interest interest)
                   (min (query-strength query) (interest-degree-of-interest interest)))
-            (setf (maximum-degree-of-interest interest)
-                  (max (query-strength query) (maximum-degree-of-interest interest)))
-            (setf (interest-priority interest) (maximum-degree-of-interest interest))
+            (setf (interest-maximum-degree-of-interest interest)
+                  (max (query-strength query) (interest-maximum-degree-of-interest interest)))
+            (setf (interest-priority interest) (interest-maximum-degree-of-interest interest))
             (readopt-interest interest nil)
             (setf (link-interest link) interest)
             (push link (interest-right-links interest))
@@ -4763,9 +4763,9 @@ queued, it goes on the front of the inference-queue. |#
                     :interest-supposition nil
                     :interest-right-links (list link)
                     :interest-degree-of-interest (query-strength query)
-                    :maximum-degree-of-interest (query-strength query)
+                    :interest-maximum-degree-of-interest (query-strength query)
                     :interest-priority (query-strength query)
-                    :deductive-interest (query-deductive query)))
+                    :interest-deductive (query-deductive query)))
             (store-interest interest)
             (when *display?* (display-interest interest))
             (when *log-on* (push interest *reasoning-log*))
@@ -4820,11 +4820,11 @@ queued, it goes on the front of the inference-queue. |#
                    :interest-variables vars
                    :interest-right-links (list link)
                    :interest-degree-of-interest (query-strength query)
-                   :maximum-degree-of-interest (query-strength query)
+                   :interest-maximum-degree-of-interest (query-strength query)
                    :interest-priority (query-strength query)
-                   :discharge-condition
+                   :interest-discharge-condition
                    (if (query-?-constraint query) (funcall (query-?-constraint query) vars))
-                   :deductive-interest (query-deductive query))))
+                   :interest-deductive (query-deductive query))))
           (store-interest interest)
           (when *display?* (display-interest interest))
           (when *log-on* (push interest *reasoning-log*))
@@ -4858,9 +4858,9 @@ discharge-link. |#
   ;; (step (reason-backwards-from i p d))
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM: ") (princ interest) (terpri))
   (apply-backwards-reasons interest priority depth)
-  (when (and *use-reductio* (not (cancelled-interest interest)))
+  (when (and *use-reductio* (not (interest-cancelled interest)))
     (make-reductio-supposition interest depth)
-    (dolist (dr (direct-reductio-interest interest))
+    (dolist (dr (interest-direct-reductio interest))
       (let ((node (car dr))
             (match (cdr dr)))
         (discharge-retrospective-reductios node match interest 1)))
@@ -4877,7 +4877,7 @@ discharge-link. |#
          (let* ((i-list (interest-i-list interest))
                 (d-node (i-list-d-node i-list)))
            (reason-backwards-from-dominant-reason-nodes interest priority (1+ depth) d-node)))
-  (setf (last-processed-degree-of-interest interest) (interest-degree-of-interest interest)))
+  (setf (interest-last-processed-degree-of-interest interest) (interest-degree-of-interest interest)))
 
 (defun reason-backwards-from-dominant-reason-nodes (interest priority depth d-node)
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES ")
@@ -4892,14 +4892,14 @@ discharge-link. |#
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM-REASON-NODE ")
     (princ interest) (princ " and ") (princ d-node) (terpri))
   (dolist (reason (d-node-backwards-reasons d-node))
-    (when (cancelled-interest interest) (throw 'apply-backwards-reasons nil))
-    (when (or (not (deductive-interest interest)) (not (defeasible-rule reason)))
+    (when (interest-cancelled interest) (throw 'apply-backwards-reasons nil))
+    (when (or (not (interest-deductive interest)) (not (defeasible-rule reason)))
       (let ((strength (reason-strength reason)))
         (when
           (or (not (numberp strength))
               (and (>= strength (interest-degree-of-interest interest))
-                   (or (null (last-processed-degree-of-interest interest))
-                       (< strength (last-processed-degree-of-interest interest)))))
+                   (or (null (interest-last-processed-degree-of-interest interest))
+                       (< strength (interest-last-processed-degree-of-interest interest)))))
           (let ((reason-function (reason-function reason)))
             (cond
               (reason-function (funcall (reason-function reason) interest (1+ depth) priority))
@@ -4929,14 +4929,14 @@ discharge-link. |#
   (when *trace* (indent depth) (princ "REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE ")
     (princ interest) (princ " and ") (princ d-node) (terpri))
   (dolist (reason (d-node-degenerate-backwards-reasons d-node))
-    (when (cancelled-interest interest) (throw 'apply-backwards-reasons nil))
-    (when (or (not (deductive-interest interest)) (not (defeasible-rule reason)))
+    (when (interest-cancelled interest) (throw 'apply-backwards-reasons nil))
+    (when (or (not (interest-deductive interest)) (not (defeasible-rule reason)))
       (let ((strength (reason-strength reason)))
         (when
           (or (not (numberp strength))
               (and (>= strength (interest-degree-of-interest interest))
-                   (or (null (last-processed-degree-of-interest interest))
-                       (< strength (last-processed-degree-of-interest interest)))))
+                   (or (null (interest-last-processed-degree-of-interest interest))
+                       (< strength (interest-last-processed-degree-of-interest interest)))))
           (let ((reason-function (reason-function reason)))
             (cond
               (reason-function (funcall (reason-function reason) interest (1+ depth) priority))
@@ -4977,7 +4977,7 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
   ; (when (equal interest (interest 9)) (break))
   ;; (step (make-reductio-supposition (interest 9) 0))
   (when
-    (not (cancelled-interest interest))
+    (not (interest-cancelled interest))
     (let ((q (interest-formula interest))
           (X (interest-supposition interest))
           (i-list (interest-i-list interest)))
@@ -5015,14 +5015,14 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
               (t (augment-inherited-non-reductio-suppositions interest)))))))
 
 (defun augment-inherited-non-reductio-suppositions (interest &optional nodes interests)
-  (dolist (node (generating-nodes interest))
+  (dolist (node (interest-generating-nodes interest))
     (when (not (member node nodes))
       (push node nodes)
       (dolist (R (hypernode-non-reductio-supposition node))
         (pushnew (cdr R) *inherited-non-reductio-suppositions*))
       (dolist (in (hypernode-generating-interests node))
         (when (and (not (member in interests))
-                   (not (direct-reductio-interest interest)))
+                   (not (interest-direct-reductio interest)))
           (push in interests)
           (dolist (R (non-reductio-interest-supposition in nodes interests))
             (pushnew R *inherited-non-reductio-suppositions*))))))
@@ -5036,12 +5036,12 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
 
 (defun non-reductio-interest-supposition (interest &optional nodes interests)
   (let ((sup nil))
-    (dolist (node (generating-nodes interest))
+    (dolist (node (interest-generating-nodes interest))
       (when (not (member node nodes))
         (push node nodes)
         (dolist (R (hypernode-non-reductio-supposition node))
           (pushnew (cdr R) sup))))
-    (dolist (dr (direct-reductio-interest interest))
+    (dolist (dr (interest-direct-reductio interest))
       (let ((node (car dr)))
         (when (not (member node nodes))
           (push node nodes)
@@ -5090,7 +5090,7 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
          (push N *hypergraph*)
          (store-hypernode-with-c-list N P c-list)
          (if *log-on* (push N *reasoning-log*))
-         (push N (generated-suppositions interest))
+         (push N (interest-generated-suppositions interest))
          (when *display?* (display-unsupported-hypernode N))
          (queue-for-inference N)
          (when (and *display?* *graphics-on*) (when *graphics-pause* (pause-graphics))
@@ -5178,7 +5178,7 @@ link being discharged.  |#
                           (is-supposition-variables is) unifier)))
                   (dolist (u unifiers)
                     (let ((u* (merge-unifiers* unifier u)))
-                      (when (cancelled-interest (is-target-interest is))
+                      (when (interest-cancelled (is-target-interest is))
                         (return-from reason-from-interest-scheme))
                       (when
                         (constrained-assignment
@@ -5297,7 +5297,7 @@ link being discharged.  |#
              (premise
                (if (backwards-premise-p premise0) premise0
                  (funcall premise0
-                          (defeater-binding resultant-interest) binding)))
+                          (interest-defeater-binding resultant-interest) binding)))
              (discharge (if (and (backwards-reason-p reason) (reason-discharge reason))
                           (remove-double-negation
                             (match-sublis binding (reason-discharge reason))))))
@@ -5332,9 +5332,9 @@ link being discharged.  |#
                                               (cons discharge supposition) supposition)
                           :link-strength
                           (cond ((eq reason :answer)
-                                 (maximum-degree-of-interest resultant-interest))
+                                 (interest-maximum-degree-of-interest resultant-interest))
                                 ((numberp (reason-strength reason)) (reason-strength reason))
-                                (t (maximum-degree-of-interest resultant-interest)))
+                                (t (interest-maximum-degree-of-interest resultant-interest)))
                           :link-generating-node generating-node
                           :link-binding new-binding
                           )))
@@ -5343,7 +5343,7 @@ link being discharged.  |#
                   (compute-link-interest
                     link (bp-condition1 premise) (bp-condition2 premise)
                     (interest-degree-of-interest resultant-interest)
-                    (maximum-degree-of-interest resultant-interest) depth priority
+                    (interest-maximum-degree-of-interest resultant-interest) depth priority
                     (append new-vars new-variables) (bp-text-condition premise))
                   (discharge-link
                     link (1+ depth) (interest-degree-of-interest resultant-interest)
@@ -5378,7 +5378,7 @@ link being discharged.  |#
                     supposition degree max-degree depth priority interests
                     :new-variables (append new-vars new-variables)))
                  ((funcall+
-                    (discharge-condition (link-resultant-interest link0)) nil (list t t)
+                    (interest-discharge-condition (link-resultant-interest link0)) nil (list t t)
                     (subst (cdr match) (car match)
                            (link-binding (car (interest-right-links (link-resultant-interest link0))))))
                   (cond
@@ -5421,9 +5421,9 @@ link being discharged.  |#
                     :link-supposition supposition
                     :link-strength
                     (cond ((eq (link-rule link0) :answer)
-                           (maximum-degree-of-interest (link-resultant-interest link0)))
+                           (interest-maximum-degree-of-interest (link-resultant-interest link0)))
                           ((numberp (reason-strength (link-rule link0))) (reason-strength (link-rule link0)))
-                          (t (maximum-degree-of-interest (link-resultant-interest link0))))
+                          (t (interest-maximum-degree-of-interest (link-resultant-interest link0))))
                     :link-generating-node (link-generating-node link0)
                     :link-binding new-binding
                     :link-generating link0
@@ -5517,14 +5517,14 @@ link being discharged.  |#
       (cond
         (interest
           (setf (interest-degree-of-interest interest) (min (interest-degree-of-interest interest) degree))
-          (setf (maximum-degree-of-interest interest)
-                (max (maximum-degree-of-interest interest) max-degree))
-          (when (not (reductio-interest interest))
-            (setf (reductio-interest interest) (reductio-interest (link-resultant-interest link))))
+          (setf (interest-maximum-degree-of-interest interest)
+                (max (interest-maximum-degree-of-interest interest) max-degree))
+          (when (not (interest-reductio interest))
+            (setf (interest-reductio interest) (interest-reductio (link-resultant-interest link))))
           (setf (interest-priority interest) (max (interest-priority interest) interest-priority))
           (let ((gn (link-generating-node link)))
             (when gn
-              (pushnew gn (generating-nodes interest))
+              (pushnew gn (interest-generating-nodes interest))
               (push interest (hypernode-generated-interests gn))))
           (if (interest-right-links interest)
             (setf (interest-right-links interest) (reverse (cons link (reverse (interest-right-links interest)))))
@@ -5539,8 +5539,8 @@ link being discharged.  |#
           (setf (interest-priority interest) interest-priority)
           ))
       (setf (link-interest link) interest)
-      ; (dolist (p (decision-plans (link-resultant-interest link)))
-      ;     (pushnew p (decision-plans interest)))
+      ; (dolist (p (interest-decision-plans (link-resultant-interest link)))
+      ;     (pushnew p (interest-decision-plans interest)))
       )))
 
 #| X and Y are sets of sequents, and every member of X subsumes some member of Y. |#
@@ -5586,10 +5586,10 @@ link being discharged.  |#
          (if i-list
            (find-if
              #'(lambda (i)
-                 (and (or condition (null (discharge-condition i)))
+                 (and (or condition (null (interest-discharge-condition i)))
                       (funcall* condition i) (== (interest-supposition i) sup)
                       (or (null link)
-                          (eq (deductive-interest i) (deductive-interest (link-resultant-interest link))))))
+                          (eq (interest-deductive i) (interest-deductive (link-resultant-interest link))))))
              (i-list-interests i-list)))))
       (when (and (null interest) (not (eq match t))) (setf i-list nil))
       (values interest i-list match match*))))
@@ -5619,17 +5619,17 @@ the resultant-interest. |#
                       (match-sublis match* unifier0)))
                (dolist (node (c-list-nodes c-list))
                  (when (and (funcall+
-                              (discharge-condition interest) node unifier
+                              (interest-discharge-condition interest) node unifier
                               (if spec (cons (cons spec node) (link-binding link)) (link-binding link)))
                             (or (not (hypernode-deductive-only node)) deductive-rule?)
-                            (or (non-reductio-interest interest) (deductive-node node)))
+                            (or (interest-non-reductio? interest) (deductive-node node)))
                    (when (and (deductive-node node)
                               (null condition)
                               (eq (mem2 unifier) t)
                               (subsetp= (match-sublis (mem1 unifier) (hypernode-supposition node))
                                         (link-supposition link)))
                      (setf hypernode-list (list (cons node unifier)))
-                     (setf (cancelling-node interest) node)
+                     (setf (interest-cancelling-node interest) node)
                      (return-from nodes))
                    (when (>= (current-maximal-degree-of-justification node) degree)
                      (push (cons node unifier) hypernode-list))))))
@@ -5643,14 +5643,14 @@ the resultant-interest. |#
         (when unifiers (setf (link-discharged link) t))
         (dolist (u unifiers)
           (let ((u* (merge-unifiers* unifier u)))
-            (when (cancelled-interest (link-interest link)) (return-from discharge-link))
+            (when (interest-cancelled (link-interest link)) (return-from discharge-link))
             (when
               (constrained-assignment
                 u* (hypernode-supposition-variables node) (interest-variables (link-interest link)))
               (when *display?*
                 (princ "                                        ") (princ "Hypernode #") (princ (hypernode-number node))
                 (princ " discharges interest #") (princ (interest-number interest)) (terpri) (terpri))
-              (pushnew node (discharging-nodes interest))
+              (pushnew node (interest-discharging-nodes interest))
               ; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
               (let
                 ((binding
@@ -5703,10 +5703,10 @@ the resultant-interest. |#
                    (construct-interest-link
                      link node instantiations binding (link-remaining-premises link) supposition
                      (interest-degree-of-interest (link-interest link))
-                     (maximum-degree-of-interest (link-interest link)) (1+ depth) priority interests))
+                     (interest-maximum-degree-of-interest (link-interest link)) (1+ depth) priority interests))
                   ((or
                      (some #'(lambda (L) (eq (link-rule L) ug)) (interest-left-links (link-resultant-interest link)))
-                     (funcall+ (discharge-condition interest) nil u binding))
+                     (funcall+ (interest-discharge-condition interest) nil u binding))
                    (cond
                      ((conclusions-function reason)
                       (dolist (P (funcall (conclusions-function reason) binding))
@@ -5720,14 +5720,14 @@ the resultant-interest. |#
                          instantiations (discount-factor reason) depth nil (defeasible-rule reason)
                          :binding binding :interest (link-resultant-interest link) :link link :clues (link-clues link)))
                      )))))))
-        (when (and (cancelling-node interest) (every #'link-discharged (interest-right-links interest)))
+        (when (and (interest-cancelling-node interest) (every #'link-discharged (interest-right-links interest)))
           (cancel-interest-in interest (if *trace* depth 0)))
         (when (and
                 unifiers
-                (not (cancelled-interest interest))
+                (not (interest-cancelled interest))
                 (equal (hypernode-formula node) (interest-formula interest))
                 (subsetp= (hypernode-supposition node) (interest-supposition interest))
-                (dolist (sup-node (generated-suppositions interest))
+                (dolist (sup-node (interest-generated-suppositions interest))
                   (when
                     (and
                       (equal (hypernode-generating-interests sup-node) (list interest))
@@ -5806,8 +5806,8 @@ the resultant-interest. |#
     (when interests
       (let ((sup (match-sublis match (sequent-supposition S))))
         (find-if #'(lambda (i)
-                     (and (eq (deductive-interest i)
-                              (deductive-interest (link-resultant-interest link)))
+                     (and (eq (interest-deductive i)
+                              (interest-deductive (link-resultant-interest link)))
                           (funcall* (mem1 condition) i)
                           (== (interest-supposition i) sup)))
                  interests)))))
@@ -5827,13 +5827,13 @@ the resultant-interest. |#
              :interest-supposition-variables
              (unionmapcar= #'formula-hypernode-variables (link-supposition link))
              :interest-right-links (list link)
-             :generating-nodes (if gn (list gn))
+             :interest-generating-nodes (if gn (list gn))
              :interest-degree-of-interest degree
-             :text-discharge-condition text-condition
-             :maximum-degree-of-interest maximum-degree
-             :deductive-interest (deductive-interest (link-resultant-interest link))
+             :interest-text-discharge-condition text-condition
+             :interest-maximum-degree-of-interest maximum-degree
+             :interest-deductive (interest-deductive (link-resultant-interest link))
              :interest-defeat-status (link-defeat-status link)
-             :reductio-interest (reductio-interest (link-resultant-interest link)))))
+             :interest-reductio (interest-reductio (link-resultant-interest link)))))
     (funcall* condition interest)
     (if gn (push interest (hypernode-generated-interests gn)))
     (compute-interest-supposition-nodes interest)
@@ -5846,7 +5846,7 @@ the resultant-interest. |#
 
 (defun compute-interest-supposition-nodes (interest)
   (when (interest-supposition interest)
-    (dolist (n (generating-nodes interest))
+    (dolist (n (interest-generating-nodes interest))
       (when (not (member n (interest-supposition-nodes interest)))
         (push n (interest-supposition-nodes interest))
         (dolist (in (hypernode-generating-interests n))
@@ -5873,7 +5873,7 @@ the resultant-interest. |#
                 (setf *inference-queue*
                       (ordered-insert Q (remove Q *inference-queue*) #'i-preferred)))))
           (t
-            (let ((old-degree (last-processed-degree-of-interest interest)))
+            (let ((old-degree (interest-last-processed-degree-of-interest interest)))
               (when (or (null old-degree) (< degree old-degree))
                 (queue-interest interest (interest-link-priority link interest-priority interest))
                 ))))))
@@ -5897,7 +5897,7 @@ the resultant-interest. |#
                   (find-if
                     #'(lambda (c)
                         (and (>= (current-maximal-degree-of-justification c) degree)
-                             (funcall+ (discharge-condition interest) c unifier binding)
+                             (funcall+ (interest-discharge-condition interest) c unifier binding)
                              (setf unifiers
                                    (appropriately-related-suppositions c interest unifier))))
                     (c-list-nodes (mem1 cl))))
@@ -5915,7 +5915,7 @@ interest-supposition. |#
   (let* ((i-sup (match-sublis (mem2 unifier) (interest-supposition interest)))
          (c-vars (match-sublis (mem1 unifier) (hypernode-supposition-variables node)))
          (i-vars (match-sublis (mem2 unifier) (interest-variables interest))))
-    (if (and (not (query-p target)) (reductio-interest target))
+    (if (and (not (query-p target)) (interest-reductio target))
       (let ((domain nil))
         (dolist (S (hypernode-non-reductio-supposition node))
           (let ((sup (cdr S)))
@@ -5928,7 +5928,7 @@ interest-supposition. |#
         i-sup c-vars i-vars))))
 
 (defun appropriately-related-reductio-suppositions (node interest unifier)
-  (when (and (not (query-p interest)) (reductio-interest interest))
+  (when (and (not (query-p interest)) (interest-reductio interest))
     (let* ((i-sup (match-sublis (mem2 unifier) (interest-supposition interest)))
            (c-vars (match-sublis (mem1 unifier) (hypernode-supposition-variables node)))
            (i-vars (match-sublis (mem2 unifier) (interest-variables interest))))
@@ -5958,7 +5958,7 @@ hypernode-supposition of node*. |#
   (let* ((i-sup (match-sublis (mem2 unifier) supposition))
          (c-vars (match-sublis (mem1 unifier) (hypernode-supposition-variables node)))
          (i-vars (match-sublis (mem2 unifier) supposition-variables)))
-    (if (and (not (query-p interest)) (reductio-interest interest))
+    (if (and (not (query-p interest)) (interest-reductio interest))
       (let ((domain nil))
         (dolist (S (hypernode-non-reductio-supposition node))
           (let ((sup (cdr S)))
@@ -6216,8 +6216,8 @@ hypernode-supposition of node*. |#
                     (find-if #'(lambda (i) (== (interest-supposition i) sup)) interests))))))
         (cond (interest
                 (setf (interest-degree-of-interest interest) (min (interest-degree-of-interest interest) degree))
-                (setf (maximum-degree-of-interest interest)
-                      (max (maximum-degree-of-interest interest) degree))
+                (setf (interest-maximum-degree-of-interest interest)
+                      (max (interest-maximum-degree-of-interest interest) degree))
                 (setf (interest-priority interest) (max (interest-priority interest) degree)))
               (t
                 (setf interest (construct-new-interest-for-sequent S degree degree))
@@ -6231,11 +6231,11 @@ hypernode-supposition of node*. |#
                       (princ " discharges interest #")
                       (princ (interest-number interest))
                       (terpri) (terpri))
-                    (pushnew conclusion (discharging-nodes interest))
-                    (when (and (not (cancelled-interest interest))
+                    (pushnew conclusion (interest-discharging-nodes interest))
+                    (when (and (not (interest-cancelled interest))
                                (equal (hypernode-formula conclusion) (interest-formula interest))
                                (subsetp= (hypernode-supposition conclusion) (interest-supposition interest))
-                               (dolist (sup-node (generated-suppositions interest))
+                               (dolist (sup-node (interest-generated-suppositions interest))
                                  (when (and
                                          (equal (hypernode-generating-interests sup-node) (list interest))
                                          (deductive-in conclusion sup-node))
@@ -6254,7 +6254,7 @@ hypernode-supposition of node*. |#
             :interest-supposition-variables
             (unionmapcar= #'formula-hypernode-variables (sequent-supposition S))
             :interest-degree-of-interest degree
-            :maximum-degree-of-interest maximum-degree)))
+            :interest-maximum-degree-of-interest maximum-degree)))
     (compute-interest-supposition-nodes interest)
     (store-interest interest)
     (when *display?* (display-interest interest))
@@ -6562,7 +6562,7 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
                         node (sequent-formula sequent) c-list))
                     (when interest
                       (push interest (hypernode-enabling-interests node))
-                      (push node (enabled-nodes interest)))
+                      (push node (interest-enabled-nodes interest)))
                     (when *trace* (indent depth) (princ "DRAW CONCLUSION: ")
                       (princ node) (terpri))
                     (when (read-char-no-hang) (clear-input) (throw 'die nil))
@@ -7043,7 +7043,7 @@ generating nodes are retrieved from the inference-queue. |#
                 (and (deductive-node C)
                      (or
                        (null (hypernode-enabling-interests C))
-                       (some #'(lambda (in) (not (cancelled-interest in))) (hypernode-enabling-interests C))))
+                       (some #'(lambda (in) (not (interest-cancelled in))) (hypernode-enabling-interests C))))
                 (generate-reductio-interests C (1+ depth) interests)))))))
     (when (c-list-reductio-interests (hypernode-c-list node))
       (generate-reductio-interests node depth interests))))
@@ -7057,7 +7057,7 @@ generating nodes are retrieved from the inference-queue. |#
         (not (eq (hypernode-justification node) :reductio-supposition))
         (c-list-reductio-interests (hypernode-c-list node))
         (or (null enabling-interests)
-            (some #'(lambda (in) (not (cancelled-interest in))) enabling-interests)))
+            (some #'(lambda (in) (not (interest-cancelled in))) enabling-interests)))
       (generate-reductio-interests node depth d-interests))))
 
 (defun generate-reductio-interests (node depth d-interests)
@@ -7090,10 +7090,10 @@ generating nodes are retrieved from the inference-queue. |#
                          :interest-supposition-variables (supposition-variables sup)
                          :interest-degree-of-interest degree
                          :interest-priority priority
-                         :maximum-degree-of-interest degree
-                         :reductio-interest t
-                         :direct-reductio-interest (list (cons node substitution))
-                         :non-reductio-interest nil
+                         :interest-maximum-degree-of-interest degree
+                         :interest-reductio t
+                         :interest-direct-reductio (list (cons node substitution))
+                         :interest-non-reductio? nil
                          ))
                  (push interest (hypernode-generated-direct-reductio-interests node))
                  (if i-list
@@ -7113,9 +7113,9 @@ generating nodes are retrieved from the inference-queue. |#
                  (queue-interest interest priority)
                  (push interest *direct-reductio-interests*))
                 (t
-                  (let ((direct-reductio-interest (direct-reductio-interest interest)))
+                  (let ((direct-reductio-interest (interest-direct-reductio interest)))
                     (pushnew (cons node (merge-matches* substitution match))
-                             (direct-reductio-interest interest))
+                             (interest-direct-reductio interest))
                     (pushnew interest (hypernode-generated-direct-reductio-interests node))
                     (when (not direct-reductio-interest)
                       (push interest *direct-reductio-interests*)
@@ -7132,22 +7132,22 @@ generating nodes are retrieved from the inference-queue. |#
 
 (defun change-to-reductio-interest (interest depth d-interests)
   ; (when (equal interest (interest 6)) (break))
-  (when (not (reductio-interest interest))
-    (setf (reductio-interest interest) t)
+  (when (not (interest-reductio interest))
+    (setf (interest-reductio interest) t)
     (discharge-new-reductio-interest interest (1+ depth) d-interests)
     (dolist (L (interest-left-links interest))
       (change-to-reductio-interest (link-interest L) depth d-interests))))
 
 #| This assumes that N is a reductio-supposition-node. |#
 (defun base-reductio-supposition (N)
-  (not (some #'reductio-interest (hypernode-generating-interests N))))
+  (not (some #'interest-reductio (hypernode-generating-interests N))))
 
 #| This assumes that N is a reductio-supposition-node.  The second conjunct could be
 made more efficient by storing the appropriate information in a slot
 non-reductio-generating-interests. |#
 (defun strictly-base-reductio-supposition (N)
   (and
-    (not (some #'reductio-interest (hypernode-generating-interests N)))
+    (not (some #'interest-reductio (hypernode-generating-interests N)))
     (every #'(lambda (in) (equal (hypernode-formula N) (neg (interest-formula in))))
            (hypernode-generating-interests N))))
 
@@ -7239,7 +7239,7 @@ non-reductio-generating-interests. |#
   ;; (step (discharge-fortuitous-reductio-interests i d))
   (when *trace* (indent depth) (princ "DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS: ")
     (princ interest) (terpri))
-  (when (reductio-interest interest)
+  (when (interest-reductio interest)
     (dolist (n (interest-supposition-nodes interest))
       (when (deductive-node n)
         (dolist (c (c-list-contradictors (hypernode-c-list n)))
@@ -7271,7 +7271,7 @@ non-reductio-generating-interests. |#
       (discharge-fortuitous-reductios node d-interests (1+ depth))
       (dolist (il (hypernode-discharged-interests node))
         (let* ((interest (mem1 il))
-               (direct-reductio-interest (direct-reductio-interest interest))
+               (direct-reductio-interest (interest-direct-reductio interest))
                (unifier (mem2 il))  ;; this unifies node with interest
                (unifiers
                  (if (mem3 il)
@@ -7282,7 +7282,7 @@ non-reductio-generating-interests. |#
                      (and
                        (not (member interest d-interests))
                        (or new?
-                           (> (maximum-degree-of-interest interest) old-degree))
+                           (> (interest-maximum-degree-of-interest interest) old-degree))
                        (<= (interest-degree-of-interest interest)
                            (current-maximal-degree-of-justification node))))
             (dolist (dr direct-reductio-interest)
@@ -7347,7 +7347,7 @@ non-reductio-generating-interests. |#
       (discharge-fortuitous-reductios node d-interests (1+ depth))
       (dolist (il (hypernode-discharged-interests node))
         (let* ((interest (mem1 il))
-               (direct-reductio-interest (direct-reductio-interest interest))
+               (direct-reductio-interest (interest-direct-reductio interest))
                (unifier (mem2 il))
                (unifiers
                  (if (mem3 il)
@@ -7421,7 +7421,7 @@ non-reductio-generating-interests. |#
         (let ((degree (current-maximal-degree-of-justification node))
               (deductive? (deductive-node node)))
           (when (and
-                  (or deductive? (not (deductive-interest interest)))
+                  (or deductive? (not (interest-deductive interest)))
                   (<= (interest-degree-of-interest interest) degree)
                   (not (subsetp=
                          (match-sublis (mem1 unifier) (hypernode-supposition node))
@@ -7435,10 +7435,10 @@ non-reductio-generating-interests. |#
                    (Y1 (remove-duplicates=
                          (match-sublis
                            (mem1 unifier) (sublis new-vars (hypernode-supposition node))))))
-              (dolist (dr (direct-reductio-interest interest))
+              (dolist (dr (interest-direct-reductio interest))
                 (let ((node* (car dr))
                       (match (cdr dr)))
-                  (when (cancelled-interest interest)
+                  (when (interest-cancelled interest)
                     (return-from discharge-new-reductio-interest))
                   (let* ((new-vars
                            (mapcar #'(lambda (v) (cons v (make-interest-variable)))
@@ -7505,7 +7505,7 @@ non-reductio-generating-interests. |#
       (discharge-fortuitous-reductios node d-interests (1+ depth))
       (dolist (il (hypernode-discharged-interests node))
         (let* ((interest (mem1 il))
-               (direct-reductio-interest (direct-reductio-interest interest))
+               (direct-reductio-interest (interest-direct-reductio interest))
                (unifier (mem2 il))
                (unifiers (mem3 il))
                ;; rewrite supposition-variables to avoid collision with formula-variables
@@ -7520,7 +7520,7 @@ non-reductio-generating-interests. |#
           (when (and
                   (setdifference (interest-supposition interest)
                                  *skolem-free-suppositions*)
-                  (> (maximum-degree-of-interest interest) old-degree)
+                  (> (interest-maximum-degree-of-interest interest) old-degree)
                   (<= (interest-degree-of-interest interest)
                       (current-maximal-degree-of-justification node)))
             (dolist (dr direct-reductio-interest)
@@ -7593,7 +7593,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
              (Y*0 (remove-duplicates=
                     (match-sublis (mem2 unifier) (sublis new-vars Y0)))))
         (dolist (C nodes)
-          (when (cancelled-interest interest)
+          (when (interest-cancelled interest)
             (return-from discharge-retrospective-reductios))
           (when (<= (interest-degree-of-interest interest) (current-maximal-degree-of-justification C))
             (let* ((unifiers (appropriately-related-suppositions C interest unifier))
@@ -7705,7 +7705,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
             (or (null d-node)
                 (not (subsumed N-conclusion (list node node*) sequent NDA
                                non-reductio-supposition :reductio nil d-node)))
-            (pushnew node (discharging-nodes interest))
+            (pushnew node (interest-discharging-nodes interest))
             (when (null N-conclusion)
               (setf N-conclusion
                     (make-new-conclusion
@@ -7835,8 +7835,8 @@ sequent-supposition.  Basis is a list of conclusions. |#
                      :interest-supposition-variables (supposition-variables supposition)
                      :interest-defeatees (list link)
                      :interest-priority *base-priority*
-                     :defeater-binding (hyperlink-binding link)
-                     :generating-defeat-nodes (list (hyperlink-target link))))
+                     :interest-defeater-binding (hyperlink-binding link)
+                     :interest-generating-defeat-nodes (list (hyperlink-target link))))
              (store-interest undercutting-interest i-list)
              (pushnew undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
              (when *display?*
@@ -7852,7 +7852,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
             (t
               (readopt-interest undercutting-interest (list link))
               (push undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
-              (push (hyperlink-target link) (generating-defeat-nodes undercutting-interest))
+              (push (hyperlink-target link) (interest-generating-defeat-nodes undercutting-interest))
               (setf (interest-defeatees undercutting-interest)
                     (cons link (interest-defeatees undercutting-interest)))))
       (dolist (node (unifying-nodes undercutting-interest))
@@ -7863,7 +7863,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
             (princ (hyperlink-number link)) (terpri))
           (let ((DL (build-hyper-defeat-link node link)))
             (pushnew DL (hyperlink-defeaters link))
-            (pushnew node (discharging-nodes undercutting-interest))
+            (pushnew node (interest-discharging-nodes undercutting-interest))
             (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
 
 (defun make-rebutting-defeater (variables base formula supposition antecedent* link)
@@ -7887,7 +7887,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                      :interest-supposition-variables (supposition-variables supposition)
                      :interest-defeatees (list link)
                      :interest-priority *base-priority*
-                     :generating-defeat-nodes (list (hyperlink-target link))))
+                     :interest-generating-defeat-nodes (list (hyperlink-target link))))
              (store-interest rebutting-interest i-list)
              (pushnew rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
              (when *display?*
@@ -7905,7 +7905,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
             (t
               (readopt-interest rebutting-interest (list link))
               (push rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
-              (push (hyperlink-target link) (generating-defeat-nodes rebutting-interest))
+              (push (hyperlink-target link) (interest-generating-defeat-nodes rebutting-interest))
               (setf (interest-defeatees rebutting-interest)
                     (cons link (interest-defeatees rebutting-interest)))))
       (dolist (node (unifying-nodes rebutting-interest))
@@ -7916,7 +7916,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
             (princ (hyperlink-number link)) (terpri))
           (let ((DL (build-hyper-defeat-link node link)))
             (pushnew DL (hyperlink-defeaters link))
-            (pushnew node (discharging-nodes rebutting-interest))
+            (pushnew node (interest-discharging-nodes rebutting-interest))
             (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
 
 (defun instantiate-defeater (undercutting-interest defeater antecedent* link reverse-binding)
@@ -8132,7 +8132,7 @@ is the old maximal-degree-of-justification  |#
                  (interest-candidates
                    (subset
                      #'(lambda (N)
-                         (not (member node (discharging-nodes N))))
+                         (not (member node (interest-discharging-nodes N))))
                      (if (and interest (member interest (i-list-interests i-list)))
                        (cons interest (remove interest (i-list-interests i-list)))
                        (i-list-interests i-list)))))
@@ -8140,30 +8140,30 @@ is the old maximal-degree-of-justification  |#
                    (C-sup (match-sublis (mem1 unifier) (hypernode-supposition node))))
               (dolist (N interest-candidates)
                 (when
-                  (and (or (null reductio-only) (reductio-interest N))
+                  (and (or (null reductio-only) (interest-reductio N))
                        (not (hypernode-cancelled-node node))
                        (not (member N interests))
                        (or (eq N interest)
                            (and
                              (or new?
-                                 (> (maximum-degree-of-interest N) old-degree))
-                             (or (deductive-node node) (not (deductive-interest N)))
+                                 (> (interest-maximum-degree-of-interest N) old-degree))
+                             (or (deductive-node node) (not (interest-deductive N)))
                              (<= (interest-degree-of-interest N) degree)
                              (not (assoc N (hypernode-discharged-interests node))))))
                   (let ((unifiers
                           (if
-                            (or (not (direct-reductio-interest N))
+                            (or (not (interest-direct-reductio N))
                                 (some #'(lambda (L)
                                           (or (eq (link-rule L) :answer)
-                                              (not (reductio-interest (link-resultant-interest L)))))
+                                              (not (interest-reductio (link-resultant-interest L)))))
                                       (interest-right-links N)))
                             (appropriately-related-non-reductio-suppositions node N unifier)))
                         (reductio-unifiers
                           (if
-                            (or (direct-reductio-interest N)
+                            (or (interest-direct-reductio N)
                                 (some #'(lambda (L)
                                           (and (not (eq (link-rule L) :answer))
-                                               (reductio-interest (link-resultant-interest L))))
+                                               (interest-reductio (link-resultant-interest L))))
                                       (interest-right-links N)))
                             (appropriately-related-reductio-suppositions node N unifier))))
                     (when (or unifiers reductio-unifiers)
@@ -8171,17 +8171,17 @@ is the old maximal-degree-of-justification  |#
                         (let ((u* (merge-unifiers* unifier u)))
                           (dolist (link (interest-right-links N))
                             (let ((spec (premise-hypernode-specifier (link-premise link))))
-                              (when (and (or (not (direct-reductio-interest N))
+                              (when (and (or (not (interest-direct-reductio N))
                                              (eq (link-rule link) :answer)
-                                             (not (reductio-interest (link-resultant-interest link))))
+                                             (not (interest-reductio (link-resultant-interest link))))
                                          (funcall+
-                                           (discharge-condition N) node unifier
+                                           (interest-discharge-condition N) node unifier
                                            (match-sublis
                                              (link-interest-match link)
                                              (if spec (cons (cons spec node) (link-binding link))
                                                (link-binding link)))))
                                 (push (list N unifier (append unifiers reductio-unifiers)) (hypernode-discharged-interests node))
-                                (pushnew node (discharging-nodes N))
+                                (pushnew node (interest-discharging-nodes N))
                                 (when *display?* (princ "  Node ") (princ (hypernode-number node))
                                   (princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
                                 (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-IN: ")
@@ -8196,28 +8196,28 @@ is the old maximal-degree-of-justification  |#
                           (dolist (link (interest-right-links N))
                             (let ((spec (premise-hypernode-specifier (link-premise link))))
                               (when (and (not (eq (link-rule link) :answer))
-                                         (reductio-interest (link-resultant-interest link))
+                                         (interest-reductio (link-resultant-interest link))
                                          (funcall+
-                                           (discharge-condition N) node unifier
+                                           (interest-discharge-condition N) node unifier
                                            (match-sublis
                                              (link-interest-match link)
                                              (if spec (cons (cons spec node) (link-binding link))
                                                (link-binding link)))))
-                                (pushnew node (discharging-nodes N))
+                                (pushnew node (interest-discharging-nodes N))
                                 (when *display?* (princ "  Node ") (princ (hypernode-number node))
                                   (princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
                                 (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-IN: ")
                                   (princ N) (princ " from ") (princ node) (terpri))
                                 (discharge-appropriately-related-link
                                   link u* degree new? old-degree N node depth (cons N interests)))))))
-                      (when (and (not (cancelled-interest N))
+                      (when (and (not (interest-cancelled N))
                                  (eq (mem2 unifier) t)
                                  (subsetp= C-sup (interest-supposition N)))
                         (cond ((deductive-node node)
-                               (setf (cancelling-node N) node)
+                               (setf (interest-cancelling-node N) node)
                                (cancel-interest-in N (if *trace* depth 0)))
                               (t
-                                (dolist (sup-node (generated-suppositions N))
+                                (dolist (sup-node (interest-generated-suppositions N))
                                   (when
                                     (and
                                       (equal (hypernode-generating-interests sup-node) (list N))
@@ -8274,8 +8274,8 @@ is the old maximal-degree-of-justification  |#
                      (throw 'die nil)))
                  ; (record-query-answers link)
                  )))
-            ((and (or (non-reductio-interest (link-resultant-interest link)) (deductive-node node))
-                  (funcall+ (discharge-condition N) node u*
+            ((and (or (interest-non-reductio? (link-resultant-interest link)) (deductive-node node))
+                  (funcall+ (interest-discharge-condition N) node u*
                             (match-sublis (link-interest-match link) binding)))
              ; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
              (let
@@ -8300,14 +8300,14 @@ is the old maximal-degree-of-justification  |#
                    ((link-remaining-premises link)
                     (construct-interest-link
                       link node instantiations binding (link-remaining-premises link) supposition
-                      (interest-degree-of-interest N) (maximum-degree-of-interest N) (1+ depth)
+                      (interest-degree-of-interest N) (interest-maximum-degree-of-interest N) (1+ depth)
                       (interest-priority (link-resultant-interest link)) interests))
 
                    ((or (null (interest-right-links (link-resultant-interest link)))
                         (some #'(lambda (L) (eq (link-rule L) ug))
                               (interest-right-links (link-resultant-interest link)))
                         (some #'(lambda (L)
-                                  (funcall+ (discharge-condition (link-resultant-interest link)) nil (list u1 u2)
+                                  (funcall+ (interest-discharge-condition (link-resultant-interest link)) nil (list u1 u2)
                                             (match-sublis (link-interest-match link) (link-binding L))))
                               (interest-right-links (link-resultant-interest link))))
                     (cond
@@ -8356,7 +8356,7 @@ is the old maximal-degree-of-justification  |#
           (when (and  (interest-defeatees N)
                       (<= (interest-degree-of-interest N) degree)
                       (or new?
-                          (> (maximum-degree-of-interest N) old-degree))
+                          (> (interest-maximum-degree-of-interest N) old-degree))
                       (subsetp= (hypernode-supposition node)
                                 (interest-supposition N)))
             (pushnew N (hypernode-generating-defeat-interests node))
@@ -8445,14 +8445,14 @@ is the old maximal-degree-of-justification  |#
   ;; (step (compute-interest-dependencies i n m))
   (when *d-trace*
     (bar-indent indent) (princ msg) (princ interest)
-    (when (cancelled-interest interest) (princ " cancelled")) (terpri))
-  (dolist (s (generated-suppositions interest))
+    (when (interest-cancelled interest) (princ " cancelled")) (terpri))
+  (dolist (s (interest-generated-suppositions interest))
     (when (not (member s *dependent-nodes*))
       (push s *dependent-nodes*)
       (when (eq (hypernode-justification s) :reductio-supposition)
         (pull s *independent-reductio-suppositions*))
       (compute-hypernode-dependencies s (1+ indent) "generated-supposition: ")))
-  (dolist (n (anchored-nodes interest))
+  (dolist (n (interest-anchored-nodes interest))
     (when (and (not (hypernode-cancelled-node n)) (not (member n *dependent-nodes*)))
       (push n *dependent-nodes*)
       (when (eq (hypernode-justification n) :reductio-supposition)
@@ -8461,11 +8461,11 @@ is the old maximal-degree-of-justification  |#
   (dolist (L (interest-left-links interest))
     (let ((in (link-interest L)))
       (when (not (member in *dependent-interests*))
-        (cond ((not (cancelled-interest in))
+        (cond ((not (interest-cancelled in))
                (push in *dependent-interests*)
                (compute-interest-dependencies in (1+ indent) "left-link: "))
               (t
-                (dolist (n (discharging-nodes in))
+                (dolist (n (interest-discharging-nodes in))
                   (when (and (not (member n *dependent-nodes*))
                              (not (hypernode-cancelled-node n)))
                     (push n *dependent-nodes*)
@@ -8516,7 +8516,7 @@ is the old maximal-degree-of-justification  |#
                       #'(lambda (in)
                           (and
                             (not (member in *dependent-interests*))
-                            (not (cancelled-interest in))
+                            (not (interest-cancelled in))
                             (progn
                               (when *d-trace*
                                 (princ "Hypernode ") (princ (hypernode-number n))
@@ -8526,7 +8526,7 @@ is the old maximal-degree-of-justification  |#
                     (some #'(lambda (in)
                               (and
                                 (not (member in *dependent-interests*))
-                                (not (cancelled-interest in))))
+                                (not (interest-cancelled in))))
                           (hypernode-generating-interests n))
                     (some
                       #'(lambda (L)
@@ -8544,23 +8544,23 @@ is the old maximal-degree-of-justification  |#
                                   (let ((n* (car dr)))
                                     (and
                                       (not (hypernode-cancelled-node n*))
-                                      (pushnew n (anchored-nodes (car in)))
+                                      (pushnew n (interest-anchored-nodes (car in)))
                                       (pushnew (car in) (hypernode-anchoring-interests n))
                                       (not (member n* *dependent-nodes*))
                                       (progn
                                         (when *d-trace*
                                           (princ "Hypernode ") (princ (hypernode-number n))
-                                          (princ " is directly anchored by discharging a direct-reductio-interest from node ")
+                                          (princ " is directly anchored by discharging a interest-direct-reductio from node ")
                                           (princ (hypernode-number n*)) (terpri)) t))))
-                              (direct-reductio-interest (car in))))
+                              (interest-direct-reductio (car in))))
                         (hypernode-discharged-interests n)))
                     (some
                       #'(lambda (in)
                           (some
                             #'(lambda (L)
                                 (and (not (query-p (link-resultant-interest L)))
-                                     (not (cancelled-interest (link-resultant-interest L)))
-                                     (pushnew n (anchored-nodes in))
+                                     (not (interest-cancelled (link-resultant-interest L)))
+                                     (pushnew n (interest-anchored-nodes in))
                                      (pushnew in (hypernode-anchoring-interests n))
                                      (not (member (link-resultant-interest L) *dependent-interests*))
                                      ))
@@ -8573,12 +8573,12 @@ is the old maximal-degree-of-justification  |#
             #'(lambda (in)
                 (or
                   (some #'(lambda (n) (not (member n *dependent-nodes*)))
-                        (generating-nodes in))
+                        (interest-generating-nodes in))
                   (some #'(lambda (n) (not (member n *dependent-nodes*)))
-                        (generating-defeat-nodes in))
+                        (interest-generating-defeat-nodes in))
                   (and *independent-reductio-suppositions*
                        (some #'(lambda (dr) (not (member (car dr) *dependent-nodes*)))
-                             (direct-reductio-interest in)))
+                             (interest-direct-reductio in)))
                   (some #'(lambda (L) (not (member (link-resultant-interest L) *dependent-interests*)))
                         (interest-right-links in))))
             *dependent-interests*)))
@@ -8603,7 +8603,7 @@ is the old maximal-degree-of-justification  |#
                     #'(lambda (in)
                         (and
                           (not (member in *dependent-interests*))
-                          (not (cancelled-interest in))
+                          (not (interest-cancelled in))
                           (progn
                             (when *d-trace*
                               (princ "Hypernode ") (princ (hypernode-number n))
@@ -8613,7 +8613,7 @@ is the old maximal-degree-of-justification  |#
                   (some #'(lambda (in)
                             (and
                               (not (member in *dependent-interests*))
-                              (not (cancelled-interest in))
+                              (not (interest-cancelled in))
                               (progn
                                 (when *d-trace*
                                   (princ "Hypernode ") (princ (hypernode-number n))
@@ -8623,7 +8623,7 @@ is the old maximal-degree-of-justification  |#
                   (some #'(lambda (in)
                             (and
                               (not (member in *dependent-interests*))
-                              (not (cancelled-interest in))
+                              (not (interest-cancelled in))
                               (progn
                                 (when *d-trace*
                                   (princ "Hypernode ") (princ (hypernode-number n))
@@ -8652,31 +8652,31 @@ is the old maximal-degree-of-justification  |#
                                 (let ((n* (car dr)))
                                   (and
                                     (not (hypernode-cancelled-node n*))
-                                    (pushnew n (anchored-nodes (car in)))
+                                    (pushnew n (interest-anchored-nodes (car in)))
                                     (pushnew (car in) (hypernode-anchoring-interests n))
                                     (not (member n* *dependent-nodes*))
                                     (progn
                                       (when *d-trace*
                                         (princ "Hypernode ") (princ (hypernode-number n))
-                                        (princ " is directly anchored by discharging a direct-reductio-interest from node ")
+                                        (princ " is directly anchored by discharging a interest-direct-reductio from node ")
                                         (princ (hypernode-number n*)) (terpri)) t))))
-                            (direct-reductio-interest (car in))))
+                            (interest-direct-reductio (car in))))
                       (hypernode-discharged-interests n)))
                   (some
                     #'(lambda (in)
                         (and
-                          (eq n (cancelling-node in))
+                          (eq n (interest-cancelling-node in))
                           (some
                             #'(lambda (L)
                                 (and (not (query-p (link-resultant-interest L)))
-                                     (not (cancelled-interest (link-resultant-interest L)))
-                                     (push n (anchored-nodes (link-resultant-interest L)))
+                                     (not (interest-cancelled (link-resultant-interest L)))
+                                     (push n (interest-anchored-nodes (link-resultant-interest L)))
                                      (pushnew (link-resultant-interest L) (hypernode-anchoring-interests n))
                                      (not (member (link-resultant-interest L) *dependent-interests*))
                                      (progn
                                        (when *d-trace*
                                          (princ "Hypernode ") (princ (hypernode-number n))
-                                         (princ " is directly anchored by being the cancelling-node for interest ")
+                                         (princ " is directly anchored by being the interest-cancelling-node for interest ")
                                          (princ (interest-number in))
                                          (princ " which has a right-link to interest ")
                                          (princ (interest-number (link-resultant-interest L)))
@@ -8700,7 +8700,7 @@ is the old maximal-degree-of-justification  |#
                                     (princ "Interest ") (princ (interest-number in))
                                     (princ " is directly anchored by the generating-node ")
                                     (princ (hypernode-number n)) (terpri)) t)))
-                          (generating-nodes in))
+                          (interest-generating-nodes in))
                     (and *independent-reductio-suppositions*
                          (some #'(lambda (dr)
                                    (and
@@ -8708,9 +8708,9 @@ is the old maximal-degree-of-justification  |#
                                      (progn
                                        (when *d-trace*
                                          (princ "Interest ") (princ (interest-number in))
-                                         (princ " is directly anchored by being a direct-reductio-interest from the node ")
+                                         (princ " is directly anchored by being a interest-direct-reductio from the node ")
                                          (princ (hypernode-number (car dr))) (terpri)) t)))
-                               (direct-reductio-interest in)))
+                               (interest-direct-reductio in)))
                     (some #'(lambda (L)
                               (and
                                 (not (member (link-resultant-interest L) *dependent-interests*))
@@ -8733,11 +8733,11 @@ is the old maximal-degree-of-justification  |#
   (dolist (L (interest-left-links interest))
     (let ((in (link-interest L)))
       (when (member in *dependent-interests*)
-        (let ((cn (cancelling-node in)))
+        (let ((cn (interest-cancelling-node in)))
           (when cn (anchor-hypernode-relative-to-interest cn I  (1+ indent) "cancelling-node: ")))
         (when (and (not (eq I in)) (member in *dependent-interests*))
           (anchor-interest-relative-to-interest in I (1+ indent) "left-link: ")))))
-  (dolist (n (generated-suppositions interest))
+  (dolist (n (interest-generated-suppositions interest))
     (when (member n *dependent-nodes*)
       (anchor-hypernode-relative-to-interest n I (1+ indent) "generated-supposition: "))))
 
@@ -8767,10 +8767,10 @@ is the old maximal-degree-of-justification  |#
                        (and
                          (not (hypernode-cancelled-node (car dr)))
                          (not (member (car dr) *dependent-nodes*))))
-                   (direct-reductio-interest in)))
+                   (interest-direct-reductio in)))
         (anchor-interest-relative-to-interest
           in I (1+ indent) "*direct-reductio-interest*: "))
-      (let ((n* (cancelling-node in)))
+      (let ((n* (interest-cancelling-node in)))
         (when (and n* (member n* *dependent-nodes*))
           (anchor-hypernode-relative-to-interest
             n* I (1+ indent) "discharges direct reductio interest: ")))))
@@ -8780,7 +8780,7 @@ is the old maximal-degree-of-justification  |#
         (pull in *dependent-interests*)
         (anchor-interest-relative-to-interest
           in I (1+ indent) "generated-direct-reductio-interest: "))
-      (let ((n* (cancelling-node in)))
+      (let ((n* (interest-cancelling-node in)))
         (when (and n* (member n* *dependent-nodes*))
           (anchor-hypernode-relative-to-interest
             n* I (1+ indent) "discharges direct reductio interest: "))))))
@@ -8793,10 +8793,10 @@ is the old maximal-degree-of-justification  |#
     (let ((in (link-interest L)))
       (when (member in *dependent-interests*)
         (anchor-interest-relative-to-node in N0 (1+ indent) "left-link: ")
-        (let ((cn (cancelling-node in)))
+        (let ((cn (interest-cancelling-node in)))
           (when (and cn (member cn *dependent-nodes*))
             (anchor-hypernode-relative-to-interest cn N0  (1+ indent) "cancelling-node: "))))))
-  (dolist (n (generated-suppositions interest))
+  (dolist (n (interest-generated-suppositions interest))
     (when (and (not (eq N N0)) (member n *dependent-nodes*))
       (anchor-hypernode-relative-to-node n N0 (1+ indent) "generated-supposition: "))))
 
@@ -8827,10 +8827,10 @@ is the old maximal-degree-of-justification  |#
                        (and
                          (not (hypernode-cancelled-node (car dr)))
                          (not (member (car dr) *dependent-nodes*))))
-                   (direct-reductio-interest in)))
+                   (interest-direct-reductio in)))
         (anchor-interest-relative-to-node
           in N0 (1+ indent) "*direct-reductio-interest*: "))
-      (let ((n* (cancelling-node in)))
+      (let ((n* (interest-cancelling-node in)))
         (when (and n* (not (eq n* N0)) (member n* *dependent-nodes*))
           (anchor-hypernode-relative-to-node
             n* N0 (1+ indent) "discharges direct reductio interest: ")))))
@@ -8840,13 +8840,13 @@ is the old maximal-degree-of-justification  |#
         (pull in *dependent-interests*)
         (anchor-interest-relative-to-node
           in N0 (1+ indent) "generated-direct-reductio-interest: "))
-      (let ((n* (cancelling-node in)))
+      (let ((n* (interest-cancelling-node in)))
         (when (and n* (not (eq n* N0)) (member n* *dependent-nodes*))
           (anchor-hypernode-relative-to-node
             n* N0 (1+ indent) "discharges direct reductio interest: "))))))
 
 (defun cancel-interest (interest depth)
-  (when (and *display?* (not (cancelled-interest interest)))
+  (when (and *display?* (not (interest-cancelled interest)))
     (indent depth) (princ "Cancelling  ") (princ interest) (terpri))
   (let ((i-list (interest-i-list interest)))
     (when i-list
@@ -8864,18 +8864,18 @@ is the old maximal-degree-of-justification  |#
         (dolist (cl (corresponding-c-lists i-list))
           (pull (assoc i-list (c-list-corresponding-i-lists (mem1 cl)))
                 (c-list-corresponding-i-lists (mem1 cl)))))))
-  (setf (cancelled-interest interest) t)
+  (setf (interest-cancelled interest) t)
   (let ((Q (interest-queue-node interest)))
     (when Q (pull Q *inference-queue*)))
-  (dolist (IS (generated-interest-schemes interest))
+  (dolist (IS (interest-generated-interest-schemes interest))
     (cancel-interest-scheme IS))
   (dolist (L (interest-left-links interest))
     (pull L (interest-right-links (link-interest L))))
   (dolist (L (interest-right-links interest))
     (when (not (query-p (link-resultant-interest L)))
       (pull L (interest-left-links (link-resultant-interest L)))
-      (push L (cancelled-left-links (link-resultant-interest L)))))
-  (when (direct-reductio-interest interest) (pull interest *direct-reductio-interests*))
+      (push L (interest-cancelled-left-links (link-resultant-interest L)))))
+  (when (interest-direct-reductio interest) (pull interest *direct-reductio-interests*))
   (when (and *display?* *graphics-on* *graph-interests*) (invalidate-view *og* t)))
 
 (defun cancel-interest-scheme (IS)
@@ -8923,11 +8923,11 @@ is the old maximal-degree-of-justification  |#
     (pull node *desires*)
     (pull node *processed-desires*)
     (dolist (IN (hypernode-generated-interests node))
-      (pull node (generating-nodes IN)))
+      (pull node (interest-generating-nodes IN)))
     (dolist (IN (hypernode-generating-interests node))
-      (pull node (generated-suppositions IN)))
+      (pull node (interest-generated-suppositions IN)))
     (dolist (IN (hypernode-generated-direct-reductio-interests node))
-      (setf (direct-reductio-interest IN) nil)) ; TODO why is this in v3.31?
+      (setf (interest-direct-reductio IN) nil)) ; TODO why is this in v3.31?
       ; TODO why is this in v4.02? (pull node (c-list-reductio-interests IN)))
     (let ((c-list (hypernode-c-list node)))
       (when c-list
@@ -8997,7 +8997,7 @@ time discharge-interest-schemes was applied to it. |#
           (instance-function (is-instance-function is)))
       (when (hypernode-cancelled-node node) (throw 'discharge-interest-schemes nil))
       (when (and (or (not (hypernode-deductive-only node)) (not (defeasible-rule reason)))
-                 (or (not (deductive-interest (is-target-interest is))) (deductive-node node)))
+                 (or (not (interest-deductive (is-target-interest is))) (deductive-node node)))
         (let ((degree* (interest-degree-of-interest (is-target-interest is))))
           (when (and (>= (current-maximal-degree-of-justification node) degree*)
                      (> degree* old-degree))
@@ -9273,7 +9273,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
     (order
       (inference-descendants
         (subset #'(lambda (N) (some #'(lambda (int) (member int interests)) (hypernode-enabling-interests N)))
-                (unionmapcar #'discharging-nodes interests)))
+                (unionmapcar #'interest-discharging-nodes interests)))
       #'(lambda (x y) (< (hypernode-number x) (hypernode-number y))))))
 
 #| Nodes and interests generated by node or interest. |#
@@ -9317,7 +9317,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
                       (when (not (member N interest-descendants))
                         (push N interest-descendants)
                         (push N interests))))
-                  (dolist (N (discharging-nodes interest))
+                  (dolist (N (interest-discharging-nodes interest))
                     (when (member interest (hypernode-enabling-interests N))
                       (when (not (member N hypernode-descendants))
                         (push N hypernode-descendants)
@@ -9472,7 +9472,7 @@ the sequent concluded. |#
               (when (not (member in affected-interests))
                 (push in affected-interests)
                 (setf changed? t))))
-          (dolist (n (generated-suppositions interest))
+          (dolist (n (interest-generated-suppositions interest))
             (when (not (member n affected-nodes))
               (push n affected-nodes)
               (setf changed? t))))
@@ -9480,9 +9480,9 @@ the sequent concluded. |#
           (return (list affected-nodes affected-interests)))))))
 
 (defun broadly-generating-nodes (interest)
-  (if (direct-reductio-interest interest)
-    (union= *reductio-supposition-nodes* (generating-nodes interest))
-    (generating-nodes interest)))
+  (if (interest-direct-reductio interest)
+    (union= *reductio-supposition-nodes* (interest-generating-nodes interest))
+    (interest-generating-nodes interest)))
 
 (defun recompute-priorities (new-beliefs new-retractions altered-interests altered-queries)
   (let* ((affected-items
@@ -9627,7 +9627,7 @@ the sequent concluded. |#
         (dolist (interest affected-interests)
           (let ((GN (broadly-generating-nodes interest))
                 (links (subset #'(lambda (L) (null (link-defeat-status L))) (interest-right-links interest))))
-            (when (and (direct-reductio-interest interest)
+            (when (and (interest-direct-reductio interest)
                        (not (some #'(lambda (n)
                                       (and (not (eq (hypernode-justification n) :reductio-supposition))
                                            (member n affected-nodes))) GN))
@@ -9678,7 +9678,7 @@ the sequent concluded. |#
                    (/ (discounted-strength Q) (item-complexity Q)))
              (setf *inference-queue*
                    (ordered-insert Q (remove Q *inference-queue*) #'i-preferred)))
-            ((not (cancelled-interest (enqued-item Q)))
+            ((not (interest-cancelled (enqued-item Q)))
              (setf (discounted-strength Q) (interest-priority (enqued-item Q)))
              (setf (degree-of-preference Q)
                    (/ (discounted-strength Q) (item-complexity Q)))

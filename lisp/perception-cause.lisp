@@ -533,7 +533,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 #| Given an interest in (x < y) where x and y are numbers, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
-is not a reductio-interest. |#
+is not a interest-reductio. |#
 (def-backwards-reason strict-arithmetical-inequality
                       :conclusions  "(x < y)"
                       :condition  (x < y)
@@ -541,7 +541,7 @@ is not a reductio-interest. |#
 
 #| Given an interest in (x <= y) where x and y are numbers, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
-is not a reductio-interest. |#
+is not a interest-reductio. |#
 (def-backwards-reason arithmetical-inequality
                       :conclusions  "(x <= y)"
                       :condition  (x <= y)
@@ -594,7 +594,7 @@ is not a reductio-interest. |#
 
 #| Given an interest in (x <= now) where x is a number, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
-is not a reductio-interest. |#
+is not a interest-reductio. |#
 (def-backwards-reason is-past-or-present
                       :conclusions  "(x <= now)"
                       :condition  (<= x *cycle*)
@@ -602,7 +602,7 @@ is not a reductio-interest. |#
 
 #| Given an interest in (x < now) where x is a number, this checks to see whether it is true.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
-is not a reductio-interest. |#
+is not a interest-reductio. |#
 (def-backwards-reason is-past
                       :conclusions  "(x < now)"
                       :condition  (< x *cycle*)

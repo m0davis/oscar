@@ -132,7 +132,7 @@
 ;        (when (not (hypernode-cancelled-node (car pos)))
 ;             (draw-node (cadr pos) wind (car pos))))
 ;    (dolist (i (interest-list wind))
-;        (when (not (cancelled-interest (car i)))
+;        (when (not (interest-cancelled (car i)))
 ;             (draw-interest (cdr i) wind (car i)))))
 
 (defmethod view-draw-contents ((wind og-window))
@@ -419,7 +419,7 @@
                   (pos (if (interest-p int) (interest-position int  view))))
            (if pos (draw-arrow  pos position view))))
     ;;;  draw arrows to generated suppositions
-    (dolist (nod (generated-suppositions node))
+    (dolist (nod (interest-generated-suppositions node))
         (let ((posi (hypernode-position nod view)))
            (when posi 
                 (when (not *monochrome*) (set-fore-color view *blue-color*))
@@ -429,7 +429,7 @@
    ; (dolist (nod (mapcar #'hyperlink-target (interest-defeatees node)))
    ;     (let ((posi (hypernode-position nod view)))
    ;        (when posi
-   ;             (set-fore-color view (if (reductio-interest node) *orange-color* *yellow-color*))
+   ;             (set-fore-color view (if (interest-reductio node) *orange-color* *yellow-color*))
    ;             (draw-arrow posi position view)
    ;             (set-fore-color view *line-color*))))
     )
@@ -1923,7 +1923,7 @@ OSCAR graphics window."
         (when (not (hypernode-cancelled-node (car pos)))
              (draw-abbreviated-node (cadr pos) wind (car pos))))
     (dolist (i (interest-list wind))
-        (when (not (cancelled-interest (car i)))
+        (when (not (interest-cancelled (car i)))
              (draw-interest (cdr i) wind (car i)))))
 
 (defunction draw-abbreviated-node (position view node)

@@ -833,16 +833,16 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
              :link-interest-condition ug-condition
              :link-rule ug
              :link-supposition (interest-supposition interest)
-             :link-strength (maximum-degree-of-interest interest)
+             :link-strength (interest-maximum-degree-of-interest interest)
              :link-binding (list (cons 'x (element 1 p)) (cons 'q (element 2 p)))
              )))
     (push link *interest-links*)
     (push link (interest-left-links interest))
     (setf (get fun 'ei-level) 0)
     (compute-link-interest
-      link #'(lambda (i) (eq (discharge-condition i) ug-condition))
-      #'(lambda (i) (setf (discharge-condition i) ug-condition))
-      (interest-degree-of-interest interest) (maximum-degree-of-interest interest) depth priority)
+      link #'(lambda (i) (eq (interest-discharge-condition i) ug-condition))
+      #'(lambda (i) (setf (interest-discharge-condition i) ug-condition))
+      (interest-degree-of-interest interest) (interest-maximum-degree-of-interest interest) depth priority)
     (discharge-link link (1+ depth) (interest-degree-of-interest interest) priority nil)
     ))
 
@@ -867,13 +867,13 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
              :link-interest-formula (subst var (q-variable p) (q-matrix p))
              :link-rule eg
              :link-supposition (interest-supposition interest)
-             :link-strength (maximum-degree-of-interest interest)
+             :link-strength (interest-maximum-degree-of-interest interest)
              :link-binding (list (cons 'x (element 1 p)) (cons 'q (element 2 p)))
              )))
     (push link *interest-links*)
     (push link (interest-left-links interest))
     (compute-link-interest
-      link nil nil (interest-degree-of-interest interest) (maximum-degree-of-interest interest) depth priority (list var))
+      link nil nil (interest-degree-of-interest interest) (interest-maximum-degree-of-interest interest) depth priority (list var))
     (discharge-link link (1+ depth) (interest-degree-of-interest interest) priority nil)
     ))
 
