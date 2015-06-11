@@ -1084,7 +1084,7 @@
             (princ-set (mapcar #'inference-number (support-link-defeaters L*))))
           (terpri))))
     ; (princ "  nearest-defeasible-ancestors: ")
-    ; (princ (nearest-defeasible-ancestors n)) (terpri)
+    ; (princ (hypernode-nearest-defeasible-ancestors n)) (terpri)
     (when (node-defeatees n)
       (princ "  defeatees: ")
       (princ "{ ")

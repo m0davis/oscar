@@ -36,7 +36,7 @@
   (hypernode-supported-hyper-defeat-links nil)  ;; hyper-defeat-links for which the node is the root
   (hypernode-degree-of-justification nil)
   (hypernode-ancestors nil)
-  (nearest-defeasible-ancestors nil)
+  (hypernode-nearest-defeasible-ancestors nil)
   (answered-queries nil)
   (deductive-only nil)   ;; If conclusion is for deductive purposes only, this is t.
   (generated-interests nil)
@@ -798,7 +798,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                      (cond
                        ((null old-value)
                         (cond ((not (zerop value)) (push node *new-beliefs*))
-                              ((not (member nil (nearest-defeasible-ancestors node)))
+                              ((not (member nil (hypernode-nearest-defeasible-ancestors node)))
                                (push node *new-retractions*))))
                        ((> value old-value) (push node *new-beliefs*))
                        ((< value old-value) (push node *new-retractions*)))
