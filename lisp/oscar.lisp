@@ -1154,10 +1154,10 @@ known conclusions matching the formula. |#
 (defstruct (i-list (:print-function print-i-list)
                    (:conc-name nil))
   (i-list-formula nil)
-  (corresponding-c-lists nil)
+  (i-list-corresponding-c-lists nil)
   (i-list-interests nil)
   (i-list-queries nil)
-  (reductio-trigger nil)
+  (i-list-reductio-trigger nil)
   (i-list-reductio-supposition nil)
   (i-list-variables)
   (i-list-term-list nil)
@@ -1265,9 +1265,9 @@ car of a formula-code, and dn is a d-node. |#
           (t (let ((c-lists (matching-c-lists-for term-list i-variables dn)))
                (setf i-list (make-i-list
                               :i-list-formula formula
-                              :corresponding-c-lists c-lists
+                              :i-list-corresponding-c-lists c-lists
                               :i-list-interests (list interest)
-                              :reductio-trigger
+                              :i-list-reductio-trigger
                               (appropriate-for-reductio-supposition formula)
                               :i-list-variables i-variables
                               :i-list-term-list term-list
@@ -1291,7 +1291,7 @@ car of a formula-code, and dn is a d-node. |#
          (i-list (make-i-list
                    :i-list-formula formula
                    :i-list-interests (list interest)
-                   :reductio-trigger
+                   :i-list-reductio-trigger
                    (appropriate-for-reductio-supposition formula)
                    :i-list-variables i-variables
                    :i-list-term-list term-list
@@ -1353,9 +1353,9 @@ car of a formula-code, and dn is a d-node. |#
                       (push reductio-sup (interest-generated-suppositions interest)))))
                 (t (setf i-list (make-i-list
                                   :i-list-formula formula
-                                  :corresponding-c-lists c-lists
+                                  :i-list-corresponding-c-lists c-lists
                                   :i-list-interests (list interest)
-                                  :reductio-trigger
+                                  :i-list-reductio-trigger
                                   (appropriate-for-reductio-supposition formula)
                                   :i-list-variables i-variables
                                   :i-list-term-list term-list
@@ -1421,7 +1421,7 @@ car of a formula-code, and dn is a d-node. |#
                               ))
                (push c-list (d-node-c-lists dn))
                (dolist (il i-lists)
-                 (push (cons c-list (cdr il)) (corresponding-c-lists (mem1 il)))))
+                 (push (cons c-list (cdr il)) (i-list-corresponding-c-lists (mem1 il)))))
              (when
                (appropriate-for-contradictors formula)
                (setf (c-list-contradictors c-list)
@@ -4638,7 +4638,7 @@ queued, it goes on the front of the inference-queue. |#
             (reason-backwards-from positive-interest priority (1+ depth))
             (form-epistemic-desires-for positive-interest)))
     (setf (query-interest query) positive-interest)
-    (dolist (cl (corresponding-c-lists (interest-i-list positive-interest)))
+    (dolist (cl (i-list-corresponding-c-lists (interest-i-list positive-interest)))
       (let ((conclusion
               (find-if
                 #'(lambda (c)
@@ -4694,7 +4694,7 @@ queued, it goes on the front of the inference-queue. |#
             (reason-backwards-from negative-interest priority (1+ depth))
             (form-epistemic-desires-for negative-interest)))
     (setf (query-negative-interest query) negative-interest)
-    (dolist (cl (corresponding-c-lists (interest-i-list negative-interest)))
+    (dolist (cl (i-list-corresponding-c-lists (interest-i-list negative-interest)))
       (let ((conclusion
               (find-if
                 #'(lambda (c)
@@ -4776,7 +4776,7 @@ queued, it goes on the front of the inference-queue. |#
             (reason-backwards-from interest priority (1+ depth))
             (form-epistemic-desires-for interest)))
     (setf (query-interest query) interest)
-    (dolist (cl (corresponding-c-lists (interest-i-list interest)))
+    (dolist (cl (i-list-corresponding-c-lists (interest-i-list interest)))
       (let ((conclusion
               (find-if
                 #'(lambda (c)
@@ -4835,7 +4835,7 @@ queued, it goes on the front of the inference-queue. |#
           (reason-backwards-from interest priority (1+ depth))
           (form-epistemic-desires-for interest)
           (setf (query-interest query) interest)
-          (dolist (cl (corresponding-c-lists (interest-i-list interest)))
+          (dolist (cl (i-list-corresponding-c-lists (interest-i-list interest)))
             (let ((conclusion
                     (find-if
                       #'(lambda (c)
@@ -4982,8 +4982,8 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
           (X (interest-supposition interest))
           (i-list (interest-i-list interest)))
       (when (not (mem q X))
-        (cond ((reductio-trigger i-list)
-               (setf (reductio-trigger i-list) nil)
+        (cond ((i-list-reductio-trigger i-list)
+               (setf (i-list-reductio-trigger i-list) nil)
                (multiple-value-bind
                  (P c-vars)
                  (convert-interest-variables (neg q) (interest-variables interest))
@@ -5097,7 +5097,7 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
            (draw-n N *og* *nodes-displayed*) (push N *nodes-displayed*))
          (start-reductio-interests N (1+ depth) nil)
          ))
-      (t (setf (reductio-trigger i-list) t)))))
+      (t (setf (i-list-reductio-trigger i-list) t)))))
 
 #| When a hypernode-non-reductio-supposition is readopted as a reductio-supposition, for all
 of its inclusive-hypernode-descendants that are deductive in it, it is moved from the
@@ -5612,7 +5612,7 @@ the resultant-interest. |#
         (match* (link-interest-reverse-match link))
         (spec (premise-hypernode-specifier (link-premise link))))
     (block nodes
-           (dolist  (cl (corresponding-c-lists (interest-i-list interest)))
+           (dolist  (cl (i-list-corresponding-c-lists (interest-i-list interest)))
              (let* ((c-list (car cl))
                     (unifier0 (mem2 cl))
                     (unifier
@@ -5880,7 +5880,7 @@ the resultant-interest. |#
 
 (defun unifying-nodes (interest)
   (let ((nodes nil))
-    (dolist (cl (corresponding-c-lists (interest-i-list interest)))
+    (dolist (cl (i-list-corresponding-c-lists (interest-i-list interest)))
       (dolist (c (c-list-nodes (mem1 cl)))
         (push c nodes)))
     nodes))
@@ -5903,7 +5903,7 @@ the resultant-interest. |#
                     (c-list-nodes (mem1 cl))))
             (when node
               (push (list interest unifier unifiers) (hypernode-discharged-interests node)))))
-      (corresponding-c-lists (interest-i-list interest)))
+      (i-list-corresponding-c-lists (interest-i-list interest)))
     node))
 
 #| For non-reductio-interests, this returns the list of unifiers unifying the hypernode-supposition of
@@ -7413,7 +7413,7 @@ non-reductio-generating-interests. |#
   (when *trace* (indent depth) (princ "DISCHARGE-NEW-REDUCTIO-INTEREST from ")
     (princ interest) (terpri))
   ; (when (equal interest (interest 6)) (break))
-  (dolist (corresponding-c-list (corresponding-c-lists (interest-i-list interest)))
+  (dolist (corresponding-c-list (i-list-corresponding-c-lists (interest-i-list interest)))
     (let* ((c-list (mem1 corresponding-c-list))
            (unifier (mem2 corresponding-c-list))
            (i-sup (match-sublis (mem2 unifier) (interest-supposition interest))))
@@ -7581,7 +7581,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
     (princ node) (princ " and ") (princ interest) (terpri))
   (let* ((Y0 (match-sublis match (hypernode-supposition node)))
          (reductio-ancestors* (hypernode-reductio-ancestors node)))
-    (dolist (cl (corresponding-c-lists (interest-i-list interest)))
+    (dolist (cl (i-list-corresponding-c-lists (interest-i-list interest)))
       (let* ((c-list (mem1 cl))
              (nodes (c-list-nodes c-list))
              (unifier (mem2 cl))
@@ -8861,7 +8861,7 @@ is the old maximal-degree-of-justification  |#
                      (null (d-node-interest-schemes dn))
                      (null (d-node-discrimination-tests dn)))
             (cancel-d-node dn)))
-        (dolist (cl (corresponding-c-lists i-list))
+        (dolist (cl (i-list-corresponding-c-lists i-list))
           (pull (assoc i-list (c-list-corresponding-i-lists (mem1 cl)))
                 (c-list-corresponding-i-lists (mem1 cl)))))))
   (setf (interest-cancelled interest) t)
@@ -8913,7 +8913,7 @@ is the old maximal-degree-of-justification  |#
         (let ((i-list (interest-i-list (mem1 (hypernode-generating-interests node)))))
           (when (eq (i-list-reductio-supposition i-list) node)
             (setf (i-list-reductio-supposition i-list) nil)
-            (setf (reductio-trigger i-list) t)))))
+            (setf (i-list-reductio-trigger i-list) t)))))
     (when (eq (hypernode-justification node) :supposition)
       (setf *skolem-free-suppositions*
             (remove-if-equal (hypernode-formula node) *skolem-free-suppositions*)))
@@ -8951,8 +8951,8 @@ is the old maximal-degree-of-justification  |#
             (pull (assoc c-list (c-list-contradictors (car cl)))
                   (c-list-contradictors (car cl))))
           (dolist (il (c-list-corresponding-i-lists c-list))
-            (pull (assoc c-list (corresponding-c-lists (mem1 il)))
-                  (corresponding-c-lists (mem1 il)))))))
+            (pull (assoc c-list (i-list-corresponding-c-lists (mem1 il)))
+                  (i-list-corresponding-c-lists (mem1 il)))))))
     (let ((Q (hypernode-queue-node node)))
       (when Q (pull Q *inference-queue*)))
     (when (and *display?* *graphics-on*) (invalidate-view *og* t))))
