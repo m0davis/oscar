@@ -45,20 +45,20 @@
   (hypernode-discounted-node-strength nil)
   (hypernode-processed? nil)  ;;  T if node has been processed.
   (hypernode-variables nil)
-  (discharged-interests nil)  ;; triples (interest unifier unifiers) where unifiers is produced by
+  (hypernode-discharged-interests nil)  ;; triples (interest unifier unifiers) where unifiers is produced by
   ;; appropriately-related-suppositions.  unifier and unifiers are
   ;; left nil in cases where they will not be used.
   (hypernode-supposition-variables nil)
-  (interests-discharged? nil)   ;; records whether interests have been discharged
-  (reductios-discharged (not *use-reductio*))  ;; records whether reductio-interests have been discharged
-  (readopted-supposition 0)  ;; number of times the node has been readopted as a supposition
+  (hypernode-interests-discharged? nil)   ;; records whether interests have been discharged
+  (hypernode-reductios-discharged (not *use-reductio*))  ;; records whether reductio-interests have been discharged
+  (hypernode-readopted-supposition 0)  ;; number of times the node has been readopted as a supposition
   (hypernode-discount-factor 1.0)  ;; This is the discount-factor provided by the hypernode-rule.
   ;;  its only use is in ei.
   (hypernode-c-list nil)
   (hypernode-queue-node nil)
-  (enabling-interests nil)  ;; if the node is obtained by discharging inference-links, this is the
+  (hypernode-enabling-interests nil)  ;; if the node is obtained by discharging inference-links, this is the
   ;; list of resultant-interests of the links.
-  (motivating-nodes nil)  ;; nodes motivating the inference, not included in the basis.
+  (hypernode-motivating-nodes nil)  ;; nodes motivating the inference, not included in the basis.
   (generated-direct-reductio-interests nil)
   (generated-defeat-interests nil)
   (generating-defeat-interests nil)  ;; interest in defeaters discharged by this node

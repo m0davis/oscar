@@ -42,7 +42,7 @@
                       (append
                         (mapcar
                           #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
-                          (motivating-nodes node))
+                          (hypernode-motivating-nodes node))
                         (mapcar
                           #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
                           (hyperlink-basis L)))))))
@@ -93,14 +93,14 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
                   :argument-ultimate-interest (mem1 (hypernode-answered-queries n))
                   :argument-inclusive-nodes (list n))))
           (push argument *arguments*)
-          (dolist (m (motivating-nodes n))
+          (dolist (m (hypernode-motivating-nodes n))
             (pushnew m (argument-inclusive-nodes argument))
             (pushnew m *nodes-used*))
           (dolist (L (argument-links argument))
             (dolist (b (hyperlink-basis L))
               (pushnew b (argument-inclusive-nodes argument))
               (pushnew b *nodes-used*)
-              (dolist (m (motivating-nodes b))
+              (dolist (m (hypernode-motivating-nodes b))
                 (pushnew m (argument-inclusive-nodes argument))
                 (pushnew m *nodes-used*))))))))
   (dolist (argument *arguments*)
@@ -159,7 +159,7 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
                               (minimum0 (mapcar #'hyperlink-degree-of-justification d-arg))
                               :argument-inclusive-nodes (list d))))
                       (push d-argument *arguments*)
-                      (dolist (m (motivating-nodes d))
+                      (dolist (m (hypernode-motivating-nodes d))
                         (pushnew m (argument-inclusive-nodes d-argument))
                         (pushnew m *nodes-used*))
                       (pushnew d-argument (argument-defeaters argument))
@@ -168,7 +168,7 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
                         (dolist (b (hyperlink-basis L))
                           (pushnew b (argument-inclusive-nodes d-argument))
                           (pushnew b *nodes-used*)
-                          (dolist (m (motivating-nodes b))
+                          (dolist (m (hypernode-motivating-nodes b))
                             (pushnew m (argument-inclusive-nodes d-argument))
                             (pushnew m *nodes-used*))))
                       (find-defeating-arguments d-argument))))))))))
@@ -226,7 +226,7 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
 
 (defun hypernode-basis-in-arg (node arg)
   (let ((link (find-if #'(lambda (L) (eq (hyperlink-target L) node)) (argument-links arg))))
-    ; (union (motivating-nodes node)
+    ; (union (hypernode-motivating-nodes node)
     (if link (hyperlink-basis link)))) ;)
 
 #| Choose the first node all of whose ancestors are already in lines and whose

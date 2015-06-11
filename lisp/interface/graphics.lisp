@@ -172,8 +172,8 @@
     (mem1 (e-assoc node (hypernode-list view))))
 
 (defunction attach-discharged-interests (position view node)
-    (when (discharged-interests node)
-         (dolist (int (mapcar #'car (discharged-interests node)))
+    (when (hypernode-discharged-interests node)
+         (dolist (int (mapcar #'car (hypernode-discharged-interests node)))
              (when (interest-p int)
                   (let ((posi (interest-position int view)))
                      (when posi 
@@ -201,7 +201,7 @@
                    (draw-defeat-arrow position pos-target view))))))
 
 (defunction draw-arrows-from-motivating-nodes (position view node)
-    (dolist (target (motivating-nodes node))
+    (dolist (target (hypernode-motivating-nodes node))
         (let ((pos-target (hypernode-position target view)))
            (when pos-target
                 (cond (*monochrome* (set-fore-color view *light-gray-color*))
@@ -765,7 +765,7 @@
        (let* ((proof-nodes (if full nil *relevant-nodes*))
                  (ultimate-interests (mapcar #'query-interest *ultimate-epistemic-interests*))
                  (enabling-interests
-                   (unionmapcar+ #'enabling-interests proof-nodes))
+                   (unionmapcar+ #'hypernode-enabling-interests proof-nodes))
                  (closure (generated-nodes-and-interests
                                   proof-nodes (union ultimate-interests enabling-interests) ultimate-interests))
                  (nodes-used (mem1 closure))
@@ -1773,14 +1773,14 @@ OSCAR graphics window."
                          :argument-ultimate-interest (mem1 (hypernode-answered-queries n))
                          :argument-inclusive-nodes (list n))))
                 (push argument *arguments*)
-                (dolist (m (motivating-nodes n))
+                (dolist (m (hypernode-motivating-nodes n))
                     (pushnew m (argument-inclusive-nodes argument))
                     (pushnew m *nodes-used*))
                 (dolist (L (argument-links argument))
                     (dolist (b (hyperlink-basis L))
                         (pushnew b (argument-inclusive-nodes argument))
                         (pushnew b *nodes-used*)
-                        (dolist (m (motivating-nodes b))
+                        (dolist (m (hypernode-motivating-nodes b))
                             (pushnew m (argument-inclusive-nodes argument))
                             (pushnew m *nodes-used*)))))))
     (dolist (argument (reverse *arguments*))
@@ -1953,7 +1953,7 @@ OSCAR graphics window."
 (defunction add-strongly-relevant-nodes (node)
     (when (not (member node *strongly-relevant-nodes*))
          (push node *strongly-relevant-nodes*)
-         (dolist (m (motivating-nodes node))
+         (dolist (m (hypernode-motivating-nodes node))
              (add-strongly-relevant-nodes m))
          (dolist (L (hypernode-hyperlinks node))
              (when (hyperlink-defeasible? L)

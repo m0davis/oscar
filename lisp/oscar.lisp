@@ -207,20 +207,20 @@ It requires Hypergraphs11.lisp. |#
   (hypernode-discounted-node-strength nil)
   (hypernode-processed? nil)  ;;  T if node has been processed.
   (hypernode-variables nil)
-  (discharged-interests nil)  ;; triples (interest unifier unifiers) where unifiers is produced by
+  (hypernode-discharged-interests nil)  ;; triples (interest unifier unifiers) where unifiers is produced by
   ;; appropriately-related-suppositions.  unifier and unifiers are
   ;; left nil in cases where they will not be used.
   (hypernode-supposition-variables nil)
-  (interests-discharged? nil)   ;; records whether interests have been discharged
-  (reductios-discharged (not *use-reductio*))  ;; records whether reductio-interests have been discharged
-  (readopted-supposition 0)  ;; number of times the node has been readopted as a supposition
+  (hypernode-interests-discharged? nil)   ;; records whether interests have been discharged
+  (hypernode-reductios-discharged (not *use-reductio*))  ;; records whether reductio-interests have been discharged
+  (hypernode-readopted-supposition 0)  ;; number of times the node has been readopted as a supposition
   (hypernode-discount-factor 1.0)  ;; This is the discount-factor provided by the hypernode-rule.
   ;;  it's only use is in ei.
   (hypernode-c-list nil)
   (hypernode-queue-node nil)
-  (enabling-interests nil)  ;; if the node is obtained by discharging inference-links, this is the
+  (hypernode-enabling-interests nil)  ;; if the node is obtained by discharging inference-links, this is the
   ;; list of resultant-interests of the links.
-  (motivating-nodes nil)  ;; nodes motivating the inference, not included in the basis.
+  (hypernode-motivating-nodes nil)  ;; nodes motivating the inference, not included in the basis.
   (generated-direct-reductio-interests nil)
   (generated-defeat-interests nil)
   (generating-defeat-interests nil)  ;; interest in defeaters discharged by this node
@@ -2060,7 +2060,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
   (let ((sup (find-if #'(lambda (N) (equal (hypernode-formula N) supposition))
                       *non-reductio-supposition-nodes*)))
     (cond (sup
-            (incf (readopted-supposition sup))
+            (incf (hypernode-readopted-supposition sup))
             (push interest (hypernode-generating-interests sup))
             (push sup (generated-suppositions interest))
             (when (and (hypernode-deductive-only sup) (not (deductive-interest interest)))
@@ -2074,7 +2074,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
                    (queue-non-reductio-supposition
                      supposition instance-supposition e-vars discount-factor interest))
                   ((reductio-supposition sup)
-                   (incf (readopted-supposition sup))
+                   (incf (hypernode-readopted-supposition sup))
                    (push interest (hypernode-generating-interests sup))
                    (convert-reductio-supposition sup discount-factor)
                    (values sup t)))))))
@@ -3708,7 +3708,7 @@ queued, it goes on the front of the inference-queue. |#
 (defun add-relevant-nodes (node)
   (when (not (member node *relevant-nodes*))
     (push node *relevant-nodes*)
-    (dolist (m (motivating-nodes node)) (add-relevant-nodes m))
+    (dolist (m (hypernode-motivating-nodes node)) (add-relevant-nodes m))
     (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L)) (add-relevant-nodes b))
       (dolist (d (hyperlink-defeaters L)) (add-relevant-nodes (hyper-defeat-link-root d))))))
@@ -3729,7 +3729,7 @@ queued, it goes on the front of the inference-queue. |#
         (setf *not-strictly-relevant-nodes* (not-strictly-relevant-nodes))
         (let* ((ultimate-interests (mapcar #'query-interest *ultimate-epistemic-interests*))
                (enabling-interests
-                 (union (unionmapcar+ #'enabling-interests *relevant-nodes*)
+                 (union (unionmapcar+ #'hypernode-enabling-interests *relevant-nodes*)
                         (unionmapcar+ #'generating-defeat-interests *relevant-nodes*)))
                (closure (generated-nodes-and-interests
                           *relevant-nodes* (union ultimate-interests enabling-interests) ultimate-interests))
@@ -3784,7 +3784,7 @@ queued, it goes on the front of the inference-queue. |#
     (compute-relevant-nodes nodes)
     (let* (
            (enabling-interests
-             (union (unionmapcar+ #'enabling-interests *relevant-nodes*)
+             (union (unionmapcar+ #'hypernode-enabling-interests *relevant-nodes*)
                     (unionmapcar+ #'generating-defeat-interests *relevant-nodes*)))
            (closure (generated-nodes-and-interests *relevant-nodes* enabling-interests nil))
            (nodes-used (remove-duplicates (mem1 closure)))
@@ -3837,7 +3837,7 @@ queued, it goes on the front of the inference-queue. |#
     (dolist (query *ultimate-epistemic-interests*)
       (dolist (N (query-answers query)) (pushnew N nodes)))
     (let* ((ultimate-interests (mapcar #'query-interest *ultimate-epistemic-interests*))
-           (enabling-interests (unionmapcar+ #'enabling-interests
+           (enabling-interests (unionmapcar+ #'hypernode-enabling-interests
                                              *relevant-nodes*))
            (closure (generated-nodes-and-interests
                       *relevant-nodes* (union ultimate-interests enabling-interests) ultimate-interests))
@@ -4143,7 +4143,7 @@ queued, it goes on the front of the inference-queue. |#
            (princ "  generated by interest ")
            (princ (interest-number (mem1 generating-interests)))))
     (when generating-interests (terpri)))
-  (let ((DI (enabling-interests n)))
+  (let ((DI (hypernode-enabling-interests n)))
     (cond
       ((> (length DI) 1)
        (princ "  This node is inferred by discharging links to interests ")
@@ -4195,7 +4195,7 @@ queued, it goes on the front of the inference-queue. |#
                                     (some
                                       #'(lambda (pn)
                                           (and
-                                            (member (resultant-interest L) (enabling-interests pn))
+                                            (member (resultant-interest L) (hypernode-enabling-interests pn))
                                             (some
                                               #'(lambda (SL)
                                                   (member n (hyperlink-basis SL)))
@@ -4373,7 +4373,7 @@ queued, it goes on the front of the inference-queue. |#
                 (some
                   #'(lambda (pn)
                       (and
-                        (member (resultant-interest L) (enabling-interests pn))
+                        (member (resultant-interest L) (hypernode-enabling-interests pn))
                         (some
                           #'(lambda (SL)
                               (member dn (hyperlink-basis SL)))
@@ -4411,7 +4411,7 @@ queued, it goes on the front of the inference-queue. |#
            (princ "||  generated by interest ")
            (princ (interest-number (mem1 generating-interests)))))
     (when generating-interests (terpri)))
-  (let ((interests (remove-duplicates (discharged-interests n))))
+  (let ((interests (remove-duplicates (hypernode-discharged-interests n))))
     (cond ((> (length interests) 1)
            (princ "||  This discharges interests ") (print-list (mapcar #'interest-number interests) 40))
           ((equal (length interests) 1)
@@ -4452,7 +4452,7 @@ queued, it goes on the front of the inference-queue. |#
 (defun relevant-nodes (node &optional nodes-used)
   (when (not (member node nodes-used))
     (setf nodes-used (cons node nodes-used))
-    (dolist (m (motivating-nodes node))
+    (dolist (m (hypernode-motivating-nodes node))
       (setf nodes-used (union (relevant-nodes m nodes-used) nodes-used)))
     (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L))
@@ -4475,7 +4475,7 @@ queued, it goes on the front of the inference-queue. |#
 (defun add-strictly-relevant-nodes (node)
   (when (not (member node *strictly-relevant-nodes*))
     (push node *strictly-relevant-nodes*)
-    (dolist (m (motivating-nodes node)) (add-strictly-relevant-nodes m))
+    (dolist (m (hypernode-motivating-nodes node)) (add-strictly-relevant-nodes m))
     (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L)) (add-strictly-relevant-nodes b)))))
 
@@ -4488,7 +4488,7 @@ queued, it goes on the front of the inference-queue. |#
   ; (when (eql *cycle* 82) (break))
   (when (null *inference-queue*) (throw 'die nil))
   (when (read-char-no-hang) (clear-input) (throw 'die nil))
-  ; (when (and (node 3) (not (zerop (readopted-supposition (node 3))))) (break))
+  ; (when (and (node 3) (not (zerop (hypernode-readopted-supposition (node 3))))) (break))
   (when (eq *cycle* *start-trace*)
     (trace-on)
     (when (equal (lisp-implementation-type) "Macintosh Common Lisp")
@@ -5007,7 +5007,7 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
                                      (match R-formula P vars)))
                                *non-reductio-supposition-nodes*))))
                    (cond (sup
-                           (incf (readopted-supposition sup))
+                           (incf (hypernode-readopted-supposition sup))
                            (setf (hypernode-justification sup) :reductio-supposition)
                            (push interest (hypernode-generating-interests sup))
                            (convert-non-reductio-sup sup))
@@ -5902,7 +5902,7 @@ the resultant-interest. |#
                                    (appropriately-related-suppositions c interest unifier))))
                     (c-list-nodes (mem1 cl))))
             (when node
-              (push (list interest unifier unifiers) (discharged-interests node)))))
+              (push (list interest unifier unifiers) (hypernode-discharged-interests node)))))
       (corresponding-c-lists (interest-i-list interest)))
     node))
 
@@ -5980,7 +5980,7 @@ hypernode-supposition of node*. |#
   (when (not (hypernode-cancelled-node node)) (apply-forwards-reasons node depth))
   (when (eq (hypernode-kind node) :inference)
     (let ((i-lists (corresponding-i-lists (hypernode-c-list node))))
-      (when (null (interests-discharged? node)) (discharge-interest-in node i-lists 0 t depth nil))
+      (when (null (hypernode-interests-discharged? node)) (discharge-interest-in node i-lists 0 t depth nil))
       (when *use-reductio*
         (when (not (hypernode-cancelled-node node)) (adopt-reductio-interest node (1+ depth) nil))
         (discharge-delayed-reductios node depth nil)))  )
@@ -6555,13 +6555,13 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
                    (decf *hyperlink-number*)
                    (when new-node? (decf *hypernode-number*)))
                   (t
-                    (setf (motivating-nodes node) (union clues motivators))
+                    (setf (hypernode-motivating-nodes node) (union clues motivators))
                     (when new-node?
                       (push node *hypergraph*)
                       (store-hypernode-with-c-list
                         node (sequent-formula sequent) c-list))
                     (when interest
-                      (push interest (enabling-interests node))
+                      (push interest (hypernode-enabling-interests node))
                       (push node (enabled-nodes interest)))
                     (when *trace* (indent depth) (princ "DRAW CONCLUSION: ")
                       (princ node) (terpri))
@@ -6754,7 +6754,7 @@ every member of NRS is an interest-supposition-node of that interest. |#
                  (some #'(lambda (R*)
                            (and (not (eq R R*))
                                 (eq (cdr R) (cdr R*))
-                                (zerop (readopted-supposition (cdr R)))))
+                                (zerop (hypernode-readopted-supposition (cdr R)))))
                        RA))
              RA))
       (let ((instantiations+ instantiations)
@@ -6780,7 +6780,7 @@ every member of NRS is an interest-supposition-node of that interest. |#
                      (some #'(lambda (R*)
                                (and (not (eq R R*))
                                     (eq (cdr R) (cdr R*))
-                                    (zerop (readopted-supposition (cdr R)))))
+                                    (zerop (hypernode-readopted-supposition (cdr R)))))
                            NR))
                  NR))
           (potent-suppositions NR RA))
@@ -7042,14 +7042,14 @@ generating nodes are retrieved from the inference-queue. |#
               (when
                 (and (deductive-node C)
                      (or
-                       (null (enabling-interests C))
-                       (some #'(lambda (in) (not (cancelled-interest in))) (enabling-interests C))))
+                       (null (hypernode-enabling-interests C))
+                       (some #'(lambda (in) (not (cancelled-interest in))) (hypernode-enabling-interests C))))
                 (generate-reductio-interests C (1+ depth) interests)))))))
     (when (reductio-interests (hypernode-c-list node))
       (generate-reductio-interests node depth interests))))
 
 (defun ADOPT-REDUCTIO-INTEREST (node depth d-interests)
-  (let ((enabling-interests (enabling-interests node)))
+  (let ((enabling-interests (hypernode-enabling-interests node)))
     (when
       (and
         *reductio-supposition-nodes*
@@ -7176,7 +7176,7 @@ non-reductio-generating-interests. |#
 ;                      (some
 ;                        #'(lambda (sup)
 ;                              (some
-;                                #'(lambda (in) (not (assoc in (discharged-interests node))))
+;                                #'(lambda (in) (not (assoc in (hypernode-discharged-interests node))))
 ;                                (hypernode-generated-interests (cdr sup))))
 ;                        (hypernode-non-reductio-supposition node*))
 ;                      (appropriately-related-node-suppositions node node* unifier))
@@ -7193,7 +7193,7 @@ non-reductio-generating-interests. |#
 ;                      (some
 ;                        #'(lambda (sup)
 ;                              (some
-;                                #'(lambda (in) (not (assoc in (discharged-interests node))))
+;                                #'(lambda (in) (not (assoc in (hypernode-discharged-interests node))))
 ;                                (hypernode-generated-interests (cdr sup))))
 ;                        (hypernode-non-reductio-supposition node))
 ;                      (appropriately-related-node-suppositions node* node unifier*))
@@ -7265,11 +7265,11 @@ non-reductio-generating-interests. |#
     (and
       (<= (length (setdifference (hypernode-supposition node) *skolem-free-suppositions*)) 1)
       (not (member d-interest d-interests)))
-    (setf (reductios-discharged node) t)
+    (setf (hypernode-reductios-discharged node) t)
     (let ((reductio-ancestors (hypernode-reductio-ancestors node))
           (Y0 (hypernode-supposition node)))
       (discharge-fortuitous-reductios node d-interests (1+ depth))
-      (dolist (il (discharged-interests node))
+      (dolist (il (hypernode-discharged-interests node))
         (let* ((interest (mem1 il))
                (direct-reductio-interest (direct-reductio-interest interest))
                (unifier (mem2 il))  ;; this unifies node with interest
@@ -7340,12 +7340,12 @@ non-reductio-generating-interests. |#
   ; (when (eq node (node 3)) (setf n node d depth di d-interests) (break))
   ;; (step (discharge-delayed-reductios n d di))
   (when
-    (not (reductios-discharged node))
-    (setf (reductios-discharged node) t)
+    (not (hypernode-reductios-discharged node))
+    (setf (hypernode-reductios-discharged node) t)
     (let ((reductio-ancestors (hypernode-reductio-ancestors node))
           (Y0 (hypernode-supposition node)))
       (discharge-fortuitous-reductios node d-interests (1+ depth))
-      (dolist (il (discharged-interests node))
+      (dolist (il (hypernode-discharged-interests node))
         (let* ((interest (mem1 il))
                (direct-reductio-interest (direct-reductio-interest interest))
                (unifier (mem2 il))
@@ -7498,12 +7498,12 @@ non-reductio-generating-interests. |#
   (when
     (not (some
            #'(lambda (il) (member (mem1 il) d-interests))
-           (discharged-interests node)))
-    (setf (reductios-discharged node) t)
+           (hypernode-discharged-interests node)))
+    (setf (hypernode-reductios-discharged node) t)
     (let ((reductio-ancestors (hypernode-reductio-ancestors node))
           (Y0 (hypernode-supposition node)))
       (discharge-fortuitous-reductios node d-interests (1+ depth))
-      (dolist (il (discharged-interests node))
+      (dolist (il (hypernode-discharged-interests node))
         (let* ((interest (mem1 il))
                (direct-reductio-interest (direct-reductio-interest interest))
                (unifier (mem2 il))
@@ -7665,7 +7665,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
                         (some #'(lambda (R*)
                                   (and (not (eq R R*))
                                        (eq (cdr R) (cdr R*))
-                                       (zerop (readopted-supposition (cdr R)))))
+                                       (zerop (hypernode-readopted-supposition (cdr R)))))
                               RA))
                     RA))
              ;; This prevents a non-reductio-supposition from being instantiated in two different ways
@@ -7675,7 +7675,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
                           #'(lambda (R*)
                               (and (not (eq R R*))
                                    (eq (cdr R) (cdr R*))
-                                   (zerop (readopted-supposition (cdr R)))))
+                                   (zerop (hypernode-readopted-supposition (cdr R)))))
                           NR))
                     NR)))
     (let ((sup (remove-if-equal P (union= Y Y*))))
@@ -7724,8 +7724,8 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
                     (store-hypernode-with-c-list
                       N-conclusion (sequent-formula sequent) c-list))
                   ; (when R
-                  ;      (setf (enabling-interests N-conclusion)
-                  ;               (union (enabling-interests N-conclusion)
+                  ;      (setf (hypernode-enabling-interests N-conclusion)
+                  ;               (union (hypernode-enabling-interests N-conclusion)
                   ;                          (hypernode-generating-interests (cdr R)))))
                   (when *trace* (indent depth)
                     (princ "draw-reductio-conclusion: ")
@@ -7957,7 +7957,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
   (let ((sup-node (find-if #'(lambda (N) (equal (hypernode-formula N) sup))
                            *non-reductio-supposition-nodes*)))
     (cond (sup-node
-            (incf (readopted-supposition sup-node))
+            (incf (hypernode-readopted-supposition sup-node))
             (when (hypernode-deductive-only sup-node)
               (let ((nodes (convert-from-deductive-only sup-node)))
                 (dolist (C nodes)
@@ -7968,7 +7968,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                    (setf sup-node
                          (queue-non-reductio-defeater-supposition sup)))
                   ((reductio-supposition sup-node)
-                   (incf (readopted-supposition sup-node))
+                   (incf (hypernode-readopted-supposition sup-node))
                    (convert-reductio-supposition sup-node 1.0)))))))
 
 (defun queue-non-reductio-defeater-supposition (supposition)
@@ -8126,7 +8126,7 @@ is the old maximal-degree-of-justification  |#
                      #'(lambda (N) (member N interests))
                      (i-list-interests (mem1 i-list)))))
           corresponding-i-lists)
-        (setf (interests-discharged? node) t)
+        (setf (hypernode-interests-discharged? node) t)
         (dolist (corresponding-i-list corresponding-i-lists)
           (let* ((i-list (mem1 corresponding-i-list))
                  (interest-candidates
@@ -8149,7 +8149,7 @@ is the old maximal-degree-of-justification  |#
                                  (> (maximum-degree-of-interest N) old-degree))
                              (or (deductive-node node) (not (deductive-interest N)))
                              (<= (degree-of-interest N) degree)
-                             (not (assoc N (discharged-interests node))))))
+                             (not (assoc N (hypernode-discharged-interests node))))))
                   (let ((unifiers
                           (if
                             (or (not (direct-reductio-interest N))
@@ -8180,7 +8180,7 @@ is the old maximal-degree-of-justification  |#
                                              (interest-match link)
                                              (if spec (cons (cons spec node) (link-binding link))
                                                (link-binding link)))))
-                                (push (list N unifier (append unifiers reductio-unifiers)) (discharged-interests node))
+                                (push (list N unifier (append unifiers reductio-unifiers)) (hypernode-discharged-interests node))
                                 (pushnew node (discharging-nodes N))
                                 (when *display?* (princ "  Node ") (princ (hypernode-number node))
                                   (princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
@@ -8190,7 +8190,7 @@ is the old maximal-degree-of-justification  |#
                                   link u* degree new? old-degree N node depth (cons N interests)))))))
                       (when reductio-unifiers
                         (push (list N unifier (append unifiers reductio-unifiers))
-                              (discharged-interests node)))
+                              (hypernode-discharged-interests node)))
                       (dolist (u reductio-unifiers)
                         (let ((u* (merge-unifiers* unifier u)))
                           (dolist (link (right-links N))
@@ -8553,7 +8553,7 @@ is the old maximal-degree-of-justification  |#
                                           (princ " is directly anchored by discharging a direct-reductio-interest from node ")
                                           (princ (hypernode-number n*)) (terpri)) t))))
                               (direct-reductio-interest (car in))))
-                        (discharged-interests n)))
+                        (hypernode-discharged-interests n)))
                     (some
                       #'(lambda (in)
                           (some
@@ -8565,7 +8565,7 @@ is the old maximal-degree-of-justification  |#
                                      (not (member (resultant-interest L) *dependent-interests*))
                                      ))
                             (right-links in)))
-                      (enabling-interests n))
+                      (hypernode-enabling-interests n))
                     )))
             *dependent-nodes*))
         (anchored-interests
@@ -8629,7 +8629,7 @@ is the old maximal-degree-of-justification  |#
                                   (princ "Hypernode ") (princ (hypernode-number n))
                                   (princ " is directly anchored by the enabling-interest ")
                                   (princ (interest-number in)) (terpri)) t)))
-                        (enabling-interests n))
+                        (hypernode-enabling-interests n))
                   (some
                     #'(lambda (L)
                         (and
@@ -8661,7 +8661,7 @@ is the old maximal-degree-of-justification  |#
                                         (princ " is directly anchored by discharging a direct-reductio-interest from node ")
                                         (princ (hypernode-number n*)) (terpri)) t))))
                             (direct-reductio-interest (car in))))
-                      (discharged-interests n)))
+                      (hypernode-discharged-interests n)))
                   (some
                     #'(lambda (in)
                         (and
@@ -8683,7 +8683,7 @@ is the old maximal-degree-of-justification  |#
                                          (terpri))
                                        t)))
                             (right-links in))))
-                    (enabling-interests n))
+                    (hypernode-enabling-interests n))
                   ))
             *dependent-nodes*))
         (anchored-interests
@@ -9272,7 +9272,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   (let ((interests (interest-descendants (list interest))))
     (order
       (inference-descendants
-        (subset #'(lambda (N) (some #'(lambda (int) (member int interests)) (enabling-interests N)))
+        (subset #'(lambda (N) (some #'(lambda (int) (member int interests)) (hypernode-enabling-interests N)))
                 (unionmapcar #'discharging-nodes interests)))
       #'(lambda (x y) (< (hypernode-number x) (hypernode-number y))))))
 
@@ -9318,7 +9318,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
                         (push N interest-descendants)
                         (push N interests))))
                   (dolist (N (discharging-nodes interest))
-                    (when (member interest (enabling-interests N))
+                    (when (member interest (hypernode-enabling-interests N))
                       (when (not (member N hypernode-descendants))
                         (push N hypernode-descendants)
                         (push N nodes))))
