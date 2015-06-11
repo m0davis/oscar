@@ -32,9 +32,9 @@
   (hypernode-consequent-links nil)
   (hypernode-old-degree-of-justification nil) ;; the degree prior to the last computation of defeat statuses
   (hypernode-reductio-ancestors nil)
-  (non-reductio-supposition nil)
-  (supported-hyper-defeat-links nil)  ;; hyper-defeat-links for which the node is the root
-  (degree-of-justification nil)
+  (hypernode-non-reductio-supposition nil)
+  (hypernode-supported-hyper-defeat-links nil)  ;; hyper-defeat-links for which the node is the root
+  (hypernode-degree-of-justification nil)
   (hypernode-ancestors nil)
   (nearest-defeasible-ancestors nil)
   (answered-queries nil)
@@ -131,7 +131,7 @@
                           (member target1 (hypernode-ancestors (hyper-defeat-link-root DL)))))  ;; bypass check
                   (cdr d-path)))
               (pushnew d-path d-paths :test 'equal))))))
-    (dolist (d-link (supported-hyper-defeat-links target1))
+    (dolist (d-link (hypernode-supported-hyper-defeat-links target1))
       (let* ((link (hyper-defeat-link-target d-link))
              (target (hyperlink-target link)))
         (cond ((eq link link2) (push (list d-link) d-paths))   ;; one-step defeat-path
@@ -605,8 +605,8 @@ When sigma = ((#<hyperlink #7 for node 8>)):
     (*deductive-only*
       (dolist (link *new-links*)
         (let ((node (hyperlink-target link)))
-          (setf (hypernode-old-degree-of-justification node) (degree-of-justification node))
-          (setf (degree-of-justification node) 1.0)
+          (setf (hypernode-old-degree-of-justification node) (hypernode-degree-of-justification node))
+          (setf (hypernode-degree-of-justification node) 1.0)
           (setf (hyperlink-degree-of-justification link) 1.0)
           (setf (discounted-node-strength node) (hyperlink-discount-factor link))
           (when (null (hypernode-old-degree-of-justification node))
@@ -647,7 +647,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
     (setf (hypernode-dependencies node) nil)
     (dolist (L (hypernode-consequent-links node))
       (when (hyperlink-justifications L) (reset-memories L)))
-    (dolist (dl (supported-hyper-defeat-links node))
+    (dolist (dl (hypernode-supported-hyper-defeat-links node))
       (setf (hyper-defeat-link-justifications dl) nil)
       (setf (hyper-defeat-link-critical? dl) nil)
       (setf (hyper-defeat-link-in dl) (list nil))
@@ -662,7 +662,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
       (dolist (L (hypernode-consequent-links node))
         (unless (assoc nil (hyperlink-justifications L))
           (compute-affected-justifications L)))
-      (dolist (DL (supported-hyper-defeat-links node))
+      (dolist (DL (hypernode-supported-hyper-defeat-links node))
         (let ((L (hyper-defeat-link-target DL)))
           (unless (assoc nil (hyperlink-justifications L))
             (compute-affected-justifications L)))))))
@@ -765,7 +765,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
       ;; Initial nodes get their assigned degrees of justification
       ((eq (hypernode-justification node) :given)
        (when (and *display?* *j-trace*) (indent indent) (princ "This is an initial node.") (terpri))
-       (setf value (degree-of-justification node))
+       (setf value (hypernode-degree-of-justification node))
        (push (cons sigma value) (hypernode-justifications node)))
       ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
       ((and sigma
@@ -787,8 +787,8 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                  (push (cons sigma value) (hypernode-justifications node))
                  ;; The following is standard stuff from OSCAR_3.33
                  (when (null sigma)
-                   (let ((old-value (degree-of-justification node)))
-                     (setf (degree-of-justification node) value)
+                   (let ((old-value (hypernode-degree-of-justification node)))
+                     (setf (hypernode-degree-of-justification node) value)
                      (setf (discounted-node-strength node)
                            (if (hypernode-hyperlinks node)
                              (* (hyperlink-discount-factor (car (hypernode-hyperlinks node))) value)
@@ -959,7 +959,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                              ;; otherwise, its value is last-link.
                              (t (setf value (last-link (append B D) path))
                                 (record-dependencies value (cons link sigma) indent)))))
-                   (t (setf value (degree-of-justification (hyperlink-target link)))
+                   (t (setf value (hypernode-degree-of-justification (hyperlink-target link)))
                       (push (cons sigma value) (hyperlink-justifications link))))))))
     (when (and (null sigma) (numberp value)) (setf (hyperlink-degree-of-justification link) value))
     (when (and *display?* *j-trace*)
@@ -1035,7 +1035,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                #'(lambda (N)
                    (or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
                        (set-difference (hypernode-hyperlinks N) links)
-                       (not (eql (degree-of-justification N) 1.0))))
+                       (not (eql (hypernode-degree-of-justification N) 1.0))))
                new-beliefs))
          (when *log-on*
            (push "               vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" *reasoning-log*))
@@ -1044,11 +1044,11 @@ When sigma = ((#<hyperlink #7 for node 8>)):
          (cond ((or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
                     (set-difference (hypernode-hyperlinks N) links))
                 (when *log-on*
-                  (push (list :increased-support N (degree-of-justification N))
+                  (push (list :increased-support N (hypernode-degree-of-justification N))
                         *reasoning-log*))
                 (when *display?*
                   (princ "               The degree-of-justification of ") (princ N)
-                  (princ " has increased to ") (princ (degree-of-justification N)) (terpri)
+                  (princ " has increased to ") (princ (hypernode-degree-of-justification N)) (terpri)
                   (princ "               vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv") (terpri))
                 (when (and *display?* *graphics-on*)
                   (let ((posi (hypernode-position N *og*)))
@@ -1057,21 +1057,21 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                         (speak-text "The degree-of-support of N ")
                         (speak-text (write-to-string (hypernode-number N)))
                         (speak-text "has increased to")
-                        (speak-text (write-to-string (degree-of-justification N))))
+                        (speak-text (write-to-string (hypernode-degree-of-justification N))))
                       (draw-just-undefeated-node posi *og* N)))))
-               ((not (eql (degree-of-justification N) 1.0))
+               ((not (eql (hypernode-degree-of-justification N) 1.0))
                 (when *log-on*
-                  (push (list :new-support N (degree-of-justification N)) *reasoning-log*))
+                  (push (list :new-support N (hypernode-degree-of-justification N)) *reasoning-log*))
                 (when *display?*
                   (princ "               The degree-of-justification of ") (princ N)
-                  (princ " is ") (princ (degree-of-justification N)) (terpri)
+                  (princ " is ") (princ (hypernode-degree-of-justification N)) (terpri)
                   (princ "               vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv") (terpri))
                 (when (and *display?* *graphics-on*)
                   (when (and (boundp '*speak*) *speak*)
                     (speak-text "The degree-of-support of N ")
                     (speak-text (write-to-string (hypernode-number N)))
                     (speak-text "is")
-                    (speak-text (write-to-string (degree-of-justification N))))
+                    (speak-text (write-to-string (hypernode-degree-of-justification N))))
                   (let ((posi (hypernode-position n *og*)))
                     (cond (posi (draw-just-undefeated-node posi *og* n))
                           (t
@@ -1083,7 +1083,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
          (cond ((or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
                     (> (length (hypernode-hyperlinks N)) 1))
                 (cond
-                  ((zerop (degree-of-justification N))
+                  ((zerop (hypernode-degree-of-justification N))
                    (when *log-on*
                      (push (list :defeated N) *reasoning-log*))
                    (when *display?*
@@ -1099,13 +1099,13 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                          (draw-just-defeated-node posi *og* N)))))
                   (t
                     (when *log-on*
-                      (push (list :decreased-support N (degree-of-justification N))
+                      (push (list :decreased-support N (hypernode-degree-of-justification N))
                             *reasoning-log*))
                     (when *display?*
                       (princ "               The degree-of-justification of ") (princ N)
-                      (princ " has decreased to ") (princ (degree-of-justification N)) (terpri)
+                      (princ " has decreased to ") (princ (hypernode-degree-of-justification N)) (terpri)
                       (princ "               vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv") (terpri)))))
-               ((zerop (degree-of-justification N))
+               ((zerop (hypernode-degree-of-justification N))
                 (when *log-on*
                   (push (list :defeated N) *reasoning-log*))
                 (when *display?*
@@ -1134,7 +1134,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
 (defun display-hypergraph ()
   (terpri) (princ "(") (terpri)
   (dolist (node (reverse *hypergraph*)) (princ node)
-    (princ "  --  ") (princ "justification = ") (princ (degree-of-justification node)) (terpri)
+    (princ "  --  ") (princ "justification = ") (princ (hypernode-degree-of-justification node)) (terpri)
     (when (hypernode-hyperlinks node)
       (princ "     hyperlinkS:") (terpri)
       (dolist (link (reverse (hypernode-hyperlinks node)))
@@ -1151,9 +1151,9 @@ When sigma = ((#<hyperlink #7 for node 8>)):
           (princ "               hyper-defeat-linkS-FOR:") (terpri)
           (dolist (dl (reverse (hyperlink-defeaters link)))
             (princ "                    ") (princ dl) (princ " from ") (princ (hyper-defeat-link-root dl)) (terpri)))))
-    (when (supported-hyper-defeat-links node)
+    (when (hypernode-supported-hyper-defeat-links node)
       (princ "     SUPPORTED-hyper-defeat-linkS:") (terpri)
-      (dolist (dl (reverse (supported-hyper-defeat-links node)))
+      (dolist (dl (reverse (hypernode-supported-hyper-defeat-links node)))
         (princ "          ") (princ dl) (terpri))))
   (princ ")") (terpri))
 

@@ -468,7 +468,7 @@
         (t 1)))
 
 (defun make-new-conclusion
-  (sequent deductive-only reductio-ancestors non-reductio-supposition)
+  (sequent deductive-only reductio-ancestors hypernode-non-reductio-supposition)
   (let* ((c-vars (formula-node-variables (sequent-formula sequent)))
          (sup (sequent-supposition sequent))
          (i-vars (supposition-variables sup))
@@ -482,7 +482,7 @@
              :deductive-only deductive-only
              :node-variables c-vars
              :node-supposition-variables i-vars
-             :non-reductio-supposition non-reductio-supposition
+             :hypernode-non-reductio-supposition non-reductio-supposition
              :hypernode-reductio-ancestors reductio-ancestors
              )))
     (when (and (listp (sequent-formula sequent))
