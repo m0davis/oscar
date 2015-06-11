@@ -182,8 +182,8 @@
                           (when (not *monochrome*) (set-fore-color view *black-color*))))))))
 
 (defunction draw-arrows-to-generated-direct-reductio-interests (position view node)
-    (when (generated-direct-reductio-interests node)
-         (dolist (int (generated-direct-reductio-interests node))
+    (when (hypernode-generated-direct-reductio-interests node)
+         (dolist (int (hypernode-generated-direct-reductio-interests node))
              (let ((posi (interest-position int view)))
                 (when posi 
                      (set-fore-color view *orange-color*)

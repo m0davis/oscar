@@ -1329,7 +1329,7 @@
                 (when display (princ "     ") (princ in) (princ " discharged protoplan interest") (terpri))
                 (push in affected-interests)
                 (push in new-affected-interests)))))
-        (dolist (in (generated-defeat-interests node))
+        (dolist (in (hypernode-generated-defeat-interests node))
           (when (not (member in affected-interests))
             (when display (princ "     ") (princ in) (princ " generated-defeat-interest") (terpri))
             (push in affected-interests)
@@ -1413,7 +1413,7 @@
         (let ((Q (node-queue-node N)))
           (when Q (pushnew Q altered-queue))))
       (when (zerop (undefeated-degree-of-support N))
-        (dolist (in (generated-defeat-interests N))
+        (dolist (in (hypernode-generated-defeat-interests N))
           (when (member in affected-interests)
             (pull in affected-interests)
             (setf (interest-priority in) *answered-priority*)
@@ -1721,7 +1721,7 @@
 ;      #'(lambda (in)
 ;            (and (processed-interest in)
 ;                     (every #'decided-node (discharging-nodes in))))
-;      (generated-defeat-interests node)))
+;      (hypernode-generated-defeat-interests node)))
 ;
 ;(defun processed-interest (interest)
 ;    (and (null (interest-queue-node interest))
@@ -1800,7 +1800,7 @@
                        (list (mem2 (node-formula (support-link-target link)))))
                      ))
              (store-interest undercutting-interest i-list)
-             (pushnew undercutting-interest (generated-defeat-interests (support-link-target link)))
+             (pushnew undercutting-interest (hypernode-generated-defeat-interests (support-link-target link)))
              (when *display?* 
                (display-interest undercutting-interest)
                (princ 
@@ -1813,7 +1813,7 @@
                undercutting-interest defeater antecedent* link reverse-binding))
             (t 
               (readopt-interest undercutting-interest (list link))
-              (push undercutting-interest (generated-defeat-interests (support-link-target link)))
+              (push undercutting-interest (hypernode-generated-defeat-interests (support-link-target link)))
               (push (support-link-target link) (generating-defeat-nodes undercutting-interest))
               (when (eq (support-link-rule link) protoplan)
                 (push (mem2 (node-formula (support-link-target link)))
@@ -1859,7 +1859,7 @@
                      (when (eq (support-link-rule link) protoplan)
                        (list (mem2 (node-formula (support-link-target link)))))))
              (store-interest rebutting-interest i-list)
-             (pushnew rebutting-interest (generated-defeat-interests (support-link-target link)))
+             (pushnew rebutting-interest (hypernode-generated-defeat-interests (support-link-target link)))
              (when *display?* 
                (display-interest rebutting-interest)
                (princ 
@@ -1872,7 +1872,7 @@
                rebutting-interest *defeater-priority*))
             (t 
               (readopt-interest rebutting-interest (list link))
-              (push rebutting-interest (generated-defeat-interests (support-link-target link)))
+              (push rebutting-interest (hypernode-generated-defeat-interests (support-link-target link)))
               (push (support-link-target link) (generating-defeat-nodes rebutting-interest))
               (when (eq (support-link-rule link) protoplan)
                 (push (mem2 (node-formula (support-link-target link)))
@@ -1982,7 +1982,7 @@
       )))
 
 (defun decided-node (node)
-  (and (every #'decided-interest (generated-defeat-interests node))
+  (and (every #'decided-interest (hypernode-generated-defeat-interests node))
        (every #'(lambda (L)
                   (every #'decided-node (support-link-defeaters L)))
               (support-links node))))

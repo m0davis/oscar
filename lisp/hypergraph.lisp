@@ -59,13 +59,13 @@
   (hypernode-enabling-interests nil)  ;; if the node is obtained by discharging inference-links, this is the
   ;; list of resultant-interests of the links.
   (hypernode-motivating-nodes nil)  ;; nodes motivating the inference, not included in the basis.
-  (generated-direct-reductio-interests nil)
-  (generated-defeat-interests nil)
-  (generating-defeat-interests nil)  ;; interest in defeaters discharged by this node
-  (temporal-node nil)  ;; nil or the cycle on which the node was constructed
-  (background-knowledge nil)
-  (non-reductio-supposition? nil)
-  (anchoring-interests nil)
+  (hypernode-generated-direct-reductio-interests nil)
+  (hypernode-generated-defeat-interests nil)
+  (hypernode-generating-defeat-interests nil)  ;; interest in defeaters discharged by this node
+  (hypernode-temporal-node nil)  ;; nil or the cycle on which the node was constructed
+  (hypernode-background-knowledge nil)
+  (hypernode-non-reductio-supposition? nil)
+  (hypernode-anchoring-interests nil)
   (hypernode-justifications nil)  ;; list of pairs (sigma.val) used by justification
   (hypernode-in (list nil))  ;; list of  lists of links
   (hypernode-dependencies nil)   ;; list of sigmas
