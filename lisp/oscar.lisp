@@ -858,15 +858,15 @@ known conclusions matching the formula. |#
   (query-formula nil)
   (query-strength 0)
   (query-queue-node nil)
-  (deductive-query nil)  ;; t if the query is whether the query formula is deductively provable
-  (positive-query-instructions nil) ;; a list of functions applicable to an hypernode
-  (negative-query-instructions nil) ;; a list of functions applicable to an hypernode
+  (query-deductive nil)  ;; t if the query is whether the query formula is deductively provable
+  (query-positive-instructions nil) ;; a list of functions applicable to an hypernode
+  (query-negative-instructions nil) ;; a list of functions applicable to an hypernode
   (query-answers nil)  ;;a list of hypernodes
-  (answered? nil)  ;; t if some answer is justified to degree greater than or equal
+  (query-answered? nil)  ;; t if some answer is justified to degree greater than or equal
   ;; to the degree of interest, nil otherwise
   (query-interest nil)   ;; the interest recording the query
-  (negative-query-interest nil)  ;; the negative-interest for a whether-query
-  (?-constraint nil))  ;; a function which when applied to the ?-vars yields a discharge-condition
+  (query-negative-interest nil)  ;; the negative-interest for a whether-query
+  (query-?-constraint nil))  ;; a function which when applied to the ?-vars yields a discharge-condition
 ;; for the query-interest, constraining the instantiating terms.
 
 (defun print-query (x stream depth)
@@ -913,7 +913,7 @@ known conclusions matching the formula. |#
 
 (defun display-query (Q)
   (princ "  Interest in ") (prinp (query-formula Q)) (terpri)
-  (cond ((null (answered? Q))
+  (cond ((null (query-answered? Q))
          (princ "  is unsatisfied.")
          (when (null (query-answers Q)) (princ "  NO ARGUMENT WAS FOUND."))
          (terpri))
@@ -2327,7 +2327,7 @@ Premises are queued for immediate retrieval. |#
         (strength
           (cond ((member query *permanent-ultimate-epistemic-interests*)
                  (query-strength query))
-                ((answered? query)
+                ((query-answered? query)
                  (* (query-strength query) *answered-discount*))
                 (t (query-strength query)))))
     (/ strength complexity)))
@@ -2489,10 +2489,10 @@ to have an undercutting defeater.  |#
   (when (and *display?* *graphics-on*) (make-oscar-window))
   (setf *query-number* (length *fixed-ultimate-epistemic-interests*))
   (dolist (query *fixed-ultimate-epistemic-interests*)
-    (setf (answered? query) nil)
+    (setf (query-answered? query) nil)
     (setf (query-answers query) nil)
     (setf (query-interest query) nil)
-    (setf (negative-query-interest query) nil)
+    (setf (query-negative-interest query) nil)
     (setf (query-queue-node query) nil))
   (dolist (premise *premises*)
     (when (null (mem3 premise)) (pull premise *premises*) (queue-premise premise)))
@@ -4584,14 +4584,14 @@ queued, it goes on the front of the inference-queue. |#
              (when interests
                (find-if #'(lambda (i)
                             (and (null (interest-supposition i))
-                                 (eq (deductive-interest i) (deductive-query query))))
+                                 (eq (deductive-interest i) (query-deductive query))))
                         interests))))
          (negative-interest
            (let ((interests (interests-for (neg formula) nil)))
              (when interests
                (find-if #'(lambda (i)
                             (and (null (interest-supposition i))
-                                 (eq (deductive-interest i) (deductive-query query))))
+                                 (eq (deductive-interest i) (query-deductive query))))
                         interests)))))
     (cond (positive-interest
             (setf (degree-of-interest positive-interest)
@@ -4627,7 +4627,7 @@ queued, it goes on the front of the inference-queue. |#
                     :degree-of-interest (query-strength query)
                     :maximum-degree-of-interest (query-strength query)
                     :interest-priority (query-strength query)
-                    :deductive-interest (deductive-query query)))
+                    :deductive-interest (query-deductive query)))
             (store-interest positive-interest)
             (when *display?* (display-interest positive-interest))
             (when *log-on* (push positive-interest *reasoning-log*))
@@ -4683,7 +4683,7 @@ queued, it goes on the front of the inference-queue. |#
                     :degree-of-interest (query-strength query)
                     :maximum-degree-of-interest (query-strength query)
                     :interest-priority (query-strength query)
-                    :deductive-interest (deductive-query query)))
+                    :deductive-interest (query-deductive query)))
             (store-interest negative-interest)
             (when *display?* (display-interest negative-interest))
             (when *log-on* (push negative-interest *reasoning-log*))
@@ -4693,7 +4693,7 @@ queued, it goes on the front of the inference-queue. |#
             (apply-degenerate-backwards-reasons negative-interest priority (1+ depth))
             (reason-backwards-from negative-interest priority (1+ depth))
             (form-epistemic-desires-for negative-interest)))
-    (setf (negative-query-interest query) negative-interest)
+    (setf (query-negative-interest query) negative-interest)
     (dolist (cl (corresponding-c-lists (interest-i-list negative-interest)))
       (let ((conclusion
               (find-if
@@ -4709,8 +4709,8 @@ queued, it goes on the front of the inference-queue. |#
       (push #'(lambda (C)
                 (when (deductive-node C)
                   (cancel-interest-in (query-interest query) 0)
-                  (cancel-interest-in (negative-query-interest query) 0)))
-            (positive-query-instructions query)))
+                  (cancel-interest-in (query-negative-interest query) 0)))
+            (query-positive-instructions query)))
     ))
 
 (defun reason-backwards-from-simple-query (query priority depth)
@@ -4729,7 +4729,7 @@ queued, it goes on the front of the inference-queue. |#
              (when interests
                (find-if #'(lambda (i)
                             (and (null (interest-supposition i))
-                                 (eq (deductive-interest i) (deductive-query query))))
+                                 (eq (deductive-interest i) (query-deductive query))))
                         interests)))))
     (cond (interest
             (setf (degree-of-interest interest)
@@ -4765,7 +4765,7 @@ queued, it goes on the front of the inference-queue. |#
                     :degree-of-interest (query-strength query)
                     :maximum-degree-of-interest (query-strength query)
                     :interest-priority (query-strength query)
-                    :deductive-interest (deductive-query query)))
+                    :deductive-interest (query-deductive query)))
             (store-interest interest)
             (when *display?* (display-interest interest))
             (when *log-on* (push interest *reasoning-log*))
@@ -4823,8 +4823,8 @@ queued, it goes on the front of the inference-queue. |#
                    :maximum-degree-of-interest (query-strength query)
                    :interest-priority (query-strength query)
                    :discharge-condition
-                   (if (?-constraint query) (funcall (?-constraint query) vars))
-                   :deductive-interest (deductive-query query))))
+                   (if (query-?-constraint query) (funcall (query-?-constraint query) vars))
+                   :deductive-interest (query-deductive query))))
           (store-interest interest)
           (when *display?* (display-interest interest))
           (when *log-on* (push interest *reasoning-log*))
@@ -4847,7 +4847,7 @@ queued, it goes on the front of the inference-queue. |#
                 (push conclusion (supporting-nodes link))
                 (record-query-answers link))))
           (when (not (member query *permanent-ultimate-epistemic-interests*))
-            (pushnew (?-positive-instruction query) (positive-query-instructions query)))
+            (pushnew (?-positive-instruction query) (query-positive-instructions query)))
           )))))
 
 #| Carrying along the priority of the inference-queue node from which
@@ -5676,7 +5676,7 @@ the resultant-interest. |#
                                     #'(lambda (Q) (eq (item-kind Q) :query))
                                     *inference-queue*)))
                        (setf (hypernode-degree-of-justification node) 1.0)
-                       (setf (answered? (resultant-interest link)) T)
+                       (setf (query-answered? (resultant-interest link)) T)
                        (let ((deductive-links nil)
                              (deductive-nodes nil))
                          (dolist (L *new-links*)
@@ -5689,7 +5689,7 @@ the resultant-interest. |#
                            *new-links*
                            deductive-nodes
                            nil))
-                       (dolist (instruction (positive-query-instructions (resultant-interest link)))
+                       (dolist (instruction (query-positive-instructions (resultant-interest link)))
                          (funcall instruction node))
                        (when *display?*
                          (terpri)
@@ -5773,9 +5773,9 @@ the resultant-interest. |#
              (princ "               ") (princ "answers ") (princ Q)
              (terpri) (princ "               ")
              (princ "=========================================") (terpri))
-           (dolist (instruction (positive-query-instructions Q))
+           (dolist (instruction (query-positive-instructions Q))
              (funcall instruction C))
-           (setf (answered? Q) t))
+           (setf (query-answered? Q) t))
           (*display?*
             (princ "               ----------------------------------------") (terpri)
             (princ "               ") (princ C)
@@ -5792,7 +5792,7 @@ the resultant-interest. |#
                      #'(lambda (Q) (eq (item-kind Q) :query))
                      *inference-queue*)))
         (setf (hypernode-degree-of-justification C) 1.0)
-        (setf (answered? Q) T)
+        (setf (query-answered? Q) T)
         (when *display?*
           (princ "             ALL QUERIES HAVE BEEN ANSWERED DEDUCTIVELY.")
           (terpri))
@@ -8251,7 +8251,7 @@ is the old maximal-degree-of-justification  |#
                                   #'(lambda (Q) (eq (item-kind Q) :query))
                                   *inference-queue*)))
                      (setf (hypernode-degree-of-justification node) 1.0)
-                     (setf (answered? (resultant-interest link)) T)
+                     (setf (query-answered? (resultant-interest link)) T)
                      (let ((deductive-links nil)
                            (deductive-nodes nil))
                        (dolist (L *new-links*)
@@ -8264,7 +8264,7 @@ is the old maximal-degree-of-justification  |#
                          *new-links*
                          deductive-nodes
                          nil))
-                     (dolist (instruction (positive-query-instructions (resultant-interest link)))
+                     (dolist (instruction (query-positive-instructions (resultant-interest link)))
                        (funcall instruction node))
                      (when *display?*
                        (terpri)
@@ -9414,9 +9414,9 @@ the sequent concluded. |#
                 (princ "               ") (princ "answers ") (princ Q)
                 (terpri) (princ "               ")
                 (princ "=========================================") (terpri))
-              (dolist (instruction (positive-query-instructions Q))
+              (dolist (instruction (query-positive-instructions Q))
                 (funcall instruction C))
-              (setf (answered? Q) t)
+              (setf (query-answered? Q) t)
               (when (not (member Q *permanent-ultimate-epistemic-interests*))
                 (push Q altered-queries)))))))
     (dolist (C new-retractions)
@@ -9434,13 +9434,13 @@ the sequent concluded. |#
             (princ "               ") (princ "retracts the previous answer to ")
             (princ Q) (terpri) (princ "               ")
             (princ "=========================================") (terpri))
-          (dolist (instruction (negative-query-instructions Q))
+          (dolist (instruction (query-negative-instructions Q))
             (funcall instruction C))
           (when
             (every
               #'(lambda (A) (not (>= (current-degree-of-justification A) (query-strength Q))))
               (query-answers Q))
-            (setf (answered? Q) nil)
+            (setf (query-answered? Q) nil)
             (when (not (member Q *permanent-ultimate-epistemic-interests*))
               (push Q altered-queries))))))
     altered-queries))
@@ -9493,7 +9493,7 @@ the sequent concluded. |#
     (dolist (query altered-queries)
       (let ((interest (query-interest query)))
         (pull interest affected-interests)
-        (cond ((and (answered? query)
+        (cond ((and (query-answered? query)
                     (not (member query *permanent-ultimate-epistemic-interests*)))
                (setf (interest-priority interest) (* (degree-of-interest interest) *answered-discount*)))
               (t (setf (interest-priority interest) (degree-of-interest interest))))))
@@ -9711,8 +9711,8 @@ of epistemic desires. |#
               :query-number (incf *query-number*)
               :query-formula (list "was-not-performed-when-tried" (mem1 act))
               :query-strength (mem2 act)
-              :positive-query-instructions (list #'(lambda (x) (push x *executable-operations*)))
-              :negative-query-instructions (list #'(lambda (x) (pull x *executable-operations*))))))
+              :query-positive-instructions (list #'(lambda (x) (push x *executable-operations*)))
+              :query-negative-instructions (list #'(lambda (x) (pull x *executable-operations*))))))
       (adopt-ultimate-interest query))))
 
 (defun try-to-perform (act )

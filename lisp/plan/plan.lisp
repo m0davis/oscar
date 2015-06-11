@@ -324,12 +324,12 @@
     :query-number 1
     :query-formula `(? plan (plan-for plan ,goal))
     :query-strength 0.1
-    :positive-query-instructions
+    :query-positive-instructions
     (list #'(lambda (c)
               (cond ((and (or *display-plans* *display?*) (eql (old-undefeated-degree-of-support c) 0.0))
                      (reinstate-plan (mem2 (node-formula c))))
                     ((and *display-plans* (not *display?*)) (display-plan (mem2 (node-formula c)))))))
-    :negative-query-instructions
+    :query-negative-instructions
     (list #'(lambda (c)
               (when (or *display-plans* *display?*)
                 (let* ((formula (node-formula c))
@@ -497,7 +497,7 @@
 
 (defun display-query (Q)
   (princ "  Interest in ") (prinp (query-formula Q)) (terpri)
-  (cond ((null (answered? Q))
+  (cond ((null (query-answered? Q))
          (princ "  is unsatisfied.")
          (when (null (query-answers Q)) (princ "  NO ARGUMENT WAS FOUND."))
          (terpri))
@@ -1386,7 +1386,7 @@
     (dolist (query altered-queries)
       (let ((interest (query-interest query)))
         (pull interest affected-interests)
-        (cond ((and (answered? query)
+        (cond ((and (query-answered? query)
                     (not (member query *permanent-ultimate-epistemic-interests*)))
                (setf (interest-priority interest) *answered-priority*)
                (when display (princ "soft-cancelling query interest ")
@@ -2110,7 +2110,7 @@
               (terpri)
               (push (list *problem-number* time argument-length
                           (- *inference-number* *unused-suppositions*) (length *plans*)
-                          (answered? (mem1 *ultimate-epistemic-interests*))) *test-log*)))
+                          (query-answered? (mem1 *ultimate-epistemic-interests*))) *test-log*)))
           (when *log-on* (terpri) (display-reasoning) (display-queries))
           (princ ")") (terpri)))
       (setf *print-pretty* pp)
@@ -2182,7 +2182,7 @@
 (defun display-query (Q)
   (setf *solutions* nil)
   (princ "  Interest in ") (prinp (query-formula Q)) (terpri)
-  (cond ((null (answered? Q))
+  (cond ((null (query-answered? Q))
          (princ "  is unsatisfied.")
          (when (null (query-answers Q)) (princ "  NO ARGUMENT WAS FOUND."))
          (terpri))
