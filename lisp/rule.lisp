@@ -594,7 +594,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (defun set-conclusions-function (reason)
   (setf (reason-conclusions-function reason)
         (conclusion-instantiator
-          (mem1 (reason-conclusions reason)) (reason-variables reason) (defeasible-rule reason))))
+          (mem1 (reason-conclusions reason)) (reason-variables reason) (reason-defeasible-rule reason))))
 
 ; Flat backwards inference rules:
 
@@ -602,7 +602,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "adjunction"
         :reason-conclusions '((& p q))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp 'p nil nil '(p)) (cbp 'q nil nil '(q)))
         :reason-variables '(p q)
         :reason-length 2))
@@ -620,7 +620,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "neg-intro"
         :reason-conclusions '((~ (~ p)))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp 'p nil nil '(p)))
         :reason-variables '(p)))
 
@@ -637,7 +637,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "i-neg-disj"
         :reason-conclusions '((~ (v p q)))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(~ p) nil nil '(p)) (cbp '(~ q) nil nil '(q)))
         :reason-variables '(p q)
         :reason-length 2))
@@ -656,7 +656,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "i-neg-condit"
         :reason-conclusions '((~ (-> p q)))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(~ q) nil nil '(q)) (cbp 'p nil nil '(p)))
         :reason-variables '(p q)
         :reason-length 2))
@@ -676,7 +676,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "bicondit-intro"
         :reason-conclusions '((<-> p q))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(-> q p) nil nil '(p q)) (cbp '(-> p q) nil nil '(p q)))
         :reason-variables '(p q)
         :reason-length 2))
@@ -695,7 +695,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "i-neg-bicondit"
         :reason-conclusions '((~ (<-> p q)))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(<-> p (~ q)) nil nil '(p q)))
         :reason-variables '(p q)))
 
@@ -713,7 +713,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "disj-cond"
         :reason-conclusions '((v p q))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(-> (~ p) q) nil nil '(p q)))
         :reason-variables '(p q)))
 
@@ -731,7 +731,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "disj-cond-2"
         :reason-conclusions '((v p q))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(-> (~ q) p) nil nil '(p q)))
         :reason-variables '(p q)))
 
@@ -749,7 +749,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "i-DM"
         :reason-conclusions '((~ (& p q)))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(v (~ p) (~ q)) nil nil '(p q)))
         :reason-variables '(p q)))
 
@@ -769,7 +769,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
         :reason-conclusions '((~ (some x q)))
         :reason-conclusions-function
         #'(lambda (binding) (let ((x (cdr (assoc 'x binding))) (q (cdr (assoc 'q binding)))) (list '~ (list 'all x q))))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(all x (~ q)) nil nil '(x q)))
         :reason-variables '(x q)
         :reason-length 1))
@@ -788,7 +788,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "i-neg-ug"
         :reason-conclusions '((~ (all x q)))
-        :backwards-premises
+        :reason-backwards-premises
         (list (cbp '(some x (~ q)) nil nil '(x q)))
         :reason-variables '(x q)
         :reason-length 1))
@@ -807,7 +807,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "UG"
         :reason-conclusions '((all x q))
-        :backwards-premises 'q
+        :reason-backwards-premises 'q
         :reason-variables '(x q)
         :reason-length 1))
 
@@ -853,7 +853,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "EG"
         :reason-conclusions '((some x q))
-        :backwards-premises 'q
+        :reason-backwards-premises 'q
         :reason-variables '(x q)
         :reason-length 1))
 
@@ -897,7 +897,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
                                      (and (literal p)
                                           (literal q)
                                           (or (negationp p) (negationp q))))
-                      :backwards-premises "~p"
+                      :reason-backwards-premises "~p"
                       :discharge "~q"
                       :variables  p q)
 
@@ -907,7 +907,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
                                      (and (literal p) (not (e-genp q)))
                                      (conjunctionp (quantifiers-matrix p))
                                      (not (e-genp q)))
-                      :backwards-premises "q"
+                      :reason-backwards-premises "q"
                       :discharge "p"
                       :variables  p q)
 

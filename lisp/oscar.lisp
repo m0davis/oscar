@@ -1922,16 +1922,16 @@ the basis is nil.  This is used by def-prob-rule. |#
   (reason-conclusions nil)
   (reason-conclusions-function nil)
   (reason-forwards-premises nil)
-  (backwards-premises nil)
+  (reason-backwards-premises nil)
   (reason-variables nil)
-  (defeasible-rule nil)
+  (reason-defeasible-rule nil)
   (reason-strength 1.0)
-  (discount-factor 1.0)
+  (reason-discount-factor 1.0)
   (reason-description nil)
   (reason-instantiated-premise nil)
-  (backwards-premises-function nil)
-  (temporal? nil)
-  (undercutting-defeaters nil)
+  (reason-backwards-premises-function nil)
+  (reason-temporal? nil)
+  (reason-undercutting-defeaters nil)
   (reason-defeatees)
   )
 
@@ -2805,7 +2805,7 @@ to have an undercutting defeater.  |#
   ; (when (eq reason null-plan) (setf r reason d d-node) (break))
   (cond ((immediate-reason reason)
          (push reason (d-node-degenerate-backwards-reasons d-node)))
-        ((backwards-premises reason)
+        ((reason-backwards-premises reason)
          (push reason (d-node-backwards-reasons d-node)))
         (t (push reason (d-node-degenerate-backwards-reasons d-node))))
   d-node)
@@ -2896,7 +2896,7 @@ to have an undercutting defeater.  |#
             (queue-supposition
               discharge (list discharge)
               (subset #'(lambda (v) (occur v discharge)) (interest-variables interest))
-              (discount-factor reason) interest))
+              (reason-discount-factor reason) interest))
           (when (or new-sup? (null discharge))
             (let* ((premise (mem1 remaining-premises))
                    (profile (reason-code (fp-formula premise) (reason-variables reason)))
@@ -3611,10 +3611,10 @@ to have an undercutting defeater.  |#
           (and
             (not *deductive-only*)
             (every #'(lambda (p) (eql (mem2 p) 1.0)) *premises*)
-            (every #'(lambda (r) (not (defeasible-rule r))) *forwards-logical-reasons*)
-            (every #'(lambda (r) (not (defeasible-rule r))) *forwards-substantive-reasons*)
-            (every #'(lambda (r) (not (defeasible-rule r))) *backwards-logical-reasons*)
-            (every #'(lambda (r) (not (defeasible-rule r))) *backwards-substantive-reasons*))
+            (every #'(lambda (r) (not (reason-defeasible-rule r))) *forwards-logical-reasons*)
+            (every #'(lambda (r) (not (reason-defeasible-rule r))) *forwards-substantive-reasons*)
+            (every #'(lambda (r) (not (reason-defeasible-rule r))) *backwards-logical-reasons*)
+            (every #'(lambda (r) (not (reason-defeasible-rule r))) *backwards-substantive-reasons*))
           (setf *deductive-only* t))
         ; (initialize-reasoner)
         (setf *cycle* 0)
@@ -4893,7 +4893,7 @@ discharge-link. |#
     (princ interest) (princ " and ") (princ d-node) (terpri))
   (dolist (reason (d-node-backwards-reasons d-node))
     (when (interest-cancelled interest) (throw 'apply-backwards-reasons nil))
-    (when (or (not (interest-deductive interest)) (not (defeasible-rule reason)))
+    (when (or (not (interest-deductive interest)) (not (reason-defeasible-rule reason)))
       (let ((strength (reason-strength reason)))
         (when
           (or (not (numberp strength))
@@ -4930,7 +4930,7 @@ discharge-link. |#
     (princ interest) (princ " and ") (princ d-node) (terpri))
   (dolist (reason (d-node-degenerate-backwards-reasons d-node))
     (when (interest-cancelled interest) (throw 'apply-backwards-reasons nil))
-    (when (or (not (interest-deductive interest)) (not (defeasible-rule reason)))
+    (when (or (not (interest-deductive interest)) (not (reason-defeasible-rule reason)))
       (let ((strength (reason-strength reason)))
         (when
           (or (not (numberp strength))
@@ -4966,7 +4966,7 @@ discharge-link. |#
           (cond ((keywordp reason) 1.0)
                 ((numberp (reason-strength reason)) (reason-strength reason))
                 (t (funcall (reason-strength reason) binding basis)))))
-    (if (and (not (keywordp reason)) (temporal? reason))
+    (if (and (not (keywordp reason)) (reason-temporal? reason))
       (* strength (minimum (mapcar #'current-degree-of-justification basis)))
       (minimum (cons strength (mapcar #'current-degree-of-justification basis))))))
 
@@ -5217,15 +5217,15 @@ link being discharged.  |#
   ; (when (eq interest (interest 8)) (setf r reason b binding i interest d depth p priority s supporting-nodes in instantiations u supposition) (break))
   ;; (step (make-backwards-inference r b i d p s in u))
   (cond
-    ((or (backwards-premises reason) (backwards-premises-function reason))
+    ((or (reason-backwards-premises reason) (reason-backwards-premises-function reason))
      (construct-initial-interest-link
        supporting-nodes instantiations reason interest depth priority binding supposition
-       :generating-node generating-node :remaining-premises (backwards-premises reason) :clues clues))
+       :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
     ((or (numberp (reason-strength reason))
          (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
      (dolist (P (funcall (reason-conclusions-function reason) binding))
        (draw-conclusion
-         (car P) supporting-nodes reason instantiations (discount-factor reason) depth nil (cdr P)
+         (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
          :binding binding :clues clues)))))
 
 ;(defun remove-double-negation (P)
@@ -5252,7 +5252,7 @@ link being discharged.  |#
   ;; (step (construct-initial-interest-link sn in r ri d p b s :generating-node gn :remaining-premises rp :clues cl :new-variables nv))
   (when *trace* (indent depth) (princ "CONSTRUCT-INITIAL-INTEREST-LINK for interest ")
     (princ (interest-number resultant-interest)) (princ " using ") (princ reason) (terpri))
-  (when (null remaining-premises) (setf remaining-premises (backwards-premises reason)))
+  (when (null remaining-premises) (setf remaining-premises (reason-backwards-premises reason)))
   (cond
     ((and (backwards-premise-p (car remaining-premises))
           (listp (bp-formula (car remaining-premises)))
@@ -5272,13 +5272,13 @@ link being discharged.  |#
                   (dolist (P (funcall (reason-conclusions-function reason) new-binding))
                     (draw-conclusion
                       (car P) supporting-nodes
-                      reason instantiations (discount-factor reason) depth nil
-                      (defeasible-rule reason) :binding new-binding
+                      reason instantiations (reason-discount-factor reason) depth nil
+                      (reason-defeasible-rule reason) :binding new-binding
                       :interest resultant-interest :clues clues)))
                  (t (draw-conclusion
                       (interest-formula resultant-interest) supporting-nodes
-                      reason instantiations (discount-factor reason) depth nil
-                      (defeasible-rule reason) :binding new-binding
+                      reason instantiations (reason-discount-factor reason) depth nil
+                      (reason-defeasible-rule reason) :binding new-binding
                       :interest resultant-interest :clues clues)))))))
     (t
       (when (null resultant-interest)
@@ -5307,7 +5307,7 @@ link being discharged.  |#
             (queue-supposition
               discharge (list discharge)
               (subset #'(lambda (v) (occur v discharge)) (interest-variables resultant-interest))
-              (discount-factor reason) resultant-interest)
+              (reason-discount-factor reason) resultant-interest)
             generating-node)
           (when (or generating-node new? (null discharge) supporting-nodes)
             (multiple-value-bind
@@ -5386,12 +5386,12 @@ link being discharged.  |#
                      (dolist (P (funcall (reason-conclusions-function (link-rule link0)) new-binding))
                        (draw-conclusion
                          (car P) (cons node (link-supporting-nodes link0)) (link-rule link0) instantiations
-                         (discount-factor (link-rule link0)) depth nil (cdr P) :binding new-binding :interest
+                         (reason-discount-factor (link-rule link0)) depth nil (cdr P) :binding new-binding :interest
                          (link-resultant-interest link0) :link link0 :clues (link-clues link0))))
                     (t (draw-conclusion
                          (interest-formula (link-resultant-interest link0)) (cons node (link-supporting-nodes link0))
-                         (link-rule link0) instantiations (discount-factor (link-rule link0)) depth nil
-                         (defeasible-rule (link-rule link0)) :binding new-binding
+                         (link-rule link0) instantiations (reason-discount-factor (link-rule link0)) depth nil
+                         (reason-defeasible-rule (link-rule link0)) :binding new-binding
                          :interest (link-resultant-interest link0) :link link0 :clues (link-clues link0)))
                     )))))))
     (t
@@ -5508,7 +5508,7 @@ link being discharged.  |#
   ;; (step (compute-link-interest l c1 c2 d md dp p nv))
   (let* ((interest-priority
            (if priority
-             (* priority (discount-factor (link-rule link)))
+             (* priority (reason-discount-factor (link-rule link)))
              (interest-priority (link-resultant-interest link))))
          (vars (formula-hypernode-variables (link-interest-formula link))))
     (multiple-value-bind
@@ -5603,7 +5603,7 @@ the resultant-interest. |#
   ; (setf l link d depth dg degree p priority in interests)
   ;; (step (discharge-link l d dg p in))
   (when *trace* (indent depth) (princ "DISCHARGE-LINK: ") (princ link) (terpri))
-  (let ((deductive-rule? (not (defeasible-rule (link-rule link))))
+  (let ((deductive-rule? (not (reason-defeasible-rule (link-rule link))))
         (hypernode-list nil)
         (interest (link-interest link))
         (reason (link-rule link))
@@ -5712,12 +5712,12 @@ the resultant-interest. |#
                       (dolist (P (funcall (reason-conclusions-function reason) binding))
                         (draw-conclusion
                           (car P) (cons node (link-supporting-nodes link)) reason instantiations
-                          (discount-factor reason) depth nil (cdr P) :binding binding :interest
+                          (reason-discount-factor reason) depth nil (cdr P) :binding binding :interest
                           (link-resultant-interest link) :link link :clues (link-clues link))))
                      (t
                        (draw-conclusion
                          (interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link)) reason
-                         instantiations (discount-factor reason) depth nil (defeasible-rule reason)
+                         instantiations (reason-discount-factor reason) depth nil (reason-defeasible-rule reason)
                          :binding binding :interest (link-resultant-interest link) :link link :clues (link-clues link)))
                      )))))))
         (when (and (interest-cancelling-node interest) (every #'link-discharged (interest-right-links interest)))
@@ -6020,7 +6020,7 @@ hypernode-supposition of node*. |#
            (reason-function (reason-function reason)))
       ;(and (null (ip-basis ip)) (reason-function reason))))
       (when (hypernode-cancelled-node node) (throw 'apply-forwards-reasons nil))
-      (when (or (not (hypernode-deductive-only node)) (not (defeasible-rule reason)))
+      (when (or (not (hypernode-deductive-only node)) (not (reason-defeasible-rule reason)))
         (cond
           (reason-function (funcall reason-function node depth ip))
           ((ip-initial? ip) (reason-substantively-from-first-instantiated-premise node depth ip))
@@ -6032,7 +6032,7 @@ hypernode-supposition of node*. |#
   ;; (step (reason-from-instantiated-premises n dn tl d))
   (dolist (ip (d-node-forwards-reasons d-node))
     (let ((reason (ip-reason ip)))
-      (when (defeasible-rule reason)
+      (when (reason-defeasible-rule reason)
         (let ((reason-function (and (null (ip-basis ip)) (reason-function reason))))
           (when (hypernode-cancelled-node node) (throw 'apply-forwards-reasons nil))
           (when (not (hypernode-deductive-only node))
@@ -6155,7 +6155,7 @@ hypernode-supposition of node*. |#
   (when *trace* (indent depth) (princ "MAKE-FORWARDS-INFERENCE from instantiated-premise ")
     (princ (ip-number ip)) (terpri))
   (cond
-    ((backwards-premises (ip-reason ip))
+    ((reason-backwards-premises (ip-reason ip))
      (let ((formulas (funcall (reason-conclusions-function (ip-reason ip)) binding))
            (sup nil)
            (instantiations+ instantiations)
@@ -6177,7 +6177,7 @@ hypernode-supposition of node*. |#
                    (some #'(lambda (b) (and (not (equal s b)) (match s b new-vars))) sup)) sup))
        (dolist (formula formulas)
          (let* ((sequent (list sup (car formula)))
-                (deductive-node (validating-deductive-node sequent (not (defeasible-rule (ip-reason ip))))))
+                (deductive-node (validating-deductive-node sequent (not (reason-defeasible-rule (ip-reason ip))))))
            (cond (deductive-node
                    (draw-conclusion
                      (car formula) (cons deductive-node basis) (ip-reason ip) (cons t instantiations) 1 depth
@@ -6192,11 +6192,11 @@ hypernode-supposition of node*. |#
                                      (mapcar #'query-strength *ultimate-epistemic-interests*))))))
                      (construct-initial-interest-link
                        basis instantiations (ip-reason ip) nil depth degree binding sup
-                       :remaining-premises (backwards-premises (ip-reason ip)) :clues clues))))))))
+                       :remaining-premises (reason-backwards-premises (ip-reason ip)) :clues clues))))))))
     (t
       (dolist (formula (funcall (reason-conclusions-function (ip-reason ip)) binding))
         (draw-conclusion
-          (car formula) basis (ip-reason ip) instantiations (discount-factor (ip-reason ip)) depth nil
+          (car formula) basis (ip-reason ip) instantiations (reason-discount-factor (ip-reason ip)) depth nil
           (cdr formula) :binding binding :clues clues)))))
 
 #| This code is modified from DISCHARGE-LINK. |#
@@ -6621,7 +6621,7 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
 
 (defun compute-nearest-defeasible-ancestors (basis rule)
   (if (or (keywordp rule)
-          (not (defeasible-rule rule)))
+          (not (reason-defeasible-rule rule)))
     (mapcar #'genunion
             (gencrossproduct
               (mapcar #'hypernode-nearest-defeasible-ancestors basis)))
@@ -6639,7 +6639,7 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
   ; (when (equal *hypernode-number* 9)
   ;      (setf n node b basis s sequent nd nda nr non-reductio-supposition r rule bi binding dn d-node)  (break))
   ;; (step (subsumed n b s nd nr r bi dn))
-  (let ((defeasible? (and (not (keywordp rule)) (defeasible-rule rule))))
+  (let ((defeasible? (and (not (keywordp rule)) (reason-defeasible-rule rule))))
     (when defeasible? (setf NDA (list (list node))))
     (cond
       (node
@@ -6855,13 +6855,13 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                    :hyperlink-target node
                    :hyperlink-defeasible? defeasible?
                    :hyperlink-temporal
-                   (if (or (and (not (keywordp rule)) (temporal? rule))
+                   (if (or (and (not (keywordp rule)) (reason-temporal? rule))
                            (some #'hypernode-temporal-node basis)) *cycle*)
                    :hyperlink-reason-strength  reason-strength
                    :hyperlink-binding binding
                    :hyperlink-discount-factor
                    (cond (discount discount)
-                         ((not (keywordp rule)) (discount-factor rule))
+                         ((not (keywordp rule)) (reason-discount-factor rule))
                          (t 1.0))
                    :hyperlink-nearest-defeasible-ancestors
                    (if defeasible? (list (list node)) NDA)
@@ -6969,7 +6969,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                           (or (eq (hyperlink-rule L) *temporal-projection*)
                               (eq (hyperlink-rule L) *causal-implication*)
                               (and (not (keywordp (hyperlink-rule L)))
-                                   (temporal? (hyperlink-rule L)))))
+                                   (reason-temporal? (hyperlink-rule L)))))
                         (degree-of-justification
                           (if temp
                             (* (adjust-for-decay (hyperlink-reason-strength L) decay)
@@ -6984,7 +6984,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                      (setf (hypernode-maximal-degree-of-justification n) degree-of-justification)
                      (dolist (L (hypernode-hyperlinks node))
                        (setf (hyperlink-degree-of-justification L) (adjust-for-decay (hyperlink-degree-of-justification L) decay))
-                       (when (and (not (keywordp (hyperlink-rule L))) (temporal? (hyperlink-rule L)))
+                       (when (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
                          (setf (hyperlink-reason-strength L)
                                (adjust-for-decay (hyperlink-reason-strength L) decay)))
                        (setf (hyperlink-temporal L) *cycle*))
@@ -7931,7 +7931,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                nil nil adjunction undercutting-interest 0 *base-priority*
                (list (cons 'p defeater) (cons 'q antecedent*)) (interest-supposition undercutting-interest)))
            (interest (link-interest i-link)))
-          (dolist (reason (undercutting-defeaters (hyperlink-rule link)))
+          (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
             (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
               (let ((supposition (interest-supposition interest)))
                 (cond
@@ -7942,7 +7942,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                   (t (make-backwards-inference
                        reason binding interest 1 *base-priority* nil nil nil supposition))))))))
       (t
-        (dolist (reason (undercutting-defeaters (hyperlink-rule link)))
+        (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
           (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
             (let ((supposition (interest-supposition undercutting-interest)))
               (cond
@@ -8017,21 +8017,21 @@ sequent-supposition.  Basis is a list of conclusions. |#
   ; (when (eq *cycle* 518) (setf r reason b binding i interest d depth p priority s supporting-nodes in instantiations u supposition) (break))
   ;; (step (make-backwards-inference r b i d p s in u))
   (cond
-    ((or (backwards-premises reason) (backwards-premises-function reason))
+    ((or (reason-backwards-premises reason) (reason-backwards-premises-function reason))
      (construct-initial-interest-link
        supporting-nodes instantiations reason interest depth priority binding supposition
-       :generating-node generating-node :remaining-premises (backwards-premises reason) :clues clues))
+       :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
     ((or (numberp (reason-strength reason))
          (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
      (cond
        ((reason-conclusions-function reason)
         (dolist (P (funcall (reason-conclusions-function reason) binding))
           (draw-conclusion
-            (car P) supporting-nodes reason instantiations (discount-factor reason) depth nil (cdr P)
+            (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
             :binding binding :clues clues)))
        (t (draw-conclusion
             (interest-formula interest) supporting-nodes reason instantiations
-            (discount-factor reason) depth nil (defeasible-rule reason) :binding binding :clues clues)))
+            (reason-discount-factor reason) depth nil (reason-defeasible-rule reason) :binding binding :clues clues)))
      )))
 
 #| When a priority-interest is encountered, it is placed at the front of the inference-queue. |#
@@ -8315,13 +8315,13 @@ is the old maximal-degree-of-justification  |#
                        (dolist (P (funcall (reason-conclusions-function (link-rule link)) binding))
                          (draw-conclusion
                            (car P) (cons node (link-supporting-nodes link)) (link-rule link) instantiations
-                           (discount-factor (link-rule link)) depth nil (cdr P) :binding binding :interest
+                           (reason-discount-factor (link-rule link)) depth nil (cdr P) :binding binding :interest
                            (link-resultant-interest link) :link link :clues (link-clues link))))
                       (t
                         (draw-conclusion
                           (interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link))
-                          (link-rule link) instantiations (discount-factor (link-rule link)) depth nil
-                          (defeasible-rule (link-rule link)) :binding binding :interest (link-resultant-interest link)
+                          (link-rule link) instantiations (reason-discount-factor (link-rule link)) depth nil
+                          (reason-defeasible-rule (link-rule link)) :binding binding :interest (link-resultant-interest link)
                           :link link :clues (link-clues link)))
                       ))))))))))
 
@@ -8343,7 +8343,7 @@ is the old maximal-degree-of-justification  |#
          (hypernode-hyperlinks n))))
 
 (defun deductive-link (L)
-  (or (keywordp (hyperlink-rule L)) (not (defeasible-rule (hyperlink-rule L)))))
+  (or (keywordp (hyperlink-rule L)) (not (reason-defeasible-rule (hyperlink-rule L)))))
 
 (defun discharge-interest-in-defeaters (node i-lists old-degree new?)
   ; (when (eq node (node 7)) (setf n node i i-lists o old-degree n? new?) (break))
@@ -8996,7 +8996,7 @@ time discharge-interest-schemes was applied to it. |#
     (let ((reason (is-reason is))
           (instance-function (is-instance-function is)))
       (when (hypernode-cancelled-node node) (throw 'discharge-interest-schemes nil))
-      (when (and (or (not (hypernode-deductive-only node)) (not (defeasible-rule reason)))
+      (when (and (or (not (hypernode-deductive-only node)) (not (reason-defeasible-rule reason)))
                  (or (not (interest-deductive (is-target-interest is))) (deductive-node node)))
         (let ((degree* (interest-degree-of-interest (is-target-interest is))))
           (when (and (>= (current-maximal-degree-of-justification node) degree*)
@@ -9185,7 +9185,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
         (dolist (L (cdr pair))
           (when (every #'hypernode-degree-of-justification (hyperlink-basis L))
             (setf (hyperlink-degree-of-justification L)
-                  (if (and (not (keywordp (hyperlink-rule L))) (temporal? (hyperlink-rule L)))
+                  (if (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
                     (prog1
                       (* (hyperlink-reason-strength L)
                          (minimum
@@ -9212,7 +9212,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
             (dolist (L (hypernode-consequent-links N))
               (when (every #'hypernode-degree-of-justification (hyperlink-basis L))
                 (setf (hyperlink-degree-of-justification L)
-                      (if (and (not (keywordp (hyperlink-rule L))) (temporal? (hyperlink-rule L)))
+                      (if (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
                         (prog1
                           (* (hyperlink-reason-strength L)
                              (minimum
@@ -9585,7 +9585,7 @@ the sequent concluded. |#
                                  #'(lambda (L)
                                      (if (eq (link-rule L) :answer)
                                        (query-strength (link-resultant-interest L))
-                                       (* (discount-factor (link-rule L))
+                                       (* (reason-discount-factor (link-rule L))
                                           (interest-priority (link-resultant-interest L)))))
                                  links))))
                      (let ((Q (interest-queue-node interest)))
@@ -9664,7 +9664,7 @@ the sequent concluded. |#
                             #'(lambda (L)
                                 (if (eq (link-rule L) :answer)
                                   (query-strength (link-resultant-interest L))
-                                  (* (discount-factor (link-rule L))
+                                  (* (reason-discount-factor (link-rule L))
                                      (interest-priority (link-resultant-interest L)))))
                             links)))))
               (let ((Q (interest-queue-node interest)))

@@ -121,7 +121,7 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
 
 (defun hyperlink-strength+ (L)
   (or (hyperlink-degree-of-justification L)
-      (if (not (defeasible-rule (hyperlink-rule L))) 1.0 0)))
+      (if (not (reason-defeasible-rule (hyperlink-rule L))) 1.0 0)))
 
 (defun find-defeating-arguments (argument)
   (dolist (L (argument-links argument))

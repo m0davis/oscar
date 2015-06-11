@@ -15,7 +15,7 @@ Forwards-reasons can be defined in either of two forms:
 
 (def-forwards-reason symbol
                      :reason-forwards-premises list of formulas or formula-condition pairs (listed one after another)
-                     :backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
+                     :reason-backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
                      :conclusions formula
                      :strength number
                      :variables list of symbols
@@ -25,7 +25,7 @@ Forwards-reasons can be defined in either of two forms:
 
 (def-forwards-reason symbol
                      :reason-forwards-premises list of formulas or formula-condition pairs
-                     :backwards-premises  list of formulas or pairs (formula (condition1 condition2))
+                     :reason-backwards-premises  list of formulas or pairs (formula (condition1 condition2))
                      :reason-conclusions-function lambda expression or function
                      :strength number
                      :variables list of symbols
@@ -60,12 +60,12 @@ produces the following code:
                           (when (and (listp %z) (equal (element 0 %z) 'thermometer-reads))
                             (values (list (cons 'x (element 1 %z))) t)))
                       '(x)))
-          :backwards-premises nil
+          :reason-backwards-premises nil
           :reason-conclusions '(patient-temperature-is x)
           :reason-conclusions-function nil
           :reason-variables '(x)
           :reason-strength 0.98
-          :defeasible-rule t
+          :reason-defeasible-rule t
           :reason-description nil))
   (push *thermometer* *forwards-substantive-reasons*))
 
@@ -101,7 +101,7 @@ constructs a reason with the reason-function:
                              (equal (element 0 %z) 'patient-has-had-green-slyme-running-out-of-his-nose-for))
                     (values (list (cons 'x (element 1 %z))) t)))
               '(x)))
-          :backwards-premises nil
+          :reason-backwards-premises nil
           :reason-conclusions nil
           :reason-conclusions-function
           #'(lambda (x)
@@ -109,7 +109,7 @@ constructs a reason with the reason-function:
                      (list* 'the-patient-ingested-silly-putty (list* 'is (list (* 0.5 (- 1 (exp (- x)))))))))
           :reason-variables '(x)
           :reason-strength 0.95
-          :defeasible-rule t
+          :reason-defeasible-rule t
           :reason-description nil))
   (push green-slyme *forwards-substantive-reasons*))
 
@@ -123,14 +123,14 @@ constructs a reason with the reason-function:
          (defeasible? (find-if #'(lambda (x) (eq (car x) :defeasible?)) newbody))
          (variables (find-if #'(lambda (x) (eq (car x) :variables)) newbody))
          (strength (find-if #'(lambda (x) (eq (car x) :strength)) newbody))
-         (discount (cadr (find-if #'(lambda (x) (eq (car x) :discount-factor)) newbody)))
-         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :temporal?)) newbody)))
+         (discount (cadr (find-if #'(lambda (x) (eq (car x) :reason-discount-factor)) newbody)))
+         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :reason-temporal?)) newbody)))
          (conclusion (find-if #'(lambda (x)
                                   (or (eq (car x) :conclusions)
                                       (eq (car x) :conclusion))) newbody))
          (conclusion-function
            (find-if #'(lambda (x) (eq (car x) :reason-conclusions-function)) newbody))
-         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody)))
+         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-backwards-premises)) newbody)))
          (premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody))))
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
@@ -196,23 +196,23 @@ constructs a reason with the reason-function:
          (when (and (boundp ',name) ,name)
            (pull ,name *forwards-substantive-reasons*)
            (dolist (R defeaters) (pull ,name (reason-defeatees R)))
-           (setf defeaters (undercutting-defeaters ,name)))
+           (setf defeaters (reason-undercutting-defeaters ,name)))
 
          (setf ,name
                (make-forwards-reason
                  :reason-name ',name
                  :reason-forwards-premises ,premises
-                 :backwards-premises ,backwards-premises
+                 :reason-backwards-premises ,backwards-premises
                  :reason-conclusions ,conclusion
                  :reason-conclusions-function ,conclusion-function
                  :reason-variables ,variables
                  :reason-strength ,strength
-                 :discount-factor (or ,discount 1.0)
-                 :defeasible-rule ,defeasible?
-                 :temporal? ,temporal?
+                 :reason-discount-factor (or ,discount 1.0)
+                 :reason-defeasible-rule ,defeasible?
+                 :reason-temporal? ,temporal?
                  :reason-description ,description))
 
-         (setf (undercutting-defeaters ,name) defeaters)
+         (setf (reason-undercutting-defeaters ,name) defeaters)
          (dolist (R defeaters) (push ,name (reason-defeatees R)))
          (push ,name *forwards-substantive-reasons*)))))
 
@@ -543,7 +543,7 @@ Backwards-reasons are defined using the following form:
 
 (def-backwards-reason symbol
                       :reason-forwards-premises list of formulas or formula-condition pairs
-                      :backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
+                      :reason-backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
                       :conclusions formula
                       :condition  this is a predicate applied to the binding produced by thetarget sequent
                       :strength number (default is 1.0)
@@ -559,7 +559,7 @@ For example,
 
 (def-backwards-reason R
                       :reason-forwards-premises   (F x y)   (G y z) (:condition (numberp z))
-                      :backwards-premises   (H z w)
+                      :reason-backwards-premises   (H z w)
                       :conclusions   (K x w)
                       :variables   x y z w
                       :strength   .95
@@ -594,13 +594,13 @@ expands into the following code:
                     (when (and (listp %z) (equal (element 0 %z) 'g))
                       (values (list (cons 'z (element 2 %z)) (cons 'y (element 1 %z))) t)))
                 '(y z)))
-            :backwards-premises (list (list '(h z w) '(nil nil)))
+            :reason-backwards-premises (list (list '(h z w) '(nil nil)))
             :reason-conclusions '(k x w)
             :reason-conclusions-function nil
             :reason-variables '(x y z w)
             :reason-length 1
             :reason-strength 0.95
-            :defeasible-rule t
+            :reason-defeasible-rule t
             :conclusions-binding-function c-binding-function
             :reason-condition nil
             :reason-description nil)))
@@ -615,8 +615,8 @@ expands into the following code:
          (condition (find-if #'(lambda (x) (eq (car x) :condition)) newbody))
          (variables (find-if #'(lambda (x) (eq (car x) :variables)) newbody))
          (strength (find-if #'(lambda (x) (eq (car x) :strength)) newbody))
-         (discount (cadr (find-if #'(lambda (x) (eq (car x) :discount-factor)) newbody)))
-         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :temporal?)) newbody)))
+         (discount (cadr (find-if #'(lambda (x) (eq (car x) :reason-discount-factor)) newbody)))
+         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :reason-temporal?)) newbody)))
          (immediate (cadr (find-if #'(lambda (x) (eq (car x) :immediate)) newbody)))
          (conclusion (find-if #'(lambda (x)
                                   (or (eq (car x) :conclusions)
@@ -626,7 +626,7 @@ expands into the following code:
          (c-vars nil)
          (discharge (find-if #'(lambda (x) (eq (car x) :discharge)) newbody))
          (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody)))
-         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody))))
+         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-backwards-premises)) newbody))))
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
     (when variables (setf variables (list 'quote (cdr variables))))
@@ -684,28 +684,28 @@ expands into the following code:
            (when (and (boundp ',name) ,name)
              (pull ,name *backwards-substantive-reasons*)
              (dolist (R defeaters) (pull ,name (reason-defeatees R)))
-             (setf defeaters (undercutting-defeaters ,name)))
+             (setf defeaters (reason-undercutting-defeaters ,name)))
 
            (setf ,name
                  (make-backwards-reason
                    :reason-name ',name
                    :reason-forwards-premises ,forwards-premises
-                   :backwards-premises ,backwards-premises
+                   :reason-backwards-premises ,backwards-premises
                    :reason-conclusions ,conclusion
                    :reason-discharge ,discharge
                    :reason-conclusions-function ,conclusion-function
                    :reason-variables ,variables
                    :reason-length ,(length (eval backwards-premises))
-                   :discount-factor (or ,discount 1.0)
+                   :reason-discount-factor (or ,discount 1.0)
                    :reason-strength ,strength
-                   :defeasible-rule ,defeasible?
-                   :temporal? ,temporal?
+                   :reason-defeasible-rule ,defeasible?
+                   :reason-temporal? ,temporal?
                    :immediate-reason ,immediate
                    :conclusions-binding-function ,c-binding-function
                    :reason-condition ,condition
                    :reason-description ,description))
 
-           (setf (undercutting-defeaters ,name) defeaters)
+           (setf (reason-undercutting-defeaters ,name) defeaters)
            (dolist (R defeaters) (push ,name (reason-defeatees R)))
            (push ,name *backwards-substantive-reasons*))))))
 
@@ -747,10 +747,10 @@ expands into the following code:
          (defeasible? (find-if #'(lambda (x) (eq (car x) :defeasible?)) newbody))
          (variables (find-if #'(lambda (x) (eq (car x) :variables)) newbody))
          (strength (find-if #'(lambda (x) (eq (car x) :strength)) newbody))
-         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :temporal?)) newbody)))
-         (discount (cadr (find-if #'(lambda (x) (eq (car x) :discount-factor)) newbody)))
+         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :reason-temporal?)) newbody)))
+         (discount (cadr (find-if #'(lambda (x) (eq (car x) :reason-discount-factor)) newbody)))
          (defeatee (find-if #'(lambda (x) (eq (car x) :defeatee)) newbody))
-         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody)))
+         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-backwards-premises)) newbody)))
          (premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody))))
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
@@ -787,23 +787,23 @@ expands into the following code:
            (when (and (boundp ',name) ,name)
              (pull ,name *backwards-substantive-reasons*)
              (dolist (R defeaters) (pull ,name (reason-defeatees R)))
-             (setf defeaters (undercutting-defeaters ,name)))
+             (setf defeaters (reason-undercutting-defeaters ,name)))
 
            (setf ,name
                  (make-forwards-reason
                    :reason-name ',name
                    :reason-forwards-premises ,premises
-                   :backwards-premises ,backwards-premises
+                   :reason-backwards-premises ,backwards-premises
                    :reason-conclusions ,conclusion
                    :reason-conclusions-function ,conclusion-function
                    :reason-variables (union ,variables (reason-variables ,defeatee))
                    :reason-strength ,strength
-                   :discount-factor (or ,discount 1.0)
-                   :defeasible-rule ,defeasible?
-                   :temporal? ,temporal?
+                   :reason-discount-factor (or ,discount 1.0)
+                   :reason-defeasible-rule ,defeasible?
+                   :reason-temporal? ,temporal?
                    :reason-description ,description))
 
-           (setf (undercutting-defeaters ,name) defeaters)
+           (setf (reason-undercutting-defeaters ,name) defeaters)
            (dolist (R defeaters) (push ,name (reason-defeatees R)))
            (push ,name *forwards-substantive-reasons*))))))
 
@@ -814,12 +814,12 @@ expands into the following code:
          (condition (find-if #'(lambda (x) (eq (car x) :condition)) newbody))
          (variables (find-if #'(lambda (x) (eq (car x) :variables)) newbody))
          (strength (find-if #'(lambda (x) (eq (car x) :strength)) newbody))
-         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :temporal?)) newbody)))
-         (discount (cadr (find-if #'(lambda (x) (eq (car x) :discount-factor)) newbody)))
+         (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :reason-temporal?)) newbody)))
+         (discount (cadr (find-if #'(lambda (x) (eq (car x) :reason-discount-factor)) newbody)))
          (defeatee (find-if #'(lambda (x) (eq (car x) :defeatee)) newbody))
          (discharge (find-if #'(lambda (x) (eq (car x) :discharge)) newbody))
          (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody)))
-         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody)))
+         (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-backwards-premises)) newbody)))
          ; (conclusion (find-if #'(lambda (x) (eq (car x) :conclusions)) newbody))
          )
     (when description (setf description (mem2 description)))
@@ -846,28 +846,28 @@ expands into the following code:
        (let ((defeaters nil))
          (when (and (boundp ',name) ,name)
            (pull ,name *backwards-substantive-reasons*)
-           (setf defeaters (undercutting-defeaters ,name))
-           (dolist (d ,defeatee) (pull ,name (undercutting-defeaters d))))
+           (setf defeaters (reason-undercutting-defeaters ,name))
+           (dolist (d ,defeatee) (pull ,name (reason-undercutting-defeaters d))))
 
          (setf ,name
                (make-backwards-reason
                  :reason-name ',name
                  :reason-forwards-premises ,forwards-premises
-                 :backwards-premises ,backwards-premises
+                 :reason-backwards-premises ,backwards-premises
                  :reason-defeatees ,defeatee
                  :reason-discharge ,discharge
                  :reason-variables ',(union (eval variables) (unionmapcar+ #'reason-variables (eval defeatee)))
                  :reason-length ,(length (eval backwards-premises))
                  :reason-strength ,strength
-                 :discount-factor (or ,discount 1.0)
-                 :defeasible-rule ,defeasible?
-                 :temporal? ,temporal?
+                 :reason-discount-factor (or ,discount 1.0)
+                 :reason-defeasible-rule ,defeasible?
+                 :reason-temporal? ,temporal?
                  :reason-condition ,condition
                  :reason-description ,description))
 
-         (setf (undercutting-defeaters ,name) defeaters)
+         (setf (reason-undercutting-defeaters ,name) defeaters)
          (push ,name *backwards-substantive-reasons*)
-         (dolist (d ,defeatee) (push ,name (undercutting-defeaters d)))
+         (dolist (d ,defeatee) (push ,name (reason-undercutting-defeaters d)))
          ))))
 
 (defun undercutters-for (reason)
@@ -879,7 +879,7 @@ expands into the following code:
               (subset #'(lambda (p) (or (not (listp p)) (not (equal (car p) 'define))))
                       (mapcar #'fp-formula* (remove-if #'fp-clue? (reason-forwards-premises reason))))
               (subset #'(lambda (p) (or (not (listp p)) (not (equal (car p) 'define))))
-                      (mapcar #'bp-formula (backwards-premises reason)))))
+                      (mapcar #'bp-formula (reason-backwards-premises reason)))))
           c))
     (reason-conclusions reason)))
 

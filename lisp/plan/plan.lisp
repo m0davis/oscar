@@ -313,10 +313,10 @@
        (setf **premises** ',premises)
        (setf *goal-state* ',goal)
        (setf *fixed-ultimate-epistemic-interests* (list (plan-interest  ',goal)))
-       (dolist (R *forwards-substantive-reasons*) (setf (undercutting-defeaters R) nil))
-       (dolist (R *backwards-substantive-reasons*) (setf (undercutting-defeaters R) nil))
+       (dolist (R *forwards-substantive-reasons*) (setf (reason-undercutting-defeaters R) nil))
+       (dolist (R *backwards-substantive-reasons*) (setf (reason-undercutting-defeaters R) nil))
        (dolist (d *backwards-substantive-reasons*)
-         (dolist (R (reason-defeatees d)) (push d (undercutting-defeaters R))))
+         (dolist (R (reason-defeatees d)) (push d (reason-undercutting-defeaters R))))
        )))
 
 (defun plan-interest (goal)
@@ -1557,7 +1557,7 @@
                                  #'(lambda (L)
                                      (if (eq (link-rule L) :answer)
                                        (query-strength (link-resultant-interest L))
-                                       (* (discount-factor (link-rule L))
+                                       (* (reason-discount-factor (link-rule L))
                                           (interest-priority (link-resultant-interest L)))))
                                  links))))
                      (when display
@@ -1644,7 +1644,7 @@
                             #'(lambda (L)
                                 (if (eq (link-rule L) :answer)
                                   (query-strength (link-resultant-interest L))
-                                  (* (discount-factor (link-rule L))
+                                  (* (reason-discount-factor (link-rule L))
                                      (interest-priority (link-resultant-interest L)))))
                             links)))))
               (when display
@@ -1671,7 +1671,7 @@
                                          (hypernode-enabling-interests n))
                                   (every #'(lambda (L)
                                              (let ((R (support-link-rule L)))
-                                               (and (backwards-reason-p R) (backwards-premises R))))
+                                               (and (backwards-reason-p R) (reason-backwards-premises R))))
                                          (support-link n)))
                              (when display
                                (princ "     unqueueing plan node with softly-cancelled enabling interests ")
@@ -1908,7 +1908,7 @@
                nil nil adjunction undercutting-interest 0 *defeater-priority*
                (list (cons 'p defeater) (cons 'q antecedent*)) (interest-supposition undercutting-interest)))
            (interest (link-interest i-link)))
-          (dolist (reason (undercutting-defeaters (support-link-rule link)))
+          (dolist (reason (reason-undercutting-defeaters (support-link-rule link)))
             (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
               (let ((supposition (interest-supposition interest)))
                 (cond
@@ -1919,7 +1919,7 @@
                   (t (make-backwards-inference 
                        reason binding interest 1 *defeater-priority* nil nil nil supposition))))))))
       (t
-        (dolist (reason (undercutting-defeaters (support-link-rule link)))
+        (dolist (reason (reason-undercutting-defeaters (support-link-rule link)))
           (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
             (let ((supposition (interest-supposition undercutting-interest)))
               (cond
@@ -1937,7 +1937,7 @@
   ;; (step (compute-link-interest l c1 c2 d md dp p nv))
   (let* ((interest-priority
            (if priority
-             (* priority (discount-factor (link-rule link)))
+             (* priority (reason-discount-factor (link-rule link)))
              (interest-priority (link-resultant-interest link))))
          (vars (formula-node-variables (link-interest-formula link))))
     (multiple-value-bind
@@ -2237,7 +2237,7 @@
 (def-backwards-reason PROTOPLAN
                       :conclusions "(plan-for plan goal)"
                       :condition (interest-variable plan)
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(protoplan-for plan goal nil nil nil nil nil)"
                       :defeasible? t
                       :strength .99
@@ -2266,7 +2266,7 @@
                                       ; (or (null bad-link) (not (eq (causal-link-root bad-link) *start*))
                                       ;       (not (equal goal (causal-link-goal bad-link))))
                                       (or nodes nodes-used (not (mem goal goals))))
-                      :backwards-premises
+                      :reason-backwards-premises
                       "goal"
                       (:condition (not (contains-duplicates goals goal)))
                       "(define plan (null-plan goal))"
@@ -2275,7 +2275,7 @@
 (def-backwards-reason THE-TRUE
                       :conclusions "(protoplan-for plan true goals nodes nodes-used links bad-link)"
                       :condition (interest-variable plan)
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(define plan (null-plan 'true))"
                       :variables plan goals nodes nodes-used links bad-link)
 
@@ -2318,7 +2318,7 @@
                                                  (not (mem goal1 goals)))
                                              (or (equal (causal-link-goal bad-link) goal2)
                                                  (not (mem goal2 goals))))))
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(protoplan-for plan1 goal1 goals nodes nodes-used links bad-link)"
                       "(protoplan-for plan2 goal2 goals nodes nodes-used links bad-link)"
                       (:condition
@@ -2540,7 +2540,7 @@
                                           (not (some
                                                  #'(lambda (L) (equal (causal-link-goal L) goal))
                                                  links))))
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(define new-goals (cons goal goals))"
                       "((precondition & action) => goal)"
                       (:condition (and (temporally-projectible precondition)
@@ -2804,7 +2804,7 @@
 #|
 (def-backwards-undercutter UNDERMINE-CAUSAL-LINKS
                            :defeatee  protoplan
-                           :backwards-premises
+                           :reason-backwards-premises
                            "(define links
                            (order (if (live-links? plan) (live-causal-links plan) (causal-links plan))
                                   #'(lambda (x y) (> (causal-link-length x plan) (causal-link-length y plan)))))"
@@ -2814,7 +2814,7 @@
 
 (def-backwards-undercutter UNDERMINE-CAUSAL-LINKS
                            :defeatee  protoplan
-                           :backwards-premises
+                           :reason-backwards-premises
                            "(define links (if (live-links? plan) (live-causal-links plan) (reverse (causal-links plan))))"
                            "(plan-undermines-causal-links plan links)"
                            :variables plan links)
@@ -2822,7 +2822,7 @@
 (def-backwards-reason PLAN-UNDERMINES-FIRST-CAUSAL-LINK
                       :conclusions  "(plan-undermines-causal-links plan links)"
                       :condition  (car links)
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(define first-link (car links))"
                       "(plan-undermines-causal-link plan R node first-link e-plan)"
                       :variables  plan node links first-link R e-plan)
@@ -2830,7 +2830,7 @@
 (def-backwards-reason PLAN-UNDERMINES-ANOTHER-CAUSAL-LINK
                       :conclusions  "(plan-undermines-causal-links plan links)"
                       :condition  (cdr links)
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(define rest-of-links (cdr links))"
                       "(plan-undermines-causal-links plan rest-of-links)"
                       :variables  plan links rest-of-links)
@@ -2850,7 +2850,7 @@
 
 (def-backwards-reason PLAN-UNDERMINES-CAUSAL-LINK
                       :conclusions  "(plan-undermines-causal-link plan+ R node link plan)"
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(define -goal (neg (causal-link-goal link)))"
                       "(define node1 (if (not (eq *start* (causal-link-root link))) (causal-link-root link)))"
                       "(define node2 (causal-link-target link))"
@@ -2870,7 +2870,7 @@
 (def-backwards-reason EMBELLISHED-PROTOPLAN
                       :conclusions "(embellished-plan-for plan plan+ -goal node1 node2 before not-between)"
                       :condition (interest-variable plan)
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(embellished-protoplan-for plan plan+ -goal node1 node2 before not-between)"
                       :defeasible? t
                       :strength .99
@@ -2878,7 +2878,7 @@
 
 (def-backwards-undercutter UNDERMINE-EMBEDDED-CAUSAL-LINKS
                            :defeatee  embellished-protoplan
-                           :backwards-premises
+                           :reason-backwards-premises
                            "(define links (set-difference (causal-links plan) (causal-links plan+)))"
                            "(plan-undermines-causal-links plan links)"
                            :variables plan plan+ links)
@@ -3040,7 +3040,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
                       (:condition (car new-order))
                       "(define new-before (mem1 new-order))"
                       "(define new-between (mem2 new-order))"
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(embellished-protoplan-for subplan plan+ precondition nil new-node new-before new-between)"
                       "(define plan
                       (extend-embellished-plan new-node goal subplan plan+))"
@@ -3084,7 +3084,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
                       :conclusions 
                       "(embellished-protoplan-for plan plan+ goal node1 node2 before not-between)"
                       :condition (and (interest-variable plan) (null node1) (not (equal goal 'true)) (not (conjunctionp goal)))
-                      :backwards-premises
+                      :reason-backwards-premises
                       "goal"
                       "(define plan (embedded-null-plan goal plan+ before not-between))"
                       (:condition (not (null plan)))
@@ -3093,7 +3093,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 (def-backwards-reason EMBEDDED-THE-TRUE
                       :conclusions "(embellished-protoplan-for plan plan+ true node1 node2 before not-between)"
                       :condition (interest-variable plan)
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(define plan (embedded-null-plan 'true plan+ before not-between))"
                       :variables plan+ plan node node1 node2 before not-between)
 
@@ -3120,7 +3120,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
                       "(embellished-protoplan-for plan& plan+ (goal1 & goal2) node1 node2 before not-between)"
                       :condition
                       (and (interest-variable plan&) (null node1) (temporally-projectible goal1) (temporally-projectible goal2))
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(embellished-protoplan-for plan1 plan+ goal1 node1 node2 before not-between)"
                       "(define before1 (before-nodes plan1))"
                       "(define not-between1 (not-between plan1))"
@@ -3132,7 +3132,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 
 ;(def-backwards-undercutter UNDERMINE-EMBEDDED-CAUSAL-LINKS
 ;    :defeatee   embellished-proto-plan
-;    :backwards-premises
+;    :reason-backwards-premises
 ;    "(define links (set-difference (causal-links plan) (causal-links subplan)))"
 ;    "(plan-undermines-causal-links plan links)"
 ;    :variables plan subplan links)
@@ -3145,7 +3145,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 ;      (let ((m (match+ action (plan-node-action node*))))
 ;        (when m (push (cons `(node-result ,node* ,(match-sublis m R) ,Q) nil) conclusions)))
 ;      conclusions)
-;    :backwards-premises
+;    :reason-backwards-premises
 ;    	"(=> (& R action) Q)"
 ;        "(plan-node node*)"
 ;    :variables  action node node* R Q)
@@ -3153,7 +3153,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 (def-backwards-reason  =>-neg1
                        :conclusions  "(P => ~(Q & R))"
                        :condition (and (not (interest-variable Q)) (not (interest-variable R)))
-                       :backwards-premises
+                       :reason-backwards-premises
                        "(define -Q (neg Q))"
                        "(P => -Q)"
                        :variables  P Q -Q R)
@@ -3161,7 +3161,7 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 (def-backwards-reason  =>-neg2
                        :conclusions  "(P => ~(Q & R))"
                        :condition (and (not (interest-variable Q)) (not (interest-variable R)))
-                       :backwards-premises
+                       :reason-backwards-premises
                        "(define -R (neg R))"
                        "(P => -R)"
                        :variables  P Q R -R)
@@ -3169,14 +3169,14 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 (def-backwards-reason  =>-disj1
                        :conclusions  "(P => (Q v R))"
                        :condition (and (not (interest-variable Q)) (not (interest-variable R)))
-                       :backwards-premises
+                       :reason-backwards-premises
                        "(P => Q)"
                        :variables  P Q R)
 
 (def-backwards-reason  =>-disj2
                        :conclusions  "(P => (Q v R))"
                        :condition (and (not (interest-variable Q)) (not (interest-variable R)))
-                       :backwards-premises
+                       :reason-backwards-premises
                        "(P => R)"
                        :variables  P Q R)
 
@@ -3187,13 +3187,13 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 
 (def-backwards-reason =>-ADJUNCTION
                       :conclusions "(P => (Q & R))"
-                      :backwards-premises  "(P => Q)" "(P => R)"
+                      :reason-backwards-premises  "(P => Q)" "(P => R)"
                       :variables P Q R)
 
 (def-backwards-reason =>-TRANSITIVITY
                       :conclusions "(P => Q)"
                       :reason-forwards-premises  "(R => Q)" 
-                      :backwards-premises  "(P => R)"
+                      :reason-backwards-premises  "(P => R)"
                       :variables P Q R)
 
 ;;===================== IMPOSING ORDERING CONSTRAINTS ==========================
@@ -3478,7 +3478,7 @@ an interest in plan relative to the goal-stack goals. |#
                      "(define new-nodes
                      (cons node (possibly-preceding-nodes node plan+ (plan-steps plan+) (before-nodes plan+))))"
 "(define links (remove bad-link (causal-links plan+)))"
-:backwards-premises
+:reason-backwards-premises
 "(protoplan-for new-plan0 goal0 goals new-nodes nil links bad-link)"
 (:condition
   (and (not (some
@@ -3566,7 +3566,7 @@ links bad-link plan0 new-plan0 links0 link0 node1 node2  e-plan)
                       (:condition (not (null precondition)))
                       "(define new-nodes (remove node nodes))"
                       "(define new-nodes-used (cons node nodes-used))"
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(protoplan-for subplan precondition goals new-nodes new-nodes-used links bad-link)"
                       "(define plan (extend-plan-with-node node goal subplan bad-link))"
                       (:condition (not (null plan)))
@@ -3589,7 +3589,7 @@ links bad-link plan0 new-plan0 links0 link0 node1 node2  e-plan)
                              ))
                       "(define new-nodes (remove node nodes))"
                       "(define new-nodes-used (cons node nodes-used))"
-                      :backwards-premises
+                      :reason-backwards-premises
                       "(protoplan-for subplan R goals new-nodes new-nodes-used links bad-link)"
                       "(define plan (extend-plan-with-node node goal subplan bad-link))"
                       (:condition (not (null plan)))
@@ -3652,7 +3652,7 @@ links bad-link plan0 new-plan0 links0 link0 node1 node2  e-plan)
                      (:condition (not (null R)))
                      (:clue? t)
                      "(protoplan-for plan- goal goals nodes nodes-used links bad-link)"
-                     :backwards-premises
+                     :reason-backwards-premises
                      "(define -R (neg R))"
                      "(protoplan-for repair-plan -R nil nodes nodes-used links bad-link)"
                      "(define plan (make-confrontation-plan repair-plan plan- -R node links e-plan))"
@@ -3666,7 +3666,7 @@ links bad-link plan0 new-plan0 links0 link0 node1 node2  e-plan)
                      (:condition (not (null R)))
                      (:clue? t)
                      "(embellished-protoplan-for subplan plan+ goal node1 node2 before not-between)"
-                     :backwards-premises
+                     :reason-backwards-premises
                      "(define -R (neg R))"
                      "(embellished-plan-for repair-plan plan+ -R node1* node2* new-before new-not-between)"
                      "(define plan (make-confrontation-plan repair-plan subplan -R node (list link)  e-plan))"
