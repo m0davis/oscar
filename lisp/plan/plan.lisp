@@ -479,7 +479,7 @@
              :node-formula (sequent-formula sequent)
              :node-supposition sup
              :node-kind :inference
-             :deductive-only deductive-only
+             :hypernode-deductive-only deductive-only
              :node-variables c-vars
              :node-supposition-variables i-vars
              :hypernode-non-reductio-supposition non-reductio-supposition

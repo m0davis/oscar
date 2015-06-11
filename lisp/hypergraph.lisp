@@ -37,8 +37,8 @@
   (hypernode-degree-of-justification nil)
   (hypernode-ancestors nil)
   (hypernode-nearest-defeasible-ancestors nil)
-  (answered-queries nil)
-  (deductive-only nil)   ;; If conclusion is for deductive purposes only, this is t.
+  (hypernode-answered-queries nil)
+  (hypernode-deductive-only nil)   ;; If conclusion is for deductive purposes only, this is t.
   (generated-interests nil)
   (generating-interests nil);; interest generating sup
   (cancelled-node nil)

@@ -199,8 +199,8 @@ It requires Hypergraphs11.lisp. |#
   (hypernode-maximal-degree-of-justification 0)  ;; maximal possible dj, ignoring defeat
   (hypernode-ancestors nil)
   (hypernode-nearest-defeasible-ancestors nil)
-  (answered-queries nil)
-  (deductive-only nil)   ;; If conclusion is for deductive purposes only, this is t.
+  (hypernode-answered-queries nil)
+  (hypernode-deductive-only nil)   ;; If conclusion is for deductive purposes only, this is t.
   (generated-interests nil)
   (generating-interests nil);; interest generating sup
   (cancelled-node nil)
@@ -701,7 +701,7 @@ It requires Hypergraphs11.lisp. |#
     (terpri) (princ "  kind: ") (princ (hypernode-kind n)))
   (terpri) (princ "  degree-of-justification: ")
   (princ (current-degree-of-justification n))
-  (dolist (Q (answered-queries n))
+  (dolist (Q (hypernode-answered-queries n))
     (terpri) (princ "  This answers ") (princ Q)))
 
 (defun display-conclusions-by-supposition ()
@@ -2063,7 +2063,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
             (incf (readopted-supposition sup))
             (push interest (generating-interests sup))
             (push sup (generated-suppositions interest))
-            (when (and (deductive-only sup) (not (deductive-interest interest)))
+            (when (and (hypernode-deductive-only sup) (not (deductive-interest interest)))
               (let ((nodes (convert-from-deductive-only sup)))
                 (dolist (C nodes)
                   (apply-forwards-defeasible-reasons C))))
@@ -2099,7 +2099,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
                :hypernode-maximal-degree-of-justification 1.0
                :hypernode-degree-of-justification 1.0
                :discounted-node-strength priority
-               :deductive-only deductive-only
+               :hypernode-deductive-only deductive-only
                :hypernode-variables e-vars
                :hypernode-supposition-variables e-vars
                :hypernode-discount-factor discount-factor
@@ -2132,16 +2132,16 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
 provided they are not inferred from other deductive-only conclusions.  It returns the list of
 converted nodes. |#
 (defun convert-from-deductive-only (node)
-  (setf (deductive-only node) nil)
+  (setf (hypernode-deductive-only node) nil)
   (let ((nodes (list node)))
     (dolist (L (hypernode-consequent-links node))
       (let ((N (hyperlink-target L)))
         (when
-          (and (deductive-only N)
+          (and (hypernode-deductive-only N)
                (not (some
                       #'(lambda (L)
                           (some
-                            #'(lambda (b) (deductive-only b))
+                            #'(lambda (b) (hypernode-deductive-only b))
                             (hyperlink-basis L)))
                       (hypernode-hyperlinks N))))
           (setf nodes
@@ -3757,7 +3757,7 @@ queued, it goes on the front of the inference-queue. |#
                   (subset
                     #'(lambda (n)
                         (some #'(lambda (q) (>= (current-degree-of-justification n) (query-strength q)))
-                              (answered-queries n)))
+                              (hypernode-answered-queries n)))
                     nodes))
             (when nodes
               (speak-text
@@ -3811,7 +3811,7 @@ queued, it goes on the front of the inference-queue. |#
               (subset
                 #'(lambda (n)
                     (some #'(lambda (q) (>= (current-degree-of-justification n) (query-strength q)))
-                          (answered-queries n)))
+                          (hypernode-answered-queries n)))
                 nodes))
         (when nodes
           (speak-text
@@ -5074,7 +5074,7 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
                    :hypernode-justification :reductio-supposition
                    :hypernode-degree-of-justification 1.0
                    :hypernode-maximal-degree-of-justification 1.0
-                   :deductive-only t
+                   :hypernode-deductive-only t
                    :discounted-node-strength
                    (* *reductio-discount* (interest-priority interest))
                    :generating-interests (list interest)
@@ -5621,7 +5621,7 @@ the resultant-interest. |#
                  (when (and (funcall+
                               (discharge-condition interest) node unifier
                               (if spec (cons (cons spec node) (link-binding link)) (link-binding link)))
-                            (or (not (deductive-only node)) deductive-rule?)
+                            (or (not (hypernode-deductive-only node)) deductive-rule?)
                             (or (non-reductio-interest interest) (deductive-node node)))
                    (when (and (deductive-node node)
                               (null condition)
@@ -5664,7 +5664,7 @@ the resultant-interest. |#
                 (cond
                   ((eq (link-rule link) :answer)
                    (push node (query-answers (resultant-interest link)))
-                   (pushnew (resultant-interest link) (answered-queries node))
+                   (pushnew (resultant-interest link) (hypernode-answered-queries node))
                    (when (deductive-node node)
                      (when (and
                              (every
@@ -5743,7 +5743,7 @@ the resultant-interest. |#
         (find-if
           #'(lambda (c)
               (and (deductive-node c)
-                   (or (not (deductive-only c)) deductive-rule?)
+                   (or (not (hypernode-deductive-only c)) deductive-rule?)
                    (subsetp= (hypernode-supposition c) sup)))
           (c-list-nodes c-list))))))
 
@@ -5754,7 +5754,7 @@ the resultant-interest. |#
          (Q (resultant-interest link)))
     (pushnew C (query-answers Q))
     (pull C (supporting-nodes link))
-    (pushnew Q (answered-queries C))
+    (pushnew Q (hypernode-answered-queries C))
     (when (and *display?* *graphics-on*)
       (draw-just-node (hypernode-position C *og*) *og* C (hypernode-color C *og*)))
     (cond ((and (not (zerop degree))
@@ -6020,7 +6020,7 @@ hypernode-supposition of node*. |#
            (reason-function (reason-function reason)))
       ;(and (null (ip-basis ip)) (reason-function reason))))
       (when (cancelled-node node) (throw 'apply-forwards-reasons nil))
-      (when (or (not (deductive-only node)) (not (defeasible-rule reason)))
+      (when (or (not (hypernode-deductive-only node)) (not (defeasible-rule reason)))
         (cond
           (reason-function (funcall reason-function node depth ip))
           ((ip-initial? ip) (reason-substantively-from-first-instantiated-premise node depth ip))
@@ -6035,7 +6035,7 @@ hypernode-supposition of node*. |#
       (when (defeasible-rule reason)
         (let ((reason-function (and (null (ip-basis ip)) (reason-function reason))))
           (when (cancelled-node node) (throw 'apply-forwards-reasons nil))
-          (when (not (deductive-only node))
+          (when (not (hypernode-deductive-only node))
             (cond
               (reason-function (funcall reason-function node 0 ip))
               ((ip-basis ip)
@@ -6541,9 +6541,9 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
               (or (null d-node)
                   (not (subsumed node basis sequent NDA NR rule binding d-node))))
             (let* ((deductive-only (and (not (eq rule :reductio))
-                                        (some #'deductive-only basis))))
-              (when (and node (deductive-only node) (not deductive-only))
-                (setf (deductive-only node) nil))
+                                        (some #'hypernode-deductive-only basis))))
+              (when (and node (hypernode-deductive-only node) (not deductive-only))
+                (setf (hypernode-deductive-only node) nil))
               (when (null node)
                 (setf node (make-new-conclusion sequent deductive-only RA NR)))
               (let ((old-degree (current-maximal-degree-of-justification node))
@@ -6821,7 +6821,7 @@ every member of NRS is an interest-supposition-node of that interest. |#
              :hypernode-formula (sequent-formula sequent)
              :hypernode-supposition sup
              :hypernode-kind :inference
-             :deductive-only deductive-only
+             :hypernode-deductive-only deductive-only
              :hypernode-variables c-vars
              :hypernode-supposition-variables i-vars
              :hypernode-non-reductio-supposition non-reductio-supposition
@@ -7958,7 +7958,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
                            *non-reductio-supposition-nodes*)))
     (cond (sup-node
             (incf (readopted-supposition sup-node))
-            (when (deductive-only sup-node)
+            (when (hypernode-deductive-only sup-node)
               (let ((nodes (convert-from-deductive-only sup-node)))
                 (dolist (C nodes)
                   (apply-forwards-defeasible-reasons C)))))
@@ -8239,7 +8239,7 @@ is the old maximal-degree-of-justification  |#
                (when (not (member node (supporting-nodes link)))
                  (push node (supporting-nodes link))
                  (push node (query-answers (resultant-interest link)))
-                 (pushnew (resultant-interest link) (answered-queries node))
+                 (pushnew (resultant-interest link) (hypernode-answered-queries node))
                  (when (deductive-node node)
                    (when (and
                            (every
@@ -8996,7 +8996,7 @@ time discharge-interest-schemes was applied to it. |#
     (let ((reason (is-reason is))
           (instance-function (is-instance-function is)))
       (when (cancelled-node node) (throw 'discharge-interest-schemes nil))
-      (when (and (or (not (deductive-only node)) (not (defeasible-rule reason)))
+      (when (and (or (not (hypernode-deductive-only node)) (not (defeasible-rule reason)))
                  (or (not (deductive-interest (is-target-interest is))) (deductive-node node)))
         (let ((degree* (degree-of-interest (is-target-interest is))))
           (when (and (>= (current-maximal-degree-of-justification node) degree*)
@@ -9384,7 +9384,7 @@ of all interests whose defeat-statuses change as a result of the computation.  |
 #| A Q&I-module is a function which, when applied to an appropriate conclusion, returns
 the sequent concluded. |#
 (defun apply-Q&I-modules-to (conclusion)
-  (when (not (deductive-only conclusion))
+  (when (not (hypernode-deductive-only conclusion))
     (dolist (Q&I *Q&I-modules*)
       (let ((S (funcall Q&I conclusion)))
         (when S (draw-conclusion S nil :Q&I nil 1 0 nil nil))))))
@@ -9395,9 +9395,9 @@ the sequent concluded. |#
   ;; (step (discharge-ultimate-epistemic-interests nb nr))
   (let ((altered-queries nil))
     (dolist (C new-beliefs)
-      (when (answered-queries C)
+      (when (hypernode-answered-queries C)
         (let ((degree (current-degree-of-justification C)))
-          (dolist (Q (answered-queries C))
+          (dolist (Q (hypernode-answered-queries C))
             (when (and (not (zerop (hypernode-degree-of-justification C)))
                        (>= degree (query-strength Q))
                        (or (null (hypernode-old-degree-of-justification C))
@@ -9420,7 +9420,7 @@ the sequent concluded. |#
               (when (not (member Q *permanent-ultimate-epistemic-interests*))
                 (push Q altered-queries)))))))
     (dolist (C new-retractions)
-      (dolist (Q (answered-queries C))
+      (dolist (Q (hypernode-answered-queries C))
         (when (and (hypernode-old-degree-of-justification C)
                    (>= (hypernode-old-degree-of-justification C) (query-strength Q))
                    (or (zerop (hypernode-degree-of-justification C))

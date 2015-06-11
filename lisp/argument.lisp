@@ -90,7 +90,7 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
                   (minimum0 (mapcar #'hyperlink-strength+ arg))
                   ; (if (every #'(lambda (L) (null (defeating-assignment-trees L))) arg)
                   ;    (minimum0 (mapcar #'hyperlink-strength+ arg)) 0)
-                  :argument-ultimate-interest (mem1 (answered-queries n))
+                  :argument-ultimate-interest (mem1 (hypernode-answered-queries n))
                   :argument-inclusive-nodes (list n))))
           (push argument *arguments*)
           (dolist (m (motivating-nodes n))

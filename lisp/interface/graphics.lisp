@@ -257,12 +257,12 @@
                         (set-pen-size view #@(3 3)) (set-fore-color view *brown-color*)
                         (frame-oval view left top right bottom)
                         (set-pen-size view #@(1 1)) (set-fore-color view *line-color*))
-                       ((answered-queries node)
+                       ((hypernode-answered-queries node)
                          (set-pen-size view #@(3 3)) (set-fore-color view *red-color*)
                          (frame-oval view left top right bottom)
                          (set-pen-size view #@(1 1)) (set-fore-color view *line-color*))
                        (t (frame-oval view left top right bottom))))
-         ((answered-queries node)
+         ((hypernode-answered-queries node)
            (set-pen-size view #@(3 3))
            (when (not *monochrome*) (set-fore-color view *red-color*))
            (frame-oval view left top right bottom)
@@ -829,7 +829,7 @@
                         (subset
                           #'(lambda (n) 
                                 (some #'(lambda (q) (>= (undefeated-degree-of-support n) (query-strength q)))
-                                             (answered-queries n)))
+                                             (hypernode-answered-queries n)))
                           nodes))
                (when nodes
                     (speak-text
@@ -1712,7 +1712,7 @@ OSCAR graphics window."
        (paint-oval view left top right bottom)
        (set-fore-color view *black-color*)
        (cond
-         ((answered-queries node)
+         ((hypernode-answered-queries node)
            (set-pen-size view #@(3 3)) (set-fore-color view *red-color*)
            (frame-oval view left top right bottom)
            (set-pen-size view #@(1 1)) (set-fore-color view *black-color*))
@@ -1770,7 +1770,7 @@ OSCAR graphics window."
                          :argument-strength
                          (if (every #'(lambda (L) (null (defeating-assignment-trees L))) arg)
                             (minimum0 (mapcar #'hyperlink-strength arg)) 0)
-                         :argument-ultimate-interest (mem1 (answered-queries n))
+                         :argument-ultimate-interest (mem1 (hypernode-answered-queries n))
                          :argument-inclusive-nodes (list n))))
                 (push argument *arguments*)
                 (dolist (m (motivating-nodes n))
