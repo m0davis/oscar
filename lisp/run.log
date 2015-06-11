@@ -1311,14 +1311,14 @@ STYLE-WARNING:
 ;     (DEFSTRUCT
 ;         (INTEREST-LINK (:PRINT-FUNCTION PRINT-INTEREST-LINK) (:CONC-NAME NIL))
 ;       (LINK-NUMBER 0)
-;       (RESULTANT-INTEREST NIL)
+;       (LINK-RESULTANT-INTEREST NIL)
 ;       (LINK-INTEREST NIL)
 ;       (LINK-INTEREST-FORMULA NIL)
 ;       (LINK-INTEREST-CONDITION NIL)
 ;       (LINK-BINDING NIL)
 ;       (LINK-RULE NIL)
-;       (REMAINING-PREMISES NIL)
-;       (SUPPORTING-NODES NIL)
+;       (LINK-REMAINING-PREMISES NIL)
+;       (LINK-SUPPORTING-NODES NIL)
 ;       (LINK-INSTANTIATIONS NIL)
 ;       ...)
 ; --> MULTIPLE-VALUE-PROG1 PROGN PROGN LET* SB-INT:NAMED-LAMBDA FUNCTION 
@@ -1339,7 +1339,7 @@ STYLE-WARNING:
 ;   caught 1 STYLE-WARNING condition
 
 ; in: DEFUN PRINT-INTEREST-LINK
-;     (INTEREST-NUMBER (RESULTANT-INTEREST X))
+;     (INTEREST-NUMBER (LINK-RESULTANT-INTEREST X))
 ; 
 ; caught STYLE-WARNING:
 ;   undefined function: INTEREST-NUMBER
@@ -3390,12 +3390,12 @@ STYLE-WARNING:
 ;   undefined function: COMPUTE-LINK-INTEREST
 
 ;     (DISCHARGE-LINK LINK (1+ DEPTH)
-;      (DEGREE-OF-INTEREST (RESULTANT-INTEREST LINK0)) PRIORITY INTERESTS)
+;      (DEGREE-OF-INTEREST (LINK-RESULTANT-INTEREST LINK0)) PRIORITY INTERESTS)
 ; 
 ; caught STYLE-WARNING:
 ;   undefined function: DISCHARGE-LINK
 
-;     (DRAW-CONCLUSION (CAR P) (CONS NODE (SUPPORTING-NODES LINK0))
+;     (DRAW-CONCLUSION (CAR P) (CONS NODE (LINK-SUPPORTING-NODES LINK0))
 ;      (LINK-RULE LINK0) INSTANTIATIONS (DISCOUNT-FACTOR (LINK-RULE LINK0)) DEPTH
 ;      NIL (CDR P) :BINDING NEW-BINDING :INTEREST ...)
 ; 
@@ -3474,7 +3474,7 @@ STYLE-WARNING:
 ; caught STYLE-WARNING:
 ;   undefined function: DISPLAY-BELIEF-CHANGES
 
-;     (DRAW-CONCLUSION (CAR P) (CONS NODE (SUPPORTING-NODES LINK)) REASON
+;     (DRAW-CONCLUSION (CAR P) (CONS NODE (LINK-SUPPORTING-NODES LINK)) REASON
 ;      INSTANTIATIONS (DISCOUNT-FACTOR REASON) DEPTH NIL (CDR P) :BINDING BINDING
 ;      :INTEREST ...)
 ; 
@@ -5729,7 +5729,7 @@ STYLE-WARNING:
 ;     Q
 ;   caught 1 WARNING condition
 
-(                                 OSCAR_4.02          6/11/2015          3:24:14
+(                                 OSCAR_4.02          6/11/2015          14:36:10
 
 *reductio-discount* = 0.23
 *reductio-interest* = 0.23
@@ -5774,7 +5774,7 @@ Ultimate epistemic interests:
   is unsatisfied.
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 12
 Size of inference-graph = 15 of which 0 were unused suppositions.
 80% of the inference-graph was used in the argument.
@@ -5824,7 +5824,7 @@ Ultimate epistemic interests:
   is unsatisfied.
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 15
 Size of inference-graph = 18 of which 0 were unused suppositions.
 83% of the inference-graph was used in the argument.
@@ -6025,7 +6025,7 @@ Ultimate epistemic interests:
   is unsatisfied.
 ---------------------------------------------------
 
-Elapsed time = 0.004 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 11
 Size of inference-graph = 14 of which 0 were unused suppositions.
 78% of the inference-graph was used in the argument.
@@ -6419,7 +6419,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 13
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 12
 Size of inference-graph = 13 of which 0 were unused suppositions.
 92% of the inference-graph was used in the argument.
@@ -6514,7 +6514,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 17
 ---------------------------------------------------
 
-Elapsed time = 0.004 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 21
 Size of inference-graph = 27 of which 0 were unused suppositions.
 77% of the inference-graph was used in the argument.
@@ -6792,7 +6792,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 13
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 11
 Size of inference-graph = 13 of which 1 were unused suppositions.
 84% of the inference-graph was used in the argument.
@@ -6815,7 +6815,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 3
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 3
 Size of inference-graph = 3 of which 0 were unused suppositions.
 100% of the inference-graph was used in the argument.
@@ -6956,7 +6956,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 101
 ---------------------------------------------------
 
-Elapsed time = 0.004 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 80
 Size of inference-graph = 101 of which 6 were unused suppositions.
 79% of the inference-graph was used in the argument.
@@ -7025,7 +7025,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 5
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 4
 Size of inference-graph = 5 of which 0 were unused suppositions.
 80% of the inference-graph was used in the argument.
@@ -7071,7 +7071,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 50
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 36
 Size of inference-graph = 50 of which -1 were unused suppositions.
 72% of the inference-graph was used in the argument.
@@ -7215,7 +7215,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 12
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 12
 Size of inference-graph = 12 of which 0 were unused suppositions.
 100% of the inference-graph was used in the argument.
@@ -7313,7 +7313,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 10
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 8
 Size of inference-graph = 10 of which 2 were unused suppositions.
 80% of the inference-graph was used in the argument.
@@ -7457,7 +7457,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 10
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 8
 Size of inference-graph = 10 of which 0 were unused suppositions.
 80% of the inference-graph was used in the argument.
@@ -7526,7 +7526,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 7
 ---------------------------------------------------
 
-Elapsed time = 0.004 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 6
 Size of inference-graph = 7 of which 1 were unused suppositions.
 85% of the inference-graph was used in the argument.
@@ -7618,7 +7618,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 16
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 15
 Size of inference-graph = 16 of which 1 were unused suppositions.
 93% of the inference-graph was used in the argument.
@@ -7664,7 +7664,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 18
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 16
 Size of inference-graph = 18 of which 2 were unused suppositions.
 88% of the inference-graph was used in the argument.
@@ -7802,7 +7802,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 24
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 13
 Size of inference-graph = 24 of which 0 were unused suppositions.
 54% of the inference-graph was used in the argument.
@@ -7850,7 +7850,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 27
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 17
 Size of inference-graph = 27 of which 0 were unused suppositions.
 62% of the inference-graph was used in the argument.
@@ -7923,7 +7923,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 39
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 32
 Size of inference-graph = 39 of which 3 were unused suppositions.
 82% of the inference-graph was used in the argument.
@@ -7975,7 +7975,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 46
 ---------------------------------------------------
 
-Elapsed time = 0.004 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 38
 Size of inference-graph = 46 of which 2 were unused suppositions.
 82% of the inference-graph was used in the argument.
@@ -8028,7 +8028,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 24
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.003 sec
 Cumulative size of arguments = 22
 Size of inference-graph = 24 of which 1 were unused suppositions.
 91% of the inference-graph was used in the argument.
@@ -8052,7 +8052,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 49
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 39
 Size of inference-graph = 49 of which 2 were unused suppositions.
 79% of the inference-graph was used in the argument.
@@ -8129,7 +8129,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 21
 ---------------------------------------------------
 
-Elapsed time = 0.000 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 19
 Size of inference-graph = 21 of which 1 were unused suppositions.
 90% of the inference-graph was used in the argument.
@@ -8152,7 +8152,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 45
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 31
 Size of inference-graph = 45 of which 0 were unused suppositions.
 68% of the inference-graph was used in the argument.
@@ -8176,7 +8176,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 311
 ---------------------------------------------------
 
-Elapsed time = 0.017 sec
+Elapsed time = 0.016 sec
 Cumulative size of arguments = 111
 Size of inference-graph = 311 of which 14 were unused suppositions.
 35% of the inference-graph was used in the argument.
@@ -8251,7 +8251,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 53
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 25
 Size of inference-graph = 53 of which 6 were unused suppositions.
 47% of the inference-graph was used in the argument.
@@ -8274,7 +8274,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 108
 ---------------------------------------------------
 
-Elapsed time = 0.007 sec
+Elapsed time = 0.010 sec
 Cumulative size of arguments = 43
 Size of inference-graph = 108 of which 7 were unused suppositions.
 39% of the inference-graph was used in the argument.
@@ -8416,7 +8416,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 21
 ---------------------------------------------------
 
-Elapsed time = 0.004 sec
+Elapsed time = 0.000 sec
 Cumulative size of arguments = 12
 Size of inference-graph = 21 of which 2 were unused suppositions.
 57% of the inference-graph was used in the argument.
@@ -8468,7 +8468,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 120
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 41
 Size of inference-graph = 120 of which 0 were unused suppositions.
 34% of the inference-graph was used in the argument.
@@ -8514,7 +8514,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 514
 ---------------------------------------------------
 
-Elapsed time = 0.027 sec
+Elapsed time = 0.026 sec
 Cumulative size of arguments = 145
 Size of inference-graph = 514 of which 43 were unused suppositions.
 28% of the inference-graph was used in the argument.
@@ -8591,7 +8591,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 317
 ---------------------------------------------------
 
-Elapsed time = 0.017 sec
+Elapsed time = 0.016 sec
 Cumulative size of arguments = 63
 Size of inference-graph = 317 of which 21 were unused suppositions.
 19% of the inference-graph was used in the argument.
@@ -8620,7 +8620,7 @@ Ultimate epistemic interests:
   is answered affirmatively by node 79
 ---------------------------------------------------
 
-Elapsed time = 0.003 sec
+Elapsed time = 0.004 sec
 Cumulative size of arguments = 37
 Size of inference-graph = 79 of which 1 were unused suppositions.
 46% of the inference-graph was used in the argument.
@@ -8635,12 +8635,12 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
           *skolem-multiplier*:                                   10
           *quantifier-discount*:                                   0.95
 
-#1008                                                                          0.003 sec
+#1008                                                                          0.000 sec
            cumulative  argument length:                 12
            total number of inferences:                     15
 
 
-#1009                                                                          0.000 sec
+#1009                                                                          0.004 sec
            cumulative  argument length:                 15
            total number of inferences:                     18
 
@@ -8665,7 +8665,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     10
 
 
-#5                                                                          0.004 sec
+#5                                                                          0.000 sec
            cumulative  argument length:                 11
            total number of inferences:                     14
 
@@ -8715,7 +8715,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     14
 
 
-#15                                                                          0.000 sec
+#15                                                                          0.004 sec
            cumulative  argument length:                 12
            total number of inferences:                     13
 
@@ -8725,7 +8725,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     29
 
 
-#17                                                                          0.004 sec
+#17                                                                          0.003 sec
            cumulative  argument length:                 21
            total number of inferences:                     27
 
@@ -8765,12 +8765,12 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     15
 
 
-#25                                                                          0.000 sec
+#25                                                                          0.004 sec
            cumulative  argument length:                 11
            total number of inferences:                     12
 
 
-#26                                                                          0.003 sec
+#26                                                                          0.000 sec
            cumulative  argument length:                 3
            total number of inferences:                     3
 
@@ -8800,7 +8800,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     3
 
 
-#32                                                                          0.004 sec
+#32                                                                          0.003 sec
            cumulative  argument length:                 80
            total number of inferences:                     95
 
@@ -8815,7 +8815,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     24
 
 
-#35                                                                          0.000 sec
+#35                                                                          0.003 sec
            cumulative  argument length:                 4
            total number of inferences:                     5
 
@@ -8825,7 +8825,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     7
 
 
-#37                                                                          0.003 sec
+#37                                                                          0.000 sec
            cumulative  argument length:                 36
            total number of inferences:                     51
 
@@ -8855,7 +8855,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     5
 
 
-#46                                                                          0.000 sec
+#46                                                                          0.004 sec
            cumulative  argument length:                 12
            total number of inferences:                     12
 
@@ -8875,7 +8875,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     6
 
 
-#50                                                                          0.003 sec
+#50                                                                          0.000 sec
            cumulative  argument length:                 8
            total number of inferences:                     8
 
@@ -8905,7 +8905,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     4
 
 
-#56                                                                          0.000 sec
+#56                                                                          0.003 sec
            cumulative  argument length:                 8
            total number of inferences:                     10
 
@@ -8920,7 +8920,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     8
 
 
-#59                                                                          0.004 sec
+#59                                                                          0.000 sec
            cumulative  argument length:                 6
            total number of inferences:                     6
 
@@ -8940,7 +8940,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     8
 
 
-#63                                                                          0.000 sec
+#63                                                                          0.003 sec
            cumulative  argument length:                 15
            total number of inferences:                     15
 
@@ -8950,7 +8950,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     18
 
 
-#65                                                                          0.003 sec
+#65                                                                          0.000 sec
            cumulative  argument length:                 16
            total number of inferences:                     16
 
@@ -8980,7 +8980,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     12
 
 
-#71                                                                          0.000 sec
+#71                                                                          0.004 sec
            cumulative  argument length:                 13
            total number of inferences:                     24
 
@@ -8990,7 +8990,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     16
 
 
-#73                                                                          0.003 sec
+#73                                                                          0.000 sec
            cumulative  argument length:                 17
            total number of inferences:                     27
 
@@ -9005,7 +9005,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     27
 
 
-#76                                                                          0.000 sec
+#76                                                                          0.003 sec
            cumulative  argument length:                 32
            total number of inferences:                     36
 
@@ -9015,7 +9015,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     13
 
 
-#78                                                                          0.004 sec
+#78                                                                          0.000 sec
            cumulative  argument length:                 38
            total number of inferences:                     44
 
@@ -9025,12 +9025,12 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     27
 
 
-#80                                                                          0.000 sec
+#80                                                                          0.003 sec
            cumulative  argument length:                 22
            total number of inferences:                     23
 
 
-#81                                                                          0.003 sec
+#81                                                                          0.000 sec
            cumulative  argument length:                 39
            total number of inferences:                     47
 
@@ -9045,17 +9045,17 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     17
 
 
-#84                                                                          0.000 sec
+#84                                                                          0.004 sec
            cumulative  argument length:                 19
            total number of inferences:                     20
 
 
-#85                                                                          0.003 sec
+#85                                                                          0.000 sec
            cumulative  argument length:                 31
            total number of inferences:                     45
 
 
-#86                                                                          0.017 sec
+#86                                                                          0.016 sec
            cumulative  argument length:                 111
            total number of inferences:                     297
 
@@ -9070,12 +9070,12 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     20
 
 
-#89                                                                          0.003 sec
+#89                                                                          0.000 sec
            cumulative  argument length:                 25
            total number of inferences:                     47
 
 
-#90                                                                          0.007 sec
+#90                                                                          0.010 sec
            cumulative  argument length:                 43
            total number of inferences:                     101
 
@@ -9105,7 +9105,7 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     46
 
 
-#96                                                                          0.004 sec
+#96                                                                          0.000 sec
            cumulative  argument length:                 12
            total number of inferences:                     19
 
@@ -9115,12 +9115,12 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     41
 
 
-#98                                                                          0.003 sec
+#98                                                                          0.004 sec
            cumulative  argument length:                 41
            total number of inferences:                     120
 
 
-#99                                                                          0.027 sec
+#99                                                                          0.026 sec
            cumulative  argument length:                 145
            total number of inferences:                     471
 
@@ -9135,36 +9135,36 @@ Size of inference-graph = 79 of which 1 were unused suppositions.
            total number of inferences:                     44
 
 
-#103                                                                          0.017 sec
+#103                                                                          0.016 sec
            cumulative  argument length:                 63
            total number of inferences:                     296
 
 
-#104                                                                          0.003 sec
+#104                                                                          0.004 sec
            cumulative  argument length:                 37
            total number of inferences:                     78
 
 
 
 (OSCAR_4.02 0.23 0.23 10 0.95
- ((104 3 37 78) (103 17 63 296) (102 0 30 44) (100 0 9 10) (99 27 145 471)
-  (98 3 41 120) (97 0 33 41) (96 4 12 19) (95 0 40 46) (94 3 35 66)
-  (93 0 18 24) (92 0 14 14) (91 0 8 8) (90 7 43 101) (89 3 25 47) (88 0 13 20)
-  (87 0 12 14) (86 17 111 297) (85 3 31 45) (84 0 19 20) (83 0 16 17)
-  (82 0 13 17) (81 3 39 47) (80 0 22 23) (79 0 26 27) (78 4 38 44) (77 0 12 13)
-  (76 0 32 36) (75 0 19 27) (74 0 14 15) (73 3 17 27) (72 0 13 16) (71 0 13 24)
-  (70 0 8 12) (69 0 5 5) (68 0 4 4) (67 0 4 4) (66 0 4 4) (65 3 16 16)
-  (64 0 18 18) (63 0 15 15) (62 0 8 8) (61 0 17 21) (60 0 23 32) (59 4 6 6)
-  (58 0 8 8) (57 0 7 7) (56 0 8 10) (55 0 4 4) (54 0 15 18) (53 0 21 23)
-  (52 0 11 11) (51 0 9 9) (50 3 8 8) (49 0 5 6) (48 0 4 5) (47 0 6 6)
-  (46 0 12 12) (45 0 5 5) (44 0 6 8) (43 0 3 3) (42 0 5 5) (41 0 3 3)
-  (37 3 36 51) (36 0 5 7) (35 0 4 5) (34 0 18 24) (33 0 27 36) (32 4 80 95)
-  (31 0 3 3) (30 0 18 18) (29 0 12 12) (28 0 4 5) (27 0 3 3) (26 3 3 3)
-  (25 0 11 12) (24 0 11 15) (23 0 4 6) (22 0 3 3) (21 0 11 14) (20 3 24 32)
-  (19 0 12 16) (18 0 7 8) (17 4 21 27) (16 0 21 29) (15 0 12 13) (14 0 13 14)
+ ((104 4 37 78) (103 16 63 296) (102 0 30 44) (100 0 9 10) (99 26 145 471)
+  (98 4 41 120) (97 0 33 41) (96 0 12 19) (95 0 40 46) (94 3 35 66)
+  (93 0 18 24) (92 0 14 14) (91 0 8 8) (90 10 43 101) (89 0 25 47) (88 0 13 20)
+  (87 0 12 14) (86 16 111 297) (85 0 31 45) (84 4 19 20) (83 0 16 17)
+  (82 0 13 17) (81 0 39 47) (80 3 22 23) (79 0 26 27) (78 0 38 44) (77 0 12 13)
+  (76 3 32 36) (75 0 19 27) (74 0 14 15) (73 0 17 27) (72 0 13 16) (71 4 13 24)
+  (70 0 8 12) (69 0 5 5) (68 0 4 4) (67 0 4 4) (66 0 4 4) (65 0 16 16)
+  (64 0 18 18) (63 3 15 15) (62 0 8 8) (61 0 17 21) (60 0 23 32) (59 0 6 6)
+  (58 0 8 8) (57 0 7 7) (56 3 8 10) (55 0 4 4) (54 0 15 18) (53 0 21 23)
+  (52 0 11 11) (51 0 9 9) (50 0 8 8) (49 0 5 6) (48 0 4 5) (47 0 6 6)
+  (46 4 12 12) (45 0 5 5) (44 0 6 8) (43 0 3 3) (42 0 5 5) (41 0 3 3)
+  (37 0 36 51) (36 0 5 7) (35 3 4 5) (34 0 18 24) (33 0 27 36) (32 3 80 95)
+  (31 0 3 3) (30 0 18 18) (29 0 12 12) (28 0 4 5) (27 0 3 3) (26 0 3 3)
+  (25 4 11 12) (24 0 11 15) (23 0 4 6) (22 0 3 3) (21 0 11 14) (20 3 24 32)
+  (19 0 12 16) (18 0 7 8) (17 3 21 27) (16 0 21 29) (15 4 12 13) (14 0 13 14)
   (13 0 12 13) (12 0 10 11) (11 0 8 9) (10 0 4 5) (9 3 13 16) (8 0 9 13)
-  (7 0 9 14) (6 0 16 19) (5 4 11 14) (4 0 8 10) (3 0 14 17) (2 0 7 10)
-  (1 0 7 8) (1009 0 15 18) (1008 3 12 15)))
+  (7 0 9 14) (6 0 16 19) (5 0 11 14) (4 0 8 10) (3 0 14 17) (2 0 7 10)
+  (1 0 7 8) (1009 4 15 18) (1008 0 12 15)))
 )
 
 (ALL X

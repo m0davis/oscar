@@ -828,7 +828,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
          (link
            (make-interest-link
              :link-number (incf *interest-link-number*)
-             :resultant-interest interest
+             :link-resultant-interest interest
              :link-interest-formula (subst substitution q-var (q-matrix p))
              :link-interest-condition ug-condition
              :link-rule ug
@@ -863,7 +863,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
          (link
            (make-interest-link
              :link-number (incf *interest-link-number*)
-             :resultant-interest interest
+             :link-resultant-interest interest
              :link-interest-formula (subst var (q-variable p) (q-matrix p))
              :link-rule eg
              :link-supposition (interest-supposition interest)

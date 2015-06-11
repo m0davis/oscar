@@ -640,13 +640,13 @@
                         (direct-reductio-interest in))
                       (some #'(lambda (L)
                                 (and
-                                  (discharged-link L)
+                                  (link-discharged L)
                                   (or
                                     (equal (link-rule L) :answer)
                                     (some
                                       #'(lambda (pn)
                                           (and
-                                            (member (resultant-interest L) (hypernode-enabling-interests pn))
+                                            (member (link-resultant-interest L) (hypernode-enabling-interests pn))
                                             (some
                                               #'(lambda (SL)
                                                   (member n (support-link-basis SL)))
@@ -705,18 +705,18 @@
     (set-prinp (interest-supposition interest)))
   (terpri)
   (when
-    (some #'(lambda (L) (query-p (resultant-interest L)))
+    (some #'(lambda (L) (query-p (link-resultant-interest L)))
           (right-links interest))
     (princ "                                        This is of ultimate interest") (terpri))
   (dolist (L (right-links interest))
-    (when (and (not (query-p (resultant-interest L))) (discharged-link L)
-               (member (resultant-interest L) used-interests))
+    (when (and (not (query-p (link-resultant-interest L))) (link-discharged L)
+               (member (link-resultant-interest L) used-interests))
       (princ "                                        For ")
-      (when (reductio-interest (resultant-interest L)) (princ "reductio "))
+      (when (reductio-interest (link-resultant-interest L)) (princ "reductio "))
       (princ "interest ")
-      (princ (interest-number (resultant-interest L)))
+      (princ (interest-number (link-resultant-interest L)))
       (princ " by ") (princ (link-rule L))
-      (let ((nodes (supporting-nodes L)))
+      (let ((nodes (link-supporting-nodes L)))
         (when nodes
           (cond ((equal (length nodes) 1)
                  (princ " using node ")
@@ -786,7 +786,7 @@
                                                 (princ (mapcar #'inference-number discharging-nodes)))
               (t (princ " node ") (princ (inference-number (mem1 discharging-nodes)))))
         (terpri))
-      ((not (some #'(lambda (L) (and (query-p (resultant-interest L)) (discharged-link L)))
+      ((not (some #'(lambda (L) (and (query-p (link-resultant-interest L)) (link-discharged L)))
                   (right-links interest)))
        (setf discharging-nodes
              (intersection (discharging-nodes interest) used-nodes))
@@ -1004,17 +1004,17 @@
     (set-prinp (interest-supposition interest)))
   (terpri)
   (when
-    (some #'(lambda (L) (query-p (resultant-interest L)))
+    (some #'(lambda (L) (query-p (link-resultant-interest L)))
           (right-links interest))
     (princ "                                        This is of ultimate interest") (terpri))
   (let ((L (lastmember (right-links interest))))
-    (when (and L (not (query-p (resultant-interest L))))
+    (when (and L (not (query-p (link-resultant-interest L))))
       (princ "                                        For ")
-      (when (reductio-interest (resultant-interest L)) (princ "reductio "))
+      (when (reductio-interest (link-resultant-interest L)) (princ "reductio "))
       (princ "interest ")
-      (princ (interest-number (resultant-interest L)))
+      (princ (interest-number (link-resultant-interest L)))
       (princ " by ") (princ (link-rule L))
-      (let ((nodes (supporting-nodes L)))
+      (let ((nodes (link-supporting-nodes L)))
         (when nodes
           (cond ((equal (length nodes) 1)
                  (princ " using node ")
@@ -1362,8 +1362,8 @@
 #|
 (find-if #'(lambda (i)
              (some #'(lambda (L)
-                       (some #'(lambda (link) (equal (resultant-interest link) i))
-                             (right-links (resultant-interest L))))
+                       (some #'(lambda (link) (equal (link-resultant-interest link) i))
+                             (right-links (link-resultant-interest L))))
                    (right-links i)))
          af)
 |#
@@ -1532,7 +1532,7 @@
                      (let ((Q (interest-queue-node interest)))
                        (when Q (pushnew Q altered-queue))))
                     ((and (not (some #'(lambda (n) (member n affected-nodes)) GN))
-                          (not (some #'(lambda (link) (member (resultant-interest link) affected-interests)) links)))
+                          (not (some #'(lambda (link) (member (link-resultant-interest link) affected-interests)) links)))
                      ;; Otherwise, the interest-priority is the maximum of:
                      ;;  (1)  the discounted-node-strengths of its generating-nodes that are 
                      ;;  not reductio-suppositions;
@@ -1556,9 +1556,9 @@
                                (mapcar
                                  #'(lambda (L)
                                      (if (eq (link-rule L) :answer)
-                                       (query-strength (resultant-interest L))
+                                       (query-strength (link-resultant-interest L))
                                        (* (discount-factor (link-rule L))
-                                          (interest-priority (resultant-interest L)))))
+                                          (interest-priority (link-resultant-interest L)))))
                                  links))))
                      (when display
                        (princ "               requeuing interest with no affected broadly generating odes and no undefeated right links with affected resultant interests ")
@@ -1643,9 +1643,9 @@
                           (mapcar
                             #'(lambda (L)
                                 (if (eq (link-rule L) :answer)
-                                  (query-strength (resultant-interest L))
+                                  (query-strength (link-resultant-interest L))
                                   (* (discount-factor (link-rule L))
-                                     (interest-priority (resultant-interest L)))))
+                                     (interest-priority (link-resultant-interest L)))))
                             links)))))
               (when display
                 (princ "     requeueing interest with broadly-generating-nodes or undefeated right links ")
@@ -1938,7 +1938,7 @@
   (let* ((interest-priority
            (if priority
              (* priority (discount-factor (link-rule link)))
-             (interest-priority (resultant-interest link))))
+             (interest-priority (link-resultant-interest link))))
          (vars (formula-node-variables (link-interest-formula link))))
     (multiple-value-bind
       (interest i-list match match*)
@@ -1949,7 +1949,7 @@
           (setf (maximum-degree-of-interest interest)
                 (max (maximum-degree-of-interest interest) max-degree))
           (when (not (reductio-interest interest))
-            (setf (reductio-interest interest) (reductio-interest (resultant-interest link))))
+            (setf (reductio-interest interest) (reductio-interest (link-resultant-interest link))))
           (setf (interest-priority interest) (max (interest-priority interest) interest-priority))
           (let ((gn (link-generating-node link)))
             (when gn
@@ -1959,9 +1959,9 @@
             (setf (right-links interest) (reverse (cons link (reverse (right-links interest)))))
             (setf (right-links interest) (list link)))
           ;  (setf (interest-depth interest)
-          ;           (min (interest-depth interest) (1+ (interest-depth (resultant-interest link)))))
-          (setf (interest-match link) match)
-          (setf (interest-reverse-match link) match*)
+          ;           (min (interest-depth interest) (1+ (interest-depth (link-resultant-interest link)))))
+          (setf (link-interest-match link) match)
+          (setf (link-interest-reverse-match link) match*)
           (readopt-interest interest nil))
         (t
           (setf interest
@@ -1970,14 +1970,14 @@
 
           ;; (when *display?* (terpri) (princ (car (link-instantiations link))) (terpri) (terpri))
 
-          ; (let ((i-depth (interest-depth (resultant-interest link))))
+          ; (let ((i-depth (interest-depth (link-resultant-interest link))))
           ;   (setf (interest-depth interest) (1+ i-depth))
           ;   (setf (interest-priority interest) (* interest-priority (/  i-depth (1+ i-depth)))))
 
           (setf (interest-priority interest) interest-priority)
           ))
       (setf (link-interest link) interest)
-      (dolist (p (decision-plans (resultant-interest link)))
+      (dolist (p (decision-plans (link-resultant-interest link)))
         (pushnew p (decision-plans interest)))
       )))
 

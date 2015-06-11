@@ -415,7 +415,7 @@
     (draw-just-interest position view node)
     ;; draw arrows
     (dolist (drl (right-links node))
-        (let* ((int (resultant-interest drl))
+        (let* ((int (link-resultant-interest drl))
                   (pos (if (interest-p int) (interest-position int  view))))
            (if pos (draw-arrow  pos position view))))
     ;;;  draw arrows to generated suppositions
@@ -507,7 +507,7 @@
                   (longth *minimum-distance-between-nodes*)
                   (suppos
                     (if (right-links int)
-                       (interest-position (resultant-interest (first (last (right-links int)))) view)))
+                       (interest-position (link-resultant-interest (first (last (right-links int)))) view)))
                   (h (if suppos (adjusted-h-position (point-h suppos) int) 50))
                   (v (if suppos (i-adjusted-v-position (point-v suppos) int) 450))
                   (h-pos (+ h (round (* longth  (cosd sweep)))))
