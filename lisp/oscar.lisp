@@ -411,10 +411,10 @@ It requires Hypergraphs11.lisp. |#
 (defstruct (d-node (:conc-name nil) (:print-function print-d-node))
   d-node-number
   (d-node-description nil)
-  (discrimination-tests nil)
+  (d-node-discrimination-tests nil)
   (d-node-c-lists nil)
   (d-node-i-lists nil)
-  (parent-d-node nil)
+  (d-node-parent nil)
   (d-node-forwards-reasons nil)  ;; a list of partially-instantiated-premises
   (d-node-backwards-reasons nil)  ;; a list of non-degenerate backwards-reasons
   (d-node-interest-schemes nil)  ;; a list of partially-instantiated-premises
@@ -526,13 +526,13 @@ It requires Hypergraphs11.lisp. |#
            (cond (last? (pull depth *line-columns*))
                  (t (pushnew depth *line-columns* :test 'eql))))
           (t
-            (let* ((DC (discrimination-tests d-node))
-                   (number (length (discrimination-tests d-node)))
+            (let* ((DC (d-node-discrimination-tests d-node))
+                   (number (length (d-node-discrimination-tests d-node)))
                    (number* (round (/ number 2)))
                    (draw-line?
                      (or (mem d-node listees)
                          (mem d-node *callees*)
-                         (some #'(lambda (C) (not (mem c listees))) (discrimination-tests d-node)))))
+                         (some #'(lambda (C) (not (mem c listees))) (d-node-discrimination-tests d-node)))))
               (pushnew d-node listees :test 'equal)
               (push d-node *callees*)
               (when (and (not *blank-line*) (> number* 0))
@@ -578,12 +578,12 @@ It requires Hypergraphs11.lisp. |#
     iss))
 
 (defun d-node-ancestors (dn)
-  (let ((pn (parent-d-node dn)))
+  (let ((pn (d-node-parent dn)))
     (when pn (cons pn (d-node-ancestors pn)))))
 
 (defun d-node-descendants (dn)
-  (when (discrimination-tests dn)
-    (let ((nodes (a-range (discrimination-tests dn))))
+  (when (d-node-discrimination-tests dn)
+    (let ((nodes (a-range (d-node-discrimination-tests dn))))
       (append nodes (unionmapcar #'d-node-descendants nodes)))))
 
 #| Display the part of the discrimination-net that contains d-node number n. |#
@@ -816,7 +816,7 @@ known conclusions matching the formula. |#
           (push node nodes))))
     (append nodes
             (unionmapcar #'(lambda (dt) (search-d-nodes formula (cdr dt)))
-                         (discrimination-tests d-node)))))
+                         (d-node-discrimination-tests d-node)))))
 
 (defun ?interests (formula)
   (when (stringp formula) (setf formula (reform formula)))
@@ -848,7 +848,7 @@ known conclusions matching the formula. |#
           (push interest interests))))
     (append interests
             (unionmapcar #'(lambda (dt) (search-d-node-interests formula (cdr dt)))
-                         (discrimination-tests d-node)))))
+                         (d-node-discrimination-tests d-node)))))
 
 ; ---------------------------- ULTIMATE-EPISTEMIC-INTERESTS -----------------------------
 
@@ -1235,7 +1235,7 @@ known conclusions matching the formula. |#
 #| (descrimination-tests d-node) is an a-list of pairs (test . dn), where test has the form of the
 car of a formula-code, and dn is a d-node. |#
 (defun index-interest (interest profile term-list d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node)))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
     (cond (dn
             (if new-profile (index-interest interest new-profile term-list dn)
@@ -1287,7 +1287,7 @@ car of a formula-code, and dn is a d-node. |#
          (dn (make-d-node
                :d-node-number (incf *d-node-number*)
                :d-node-description (cons test (d-node-description d-node))
-               :parent-d-node d-node))
+               :d-node-parent d-node))
          (i-list (make-i-list
                    :i-list-formula formula
                    :i-list-interests (list interest)
@@ -1298,7 +1298,7 @@ car of a formula-code, and dn is a d-node. |#
                    :i-list-d-node dn
                    )))
     (push dn *discrimination-net*)
-    (push (cons test dn) (discrimination-tests d-node))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (setf (d-node-i-lists dn) (list i-list))
     (setf (interest-i-list interest) i-list)))
 
@@ -1307,7 +1307,7 @@ car of a formula-code, and dn is a d-node. |#
     (pursue-i-lists-for formula profile term-list variables *top-d-node*)))
 
 (defun pursue-i-lists-for (formula profile term-list variables d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node))))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node))))
     (when dn
       (let ((new-profile (cdr profile)))
         (cond
@@ -1318,15 +1318,15 @@ car of a formula-code, and dn is a d-node. |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
-    (push (cons test dn) (discrimination-tests d-node))
+              :d-node-parent d-node)))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (push dn *discrimination-net*)
     (let ((desc (cdr profile)))
       (cond (desc (index-interest-at-new-nodes interest term-list dn desc (car profile)))
             (t (store-interest-at-new-d-node interest term-list dn (car profile)))))))
 
 (defun pursue-d-node-for (profile d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node))))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node))))
     (when dn
       (let ((new-profile (cdr profile)))
         (cond
@@ -1387,7 +1387,7 @@ car of a formula-code, and dn is a d-node. |#
 #| (descrimination-tests d-node) is an a-list of pairs (test . dn), where test has the form of the
 car of a formula-code, and dn is a d-node. |#
 (defun index-hypernode (node profile term-list d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node)))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
     (cond (dn
             (if new-profile (index-hypernode node new-profile term-list dn)
@@ -1437,7 +1437,7 @@ car of a formula-code, and dn is a d-node. |#
          (dn (make-d-node
                :d-node-number (incf *d-node-number*)
                :d-node-description (cons test (d-node-description d-node))
-               :parent-d-node d-node))
+               :d-node-parent d-node))
          (formula (hypernode-formula node))
          (c-list (make-c-list
                    :c-list-formula formula
@@ -1449,7 +1449,7 @@ car of a formula-code, and dn is a d-node. |#
                    :c-list-d-node dn
                    )))
     (push dn *discrimination-net*)
-    (push (cons test dn) (discrimination-tests d-node))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (setf (d-node-c-lists dn) (list c-list))
     (when
       (appropriate-for-contradictors formula)
@@ -1465,7 +1465,7 @@ car of a formula-code, and dn is a d-node. |#
     (pursue-c-lists-for formula profile term-list variables *top-d-node*)))
 
 (defun pursue-c-lists-for (formula profile term-list variables d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node))))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node))))
     (when dn
       (let ((new-profile (cdr profile)))
         (cond
@@ -1476,8 +1476,8 @@ car of a formula-code, and dn is a d-node. |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
-    (push (cons test dn) (discrimination-tests d-node))
+              :d-node-parent d-node)))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (push dn *discrimination-net*)
     (let ((desc (cdr profile)))
       (cond (desc (index-hypernode-at-new-nodes node term-list dn desc (car profile)))
@@ -1493,7 +1493,7 @@ car of a formula-code, and dn is a d-node. |#
       (fetch-c-list-for formula d-node))))
 
 (defun pursue-c-list-for (formula profile d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node))))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node))))
     (when dn
       (let ((new-profile (cdr profile)))
         (cond
@@ -2505,17 +2505,17 @@ to have an undercutting defeater.  |#
 (defun initialize-discrimination-net ()
   (setf *top-d-node* (make-d-node :d-node-number (setf *d-node-number* 1)))
   (setf *conditional-node*
-        (make-d-node :d-node-number (incf *d-node-number*) :parent-d-node *top-d-node*))
+        (make-d-node :d-node-number (incf *d-node-number*) :d-node-parent *top-d-node*))
   (setf *undercutter-node*
-        (make-d-node :d-node-number (incf *d-node-number*) :parent-d-node *top-d-node*))
+        (make-d-node :d-node-number (incf *d-node-number*) :d-node-parent *top-d-node*))
   (setf *conjunctive-undercutter-node*
-        (make-d-node :d-node-number (incf *d-node-number*) :parent-d-node *undercutter-node*))
-  (setf (discrimination-tests *top-d-node*)
+        (make-d-node :d-node-number (incf *d-node-number*) :d-node-parent *undercutter-node*))
+  (setf (d-node-discrimination-tests *top-d-node*)
         (list (cons '((1) . ->) *conditional-node*)
               (cons '((1) . @) *undercutter-node*)))
   (setf *discrimination-net*
         (list *top-d-node* *conditional-node* *undercutter-node* *conjunctive-undercutter-node*))
-  (setf (discrimination-tests *undercutter-node*)
+  (setf (d-node-discrimination-tests *undercutter-node*)
         (list (cons '((2 1) . &) *conjunctive-undercutter-node*)))
   (compute-forwards-reason-d-nodes)
   (compute-backwards-reason-d-nodes))
@@ -2618,7 +2618,7 @@ to have an undercutting defeater.  |#
     ip))
 
 (defun index-forwards-reason (reason premise profile d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node)))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
     (cond (dn
             (cond
@@ -2635,9 +2635,9 @@ to have an undercutting defeater.  |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
+              :d-node-parent d-node)))
     (push dn *discrimination-net*)
-    (push (cons test dn) (discrimination-tests d-node))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (store-forwards-reason-at-d-node reason premise dn)))
 
 (defun index-forwards-reason-at-new-nodes
@@ -2645,8 +2645,8 @@ to have an undercutting defeater.  |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
-    (push (cons test dn) (discrimination-tests d-node))
+              :d-node-parent d-node)))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (push dn *discrimination-net*)
     (let ((desc (cdr profile)))
       (cond (desc (index-forwards-reason-at-new-nodes reason premise dn desc (car profile)))
@@ -2747,7 +2747,7 @@ to have an undercutting defeater.  |#
 
 (defun index-instantiated-premise
   (reason premise profile node c-list binding instantiations ip d-node remaining-premises)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node)))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
     (cond (dn
             (cond
@@ -2773,9 +2773,9 @@ to have an undercutting defeater.  |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
+              :d-node-parent d-node)))
     (push dn *discrimination-net*)
-    (push (cons test dn) (discrimination-tests d-node))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (store-instantiated-premise-at-d-node
       reason premise node c-list binding instantiations ip dn remaining-premises)))
 
@@ -2784,8 +2784,8 @@ to have an undercutting defeater.  |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
-    (push (cons test dn) (discrimination-tests d-node))
+              :d-node-parent d-node)))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (push dn *discrimination-net*)
     (let ((desc (cdr profile)))
       (cond (desc (index-instantiated-premise-at-new-nodes
@@ -2817,7 +2817,7 @@ to have an undercutting defeater.  |#
     (t (store-backwards-reason-at-d-node reason *top-d-node*))))
 
 (defun index-backwards-reason (reason profile d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node)))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
     (cond (dn
             (cond
@@ -2834,17 +2834,17 @@ to have an undercutting defeater.  |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
+              :d-node-parent d-node)))
     (push dn *discrimination-net*)
-    (push (cons test dn) (discrimination-tests d-node))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (store-backwards-reason-at-d-node reason dn)))
 
 (defun index-backwards-reason-at-new-nodes (reason d-node profile test)
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
-    (push (cons test dn) (discrimination-tests d-node))
+              :d-node-parent d-node)))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (push dn *discrimination-net*)
     (let ((desc (cdr profile)))
       (cond (desc (index-backwards-reason-at-new-nodes reason dn desc (car profile)))
@@ -2972,7 +2972,7 @@ to have an undercutting defeater.  |#
   interest-scheme)
 
 (defun index-interest-scheme (interest-scheme profile d-node)
-  (let ((dn (e-assoc (car profile) (discrimination-tests d-node)))
+  (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
     (cond (dn
             (cond
@@ -2988,17 +2988,17 @@ to have an undercutting defeater.  |#
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
+              :d-node-parent d-node)))
     (push dn *discrimination-net*)
-    (push (cons test dn) (discrimination-tests d-node))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (store-interest-scheme-at-d-node interest-scheme dn)))
 
 (defun index-interest-scheme-at-new-nodes (interest-scheme d-node profile test)
   (let ((dn (make-d-node
               :d-node-number (incf *d-node-number*)
               :d-node-description (cons test (d-node-description d-node))
-              :parent-d-node d-node)))
-    (push (cons test dn) (discrimination-tests d-node))
+              :d-node-parent d-node)))
+    (push (cons test dn) (d-node-discrimination-tests d-node))
     (push dn *discrimination-net*)
     (let ((desc (cdr profile)))
       (cond (desc (index-interest-scheme-at-new-nodes interest-scheme dn desc (car profile)))
@@ -4883,7 +4883,7 @@ discharge-link. |#
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES ")
     (princ interest) (princ " and ") (princ d-node) (terpri))
   (reason-backwards-from-reason-node interest priority (1+ depth) d-node)
-  (let ((pn (parent-d-node d-node)))
+  (let ((pn (d-node-parent d-node)))
     (when pn (reason-backwards-from-dominant-reason-nodes interest priority (1+ depth) pn))))
 
 (defun reason-backwards-from-reason-node (interest priority depth d-node)
@@ -4920,7 +4920,7 @@ discharge-link. |#
     (princ "REASON-DEGENERATELY-BACKWARDS-FROM-DOMINANT-REASON-NODES ")
     (princ interest) (princ " and ") (princ d-node) (terpri))
   (reason-degenerately-backwards-from-reason-node interest priority (1+ depth) d-node)
-  (let ((pn (parent-d-node d-node)))
+  (let ((pn (d-node-parent d-node)))
     (when pn (reason-degenerately-backwards-from-dominant-reason-nodes interest priority (1+ depth) pn))))
 
 (defun reason-degenerately-backwards-from-reason-node (interest priority depth d-node)
@@ -5144,7 +5144,7 @@ link being discharged.  |#
   (dolist (c-list (d-node-c-lists d-node))
     (dolist (node (c-list-processed-nodes c-list))
       (reason-from-interest-scheme node priority (1+ depth) interest-scheme)))
-  (dolist (test (discrimination-tests d-node))
+  (dolist (test (d-node-discrimination-tests d-node))
     (discharge-interest-scheme interest-scheme (cdr test) priority (1+ depth))))
 
 (defun reason-from-interest-scheme (node priority depth is)
@@ -5458,7 +5458,7 @@ link being discharged.  |#
   (when (null d-node) (setf d-node (d-node 1)))
   (append (d-node-interest-schemes d-node)
           (unionmapcar #'(lambda (d) (list-interest-schemes (cdr d)))
-                       (discrimination-tests d-node))))
+                       (d-node-discrimination-tests d-node))))
 
 (defun is (n)
   (find-if #'(lambda (x) (equal (ip-number x) n)) (list-interest-schemes)))
@@ -5467,7 +5467,7 @@ link being discharged.  |#
   (when (null d-node) (setf d-node (d-node 1)))
   (append (d-node-forwards-reasons d-node)
           (unionmapcar #'(lambda (d) (list-instantiated-premises (cdr d)))
-                       (discrimination-tests d-node))))
+                       (d-node-discrimination-tests d-node))))
 
 (defun ip (n)
   (find-if #'(lambda (x) (equal (ip-number x) n)) (list-instantiated-premises)))
@@ -6004,12 +6004,12 @@ hypernode-supposition of node*. |#
   ; (when (and (eq node (node 252)) (eq d-node (d-node 68))) (setf n node dn d-node d depth) (break))
   ;; (step (reason-from-dominant-premise-nodes n dn d))
   (reason-from-instantiated-premises node d-node depth)
-  (let ((pn (parent-d-node d-node)))
+  (let ((pn (d-node-parent d-node)))
     (when pn (reason-from-dominant-premise-nodes node pn depth))))
 
 (defun reason-defeasibly-from-dominant-premise-nodes (node d-node)
   (reason-defeasibly-from-instantiated-premises node d-node)
-  (let ((pn (parent-d-node d-node)))
+  (let ((pn (d-node-parent d-node)))
     (when pn (reason-defeasibly-from-dominant-premise-nodes node pn))))
 
 (defun reason-from-instantiated-premises (node d-node depth)
@@ -6069,7 +6069,7 @@ hypernode-supposition of node*. |#
   (dolist (c-list (d-node-c-lists d-node))
     (when (c-list-processed-nodes c-list)
       (reason-substantively-from-non-initial-instantiated-premise c-list depth ip)))
-  (dolist (test (discrimination-tests d-node))
+  (dolist (test (d-node-discrimination-tests d-node))
     (reason-from-subsidiary-c-lists (cdr test) depth ip)))
 
 (defun reason-substantively-from-non-initial-instantiated-premise
@@ -8859,7 +8859,7 @@ is the old maximal-degree-of-justification  |#
                      (null (d-node-forwards-reasons dn))
                      (null (d-node-backwards-reasons dn))
                      (null (d-node-interest-schemes dn))
-                     (null (discrimination-tests dn)))
+                     (null (d-node-discrimination-tests dn)))
             (cancel-d-node dn)))
         (dolist (cl (corresponding-c-lists i-list))
           (pull (assoc i-list (corresponding-i-lists (mem1 cl)))
@@ -8886,20 +8886,20 @@ is the old maximal-degree-of-justification  |#
                (null (d-node-i-lists dn))
                (null (d-node-forwards-reasons dn))
                (null (d-node-backwards-reasons dn))
-               (null (discrimination-tests dn)))
+               (null (d-node-discrimination-tests dn)))
       (cancel-d-node dn)))
   (dolist (IS* (is-derived-interest-schemes IS)) (cancel-interest-scheme IS*)))
 
 (defun cancel-d-node (d-node)
   (when (not (eq d-node *top-d-node*))
-    (let* ((dn (parent-d-node d-node))
-           (test (rassoc d-node (discrimination-tests dn))))
-      (setf (discrimination-tests dn) (remove test (discrimination-tests dn)))
+    (let* ((dn (d-node-parent d-node))
+           (test (rassoc d-node (d-node-discrimination-tests dn))))
+      (setf (d-node-discrimination-tests dn) (remove test (d-node-discrimination-tests dn)))
       (when (and (null (d-node-c-lists dn)) (null (d-node-i-lists dn))
                  (null (d-node-forwards-reasons dn))
                  (null (d-node-backwards-reasons dn))
                  (null (d-node-interest-schemes dn))
-                 (null (discrimination-tests dn)))
+                 (null (d-node-discrimination-tests dn)))
         (cancel-d-node dn)))))
 
 (defun cancel-interest-in-node (node depth)
@@ -8945,7 +8945,7 @@ is the old maximal-degree-of-justification  |#
                        (null (d-node-forwards-reasons dn))
                        (null (d-node-backwards-reasons dn))
                        (null (d-node-interest-schemes dn))
-                       (null (discrimination-tests dn)))
+                       (null (d-node-discrimination-tests dn)))
               (cancel-d-node dn)))
           (dolist (cl (c-list-contradictors c-list))
             (pull (assoc c-list (c-list-contradictors (car cl)))
@@ -8965,7 +8965,7 @@ is the old maximal-degree-of-justification  |#
                (null (d-node-c-lists dn))
                (null (d-node-i-lists dn))
                (null (d-node-backwards-reasons dn))
-               (null (discrimination-tests dn)))
+               (null (d-node-discrimination-tests dn)))
       (cancel-d-node dn)))
   (dolist (IP* (ip-derived-premises IP)) (cancel-instantiated-premise IP*)))
 
@@ -8984,7 +8984,7 @@ time discharge-interest-schemes was applied to it. |#
   ;      (setf n node dn d-node od old-degree d depth) (break))
   ;; (step (reason-from-dominant-interest-schemes n dn od d))
   (reason-from-current-interest-scheme node d-node old-degree depth)
-  (let ((pn (parent-d-node d-node)))
+  (let ((pn (d-node-parent d-node)))
     (when pn (reason-from-dominant-interest-schemes node pn old-degree depth))))
 
 (defun reason-from-current-interest-scheme (node d-node old-degree depth)
