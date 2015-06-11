@@ -483,7 +483,7 @@
              :node-variables c-vars
              :node-supposition-variables i-vars
              :non-reductio-supposition non-reductio-supposition
-             :reductio-ancestors reductio-ancestors
+             :hypernode-reductio-ancestors reductio-ancestors
              )))
     (when (and (listp (sequent-formula sequent))
                (or (equal (car (sequent-formula sequent)) 'plan-for)
@@ -610,9 +610,9 @@
                              (and
                                (member (car DI) (generating-interests sup))
                                ;; 
-                               (mem sup (a-range (reductio-ancestors node*)))
-                               (not (mem sup (a-range (reductio-ancestors n))))))
-                         (a-range (reductio-ancestors node*)))))
+                               (mem sup (a-range (hypernode-reductio-ancestors node*)))
+                               (not (mem sup (a-range (hypernode-reductio-ancestors n))))))
+                         (a-range (hypernode-reductio-ancestors node*)))))
               ;; (generated-suppositions (car DI)))))
               (when rs
                 (princ " as a result of inferring node #") (princ (inference-number node*))

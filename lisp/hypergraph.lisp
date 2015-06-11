@@ -31,7 +31,7 @@
   (hypernode-justification nil)  ;; a keyword if the node is given or a supposition
   (hypernode-consequent-links nil)
   (hypernode-old-degree-of-justification nil) ;; the degree prior to the last computation of defeat statuses
-  (reductio-ancestors nil)
+  (hypernode-reductio-ancestors nil)
   (non-reductio-supposition nil)
   (supported-hyper-defeat-links nil)  ;; hyper-defeat-links for which the node is the root
   (degree-of-justification nil)
