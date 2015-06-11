@@ -279,7 +279,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 #| This forms conclusions of the form (P at t). |#
 
 (def-forwards-reason *PERCEPTION*
-                     :forwards-premises "(p at time)" (:kind :percept)
+                     :reason-forwards-premises "(p at time)" (:kind :percept)
                      :conclusions "(p at time)"
                      :variables p time
                      :defeasible? t
@@ -293,7 +293,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-undercutter *PERCEPTUAL-RELIABILITY*
                            :defeatee *perception*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of p given ((I have a percept with content p) & R)) <= s)"
                            (:condition (s < 0.99))
                            :backwards-premises "(R at time)"
@@ -302,7 +302,7 @@ which can then be run individually using the function (simulate-oscar n). |#
                            :description "When perception is unreliable, it is not reasonable to accept its representations.")
 
 (def-forwards-reason *DISCOUNTED-PERCEPTION*
-                     :forwards-premises
+                     :reason-forwards-premises
                      "((the probability of p given ((I have a percept with content p) & R)) <= s)"
                      (:condition (and (projectible R) (0.5 < s) (s < 0.99)))
                      "(p at time)"
@@ -316,7 +316,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-undercutter *PERCEPTUAL-UNRELIABILITY*
                            :defeatee *discounted-perception*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of p given ((I have a percept with content p) & A)) <= s*)"
                            (:condition (and (projectible A) (s* < s)))
                            :backwards-premises "(A at time)"
@@ -347,7 +347,7 @@ which can then be run individually using the function (simulate-oscar n). |#
                       :conclusions  "(p throughout (op time* time))"
                       :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
                                        (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(p at time0)"
                       (:condition (time0 < time))
                       :variables p time0 time* time op
@@ -361,7 +361,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 ;; and the inference would not then be redone.
 (def-backwards-reason *TEMPORAL-PROJECTION*
                       :conclusions  "(p throughout (op time* time))"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(p at time0)"
                       (:condition (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
                                         (support-links c)))
@@ -375,7 +375,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
                       :conclusions  "(p throughout (op time* time))"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(p at time0)"
                       :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
                                        (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
@@ -387,7 +387,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
                       :conclusions  "(p throughout (op time* time))"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(p at time0)"
                       (:condition (and  (numberp time*) (time0 <= time*)
                                         (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
@@ -403,27 +403,27 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-TEMPORAL-PROJECTION*
                            :defeatee  *temporal-projection*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of (p at (t + 1)) given (p at t)) = s)"
                            (:condition (s < *temporal-decay*))
                            :variables  p s time0 time)
 
 (def-backwards-reason *INCOMPATIBLE-COLORS*
                       :conclusions "~((the color of x is y) at time)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((the color of x is z) at time)"
                       (:condition (not (eq z y)))
                       :variables  x y z time)
 
 (def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*
                       :conclusions "~(the color of x is y)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(the color of x is z)"
                       (:condition (not (eq z y)))
                       :variables  x y z time)
 
 (def-forwards-reason *INDEXICAL-PERCEPTION*
-                     :forwards-premises "(p at time)"
+                     :reason-forwards-premises "(p at time)"
                      (:kind :percept)
                      :conclusions "p"
                      :variables p time
@@ -434,14 +434,14 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-PERCEPTION*
                            :defeatee  *indexical-perception*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of (p at (t + 1)) given (p at t)) = s)"
                            (:condition (s < *temporal-decay*))
                            :variables  p s time0 time)
 
 (def-backwards-undercutter *INDEXICAL-PERCEPTUAL-RELIABILITY*
                            :defeatee *indexical-perception*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of p given ((I have a percept with content p) & R)) <= s)"
                            (:condition (and (projectible R) (s < 0.99)))
                            :backwards-premises "(R at time)"
@@ -449,7 +449,7 @@ which can then be run individually using the function (simulate-oscar n). |#
                            :description "When perception is unreliable, it is not reasonable to accept its representations.")
 
 (def-forwards-reason *DISCOUNTED-INDEXICAL-PERCEPTION*
-                     :forwards-premises
+                     :reason-forwards-premises
                      "((the probability of p given ((I have a percept with content p) & R)) <= s)"
                      (:condition (and (projectible R) (0.5 < s) (s < 0.99)))
                      "(p at time)"
@@ -464,7 +464,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-undercutter *INDEXICAL-PERCEPTUAL-UNRELIABILITY*
                            :defeatee *discounted-indexical-perception*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of p given ((I have a percept with content p) & A)) <= s*)"
                            (:condition (and (projectible A) (s* < s)))
                            :backwards-premises "(A at time)"
@@ -473,14 +473,14 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*
                       :conclusions "~(the color of x is y)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(the color of x is z)"
                       (:condition (not (eq z y)))
                       :variables  x y z)
 
 (def-backwards-reason *INDEXICAL-TEMPORAL-PROJECTION*
                       :conclusions  "p"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(p at time0)"
                       (:condition (time0 < now))
                       :condition  (and (temporally-projectible p) (not (occur 'at p)))
@@ -493,13 +493,13 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-TEMPORAL-PROJECTION*
                            :defeatee  *indexical-temporal-projection*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((the probability of (p at (t + 1)) given (p at t)) = s)"
                            (:condition (s < *temporal-decay*))
                            :variables  p s time0 time)
 
 (def-forwards-reason *RELIABLE-INFORMANT*
-                     :forwards-premises
+                     :reason-forwards-premises
                      "(x is a reliable informant)"
                      "((x reports that P) at time)"
                      :conclusions "(P at time)"
@@ -510,7 +510,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 #|  No time reference in the conclusion.
 (def-forwards-reason *RELIABLE-INFORMANT*
-                     :forwards-premises
+                     :reason-forwards-premises
                      "(x is a reliable informant)"
                      "((x reports that P) at time)"
                      :conclusions "P"
@@ -525,7 +525,7 @@ which can then be run individually using the function (simulate-oscar n). |#
 
 ;(def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*
 ;   :conclusions  "~((the color of x is y) now)"
-;    :forwards-premises
+;    :reason-forwards-premises
 ;    "((the color of x is w) now)"
 ;       (:condition (and (is-inference c) (not (equal w y))))
 ;    :variables x y w
@@ -611,7 +611,7 @@ is not a interest-reductio. |#
 (def-backwards-reason *CAUSAL-IMPLICATION*
                       :conclusions  "(Q throughout (op time* time**))"
                       :condition (and (numberp time*) (<= time* time**))
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(A when P is causally sufficient for Q after an interval interval)"
                       (:condition (every #'temporally-projectible (conjuncts Q)))
                       "(A at time)"
@@ -628,7 +628,7 @@ is not a interest-reductio. |#
 (def-backwards-reason *CAUSAL-IMPLICATION2*
                       :conclusions  "(Q throughout (op time* time**))"
                       :condition (and (numberp time*) (<= time* time**))
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(A when P is causally sufficient for Q after an interval interval)"
                       (:condition (every #'temporally-projectible (conjuncts Q)))
                       "(P at time-)"
@@ -648,7 +648,7 @@ is not a interest-reductio. |#
 (def-backwards-reason *CAUSAL-IMPLICATION+*
                       :conclusions  "(Q throughout (op time* time**))"
                       :condition (and (numberp time*) (<= time* time**))
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((R at time*) -> (Q at time*))"
                       "(A when P is causally sufficient for R after an interval interval)"
                       (:condition (every #'temporally-projectible (conjuncts Q)))
@@ -665,7 +665,7 @@ is not a interest-reductio. |#
 
 (def-backwards-reason *INDEXICAL-CAUSAL-IMPLICATION*
                       :conclusions  "Q"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(A when P is causally sufficient for Q after an interval interval)"
                       (:condition (every #'temporally-projectible (conjuncts Q)))
                       "(A at time)"
@@ -679,7 +679,7 @@ is not a interest-reductio. |#
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER*
                            :defeatee *temporal-projection*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "(define -p (neg p))"
                            "(A when Q is causally sufficient for -p after an interval interval)"
                            "(A at time1)"
@@ -692,7 +692,7 @@ is not a interest-reductio. |#
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER+*
                            :defeatee *temporal-projection*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "((R at time1) -> ~(p at time1))"
                            "(A when Q is causally sufficient for R after an interval interval)"
                            "(A at time1)"
@@ -705,7 +705,7 @@ is not a interest-reductio. |#
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER*
                            :defeatee *indexical-temporal-projection*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "(define -p (neg p))"
                            "(A when Q is causally sufficient for -p after an interval interval)"
                            "(A at time1)"
@@ -718,7 +718,7 @@ is not a interest-reductio. |#
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER+*
                            :defeatee *indexical-temporal-projection*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "(R -> ~p)"
                            "(A when Q is causally sufficient for R after an interval interval)"
                            "(A at time1)"
@@ -732,7 +732,7 @@ is not a interest-reductio. |#
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
                            :defeatee *causal-implication*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "(define -q (neg q))"
                            "(A* when R is causally sufficient for -q after an interval interval*)"
                            "(A* at time1)"
@@ -745,7 +745,7 @@ is not a interest-reductio. |#
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
                            :defeatee *indexical-causal-implication*
-                           :forwards-premises
+                           :reason-forwards-premises
                            "(define -q (neg q))"
                            "(A* when R is causally sufficient for -q after an interval interval*)"
                            "(A* at time1)"
@@ -773,7 +773,7 @@ is not a interest-reductio. |#
                       :variables  P time)
 
 (def-forwards-reason neg-at-elimination
-                     :forwards-premises   "~(P at time)"
+                     :reason-forwards-premises   "~(P at time)"
                      (:condition (not (negationp P)))
                      :conclusions  "(~P at time)"
                      :variables  P time)
@@ -784,7 +784,7 @@ is not a interest-reductio. |#
                       :variables  P Q time)
 
 (def-forwards-reason &-at-elimination
-                     :forwards-premises   "((P & Q) at time)"
+                     :reason-forwards-premises   "((P & Q) at time)"
                      :conclusions  "((P at time) & (Q at time))"
                      :variables  P Q time)
 
@@ -801,13 +801,13 @@ is not a interest-reductio. |#
 
 #| Should this be a degenerate backwards-reason? |#
 (def-forwards-reason COLLISION-SYMMETRY
-                     :forwards-premises   "((B1 and B2 collide) at time)"
+                     :reason-forwards-premises   "((B1 and B2 collide) at time)"
                      :conclusions  "((B2 and B1 collide) at time)"
                      :variables  B1 B2 time)
 
 (def-backwards-reason *NEW-POSITION*
                       :conclusions  "((the position of b is (x y)) at time1)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((the position of b is (x0 y0)) at time0)"
                       (:condition (time0 < time1))
                       :backwards-premises
@@ -819,7 +819,7 @@ is not a interest-reductio. |#
 
 (def-forwards-reason *POSITION-INCOMPATIBILITY*
                      :conclusions  "~((the position of b is (z w)) at time)"
-                     :forwards-premises
+                     :reason-forwards-premises
                      "((the position of b is (x y)) at time)"
                      "((the position of b is (z w)) at time)"
                      (:condition (or (not (x = z)) (not (y = w))))
@@ -829,7 +829,7 @@ is not a interest-reductio. |#
 #|
 (def-backwards-reason *POSITION-INCOMPATIBILITY*
                       :conclusions  "~((the position of b is (z w)) at time)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((the position of b is (x y)) at time)"
                       (:condition (or (not (x = z)) (not (y = w))))
                       :variables  b time x y z w)
@@ -837,39 +837,39 @@ is not a interest-reductio. |#
 
 (def-backwards-reason *POSITION-INCOMPATIBILITY-1*
                       :conclusions  "~((the position of b is (z w)) at time)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((the position of b is (x y)) at time)"
                       (:condition (not (x = z)))
                       :variables  b time x y z w)
 
 (def-backwards-reason *POSITION-INCOMPATIBILITY-2*
                       :conclusions  "~((the position of b is (z w)) at time)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((the position of b is (x y)) at time)"
                       (:condition  (not (y = w)))
                       :variables  b time x y z w)
 
 (def-backwards-reason *VELOCITY-INCOMPATIBILITY-1*
                       :conclusions  "~((the velocity of b is (z w)) at time)"
-                      :forwards-premises   "((the velocity of b is (x y)) at time)"
+                      :reason-forwards-premises   "((the velocity of b is (x y)) at time)"
                       :backwards-premises  "~(x = z)"
                       :variables  b time x y z w)
 
 (def-backwards-reason *VELOCITY-INCOMPATIBILITY-2*
                       :conclusions  "~((the velocity of b is (z w)) at time)"
-                      :forwards-premises   "((the velocity of b is (x y)) at time)"
+                      :reason-forwards-premises   "((the velocity of b is (x y)) at time)"
                       :backwards-premises  "~(y = w)"
                       :variables  b time x y z w)
 
 (def-backwards-reason inequality-transitivity
                       :conclusions  "(x < y)"
-                      :forwards-premises  "(z < y)"
+                      :reason-forwards-premises  "(z < y)"
                       :backwards-premises  "(x <= z)"
                       :variables  x y z)
 
 (def-backwards-reason inequality-transitivity2
                       :conclusions  "(x < y)"
-                      :forwards-premises  "(x < z)"
+                      :reason-forwards-premises  "(x < z)"
                       :backwards-premises  "(z <= y)"
                       :variables  x y z)
 
@@ -886,13 +886,13 @@ is not a interest-reductio. |#
                       :variables  x y z w)
 
 (def-forwards-reason not-alive-elimination
-                     :forwards-premises  "(~(x is alive) at time)"
+                     :reason-forwards-premises  "(~(x is alive) at time)"
                      :conclusions "((x is dead) at time)"
                      :variables   x time
                      :description "A person is dead iff he is not alive.")
 
 (def-forwards-reason not-dead-elimination
-                     :forwards-premises  "(~(x is dead) at time)"
+                     :reason-forwards-premises  "(~(x is dead) at time)"
                      :conclusions "((x is alive) at time)"
                      :variables   x time
                      :description "A person is alive iff he is not dead.")
@@ -910,7 +910,7 @@ is not a interest-reductio. |#
                       :description "A person is alive iff he is not dead.")
 
 (def-forwards-reason dead-elimination
-                     :forwards-premises  "((x is dead) at time)"
+                     :reason-forwards-premises  "((x is dead) at time)"
                      :conclusions  "(~(x is alive) at time)"
                      :variables   x time
                      :description "A person is dead iff he is not alive")
@@ -926,7 +926,7 @@ is not a interest-reductio. |#
 
 (def-backwards-reason *NEW-POSITION-*
                       :conclusions  "((the position of b is (x y)) at time1)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "((the position of b is (x0 y0)) at time0)"
                       (:condition (time0 < time1))
                       :backwards-premises
@@ -938,7 +938,7 @@ is not a interest-reductio. |#
 
 (def-backwards-reason *CAUSAL-IMPLICATION-*
                       :conclusions  "(Q throughout- (time* time**))"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(A when P is causally sufficient for Q after an interval interval)"
                       (:condition (every #'temporally-projectible (conjuncts Q)))
                       "(A at time)"
@@ -951,7 +951,7 @@ is not a interest-reductio. |#
 
 (def-backwards-reason *TEMPORAL-PROJECTION-*
                       :conclusions  "(p throughout- (time* time))"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(p at time0)"
                       (:condition (time0 < time*))
                       :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time))

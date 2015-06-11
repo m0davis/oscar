@@ -19,7 +19,7 @@
 (setf simp
       (make-forwards-reason
         :reason-name "simp"
-        :forwards-premises (list (cfp '(& P Q) '(P Q)))
+        :reason-forwards-premises (list (cfp '(& P Q) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun simp (c depth ip)
@@ -34,7 +34,7 @@
 (setf neg-elim
       (make-forwards-reason
         :reason-name "neg-elim"
-        :forwards-premises (list (cfp '(~ (~ P)) '(P)))
+        :reason-forwards-premises (list (cfp '(~ (~ P)) '(P)))
         :reason-variables '(P)))
 
 (defun neg-elim (c depth ip)
@@ -48,7 +48,7 @@
 (setf neg-disj
       (make-forwards-reason
         :reason-name "neg-disj"
-        :forwards-premises (list (cfp '(~ (v P Q)) '(P Q)))
+        :reason-forwards-premises (list (cfp '(~ (v P Q)) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun neg-disj (c depth ip)
@@ -63,7 +63,7 @@
 (setf neg-condit
       (make-forwards-reason
         :reason-name "neg-condit"
-        :forwards-premises (list (cfp '(~ (-> P Q)) '(P Q)))
+        :reason-forwards-premises (list (cfp '(~ (-> P Q)) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun neg-condit (c depth ip)
@@ -81,7 +81,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf neg-bicondit-simp
       (make-forwards-reason
         :reason-name "neg-bicondit-simp"
-        :forwards-premises (list (cfp '(~ (<-> P Q)) '(P Q)))
+        :reason-forwards-premises (list (cfp '(~ (<-> P Q)) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun neg-bicondit-simp (c depth ip)
@@ -98,7 +98,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf DM
       (make-forwards-reason
         :reason-name "DM"
-        :forwards-premises (list (cfp '(~ (& P Q)) '(P Q)))
+        :reason-forwards-premises (list (cfp '(~ (& P Q)) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun DM (c depth ip)
@@ -114,7 +114,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf bicondit-simp
       (make-forwards-reason
         :reason-name "bicondit-simp"
-        :forwards-premises (list (cfp '(<-> P Q) '(P Q)))
+        :reason-forwards-premises (list (cfp '(<-> P Q) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun bicondit-simp (c depth ip)
@@ -131,7 +131,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf exportation
       (make-forwards-reason
         :reason-name "exportation"
-        :forwards-premises (list (cfp '(-> (& P Q) R) '(P Q R)))
+        :reason-forwards-premises (list (cfp '(-> (& P Q) R) '(P Q R)))
         :reason-variables '(P Q R)))
 
 (defun exportation (c depth ip)
@@ -148,7 +148,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf disj-antecedent-simp
       (make-forwards-reason
         :reason-name "disj-antecedent-simp"
-        :forwards-premises (list (cfp '(-> (v P Q) R) '(P Q R)))
+        :reason-forwards-premises (list (cfp '(-> (v P Q) R) '(P Q R)))
         :reason-variables '(P Q R)))
 
 (defun disj-antecedent-simp (c depth ip)
@@ -167,7 +167,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf cond-antecedent-simp
       (make-forwards-reason
         :reason-name "cond-antecedent-simp"
-        :forwards-premises (list (cfp '(-> (-> P Q) R) '(P Q R)))
+        :reason-forwards-premises (list (cfp '(-> (-> P Q) R) '(P Q R)))
         :reason-variables '(P Q R)))
 
 (defun cond-antecedent-simp (c depth ip)
@@ -186,7 +186,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf disj-simp
       (make-forwards-reason
         :reason-name "disj-simp"
-        :forwards-premises (list (cfp '(v P Q) '(P Q)))
+        :reason-forwards-premises (list (cfp '(v P Q) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun disj-simp (c depth ip)
@@ -201,7 +201,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf cond-simp1
       (make-forwards-reason
         :reason-name "cond-simp1"
-        :forwards-premises (list (cfp '(-> P (~ P)) '(P)))
+        :reason-forwards-premises (list (cfp '(-> P (~ P)) '(P)))
         :reason-variables '(P)))
 
 (defun cond-simp1 (c depth ip)
@@ -227,7 +227,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf cond-simp2
       (make-forwards-reason
         :reason-name "cond-simp2"
-        :forwards-premises (list (cfp '(-> (~ P) P) '(P)))
+        :reason-forwards-premises (list (cfp '(-> (~ P) P) '(P)))
         :reason-variables '(P)))
 
 (defun cond-simp2 (c depth ip)
@@ -250,7 +250,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf E-removal
       (make-forwards-reason
         :reason-name "E-removal"
-        :forwards-premises (list (cfp '(-> (some x P) Q) '(P Q)))
+        :reason-forwards-premises (list (cfp '(-> (some x P) Q) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun E-removal (c depth ip)
@@ -271,7 +271,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf A-removal
       (make-forwards-reason
         :reason-name "A-removal"
-        :forwards-premises (list (cfp '(-> (all x P) Q) '(P Q)))
+        :reason-forwards-premises (list (cfp '(-> (all x P) Q) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun A-removal (c depth ip)
@@ -292,7 +292,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf modus-ponens1
       (make-forwards-reason
         :reason-name "modus-ponens1"
-        :forwards-premises
+        :reason-forwards-premises
         (list (cfp '(-> %P %Q) '(%P %Q))
               (cfp '%P '(%P)))
         :reason-conclusions '%Q
@@ -309,7 +309,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
                (dn
                  (ip-d-node
                    (store-instantiated-premise
-                     modus-ponens2 c nil binding (list t) ip (cdr (forwards-premises modus-ponens1)) profile))))
+                     modus-ponens2 c nil binding (list t) ip (cdr (reason-forwards-premises modus-ponens1)) profile))))
           (dolist (c-list (d-node-c-lists dn))
             (when (c-list-processed-nodes c-list)
               (let ((unifier
@@ -326,7 +326,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf modus-ponens2
       (make-forwards-reason
         :reason-name "modus-ponens2"
-        :forwards-premises
+        :reason-forwards-premises
         (list (cfp '%P '(%P)))
         :reason-variables '(%P)))
 
@@ -350,7 +350,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf modus-tollens1
       (make-forwards-reason
         :reason-name "modus-tollens1"
-        :forwards-premises
+        :reason-forwards-premises
         (list (cfp '(-> %P %Q) '(%P %Q))
               (cfp '(~ %Q) '(%Q)))
         :reason-conclusions '(~ %P)
@@ -365,7 +365,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
                (dn
                  (ip-d-node
                    (store-instantiated-premise
-                     modus-tollens2 c nil binding (list t) ip (cdr (forwards-premises modus-tollens1)) profile))))
+                     modus-tollens2 c nil binding (list t) ip (cdr (reason-forwards-premises modus-tollens1)) profile))))
           (dolist (c-list (d-node-c-lists dn))
             (when (c-list-processed-nodes c-list)
               (let ((unifier
@@ -382,7 +382,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf modus-tollens2
       (make-forwards-reason
         :reason-name "modus-tollens2"
-        :forwards-premises
+        :reason-forwards-premises
         (list (cfp '(~ %Q) '(%Q)))
         :reason-variables '(%Q)))
 
@@ -407,7 +407,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf conditional-modus-tollens
       (make-forwards-reason
         :reason-name "conditional-modus-tollens"
-        :forwards-premises (list (cfp '(-> P Q) '(P Q)))
+        :reason-forwards-premises (list (cfp '(-> P Q) '(P Q)))
         :reason-variables '(P Q)))
 
 (defun conditional-modus-tollens (c depth ip)
@@ -436,7 +436,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf neg-UG
       (make-forwards-reason
         :reason-name "neg-ug"
-        :forwards-premises (list (cfp '(~ (all x P)) '(P)))
+        :reason-forwards-premises (list (cfp '(~ (all x P)) '(P)))
         :reason-variables '(P)))
 
 (defun neg-UG (c depth ip)
@@ -453,7 +453,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf neg-EG
       (make-forwards-reason
         :reason-name "neg-eg"
-        :forwards-premises (list (cfp '(~ (some x P)) '(P)))
+        :reason-forwards-premises (list (cfp '(~ (some x P)) '(P)))
         :reason-variables '(P)))
 
 (defun neg-EG (c depth ip)
@@ -470,7 +470,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf UI
       (make-forwards-reason
         :reason-name "UI"
-        :forwards-premises (list (cfp '(all x P) '(P)))
+        :reason-forwards-premises (list (cfp '(all x P) '(P)))
         :reason-variables '(P)))
 
 (defun UI (c depth ip)
@@ -489,7 +489,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (setf EI
       (make-forwards-reason
         :reason-name "EI"
-        :forwards-premises (list (cfp '(some x P) '(P)))
+        :reason-forwards-premises (list (cfp '(some x P) '(P)))
         :reason-variables '(x P)))
 
 (defun ei-level (var) (get var 'ei-level))
@@ -592,7 +592,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 
 (defun set-conclusions-function (reason)
-  (setf (conclusions-function reason)
+  (setf (reason-conclusions-function reason)
         (conclusion-instantiator
           (mem1 (reason-conclusions reason)) (reason-variables reason) (defeasible-rule reason))))
 
@@ -767,7 +767,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (make-backwards-reason
         :reason-name "i-neg-eg"
         :reason-conclusions '((~ (some x q)))
-        :conclusions-function
+        :reason-conclusions-function
         #'(lambda (binding) (let ((x (cdr (assoc 'x binding))) (q (cdr (assoc 'q binding)))) (list '~ (list 'all x q))))
         :backwards-premises
         (list (cbp '(all x (~ q)) nil nil '(x q)))
@@ -882,7 +882,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (def-backwards-reason VACUOUS-CONDITION
                       :conclusions "(p -> q)"
-                      :forwards-premises
+                      :reason-forwards-premises
                       "(define -p (neg p))"
                       "-p"
                       :variables  p q -p)

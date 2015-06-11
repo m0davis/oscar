@@ -14,7 +14,7 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
 Forwards-reasons can be defined in either of two forms:
 
 (def-forwards-reason symbol
-                     :forwards-premises list of formulas or formula-condition pairs (listed one after another)
+                     :reason-forwards-premises list of formulas or formula-condition pairs (listed one after another)
                      :backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
                      :conclusions formula
                      :strength number
@@ -24,9 +24,9 @@ Forwards-reasons can be defined in either of two forms:
                      )
 
 (def-forwards-reason symbol
-                     :forwards-premises list of formulas or formula-condition pairs
+                     :reason-forwards-premises list of formulas or formula-condition pairs
                      :backwards-premises  list of formulas or pairs (formula (condition1 condition2))
-                     :conclusions-function lambda expression or function
+                     :reason-conclusions-function lambda expression or function
                      :strength number
                      :variables list of symbols
                      :defeasible? T or NIL (NIL is default)
@@ -38,7 +38,7 @@ If no premise-condition is supplied for a particular premise, the default condit
 What is generated is forwards-reasons with reason-functions.  For example
 
 (def-forwards-reason *THERMOMETER*
-                     :forwards-premises   (thermometer-reads x)
+                     :reason-forwards-premises   (thermometer-reads x)
                      :conclusions   (Patient-temperature-is x)
                      :strength   .98
                      :variables   x
@@ -52,7 +52,7 @@ produces the following code:
   (setf *thermometer*
         (make-forwards-reason
           :reason-name '*thermometer*
-          :forwards-premises
+          :reason-forwards-premises
           (list (list '(thermometer-reads x)
                       #<Compiled-function is-inference #x17C13C6>
                       #'(lambda (%z %v)
@@ -62,7 +62,7 @@ produces the following code:
                       '(x)))
           :backwards-premises nil
           :reason-conclusions '(patient-temperature-is x)
-          :conclusions-function nil
+          :reason-conclusions-function nil
           :reason-variables '(x)
           :reason-strength 0.98
           :defeasible-rule t
@@ -72,11 +72,11 @@ produces the following code:
 On the other hand
 
 (def-forwards-reason GREEN-SLYME
-                     :forwards-premises
+                     :reason-forwards-premises
                      (Patient-has-had-green-slyme-running-out-of-his-nose-for  x  hours)
                      (:condition (and (is-inference c) (numberp x)))
                      :variables   x
-                     :conclusions-function
+                     :reason-conclusions-function
                      `(The-probability-that the-patient-ingested-silly-putty is ,(* .5 (- 1 (exp (- x)))))
                      :strength   .95
                      :defeasible? T)
@@ -89,7 +89,7 @@ constructs a reason with the reason-function:
   (setf green-slyme
         (make-forwards-reason
           :reason-name 'green-slyme
-          :forwards-premises
+          :reason-forwards-premises
           (list
             (list
               '(patient-has-had-green-slyme-running-out-of-his-nose-for x hours)
@@ -103,7 +103,7 @@ constructs a reason with the reason-function:
               '(x)))
           :backwards-premises nil
           :reason-conclusions nil
-          :conclusions-function
+          :reason-conclusions-function
           #'(lambda (x)
               (list* 'the-probability-that
                      (list* 'the-patient-ingested-silly-putty (list* 'is (list (* 0.5 (- 1 (exp (- x)))))))))
@@ -129,9 +129,9 @@ constructs a reason with the reason-function:
                                   (or (eq (car x) :conclusions)
                                       (eq (car x) :conclusion))) newbody))
          (conclusion-function
-           (find-if #'(lambda (x) (eq (car x) :conclusions-function)) newbody))
+           (find-if #'(lambda (x) (eq (car x) :reason-conclusions-function)) newbody))
          (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody)))
-         (premises (cdr (find-if #'(lambda (x) (eq (car x) :forwards-premises)) newbody))))
+         (premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody))))
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
     (when variables (setf variables (list 'quote (cdr variables))))
@@ -201,10 +201,10 @@ constructs a reason with the reason-function:
          (setf ,name
                (make-forwards-reason
                  :reason-name ',name
-                 :forwards-premises ,premises
+                 :reason-forwards-premises ,premises
                  :backwards-premises ,backwards-premises
                  :reason-conclusions ,conclusion
-                 :conclusions-function ,conclusion-function
+                 :reason-conclusions-function ,conclusion-function
                  :reason-variables ,variables
                  :reason-strength ,strength
                  :discount-factor (or ,discount 1.0)
@@ -542,7 +542,7 @@ extended binding. |#
 Backwards-reasons are defined using the following form:
 
 (def-backwards-reason symbol
-                      :forwards-premises list of formulas or formula-condition pairs
+                      :reason-forwards-premises list of formulas or formula-condition pairs
                       :backwards-premises  list of formulas or pairs (formula,(condition1,condition2))
                       :conclusions formula
                       :condition  this is a predicate applied to the binding produced by thetarget sequent
@@ -552,13 +552,13 @@ Backwards-reasons are defined using the following form:
                       :description  an optional string (quoted) describing the reason
                       )
 
-The conditions on forwards-premises are  predicates on c interest, and the values
+The conditions on reason-forwards-premises are  predicates on c interest, and the values
 of the binding.  The default is #'(lambda (c interest &rest r) (declare (ignore interest r)) (is-inference c)).
 
 For example,
 
 (def-backwards-reason R
-                      :forwards-premises   (F x y)   (G y z) (:condition (numberp z))
+                      :reason-forwards-premises   (F x y)   (G y z) (:condition (numberp z))
                       :backwards-premises   (H z w)
                       :conclusions   (K x w)
                       :variables   x y z w
@@ -575,7 +575,7 @@ expands into the following code:
     (setf r
           (make-backwards-reason
             :reason-name 'r
-            :forwards-premises
+            :reason-forwards-premises
             (list
               (list
                 '(f x y)
@@ -596,7 +596,7 @@ expands into the following code:
                 '(y z)))
             :backwards-premises (list (list '(h z w) '(nil nil)))
             :reason-conclusions '(k x w)
-            :conclusions-function nil
+            :reason-conclusions-function nil
             :reason-variables '(x y z w)
             :reason-length 1
             :reason-strength 0.95
@@ -622,10 +622,10 @@ expands into the following code:
                                   (or (eq (car x) :conclusions)
                                       (eq (car x) :conclusion))) newbody))
          (conclusion-function
-           (find-if #'(lambda (x) (eq (car x) :conclusions-function)) newbody))
+           (find-if #'(lambda (x) (eq (car x) :reason-conclusions-function)) newbody))
          (c-vars nil)
          (discharge (find-if #'(lambda (x) (eq (car x) :discharge)) newbody))
-         (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :forwards-premises)) newbody)))
+         (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody)))
          (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody))))
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
@@ -689,11 +689,11 @@ expands into the following code:
            (setf ,name
                  (make-backwards-reason
                    :reason-name ',name
-                   :forwards-premises ,forwards-premises
+                   :reason-forwards-premises ,forwards-premises
                    :backwards-premises ,backwards-premises
                    :reason-conclusions ,conclusion
                    :reason-discharge ,discharge
-                   :conclusions-function ,conclusion-function
+                   :reason-conclusions-function ,conclusion-function
                    :reason-variables ,variables
                    :reason-length ,(length (eval backwards-premises))
                    :discount-factor (or ,discount 1.0)
@@ -751,7 +751,7 @@ expands into the following code:
          (discount (cadr (find-if #'(lambda (x) (eq (car x) :discount-factor)) newbody)))
          (defeatee (find-if #'(lambda (x) (eq (car x) :defeatee)) newbody))
          (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody)))
-         (premises (cdr (find-if #'(lambda (x) (eq (car x) :forwards-premises)) newbody))))
+         (premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody))))
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
     (when variables (setf variables (list 'quote (cdr variables))))
@@ -792,10 +792,10 @@ expands into the following code:
            (setf ,name
                  (make-forwards-reason
                    :reason-name ',name
-                   :forwards-premises ,premises
+                   :reason-forwards-premises ,premises
                    :backwards-premises ,backwards-premises
                    :reason-conclusions ,conclusion
-                   :conclusions-function ,conclusion-function
+                   :reason-conclusions-function ,conclusion-function
                    :reason-variables (union ,variables (reason-variables ,defeatee))
                    :reason-strength ,strength
                    :discount-factor (or ,discount 1.0)
@@ -818,7 +818,7 @@ expands into the following code:
          (discount (cadr (find-if #'(lambda (x) (eq (car x) :discount-factor)) newbody)))
          (defeatee (find-if #'(lambda (x) (eq (car x) :defeatee)) newbody))
          (discharge (find-if #'(lambda (x) (eq (car x) :discharge)) newbody))
-         (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :forwards-premises)) newbody)))
+         (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody)))
          (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :backwards-premises)) newbody)))
          ; (conclusion (find-if #'(lambda (x) (eq (car x) :conclusions)) newbody))
          )
@@ -852,7 +852,7 @@ expands into the following code:
          (setf ,name
                (make-backwards-reason
                  :reason-name ',name
-                 :forwards-premises ,forwards-premises
+                 :reason-forwards-premises ,forwards-premises
                  :backwards-premises ,backwards-premises
                  :reason-defeatees ,defeatee
                  :reason-discharge ,discharge
@@ -877,7 +877,7 @@ expands into the following code:
           (gen-conjunction
             (append
               (subset #'(lambda (p) (or (not (listp p)) (not (equal (car p) 'define))))
-                      (mapcar #'fp-formula* (remove-if #'fp-clue? (forwards-premises reason))))
+                      (mapcar #'fp-formula* (remove-if #'fp-clue? (reason-forwards-premises reason))))
               (subset #'(lambda (p) (or (not (listp p)) (not (equal (car p) 'define))))
                       (mapcar #'bp-formula (backwards-premises reason)))))
           c))

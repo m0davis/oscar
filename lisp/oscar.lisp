@@ -1920,8 +1920,8 @@ the basis is nil.  This is used by def-prob-rule. |#
   (reason-name nil)
   (reason-function nil)
   (reason-conclusions nil)
-  (conclusions-function nil)
-  (forwards-premises nil)
+  (reason-conclusions-function nil)
+  (reason-forwards-premises nil)
   (backwards-premises nil)
   (reason-variables nil)
   (defeasible-rule nil)
@@ -2592,7 +2592,7 @@ to have an undercutting defeater.  |#
 
 (defun compute-forwards-reason-d-nodes ()
   (dolist (reason *forwards-reasons*)
-    (let* ((premise (mem1 (forwards-premises reason)))
+    (let* ((premise (mem1 (reason-forwards-premises reason)))
            (profile (reason-code (fp-formula premise) (fp-variables premise)))
            (ip (store-forwards-reason reason premise profile)))
       (setf (reason-instantiated-premise reason) ip))))
@@ -2608,7 +2608,7 @@ to have an undercutting defeater.  |#
           (make-instantiated-premise
             :reason reason
             :premise premise
-            :remaining-premises (cdr (forwards-premises reason))
+            :remaining-premises (cdr (reason-forwards-premises reason))
             :used-premise-variables (fp-variables premise)
             :d-node d-node
             :number (incf *ip-number*)
@@ -4954,10 +4954,10 @@ discharge-link. |#
     (when (and instantiation (funcall* (reason-condition reason) binding))
       (let ((supposition (match-sublis instantiation (interest-supposition interest))))
         (cond
-          ((forwards-premises reason)
+          ((reason-forwards-premises reason)
            (construct-interest-scheme
              reason nil interest binding nil
-             (forwards-premises reason) nil (1+ depth) priority supposition))
+             (reason-forwards-premises reason) nil (1+ depth) priority supposition))
           (t (make-backwards-inference
                reason binding interest (1+ depth) priority nil nil nil supposition)))))))
 
@@ -5223,7 +5223,7 @@ link being discharged.  |#
        :generating-node generating-node :remaining-premises (backwards-premises reason) :clues clues))
     ((or (numberp (reason-strength reason))
          (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
-     (dolist (P (funcall (conclusions-function reason) binding))
+     (dolist (P (funcall (reason-conclusions-function reason) binding))
        (draw-conclusion
          (car P) supporting-nodes reason instantiations (discount-factor reason) depth nil (cdr P)
          :binding binding :clues clues)))))
@@ -5268,8 +5268,8 @@ link being discharged.  |#
                     supporting-nodes instantiations reason resultant-interest depth priority new-binding
                     supposition :generating-node generating-node :remaining-premises (cdr remaining-premises)
                     :clues clues :new-variables (append new-vars new-variables)))
-                 ((conclusions-function reason)
-                  (dolist (P (funcall (conclusions-function reason) new-binding))
+                 ((reason-conclusions-function reason)
+                  (dolist (P (funcall (reason-conclusions-function reason) new-binding))
                     (draw-conclusion
                       (car P) supporting-nodes
                       reason instantiations (discount-factor reason) depth nil
@@ -5284,7 +5284,7 @@ link being discharged.  |#
       (when (null resultant-interest)
         (multiple-value-bind
           (formulas vars)
-          (funcall (conclusions-function reason) binding)
+          (funcall (reason-conclusions-function reason) binding)
           (multiple-value-bind
             (i-list match)
             (i-list-for (caar formulas) vars)
@@ -5382,8 +5382,8 @@ link being discharged.  |#
                     (subst (cdr match) (car match)
                            (link-binding (car (interest-right-links (link-resultant-interest link0))))))
                   (cond
-                    ((conclusions-function (link-rule link0))
-                     (dolist (P (funcall (conclusions-function (link-rule link0)) new-binding))
+                    ((reason-conclusions-function (link-rule link0))
+                     (dolist (P (funcall (reason-conclusions-function (link-rule link0)) new-binding))
                        (draw-conclusion
                          (car P) (cons node (link-supporting-nodes link0)) (link-rule link0) instantiations
                          (discount-factor (link-rule link0)) depth nil (cdr P) :binding new-binding :interest
@@ -5708,8 +5708,8 @@ the resultant-interest. |#
                      (some #'(lambda (L) (eq (link-rule L) ug)) (interest-left-links (link-resultant-interest link)))
                      (funcall+ (interest-discharge-condition interest) nil u binding))
                    (cond
-                     ((conclusions-function reason)
-                      (dolist (P (funcall (conclusions-function reason) binding))
+                     ((reason-conclusions-function reason)
+                      (dolist (P (funcall (reason-conclusions-function reason) binding))
                         (draw-conclusion
                           (car P) (cons node (link-supporting-nodes link)) reason instantiations
                           (discount-factor reason) depth nil (cdr P) :binding binding :interest
@@ -6156,7 +6156,7 @@ hypernode-supposition of node*. |#
     (princ (ip-number ip)) (terpri))
   (cond
     ((backwards-premises (ip-reason ip))
-     (let ((formulas (funcall (conclusions-function (ip-reason ip)) binding))
+     (let ((formulas (funcall (reason-conclusions-function (ip-reason ip)) binding))
            (sup nil)
            (instantiations+ instantiations)
            (variables (unionmapcar+ #'hypernode-variables basis))
@@ -6194,7 +6194,7 @@ hypernode-supposition of node*. |#
                        basis instantiations (ip-reason ip) nil depth degree binding sup
                        :remaining-premises (backwards-premises (ip-reason ip)) :clues clues))))))))
     (t
-      (dolist (formula (funcall (conclusions-function (ip-reason ip)) binding))
+      (dolist (formula (funcall (reason-conclusions-function (ip-reason ip)) binding))
         (draw-conclusion
           (car formula) basis (ip-reason ip) instantiations (discount-factor (ip-reason ip)) depth nil
           (cdr formula) :binding binding :clues clues)))))
@@ -7935,9 +7935,9 @@ sequent-supposition.  Basis is a list of conclusions. |#
             (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
               (let ((supposition (interest-supposition interest)))
                 (cond
-                  ((forwards-premises reason)
+                  ((reason-forwards-premises reason)
                    (construct-interest-scheme
-                     reason nil interest binding nil (forwards-premises reason) nil 1
+                     reason nil interest binding nil (reason-forwards-premises reason) nil 1
                      *base-priority* supposition))
                   (t (make-backwards-inference
                        reason binding interest 1 *base-priority* nil nil nil supposition))))))))
@@ -7946,9 +7946,9 @@ sequent-supposition.  Basis is a list of conclusions. |#
           (when (and (member reason *backwards-reasons*) (funcall* (reason-condition reason) binding))
             (let ((supposition (interest-supposition undercutting-interest)))
               (cond
-                ((forwards-premises reason)
+                ((reason-forwards-premises reason)
                  (construct-interest-scheme
-                   reason nil undercutting-interest binding nil (forwards-premises reason) nil 1
+                   reason nil undercutting-interest binding nil (reason-forwards-premises reason) nil 1
                    *base-priority* supposition))
                 (t (make-backwards-inference
                      reason binding undercutting-interest 1 *base-priority* nil nil nil supposition))))))))))
@@ -8024,8 +8024,8 @@ sequent-supposition.  Basis is a list of conclusions. |#
     ((or (numberp (reason-strength reason))
          (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
      (cond
-       ((conclusions-function reason)
-        (dolist (P (funcall (conclusions-function reason) binding))
+       ((reason-conclusions-function reason)
+        (dolist (P (funcall (reason-conclusions-function reason) binding))
           (draw-conclusion
             (car P) supporting-nodes reason instantiations (discount-factor reason) depth nil (cdr P)
             :binding binding :clues clues)))
@@ -8311,8 +8311,8 @@ is the old maximal-degree-of-justification  |#
                                             (match-sublis (link-interest-match link) (link-binding L))))
                               (interest-right-links (link-resultant-interest link))))
                     (cond
-                      ((conclusions-function (link-rule link))
-                       (dolist (P (funcall (conclusions-function (link-rule link)) binding))
+                      ((reason-conclusions-function (link-rule link))
+                       (dolist (P (funcall (reason-conclusions-function (link-rule link)) binding))
                          (draw-conclusion
                            (car P) (cons node (link-supporting-nodes link)) (link-rule link) instantiations
                            (discount-factor (link-rule link)) depth nil (cdr P) :binding binding :interest

@@ -27,11 +27,11 @@ The listing of strengths in reasons is optional, the default being 1.0.
 #| This is similar to def-forwards-reason except that it does not put the reason into
 *forwards-substantive-reasons*. |#
 (defmacro define-forwards-reason
-  (name &key forwards-premises backwards-premises conclusion
+  (name &key reason-forwards-premises backwards-premises conclusion
         (strength 1.0) variables defeasible? description)
-  ; (setf n name fp forwards-premises bp backwards-premises c conclusion v variables d defeasible?)
+  ; (setf n name fp reason-forwards-premises bp backwards-premises c conclusion v variables d defeasible?)
   ; (break)
-  #| (step (define-forwards-reason n :forwards-premises (eval fp) :backwards-premises (eval bp)
+  #| (step (define-forwards-reason n :reason-forwards-premises (eval fp) :backwards-premises (eval bp)
                                    :conclusion (eval c) :variables (eval v) :defeasible? (eval d)))  |#
   (when (stringp name) (setf name (read-from-string name)))
 
@@ -41,10 +41,10 @@ The listing of strengths in reasons is optional, the default being 1.0.
      (setf ,name
            (make-forwards-reason
              :reason-name ',name
-             :forwards-premises (rectify-forwards-premises* ,forwards-premises ,variables)
+             :reason-forwards-premises (rectify-forwards-premises* ,reason-forwards-premises ,variables)
              :backwards-premises (rectify-backwards-premises* ,backwards-premises ,variables)
              :reason-conclusions ,conclusion
-             :conclusions-function (conclusion-instantiator ,conclusion ,variables ,defeasible?)
+             :reason-conclusions-function (conclusion-instantiator ,conclusion ,variables ,defeasible?)
              :reason-variables ,variables
              :reason-strength ,strength
              :defeasible-rule ,defeasible?
@@ -78,7 +78,7 @@ The listing of strengths in reasons is optional, the default being 1.0.
 *backwards-substantive-reasons*. |#
 
 (defmacro define-backwards-reason
-  (name &key forwards-premises backwards-premises conclusion (strength 1.0)
+  (name &key reason-forwards-premises backwards-premises conclusion (strength 1.0)
         condition variables defeasible? description)
   (when (stringp name) (setf name (read-from-string name)))
 
@@ -90,10 +90,10 @@ The listing of strengths in reasons is optional, the default being 1.0.
        (setf ,name
              (make-backwards-reason
                :reason-name ',name
-               :forwards-premises (rectify-forwards-premises* ,forwards-premises ,variables)
+               :reason-forwards-premises (rectify-forwards-premises* ,reason-forwards-premises ,variables)
                :backwards-premises (rectify-backwards-premises* ,backwards-premises ,variables)
                :reason-conclusions (list ,conclusion)
-               :conclusions-function (conclusion-instantiator ,conclusion ,variables ,defeasible?)
+               :reason-conclusions-function (conclusion-instantiator ,conclusion ,variables ,defeasible?)
                :reason-variables ,variables
                :reason-strength ,strength
                :defeasible-rule ,defeasible?
@@ -179,8 +179,8 @@ it displays just problem n. |#
 
 (defun display-forwards-reason (R)
   (princ "      ") (princ (reason-name R))
-  (princ ":   {") (print-premise (mem1 (forwards-premises R)))
-  (for-all (cdr (forwards-premises R)) #'(lambda (p) (princ " , ") (print-premise p))) (princ "}")
+  (princ ":   {") (print-premise (mem1 (reason-forwards-premises R)))
+  (for-all (cdr (reason-forwards-premises R)) #'(lambda (p) (princ " , ") (print-premise p))) (princ "}")
   (princ " ||=> ") (prinp (reason-conclusions R))
   (cond ((reason-variables R)
          (princ "  variables = {") (princ (mem1 (reason-variables R)))
@@ -198,8 +198,8 @@ it displays just problem n. |#
 
 (defun display-backwards-reason (R)
   (princ "      ") (princ (reason-name R)) (princ ":   {")
-  (when (mem1 (forwards-premises R)) (prinp (fp-formula (mem1 (forwards-premises R)))))
-  (for-all (cdr (forwards-premises R)) #'(lambda (p) (princ " , ") (prinp (fp-formula p)))) (princ "} ")
+  (when (mem1 (reason-forwards-premises R)) (prinp (fp-formula (mem1 (reason-forwards-premises R)))))
+  (for-all (cdr (reason-forwards-premises R)) #'(lambda (p) (princ " , ") (prinp (fp-formula p)))) (princ "} ")
   (princ "{") (prinp (bp-formula (mem1 (backwards-premises R))))
   (for-all (cdr (backwards-premises R)) #'(lambda (p) (princ " , ") (prinp (bp-formula p)))) (princ "}")
   (princ " ||=> ") (prinp (reason-conclusions R))
@@ -356,7 +356,7 @@ describing the individual problems. |#
                       (push
                         (eval `(define-forwards-reason
                                  ,(read-from-string (cat-list (list name "." (string-rep problem-number))))
-                                 :forwards-premises
+                                 :reason-forwards-premises
                                  ',(mapcar #'(lambda (premise)
                                                (if (stringp premise)
                                                  (list (reform premise) nil)
@@ -411,7 +411,7 @@ describing the individual problems. |#
                       (push
                         (eval `(define-forwards-reason
                                  ,(read-from-string (cat-list (list name "." (string-rep problem-number))))
-                                 :forwards-premises ',(mapcar #'(lambda (premise)
+                                 :reason-forwards-premises ',(mapcar #'(lambda (premise)
                                                                   (if (stringp premise)
                                                                     (list (reform premise) nil)
                                                                     (list (reform-if-string (mem1 premise)) (mem2 premise))))
@@ -435,7 +435,7 @@ describing the individual problems. |#
                    (premise-string
                      (string-trim
                        '(#\Space #\Tab #\Newline #\{ #\}) (subseq reason-string 0 pos11)))
-                   (forwards-premises
+                   (reason-forwards-premises
                      (mapcar #'(lambda (p) (list p nil)) (reform-list premise-string))))
               (setf reason-string (subseq reason-string pos11))
               (let* ((pos2 (position #\{ reason-string)))
@@ -481,11 +481,11 @@ describing the individual problems. |#
                           (push
                             (eval `(define-backwards-reason
                                      ,(read-from-string (cat-list (list name "." (string-rep problem-number))))
-                                     :forwards-premises ',(mapcar #'(lambda (premise)
+                                     :reason-forwards-premises ',(mapcar #'(lambda (premise)
                                                                       (if (stringp premise)
                                                                         (list (reform premise) nil)
                                                                         (list (reform-if-string (mem1 premise)) (mem2 premise))))
-                                                                  forwards-premises)
+                                                                  reason-forwards-premises)
                                      :backwards-premises ',(mapcar #'(lambda (premise)
                                                                        (if (stringp premise)
                                                                          (list (reform premise) nil)
@@ -516,7 +516,7 @@ describing the individual problems. |#
                    (premise-string
                      (string-trim
                        '(#\Space #\Tab #\Newline #\{ #\}) (subseq reason-string 0 pos11)))
-                   (forwards-premises
+                   (reason-forwards-premises
                      (mapcar #'(lambda (p) (list p nil)) (reform-list premise-string))))
               (setf reason-string (subseq reason-string pos11))
               (let* ((pos2 (position #\{ reason-string)))
@@ -557,11 +557,11 @@ describing the individual problems. |#
                           (push
                             (eval `(define-backwards-reason
                                      ,(read-from-string (cat-list (list name "." (string-rep problem-number))))
-                                     :forwards-premises ',(mapcar #'(lambda (premise)
+                                     :reason-forwards-premises ',(mapcar #'(lambda (premise)
                                                                       (if (stringp premise)
                                                                         (list (reform premise) nil)
                                                                         (list (reform-if-string (mem1 premise)) (mem2 premise))))
-                                                                  forwards-premises)
+                                                                  reason-forwards-premises)
                                      :backwards-premises ',(mapcar #'(lambda (premise)
                                                                        (if (stringp premise)
                                                                          (list (reform premise) nil)
