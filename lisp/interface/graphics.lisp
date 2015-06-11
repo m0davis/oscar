@@ -414,7 +414,7 @@
     ;; (step (draw-interest p v n))
     (draw-just-interest position view node)
     ;; draw arrows
-    (dolist (drl (right-links node))
+    (dolist (drl (interest-right-links node))
         (let* ((int (link-resultant-interest drl))
                   (pos (if (interest-p int) (interest-position int  view))))
            (if pos (draw-arrow  pos position view))))
@@ -443,7 +443,7 @@
               (right (+ x *hypernode-radius*))
               (bottom (+ y *hypernode-radius*))
               (wincolor
-                (if (some #'(lambda (L) (equal (link-rule L) "answer")) (right-links node))
+                (if (some #'(lambda (L) (equal (link-rule L) "answer")) (interest-right-links node))
                    3538753 9405695)))
        ;; clear the space
        (erase-oval view left top right bottom)
@@ -483,8 +483,8 @@
       ((assoc int (interest-list view)) nil)
       ;;;; if it has no support links, or it is a query interest, figure out where to put it
       ;;;; using a slide along the bottom algorithm
-      ((or (null (right-links int))
-              (some #'(lambda (L) (equal (link-rule L) "answer")) (right-links int)))
+      ((or (null (interest-right-links int))
+              (some #'(lambda (L) (equal (link-rule L) "answer")) (interest-right-links int)))
         (let* ((condition
                    (< (point-h *last-interest-terminal*)
                         (- *screen-width*  *minimum-distance-between-nodes*)))
@@ -506,8 +506,8 @@
         (let* ((sweep *start-i-sweep*)
                   (longth *minimum-distance-between-nodes*)
                   (suppos
-                    (if (right-links int)
-                       (interest-position (link-resultant-interest (first (last (right-links int)))) view)))
+                    (if (interest-right-links int)
+                       (interest-position (link-resultant-interest (first (last (interest-right-links int)))) view)))
                   (h (if suppos (adjusted-h-position (point-h suppos) int) 50))
                   (v (if suppos (i-adjusted-v-position (point-v suppos) int) 450))
                   (h-pos (+ h (round (* longth  (cosd sweep)))))

@@ -837,13 +837,13 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
              :link-binding (list (cons 'x (element 1 p)) (cons 'q (element 2 p)))
              )))
     (push link *interest-links*)
-    (push link (left-links interest))
+    (push link (interest-left-links interest))
     (setf (get fun 'ei-level) 0)
     (compute-link-interest
       link #'(lambda (i) (eq (discharge-condition i) ug-condition))
       #'(lambda (i) (setf (discharge-condition i) ug-condition))
-      (degree-of-interest interest) (maximum-degree-of-interest interest) depth priority)
-    (discharge-link link (1+ depth) (degree-of-interest interest) priority nil)
+      (interest-degree-of-interest interest) (maximum-degree-of-interest interest) depth priority)
+    (discharge-link link (1+ depth) (interest-degree-of-interest interest) priority nil)
     ))
 
 (set-conclusions-function UG)
@@ -871,10 +871,10 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
              :link-binding (list (cons 'x (element 1 p)) (cons 'q (element 2 p)))
              )))
     (push link *interest-links*)
-    (push link (left-links interest))
+    (push link (interest-left-links interest))
     (compute-link-interest
-      link nil nil (degree-of-interest interest) (maximum-degree-of-interest interest) depth priority (list var))
-    (discharge-link link (1+ depth) (degree-of-interest interest) priority nil)
+      link nil nil (interest-degree-of-interest interest) (maximum-degree-of-interest interest) depth priority (list var))
+    (discharge-link link (1+ depth) (interest-degree-of-interest interest) priority nil)
     ))
 
 (set-conclusions-function EG)
