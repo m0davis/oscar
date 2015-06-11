@@ -630,17 +630,17 @@ It requires Hypergraphs11.lisp. |#
 (defstruct (c-list (:print-function print-c-list)
                    (:conc-name nil))
   (c-list-formula nil)
-  (corresponding-i-lists nil)
+  (c-list-corresponding-i-lists nil)
   (c-list-nodes nil)
   (c-list-processed-nodes nil)
-  (link-defeatees nil)
-  (reductio-interests nil)
+  (c-list-link-defeatees nil)
+  (c-list-reductio-interests nil)
   (c-list-variables nil)
   (c-list-contradictors nil)
   (c-list-term-list nil)
   (c-list-d-node nil)
-  (generated-instantiated-premises nil)
-  (supported-interest-schemes nil))
+  (c-list-generated-instantiated-premises nil)
+  (c-list-supported-interest-schemes nil))
 
 (defun print-c-list (x stream depth)
   (declare (ignore depth))
@@ -1275,7 +1275,7 @@ car of a formula-code, and dn is a d-node. |#
                               ))
                (push i-list (d-node-i-lists dn))
                (dolist (cl c-lists)
-                 (push (cons i-list (cdr cl)) (corresponding-i-lists (mem1 cl)))))))
+                 (push (cons i-list (cdr cl)) (c-list-corresponding-i-lists (mem1 cl)))))))
     (setf (interest-i-list interest) i-list)))
 
 #| Test is the final member of the formula-profile for the hypernode-formula. |#
@@ -1363,7 +1363,7 @@ car of a formula-code, and dn is a d-node. |#
                                   ))
                    (push i-list (d-node-i-lists dn))
                    (dolist (cl c-lists)
-                     (push (cons i-list (cdr cl)) (corresponding-i-lists (mem1 cl))))))
+                     (push (cons i-list (cdr cl)) (c-list-corresponding-i-lists (mem1 cl))))))
           (setf (interest-i-list interest) i-list)))
       (t (store-interest interest)))))
 
@@ -1411,9 +1411,9 @@ car of a formula-code, and dn is a d-node. |#
           (t (let ((i-lists (matching-i-lists-for term-list c-variables dn)))
                (setf c-list (make-c-list
                               :c-list-formula formula
-                              :corresponding-i-lists i-lists
+                              :c-list-corresponding-i-lists i-lists
                               :c-list-nodes (if (is-inference node) (list node))
-                              :reductio-interests
+                              :c-list-reductio-interests
                               (appropriate-for-reductio-interest formula)
                               :c-list-variables c-variables
                               :c-list-term-list term-list
@@ -1442,7 +1442,7 @@ car of a formula-code, and dn is a d-node. |#
          (c-list (make-c-list
                    :c-list-formula formula
                    :c-list-nodes (list node)
-                   :reductio-interests
+                   :c-list-reductio-interests
                    (appropriate-for-reductio-interest formula)
                    :c-list-variables c-variables
                    :c-list-term-list term-list
@@ -2121,7 +2121,7 @@ nodes are made not deductive-only, and all defeasible forwards-rules are applied
       (push node *non-reductio-supposition-nodes*)
       (if *log-on* (push node *reasoning-log*))
       (when *display?* (display-unsupported-hypernode node))
-      (discharge-interest-in node (corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+      (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
       (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
       (when (and *display?* *graphics-on*)
         (when *graphics-pause* (pause-graphics))
@@ -2740,7 +2740,7 @@ to have an undercutting defeater.  |#
              )))
     (push ip (d-node-forwards-reasons d-node))
     (setf (ip-d-node ip) d-node)
-    (push ip (generated-instantiated-premises c-list))
+    (push ip (c-list-generated-instantiated-premises c-list))
     (if ip0 (push ip (ip-derived-premises ip0)))
     (when *display?* (display-instantiated-premise ip))
     ip))
@@ -2943,7 +2943,7 @@ to have an undercutting defeater.  |#
                   (store-interest-scheme-at-d-node interest-scheme d-node)
                   (store-interest-scheme interest-scheme profile *top-d-node*))
                 (when *display?* (display-interest-scheme interest-scheme))
-                (if node (pushnew interest-scheme (generated-instantiated-premises (hypernode-c-list node))))
+                (if node (pushnew interest-scheme (c-list-generated-instantiated-premises (hypernode-c-list node))))
                 (when is0 (pushnew interest-scheme (is-derived-premises is0)))
                 (discharge-interest-scheme
                   interest-scheme (is-d-node interest-scheme) priority depth))
@@ -3070,7 +3070,7 @@ to have an undercutting defeater.  |#
     (when *display?* (display-unsupported-hypernode node))
     (store-hypernode node formula)
     (discharge-interest-in
-      node (corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+      node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
     (setf *inference-queue*
           (ordered-insert queue-node *inference-queue* #'i-preferred))
     ))
@@ -5119,7 +5119,7 @@ reason-forwards-from them. |#
     (when assoc
       (pull assoc (hypernode-non-reductio-supposition node))
       (push assoc (hypernode-reductio-ancestors node))
-      (discharge-interest-in node (corresponding-i-lists (hypernode-c-list node)) 0 t 1 nil nil :reductio-only t)
+      (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) 0 t 1 nil nil :reductio-only t)
       (dolist (L (hypernode-consequent-links node))
         (recompute-reductio-ancestors (hyperlink-target L) sup)))))
 
@@ -5565,13 +5565,13 @@ link being discharged.  |#
 ;            (setf rebutting-c-list
 ;                     (make-c-list
 ;                       :c-list-formula rebut
-;                       :corresponding-i-lists (matching-i-lists-for rebut nil)))
+;                       :c-list-corresponding-i-lists (matching-i-lists-for rebut nil)))
 ;            (push (cons rebut rebutting-c-list) *conclusions*))
 ;       (when (null undercutting-c-list)
 ;            (setf undercutting-c-list
 ;                     (make-c-list
 ;                       :c-list-formula undercut
-;                       :corresponding-i-lists (matching-i-lists-for undercut nil)))
+;                       :c-list-corresponding-i-lists (matching-i-lists-for undercut nil)))
 ;            (push (cons undercut undercutting-c-list) *conclusions*))
 ;       (list rebutting-c-list undercutting-c-list)))
 
@@ -5979,7 +5979,7 @@ hypernode-supposition of node*. |#
   (discharge-interest-schemes node 0 (1+ depth))
   (when (not (hypernode-cancelled-node node)) (apply-forwards-reasons node depth))
   (when (eq (hypernode-kind node) :inference)
-    (let ((i-lists (corresponding-i-lists (hypernode-c-list node))))
+    (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list node))))
       (when (null (hypernode-interests-discharged? node)) (discharge-interest-in node i-lists 0 t depth nil))
       (when *use-reductio*
         (when (not (hypernode-cancelled-node node)) (adopt-reductio-interest node (1+ depth) nil))
@@ -6566,7 +6566,7 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
                     (when *trace* (indent depth) (princ "DRAW CONCLUSION: ")
                       (princ node) (terpri))
                     (when (read-char-no-hang) (clear-input) (throw 'die nil))
-                    (let* ((i-lists (corresponding-i-lists (hypernode-c-list node)))
+                    (let* ((i-lists (c-list-corresponding-i-lists (hypernode-c-list node)))
                            (increased-justification?
                              (or new-node? (> (hypernode-maximal-degree-of-justification node) old-degree)))
                            (cancellations
@@ -6990,7 +6990,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                        (setf (hyperlink-temporal L) *cycle*))
                      (setf (hypernode-temporal-node n) *cycle*)
                      (setf (hyperlink-temporal L) *cycle*)
-                     (let ((i-lists (corresponding-i-lists (hypernode-c-list n))))
+                     (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list n))))
                        (discharge-interest-in-defeaters n i-lists old-degree nil)
                        (discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
                        (when (hypernode-processed? N)
@@ -7007,7 +7007,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                              (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))))
                (when (> degree-of-justification old-degree)
                  (setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
-                 (let ((i-lists (corresponding-i-lists (hypernode-c-list n))))
+                 (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list n))))
                    (discharge-interest-in-defeaters n i-lists old-degree nil)
                    (discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
                    (when (hypernode-processed? N)
@@ -7037,7 +7037,7 @@ generating nodes are retrieved from the inference-queue. |#
       (when *trace* (indent (1+ depth)) (princ "INITIATING-REDUCTIO-INTERESTS") (terpri))
       (dolist (dn *discrimination-net*)
         (dolist (cl (d-node-c-lists dn))
-          (when  (reductio-interests cl)
+          (when  (c-list-reductio-interests cl)
             (dolist (C (c-list-processed-nodes cl))
               (when
                 (and (deductive-node C)
@@ -7045,7 +7045,7 @@ generating nodes are retrieved from the inference-queue. |#
                        (null (hypernode-enabling-interests C))
                        (some #'(lambda (in) (not (cancelled-interest in))) (hypernode-enabling-interests C))))
                 (generate-reductio-interests C (1+ depth) interests)))))))
-    (when (reductio-interests (hypernode-c-list node))
+    (when (c-list-reductio-interests (hypernode-c-list node))
       (generate-reductio-interests node depth interests))))
 
 (defun ADOPT-REDUCTIO-INTEREST (node depth d-interests)
@@ -7055,7 +7055,7 @@ generating nodes are retrieved from the inference-queue. |#
         *reductio-supposition-nodes*
         (deductive-node node)
         (not (eq (hypernode-justification node) :reductio-supposition))
-        (reductio-interests (hypernode-c-list node))
+        (c-list-reductio-interests (hypernode-c-list node))
         (or (null enabling-interests)
             (some #'(lambda (in) (not (cancelled-interest in))) enabling-interests)))
       (generate-reductio-interests node depth d-interests))))
@@ -7732,7 +7732,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
                     (princ N-conclusion) (terpri))
                   (when *display?* (display-hyperlink hyperlink))
                   (when (read-char-no-hang) (clear-input) (throw 'die nil))
-                  (let ((i-lists (corresponding-i-lists (hypernode-c-list N-conclusion)))
+                  (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list N-conclusion)))
                         (increased-justification?
                           (or new-node? (> (current-maximal-degree-of-justification node) old-degree))))
                     (when increased-justification?
@@ -8004,7 +8004,7 @@ sequent-supposition.  Basis is a list of conclusions. |#
     (push node *non-reductio-supposition-nodes*)
     (if *log-on* (push node *reasoning-log*))
     (when *display?* (display-unsupported-hypernode node))
-    (discharge-interest-in node (corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+    (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
     (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
     (when (and *display?* *graphics-on*)
       (when *graphics-pause* (pause-graphics))
@@ -8862,8 +8862,8 @@ is the old maximal-degree-of-justification  |#
                      (null (d-node-discrimination-tests dn)))
             (cancel-d-node dn)))
         (dolist (cl (corresponding-c-lists i-list))
-          (pull (assoc i-list (corresponding-i-lists (mem1 cl)))
-                (corresponding-i-lists (mem1 cl)))))))
+          (pull (assoc i-list (c-list-corresponding-i-lists (mem1 cl)))
+                (c-list-corresponding-i-lists (mem1 cl)))))))
   (setf (cancelled-interest interest) t)
   (let ((Q (interest-queue-node interest)))
     (when Q (pull Q *inference-queue*)))
@@ -8928,15 +8928,15 @@ is the old maximal-degree-of-justification  |#
       (pull node (generated-suppositions IN)))
     (dolist (IN (hypernode-generated-direct-reductio-interests node))
       (setf (direct-reductio-interest IN) nil)) ; TODO why is this in v3.31?
-      ; TODO why is this in v4.02? (pull node (reductio-interests IN)))
+      ; TODO why is this in v4.02? (pull node (c-list-reductio-interests IN)))
     (let ((c-list (hypernode-c-list node)))
       (when c-list
         (pull node (c-list-nodes c-list))
         (pull node (c-list-processed-nodes c-list))
         (when (null (c-list-processed-nodes c-list))
-          (dolist (IS (supported-interest-schemes c-list))
+          (dolist (IS (c-list-supported-interest-schemes c-list))
             (cancel-interest-scheme IS))
-          (dolist (IP (generated-instantiated-premises c-list))
+          (dolist (IP (c-list-generated-instantiated-premises c-list))
             (cancel-instantiated-premise IP)))
         (when (null (c-list-nodes c-list))
           (let ((dn (c-list-d-node c-list)))
@@ -8950,7 +8950,7 @@ is the old maximal-degree-of-justification  |#
           (dolist (cl (c-list-contradictors c-list))
             (pull (assoc c-list (c-list-contradictors (car cl)))
                   (c-list-contradictors (car cl))))
-          (dolist (il (corresponding-i-lists c-list))
+          (dolist (il (c-list-corresponding-i-lists c-list))
             (pull (assoc c-list (corresponding-c-lists (mem1 il)))
                   (corresponding-c-lists (mem1 il)))))))
     (let ((Q (hypernode-queue-node node)))
@@ -9330,7 +9330,7 @@ of all interests whose defeat-statuses change as a result of the computation.  |
   (let ((altered-interests nil)
         (altered-links nil))
     (dolist (c new-beliefs)
-      (dolist (L (link-defeatees (hypernode-c-list c)))
+      (dolist (L (c-list-link-defeatees (hypernode-c-list c)))
         (when (not (member L altered-links))
           (push L altered-links)
           (let ((defeated?
@@ -9354,7 +9354,7 @@ of all interests whose defeat-statuses change as a result of the computation.  |
               (setf (link-defeat-status L) defeated?)
               (pushnew (link-interest L) altered-interests))))))
     (dolist (c new-retractions)
-      (dolist (L (link-defeatees (hypernode-c-list c)))
+      (dolist (L (c-list-link-defeatees (hypernode-c-list c)))
         (when (and (not (member L altered-links))
                    (subsetp= (hypernode-supposition c)
                              (interest-supposition (resultant-interest L))))
