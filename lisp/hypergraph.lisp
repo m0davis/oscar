@@ -39,11 +39,11 @@
   (hypernode-nearest-defeasible-ancestors nil)
   (hypernode-answered-queries nil)
   (hypernode-deductive-only nil)   ;; If conclusion is for deductive purposes only, this is t.
-  (generated-interests nil)
-  (generating-interests nil);; interest generating sup
-  (cancelled-node nil)
-  (discounted-node-strength nil)
-  (processed? nil)  ;;  T if node has been processed.
+  (hypernode-generated-interests nil)
+  (hypernode-generating-interests nil);; interest generating sup
+  (hypernode-cancelled-node nil)
+  (hypernode-discounted-node-strength nil)
+  (hypernode-processed? nil)  ;;  T if node has been processed.
   (hypernode-variables nil)
   (discharged-interests nil)  ;; triples (interest unifier unifiers) where unifiers is produced by
   ;; appropriately-related-suppositions.  unifier and unifiers are
@@ -608,7 +608,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
           (setf (hypernode-old-degree-of-justification node) (hypernode-degree-of-justification node))
           (setf (hypernode-degree-of-justification node) 1.0)
           (setf (hyperlink-degree-of-justification link) 1.0)
-          (setf (discounted-node-strength node) (hyperlink-discount-factor link))
+          (setf (hypernode-discounted-node-strength node) (hyperlink-discount-factor link))
           (when (null (hypernode-old-degree-of-justification node))
             (queue-for-inference node))
           ; (display-belief-changes (list link) (list node) nil)
@@ -789,7 +789,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                  (when (null sigma)
                    (let ((old-value (hypernode-degree-of-justification node)))
                      (setf (hypernode-degree-of-justification node) value)
-                     (setf (discounted-node-strength node)
+                     (setf (hypernode-discounted-node-strength node)
                            (if (hypernode-hyperlinks node)
                              (* (hyperlink-discount-factor (car (hypernode-hyperlinks node))) value)
                              value))

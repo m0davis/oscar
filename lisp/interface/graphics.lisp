@@ -129,7 +129,7 @@
 
 ;(defmethod view-draw-contents ((wind og-window))
 ;    (dolist (pos (hypernode-list wind))
-;        (when (not (cancelled-node (car pos)))
+;        (when (not (hypernode-cancelled-node (car pos)))
 ;             (draw-node (cadr pos) wind (car pos))))
 ;    (dolist (i (interest-list wind))
 ;        (when (not (cancelled-interest (car i)))
@@ -1920,7 +1920,7 @@ OSCAR graphics window."
 
 (defmethod view-draw-contents ((wind abbreviated-og-window))
     (dolist (pos (hypernode-list wind))
-        (when (not (cancelled-node (car pos)))
+        (when (not (hypernode-cancelled-node (car pos)))
              (draw-abbreviated-node (cadr pos) wind (car pos))))
     (dolist (i (interest-list wind))
         (when (not (cancelled-interest (car i)))
