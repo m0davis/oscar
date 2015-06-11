@@ -27,10 +27,10 @@
   (hypernode-formula nil)
   (hypernode-supposition nil)
   (hypernode-kind nil)   ;;:percept, :desire, or :inference
-  (hyperlinks nil)
+  (hypernode-hyperlinks nil)
   (hypernode-justification nil)  ;; a keyword if the node is given or a supposition
-  (consequent-links nil)
-  (old-degree-of-justification nil) ;; the degree prior to the last computation of defeat statuses
+  (hypernode-consequent-links nil)
+  (hypernode-old-degree-of-justification nil) ;; the degree prior to the last computation of defeat statuses
   (reductio-ancestors nil)
   (non-reductio-supposition nil)
   (supported-hyper-defeat-links nil)  ;; hyper-defeat-links for which the node is the root
@@ -85,10 +85,10 @@
   (hyperlink-reason-strength 1.0)  ;; the strength of the reason
   (hyperlink-binding nil)
   (hyperlink-conclusive-defeat-status nil)
-  (temporal-hyperlink nil)
-  (generating-interest-link nil)
+  (hyperlink-temporal nil)
+  (hyperlink-generating-interest-link nil)
   (hyperlink-clues nil)
-  (unsecured-hyperlink? nil) ;; list of sigmas
+  (hyperlink-unsecured? nil) ;; list of sigmas
   (hyperlink-defeat-loops T) ;; defeat-loops from link to link
   (hyperlink-justifications nil)  ;; list of pairs (sigma.val) used by justification
   (hyperlink-in (list nil))  ;; list of sigmas
@@ -100,7 +100,7 @@
   (hyper-defeat-link-number 0)
   (hyper-defeat-link-target nil)   ;; the hyperlink defeated by the link
   (hyper-defeat-link-root nil)   ;; an hypernode
-  (critical-hyper-defeat-link? nil)  ;; list of (X.t) or (sigma.nil)
+  (hyper-defeat-link-critical? nil)  ;; list of (X.t) or (sigma.nil)
   (hyper-defeat-link-justifications nil)  ;; list of pairs (sigma.val).
   (hyper-defeat-link-in (list nil))  ;; list of  lists of links
   )
@@ -116,8 +116,8 @@
 (defun defeat-paths (link1 link2 &optional used-links)
   (let ((d-paths nil)
         (target1 (hyperlink-target link1)))
-    (dolist (link (consequent-links target1))
-      ;; defeat-paths from the targets of consequent-links of link1 are defeat-paths
+    (dolist (link (hypernode-consequent-links target1))
+      ;; defeat-paths from the targets of hypernode-consequent-links of link1 are defeat-paths
       ;; provided link1 does not have the same target as the links used in constructing
       ;; the defeat-path or introduce a bypass.
       (when (and (not (eq link link2)) (not (member link used-links)))
@@ -160,7 +160,7 @@
   (dolist (link *hyperlinks*) (setf (hyperlink-defeat-loops link) T)))
 
 (defun clear-criticalities ()
-  (dolist (DL *hyper-defeat-links*) (setf (critical-hyper-defeat-link? DL) nil)))
+  (dolist (DL *hyper-defeat-links*) (setf (hyper-defeat-link-critical? DL) nil)))
 
 ;; DL is a hyper-defeat-link and sigma a list of hyperlinks and unit sets of hyperlinks.
 (defun critical-link (DL sigma)
@@ -168,7 +168,7 @@
   (when sigma
     (let ((L (car sigma)))
       (when (hyperlink-p L)
-        (let ((critical (assoc sigma (critical-hyper-defeat-link? DL) :test 'equal)))
+        (let ((critical (assoc sigma (hyper-defeat-link-critical? DL) :test 'equal)))
           (cond
             (critical (cdr critical))
             (t
@@ -177,7 +177,7 @@
                       #'(lambda (d-loop)
                           (and (member DL d-loop) (sigma-defeat-loop d-loop sigma)))
                       (defeat-loops L)))
-              (push (cons sigma critical) (critical-hyper-defeat-link? DL))
+              (push (cons sigma critical) (hyper-defeat-link-critical? DL))
               critical)))))))
 
 ;; d-loop is a defeat-loop
@@ -215,15 +215,15 @@
               (setf last-d-link d-link)
               (setf d-link (car d-links)))
             (when node
-              (let* ((links (cdr (hyperlinks (hyper-defeat-link-root DL))))
-                     (s-link (car (hyperlinks (hyper-defeat-link-root DL)))))
+              (let* ((links (cdr (hypernode-hyperlinks (hyper-defeat-link-root DL))))
+                     (s-link (car (hypernode-hyperlinks (hyper-defeat-link-root DL)))))
                 ;; collect the critical hyperlinks
                 (when (eq s-link link) (pushnew s-link critical-links))
                 (loop
                   (dolist (B (hyperlink-basis s-link))
                     (when (or (eq node B) (member node (hypernode-ancestors B)))
                       (pushnew s-link critical-links)
-                      (setf links (append links (hyperlinks B)))))
+                      (setf links (append links (hypernode-hyperlinks B)))))
                   (when (null links) (return))
                   (setf s-link (car links))
                   (setf links (cdr links)))))))))
@@ -315,7 +315,7 @@
     (princ-sigma path) (terpri))
   (let ((links nil) (unsecured-links nil))
     (when (not (initial-node node sigma))
-      (dolist (L (hyperlinks node))
+      (dolist (L (hypernode-hyperlinks node))
         (multiple-value-bind
           (L-links L-unsecured-links)
           (subsidiary-hyperlinks-for-link L sigma path DL (1+ indent))
@@ -434,7 +434,7 @@
     (dolist (N (reverse *hypergraph*))
       (when (mem S (hypernode-in  N))  (terpri)
         (indent indent) (princ N) (princ " is in")
-        (dolist (L (reverse (hyperlinks N)))
+        (dolist (L (reverse (hypernode-hyperlinks N)))
           (when (mem S (hyperlink-in L))
             (terpri) (indent (+ 2 indent)) (princ L) (princ " is in")
             (dolist (DL (reverse (hyperlink-defeaters L)))
@@ -452,7 +452,7 @@
     (dolist (N (reverse *hypergraph*))
       (when (mem S (hypernode-in  N))  (terpri)
         (indent indent) (princ N) (princ " is in") (setf empty? nil)
-        (dolist (L (reverse (hyperlinks N)))
+        (dolist (L (reverse (hypernode-hyperlinks N)))
           (when (mem S (hyperlink-in L))
             (terpri) (indent (+ 2 indent)) (princ L) (princ " is in") (setf empty? nil)
             (dolist (DL (reverse (hyperlink-defeaters L)))
@@ -506,7 +506,7 @@
                         (push sigma2 (hyperlink-in L))
                         ))
                     (dolist (L unsecured-links)
-                      (push sigma2 (unsecured-hyperlink? L))
+                      (push sigma2 (hyperlink-unsecured? L))
                       (when (not (independent-link-value L sigma1))
                         (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))))))))
 
@@ -518,7 +518,7 @@
     (push sigma1 (hypernode-in node))
     ;; if a node is in sigma1, it is not  sigma1-initial, all of its hyperlinks are in sigma1
     (when (not (initial-node node sigma1))
-      (dolist (L (hyperlinks node))
+      (dolist (L (hypernode-hyperlinks node))
         (add-link-to-critical-graph L sigma1 sigma2 (1+ indent))))))
 
 #|
@@ -605,11 +605,11 @@ When sigma = ((#<hyperlink #7 for node 8>)):
     (*deductive-only*
       (dolist (link *new-links*)
         (let ((node (hyperlink-target link)))
-          (setf (old-degree-of-justification node) (degree-of-justification node))
+          (setf (hypernode-old-degree-of-justification node) (degree-of-justification node))
           (setf (degree-of-justification node) 1.0)
           (setf (hyperlink-degree-of-justification link) 1.0)
           (setf (discounted-node-strength node) (hyperlink-discount-factor link))
-          (when (null (old-degree-of-justification node))
+          (when (null (hypernode-old-degree-of-justification node))
             (queue-for-inference node))
           ; (display-belief-changes (list link) (list node) nil)
           (discharge-ultimate-epistemic-interests (list node) nil))))
@@ -638,18 +638,18 @@ When sigma = ((#<hyperlink #7 for node 8>)):
 (defun reset-memories (link)
   (setf (hyperlink-justifications link) nil)
   (setf (hyperlink-defeat-loops link) T)
-  (setf (unsecured-hyperlink? link) nil)
+  (setf (hyperlink-unsecured? link) nil)
   (setf (hyperlink-in link) (list nil))
   (setf (hyperlink-dependencies link) nil)
   (let ((node (hyperlink-target link)))
     (setf (hypernode-justifications node) nil)
     (setf (hypernode-in node) (list nil))
     (setf (hypernode-dependencies node) nil)
-    (dolist (L (consequent-links node))
+    (dolist (L (hypernode-consequent-links node))
       (when (hyperlink-justifications L) (reset-memories L)))
     (dolist (dl (supported-hyper-defeat-links node))
       (setf (hyper-defeat-link-justifications dl) nil)
-      (setf (critical-hyper-defeat-link? dl) nil)
+      (setf (hyper-defeat-link-critical? dl) nil)
       (setf (hyper-defeat-link-in dl) (list nil))
       (let ((target (hyper-defeat-link-target dl)))
         (when (hyperlink-justifications target) (reset-memories target))))))
@@ -659,7 +659,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
   (let ((node (hyperlink-target link)))
     (unless (assoc nil (hypernode-justifications node))
       (compute-hypernode-justification node nil)
-      (dolist (L (consequent-links node))
+      (dolist (L (hypernode-consequent-links node))
         (unless (assoc nil (hyperlink-justifications L))
           (compute-affected-justifications L)))
       (dolist (DL (supported-hyper-defeat-links node))
@@ -729,7 +729,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
     (push sigma (hyperlink-dependencies link))
     (when (not (member sigma (hypernode-dependencies (hyperlink-target link)) :test 'equal))
       (push sigma (hypernode-dependencies (hyperlink-target link)))
-      (dolist (c-link (consequent-links (hyperlink-target link)))
+      (dolist (c-link (hypernode-consequent-links (hyperlink-target link)))
         (record-dependencies c-link sigma indent)))))
 
 ;; path is the reverse of the  list of hyperlinks through whose defeaters the recursion has
@@ -779,7 +779,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
        (push (cons sigma value) (hypernode-justifications node)))
       (t
         (let ((values nil))
-          (dolist (link  (subset #'(lambda (link) (mem sigma (hyperlink-in link))) (hyperlinks node)))
+          (dolist (link  (subset #'(lambda (link) (mem sigma (hyperlink-in link))) (hypernode-hyperlinks node)))
             (push (compute-link-justification link sigma link0 (1+ indent) path) values))
           ;;  it receives the maximum value of its sigma-hyperlinks if they all have numerical values.
           (cond ((every #'numberp values)
@@ -790,11 +790,11 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                    (let ((old-value (degree-of-justification node)))
                      (setf (degree-of-justification node) value)
                      (setf (discounted-node-strength node)
-                           (if (hyperlinks node)
-                             (* (hyperlink-discount-factor (car (hyperlinks node))) value)
+                           (if (hypernode-hyperlinks node)
+                             (* (hyperlink-discount-factor (car (hypernode-hyperlinks node))) value)
                              value))
                      (when (null old-value) (queue-for-inference node))
-                     (setf (old-degree-of-justification node) old-value)
+                     (setf (hypernode-old-degree-of-justification node) old-value)
                      (cond
                        ((null old-value)
                         (cond ((not (zerop value)) (push node *new-beliefs*))
@@ -867,7 +867,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
        (push (cons sigma value) (hyperlink-justifications link)))
       ;; if (car sigma) is a bracketed-hyperlink and link is sigma-unsecured, compute the link-justification
       ;; in the critical hypergraph.
-      ((and sigma (not (hyperlink-p (car sigma))) (mem sigma (unsecured-hyperlink? link)))
+      ((and sigma (not (hyperlink-p (car sigma))) (mem sigma (hyperlink-unsecured? link)))
        (let ((sigma-  (cons (caar sigma) (cdr sigma))))
          (when (and *display?* *j-trace*)
            (indent indent)  (princ "This hyperlink was imported from ") (princ-sigma sigma-) (terpri))
@@ -1034,7 +1034,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
              (some
                #'(lambda (N)
                    (or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
-                       (set-difference (hyperlinks N) links)
+                       (set-difference (hypernode-hyperlinks N) links)
                        (not (eql (degree-of-justification N) 1.0))))
                new-beliefs))
          (when *log-on*
@@ -1042,7 +1042,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
          (when *display?* (princ "               vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv") (terpri)))
        (dolist (N new-beliefs)
          (cond ((or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
-                    (set-difference (hyperlinks N) links))
+                    (set-difference (hypernode-hyperlinks N) links))
                 (when *log-on*
                   (push (list :increased-support N (degree-of-justification N))
                         *reasoning-log*))
@@ -1081,7 +1081,7 @@ When sigma = ((#<hyperlink #7 for node 8>)):
                             (draw-just-undefeated-node posi *og* n))))))))
        (dolist (N new-retractions)
          (cond ((or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
-                    (> (length (hyperlinks N)) 1))
+                    (> (length (hypernode-hyperlinks N)) 1))
                 (cond
                   ((zerop (degree-of-justification N))
                    (when *log-on*
@@ -1135,17 +1135,17 @@ When sigma = ((#<hyperlink #7 for node 8>)):
   (terpri) (princ "(") (terpri)
   (dolist (node (reverse *hypergraph*)) (princ node)
     (princ "  --  ") (princ "justification = ") (princ (degree-of-justification node)) (terpri)
-    (when (hyperlinks node)
+    (when (hypernode-hyperlinks node)
       (princ "     hyperlinkS:") (terpri)
-      (dolist (link (reverse (hyperlinks node)))
+      (dolist (link (reverse (hypernode-hyperlinks node)))
         (princ "          ") (princ link) (princ " from ") (princ (hyperlink-basis link)) (terpri)
         (when (hyperlink-defeaters link)
           (princ "               hyper-defeat-linkS-FOR:") (terpri)
           (dolist (dl (reverse (hyperlink-defeaters link)))
             (princ "                    ") (princ dl) (princ " from ") (princ (hyper-defeat-link-root dl)) (terpri)))))
-    (when (consequent-links node)
+    (when (hypernode-consequent-links node)
       (princ "     CONSEQUENT-LINKS:") (terpri)
-      (dolist (link (reverse (consequent-links node)))
+      (dolist (link (reverse (hypernode-consequent-links node)))
         (princ "          ") (princ link) (terpri)
         (when (hyperlink-defeaters link)
           (princ "               hyper-defeat-linkS-FOR:") (terpri)

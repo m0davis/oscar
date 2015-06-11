@@ -214,7 +214,7 @@
 (defunction draw-hyperlinks (position view node)
    ; (when (eq node (node 146)) (setf p position v view n node) (break))
     ;; (step (draw-hyperlinks p v n))
-    (dolist (sl (hyperlinks node))
+    (dolist (sl (hypernode-hyperlinks node))
         (when (hyperlink-defeasible? sl) (set-fore-color view *gray-color*))
         (dolist (nb (hyperlink-basis sl))
             (let ((pos-nb (hypernode-position nb view)))
@@ -357,14 +357,14 @@
              (speak-text
                (cat "Let us suppose that "
                        (pranc-to-string (pretty (hypernode-formula node))))))
-           ((some #'(lambda (L) (null (hyperlink-basis L))) (hyperlinks node))
+           ((some #'(lambda (L) (null (hyperlink-basis L))) (hypernode-hyperlinks node))
              (speak-text
                (cat "It is true a priori that "
                        (pranc-to-string (pretty (hypernode-formula node))))))
            (t (let
                  ((msg
                     (list 
-                      (if (some #'hyperlink-defeasible? (hyperlinks node))
+                      (if (some #'hyperlink-defeasible? (hypernode-hyperlinks node))
                          "It follows defeasibly that "
                          "It follows that ")
                       (pranc-to-string (pretty (hypernode-formula node))))))
@@ -376,7 +376,7 @@
                                    "given the supposition that"
                                    (pranc-to-string (pretty (gen-conjunction (hypernode-supposition node))))))))
                  (speak-text (cat-list msg)))
-               ; (dolist (x (hyperlinks node))
+               ; (dolist (x (hypernode-hyperlinks node))
                ;     (when (or (null *nodes-displayed*) (subsetp (hyperlink-basis x) *nodes-displayed*))
                ;          (speak-text (cat "by " (pranc-to-string (princ-to-string (hyperlink-rule x)))))))
                ))))
@@ -548,12 +548,12 @@
     (cond
       ((assoc node (hypernode-list view)) nil)
       ;;;; if it has no support links, figure out where to put it using a slide along the top algorithm
-      ((or (null (hyperlinks node)) (null nodes-displayed)
+      ((or (null (hypernode-hyperlinks node)) (null nodes-displayed)
               (every
                 #'(lambda (L)
                       (or (null (hyperlink-basis L))
                             (not (subsetp (hyperlink-basis L) nodes-displayed))))
-                (hyperlinks node)))
+                (hypernode-hyperlinks node)))
         (let* ((condition
                    (< (point-h *last-hypernode-terminal*) 
                         (- *screen-width*  *minimum-distance-between-nodes*)))
@@ -574,7 +574,7 @@
       (t  
         (let* ((sweep *start-sweep*)
                   (longth *minimum-distance-between-nodes*)
-                  (suppos (hypernode-position (first (hyperlink-basis (first (last (hyperlinks node))))) view))
+                  (suppos (hypernode-position (first (hyperlink-basis (first (last (hypernode-hyperlinks node))))) view))
                   (h (adjusted-h-position (point-h suppos) node))
                   (v (adjusted-v-position (point-v suppos) node))
                   (h-pos (+ h (round (* longth  (cosd sweep)))))
@@ -868,7 +868,7 @@
     (graph-nodes
       (union *affected-nodes*
                            (unionmapcar+
-                             #'(lambda (N) (unionmapcar+ #'hyperlink-basis (hyperlinks N)))
+                             #'(lambda (N) (unionmapcar+ #'hyperlink-basis (hypernode-hyperlinks N)))
                              *affected-nodes*))
       view)
     "Affected-nodes")
@@ -1484,7 +1484,7 @@ OSCAR graphics window."
 (defunction flash-affected-nodes (selected-node wind)
     (flash-nodes
       (subset #'(lambda (n) (assoc n (hypernode-list wind)))
-                     (mem2 (compute-effects (car (hyperlinks selected-node)))))
+                     (mem2 (compute-effects (car (hypernode-hyperlinks selected-node)))))
       wind *yellow-color* 5
       (cat-list
         (list "Node " (write-to-string (hypernode-number selected-node)) " has no affected-nodes")))
@@ -1501,7 +1501,7 @@ OSCAR graphics window."
 (defunction flash-consequences (selected-node wind)
     (flash-nodes
       (subset #'(lambda (n) (assoc n (hypernode-list wind)))
-                     (mapcar #'hyperlink-target (consequent-links selected-node)))
+                     (mapcar #'hyperlink-target (hypernode-consequent-links selected-node)))
       wind *blue-color* 10
       (cat-list
         (list "Node " (write-to-string (hypernode-number selected-node)) " has no consequences")))
@@ -1519,7 +1519,7 @@ OSCAR graphics window."
 (defunction flash-defeatees (selected-node wind)
     (flash-nodes
       (subset #'(lambda (n) (assoc n (hypernode-list wind)))
-                     (flash-nodes (unionmapcar+ #'hyperlink-hypernode-defeaters (hyperlinks selected-node))
+                     (flash-nodes (unionmapcar+ #'hyperlink-hypernode-defeaters (hypernode-hyperlinks selected-node))
                                              wind *red-color* 10
                                              (cat-list
                                                (list "Node " (write-to-string (hypernode-number selected-node)) " has no defeaters"))))
@@ -1540,14 +1540,14 @@ OSCAR graphics window."
 (defunction flash-hyperlink-bases (selected-node wind)
     (flash-nodes
       (subset #'(lambda (n) (assoc n (hypernode-list wind)))
-                     (unionmapcar+ #'hyperlink-basis (hyperlinks selected-node)))
+                     (unionmapcar+ #'hyperlink-basis (hypernode-hyperlinks selected-node)))
       wind *blue-color* 10
       (cat-list
         (list "Node " (write-to-string (hypernode-number selected-node)) " has no hyperlink-bases")))
     (setf *flash-hyperlink-bases* nil))
 
 (defunction flash-hyperlinks (selected-node wind)
-    (let ((links (hyperlinks selected-node)))
+    (let ((links (hypernode-hyperlinks selected-node)))
        (cond
          (links
            (dolist (l links)
@@ -1932,7 +1932,7 @@ OSCAR graphics window."
     (attach-arrows-to-defeated-nodes position view node))
 
 (defunction draw-abbreviated-hyperlinks (position view node)
-    (dolist (L (hyperlinks node))
+    (dolist (L (hypernode-hyperlinks node))
         (when (hyperlink-defeasible? L)
              (set-fore-color view *gray-color*)
              (dolist (b (hyperlink-basis L))
@@ -1955,7 +1955,7 @@ OSCAR graphics window."
          (push node *strongly-relevant-nodes*)
          (dolist (m (motivating-nodes node))
              (add-strongly-relevant-nodes m))
-         (dolist (L (hyperlinks node))
+         (dolist (L (hypernode-hyperlinks node))
              (when (hyperlink-defeasible? L)
                   (dolist (b (hyperlink-basis L)) (add-strongly-relevant-nodes b))
                   (dolist (d (hyperlink-hypernode-defeaters L)) (add-strongly-relevant-nodes d))))
@@ -1970,18 +1970,18 @@ OSCAR graphics window."
 (defunction add-terminal-deductive-ancestors (node)
     (when (not (member node *nodes-done*))
          (push node *nodes-done*)
-         (dolist (L (hyperlinks node))
+         (dolist (L (hypernode-hyperlinks node))
              (when
                (not (hyperlink-defeasible? L))
                  (dolist (b (hyperlink-basis L))
                      (when
-                          (or (initial-node b) (some #'hyperlink-defeasible? (hyperlinks b)))
+                          (or (initial-node b) (some #'hyperlink-defeasible? (hypernode-hyperlinks b)))
                           (pushnew b  *terminal-deductive-ancestors*))
                      (add-terminal-deductive-ancestors b))))))
 
 (defunction initial-node (node)
-    (or (null (hyperlinks node))
-          (some #'(lambda (L) (null (hyperlink-basis L))) (hyperlinks node))))
+    (or (null (hypernode-hyperlinks node))
+          (some #'(lambda (L) (null (hyperlink-basis L))) (hypernode-hyperlinks node))))
 
 (defunction draw-abbreviated-display (window &optional (title "Abbreviated Node Display"))
     (let ((wind (find-window title)))

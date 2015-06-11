@@ -18,7 +18,7 @@
   (argument-inclusive-nodes nil))
 
 (defun hypernode-arguments (node &optional used-sequents)
-  (if (hyperlinks node)
+  (if (hypernode-hyperlinks node)
     (let ((S (hypernode-sequent node)))
       ; (union=
       (unionmapcar=
@@ -47,7 +47,7 @@
                           #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
                           (hyperlink-basis L)))))))
               (list (list L))))
-        (hyperlinks node)))
+        (hypernode-hyperlinks node)))
     (list nil)))
 
 #| An argument is a list of hyperlinks. |#

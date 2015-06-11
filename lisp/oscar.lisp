@@ -126,10 +126,10 @@ It requires Hypergraphs11.lisp. |#
   (hyperlink-reason-strength 1.0)  ;; the strength of the reason
   (hyperlink-binding nil)
   (hyperlink-conclusive-defeat-status nil)
-  (temporal-hyperlink nil)
-  (generating-interest-link nil)
+  (hyperlink-temporal nil)
+  (hyperlink-generating-interest-link nil)
   (hyperlink-clues nil)
-  (unsecured-hyperlink? nil) ;; list of sigmas
+  (hyperlink-unsecured? nil) ;; list of sigmas
   (hyperlink-defeat-loops T) ;; defeat-loops from link to link
   (hyperlink-justifications nil)  ;; list of pairs (sigma.val) used by justification
   (hyperlink-in (list nil))  ;; list of sigmas
@@ -155,7 +155,7 @@ It requires Hypergraphs11.lisp. |#
   (hyper-defeat-link-number 0)
   (hyper-defeat-link-target nil)   ;; the hyperlink defeated by the link
   (hyper-defeat-link-root nil)   ;; an hypernode
-  (critical-hyper-defeat-link? nil)  ;; list of (X.t) or (sigma.nil)
+  (hyper-defeat-link-critical? nil)  ;; list of (X.t) or (sigma.nil)
   (hyper-defeat-link-justifications nil)  ;; list of pairs (sigma.val).
   (hyper-defeat-link-in (list nil))  ;; list of  lists of links
   )
@@ -188,10 +188,10 @@ It requires Hypergraphs11.lisp. |#
   (hypernode-formula nil)
   (hypernode-supposition nil)
   (hypernode-kind nil)   ;;:percept, :desire, or :inference
-  (hyperlinks nil)
+  (hypernode-hyperlinks nil)
   (hypernode-justification nil)  ;; a keyword if the node is given or a supposition
-  (consequent-links nil)
-  (old-degree-of-justification nil) ;; the degree prior to the last computation of defeat statuses
+  (hypernode-consequent-links nil)
+  (hypernode-old-degree-of-justification nil) ;; the degree prior to the last computation of defeat statuses
   (reductio-ancestors nil)
   (non-reductio-supposition nil)
   (supported-hyper-defeat-links nil)  ;; hyper-defeat-links for which the node is the root
@@ -262,9 +262,9 @@ It requires Hypergraphs11.lisp. |#
     (t (degree-of-justification node))))
 
 (defun compute-old-degree-of-justification (node)
-  (if (and (temporal-node node) (old-degree-of-justification node))
-    (adjust-for-time (old-degree-of-justification node) node)
-    (old-degree-of-justification node)))
+  (if (and (temporal-node node) (hypernode-old-degree-of-justification node))
+    (adjust-for-time (hypernode-old-degree-of-justification node) node)
+    (hypernode-old-degree-of-justification node)))
 
 (defun compute-discounted-node-strength (node)
   (if (temporal-node node)
@@ -276,7 +276,7 @@ It requires Hypergraphs11.lisp. |#
        (member nil (nearest-defeasible-ancestors n))))
 
 (defun hypernode-consequences (n)
-  (mapcar #'hyperlink-target (consequent-links n)))
+  (mapcar #'hyperlink-target (hypernode-consequent-links n)))
 
 (defun hypernode (n)
   (find-if #'(lambda (node) (equal (hypernode-number node) n))
@@ -292,9 +292,9 @@ It requires Hypergraphs11.lisp. |#
   (if (zerop (degree-of-justification n)) (princ "                  DEFEATED"))
   (terpri)
   (cond ((hypernode-justification n) (princ "  ") (princ (hypernode-justification n)) (terpri))
-        ((hyperlinks n)
+        ((hypernode-hyperlinks n)
          (princ "  Inferred by:") (terpri)
-         (dolist (L* (hyperlinks n))
+         (dolist (L* (hypernode-hyperlinks n))
            (princ "                hyperlink #") (princ (hyperlink-number L*))
            (princ " from ") (princ-set (mapcar #'hypernode-number (hyperlink-basis L*)))
            (princ " by ") (princ (hyperlink-rule L*))
@@ -345,7 +345,7 @@ It requires Hypergraphs11.lisp. |#
     (terpri)
     (when (and (reason-p (hyperlink-rule L)) (reason-description (hyperlink-rule L)))
       (princ "  ") (princ (reason-description (hyperlink-rule L))) (terpri))
-    (let ((links (remove L (hyperlinks n))))
+    (let ((links (remove L (hypernode-hyperlinks n))))
       (when links
         (princ "  Previously inferred by:") (terpri)
         (dolist (L* links)
@@ -909,7 +909,7 @@ known conclusions matching the formula. |#
   (cons node (hypernode-ancestors node)))
 
 (defun ancestral-links (node)
-  (unionmapcar+ #'hyperlinks (inclusive-hypernode-ancestors node)))
+  (unionmapcar+ #'hypernode-hyperlinks (inclusive-hypernode-ancestors node)))
 
 (defun display-query (Q)
   (princ "  Interest in ") (prinp (query-formula Q)) (terpri)
@@ -2134,7 +2134,7 @@ converted nodes. |#
 (defun convert-from-deductive-only (node)
   (setf (deductive-only node) nil)
   (let ((nodes (list node)))
-    (dolist (L (consequent-links node))
+    (dolist (L (hypernode-consequent-links node))
       (let ((N (hyperlink-target L)))
         (when
           (and (deductive-only N)
@@ -2143,7 +2143,7 @@ converted nodes. |#
                           (some
                             #'(lambda (b) (deductive-only b))
                             (hyperlink-basis L)))
-                      (hyperlinks N))))
+                      (hypernode-hyperlinks N))))
           (setf nodes
                 (union nodes (convert-from-deductive-only N))))))
     nodes))
@@ -3040,7 +3040,7 @@ to have an undercutting defeater.  |#
              :maximal-degree-of-justification 1.0
              :nearest-defeasible-ancestors (list nil)
              :degree-of-justification (mem2 premise)
-             :old-degree-of-justification (mem2 premise)
+             :hypernode-old-degree-of-justification (mem2 premise)
              :discounted-node-strength (mem2 premise)
              :background-knowledge (mem4 premise)))
          (queue-node
@@ -3059,7 +3059,7 @@ to have an undercutting defeater.  |#
                  :hyperlink-degree-of-justification (mem2 premise)
                  :hyperlink-nearest-defeasible-ancestors (list (list node)))))
     (setf (hypernode-queue-node node) queue-node)
-    (setf (hyperlinks node) (list link))
+    (setf (hypernode-hyperlinks node) (list link))
     (when (not (eql (mem2 premise) 1.0))
       (setf (nearest-defeasible-ancestors node) (list (list node)))
       (when (not (mem4 premise))
@@ -3093,7 +3093,7 @@ to have an undercutting defeater.  |#
                    :interest-formula (neg formula)
                    :interest-supposition supposition
                    :interest-priority *base-priority*
-                   :interest-defeatees (hyperlinks node)))
+                   :interest-defeatees (hypernode-hyperlinks node)))
            (store-interest rebutting-interest)
            (when *display?*
              (display-interest rebutting-interest)
@@ -3709,7 +3709,7 @@ queued, it goes on the front of the inference-queue. |#
   (when (not (member node *relevant-nodes*))
     (push node *relevant-nodes*)
     (dolist (m (motivating-nodes node)) (add-relevant-nodes m))
-    (dolist (L (hyperlinks node))
+    (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L)) (add-relevant-nodes b))
       (dolist (d (hyperlink-defeaters L)) (add-relevant-nodes (hyper-defeat-link-root d))))))
 
@@ -3997,14 +3997,14 @@ queued, it goes on the front of the inference-queue. |#
 (defun process-unprocessed-node (node proof-nodes enabling-interests)
   ; (princ "process-unprocessed-node ") (princ node) (terpri)
   (pull node *unprocessed-nodes*)
-  (dolist (L (hyperlinks node))
+  (dolist (L (hypernode-hyperlinks node))
     (dolist (b (hyperlink-basis L))
       (when (not (member b *used-nodes*))
         (push b *used-nodes*) (push b *unprocessed-nodes*)))
     (dolist (b (hyperlink-clues L))
       (when (not (member b *used-nodes*))
         (push b *used-nodes*) (push b *unprocessed-nodes*)))
-    (let ((link (generating-interest-link L)))
+    (let ((link (hyperlink-generating-interest-link L)))
       (when link
         (push (resultant-interest link) *used-interests*)
         (pull (resultant-interest link) *unprocessed-interests*)
@@ -4104,9 +4104,9 @@ queued, it goes on the front of the inference-queue. |#
     (princ "   --  NOT USED IN PROOF"))
   (terpri)
   (cond ((keywordp (hypernode-justification n)) (princ "  ") (princ (hypernode-justification n)) (terpri))
-        ((hyperlinks n)
+        ((hypernode-hyperlinks n)
          (princ "  Inferred by:") (terpri)
-         (dolist (L* (hyperlinks n))
+         (dolist (L* (hypernode-hyperlinks n))
            (when (subsetp (hyperlink-basis L*) nodes-displayed)
              (princ "                hyperlink #") (princ (hyperlink-number L*))
              (princ " from ") (princ-set (mapcar #'hypernode-number (hyperlink-basis L*)))
@@ -4151,7 +4151,7 @@ queued, it goes on the front of the inference-queue. |#
       (DI
         (princ "  This node is inferred by discharging a link to interest #")
         (princ (interest-number (car DI)))
-        (let ((SL (find-if #'(lambda (SL) (equal (hyperlink-rule SL) :reductio)) (hyperlinks n))))
+        (let ((SL (find-if #'(lambda (SL) (equal (hyperlink-rule SL) :reductio)) (hypernode-hyperlinks n))))
           (when SL
             (let* ((node* (mem1 (hyperlink-basis SL)))
                    (rs (find-if
@@ -4184,7 +4184,7 @@ queued, it goes on the front of the inference-queue. |#
                                         (and (equal (hyperlink-rule SL) :reductio)
                                              (member n (hyperlink-basis SL))
                                              (member (car dr) (hyperlink-basis SL))))
-                                    (hyperlinks pn)))
+                                    (hypernode-hyperlinks pn)))
                               proof-nodes))
                         (direct-reductio-interest in))
                       (some #'(lambda (L)
@@ -4199,7 +4199,7 @@ queued, it goes on the front of the inference-queue. |#
                                             (some
                                               #'(lambda (SL)
                                                   (member n (hyperlink-basis SL)))
-                                              (hyperlinks pn))))
+                                              (hypernode-hyperlinks pn))))
                                       proof-nodes))))
                             (right-links in)))))
               (set-difference interests-used DI))))
@@ -4363,7 +4363,7 @@ queued, it goes on the front of the inference-queue. |#
                       (and (equal (hyperlink-rule SL) :reductio)
                            (member dn (hyperlink-basis SL))
                            (member (car dr) (hyperlink-basis SL))))
-                  (hyperlinks pn)))
+                  (hypernode-hyperlinks pn)))
             proof-nodes))
       (direct-reductio-interest interest))
     (some #'(lambda (L)
@@ -4377,7 +4377,7 @@ queued, it goes on the front of the inference-queue. |#
                         (some
                           #'(lambda (SL)
                               (member dn (hyperlink-basis SL)))
-                          (hyperlinks pn))))
+                          (hypernode-hyperlinks pn))))
                   proof-nodes)))
           (right-links interest))))
 
@@ -4391,9 +4391,9 @@ queued, it goes on the front of the inference-queue. |#
   (when (not (member n proof-nodes)) (princ "   --  NOT USED IN PROOF"))
   (terpri)
   (when (hypernode-justification n) (princ "||  by ") (princ (hypernode-justification n)) (terpri))
-  (when (hyperlinks n)
+  (when (hypernode-hyperlinks n)
     (princ "||  Inferred by:") (terpri)
-    (dolist (L* (hyperlinks n))
+    (dolist (L* (hypernode-hyperlinks n))
       (princ "||                hyperlink #") (princ (hyperlink-number L*))
       (princ " from ") (princ-set (mapcar #'hypernode-number (hyperlink-basis L*)))
       (princ " by ") (princ (hyperlink-rule L*))
@@ -4454,7 +4454,7 @@ queued, it goes on the front of the inference-queue. |#
     (setf nodes-used (cons node nodes-used))
     (dolist (m (motivating-nodes node))
       (setf nodes-used (union (relevant-nodes m nodes-used) nodes-used)))
-    (dolist (L (hyperlinks node))
+    (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L))
         (setf nodes-used (union (relevant-nodes b nodes-used) nodes-used)))
       (dolist (d (hyperlink-defeaters L))
@@ -4476,7 +4476,7 @@ queued, it goes on the front of the inference-queue. |#
   (when (not (member node *strictly-relevant-nodes*))
     (push node *strictly-relevant-nodes*)
     (dolist (m (motivating-nodes node)) (add-strictly-relevant-nodes m))
-    (dolist (L (hyperlinks node))
+    (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L)) (add-strictly-relevant-nodes b)))))
 
 (defun not-strictly-relevant-nodes ()
@@ -5120,7 +5120,7 @@ reason-forwards-from them. |#
       (pull assoc (non-reductio-supposition node))
       (push assoc (reductio-ancestors node))
       (discharge-interest-in node (corresponding-i-lists (hypernode-c-list node)) 0 t 1 nil nil :reductio-only t)
-      (dolist (L (consequent-links node))
+      (dolist (L (hypernode-consequent-links node))
         (recompute-reductio-ancestors (hyperlink-target L) sup)))))
 
 #| If the interest is readopted as an interest in a defeater, defeated-nodes is the list of
@@ -5759,9 +5759,9 @@ the resultant-interest. |#
       (draw-just-node (hypernode-position C *og*) *og* C (hypernode-color C *og*)))
     (cond ((and (not (zerop degree))
                 (>= degree (query-strength Q))
-                (or (null (old-degree-of-justification C))
-                    (zerop (old-degree-of-justification C))
-                    (< (old-degree-of-justification C) (query-strength Q))))
+                (or (null (hypernode-old-degree-of-justification C))
+                    (zerop (hypernode-old-degree-of-justification C))
+                    (< (hypernode-old-degree-of-justification C) (query-strength Q))))
            (when *log-on* (push (list :answer-query C Q degree) *reasoning-log*))
            (when *display?*
              (princ "               ")
@@ -6340,7 +6340,7 @@ hypernode-supposition of node*. |#
                           (hypernode-supposition N)
                           (append (hypernode-variables node) (hypernode-variables node*))
                           (hypernode-variables N))
-                    (dolist (L (hyperlinks N))
+                    (dolist (L (hypernode-hyperlinks N))
                       (invert-contradiction L node node* D N instantiations depth)))))))
           (when (not (deductive-node node))
             (dolist (u (appropriately-related-node-suppositions node node* unifier*))
@@ -6351,7 +6351,7 @@ hypernode-supposition of node*. |#
                           (hypernode-supposition N)
                           (append (hypernode-variables node) (hypernode-variables node*))
                           (hypernode-variables N))
-                    (dolist (L (hyperlinks N))
+                    (dolist (L (hypernode-hyperlinks N))
                       (invert-contradiction L node* node D N instantiations depth))))))))))))
 
 (defun invert-contradictions-retrospectively (node NDA old-NDA)
@@ -6370,7 +6370,7 @@ hypernode-supposition of node*. |#
                        (hypernode-supposition N)
                        (append (hypernode-variables node) (hypernode-variables node*))
                        (hypernode-variables N)))
-                (dolist (L (hyperlinks N))
+                (dolist (L (hypernode-hyperlinks N))
                   (invert-contradiction L node node* NDA N u 0))))))))))
 
 (defun invert-contradictions-from-new-hyperlink (link instantiations)
@@ -6395,7 +6395,7 @@ hypernode-supposition of node*. |#
     (loop
       (let ((node (car nodes)))
         (setf nodes (cdr nodes))
-        (dolist (L (consequent-links node))
+        (dolist (L (hypernode-consequent-links node))
           (when (not (hyperlink-defeasible? L))
             (let ((N (hyperlink-target L)))
               (when (not (member N descendants))
@@ -6421,7 +6421,7 @@ hypernode-supposition of node*. |#
                 (cond
                   ((eq M node)
                    (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
-                     (dolist (L (hyperlinks M))
+                     (dolist (L (hypernode-hyperlinks M))
                        (when
                          (and (not (eq L link))
                               (not (hyperlink-defeasible? L)))
@@ -6433,7 +6433,7 @@ hypernode-supposition of node*. |#
                              (delete-arguments L M link depth)
                              (when *display?*
                                (princ link) (princ " subsumes ") (princ L) (terpri))
-                             ; (pull L (hyperlinks M))
+                             ; (pull L (hypernode-hyperlinks M))
                              ))))))
                   ((<= (length (hypernode-supposition node)) (length (hypernode-supposition M)))
                    (let* ((M-sup (hypernode-supposition M))
@@ -6447,7 +6447,7 @@ hypernode-supposition of node*. |#
                                     (non-reductio-supposition M)))
                               SM))
                        (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
-                         (dolist (L (hyperlinks M))
+                         (dolist (L (hypernode-hyperlinks M))
                            (when
                              (and (not (cancelled-node (hyperlink-target L)))
                                   (not (link-ancestor L link))
@@ -6472,10 +6472,10 @@ hypernode-supposition of node*. |#
              (not (link-ancestor link L0)))
     (push link *deleted-arguments*)
     ; (princ "**** Deleting ") (princ link) (terpri)
-    (pull link (hyperlinks node))
-    (cond ((null (hyperlinks node)) (cancel-node node (if *trace* depth 0)))
+    (pull link (hypernode-hyperlinks node))
+    (cond ((null (hypernode-hyperlinks node)) (cancel-node node (if *trace* depth 0)))
           (t
-            (dolist (L (hyperlinks node))
+            (dolist (L (hypernode-hyperlinks node))
               (let ((NDA
                       (cond ((hyperlink-defeasible? node)
                              (mapcar #'genunion
@@ -6496,14 +6496,14 @@ hypernode-supposition of node*. |#
                       #'(lambda (L)
                           (union (hyperlink-basis L)
                                  (unionmapcar+ #'hypernode-ancestors (hyperlink-basis L))))
-                      (hyperlinks node))))
+                      (hypernode-hyperlinks node))))
               (setf (hypernode-ancestors node) ancestors)
               (recursively-compute-hypernode-ancestors node ancestors)
               )))))
 
 #| L is an ancestor of hyperlink link, whose target is node. |#
 (defun link-ancestor (L link)
-  (some #'(lambda (N) (member L (hyperlinks N)))
+  (some #'(lambda (N) (member L (hypernode-hyperlinks N)))
         (hypernode-ancestors (hyperlink-target link))))
 
 #| Rule is either a member of *forwards-reasons* or *backwards-reasons*,
@@ -6687,7 +6687,7 @@ is a list of conclusions.  If supposition is not T, it is added to the suppositi
                                                                   basis)
                                                     (unionmapcar+ #'nearest-defeasible-ancestors
                                                                   (hyperlink-basis L)))))
-                                          (hyperlinks N))))
+                                          (hypernode-hyperlinks N))))
                                     (t
                                       (every
                                         #'(lambda (Y)
@@ -6840,8 +6840,8 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
   (when (not (some #'(lambda (L)
                        (and (equal (hyperlink-basis L) basis)
                             (eq (hyperlink-rule L) rule)))
-                   (hyperlinks node)))
-    (let* ((new? (null (hyperlinks node)))
+                   (hypernode-hyperlinks node)))
+    (let* ((new? (null (hypernode-hyperlinks node)))
            (reason-strength
              (cond ((keywordp rule) 1.0)
                    ((numberp (reason-strength rule)) (reason-strength rule))
@@ -6854,7 +6854,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                    :hyperlink-rule rule
                    :hyperlink-target node
                    :hyperlink-defeasible? defeasible?
-                   :temporal-hyperlink
+                   :hyperlink-temporal
                    (if (or (and (not (keywordp rule)) (temporal? rule))
                            (some #'temporal-node basis)) *cycle*)
                    :hyperlink-reason-strength  reason-strength
@@ -6865,12 +6865,12 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                          (t 1.0))
                    :hyperlink-nearest-defeasible-ancestors
                    (if defeasible? (list (list node)) NDA)
-                   :generating-interest-link link))
+                   :hyperlink-generating-interest-link link))
            (ancestors (union basis (unionmapcar+ #'hypernode-ancestors basis))))
       (when (or (not (member nil NDA))
                 (non-circular (hypernode-sequent node) ancestors))  ;; this is a circularity test
-        (dolist (n basis) (push link (consequent-links n)))
-        (if (null (temporal-node node)) (setf (temporal-node node) (temporal-hyperlink link)))
+        (dolist (n basis) (push link (hypernode-consequent-links n)))
+        (if (null (temporal-node node)) (setf (temporal-node node) (hyperlink-temporal link)))
         (push link *hyperlinks*)
         (add-hyperlink link node depth)
         (if *log-on* (push node *reasoning-log*))
@@ -6904,7 +6904,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
     ancestors))
 
 (defun recursively-compute-hypernode-ancestors (node ancestors)
-  (dolist (L (consequent-links node))
+  (dolist (L (hypernode-consequent-links node))
     (let* ((target (hyperlink-target L))
            (new-ancestors (set-difference ancestors (hypernode-ancestors target))))
       (when new-ancestors
@@ -6914,7 +6914,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
 (defun recursively-compute-nearest-defeasible-ancestors
   (node &optional nodes-done)
   (push node nodes-done)
-  (dolist (L (consequent-links node))
+  (dolist (L (hypernode-consequent-links node))
     (when (not (hyperlink-defeasible? L))
       (let ((NDA
               (mapcar #'genunion
@@ -6937,11 +6937,11 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
   ; (setf l link n node d depth)
   ; (when (eq link (hyperlink 21)) (setf l link n node d depth) (break))
   ;; (step (add-hyperlink l n d))
-  (push link (hyperlinks node))
+  (push link (hypernode-hyperlinks node))
   (let ((degree-of-justification
           (minimum (cons (hyperlink-reason-strength link)
                          (mapcar #'current-maximal-degree-of-justification (hyperlink-basis link))))))
-    (cond ((and (temporal-hyperlink link) (not (eql (temporal-node node) *cycle*)))
+    (cond ((and (hyperlink-temporal link) (not (eql (temporal-node node) *cycle*)))
            (let* ((decay (expt *temporal-decay* (- *cycle* (temporal-node node))))
                   (old-degree (adjust-for-decay (maximal-degree-of-justification node) decay)))
              (when (> degree-of-justification old-degree)
@@ -6959,7 +6959,7 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
   ;; (step (adjust-support-for-consequences n o d))
   (when *trace* (indent depth) (princ "ADJUST-SUPPORT-FOR-CONSEQUENCES for ")
     (princ node) (terpri))
-  (dolist (L (consequent-links node))
+  (dolist (L (hypernode-consequent-links node))
     (let ((n (hyperlink-target L)))
       (cond ((temporal-node node)
              (let* ((decay (expt *temporal-decay* (- *cycle* (temporal-node n))))
@@ -6982,14 +6982,14 @@ inference-descendants.  Node arguments are stored as triples (arg,strength,disco
                               decay))))
                    (when (> degree-of-justification adjusted-old-degree)
                      (setf (maximal-degree-of-justification n) degree-of-justification)
-                     (dolist (L (hyperlinks node))
+                     (dolist (L (hypernode-hyperlinks node))
                        (setf (hyperlink-degree-of-justification L) (adjust-for-decay (hyperlink-degree-of-justification L) decay))
                        (when (and (not (keywordp (hyperlink-rule L))) (temporal? (hyperlink-rule L)))
                          (setf (hyperlink-reason-strength L)
                                (adjust-for-decay (hyperlink-reason-strength L) decay)))
-                       (setf (temporal-hyperlink L) *cycle*))
+                       (setf (hyperlink-temporal L) *cycle*))
                      (setf (temporal-node n) *cycle*)
-                     (setf (temporal-hyperlink L) *cycle*)
+                     (setf (hyperlink-temporal L) *cycle*)
                      (let ((i-lists (corresponding-i-lists (hypernode-c-list n))))
                        (discharge-interest-in-defeaters n i-lists old-degree nil)
                        (discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
@@ -8340,7 +8340,7 @@ is the old maximal-degree-of-justification  |#
                      #'(lambda (x) (or (not (member m (hypernode-ancestors x)))
                                        (deductive-in x m)))
                      B)))))
-         (hyperlinks n))))
+         (hypernode-hyperlinks n))))
 
 (defun deductive-link (L)
   (or (keywordp (hyperlink-rule L)) (not (defeasible-rule (hyperlink-rule L)))))
@@ -8367,10 +8367,10 @@ is the old maximal-degree-of-justification  |#
               (when (deductive-node node)
                 (let ((node* (hyperlink-target L)))
                   (setf (hyperlink-conclusive-defeat-status L) T)
-                  (cond ((every #'hyperlink-conclusive-defeat-status (hyperlinks node*))
+                  (cond ((every #'hyperlink-conclusive-defeat-status (hypernode-hyperlinks node*))
                          (push node* cancellations))
                         (t
-                          (dolist (L (hyperlinks node*))
+                          (dolist (L (hypernode-hyperlinks node*))
                             (let ((NDA
                                     (cond ((hyperlink-defeasible? L)
                                            (mapcar #'genunion
@@ -8391,7 +8391,7 @@ is the old maximal-degree-of-justification  |#
                                     #'(lambda (L)
                                         (union (hyperlink-basis L)
                                                (unionmapcar+ #'hypernode-ancestors (hyperlink-basis L))))
-                                    (hyperlinks node*))))
+                                    (hypernode-hyperlinks node*))))
                             (setf (hypernode-ancestors node*) ancestors)
                             (recursively-compute-hypernode-ancestors node* ancestors)
                             ))))))))))
@@ -8399,7 +8399,7 @@ is the old maximal-degree-of-justification  |#
              (every #'(lambda (L)
                         (and (not (keywordp (hyperlink-rule L)))
                              (backwards-reason-p (hyperlink-rule L))))
-                    (hyperlinks node)))
+                    (hypernode-hyperlinks node)))
       (cons node cancellations) cancellations)))
 
 (defun cancel-node (node depth)
@@ -8534,7 +8534,7 @@ is the old maximal-degree-of-justification  |#
                                      (and (not (member b *dependent-nodes*))
                                           (not (cancelled-node b))))
                                  (hyperlink-basis L)))
-                      (hyperlinks n))
+                      (hypernode-hyperlinks n))
                     (and
                       *independent-reductio-suppositions*
                       (some
@@ -8642,7 +8642,7 @@ is the old maximal-degree-of-justification  |#
                               (princ "Hypernode ") (princ (hypernode-number n))
                               (princ " is directly anchored by the hyperlink ")
                               (princ (hyperlink-number L)) (terpri)) t)))
-                    (hyperlinks n))
+                    (hypernode-hyperlinks n))
                   (and
                     *independent-reductio-suppositions*
                     (some
@@ -8755,7 +8755,7 @@ is the old maximal-degree-of-justification  |#
                          (and (not (cancelled-node b))
                               (not (member b *dependent-nodes*))))
                      (hyperlink-basis L)))
-          (hyperlinks n)))
+          (hypernode-hyperlinks n)))
       (anchor-hypernode-relative-to-interest n I (1+ indent) "hypernode-consequence: ")))
   (when (and (eq (hypernode-justification node) :reductio-supposition)
              (null *independent-reductio-suppositions*))
@@ -8815,7 +8815,7 @@ is the old maximal-degree-of-justification  |#
                          (and (not (cancelled-node b))
                               (not (member b *dependent-nodes*))))
                      (hyperlink-basis L)))
-          (hyperlinks n)))
+          (hypernode-hyperlinks n)))
       (anchor-hypernode-relative-to-node n N0 (1+ indent) "hypernode-consequence: ")))
   (when (and (eq (hypernode-justification node) :reductio-supposition)
              (null *independent-reductio-suppositions*))
@@ -9019,11 +9019,11 @@ time discharge-interest-schemes was applied to it. |#
     (*deductive-only*
       (dolist (link *new-links*)
         (let ((node (hyperlink-target link)))
-          (setf (old-degree-of-justification node) (degree-of-justification node))
+          (setf (hypernode-old-degree-of-justification node) (degree-of-justification node))
           (setf (degree-of-justification node) 1.0)
           (setf (hyperlink-degree-of-justification link) 1.0)
           (setf (discounted-node-strength node) (hyperlink-discount-factor link))
-          (when (null (old-degree-of-justification node))
+          (when (null (hypernode-old-degree-of-justification node))
             (queue-for-inference node))
           ; (display-belief-changes (list link) (list node) nil)
           (discharge-ultimate-epistemic-interests (list node) nil))))
@@ -9056,7 +9056,7 @@ time discharge-interest-schemes was applied to it. |#
              (some
                #'(lambda (N)
                    (or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
-                       (set-difference (hyperlinks N) links)
+                       (set-difference (hypernode-hyperlinks N) links)
                        (not (eql (degree-of-justification N) 1.0))))
                new-beliefs))
          (when *log-on*
@@ -9064,7 +9064,7 @@ time discharge-interest-schemes was applied to it. |#
          (when *display?* (princ "               vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv") (terpri)))
        (dolist (N new-beliefs)
          (cond ((or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
-                    (set-difference (hyperlinks N) links))
+                    (set-difference (hypernode-hyperlinks N) links))
                 (when *log-on*
                   (push (list :increased-support N (degree-of-justification N))
                         *reasoning-log*))
@@ -9103,7 +9103,7 @@ time discharge-interest-schemes was applied to it. |#
                             (draw-just-undefeated-node posi *og* n))))))))
        (dolist (N new-retractions)
          (cond ((or (not (some #'(lambda (L) (eq N (hyperlink-target L))) links))
-                    (> (length (hyperlinks N)) 1))
+                    (> (length (hypernode-hyperlinks N)) 1))
                 (cond
                   ((zerop (degree-of-justification N))
                    (when *log-on*
@@ -9168,7 +9168,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
          (new-beliefs nil)
          (new-retractions nil))
     (dolist (N altered-nodes)
-      (setf (old-degree-of-justification N) (degree-of-justification N)))
+      (setf (hypernode-old-degree-of-justification N) (degree-of-justification N)))
     (let ((undefeated-links
             (mapcar
               #'(lambda (N)
@@ -9179,7 +9179,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
                                    (not (some
                                           #'(lambda (b) (member b altered-nodes-))
                                           (hyperlink-basis L)))))
-                          (hyperlinks N))))
+                          (hypernode-hyperlinks N))))
               (reverse altered-nodes))))
       (dolist (pair undefeated-links)
         (dolist (L (cdr pair))
@@ -9191,7 +9191,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
                          (minimum
                            (mapcar #'current-degree-of-justification
                                    (hyperlink-basis L))))
-                      (setf (temporal-hyperlink L) *cycle*))
+                      (setf (hyperlink-temporal L) *cycle*))
                     (minimum
                       (cons (hyperlink-reason-strength L)
                             (mapcar #'current-degree-of-justification
@@ -9209,7 +9209,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
                 (push (* val (hyperlink-discount-factor L)) discounted-support-values)))
             (setf (degree-of-justification N) (maximum0 support-values))
             (setf (discounted-node-strength N) (maximum0 discounted-support-values))
-            (dolist (L (consequent-links N))
+            (dolist (L (hypernode-consequent-links N))
               (when (every #'degree-of-justification (hyperlink-basis L))
                 (setf (hyperlink-degree-of-justification L)
                       (if (and (not (keywordp (hyperlink-rule L))) (temporal? (hyperlink-rule L)))
@@ -9218,7 +9218,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
                              (minimum
                                (mapcar #'current-degree-of-justification
                                        (hyperlink-basis L))))
-                          (setf (temporal-hyperlink L) *cycle*))
+                          (setf (hyperlink-temporal L) *cycle*))
                         (minimum
                           (cons (hyperlink-reason-strength L)
                                 (mapcar #'current-degree-of-justification
@@ -9227,16 +9227,16 @@ undefeated-degrees-of-support have decreased as a result of this computation.
         (when (not (zerop (degree-of-justification N)))
           (recompute-descendant-udoss N)))
       (dolist (node altered-nodes)
-        (let ((old-degree-of-justification (compute-old-degree-of-justification node)))
+        (let ((hypernode-old-degree-of-justification (compute-old-degree-of-justification node)))
           (cond
-            ((null (old-degree-of-justification node))
+            ((null (hypernode-old-degree-of-justification node))
              (cond ((not (zerop (degree-of-justification node)))
                     (push node new-beliefs))
                    ((not (member nil (nearest-defeasible-ancestors node)))
                     (push node new-retractions))))
-            ((> (degree-of-justification node) old-degree-of-justification)
+            ((> (degree-of-justification node) hypernode-old-degree-of-justification)
              (push node new-beliefs))
-            ((< (degree-of-justification node) old-degree-of-justification)
+            ((< (degree-of-justification node) hypernode-old-degree-of-justification)
              (push node new-retractions)))))
       (list new-beliefs new-retractions)
       )))
@@ -9248,7 +9248,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
       (when (null nodes) (return descendants))
       (let ((node (car nodes)))
         (setf nodes (cdr nodes))
-        (dolist (L (consequent-links node))
+        (dolist (L (hypernode-consequent-links node))
           (let ((N (hyperlink-target L)))
             (when (not (member N descendants))
               (push N descendants)
@@ -9293,7 +9293,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
               (let ((node (car nodes)))
                 (when node
                   (setf nodes (cdr nodes))
-                  (dolist (L (consequent-links node))
+                  (dolist (L (hypernode-consequent-links node))
                     (let ((N (hyperlink-target L)))
                       (when (not (member N hypernode-descendants))
                         (push N hypernode-descendants)
@@ -9400,9 +9400,9 @@ the sequent concluded. |#
           (dolist (Q (answered-queries C))
             (when (and (not (zerop (degree-of-justification C)))
                        (>= degree (query-strength Q))
-                       (or (null (old-degree-of-justification C))
-                           (zerop (old-degree-of-justification C))
-                           (< (old-degree-of-justification C) (query-strength Q))))
+                       (or (null (hypernode-old-degree-of-justification C))
+                           (zerop (hypernode-old-degree-of-justification C))
+                           (< (hypernode-old-degree-of-justification C) (query-strength Q))))
               (when *log-on* (push (list :answer-query C Q degree) *reasoning-log*))
               (when *display?*
                 (princ "               ")
@@ -9421,8 +9421,8 @@ the sequent concluded. |#
                 (push Q altered-queries)))))))
     (dolist (C new-retractions)
       (dolist (Q (answered-queries C))
-        (when (and (old-degree-of-justification C)
-                   (>= (old-degree-of-justification C) (query-strength Q))
+        (when (and (hypernode-old-degree-of-justification C)
+                   (>= (hypernode-old-degree-of-justification C) (query-strength Q))
                    (or (zerop (degree-of-justification C))
                        (not (>= (degree-of-justification C) (query-strength Q)))))
           (when *log-on* (push (list :retract-answer C Q) *reasoning-log*))

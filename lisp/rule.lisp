@@ -512,7 +512,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (when
         (and
           (not (some #'(lambda (L) (eq (hyperlink-rule L) EG))
-                     (hyperlinks c)))
+                     (hypernode-hyperlinks c)))
           (or (null dn)
               (not
                 (some
