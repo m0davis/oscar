@@ -2278,7 +2278,7 @@ Premises are queued for immediate retrieval. |#
   (desire-content nil)
   (desire-object nil)  ;; the object of a desire will be a goal
   (desire-strength 0)
-  (generated-plans nil)
+  (desire-generated-plans nil)
   (desire-generating-interest nil)  ;; for epistemic-desires
   (desire-hypernode nil))  ;; the hypernode recording the desire
 
