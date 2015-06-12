@@ -2261,10 +2261,11 @@ Premises are queued for immediate retrieval. |#
   (goal-number 0)
   (goal-formula nil)
   (goal-strength 1)
-  (supporting-goal-node nil)  ;; the node supporting this as a suitable goal
+  (goal-supporting-node nil)  ;; the node supporting this as a suitable goal
   (goal-generating-desire nil)  ;; the desire, if there is on, that generates the goal
-  (plans-for nil)  ;; the list of candidate plans that aim at the satisfaction of this goal
-  (user-question-asked? nil))
+  ; (plans-for nil)  ;; the list of candidate plans that aim at the satisfaction of this goal
+  ; (user-question-asked? nil)
+  )
 
 (defun print-goal (goal stream depth)
   (declare (ignore depth))
