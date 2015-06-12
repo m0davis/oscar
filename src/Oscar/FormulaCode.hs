@@ -1,8 +1,11 @@
+{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.FormulaCode where
+
+import Oscar.Main.Prelude
 
 import Oscar.Formula hiding (Formula)
 import qualified Oscar.Formula as F

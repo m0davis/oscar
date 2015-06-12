@@ -20,6 +20,7 @@ executable OSCAR
         Oscar.Main
         Oscar.Main.Parser
         Oscar.Main.Prelude
+        Oscar.Oscar
         Oscar.Problem
         Oscar.ProblemParser
         Oscar.ProblemParser.Internal
