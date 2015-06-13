@@ -59,7 +59,7 @@ data Quantifier
 {- | Unary operations on predicates. -}
 data UnaryOp
     = Negation  -- ^ ~
-    | Whether   -- ^ ?
+    | Whether   -- ^ ? TODO add a quantifier-like `?' operator for ?-queries
   deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 {- | Binary operations on predicates. -}
