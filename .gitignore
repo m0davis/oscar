@@ -5,3 +5,7 @@
 dist/
 lisp/tags
 codex.tags
+Session.vim
+lisp/Session.vim
+cabal.config
+cabal.sandbox.config

@@ -148,6 +148,7 @@ main ∷ IO ()
 main = do
     problems ← readFileProblems combinedProblemsPath
     -- sequence_ $ ppPrint <$> problems
+    sequence_ $ testOscar <$> problems
     let f = formulaFromText $ pack "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))" in
       let u = uFormula f in do
         ppPrint f
@@ -155,4 +156,3 @@ main = do
         ppPrint $ formulaCode u
         ppPrint $ reasonCode u [Symbol $ pack "H"]
 
-    sequence_ $ testOscar <$> problems

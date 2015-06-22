@@ -33,12 +33,12 @@ executable OSCAR
             base                            ==  4.8.*
         ,   classy-prelude                  ==  0.12.*
         ,   cond                            ==  0.4.*
-        ,   free                            ==  4.12.*
-        ,   lens                            ==  4.11.*
+        ,   free                            ==  4.11.*
+        ,   lens                            ==  4.9.*
         ,   parsec                          ==  3.1.*
         ,   pretty-show                     ==  1.6.*
         ,   split                           ==  0.2.*
-        ,   tagged                          ==  0.7.*
+        ,   tagged                          ==  0.8.*
         ,   text                            ==  1.2.*
 
     hs-source-dirs:      
@@ -70,12 +70,12 @@ executable OSCARTest
             base                            ==  4.8.*
         ,   classy-prelude                  ==  0.12.*
         ,   cond                            ==  0.4.*
-        ,   free                            ==  4.12.*
-        ,   lens                            ==  4.11.*
+        ,   free                            ==  4.11.*
+        ,   lens                            ==  4.9.*
         ,   parsec                          ==  3.1.*
         ,   pretty-show                     ==  1.6.*
         ,   split                           ==  0.2.*
-        ,   tagged                          ==  0.7.*
+        ,   tagged                          ==  0.8.*
         ,   text                            ==  1.2.*
         ,   heredoc                         ==  0.2.*
 
