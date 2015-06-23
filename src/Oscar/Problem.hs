@@ -21,7 +21,7 @@ module Oscar.Problem (
     ProblemStrengthDegree(..),
     Formula(..),
     BinaryOp(..),
-    Quantifier(..),
+    QuantifierOp(..),
     Symbol(..),
     UnaryOp(..),
     Predication(..),
@@ -51,9 +51,11 @@ import Oscar.Formula                    (BinaryOp(..))
 import Oscar.Formula                    (DomainFunction(..))
 import Oscar.Formula                    (Formula(..))
 import Oscar.Formula                    (Predication(..))
-import Oscar.Formula                    (Quantifier(..))
+import Oscar.Formula                    (QuantifierOp(..))
 import Oscar.Formula                    (Symbol(..))
 import Oscar.Formula                    (UnaryOp(..))
+
+type SFormula = Formula Symbol Symbol Symbol Symbol
 
 data Problem = Problem
     { _problemNumber                     ∷ !ProblemNumber
@@ -76,14 +78,14 @@ newtype ProblemDescription = ProblemDescription Text
   deriving (Eq, Read, Show)
 
 -- | A formula of a premise with its justification
-type ProblemPremise                   = (Formula, ProblemJustificationDegree)
+type ProblemPremise                   = (SFormula, ProblemJustificationDegree)
 
 -- | The degree of justification (of a premise)
 newtype ProblemJustificationDegree = ProblemJustificationDegree Degree
   deriving (Eq, Ord, Read, Show)
 
 -- | A formula of an interest with its degree of interest
-type ProblemInterest                  = (Formula, ProblemInterestDegree)
+type ProblemInterest                  = (SFormula, ProblemInterestDegree)
 
 -- | The degree of interest (of an interest)
 newtype ProblemInterestDegree = ProblemInterestDegree Degree
@@ -120,17 +122,17 @@ newtype ProblemReasonName = ProblemReasonName Text
 
 -- | A forwards reason
 data ForwardsReason = ForwardsReason
-    { _frForwardsPremises ∷ ![Formula]
+    { _frForwardsPremises ∷ ![SFormula]
       -- TODO change [] to Set where appropriate
-    , _frConclusion       ∷ !Formula
+    , _frConclusion       ∷ !SFormula
     }
   deriving (Eq, Read, Show)
 
 -- | A backwards reason
 data BackwardsReason = BackwardsReason
-    { _brForwardsPremises  ∷ ![Formula]
-    , _brBackwardsPremises ∷ ![Formula]
-    , _brConclusion        ∷ !Formula
+    { _brForwardsPremises  ∷ ![SFormula]
+    , _brBackwardsPremises ∷ ![SFormula]
+    , _brConclusion        ∷ !SFormula
     }
   deriving (Eq, Read, Show)
 

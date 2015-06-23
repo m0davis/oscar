@@ -13,7 +13,7 @@ import qualified Oscar.Problem as P
 
 import Oscar.Problem (Problem(Problem))
 import Oscar.Formula (Symbol(Symbol))
-import Oscar.FormulaCode (Formula)
+import Oscar.FormulaCode (SFormula)
 
 type FormulaTerm = FC.FormulaTerm
 type Discriminator = FC.Discriminator

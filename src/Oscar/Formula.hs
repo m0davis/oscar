@@ -3,16 +3,13 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Oscar.Formula (
-    Formula,
-    FormulaY(..),
-    Quantifier(..),
+    Formula(..),
+    QuantifierOp(..),
     UnaryOp(..),
     BinaryOp(..),
     Symbol(..),
-    Predication,
-    PredicationY(..),
-    DomainFunction,
-    DomainFunctionY(..),
+    Predication(..),
+    DomainFunction(..),
     -- * "Control.Lens"
     formulaBinaryOp,
     formulaBinaryLeftFormula,
@@ -32,26 +29,24 @@ import Control.Lens
 {- | See "Oscar.Documentation" for a guide to writing 'Formula's.
 -}
 -- TODO rename FormulaY (et al.) to Formula; modules that import and use Formula should create their own type, Formula (as below) or else add a layer of abstraction for such Formulas (? can we have a module that exports the current Formula type but also provides the current FormulaY constructors?)
-data FormulaY q p df dv
+data Formula q p df dv
     = FormulaBinary { _formulaBinaryOp ∷ !BinaryOp
-                    , _formulaBinaryLeftFormula ∷ !(FormulaY q p df dv)
-                    , _formulaBinaryRightFormula ∷ !(FormulaY q p df dv)
+                    , _formulaBinaryLeftFormula ∷ !(Formula q p df dv)
+                    , _formulaBinaryRightFormula ∷ !(Formula q p df dv)
                     }
     | FormulaUnary { _formulaUnaryOp ∷ !UnaryOp
-                   , _formulaUnaryFormula ∷ !(FormulaY q p df dv)
+                   , _formulaUnaryFormula ∷ !(Formula q p df dv)
                    }
-    | FormulaQuantification { _formulaQuantifier ∷ !Quantifier
+    | FormulaQuantification { _formulaQuantifier ∷ !QuantifierOp
                             , _formulaQuantifierSymbol ∷ !q
-                            , _formulaQuantifierFormula ∷ !(FormulaY q p df dv)
+                            , _formulaQuantifierFormula ∷ !(Formula q p df dv)
                             }
-    | FormulaPredication { _formulaPredication ∷ !(PredicationY p df dv) }
+    | FormulaPredication { _formulaPredication ∷ !(Predication p df dv) }
   deriving (Eq, Read, Show)
-
-type Formula = FormulaY Symbol Symbol Symbol Symbol
 
 {- | a la first-order logic -}
 -- TODO rename this to QuantifierOp, for consistency?
-data Quantifier
+data QuantifierOp
     = Universal    -- ^ (all ...)
     | Existential  -- ^ (some ...)
   deriving (Bounded, Enum, Eq, Ord, Read, Show)
@@ -81,10 +76,8 @@ newtype Symbol = Symbol Text
      doesn't necessarily have a truth value since not all of its variables
      may be bound.
 -}
-data PredicationY p df dv = Predication p [DomainFunctionY df dv]
+data Predication p df dv = Predication p [DomainFunction df dv]
   deriving (Eq, Read, Show)
-
-type Predication = PredicationY Symbol Symbol Symbol
 
 {- | Perhaps the simplest domain function is a constant. E.g. c stands for
      Garfield.
@@ -97,11 +90,9 @@ type Predication = PredicationY Symbol Symbol Symbol
      the-litter-box-used-by is a domain function in the formula
      @(all x)(JimDavisDraws x -> ~JimDavisDraws (the-litter-box-used-by x)).
 -}
-data DomainFunctionY df dv
-    = DomainFunction !df ![DomainFunctionY df dv] -- ^ `g' in P (g x)
-    | DomainVariable !dv                   -- ^ `x' or `y' in P (g x) y
+data DomainFunction df dv
+    = DomainFunction !df ![DomainFunction df dv] -- ^ `g' in P (g x)
+    | DomainVariable !dv                         -- ^ `x' or `y' in P (g x) y
   deriving (Eq, Read, Show)
 
-type DomainFunction = DomainFunctionY Symbol Symbol
-
-makeLenses ''FormulaY
+makeLenses ''Formula

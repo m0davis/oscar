@@ -35,23 +35,23 @@ module Oscar.FormulaParser.Internal (
 import Oscar.Main.Prelude
 import Oscar.Main.Parser
 
-import Oscar.Formula                    (FormulaY(FormulaBinary))
-import Oscar.Formula                    (FormulaY(FormulaQuantification))
-import Oscar.Formula                    (FormulaY(FormulaUnary))
-import Oscar.Formula                    (FormulaY(FormulaPredication))
+import Oscar.Formula                    (Formula(FormulaBinary))
+import Oscar.Formula                    (Formula(FormulaQuantification))
+import Oscar.Formula                    (Formula(FormulaUnary))
+import Oscar.Formula                    (Formula(FormulaPredication))
 import Oscar.Formula                    (Formula)
-import Oscar.Formula                    (PredicationY(Predication))
+import Oscar.Formula                    (Predication(Predication))
 import Oscar.Formula                    (Predication)
-import Oscar.Formula                    (DomainFunctionY(DomainFunction))
-import Oscar.Formula                    (DomainFunctionY(DomainVariable))
+import Oscar.Formula                    (DomainFunction(DomainFunction))
+import Oscar.Formula                    (DomainFunction(DomainVariable))
 import Oscar.Formula                    (DomainFunction)
 import Oscar.Formula                    (BinaryOp(Disjunction))
 import Oscar.Formula                    (BinaryOp(Conjunction))
 import Oscar.Formula                    (BinaryOp(Defeater))
 import Oscar.Formula                    (BinaryOp(Conditional))
 import Oscar.Formula                    (BinaryOp(Biconditional))
-import Oscar.Formula                    (Quantifier(Universal))
-import Oscar.Formula                    (Quantifier(Existential))
+import Oscar.Formula                    (QuantifierOp(Universal))
+import Oscar.Formula                    (QuantifierOp(Existential))
 import Oscar.Formula                    (Symbol(Symbol))
 import Oscar.Formula                    (UnaryOp(Negation))
 import Oscar.Formula                    (UnaryOp(Whether))
@@ -63,7 +63,7 @@ import Oscar.Formula                    (UnaryOp(Whether))
 data QToken
     = QTokenUnaryOp !UnaryOp
     | QTokenBinaryOp !BinaryOp
-    | QTokenQuantifier !Quantifier
+    | QTokenQuantifier !QuantifierOp
     | QTokenSymbol !Symbol
   deriving (Eq, Read, Show)
 
@@ -129,7 +129,7 @@ makePQTokens = simpleParse $ many $ spaces *> parsePQToken
             <|> string "->"         ↦ Conditional
             <|> string "<->"        ↦ Biconditional
 
-        quantifier ∷ Parser Quantifier
+        quantifier ∷ Parser QuantifierOp
         quantifier = empty
             <|> string "all"        ↦ Universal
             <|> string "some"       ↦ Existential
@@ -203,7 +203,7 @@ freeFromParentheses f = fst . ffp 0 []
 data QSToken
     = QSTokenUnaryOp !UnaryOp
     | QSTokenBinaryOp !BinaryOp
-    | QSTokenQuantifier !Quantifier !Symbol
+    | QSTokenQuantifier !QuantifierOp !Symbol
     | QSTokenSymbol !Symbol
   deriving (Eq, Read, Show)
 
@@ -360,7 +360,7 @@ __Example__
     @
 
 -}
-makeFormula ∷ (Free [] QSToken) ⁞ ƮReformed → Formula
+makeFormula ∷ (Free [] QSToken) ⁞ ƮReformed → Formula Symbol Symbol Symbol Symbol
 makeFormula = mk . unƭ
   where
     mk = \case
@@ -377,7 +377,7 @@ makeFormula = mk . unƭ
         RedundantParenthesesP f → mk f
         x → error $ "makeFormula: unexpected structure\n" ++ ppShow x
       where
-        makeDomainFunction ∷ Free [] QSToken → DomainFunction
+        makeDomainFunction ∷ Free [] QSToken → DomainFunction Symbol Symbol
         makeDomainFunction (Pure (QSTokenSymbol s)) =
             DomainVariable s
         makeDomainFunction (Free (Pure (QSTokenSymbol s):ss)) =

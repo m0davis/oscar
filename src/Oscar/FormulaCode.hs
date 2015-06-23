@@ -7,12 +7,10 @@ module Oscar.FormulaCode where
 
 import Oscar.Main.Prelude
 
-import Oscar.Formula hiding (Formula)
-import qualified Oscar.Formula as F
+import Oscar.Formula
 
-type Formula = F.Formula
-
-type UFormula = FormulaY UQuantifier UPredicate UDomainFunction UDomainVariable
+type SFormula = Formula Symbol Symbol Symbol Symbol
+type UFormula = Formula UQuantifier UPredicate UDomainFunction UDomainVariable
 
 {- TODO This is ugly-looking. The U prefix is meant to signify the Uniqueness of quantifier variables a la uFormula. Rename? Separate layers of abstraction? -}
 type U = Int
@@ -25,16 +23,16 @@ data UDomainVariable
   deriving (Eq, Read, Show)
 
 {- TODO reformat, rename; provide some examples -}
-uFormula ∷ Formula → UFormula
+uFormula ∷ SFormula → UFormula
 uFormula = snd . uFormula' 0 []
   where
     uFormula' ∷ Int                 -- ^ number of quantifiers found so far
               → [(Symbol, Int)]     -- ^ mappings of in-scope quantifiers
-              → Formula             -- ^
+              → SFormula            -- ^
               → (Int, UFormula)     -- ^ Int = cumulative # of quantifiers
     uFormula' n qs = uFormula''
       where
-        uFormula'' ∷ Formula → (Int, UFormula)
+        uFormula'' ∷ SFormula → (Int, UFormula)
         uFormula'' FormulaBinary {..} =
           let (n', ufl) = uFormula' n qs _formulaBinaryLeftFormula in
           let (n'', ufr) = uFormula' n' qs _formulaBinaryRightFormula in
@@ -48,7 +46,7 @@ uFormula = snd . uFormula' 0 []
         uFormula'' (FormulaPredication (Predication p dfs)) =
           (n,) $ FormulaPredication $ Predication p $ map s2i dfs
             where
-              s2i ∷ DomainFunction → DomainFunctionY Symbol UDomainVariable
+              s2i ∷ DomainFunction Symbol Symbol → DomainFunction Symbol UDomainVariable
               s2i (DomainFunction df dfs) = DomainFunction df $ map s2i dfs
               s2i (DomainVariable dv) = DomainVariable $
                 case lookup dv qs of
@@ -64,7 +62,7 @@ data Discriminator = Discriminator
 
 -- TODO rename
 data FormulaParticle
-    = FormulaParticleQuantified Quantifier
+    = FormulaParticleQuantified QuantifierOp
     | FormulaParticleUnary UnaryOp
     | FormulaParticleBinary BinaryOp
     | FormulaParticlePredicated Symbol
@@ -97,7 +95,7 @@ formulaCode' (FormulaQuantification {..}) is =
 formulaCode' (FormulaPredication (Predication p dfs)) is =
   ([Discriminator (reverse (1 : is)) (FormulaParticlePredicated p)], map df2ft dfs)
     where
-      df2ft ∷ DomainFunctionY Symbol UDomainVariable → FormulaTerm
+      df2ft ∷ DomainFunction Symbol UDomainVariable → FormulaTerm
       df2ft (DomainFunction s dfs) = FormulaTermDomainFunction s $ map df2ft dfs
       df2ft (DomainVariable (UQuantified u)) = FormulaTermBoundVariable u
       df2ft (DomainVariable (UFree s)) = FormulaTermFreeVariable s
