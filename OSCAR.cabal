@@ -8,10 +8,8 @@ extra-source-files:  combined-problems
 cabal-version:       >= 1.10
 description:         "The objective of the OSCAR Project is twofold. On the one hand, it is to construct a general theory of rational cognition. On the other hand, it is to construct an artificial rational agent (an \'artilect\') implementing that theory. This is a joint project in philosophy and AI." -- John L. Pollock
 
-executable OSCAR
-    main-is: ../Main.hs
-
-    other-modules:
+library
+    exposed-modules:
         Oscar.Documentation
         Oscar.Formula
         Oscar.FormulaCode
@@ -42,45 +40,29 @@ executable OSCAR
         ,   text                            ==  1.2.*
 
     hs-source-dirs:
-        src
+        src-lib
+
+    default-language:
+        Haskell2010
+
+executable OSCAR
+    main-is: Main.hs
+
+    build-depends: OSCAR
+
+    hs-source-dirs:
+        src-exec
 
     default-language:
         Haskell2010
 
 executable OSCARTest
-    main-is: ../Test.hs
+    main-is: Test.hs
 
-    other-modules:
-        Oscar.Documentation
-        Oscar.Formula
-        Oscar.FormulaParser
-        Oscar.FormulaParser.Internal
-        Oscar.Main
-        Oscar.Main.Parser
-        Oscar.Main.Prelude
-        Oscar.Problem
-        Oscar.ProblemParser
-        Oscar.ProblemParser.Internal
-        Oscar.ProblemParser.Internal.ReasonSection
-        Oscar.ProblemParser.Internal.SectionName
-        Oscar.ProblemParser.Internal.Tags
-        Oscar.ProblemParser.Internal.DegreeParsers
-
-    build-depends:
-            base                            ==  4.8.*
-        ,   classy-prelude                  ==  0.12.*
-        ,   cond                            ==  0.4.*
-        ,   free                            ==  4.11.*
-        ,   lens                            ==  4.9.*
-        ,   parsec                          ==  3.1.*
-        ,   pretty-show                     ==  1.6.*
-        ,   split                           ==  0.2.*
-        ,   tagged                          ==  0.8.*
-        ,   text                            ==  1.2.*
-        ,   heredoc                         ==  0.2.*
+    build-depends: OSCAR, heredoc == 0.2.*
 
     hs-source-dirs:
-        src
+        src-test
 
     default-language:
         Haskell2010
