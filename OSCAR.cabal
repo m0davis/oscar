@@ -66,3 +66,15 @@ executable OSCARTest
 
     default-language:
         Haskell2010
+
+executable OSCAR_WIP
+    main-is: WIP.hs
+
+    build-depends:
+            base                            ==  4.8.*
+
+    hs-source-dirs:
+        src-wip
+
+    default-language:
+        Haskell2010
