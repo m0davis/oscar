@@ -19,6 +19,7 @@ data OscarStateEvent
     = OSE_Initialized
     | OSE_IncreasedCycle Int
     | OSE_ThinkStarted
+    | OSE_ThinkEnded
   deriving (Eq, Read, Show)
 
 printOscarEvents ∷ [OscarStateEvent] → IO ()
@@ -26,8 +27,9 @@ printOscarEvents oses = forM_ oses print
 
 think ∷ OscarState → Writer [OscarStateEvent] OscarState
 think OscarState {..} = do
+    tell [OSE_ThinkStarted]
     tell oses
-    return os
+    return os <* tell [OSE_ThinkEnded]
   where
     oses = [OSE_IncreasedCycle $ Main._osCycle os]
     os = OscarState { _osCycle = _osCycle + 1 }
