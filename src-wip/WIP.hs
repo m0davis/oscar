@@ -25,7 +25,9 @@ printOscarEvents ∷ [OscarStateEvent] → IO ()
 printOscarEvents oses = forM_ oses print
 
 think ∷ OscarState → Writer [OscarStateEvent] OscarState
-think OscarState {..} = tell oses >> return os
+think OscarState {..} = do
+    tell oses
+    return os
   where
     oses = [OSE_IncreasedCycle $ Main._osCycle os]
     os = OscarState { _osCycle = _osCycle + 1 }
