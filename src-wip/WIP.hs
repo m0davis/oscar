@@ -2,12 +2,13 @@ module Main where
 
 import Data.IntMap
 import Control.Monad
+import Control.Monad.Trans.Writer.Lazy
 
 main ∷ IO ()
 main = do
     o1 ← getInitialOscarState
     print o1
-    let (o2, oses) = think o1
+    let (o2, oses) = runWriter $ think o1
     printOscarEvents oses
     print o2
 
@@ -23,8 +24,8 @@ data OscarStateEvent
 printOscarEvents ∷ [OscarStateEvent] → IO ()
 printOscarEvents oses = forM_ oses print
 
-think ∷ OscarState → (OscarState, [OscarStateEvent])
-think OscarState {..} = (os, oses)
+think ∷ OscarState → Writer [OscarStateEvent] OscarState
+think OscarState {..} = tell oses >> return os
   where
     oses = [OSE_IncreasedCycle $ Main._osCycle os]
     os = OscarState { _osCycle = _osCycle + 1 }
