@@ -103,6 +103,7 @@ data Sequent = Sequent
     { _sSupposition ∷ Maybe Formula
     , _sFormula ∷ Formula
     }
+newtype ForwardsReason = ForwardsReason { _frReason ∷ Reason }
 data Reason = Reason
     { _rName ∷ Text
     , _rFunction ∷ HyperNode → Priority → Oscar → Oscar
@@ -541,17 +542,6 @@ dnPursueDNodeFor dn [] = Just dn
 
 interestsFor ∷ (Formula, Set Variable) → Set Interest
 
-simpReason ∷ ForwardsReason
-simpReason = ForwardsReason Reason
-    { _rName = "simp"
-    , _rForwardsPremises = [cfp (compileFormulaFromText "(P & Q)") ((Symbol . pack) <$> ["P", "Q"]) undefined]
-    , _rVariables = ((Symbol ) <$> ["P", "Q"])
-    , _rFunction = simpReasonFunction
-    }
-  where
-    simpReasonFunction ∷ HyperNode → Depth → Priority → Oscar → (Oscar, IO ())
-    simpReasonFunction h d p o = undefined
-
 cfp ∷ Formula → SET Variable → BindingFunction → ForwardsPremise
 cfp f vs bf = constructForwardsPremise f undefined vs bf
 
@@ -608,8 +598,6 @@ type Depth = TODO
 type Priority = TODO
 
 
-newtype ForwardsReason = ForwardsReason { _frReason ∷ Reason }
-
 data Reason = ReasonLogical LogicalReason | ReasonSubstantive Substantive
 
 data LogicalReason = LogicalReason
@@ -659,3 +647,160 @@ storeInterestAtNewDNode = undefined
 -- oscar ∷ [DiscriminationNode] -> IO ()
 -- oscar [] = oscar oscar conditional
 
+data Oscar = Oscar
+    { _oInterestLinks ∷ IntMap InterestLink
+    , _oInferenceQueue ∷
+
+-- "An interest-graph-link"
+data InterestLink = InterestLink
+    { _nlNumber ∷ () -- 0)
+    , _nlResultantInterest ∷ Either Query Interest -- nil)
+    , _nlInterest ∷ () -- nil)
+    , _nlInterestFormula ∷ () -- nil)
+    , _nlInterestCondition ∷ () -- nil)
+    , _nlBinding ∷ () -- nil)
+    , _nlRule ∷ () -- nil)
+    , _nlRemainingPremises ∷ () -- nil)
+    , _nlSupportingNodes ∷ () -- nil)
+    , _nlInstantiations ∷ () -- nil)
+    , _nlSupposition ∷ () -- nil)
+    , _nlDefeaters ∷ () -- nil)
+    , _nlDefeatStatus ∷ () -- nil)
+    , _nlStrength ∷ () -- 0)  -- maximum-degree-of-interest conveyed
+    , _nlGeneratingNode ∷ () -- nil)
+    , _nlDischarged ∷ () -- nil)
+    , _nlInterestMatch ∷ () -- nil)
+    , _nlInterestReverseMatch ∷ () -- nil)
+    , _nlGenerating ∷ () -- nil)
+    , _nlPremise ∷ () -- nil)
+    , _nlClues ∷ () -- nil)
+    }
+
+main ∷ IO ()
+main = do
+    cogitate
+
+cogitate ∷ Oscar → Oscar
+cogitate = do
+    initializeReasoner
+
+class Oscar o where
+
+initializeReasoner ∷ (Oscar oscar) ⇒ oscar ()
+initializeReasoner
+
+data Oscar = Oscar
+    { _oUltimateEpistemicInterests ∷ Set UltimateEpistemicInterest
+    , _oPremises ∷ Set Premise
+    , _oCycle ∷ Cycle
+    , _oForwardsReasons ∷ Set ForwardsReason
+    , _oBackwardsReasons ∷ Set BackwardsReason
+    }
+
+class ForwardsReasonable a where
+
+
+data ForwardsReason
+    = ForwardsReason
+        { _frName ∷ Text
+        , _frFunction ∷ HyperNode → InstantiatedPremise → Oscar → Oscar
+        , _frConclusions ∷ ()
+        , _frConclusionsFunction ∷ ()
+        , _frForwardsPremises ∷ Set ForwardsPremise
+        , _frBackwardsPremises ∷ ()
+        , _frVariables ∷ Set Variable
+        , _frIsDefeasibleRule ∷ Bool
+        , _frStrength ∷ Strength
+        , _frDiscountFactor ∷ Double
+        , _frDescription ∷ ()
+        , _frInstantiatedPremise ∷ ()
+        , _frBackwardsPremisesFunction ∷ ()
+        , _frIsTemporal ∷ Bool
+        , _frUndercuttingDefeaters ∷ ()
+        , _frDefeatees ∷ ()
+        }
+data BackwardsReason = BackwardsReason
+    { _frName ∷ Text
+    , _frFunction ∷ HyperNode → Priority → Oscar → Oscar
+    , _frConclusions ∷ ()
+    , _frConclusionsFunction ∷ ()
+    , _frForwardsPremises ∷ [ForwardsPremise]
+    , _frBackwardsPremises ∷ ()
+    , _frVariables ∷ SET Variable
+    , _frDefeasibleRule ∷ ()
+    , _frStrength ∷ Double
+    , _frDiscountFactor ∷ Double
+    , _frDescription ∷ ()
+    , _frInstantiatedPremise ∷ ()
+    , _frBackwardsPremisesFunction ∷ ()
+    , _frTemporal ∷ Bool
+    , _frUndercuttingDefeaters ∷ ()
+    , _frDefeatees ∷ ()
+    , _brCondition ∷ () -- nil)  -- this is a predicate applied to the binding
+    , _brDischarge ∷ () -- nil)
+    , _brLength ∷ () -- 1)  -- this is the number of backwards-premises
+    , _brConclusionsBindingFunction ∷ () -- nil)
+    , _brConclusionVariables ∷ () -- nil)
+    , _brImmediate ∷ () -- nil))
+    }
+
+main :: IO ()
+main = do
+  print "Hello, World!"
+  let g = makeEmptyGraph
+
+makeForwardsReason ∷  → ForwardsReason
+
+simpReason ∷ ForwardsReason
+simpReason = ForwardsReason Reason
+    { _rName = "simp"
+    , _rForwardsPremises = [cfp (compileFormulaFromText "(P & Q)") ((Symbol . pack) <$> ["P", "Q"]) undefined]
+    , _rVariables = ((Symbol ) <$> ["P", "Q"])
+    , _rFunction = simpReasonFunction
+    }
+  where
+    simpReasonFunction ∷ HyperNode → Depth → Priority → Oscar → (Oscar, IO ())
+    simpReasonFunction h d p o = undefined
+
+addEmptyNode :: Graph -> (Key, Graph)
+addEmptyNode g =
+
+modifyNode :: Key -> (Node -> Node) -> Graph -> Graph
+modifyNode k nf g = g { gNodes = gNodes' }
+  where
+    gNodes' = insert k (nf $ gNodes g ! k) (gNodes g)
+
+
+
+addTwoLinkedNodes :: Graph -> Graph
+addTwoLinkedNodes g = g'
+  where
+    g' =
+
+
+    do
+        n1 <- addEmptyNode
+        n2 <- addEmptyNode
+        l <- addLink n1 n2
+
+
+
+data Node = Node
+  { nLinks :: [Link]
+  }
+  deriving (Show)
+
+data Link = Link
+  { lParentNode :: Node
+  , lTargetNode :: Node
+  }
+  deriving (Show)
+
+data Graph = Graph
+  { gNodes :: IntMap Node
+  , gLinks :: IntMap Link
+  }
+  deriving (Show)
+
+makeEmptyGraph :: Graph
+makeEmptyGraph = Graph { gNodes = empty, gLinks = empty }

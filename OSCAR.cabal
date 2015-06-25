@@ -72,9 +72,18 @@ executable OSCAR_WIP
 
     build-depends:
             base                            ==  4.8.*
+        ,   containers                      ==  0.5.*
 
     hs-source-dirs:
         src-wip
 
     default-language:
         Haskell2010
+
+    default-extensions:
+        OverloadedStrings
+        OverloadedLists
+        RecordWildCards
+        UnicodeSyntax
+        FlexibleContexts
+
