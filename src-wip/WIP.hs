@@ -20,22 +20,28 @@ getInitialOscarState = return OscarState { _osCycle = 0 }
 data OscarStateEvent
     = OSE_Initialized
     | OSE_CycleEq Int
-    | OSE_ThinkStarted
-    | OSE_ThinkEnded
+    | OSE_BeginLabel OscarStateEventLabel
+    | OSE_EndLabel OscarStateEventLabel
+  deriving (Eq, Read, Show)
+
+data OscarStateEventLabel
+    = OSEL_Think
+    | OSEL_Sleep
   deriving (Eq, Read, Show)
 
 printOscarEvents ∷ [OscarStateEvent] → IO ()
 printOscarEvents oses = forM_ oses print
 
+osel ∷ OscarStateEventLabel → WriterT [OscarStateEvent] (State OscarState) () → WriterT [OscarStateEvent] (State OscarState) ()
+osel l m = tell [OSE_BeginLabel l] >> m <* tell [OSE_EndLabel l]
+
 think ∷ WriterT [OscarStateEvent] (State OscarState) ()
-think = do
-    tell [OSE_ThinkStarted]
+think = osel OSEL_Think $ do
     c ← lift $ gets _osCycle
     tell [OSE_CycleEq c]
     lift (modify os) <* do
         c ← lift $ gets _osCycle
         tell [OSE_CycleEq c]
-        tell [OSE_ThinkEnded]
   where
     os OscarState {..} = OscarState { _osCycle = _osCycle + 1 }
 
