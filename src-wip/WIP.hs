@@ -11,7 +11,7 @@ main ∷ IO ()
 main = do
     o1 ← getInitialOscarState
     print o1
-    let (oses, o2) = runState (execWriterT think) o1
+    let (oses, o2) = runIdentity (runStateT (execWriterT $ evalStateT think 0) o1)
     printOscarEvents oses
     print o2
 
@@ -30,24 +30,51 @@ data OscarStateEventLabel
     | OSEL_Sleep
   deriving (Eq, Read, Show)
 
-printOscarEvents ∷ [OscarStateEvent] → IO ()
+printOscarEvents ∷ [(Depth, OscarStateEvent)] → IO ()
 printOscarEvents oses = forM_ oses print
 
 
--- type TDepth = StateT Int
-type TLog = WriterT [OscarStateEvent]
+type Depth = Int
+type TLog = WriterT [(Depth, OscarStateEvent)]
+type TDepth = StateT Depth
 type TOscar = StateT OscarState
 
-osel ∷ OscarStateEventLabel → TLog (TOscar Identity) a → WriterT [OscarStateEvent] (State OscarState) a
-osel l m = tell [OSE_BeginLabel l] >> m <* tell [OSE_EndLabel l]
+type TDepthLogOscar m = (TDepth (TLog (TOscar m)))
 
-think ∷ TLog (TOscar Identity) ()
-think = osel OSEL_Think $ do
-    c ← lift $ gets _osCycle
-    tell [OSE_CycleEq c]
-    lift (modify os) <* do
-        c ← lift $ gets _osCycle
-        tell [OSE_CycleEq c]
+type OscarApplicationM = TDepthLogOscar Identity
+
+tellLog ∷ OscarStateEvent → OscarApplicationM ()
+tellLog ose = do
+    depth ← getDepth
+    lift . tell $ [(depth, ose)]
+
+getDepth ∷ OscarApplicationM Depth
+getDepth = get
+
+withIncDepth ∷ OscarApplicationM a → OscarApplicationM a
+withIncDepth m = do
+    modify succ
+    m <* modify pred
+
+logLabel ∷ OscarStateEventLabel → OscarApplicationM a → OscarApplicationM a
+logLabel l m = do
+    tellLog $ OSE_BeginLabel l
+    withIncDepth m <* do
+        tellLog $ OSE_EndLabel l
+
+getOscar ∷ OscarApplicationM OscarState
+getOscar = lift . lift $ get
+
+modifyOscar ∷ (OscarState → OscarState) → OscarApplicationM ()
+modifyOscar = lift . lift . modify
+
+think ∷ OscarApplicationM ()
+think = logLabel OSEL_Think $ do
+    c ← _osCycle <$> getOscar
+    tellLog $ OSE_CycleEq c
+    modifyOscar os <* do
+        c ← _osCycle <$> getOscar
+        tellLog $ OSE_CycleEq c
   where
     os OscarState {..} = OscarState { _osCycle = _osCycle + 1 }
 
