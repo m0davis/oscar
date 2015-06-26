@@ -1,5 +1,6 @@
 module Main where
 
+import Data.Functor.Identity
 import Data.IntMap
 import Control.Monad
 import Control.Monad.Trans.Class
@@ -32,10 +33,15 @@ data OscarStateEventLabel
 printOscarEvents ∷ [OscarStateEvent] → IO ()
 printOscarEvents oses = forM_ oses print
 
-osel ∷ OscarStateEventLabel → WriterT [OscarStateEvent] (State OscarState) () → WriterT [OscarStateEvent] (State OscarState) ()
+
+-- type TDepth = StateT Int
+type TLog = WriterT [OscarStateEvent]
+type TOscar = StateT OscarState
+
+osel ∷ OscarStateEventLabel → TLog (TOscar Identity) a → WriterT [OscarStateEvent] (State OscarState) a
 osel l m = tell [OSE_BeginLabel l] >> m <* tell [OSE_EndLabel l]
 
-think ∷ WriterT [OscarStateEvent] (State OscarState) ()
+think ∷ TLog (TOscar Identity) ()
 think = osel OSEL_Think $ do
     c ← lift $ gets _osCycle
     tell [OSE_CycleEq c]
