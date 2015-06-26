@@ -15,6 +15,11 @@ main = do
     printOscarEvents oses
     print o2
 
+data OscarState = OscarState
+    { _osCycle ∷ Int
+    }
+  deriving (Eq, Read, Show)
+
 getInitialOscarState ∷ IO OscarState
 getInitialOscarState = return OscarState { _osCycle = 0 }
 
@@ -77,8 +82,3 @@ think = logLabel OSEL_Think $ do
         tellLog $ OSE_CycleEq c
   where
     os OscarState {..} = OscarState { _osCycle = _osCycle + 1 }
-
-data OscarState = OscarState
-    { _osCycle ∷ Int
-    }
-  deriving (Eq, Read, Show)
