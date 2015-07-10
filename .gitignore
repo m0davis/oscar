@@ -9,3 +9,4 @@ Session.vim
 lisp/Session.vim
 cabal.config
 cabal.sandbox.config
+.liquid/

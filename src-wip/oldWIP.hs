@@ -15,6 +15,9 @@ import Oscar.Problem (Problem(Problem))
 import Oscar.Formula (Symbol(Symbol))
 import Oscar.FormulaCode (Formula)
 
+fixedUltimateEpistemicInterests ∷ Set Query
+
+
 
 
 data Oscar = Oscar
@@ -507,11 +510,26 @@ tdnIListFor tdn f vs =
     matcher il = oneOneMatch tl (_ilTermList il) vs (_ilVariables il)
     (ds, tl) = formulaCode f
 
+
+type Tree a = Free [] a
+
+-- formulaToFree ∷ Formula → Free [] Text
+-- formulaToFree () =
+
+lookup :: k -> Map k a -> Maybe a
+
+class Maplike map where
+    lookup :: k → map → Maybe v
+    insert :: (k, v) → map → map
+
 {-
   oneOneMatch t1 t2 v1 v2 ⇒ Just m
     iff
   matchSublis m t1 ⇒
 -}
+[Free [] a] → [Free [] a] → [a] → [a] →
+
+
 oneOneMatch ∷ (Eq a) ⇒ Tree a → Tree a → Set a → Set a → Maybe (Map a (Tree a))
 oneOneMatch p q pv qv =
     case match p q pv of

@@ -1,11 +1,20 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedLists #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE FlexibleContexts #-}
+
 module Main where
 
+import qualified Data.Map.Lazy as Map
 import Data.Functor.Identity
-import Data.IntMap
+--import Data.IntMap
 import Control.Monad
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Writer.Lazy
 import Control.Monad.Trans.State.Lazy
+
+import Match ()
 
 main ∷ IO ()
 main = do
@@ -82,3 +91,15 @@ think = logLabel OSEL_Think $ do
         tellLog $ OSE_CycleEq c
   where
     os OscarState {..} = OscarState { _osCycle = _osCycle + 1 }
+
+iListFor ∷ Formula → [InterestVariable] → IList
+iListFor f ivs =
+
+
+
+-- Apparently [Variable] is always empty
+interestsFor ∷ Free [] a → [a] → Maybe (NonEmptyList Interest, Map Variable Variable)
+interestsFor ∷ Free [] a → [a] → Maybe (Interest, [Interest], Map a a)
+
+[FormulaTerm] → Free [] a
+formulaCode ∷ UFormula → ([Discriminator], [FormulaTerm])
