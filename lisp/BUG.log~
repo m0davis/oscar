@@ -1,0 +1,196 @@
+******************************************************************************************
+******************************************************************************************
+Problem #1
+
+Given premises:
+     (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))    justification = 1.0
+     (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))    justification = 1.0
+     (all A)(all B)((maps F A B) <-> ((all x)((mem x A) -> (some y)((mem y B) & (F x y))) & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))    justification = 1.0
+     (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))    justification = 1.0
+     (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))    justification = 1.0
+     (all B)(all A)(all B1)(all x)((mem x (inv F B1 A)) <-> ((mem x A) & (some y)((mem y B1) & (F x y))))    justification = 1.0
+Ultimate epistemic interests:
+     (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))    interest = 1.0
+
+
+
+================== ULTIMATE EPISTEMIC INTERESTS ===================
+  Interest in (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))
+  is answered affirmatively by node 2023
+---------------------------------------------------
+
+Elapsed time = 20.030 sec
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))
+ which is of ultimate interest.
+
+ 5.  (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))     GIVEN
+ 10.  (all B)((equal x4 B) <-> ((subset x4 B) & (subset B x4)))     UI from { 5 }
+ 12.  ((equal x4 x6) <-> ((subset x4 x6) & (subset x6 x4)))     UI from { 10 }
+ 19.  (((subset x4 x6) & (subset x6 x4)) -> (equal x4 x6))     bicondit-simp from { 12 }
+ 18.  ((equal x4 x6) -> ((subset x4 x6) & (subset x6 x4)))     bicondit-simp from { 12 }
+ 20.  ((subset x4 x6) -> ((subset x6 x4) -> (equal x4 x6)))     exportation from { 19 }
+ 1.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 8.  (all B)((subset x2 B) <-> (all x)((mem x x2) -> (mem x B)))     UI from { 1 }
+ 11.  ((subset x2 x5) <-> (all x)((mem x x2) -> (mem x x5)))     UI from { 8 }
+ 14.  ((subset x2 x5) -> (all x)((mem x x2) -> (mem x x5)))     bicondit-simp from { 11 }
+ 15.  ((all x)((mem x x2) -> (mem x x5)) -> (subset x2 x5))     bicondit-simp from { 11 }
+ 16.  (some z8)(((mem z8 x2) -> (mem z8 x5)) -> (subset x2 x5))     A-removal from { 15 }
+ 17.  (((mem (s9 x2 x5) x2) -> (mem (s9 x2 x5) x5)) -> (subset x2 x5))     EI from { 16 }
+ 46.  (~(mem (s9 x2 x5) x2) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+ 47.  ((mem (s9 x2 x5) x5) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) }
+        |----------------------------------------------------------
+        | 45.  ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO-SUPPOSITION
+        | 75.  ~((subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) & (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)))     modus-tollens2 from { 19 , 45 }
+        | 76.  (~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) v ~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)))     DM from { 75 }
+        | 77.  ((subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) -> ~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)))     disj-simp from { 76 }
+        | 81.  (~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) v ~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))))     disj-cond-2 from { 77 }
+        | 84.  ((subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) -> ~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))))     disj-simp from { 81 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal x654 c18) }
+        |----------------------------------------------------------
+        | 541.  ~(equal x654 c18)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (subset x89 x90) }
+        |----------------------------------------------------------
+        | 80.  (subset x89 x90)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (subset x4 x6) }
+        |----------------------------------------------------------
+        | 89.  ((subset x6 x4) -> (equal x4 x6))     modus-ponens2 from { 20 , 80 }
+                |----------------------------------------------------------
+                | Suppose:  { (subset x4 x6) , (subset x6 x4) }
+                |----------------------------------------------------------
+                | 94.  (equal x4 x6)     modus-ponens1 from { 89 , 80 }
+                |----------------------------------------------------------
+                | Suppose:  { (subset c18 ^@y39) , ~(equal ^@y39 c18) }
+                |----------------------------------------------------------
+                | 542.  ~(subset ^@y39 c18)     REDUCTIO from { 94 , 541 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y38 c18) }
+        |----------------------------------------------------------
+        | 544.  ((subset ^@y38 c18) -> ~(subset c18 ^@y38))     CONTRA-CONDITIONALIZATION from { 542 }
+        | 549.  (~(subset ^@y39 c18) v ~(subset c18 ^@y39))     disj-cond from { 544 }
+        | 550.  ~((subset ^@y39 c18) & (subset c18 ^@y39))     i-DM from { 549 }
+        | 657.  ~(equal x4 c18)     modus-tollens2 from { 18 , 550 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(equal ^@y38 c18) , (subset c18 ^@y105) }
+                |----------------------------------------------------------
+                | 684.  ~(subset ^@y105 c18)     REDUCTIO from { 657 , 94 }
+        | 686.  ((subset c18 ^@y39) -> ~(subset ^@y39 c18))     CONDITIONALIZATION from { 684 }
+        | 762.  ~(subset c18 c18)     cond-simp1 from { 686 }
+        | 776.  ~(mem (s9 c18 c18) c18)     modus-tollens2 from { 47 , 762 }
+        | 763.  (mem (s9 c18 c18) c18)     modus-tollens2 from { 46 , 762 }
+        | 1417.  (subset c18 c18)     modus-ponens2 from { 47 , 763 }
+        | 777.  ~((mem (s9 c18 c18) c18) -> (mem (s9 c18 c18) c18))     i-neg-condit from { 776 , 763 }
+        | 778.  (some x)~((mem x c18) -> (mem x c18))     EG from { 777 }
+        | 779.  ~(all x)((mem x c18) -> (mem x c18))     i-neg-ug from { 778 }
+        | 1425.  ~((subset c18 c18) -> (all x)((mem x c18) -> (mem x c18)))     i-neg-condit from { 779 , 1417 }
+ 1426.  (equal ^@y38 c18)     REDUCTIO from { 1425 , 14 }
+ 1444.  ((subset x4 c18) & (subset c18 x4))     modus-ponens2 from { 18 , 1426 }
+ 1445.  (subset x4 c18)     simp from { 1444 }
+ 1480.  (subset c18 x4)     simp from { 1444 }
+ 1533.  (all x)((mem x x2) -> (mem x c18))     modus-ponens2 from { 14 , 1445 }
+ 1545.  ((mem x1528 x2) -> (mem x1528 c18))     UI from { 1533 }
+ 1539.  (all x)((mem x c18) -> (mem x x5))     modus-ponens2 from { 14 , 1480 }
+ 1544.  ((mem x1520 c18) -> (mem x1520 x5))     UI from { 1539 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x2 x5) }
+        |----------------------------------------------------------
+        | 90.  (all x)((mem x x2) -> (mem x x5))     modus-ponens2 from { 14 , 80 }
+        | 93.  ((mem x95 x2) -> (mem x95 x5))     UI from { 90 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                |----------------------------------------------------------
+                | 86.  ~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     modus-ponens2 from { 84 , 80 }
+                | 117.  ~(mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) (int (inv F c18 c0) (inv F c19 c0)))     modus-tollens2 from { 47 , 86 }
+                | 115.  (mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) (inv F (int c18 c19) c0))     modus-tollens2 from { 46 , 86 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset (inv F (int c18 c19) c0) x5) , ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                        |----------------------------------------------------------
+                        | 128.  (mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) x5)     modus-ponens2 from { 93 , 115 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset (inv F (int c18 c19) c0) ^@y42) , ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                        |----------------------------------------------------------
+                        | 129.  ~((mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) ^@y42) -> (mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) (int (inv F c18 c0) (inv F c19 c0))))     i-neg-condit from { 117 , 128 }
+                        | 130.  (some x)~((mem x ^@y42) -> (mem x (int (inv F c18 c0) (inv F c19 c0))))     EG from { 129 }
+                        | 131.  ~(all x)((mem x ^@y42) -> (mem x (int (inv F c18 c0) (inv F c19 c0))))     i-neg-ug from { 130 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset (inv F (int c18 c19) c0) x2) , ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                        |----------------------------------------------------------
+                        | 137.  ~(subset x2 (int (inv F c18 c0) (inv F c19 c0)))     modus-tollens2 from { 14 , 131 }
+                | 1510.  ~(subset (inv F (int c18 c19) c0) c18)     REDUCTIO from { 1480 , 137 }
+                | 1766.  (mem (s9 (inv F (int c18 c19) c0) c18) (inv F (int c18 c19) c0))     modus-tollens2 from { 46 , 1510 }
+                        |----------------------------------------------------------
+                        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) , (subset ^@y40 (int (inv F c18 c0) (inv F c19 c0))) }
+                        |----------------------------------------------------------
+                        | 162.  ~(subset (inv F (int c18 c19) c0) ^@y40)     REDUCTIO from { 137 , 80 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem x85 x86) }
+        |----------------------------------------------------------
+        | 79.  (mem x85 x86)     REDUCTIO-SUPPOSITION
+                        |----------------------------------------------------------
+                        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) , (subset x5 (int (inv F c18 c0) (inv F c19 c0))) }
+                        |----------------------------------------------------------
+                        | 213.  ~(mem (s9 (inv F (int c18 c19) c0) x5) x5)     modus-tollens2 from { 47 , 162 }
+                        |----------------------------------------------------------
+                        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) , (mem (s9 (inv F (int c18 c19) c0) ^@y43) ^@y43) }
+                        |----------------------------------------------------------
+                        | 315.  ~(subset ^@y43 (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO from { 213 , 79 }
+                | 1498.  ~(mem (s9 (inv F (int c18 c19) c0) c18) c18)     REDUCTIO from { 1480 , 315 }
+                | 1820.  ~(mem (s9 (inv F (int c18 c19) c0) c18) x2)     modus-tollens2 from { 1545 , 1498 }
+                | 1827.  ~((mem (s9 (inv F (int c18 c19) c0) c18) (inv F (int c18 c19) c0)) -> (mem (s9 (inv F (int c18 c19) c0) c18) ^@y43))     i-neg-condit from { 1820 , 1766 }
+                | 1828.  (some x)~((mem x (inv F (int c18 c19) c0)) -> (mem x ^@y43))     EG from { 1827 }
+                | 1829.  ~(all x)((mem x (inv F (int c18 c19) c0)) -> (mem x ^@y43))     i-neg-ug from { 1828 }
+                | 1936.  ~(subset (inv F (int c18 c19) c0) x5)     modus-tollens2 from { 14 , 1829 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+        |----------------------------------------------------------
+        | 1976.  (equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO from { 1936 , 1445 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) }
+        |----------------------------------------------------------
+        | 1978.  ~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0))     REDUCTIO from { 1976 , 45 }
+        | 1988.  ~(mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) (inv F (int c18 c19) c0))     modus-tollens2 from { 47 , 1978 }
+        | 2008.  ~(mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) c18)     modus-tollens2 from { 1544 , 1988 }
+        | 1981.  (mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) (int (inv F c18 c0) (inv F c19 c0)))     modus-tollens2 from { 46 , 1978 }
+        | 2013.  ~((mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) (int (inv F c18 c0) (inv F c19 c0))) -> (mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) c18))     i-neg-condit from { 2008 , 1981 }
+        | 2014.  (some x)~((mem x (int (inv F c18 c0) (inv F c19 c0))) -> (mem x c18))     EG from { 2013 }
+        | 2015.  ~(all x)((mem x (int (inv F c18 c0) (inv F c19 c0))) -> (mem x c18))     i-neg-ug from { 2014 }
+        | 2016.  ~((subset (int (inv F c18 c0) (inv F c19 c0)) c18) -> (all x)((mem x (int (inv F c18 c0) (inv F c19 c0))) -> (mem x c18)))     i-neg-condit from { 2015 , 1445 }
+ 2017.  (equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO from { 2016 , 14 }
+ 2019.  (((maps F c0 c17) & ((subset c18 c17) & (subset c19 c17))) -> (equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))))     CONDITIONALIZATION from { 2017 }
+ 2020.  (all Y)(((maps F c0 c17) & ((subset c18 c17) & (subset Y c17))) -> (equal (inv F (int c18 Y) c0) (int (inv F c18 c0) (inv F Y c0))))     UG from { 2019 }
+ 2021.  (all X)(all Y)(((maps F c0 c17) & ((subset X c17) & (subset Y c17))) -> (equal (inv F (int X Y) c0) (int (inv F X c0) (inv F Y c0))))     UG from { 2020 }
+ 2022.  (all B)(all X)(all Y)(((maps F c0 B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) c0) (int (inv F X c0) (inv F Y c0))))     UG from { 2021 }
+ 2023.  (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))     UG from { 2022 }
+
+===========================================================================
+
+
+Cumulative size of arguments = 85
+Size of inference-graph = 2023 of which 6 were unused suppositions.
+4% of the inference-graph was used in the argument.
+261 interests were adopted.
+9 suppositions were made.
+
+=========================== TEST RESULTS ===========================
+
+                                                                                OSCAR_4.02
+          *reductio-discount*:                                 0.23
+          *reductio-interest*:                                   0.23
+          *skolem-multiplier*:                                   10
+          *quantifier-discount*:                                   0.95
+
+#1                                                                          20.030 sec
+           cumulative  argument length:                 85
+           total number of inferences:                     2017
+
+
+
+(OSCAR_4.02 0.23 0.23 10 0.95 ((1 20029998 85 2017)))

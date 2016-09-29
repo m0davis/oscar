@@ -104,7 +104,7 @@
 
 (load (concatenate 'string oscar-pathname "reason"))
 (load (concatenate 'string oscar-pathname "rule"))
-; (load (concatenate 'string oscar-pathname "argument"))
+(load (concatenate 'string oscar-pathname "argument"))
 
 (load (concatenate 'string oscar-pathname "problem"))
 (load (concatenate 'string oscar-pathname "problem-example"))

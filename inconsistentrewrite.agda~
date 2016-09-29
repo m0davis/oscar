@@ -1,0 +1,775 @@
+{- Revision with emphasis on proofs -}
+
+------------------------------------------------------------------------
+-- The Agda standard library
+--
+-- AVL trees
+------------------------------------------------------------------------
+
+-- AVL trees are balanced binary search trees.
+
+-- The search tree invariant is specified using the technique
+-- described by Conor McBride in his talk "Pivotal pragmatism".
+
+open import Relation.Binary
+open import Relation.Binary.PropositionalEquality as P using (_≡_)
+
+module Data.AVL2
+  {𝑼⟨Key⟩ 𝑼⟨Value⟩ 𝑼⟨<⟩}
+  {Key : Set 𝑼⟨Key⟩} (Value : Key → Set 𝑼⟨Value⟩)
+  {_<_ : Rel Key 𝑼⟨<⟩}
+  (isStrictTotalOrder : IsStrictTotalOrder _≡_ _<_)
+  where
+
+open import Data.Bool.Base using (Bool)
+import Data.DifferenceList as DiffList
+open import Data.Empty
+open import Data.List.Base as List using (List)
+open import Data.Maybe.Base hiding (map)
+open import Data.Nat.Base hiding (_<_; _⊔_)
+open import Data.Product hiding (map)
+open import Data.Unit
+open import Function
+open import Level using (_⊔_; Lift; lift)
+
+open IsStrictTotalOrder isStrictTotalOrder
+
+------------------------------------------------------------------------
+-- Extended keys
+
+module Extended-key where
+
+  -- The key type extended with a new minimum and maximum.
+
+  data Key⁺ : Set 𝑼⟨Key⟩ where
+    ⊥⁺ ⊤⁺ : Key⁺
+    [_]   : (k : Key) → Key⁺
+
+  -- An extended strict ordering relation.
+
+  infix 4 _<⁺_
+
+  _<⁺_ : Key⁺ → Key⁺ → Set 𝑼⟨<⟩
+  ⊥⁺    <⁺ [ _ ] = Lift ⊤
+  ⊥⁺    <⁺ ⊤⁺    = Lift ⊤
+  [ x ] <⁺ [ y ] = x < y
+  [ _ ] <⁺ ⊤⁺    = Lift ⊤
+  _     <⁺ _     = Lift ⊥
+
+  -- A pair of ordering constraints.
+
+  infix 4 _<_<_
+
+  _<_<_ : Key⁺ → Key → Key⁺ → Set 𝑼⟨<⟩
+  l < x < u = l <⁺ [ x ] × [ x ] <⁺ u
+
+  -- _<⁺_ is transitive.
+
+  trans⁺ : ∀ l {m u} → l <⁺ m → m <⁺ u → l <⁺ u
+
+  trans⁺ [ l ] {m = [ m ]} {u = [ u ]} l<m m<u = trans l<m m<u
+
+  trans⁺ ⊥⁺    {u = [ _ ]} _ _ = _
+  trans⁺ ⊥⁺    {u = ⊤⁺}    _ _ = _
+  trans⁺ [ _ ] {u = ⊤⁺}    _ _ = _
+
+  trans⁺ _     {m = ⊥⁺}    {u = ⊥⁺}    _ (lift ())
+  trans⁺ _     {m = [ _ ]} {u = ⊥⁺}    _ (lift ())
+  trans⁺ _     {m = ⊤⁺}    {u = ⊥⁺}    _ (lift ())
+  trans⁺ [ _ ] {m = ⊥⁺}    {u = [ _ ]} (lift ()) _
+  trans⁺ [ _ ] {m = ⊤⁺}    {u = [ _ ]} _ (lift ())
+  trans⁺ ⊤⁺    {m = ⊥⁺}                (lift ()) _
+  trans⁺ ⊤⁺    {m = [ _ ]}             (lift ()) _
+  trans⁺ ⊤⁺    {m = ⊤⁺}                (lift ()) _
+
+------------------------------------------------------------------------
+-- Types and functions which are used to keep track of height
+-- invariants
+
+module Height-invariants where
+
+  -- Bits. (I would use Fin 2 instead if Agda had "defined patterns",
+  -- so that I could pattern match on 1# instead of suc zero; the text
+  -- "suc zero" takes up a lot more space.)
+
+  data ℕ₂ : Set where
+    0# : ℕ₂
+    1# : ℕ₂
+
+  -- Addition.
+
+  infixl 6 _⊕_
+
+  _⊕_ : ℕ₂ → ℕ → ℕ
+  0# ⊕ n = n
+  1# ⊕ n = 1 + n
+
+  -- i ⊕ n -1 = pred (i ⊕ n).
+
+  _⊕_-1 : ℕ₂ → ℕ → ℕ
+  i ⊕ zero  -1 = 0
+  i ⊕ suc n -1 = i ⊕ n
+
+  infix 4 _∼_⊔_
+
+  -- If i ∼ j ⊔ m, then the difference between i and j is at most 1,
+  -- and the maximum of i and j is m. _∼_⊔_ is used to record the
+  -- balance factor of the AVL trees, and also to ensure that the
+  -- absolute value of the balance factor is never more than 1.
+
+  data _∼_⊔_ : ℕ → ℕ → ℕ → Set where
+    ∼+ : ∀ {n} →     n ∼ 1 + n ⊔ 1 + n
+    ∼0 : ∀ {n} →     n ∼ n     ⊔ n
+    ∼- : ∀ {n} → 1 + n ∼ n     ⊔ 1 + n
+
+  -- Some lemmas.
+
+  max∼ : ∀ {i j m} → i ∼ j ⊔ m → m ∼ i ⊔ m
+  max∼ ∼+ = ∼-
+  max∼ ∼0 = ∼0
+  max∼ ∼- = ∼0
+
+  ∼max : ∀ {i j m} → i ∼ j ⊔ m → j ∼ m ⊔ m
+  ∼max ∼+ = ∼0
+  ∼max ∼0 = ∼0
+  ∼max ∼- = ∼+
+
+------------------------------------------------------------------------
+-- AVL trees
+
+-- Key/value pairs.
+
+KV : Set (𝑼⟨Key⟩ ⊔ 𝑼⟨Value⟩)
+KV = Σ Key Value
+
+module Indexed where
+
+  open Extended-key
+  open Height-invariants
+
+  -- The trees have three parameters/indices: a lower bound on the
+  -- keys, an upper bound, and a height.
+  --
+  -- (The bal argument is the balance factor.)
+
+  data Tree (l u : Key⁺) : ℕ → Set (𝑼⟨Key⟩ ⊔ 𝑼⟨Value⟩ ⊔ 𝑼⟨<⟩) where
+    leaf : (l<u : l <⁺ u) → Tree l u 0
+    node : ∀ {hˡ hʳ h}
+           (k : KV)
+           (lk : Tree l [ proj₁ k ] hˡ)
+           (ku : Tree [ proj₁ k ] u hʳ)
+           (bal : hˡ ∼ hʳ ⊔ h) →
+           Tree l u (suc h)
+
+  -- Cast operations. Logarithmic in the size of the tree, if we don't
+  -- count the time needed to construct the new proofs in the leaf
+  -- cases. (The same kind of caveat applies to other operations
+  -- below.)
+  --
+  -- Perhaps it would be worthwhile changing the data structure so
+  -- that the casts could be implemented in constant time (excluding
+  -- proof manipulation). However, note that this would not change the
+  -- worst-case time complexity of the operations below (up to Θ).
+
+  castˡ : ∀ {l m u h} → l <⁺ m → Tree m u h → Tree l u h
+  castˡ {l} l<m (leaf m<u)         = leaf (trans⁺ l l<m m<u)
+  castˡ     l<m (node k mk ku bal) = node k (castˡ l<m mk) ku bal
+
+  castʳ : ∀ {l m u h} → Tree l m h → m <⁺ u → Tree l u h
+  castʳ {l} (leaf l<m)         m<u = leaf (trans⁺ l l<m m<u)
+  castʳ     (node k lk km bal) m<u = node k lk (castʳ km m<u) bal
+
+  -- Various constant-time functions which construct trees out of
+  -- smaller pieces, sometimes using rotation.
+
+  joinˡ⁺ : ∀ {l u hˡ hʳ h} →
+           (k : KV) →
+           (∃ λ i → Tree l [ proj₁ k ] (i ⊕ hˡ)) →
+           Tree [ proj₁ k ] u hʳ →
+           (bal : hˡ ∼ hʳ ⊔ h) →
+           ∃ λ i → Tree l u (i ⊕ (1 + h))
+  joinˡ⁺ k₆ (1# , node k₂ t₁
+                    (node k₄ t₃ t₅ bal)
+                                ∼+) t₇ ∼-  = (0# , node k₄
+                                                        (node k₂ t₁ t₃ (max∼ bal))
+                                                        (node k₆ t₅ t₇ (∼max bal))
+                                                        ∼0)
+  joinˡ⁺ k₄ (1# , node k₂ t₁ t₃ ∼-) t₅ ∼-  = (0# , node k₂ t₁ (node k₄ t₃ t₅ ∼0) ∼0)
+  joinˡ⁺ k₄ (1# , node k₂ t₁ t₃ ∼0) t₅ ∼-  = (1# , node k₂ t₁ (node k₄ t₃ t₅ ∼-) ∼+)
+  joinˡ⁺ k₂ (1# , t₁)               t₃ ∼0  = (1# , node k₂ t₁ t₃ ∼-)
+  joinˡ⁺ k₂ (1# , t₁)               t₃ ∼+  = (0# , node k₂ t₁ t₃ ∼0)
+  joinˡ⁺ k₂ (0# , t₁)               t₃ bal = (0# , node k₂ t₁ t₃ bal)
+
+  joinʳ⁺ : ∀ {l u hˡ hʳ h} →
+           (k : KV) →
+           Tree l [ proj₁ k ] hˡ →
+           (∃ λ i → Tree [ proj₁ k ] u (i ⊕ hʳ)) →
+           (bal : hˡ ∼ hʳ ⊔ h) →
+           ∃ λ i → Tree l u (i ⊕ (1 + h))
+  joinʳ⁺ k₂ t₁ (1# , node k₆
+                       (node k₄ t₃ t₅ bal)
+                                t₇ ∼-) ∼+  = (0# , node k₄
+                                                        (node k₂ t₁ t₃ (max∼ bal))
+                                                        (node k₆ t₅ t₇ (∼max bal))
+                                                        ∼0)
+  joinʳ⁺ k₂ t₁ (1# , node k₄ t₃ t₅ ∼+) ∼+  = (0# , node k₄ (node k₂ t₁ t₃ ∼0) t₅ ∼0)
+  joinʳ⁺ k₂ t₁ (1# , node k₄ t₃ t₅ ∼0) ∼+  = (1# , node k₄ (node k₂ t₁ t₃ ∼+) t₅ ∼-)
+  joinʳ⁺ k₂ t₁ (1# , t₃)               ∼0  = (1# , node k₂ t₁ t₃ ∼+)
+  joinʳ⁺ k₂ t₁ (1# , t₃)               ∼-  = (0# , node k₂ t₁ t₃ ∼0)
+  joinʳ⁺ k₂ t₁ (0# , t₃)               bal = (0# , node k₂ t₁ t₃ bal)
+
+  joinˡ⁻ : ∀ {l u} hˡ {hʳ h} →
+           (k : KV) →
+           (∃ λ i → Tree l [ proj₁ k ] (i ⊕ hˡ -1)) →
+           Tree [ proj₁ k ] u hʳ →
+           (bal : hˡ ∼ hʳ ⊔ h) →
+           ∃ λ i → Tree l u (i ⊕ h)
+  joinˡ⁻ zero    k₂ (0# , t₁) t₃ bal = (1# , node k₂ t₁ t₃ bal)
+  joinˡ⁻ zero    k₂ (1# , t₁) t₃ bal = (1# , node k₂ t₁ t₃ bal)
+  joinˡ⁻ (suc _) k₂ (0# , t₁) t₃ ∼+  = joinʳ⁺ k₂ t₁ (1# , t₃) ∼+
+  joinˡ⁻ (suc _) k₂ (0# , t₁) t₃ ∼0  = (1# , node k₂ t₁ t₃ ∼+)
+  joinˡ⁻ (suc _) k₂ (0# , t₁) t₃ ∼-  = (0# , node k₂ t₁ t₃ ∼0)
+  joinˡ⁻ (suc _) k₂ (1# , t₁) t₃ bal = (1# , node k₂ t₁ t₃ bal)
+
+  joinʳ⁻ : ∀ {l u hˡ} hʳ {h} →
+           (k : KV) →
+           Tree l [ proj₁ k ] hˡ →
+           (∃ λ i → Tree [ proj₁ k ] u (i ⊕ hʳ -1)) →
+           (bal : hˡ ∼ hʳ ⊔ h) →
+           ∃ λ i → Tree l u (i ⊕ h)
+  joinʳ⁻ zero    k₂ t₁ (0# , t₃) bal = (1# , node k₂ t₁ t₃ bal)
+  joinʳ⁻ zero    k₂ t₁ (1# , t₃) bal = (1# , node k₂ t₁ t₃ bal)
+  joinʳ⁻ (suc _) k₂ t₁ (0# , t₃) ∼-  = joinˡ⁺ k₂ (1# , t₁) t₃ ∼-
+  joinʳ⁻ (suc _) k₂ t₁ (0# , t₃) ∼0  = (1# , node k₂ t₁ t₃ ∼-)
+  joinʳ⁻ (suc _) k₂ t₁ (0# , t₃) ∼+  = (0# , node k₂ t₁ t₃ ∼0)
+  joinʳ⁻ (suc _) k₂ t₁ (1# , t₃) bal = (1# , node k₂ t₁ t₃ bal)
+
+  -- Extracts the smallest element from the tree, plus the rest.
+  -- Logarithmic in the size of the tree.
+
+  headTail : ∀ {l u h} → Tree l u (1 + h) →
+             ∃ λ (k : KV) → l <⁺ [ proj₁ k ] ×
+                            ∃ λ i → Tree [ proj₁ k ] u (i ⊕ h)
+  headTail (node k₁ (leaf l<k₁) t₂ ∼+) = (k₁ , l<k₁ , 0# , t₂)
+  headTail (node k₁ (leaf l<k₁) t₂ ∼0) = (k₁ , l<k₁ , 0# , t₂)
+  headTail (node {hˡ = suc _} k₃ t₁₂ t₄ bal) with headTail t₁₂
+  ... | (k₁ , l<k₁ , t₂) = (k₁ , l<k₁ , joinˡ⁻ _ k₃ t₂ t₄ bal)
+
+  -- Extracts the largest element from the tree, plus the rest.
+  -- Logarithmic in the size of the tree.
+
+  initLast : ∀ {l u h} → Tree l u (1 + h) →
+             ∃ λ (k : KV) → [ proj₁ k ] <⁺ u ×
+                            ∃ λ i → Tree l [ proj₁ k ] (i ⊕ h)
+  initLast (node k₂ t₁ (leaf k₂<u) ∼-) = (k₂ , k₂<u , (0# , t₁))
+  initLast (node k₂ t₁ (leaf k₂<u) ∼0) = (k₂ , k₂<u , (0# , t₁))
+  initLast (node {hʳ = suc _} k₂ t₁ t₃₄ bal) with initLast t₃₄
+  ... | (k₄ , k₄<u , t₃) = (k₄ , k₄<u , joinʳ⁻ _ k₂ t₁ t₃ bal)
+
+  -- Another joining function. Logarithmic in the size of either of
+  -- the input trees (which need to have almost equal heights).
+
+  join : ∀ {l m u hˡ hʳ h} →
+         Tree l m hˡ → Tree m u hʳ → (bal : hˡ ∼ hʳ ⊔ h) →
+         ∃ λ i → Tree l u (i ⊕ h)
+  join t₁ (leaf m<u) ∼0 = (0# , castʳ t₁ m<u)
+  join t₁ (leaf m<u) ∼- = (0# , castʳ t₁ m<u)
+  join {hʳ = suc _} t₁ t₂₃ bal with headTail t₂₃
+  ... | (k₂ , m<k₂ , t₃) = joinʳ⁻ _ k₂ (castʳ t₁ m<k₂) t₃ bal
+
+  -- An empty tree.
+
+  empty : ∀ {l u} → l <⁺ u → Tree l u 0
+  empty = leaf
+
+  -- A singleton tree.
+
+  singleton : ∀ {l u} (k : Key) → Value k → l < k < u → Tree l u 1
+  singleton k v (l<k , k<u) = node (k , v) (leaf l<k) (leaf k<u) ∼0
+
+  -- Inserts a key into the tree, using a function to combine any
+  -- existing value with the new value. Logarithmic in the size of the
+  -- tree (assuming constant-time comparisons and a constant-time
+  -- combining function).
+
+  insertWith : ∀ {l u h} → (k : Key) → Value k →
+               (Value k → Value k → Value k) →  -- New → old → result.
+               Tree l u h → l < k < u →
+               ∃ λ i → Tree l u (i ⊕ h)
+  insertWith k v f (leaf l<u) l<k<u = (1# , singleton k v l<k<u)
+  insertWith k v f (node (k′ , v′) lp pu bal) (l<k , k<u) with compare k k′
+  ... | tri< k<k′ _ _ = joinˡ⁺ (k′ , v′) (insertWith k v f lp (l<k , k<k′)) pu bal
+  ... | tri> _ _ k′<k = joinʳ⁺ (k′ , v′) lp (insertWith k v f pu (k′<k , k<u)) bal
+  ... | tri≈ _ k≡k′ _ rewrite P.sym k≡k′ = (0# , node (k , f v v′) lp pu bal)
+
+  -- Inserts a key into the tree. If the key already exists, then it
+  -- is replaced. Logarithmic in the size of the tree (assuming
+  -- constant-time comparisons).
+
+  insert : ∀ {l u h} → (k : Key) → Value k → Tree l u h → l < k < u →
+           ∃ λ i → Tree l u (i ⊕ h)
+  insert k v = insertWith k v const
+
+  -- Deletes the key/value pair containing the given key, if any.
+  -- Logarithmic in the size of the tree (assuming constant-time
+  -- comparisons).
+
+  delete : ∀ {l u h} → Key → Tree l u h →
+           ∃ λ i → Tree l u (i ⊕ h -1)
+  delete k (leaf l<u)         = (0# , leaf l<u)
+  delete k (node p lp pu bal) with compare k (proj₁ p)
+  ... | tri< _ _ _ = joinˡ⁻ _ p (delete k lp) pu bal
+  ... | tri> _ _ _ = joinʳ⁻ _ p lp (delete k pu) bal
+  ... | tri≈ _ _ _ = join lp pu bal
+
+  -- Looks up a key. Logarithmic in the size of the tree (assuming
+  -- constant-time comparisons).
+
+  lookup : ∀ {l u h} → (k : Key) → Tree l u h → Maybe (Value k)
+  lookup k (leaf _)                  = nothing
+  lookup k (node (k′ , v) lk′ k′u _) with compare k k′
+  ... | tri< _ _  _ = lookup k lk′
+  ... | tri> _ _  _ = lookup k k′u
+  ... | tri≈ _ eq _ rewrite eq = just v
+
+  -- Maps a function over all values in the tree.
+
+  map : (∀ {k} → Value k → Value k) →
+        ∀ {l u h} → Tree l u h → Tree l u h
+  map f (leaf l<u)             = leaf l<u
+  map f (node (k , v) l r bal) = node (k , f v) (map f l) (map f r) bal
+
+  -- Converts the tree to an ordered list. Linear in the size of the
+  -- tree.
+
+  open DiffList
+
+  toDiffList : ∀ {l u h} → Tree l u h → DiffList KV
+  toDiffList (leaf _)       = []
+  toDiffList (node k l r _) = toDiffList l ++ k ∷ toDiffList r
+
+module MSD where
+
+  open Indexed
+
+  open Extended-key
+  open Height-invariants
+  
+  open import Relation.Binary.HeterogeneousEquality as H using ( _≅_ )
+  open import Relation.Nullary.Negation
+  import Data.List as L
+
+  Tree⟶<⁺ : ∀ { k⃖ k⃗ h } → Tree k⃖ k⃗ h → k⃖ <⁺ k⃗
+  Tree⟶<⁺ ( leaf k⃖<k⃗ ) = k⃖<k⃗
+  Tree⟶<⁺ { k⃖ = k⃖ } ( node _ t⃖ t⃗ _ ) = trans⁺ k⃖ ( Tree⟶<⁺ t⃖ ) ( Tree⟶<⁺ t⃗ )
+
+  data _∈_ { k⃖ k⃗ } ( k : Key ) : ∀ { h } → Tree k⃖ k⃗ h → Set ( 𝑼⟨Key⟩ ⊔ 𝑼⟨Value⟩ ⊔ 𝑼⟨<⟩ ) where
+    here : ∀
+           { h⃖ h⃗ h v }
+           { t⃖ : Tree k⃖ [ k ] h⃖ }
+           { t⃗ : Tree [ k ]  k⃗ h⃗ }
+           { bal : h⃖ ∼ h⃗ ⊔ h }
+           → k ∈ node ( k , v ) t⃖ t⃗ bal
+    left : ∀
+           { h⃖ h⃗ h k′ } { v′ : Value k′ }
+           { t⃖ : Tree k⃖ [ k′ ] h⃖ }
+           { t⃗ : Tree [ k′ ]  k⃗ h⃗ }
+           { bal : h⃖ ∼ h⃗ ⊔ h }
+           → k ∈ t⃖
+           → k ∈ node ( k′ , v′ ) t⃖ t⃗ bal
+    right : ∀
+            { h⃖ h⃗ h k′ } { v′ : Value k′ }
+            { t⃖ : Tree k⃖ [ k′ ] h⃖ }
+            { t⃗ : Tree [ k′ ] k⃗ h⃗ }
+            { bal : h⃖ ∼ h⃗ ⊔ h }
+            → k ∈ t⃗
+            → k ∈ node ( k′ , v′ ) t⃖ t⃗ bal
+
+  ∈⟶Tree : ∀ { l u h } { t : Tree l u h } { k : Key } → k ∈ t → Tree l u h
+  ∈⟶Tree { t = t } _ = t
+
+  ∈⟶<< : ∀ { l u h } { t : Tree l u h } { k : Key } → k ∈ t → l < k < u
+  ∈⟶<< ( here { t⃖ = t⃖ } { t⃗ = t⃗ } ) = Tree⟶<⁺ t⃖ , Tree⟶<⁺ t⃗
+  ∈⟶<< { l = l } { u = u } { k = k } ( left { k′ = k′ } { t⃗ = t⃗ } k∈tˡ ) = l<k , k<u where
+    l<k<k′ : l < k < [ k′ ]
+    l<k<k′ = ∈⟶<< k∈tˡ
+   
+    l<k : l <⁺ [ k ]
+    l<k = proj₁ l<k<k′
+   
+    k<k′ : [ k ] <⁺ [ k′ ]
+    k<k′ = proj₂ l<k<k′
+   
+    k′<u : [ k′ ] <⁺ u
+    k′<u = Tree⟶<⁺ t⃗
+   
+    k<u : [ k ] <⁺ u
+    k<u = trans⁺ [ k ] { m = [ k′ ] } { u = u } k<k′ k′<u
+  ∈⟶<< { l = l } { u = u } { k = k } ( right { k′ = k′ } { t⃖ = lk′ } k∈tʳ ) = l<k , k<u where
+    k′<k<u : [ k′ ] < k < u
+    k′<k<u = ∈⟶<< k∈tʳ
+   
+    k<u : [ k ] <⁺ u
+    k<u = proj₂ k′<k<u
+   
+    k′<k : [ k′ ] <⁺ [ k ] 
+    k′<k = proj₁ k′<k<u
+   
+    l<k′ : l <⁺ [ k′ ]
+    l<k′ = Tree⟶<⁺ lk′
+   
+    l<k : l <⁺ [ k ]
+    l<k = trans⁺ l { m = [ k′ ] } { u = [ k ] } l<k′ k′<k
+   
+  data _∼_∈̃_ { k⃖ k⃗ : Key⁺ } ( k : Key ) ( v : Value k ) {- ( k' : Key ) ⦃ _ : k ≡ k' ⦄ -} : ∀ { h : ℕ } → Tree k⃖ k⃗ h → Set ( 𝑼⟨Key⟩ ⊔ 𝑼⟨Value⟩ ⊔ 𝑼⟨<⟩ ) where
+    here : ∀
+           { h⃖ h⃗ h }
+           { t⃖ : Tree k⃖ [ k ] h⃖ }
+           { t⃗ : Tree [ k ]  k⃗ h⃗ }
+           { bal : h⃖ ∼ h⃗ ⊔ h }
+           → k ∼ v ∈̃ node ( k , v ) t⃖ t⃗ bal
+    left : ∀
+           { h⃖ h⃗ h k′ } { v′ : Value k′ }
+           { t⃖ : Tree k⃖ [ k′ ] h⃖ }
+           { t⃗ : Tree [ k′ ]  k⃗ h⃗ }
+           { bal : h⃖ ∼ h⃗ ⊔ h }
+           → k ∼ v ∈̃ t⃖
+           → k ∼ v ∈̃ node ( k′ , v′ ) t⃖ t⃗ bal
+    right : ∀
+            { h⃖ h⃗ h k′ } { v′ : Value k′ }
+            { t⃖ : Tree k⃖ [ k′ ] h⃖ }
+            { t⃗ : Tree [ k′ ] k⃗ h⃗ }
+            { bal : h⃖ ∼ h⃗ ⊔ h }
+            → k ∼ v ∈̃ t⃗
+            → k ∼ v ∈̃ node ( k′ , v′ ) t⃖ t⃗ bal
+
+  _∈̌_ : ∀ { k⃖ k⃗ : Key⁺ } { h } ( kv : KV ) → ( t : Tree k⃖ k⃗ h )  → Set ( 𝑼⟨Key⟩ ⊔ 𝑼⟨Value⟩ ⊔ 𝑼⟨<⟩ )
+  (k , v) ∈̌ t = k ∼ v ∈̃ t
+
+  ∈̃→∈ : ∀ { k l u h } { v : Value k } { t : Tree l u h } → k ∼ v ∈̃ t → k ∈ t
+  ∈̃→∈ here = here
+  ∈̃→∈ (left x) = left (∈̃→∈ x)
+  ∈̃→∈ (right x) = right (∈̃→∈ x)
+
+  ∈̌⟶l<⁺k : ∀ { k l u h } { v : Value k } { t : Tree l u h } → k ∼ v ∈̃ t → l <⁺ [ k ]
+  ∈̌⟶l<⁺k x = proj₁ (∈⟶<< (∈̃→∈ x))
+
+  ∈̌⟶k<⁺u : ∀ { k l u h } { v : Value k } { t : Tree l u h } → k ∼ v ∈̃ t → [ k ] <⁺ u
+  ∈̌⟶k<⁺u x = proj₂ (∈⟶<< (∈̃→∈ x))
+
+  open import Data.Sum using (_⊎_ ; inj₁ ; inj₂)
+
+  a≮a : ∀ { k } → k < k → ⊥
+  a≮a = irrefl P.refl
+  
+  lemL : ∀ { k l h } { v : Value k } { t : Tree l [ k ] h } → k ∼ v ∈̃ t → ⊥
+  lemL x = contradiction ( proj₂ (∈⟶<< (∈̃→∈ x))) ( a≮a) where
+    
+  lemR : ∀ { k u h } { v : Value k } { t : Tree [ k ] u h } → k ∼ v ∈̃ t → ⊥
+  lemR x = contradiction ( proj₁ (∈⟶<< (∈̃→∈ x))) ( a≮a) where
+
+  open import Relation.Binary.Consequences
+    
+  k→v : ∀ {kv1 kv2 : KV} {l u h} {t : Tree l u h} → kv1 ∈̌ t → kv2 ∈̌ t → proj₁ kv1 ≡ proj₁ kv2 → kv1 ≅ kv2
+  k→v here here P.refl = H.refl
+  k→v (here { t⃖ = t⃖ })  (left kv2∈̌t) P.refl = ⊥-elim (lemL kv2∈̌t)
+  k→v here (right kv2∈̌t) P.refl = ⊥-elim (lemR kv2∈̌t)
+  k→v (left kv1∈̌tˡ) here P.refl = ⊥-elim (lemL kv1∈̌tˡ)
+  k→v (left kv1∈̌tˡ) (left kv2∈̌t) P.refl = k→v kv1∈̌tˡ kv2∈̌t P.refl
+  k→v (left kv1∈̌tˡ) (right kv2∈̌t) P.refl = contradiction (proj₂ (∈⟶<< (∈̃→∈ kv1∈̌tˡ))) (tri⟶asym compare (proj₁ (∈⟶<< (∈̃→∈ kv2∈̌t))))
+  k→v (right kv1∈̌tʳ) here P.refl = ⊥-elim (lemR kv1∈̌tʳ)
+  k→v (right kv1∈̌tʳ) (left kv2∈̌t) P.refl = contradiction (proj₂ (∈⟶<< (∈̃→∈ kv2∈̌t))) (tri⟶asym compare (proj₁ (∈⟶<< (∈̃→∈ kv1∈̌tʳ))))
+  k→v (right kv1∈̌tʳ) (right kv2∈̌t) P.refl = k→v kv1∈̌tʳ kv2∈̌t P.refl
+
+  k→v' : ∀ { k : Key } { v₁ v₂ : Value k } { l u h } { t : Tree l u h } → k ∼ v₁ ∈̃ t → k ∼ v₂ ∈̃ t → v₁ ≡ v₂
+  k→v' here here = P.refl
+  k→v' here (left kv2∈̌t) = ⊥-elim (lemL kv2∈̌t)
+  k→v' here (right kv2∈̌t) = ⊥-elim (lemR kv2∈̌t)
+  k→v' (left kv1∈̌tˡ) here = ⊥-elim (lemL kv1∈̌tˡ)
+  k→v' (left kv1∈̌tˡ) (left kv2∈̌t) = k→v' kv1∈̌tˡ kv2∈̌t
+  k→v' (left kv1∈̌tˡ) (right kv2∈̌t) = contradiction (proj₂ (∈⟶<< (∈̃→∈ kv1∈̌tˡ))) (tri⟶asym compare (proj₁ (∈⟶<< (∈̃→∈ kv2∈̌t))))
+  k→v' (right kv1∈̌tʳ) here = ⊥-elim (lemR kv1∈̌tʳ)
+  k→v' (right kv1∈̌tʳ) (left kv2∈̌t) = contradiction (proj₂ (∈⟶<< (∈̃→∈ kv2∈̌t))) (tri⟶asym compare (proj₁ (∈⟶<< (∈̃→∈ kv1∈̌tʳ))))
+  k→v' (right kv1∈̌tʳ) (right kv2∈̌t) = k→v' kv1∈̌tʳ kv2∈̌t
+
+  <⁺⟶< : ∀ {l u} → [ l ] <⁺ [ u ] → l < u
+  <⁺⟶< [l]<⁺[u] = [l]<⁺[u]
+
+  kv<k→kv∈t1 : ∀ {l1 u1 k kv h1 h2 H1} →
+            {v : Value k}
+            {t1 : Tree l1 [ k ] h1} →
+            {t2 : Tree [ k ] u1 h2} →
+            {bal1 : h1 ∼ h2 ⊔ H1} →
+            proj₁ kv < k →
+            kv ∈̌ node (k , v) t1 t2 bal1 → 
+            kv ∈̌ t1
+  kv<k→kv∈t1 kv<k here = ⊥-elim (irrefl P.refl kv<k)
+  kv<k→kv∈t1 kv<k (left kv∈̌node) = kv∈̌node
+  kv<k→kv∈t1 {kv = (k , v)} kv<k (right kv∈̌node) = contradiction (<⁺⟶< (∈̌⟶l<⁺k kv∈̌node)) (tri⟶asym compare kv<k)
+
+  k<kv→kv∈t2 : ∀ {l1 u1 k kv h1 h2 H1} →
+            {v : Value k}
+            {t1 : Tree l1 [ k ] h1} →
+            {t2 : Tree [ k ] u1 h2} →
+            {bal1 : h1 ∼ h2 ⊔ H1} →
+            k < proj₁ kv →
+            kv ∈̌ node (k , v) t1 t2 bal1 → 
+            kv ∈̌ t2
+  k<kv→kv∈t2 k<kv here = ⊥-elim (irrefl P.refl k<kv)
+  k<kv→kv∈t2 k<kv (right kv∈̌node) = kv∈̌node
+  k<kv→kv∈t2 {kv = (k , v)} k<kv (left kv∈̌node) = contradiction (<⁺⟶< (∈̌⟶k<⁺u kv∈̌node)) (tri⟶asym compare k<kv)
+
+  t1→t3 : ∀ {l1 l2 u1 u2 k kv h1 h2 h3 h4 H1 H2} →
+            {v : Value k}
+            {t1 : Tree l1 [ k ] h1} →
+            {t2 : Tree [ k ] u1 h2} →
+            {t3 : Tree l2 [ k ] h3} →
+            {t4 : Tree [ k ] u2 h4} →
+            {bal1 : h1 ∼ h2 ⊔ H1}
+            {bal2 : h3 ∼ h4 ⊔ H2} →
+            (kv ∈̌ node (k , v) t1 t2 bal1 → kv ∈̌ node (k , v) t3 t4 bal2) →
+            kv ∈̌ t1 → kv ∈̌ t3
+  t1→t3 ∈̌→∈̌ kv∈̌t1 = let kv∈̌node12 = left kv∈̌t1 in kv<k→kv∈t1 (<⁺⟶< (∈̌⟶k<⁺u kv∈̌t1)) (∈̌→∈̌ kv∈̌node12)
+
+  t2→t4 : ∀ {l1 l2 u1 u2 k kv h1 h2 h3 h4 H1 H2} →
+            {v : Value k}
+            {t1 : Tree l1 [ k ] h1} →
+            {t2 : Tree [ k ] u1 h2} →
+            {t3 : Tree l2 [ k ] h3} →
+            {t4 : Tree [ k ] u2 h4} →
+            {bal1 : h1 ∼ h2 ⊔ H1}
+            {bal2 : h3 ∼ h4 ⊔ H2} →
+            (kv ∈̌ node (k , v) t1 t2 bal1 → kv ∈̌ node (k , v) t3 t4 bal2) →
+            kv ∈̌ t2 → kv ∈̌ t4
+  t2→t4 ∈̌→∈̌ kv∈̌t2 = let kv∈̌node12 = right kv∈̌t2 in k<kv→kv∈t2 (<⁺⟶< (∈̌⟶l<⁺k kv∈̌t2)) (∈̌→∈̌ kv∈̌node12)
+
+  open import Relation.Binary.PropositionalEquality.Core
+  open import Relation.Binary.PropositionalEquality
+
+  ∈̃→v1≡v2 : ∀ { k l u h1 h2 h } → { v1 v2 : Value k } { t₁ : Tree l [ k ] h1 } { t₂ : Tree [ k ] u h2 } { bal : h1 ∼ h2 ⊔ h } → k ∼ v1 ∈̃ node (k , v2) t₁ t₂ bal → v1 ≡ v2
+  ∈̃→v1≡v2 here = refl
+  ∈̃→v1≡v2 (left x) = ⊥-elim (lemL x)
+  ∈̃→v1≡v2 (right x) = ⊥-elim (lemR x)
+    
+  ∈̃→v2≡v1 : ∀ { k l u h1 h2 h } → { v1 v2 : Value k } { t₁ : Tree l [ k ] h1 } { t₂ : Tree [ k ] u h2 } { bal : h1 ∼ h2 ⊔ h } → k ∼ v1 ∈̃ node (k , v2) t₁ t₂ bal → v2 ≡ v1
+  ∈̃→v2≡v1 here = refl
+  ∈̃→v2≡v1 (left x) = ⊥-elim (lemL x)
+  ∈̃→v2≡v1 (right x) = ⊥-elim (lemR x)
+
+
+  lemjl- : ∀ { k⃖₁ k⃗₁ h₁ k⃖₂ k⃗₂ h₂ } →
+           ( t₁ : Tree k⃖₁ k⃗₁ h₁ )
+           ( t₂ : Tree k⃖₂ k⃗₂ h₂ )
+           ( _ : ∀ {kv} → kv ∈̌ t₁ → kv ∈̌ t₂ )
+           ( _ : ∀ {kv} → kv ∈̌ t₂ → kv ∈̌ t₁ ) →
+           ( lst : List KV ) →
+           (toDiffList t₁) lst ≡ (toDiffList t₂) lst
+  lemjl- (leaf l<u) (leaf l<u₁) x₂ x₃ lst = P.refl
+  lemjl- (leaf l<u) (node k₁ t₂ t₃ bal) x₂ x₃ lst = contradiction (x₃ here) (λ ())
+  lemjl- (node k₁ t₁ t₂ bal) (leaf l<u) x₂ x₃ lst = contradiction (x₂ here) (λ ())
+  lemjl- (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) x₂ x₃ lst with compare (proj₁ k₁) (proj₁ k₂)
+  lemjl- (node ( k₁ , v₁ ) t₁ t₂ bal) (node ( k₂ , v₂ ) t₃ t₄ bal₁) kv∈̌t₁→kv∈̌t₂ kv∈̌t₂→kv∈̌t₁ lst | tri≈ k₁≮k₂ k₁≡k₂ k₂≮k₁ rewrite
+         k₁≡k₂
+         -- When the below lines are commented-out, then C-c C-, at goal 0 (below) reports the following types:
+            {-
+              kv∈̌t₂→kv∈̌t₁
+                       : {kv : Σ Key Value} →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₂) t₃ t₄ bal₁ →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₁) t₁ t₂ bal
+              kv∈̌t₁→kv∈̌t₂
+                       : {kv : Σ Key Value} →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₁) t₁ t₂ bal →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₂) t₃ t₄ bal₁
+            -}
+
+         -- However, uncommenting the below rewrite...
+         -- | ∈̃→v2≡v1 (kv∈̌t₁→kv∈̌t₂ here) -- equivalent to v₂ ≡ v₁
+         -- ... results in the following types being reported:
+            {-
+              kv∈̌t₂→kv∈̌t₁
+                       : {kv : Σ Key Value} →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₁) t₃ t₄ bal₁ →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₁) t₁ t₂ bal
+              kv∈̌t₁→kv∈̌t₂
+                       : {kv : Σ Key Value} →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₁) t₁ t₂ bal →
+                         proj₁ kv ∼ proj₂ kv ∈̃ node (k₂ , v₂) t₃ t₄ bal₁
+            -}
+
+         -- So, v₁ has been rewritten to v₂ in kv∈̌t₂→kv∈̌t₁ but not in kv∈̌t₁→kv∈̌t₂. Why?
+         = {!!}
+  lemjl- (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) kv∈̌t₁→kv∈̌t₂ kv∈̌t₂→kv∈̌t₁ lst | tri< k₁<k₂ k₁≢k₂ k₂≮k₁ = {!!}
+  lemjl- (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) kv∈̌t₁→kv∈̌t₂ kv∈̌t₂→kv∈̌t₁ lst | tri> k₁≮k₂ k₁≢k₂ k₂<k₁ = {!!}
+  
+{-
+  lemjl- : ∀ { k⃖₁ k⃗₁ h₁ k⃖₂ k⃗₂ h₂ } →
+           ( t₁ : Tree k⃖₁ k⃗₁ h₁ )
+           ( t₂ : Tree k⃖₂ k⃗₂ h₂ )
+           ( _ : ∀ {kv} → kv ∈̌ t₁ → kv ∈̌ t₂ )
+           ( _ : ∀ {kv} → kv ∈̌ t₂ → kv ∈̌ t₁ ) →
+           ( lst : List KV ) →
+           (toDiffList t₁) lst ≡ (toDiffList t₂) lst
+  lemjl- (leaf l<u) (leaf l<u₁) x₂ x₃ lst = P.refl
+  lemjl- (leaf l<u) (node k₁ t₂ t₃ bal) x₂ x₃ lst = contradiction (x₃ here) (λ ())
+  lemjl- (node k₁ t₁ t₂ bal) (leaf l<u) x₂ x₃ lst = contradiction (x₂ here) (λ ())
+  lemjl- (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) x₂ x₃ lst with compare (proj₁ k₁) (proj₁ k₂)
+  lemjl- (node ( k₁ , v₁ ) t₁ t₂ bal) (node ( k₂ , v₂ ) t₃ t₄ bal₁) kv∈̌t₁→kv∈̌t₂ kv∈̌t₂→kv∈̌t₁ lst | tri≈ k₁≮k₂ k₁≡k₂ k₂≮k₁ rewrite
+         k₁≡k₂ -- |
+         -- ∈̃→v1≡v2 (kv∈̌t₂→kv∈̌t₁ here) |
+         -- | ∈̃→v2≡v1 (kv∈̌t₁→kv∈̌t₂ here)
+         -- lemjl- t₂ t₄ (t2→t4 kv∈̌t₁→kv∈̌t₂) {!!} lst -- (t2→t4 kv∈̌t₂→kv∈̌t₁) -- subst (∈̃→v1≡v2 (kv∈̌t₂→kv∈̌t₁ here)) kv∈̌t₂→kv∈̌t₁
+         = {!!} -- lemjl- t₁ t₃ {!!} {!!} ((k₂ , v₂) L.∷ toDiffList t₄ lst)
+  -- (kv∈̌t₁→kv∈̌t₂ here) -- k₂ ∼ v₁ ∈̃ node (k₂ , v₂) t₃ t₄ bal₁
+  -- (kv∈̌t₂→kv∈̌t₁ here) -- k₂ ∼ v₂ ∈̃ node (k₂ , v₁) t₁ t₂ bal
+  -- k→v' (kv∈̌t₁→kv∈̌t₂ here) (kv∈̌t₂→kv∈̌t₁ here)
+
+-- {-k→v'-}  {! (lemjl- t₂ t₄ (? kv∈̌t₁→kv∈̌t₂) (? kv∈̌t₂→kv∈̌t₁) lst)!}
+  -- subst {!!} (lemjl- t₂ t₄ ({!!} kv∈̌t₁→kv∈̌t₂) ({!!} kv∈̌t₂→kv∈̌t₁) lst) {!!} where
+  lemjl- (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) kv∈̌t₁→kv∈̌t₂ kv∈̌t₂→kv∈̌t₁ lst | tri< k₁<k₂ k₁≢k₂ k₂≮k₁ = {!!}
+  lemjl- (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) kv∈̌t₁→kv∈̌t₂ kv∈̌t₂→kv∈̌t₁ lst | tri> k₁≮k₂ k₁≢k₂ k₂<k₁ = {!!}
+-}
+  
+  lemjl+ : ∀ { k⃖₁ k⃗₁ h₁ k⃖₂ k⃗₂ h₂ } →
+           ( t₁ : Tree k⃖₁ k⃗₁ h₁ )
+           ( t₂ : Tree k⃖₂ k⃗₂ h₂ )
+           ( _ : ∀ {kv} → proj₁ kv ∼ proj₂ kv ∈̃ t₁ → proj₁ kv ∼ proj₂ kv ∈̃ t₂ )
+           ( _ : ∀ {kv} → proj₁ kv ∼ proj₂ kv ∈̃ t₂ → proj₁ kv ∼ proj₂ kv ∈̃ t₁ ) →
+           (toDiffList t₁) L.[] ≅ (toDiffList t₂) L.[]
+  lemjl+ (leaf l<u) (leaf l<u₁) x₂ x₃ = H.refl
+  lemjl+ (leaf l<u) (node k₁ t₂ t₃ bal) x₂ x₃ = contradiction (x₃ here) (λ ())
+  lemjl+ (node k₁ t₁ t₂ bal) (leaf l<u) x₂ x₃ = contradiction (x₂ here) (λ ())
+  lemjl+ (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) x₂ x₃ with compare (proj₁ k₁) (proj₁ k₂)
+  lemjl+ (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) x₂ x₃ | tri< a ¬b ¬c = {!!}
+  lemjl+ (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) x₂ x₃ | tri≈ ¬a b ¬c = {!!}
+  lemjl+ (node k₁ t₁ t₂ bal) (node k₂ t₃ t₄ bal₁) x₂ x₃ | tri> ¬a ¬b c = {!!}
+
+  joinˡ⁺! : ∀ {l u hˡ hʳ h} →
+            (k : KV) →
+            (tl+ : (∃ λ i → Tree l [ proj₁ k ] (i ⊕ hˡ))) →
+            (tr : Tree [ proj₁ k ] u hʳ) →
+            (bal : hˡ ∼ hʳ ⊔ h) →
+            ∃ λ i → ∃! _≡_ λ (t : Tree l u (i ⊕ (1 + h))) →
+            (∀ (k' : Key) (v' : Value k') →
+            (  (k' ∼ v' ∈̃ proj₂ tl+ → k' ∼ v' ∈̃ t)
+             × (k' ∼ v' ∈̃ tr → k' ∼ v' ∈̃ t)
+             × (k' ∼ v' ∈̃ t → (k' ∼ v' ∈̃ proj₂ tl+) ⊎ (k' ∼ v' ∈̃ tr) ⊎ (k' , v' ≡ k) )
+             × (proj₁ k ∼ proj₂ k ∈̃ t)
+             ))
+  joinˡ⁺! k₆ (1# , node k₂ t₁
+                    (node k₄ t₃ t₅ bal)
+                                ∼+) t₇ ∼-  = 0# , node k₄
+                                                        (node k₂ t₁ t₃ (max∼ bal))
+                                                        (node k₆ t₅ t₇ (∼max bal))
+                                                        ∼0 , (λ k' v' → proof , (λ x → right (right x)) , proof2 , right here) , (λ x → {!!})
+             where
+    proof : ∀ {k' k₂ t₁l t₁h k₄ t₃h k₆ t₅h t₇u bal}
+              {v' : Value k'}
+              {t₁ : Tree t₁l [ proj₁ k₂ ] t₁h}
+              {t₃ : Tree [ proj₁ k₂ ] [ proj₁ k₄ ] t₃h}
+              {t₅ : Tree [ proj₁ k₄ ] [ proj₁ k₆ ] t₅h}
+              {t₇ : Tree [ proj₁ k₆ ] t₇u t₁h}  →
+              k' ∼ v' ∈̃ node k₂ t₁ (node k₄ t₃ t₅ bal) ∼+ →
+              k' ∼ v' ∈̃ node k₄ (node k₂ t₁ t₃ (max∼ bal)) (node k₆ t₅ t₇ (∼max bal)) ∼0
+    proof here = left here
+    proof (left x) = left (left x)
+    proof (right here) = here
+    proof (right (left x)) = left (right x)
+    proof (right (right x)) = right (left x)
+
+    proof2 : ∀ {k' k₂ t₁l t₁h k₄ t₃h k₆ t₅h t₇u bal}
+              {v' : Value k'}
+              {t₁ : Tree t₁l [ proj₁ k₂ ] t₁h}
+              {t₃ : Tree [ proj₁ k₂ ] [ proj₁ k₄ ] t₃h}
+              {t₅ : Tree [ proj₁ k₄ ] [ proj₁ k₆ ] t₅h}
+              {t₇ : Tree [ proj₁ k₆ ] t₇u t₁h}  →
+             k' ∼ v' ∈̃ node k₄ (node k₂ t₁ t₃ (max∼ bal)) (node k₆ t₅ t₇ (∼max bal)) ∼0 →
+             k' ∼ v' ∈̃ node k₂ t₁ (node k₄ t₃ t₅ bal) ∼+ ⊎ k' ∼ v' ∈̃ t₇ ⊎ (k' , v' ≡ k₆)
+    proof2 here = inj₁ (right here)
+    proof2 (left here) = inj₁ here
+    proof2 (left (left x)) = inj₁ (left x)
+    proof2 (left (right x)) = inj₁ (right (left x))
+    proof2 (right here) = inj₂ (inj₂ P.refl)
+    proof2 (right (left x)) = inj₁ (right (right x))
+    proof2 (right (right x)) = inj₂ (inj₁ x)
+    
+  joinˡ⁺! k₄ (1# , node k₂ t₁ t₃ ∼-) t₅ ∼-  = 0# , node k₂ t₁ (node k₄ t₃ t₅ ∼0) ∼0 , {!!}
+  joinˡ⁺! k₄ (1# , node k₂ t₁ t₃ ∼0) t₅ ∼-  = 1# , node k₂ t₁ (node k₄ t₃ t₅ ∼-) ∼+ , {!!}
+  joinˡ⁺! k₂ (1# , t₁)               t₃ ∼0  = 1# , node k₂ t₁ t₃ ∼- , {!!}
+  joinˡ⁺! k₂ (1# , t₁)               t₃ ∼+  = 0# , node k₂ t₁ t₃ ∼0 , {!!}
+  joinˡ⁺! k₂ (0# , t₁)               t₃ bal = 0# , node k₂ t₁ t₃ bal , {!!}
+
+------------------------------------------------------------------------
+-- Types and functions with hidden indices
+
+data Tree : Set (𝑼⟨Key⟩ ⊔ 𝑼⟨Value⟩ ⊔ 𝑼⟨<⟩) where
+  tree : let open Extended-key in
+         ∀ {h} → Indexed.Tree ⊥⁺ ⊤⁺ h → Tree
+
+empty : Tree
+empty = tree (Indexed.empty _)
+
+singleton : (k : Key) → Value k → Tree
+singleton k v = tree (Indexed.singleton k v _)
+
+insert : (k : Key) → Value k → Tree → Tree
+insert k v (tree t) = tree $ proj₂ $ Indexed.insert k v t _
+
+insertWith : (k : Key) → Value k → (Value k → Value k → Value k) →
+             Tree → Tree
+insertWith k v f (tree t) = tree $ proj₂ $ Indexed.insertWith k v f t _
+
+delete : Key → Tree → Tree
+delete k (tree t) = tree $ proj₂ $ Indexed.delete k t
+
+lookup : (k : Key) → Tree → Maybe (Value k)
+lookup k (tree t) = Indexed.lookup k t
+
+map : ({k : Key} → Value k → Value k) → Tree → Tree
+map f (tree t) = tree $ Indexed.map f t
+
+infix 4 _∈?_
+
+_∈?_ : Key → Tree → Bool
+k ∈? t = is-just (lookup k t)
+
+headTail : Tree → Maybe (KV × Tree)
+headTail (tree (Indexed.leaf _)) = nothing
+headTail (tree {h = suc _} t)    with Indexed.headTail t
+... | (k , _ , _ , t′) = just (k , tree (Indexed.castˡ _ t′))
+
+initLast : Tree → Maybe (Tree × KV)
+initLast (tree (Indexed.leaf _)) = nothing
+initLast (tree {h = suc _} t)    with Indexed.initLast t
+... | (k , _ , _ , t′) = just (tree (Indexed.castʳ t′ _) , k)
+
+-- The input does not need to be ordered.
+
+fromList : List KV → Tree
+fromList = List.foldr (uncurry insert) empty
+
+-- Returns an ordered list.
+
+toList : Tree → List KV
+toList (tree t) = DiffList.toList (Indexed.toDiffList t)
+
+-- Naive implementations of union.
+
+unionWith : (∀ {k} → Value k → Value k → Value k) →
+            -- Left → right → result.
+            Tree → Tree → Tree
+unionWith f t₁ t₂ =
+  List.foldr (λ { (k , v) → insertWith k v f }) t₂ (toList t₁)
+
+-- Left-biased.
+
+union : Tree → Tree → Tree
+union = unionWith const
+
+unionsWith : (∀ {k} → Value k → Value k → Value k) → List Tree → Tree
+unionsWith f ts = List.foldr (unionWith f) empty ts
+
+-- Left-biased.
+
+unions : List Tree → Tree
+unions = unionsWith const
+

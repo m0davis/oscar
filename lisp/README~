@@ -1,0 +1,33 @@
+loader
+	oscar
+		tool
+		syntax
+			setf *constant-transformation*
+			setf *bracket-transformation*
+		hypergraph
+	reason
+	rule
+		setf simp
+		setf (reason-function simp)
+		...
+		setf *forwards-logical-reasons*
+		setf adjunction
+		set-conclusions-function adjunction
+		setf (reason-function adjunction)
+		...
+		def-backwards-reason VACUOUS-CONDITION
+		...
+		setf *backwards-logical-reasons*
+	argument
+	problem
+	problem-example
+		setf *problems*
+	perception-cause
+		setf *temporal-reason-decay*
+	perception-cause-example
+
+
+
+
+defun one-one-match
+defun initialize-reasoner
