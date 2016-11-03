@@ -62,6 +62,10 @@ module M {a} {A : Set a} {B : Set a} (IsVariable : B → Set) (DecIsVariable : (
   pure x ⋐? free g ys  = {!!}
   free x x₁ ⋐? free x₂ x₃ = {!!}
 -}
+record _≡'_ {a} {A : Set a} (x : A) (x' : A) : Set a where
+  inductive
+  field
+    refl' : x ≡' x'
 
 module M1 {a} {A : Set a} {B : Set a} (IsVariable : B → Bool) {C : Set a} (DecC : (c1 c2 : C) → Dec (c1 ≡ c2)) (A→C : A → C) (B→C : B → C) where
   data _⋐_ : (exp : Free List A) (pat : Free List B) → Set (suc a) where
