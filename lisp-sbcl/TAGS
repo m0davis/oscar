@@ -1,1179 +1,1044 @@
 
-argument.lisp,595
-(defun print-argument 3,74
-(defstruct (argument 10,312
-(defun hypernode-arguments 20,599
-(defun independent-of 54,2037
-(defun show-arguments 62,2414
-(defun hyperlink-strength+ 122,5026
-(defun find-defeating-arguments 126,5171
-(defun deductive-argument 176,7677
-(defun display-argument 179,7789
-(defun hypernode-basis-in-arg 227,10150
-(defun format-argument 240,11009
-(defun print-formatted-argument 292,13204
-(defun sup-order 331,15234
-(defun print-supposition 334,15324
-(defun clear-indent 347,15816
-(defun display-arguments 351,15933
-(defun print-argument-relations 360,16301
-
-defstruct.lisp,711
-(defstruct (argument 1,0
-(defstruct (hyperlink 11,289
-(defstruct (hyper-defeat-link 34,1448
-(defstruct (hypernode 43,1930
-(defstruct (d-node 94,4850
-(defstruct (c-list 106,5349
-(defstruct (query 120,5803
-(defstruct (instantiated-premise 136,6733
-(defstruct (interest-scheme 150,7444
-(defstruct (interest-link 157,7715
-(defstruct (interest 181,8434
-(defstruct (i-list 220,9983
-(defstruct (reason 231,10315
-(defstruct (forwards-premise 249,10862
-(defstruct (backwards-premise 259,11165
-(defstruct (forwards-reason 268,11499
-(defstruct (backwards-reason 270,11623
-(defstruct (inference-queue-node 278,12028
-(defstruct (goal 286,12415
-(defstruct (desire 295,12831
-(defstruct (percept 303,13185
-
-hypergraph.lisp,1706
-(defvar *j-trace* 6,218
-(defvar *s-trace* 11,329
-(defvar *safe-trace* 16,438
-(defun ultimate-target 24,676
-(defun defeat-paths 29,931
-(defun defeat-loops 67,3074
-(defun clear-hyperlink-defeat-loops 72,3268
-(defun clear-criticalities 75,3379
-(defun critical-link 79,3581
-(defun sigma-defeat-loop 97,4290
-(defun hereditarily-critical-link 101,4520
-(defun critical-hyperlinks 107,4765
-(defun convergent-support-path 146,6690
-(defun safe-support-path 168,7840
-(defun minimal-safe-arguments 208,10260
-(defun subsidiary-hyperlinks-for-node 224,11348
-(defun subsidiary-hyperlinks-for-link 250,12876
-(defun clear-graph-memories 303,16279
-(defun compute-new-hypergraphs 308,16510
-(defun split-hypergraph 312,16641
-(defun display-split 338,18212
-(defun add-link-to-critical-graph 379,20464
-(defun add-node-to-critical-graph 427,23777
-(defun add-hyper-defeat-link-to-critical-graph 439,24445
-(defun display-hypergraphs 468,26153
-(defun update-beliefs 514,27738
-(defun compute-hypernode-degrees-of-justification 545,29165
-(defun reset-memories 551,29435
-(defun compute-affected-justifications 570,30308
-(defun link-descendant 583,30927
-(defun independent-link-value 592,31408
-(defun independent-hypernode-value 600,31874
-(defun independent-hyper-defeat-link-value 608,32369
-(defun initial-node 612,32540
-(defun princ-sigma 622,32944
-(defun record-dependencies 636,33746
-(defun compute-hypernode-justification 651,34758
-(defun last-link 729,39743
-(defun ~ 740,40068
-(defun compute-link-justification 746,40345
-(defun compute-hyper-defeat-link-justification 887,50435
-(defun display-belief-changes 936,53412
-(defun display-hypergraph 1047,59913
-(defun critical-set 1073,61425
-
-loader.lisp,2029
-(defvar *package-name* 44,3476
-(defvar *temporal-projection* 46,3526
-(defvar *causal-implication* 47,3561
-(defvar *temporal-decay* 48,3595
-(defvar *temporal-decay-minimum* 49,3627
-(defvar *pause* 50,3697
-(defvar *time-limit* 51,3718
-(defvar *syntax-loaded* 52,3742
-(defvar *prob-compiler-loaded* 53,3771
-(defvar *problems-loaded* 54,3807
-(defvar *tools-loaded* 55,3838
-(defvar *premises* 56,3866
-(defvar *ultimate-epistemic-interests* 57,3890
-(defvar *permanent-ultimate-epistemic-interests* 58,3934
-(defvar *fixed-ultimate-epistemic-interests* 59,3988
-(defvar *forwards-rules* 60,4038
-(defvar *backwards-rules* 61,4068
-(defvar *auxiliary-forwards-rules* 62,4099
-(defvar *auxiliary-backwards-rules* 63,4139
-(defvar *optative-dispositions* 64,4180
-(defvar *doxastic-optative-dispositions* 65,4217
-(defvar *trees-loaded* 66,4263
-(defvar *display-inference-queue* 67,4291
-(defvar *display?* 68,4330
-(defvar *trace* 69,4354
-(defvar *d-trace* 70,4375
-(defvar *start-trace* 71,4398
-(defvar *start-display* 72,4425
-(defvar *proofs?* 73,4454
-(defvar *use-logic* 74,4477
-(defvar *use-reductio* 75,4500
-(defvar *log-on* 76,4526
-(defvar *priority-interests* 77,4548
-(defvar *blocked-conclusions* 78,4582
-(defvar *answered-discount* 79,4617
-(defvar *base-priority* 80,4649
-(defvar *reductio-interest* 81,4677
-(defvar *reductio-discount* 82,4710
-(defvar *quantifier-discount* 83,4743
-(defvar *EI-adjustment* 84,4778
-(defvar *skolem-multiplier* 85,4807
-(defvar *concluded-interest-priority* 86,4839
-(defvar *forwards-substantive-reasons* 87,4883
-(defvar *backwards-substantive-reasons* 88,4927
-(defvar *environmental-input* 89,4972
-(defvar *executable-operations* 90,5007
-(defvar *assignment-tree-dialog* 91,5044
-(defvar *assignment-tree-subview* 92,5082
-(defvar *monitor-assignment-tree* 93,5121
-(defvar *deductive-only* 94,5160
-(defvar *affected-nodes* 95,5190
-(defvar *graphics-on* 96,5220
-(defvar *graph-log* 97,5247
-(defvar *graphics-pause* 98,5272
-(defvar *graph-interests* 99,5302
-
-oscar.lisp,21541
-(defvar *package-name* 46,3606
-(defvar *temporal-projection* 48,3656
-(defvar *causal-implication* 49,3691
-(defvar *temporal-decay* 50,3725
-(defvar *temporal-decay-minimum* 51,3756
-(defvar *pause* 52,3826
-(defvar *time-limit* 53,3847
-(defvar *syntax-loaded* 54,3871
-(defvar *prob-compiler-loaded* 55,3900
-(defvar *problems-loaded* 56,3936
-(defvar *tools-loaded* 57,3967
-(defvar *menus-loaded* 58,3995
-(defvar *hypergraphs-loaded* 59,4023
-(defvar *premises* 60,4057
-(defvar *ultimate-epistemic-interests* 61,4081
-(defvar *permanent-ultimate-epistemic-interests* 62,4125
-(defvar *fixed-ultimate-epistemic-interests* 63,4179
-(defvar *forwards-rules* 64,4229
-(defvar *backwards-rules* 65,4259
-(defvar *auxiliary-forwards-rules* 66,4290
-(defvar *auxiliary-backwards-rules* 67,4330
-(defvar *optative-dispositions* 68,4371
-(defvar *doxastic-optative-dispositions* 69,4408
-(defvar *trees-loaded* 70,4454
-(defvar *display-inference-queue* 71,4482
-(defvar *display?* 72,4521
-(defvar *trace* 73,4545
-(defvar *d-trace* 74,4566
-(defvar *start-trace* 75,4589
-(defvar *start-display* 76,4616
-(defvar *proofs?* 77,4645
-(defvar *use-logic* 78,4668
-(defvar *use-reductio* 79,4691
-(defvar *log-on* 80,4717
-(defvar *priority-interests* 81,4739
-(defvar *blocked-conclusions* 82,4773
-(defvar *answered-discount* 83,4808
-(defvar *base-priority* 84,4840
-(defvar *reductio-interest* 85,4868
-(defvar *reductio-discount* 86,4901
-(defvar *quantifier-discount* 87,4934
-(defvar *EI-adjustment* 88,4969
-(defvar *skolem-multiplier* 89,4998
-(defvar *concluded-interest-priority* 90,5030
-(defvar *forwards-substantive-reasons* 91,5074
-(defvar *backwards-substantive-reasons* 92,5118
-(defvar *environmental-input* 93,5163
-(defvar *executable-operations* 94,5198
-(defvar *deductive-only* 95,5235
-(defvar *graphics-on* 96,5265
-(defvar *graph-log* 97,5292
-(defvar *graphics-pause* 98,5317
-(defvar *graph-interests* 99,5347
-(defvar *comparison-log* 100,5378
-(defun print-sequent 110,5621
-(defstruct (hypernode 113,5764
-(defstruct (hyperlink 175,9234
-(defun hyperlink 206,10811
-(defstruct (hyper-defeat-link 212,11008
-(defun build-hyper-defeat-link 229,12057
-(defun hyper-defeat-link 238,12422
-(defun hypernode 242,12551
-(defun nf 246,12662
-(defun adjust-for-time 251,12778
-(defun adjust-for-decay 257,13035
-(defun current-maximal-degree-of-justification 260,13155
-(defun current-degree-of-justification 267,13418
-(defun compute-old-degree-of-justification 274,13657
-(defun compute-discounted-node-strength 279,13919
-(defun deductive-node 284,14121
-(defun hypernode-consequences 288,14261
-(defun subsumes 291,14358
-(defun hypernode-defeatees 295,14546
-(defun hyperlink-hypernode-defeaters 298,14666
-(defstruct (d-node 304,14924
-(defun d-node 322,15637
-(defun formula-code* 325,15733
-(defun formula-code 357,17210
-(defun prinp-test 362,17368
-(defstruct (c-list 365,17497
-(defun notational-variant 384,18146
-(defun processed-c-list-for 403,19034
-(defun processed-nodes-for 406,19170
-(defun display-conclusion 410,19297
-(defun display-conclusions 419,19652
-(defun display-conclusions-by-supposition 437,20334
-(defun display-c-lists 472,21906
-(defun display-processed-c-lists 492,22779
-(defun ?-variables 511,23594
-(defun search-d-nodes 517,23847
-(defun pursue-d-node-for 529,24348
-(defun d-node-for 537,24615
-(defstruct (interest 541,24733
-(defstruct (i-list 587,26614
-(defstruct (query 605,27232
-(defun var-kind 629,28509
-(defun interest-variable 631,28553
-(defun conclusion-variable 634,28632
-(defun make-interest-variable 637,28713
-(defun make-conclusion-variable 643,28858
-(defun convert-interest-variables 649,29047
-(defun convert-conclusion-variables 660,29478
-(defun convert-unifier-variables 672,30009
-(defun formula-hypernode-variables 686,30635
-(defun make-skolem-e-function 691,30868
-(defun make-skolem-i-function 696,30988
-(defun make-skolem-e-constant 701,31108
-(defun make-skolem-i-constant 706,31228
-(defun skolem-function 711,31348
-(defun skolem-functions 714,31437
-(defun skolem-free 721,31678
-(defun ?-query-p 728,31902
-(defun ?-matrix 732,32044
-(defun whether-query-p 738,32233
-(defun query 741,32318
-(defun show-query 745,32433
-(defun show-queries 750,32557
-(defun inclusive-hypernode-ancestors 758,32753
-(defun ancestral-links 761,32840
-(defun display-query 764,32949
-(defun display-queries 801,35106
-(defun instance-of 810,35356
-(defun answers 813,35462
-(defun complexity 819,35653
-(defstruct (inference-queue-node843,36860
-(defun i-preferred 858,37446
-(defun query-preference 862,37645
-(defun queue-query-for-interest 872,38048
-(defstruct (instantiated-premise 886,38671
-(defstruct (interest-scheme 907,39702
-(defun interest-scheme 921,40364
-(defun instantiated-premise 932,40729
-(defmacro is-derived-interest-schemes 942,41039
-(defstruct (interest-link 944,41111
-(defun link 977,42348
-(defun display-links 980,42442
-(defun display-link 983,42519
-(defun reverse-match 993,43033
-(defun one-one-match 998,43210
-(defun i-list-for 1010,43616
-(defun interests-for 1024,44204
-(defun in-interest 1030,44376
-(defun adopt-ultimate-interest 1036,44592
-(defun sequential-sublis 1045,44962
-(defun match-sequential-sublis 1051,45208
-(defun parallelize-match 1056,45396
-(defun merge-sequential-matches 1064,45654
-(defun variable-correspondence 1072,46044
-(defun mgu 1111,47858
-(defun unifier* 1148,49414
-(defun unifier 1181,51039
-(defun interest 1190,51480
-(defun ni-unifier 1193,51569
-(defun hypernode-unifier 1197,51754
-(defun reductio-unifier 1201,51950
-(defun permutations 1205,52151
-(defun merge-matches* 1232,53331
-(defun set-mgu 1243,53709
-(defun set-unifier 1264,54569
-(defun constrained-assignment 1305,56260
-(defun constrained-assignment 1322,56827
-(defun matching-i-lists-for 1331,57167
-(defun matching-c-lists-for 1339,57514
-(defun index-interest 1348,57953
-(defun store-interest 1359,58502
-(defun fetch-I-list-for 1372,59137
-(defun store-interest-at-d-node 1377,59300
-(defun store-interest-at-new-d-node 1406,60915
-(defun find-matching-i-lists-for 1429,62005
-(defun pursue-i-lists-for 1433,62201
-(defun index-interest-at-new-nodes 1441,62569
-(defun store-interest-with-c-lists 1452,63143
-(defun appropriate-for-reductio-supposition 1486,64978
-(defun store-hypernode 1497,65311
-(defun index-hypernode 1505,65731
-(defun fetch-c-list-for 1517,66276
-(defun store-hypernode-at-d-node 1521,66431
-(defun store-hypernode-at-new-d-node 1551,68061
-(defun find-matching-c-lists-for 1579,69311
-(defun pursue-c-lists-for 1583,69507
-(defun index-hypernode-at-new-nodes 1591,69875
-(defun c-list-for 1602,70440
-(defun nodes-for 1607,70566
-(defun pursue-c-list-for 1611,70673
-(defun store-hypernode-with-c-list 1619,70983
-(defun appropriate-for-reductio-interest 1627,71327
-(defun appropriate-for-contradictors 1642,72026
-(defun cancelled-c-list-for 1654,72414
-(defun store-processed-node 1657,72494
-(defun ? 1663,72769
-(defun degree-of-interest* 1684,73915
-(defun interest-sequent* 1687,74021
-(defstruct (reason 1696,74445
-(defun reason 1721,75173
-(defstruct (forwards-premise1727,75398
-(defstruct (backwards-premise1750,76295
-(defun premise-hypernode-specifier 1767,76831
-(defun clue? 1771,77024
-(defun construct-forwards-premise 1775,77167
-(defmacro cfp 1783,77366
-(defun construct-backwards-premise 1785,77443
-(defmacro cbp 1793,77681
-(defstruct (forwards-reason 1795,77754
-(defun is-inference 1798,77879
-(defun is-desire 1800,77969
-(defun is-percept 1802,78053
-(defun reason-ips 1811,78300
-(defun reason-iss 1819,78563
-(defun display-d-node 1826,78767
-(defun display-discrimination-node 1865,80496
-(defun display-discrimination-net 1912,82913
-(defun ddn 1919,83132
-(defun d-node-ancestors 1921,83221
-(defun d-node-descendants 1925,83332
-(defun show-d-node 1931,83612
-(defun show-interest 1936,83804
-(defun show-hypernode 1942,84051
-(defun show-reason 1949,84370
-(defun display-hypernode 1968,85213
-(defun display-hyperlink 2009,87255
-(defun display-unsupported-hypernode 2064,89939
-(defun display-interest 2081,90791
-(defun display-discharge-condition 2133,93188
-(defun display-interests 2140,93501
-(defun interest-ancestor-chains 2205,96386
-(defun right-branches 2220,97011
-(defun good-interest-ancestor-chains 2233,97452
-(defun derived-interests 2263,99057
-(defun display-interests-by-supposition 2266,99153
-(defun display-i-lists 2308,101030
-(defstruct (backwards-reason 2341,102522
-(defun queue-supposition 2353,103209
-(defun queue-non-reductio-supposition2378,104642
-(defun convert-from-deductive-only 2430,107440
-(defun subsuming-supposition 2447,108069
-(defun formula-complexity 2467,108835
-(defun sequent-complexity 2471,108960
-(defun sequent-complexity 2489,109701
-(defun premise-preference 2511,110750
-(defstruct (goal 2514,110837
-(defun print-goal 2524,111254
-(defstruct (desire 2530,111416
-(defun print-desire 2539,111771
-(defun goal-generating-interest 2545,111943
-(defstruct (percept 2549,112087
-(defun print-percept 2555,112245
-(defun desire-preference 2562,112497
-(defun percept-preference 2566,112677
-(defun discharged? 2569,112786
-(defun defeater-priority 2575,113043
-(defun interest-preference 2581,113306
-(defun retrieved-interest-priority 2586,113521
-(defun interest-link-priority 2589,113610
-(defun concluded-interest-priority 2599,114101
-(defun convert-reductio-supposition 2605,114342
-(defun trace-on 2629,115485
-(defun trace-off 2630,115542
-(defun trace-from 2631,115600
-(defun display-on 2632,115673
-(defun display-off 2633,115715
-(defun display-from 2634,115810
-(defun proof-on 2635,115905
-(defun proof-off 2636,115944
-(defun logic-on 2637,115986
-(defun logic-off 2638,116051
-(defun reductio-on 2639,116121
-(defun reductio-off 2640,116189
-(defun log-on 2641,116239
-(defun log-off 2642,116275
-(defun IQ-on 2643,116314
-(defun IQ-off 2644,116366
-(defun graph-log-on 2645,116421
-(defun graph-log-off 2646,116466
-(defun graphics-pause-on 2651,116715
-(defun graphics-pause-off 2652,116770
-(defun OSCAR 2663,117441
-(defun initialize-reasoner 2684,118158
-(defun initialize-discrimination-net 2749,120569
-(defun premise-code 2767,121533
-(defun premise-code* 2773,121728
-(defun reason-code 2802,123195
-(defun reason-code* 2807,123319
-(defun compute-forwards-reason-d-nodes 2837,124813
-(defun store-forwards-reason 2845,125213
-(defun store-forwards-reason-at-d-node 2850,125422
-(defun index-forwards-reason 2864,125904
-(defun store-forwards-reason-at-new-d-node 2878,126582
-(defun index-forwards-reason-at-new-nodes2887,127001
-(defun def-instantiator 2899,127586
-(defun set-def-binding 2919,128285
-(defun store-instantiated-premise2928,128615
-(defun store-instantiated-premise-at-d-node2963,130688
-(defun index-instantiated-premise2992,131996
-(defun store-instantiated-premise-at-new-d-node3015,133118
-(defun index-instantiated-premise-at-new-nodes3026,133669
-(defun compute-backwards-reason-d-nodes 3042,134514
-(defun store-backwards-reason-at-d-node 3048,134785
-(defun store-backwards-reason 3058,135260
-(defun index-backwards-reason 3063,135448
-(defun store-backwards-reason-at-new-d-node 3077,136091
-(defun index-backwards-reason-at-new-nodes 3086,136496
-(defun construct-interest-scheme3097,137058
-(defun display-interest-scheme 3196,142722
-(defun store-interest-scheme 3208,143384
-(defun store-interest-scheme-at-d-node 3213,143591
-(defun index-interest-scheme 3218,143777
-(defun store-interest-scheme-at-new-d-node 3231,144451
-(defun index-interest-scheme-at-new-nodes 3240,144873
-(defun make-oscar-window 3255,145649
-(defun draw-n 3256,145682
-(defun flash-nodes 3257,145730
-(defun hypernode-position 3258,145787
-(defun interest-position 3259,145843
-(defun hypernode-color 3260,145898
-(defun draw-just-node 3261,145951
-(defun draw-just-undefeated-node 3262,146011
-(defun draw-just-defeated-node 3263,146078
-(defun pause-graphics 3264,146143
-(defun draw-i 3265,146169
-(defun draw-interest 3266,146213
-(defun speak-text 3267,146268
-(defun pranc-to-string 3268,146312
-(defun monitor-assignment-tree 3269,146361
-(defun queue-premise 3272,146470
-(defun adopt-interest-in-premise-defeater 3322,148777
-(defun queue-desire 3357,150567
-(defun queue-percept 3411,153445
-(defun think 3444,155022
-(defun test 3501,157963
-(defun pause-on 3566,161016
-(defun pause-off 3567,161053
-(defun display-test-log 3569,161094
-(defun rerun 3650,165558
-(defun run 3709,168575
-(defun run-reasoning-problem 3768,171591
-(defun test* 3786,172094
-(defun test&load 3792,172272
-(defun test&compare 3799,172487
-(defun run-reasoning-problem* 3812,173102
-(defun COGITATE0 3830,173810
-(defun COGITATE 3849,174589
-(defun try 3919,178318
-(defun try-interest 3943,179318
-(defun compute-relevant-nodes 3947,179448
-(defun add-relevant-nodes 3952,179587
-(defun display-reasoning 3960,179973
-(defun display-reasoning-for 4019,183163
-(defun display-reasoning-fully 4074,185817
-(defun display-peripherals 4140,189415
-(defun generated-nodes-and-interests 4227,194565
-(defun process-unprocessed-node 4241,195272
-(defun process-unprocessed-interest 4278,197467
-(defun store-interest-record 4300,198781
-(defun display-node4329,200171
-(defun display-used-interest4479,208393
-(defun strongly-discharging-node 4599,214624
-(defun full-display-node 4629,215788
-(defun full-display-used-interest 4666,217708
-(defun relevant-nodes 4696,219424
-(defun strictly-relevant-nodes 4708,220002
-(defun compute-strictly-relevant-nodes 4714,220215
-(defun add-strictly-relevant-nodes 4719,220390
-(defun not-strictly-relevant-nodes 4726,220730
-(defun think-or-die 4731,220996
-(defun display-inference-queue 4785,223680
-(defun reason-backwards-from-query 4803,224611
-(defun reason-backwards-from-whether-query 4815,225111
-(defun reason-backwards-from-simple-query 4960,233293
-(defun ?-positive-instruction 5035,237224
-(defun reason-backwards-from-?-query 5040,237367
-(defun reason-backwards-from 5100,240492
-(defun apply-backwards-reasons 5115,241248
-(defun reason-backwards-from-dominant-reason-nodes 5126,241900
-(defun reason-backwards-from-reason-node 5133,242338
-(defun apply-degenerate-backwards-reasons 5152,243552
-(defun reason-degenerately-backwards-from-dominant-reason-nodes5161,244108
-(defun reason-degenerately-backwards-from-reason-node 5170,244604
-(defun reason-substantively-from-backwards-reason 5189,245899
-(defun applied-forwards-reason-strength 5208,246960
-(defun MAKE-REDUCTIO-SUPPOSITION 5220,247698
-(defun augment-inherited-non-reductio-suppositions 5261,249912
-(defun non-reductio-interest-supposition 5281,250920
-(defun make-new-reductio-supposition 5302,251799
-(defun convert-non-reductio-sup 5351,254337
-(defun recompute-reductio-ancestors 5361,254878
-(defun readopt-interest 5373,255576
-(defun discharge-interest-scheme 5383,255966
-(defun reason-from-interest-scheme 5394,256631
-(defun make-backwards-inference5458,260548
-(defun remove-double-negation 5478,261770
-(defun construct-initial-interest-link5491,262205
-(defun construct-interest-link5599,269075
-(defun link-interests 5685,274564
-(defun display-instantiated-premise 5690,274744
-(defun list-interest-schemes 5701,275215
-(defun is 5707,275488
-(defun list-instantiated-premises 5710,275579
-(defun ip 5716,275862
-(defun analyze-interest-schemes 5719,275958
-(defun analyze-instantiated-premises 5731,276399
-(defun analyze-schemes 5743,276854
-(defun compute-link-interest5748,277022
-(defun subsumes-basis 5791,279405
-(defun interest-for 5822,280754
-(defun DISCHARGE-LINK 5845,281875
-(defun validating-deductive-node 5983,290263
-(defun record-query-answers 5994,290681
-(defun condition-satisfying-interest 6046,293262
-(defun construct-new-interest-for6059,293815
-(defun compute-interest-supposition-nodes 6091,295608
-(defun re-queue-interest 6107,296366
-(defun unifying-nodes 6125,297335
-(defun funcall** 6132,297545
-(defun validating-node 6134,297597
-(defun appropriately-related-suppositions 6157,298734
-(defun appropriately-related-reductio-suppositions 6174,299677
-(defun appropriately-related-non-reductio-suppositions 6186,300388
-(defun appropriately-related-node-suppositions 6194,300941
-(defun appropriately-related-supposition 6201,301373
-(defun reason-forwards-from 6218,302378
-(defun apply-forwards-reasons 6233,303263
-(defun apply-forwards-defeasible-reasons 6241,303604
-(defun reason-from-dominant-premise-nodes 6247,303869
-(defun reason-defeasibly-from-dominant-premise-nodes 6254,304250
-(defun reason-from-instantiated-premises 6259,304488
-(defun reason-defeasibly-from-instantiated-premises 6273,305358
-(defun reason-substantively-from-first-instantiated-premise 6289,306252
-(defun reason-from-subsidiary-c-lists 6312,307463
-(defun reason-substantively-from-non-initial-instantiated-premise6319,307803
-(defun rectify-binding 6375,310808
-(defun binding-unifier 6386,311223
-(defun make-forwards-inference 6396,311622
-(defun adopt-interest 6447,314563
-(defun construct-new-interest-for-sequent 6489,317010
-(defun invert-contradiction 6508,317856
-(defun invert-contradictions 6570,321053
-(defun invert-contradictions-retrospectively 6601,322793
-(defun invert-contradictions-from-new-hyperlink 6620,323795
-(defun deductive-consequences 6636,324786
-(defun cancel-subsumed-links 6650,325282
-(defun delete-arguments 6709,328532
-(defun link-ancestor 6749,330643
-(defun DRAW-CONCLUSION6756,331025
-(defun contradicting-nodes 6835,335751
-(defun inconsistent-supposition 6839,335956
-(defun compute-nearest-defeasible-ancestors 6866,337139
-(defun reductio-supposition 6874,337411
-(defun subsetp* 6876,337506
-(defun subsumed 6882,337761
-(defun potent-suppositions 6951,341670
-(defun conclusion-data 6974,342545
-(defun supposition-variables 7053,346106
-(defun make-new-conclusion7056,346194
-(defun build-hyperlink 7078,347233
-(defun non-circular 7143,351113
-(defun recursively-compute-hypernode-ancestors 7150,351293
-(defun recursively-compute-nearest-defeasible-ancestors7158,351728
-(defun add-hyperlink 7180,352846
-(defun adjust-support-for-consequences 7201,354170
-(defun START-REDUCTIO-INTERESTS 7273,359009
-(defun ADOPT-REDUCTIO-INTEREST 7295,360145
-(defun generate-reductio-interests 7307,360674
-(defun rewrite-u-vars 7371,364401
-(defun change-to-reductio-interest 7377,364601
-(defun base-reductio-supposition 7386,365050
-(defun strictly-base-reductio-supposition 7392,365351
-(defun merge-unifiers* 7398,365611
-(defun discharge-fortuitous-reductios 7454,369081
-(defun discharge-fortuitous-reductio-interests 7481,370631
-(defun base-test 7497,371446
-(defun discharge-immediate-reductios7501,371613
-(defun discharge-delayed-reductios 7581,376120
-(defun discharge-new-reductio-interest 7656,380282
-(defun discharge-reductios 7739,385253
-(defun DISCHARGE-RETROSPECTIVE-REDUCTIOS 7821,389850
-(defun draw-reductio-conclusion 7899,394294
-(defun adopt-interest-in-defeaters-for 7999,399959
-(defun make-undercutting-defeater 8058,403370
-(defun make-rebutting-defeater 8113,406643
-(defun instantiate-defeater 8166,409737
-(defun queue-defeater-supposition 8200,411745
-(defun queue-non-reductio-defeater-supposition 8218,412640
-(defun make-backwards-inference8258,414584
-(defun queue-interest 8282,416081
-(defun defeats 8309,417478
-(defun rebuts 8313,417597
-(defun undercuts 8317,417789
-(defun queue-for-inference 8326,418218
-(defun adopt-interest-in-Q&I-defeaters-for 8354,419712
-(defun DISCHARGE-INTEREST-IN8360,419916
-(defun discharge-appropriately-related-link 8472,427405
-(defun deductive-in 8573,433817
-(defun deductive-link 8589,434392
-(defun discharge-interest-in-defeaters 8592,434507
-(defun cancel-node 8649,437977
-(defun cancel-interest-in 8668,438928
-(defun compute-interest-dependencies 8687,439913
-(defun compute-hypernode-dependencies 8719,441634
-(defun compute-dependencies-from-node 8746,442955
-(defun compute-dependencies 8834,447680
-(defun anchor-interest-relative-to-interest 8973,455658
-(defun anchor-hypernode-relative-to-interest 8988,456463
-(defun anchor-interest-relative-to-node 9032,458570
-(defun anchor-hypernode-relative-to-node 9047,459364
-(defun cancel-interest 9092,461473
-(defun cancel-interest-scheme 9125,463178
-(defun cancel-d-node 9137,463687
-(defun cancel-interest-in-node 9149,464277
-(defun cancel-instantiated-premise 9204,467248
-(defun discharge-interest-schemes 9218,467888
-(defun reason-from-dominant-interest-schemes 9226,468289
-(defun reason-from-current-interest-scheme 9234,468738
-(defun update-beliefs 9255,470066
-(defun display-belief-changes 9285,471490
-(defun compute-undefeated-degrees-of-support 9400,478313
-(defun inference-descendants 9485,482939
-(defun interest-descendants 9497,483342
-(defun hypernode-descendants-of-interest 9511,483925
-(defun descendants-of 9520,484389
-(defun compute-interest-graph-defeat-statuses 9569,486807
-(defun apply-optative-dispositions-to 9620,489567
-(defun apply-Q&I-modules-to 9626,489809
-(defun discharge-ultimate-epistemic-interests 9632,490043
-(defun affected-items 9688,493275
-(defun broadly-generating-nodes 9722,494839
-(defun recompute-priorities 9727,495047
-(defun generating-reductio-interests 9928,507725
-(defun generating-non-reductio-interests 9932,507898
-(defun form-epistemic-desires-for 9938,508192
-(defun initiate-actions 9942,508273
-(defun try-to-perform 9958,508996
-(defun update-environmental-input 9966,509208
-(defun print-undefeated-degrees-of-support 9971,509300
-(defun display-inference-graph 9979,509702
-
-perception-cause.lisp,4279
-(defvar **percepts** 13,596
-(defun SIMULATE-OSCAR 18,810
-(defun SO 99,5034
-(defvar *substantive-interests* 102,5143
-(defun display-settings 104,5181
-(defun update-percepts 163,7893
-(defun form-percept 167,8020
-(defun competing-percepts 189,9314
-(defmacro make-simulation-problem 205,9755
-(def-forwards-reason *PERCEPTION*281,13627
-(defun projectible 290,14020
-(def-backwards-undercutter *PERCEPTUAL-RELIABILITY*294,14125
-(def-forwards-reason *DISCOUNTED-PERCEPTION*304,14728
-(def-backwards-undercutter *PERCEPTUAL-UNRELIABILITY*317,15420
-(defun temporally-projectible 329,16086
-(defun temporally-projectible 338,16285
-(def-backwards-reason *TEMPORAL-PROJECTION*346,16589
-(def-backwards-reason *TEMPORAL-PROJECTION*362,17513
-(def-backwards-reason *TEMPORAL-PROJECTION*376,18440
-(def-backwards-reason *TEMPORAL-PROJECTION*388,19197
-(def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-TEMPORAL-PROJECTION*404,20179
-(def-backwards-reason *INCOMPATIBLE-COLORS*411,20571
-(def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*418,20886
-(def-forwards-reason *INDEXICAL-PERCEPTION*425,21191
-(def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-PERCEPTION*435,21687
-(def-backwards-undercutter *INDEXICAL-PERCEPTUAL-RELIABILITY*442,22081
-(def-forwards-reason *DISCOUNTED-INDEXICAL-PERCEPTION*451,22684
-(def-backwards-undercutter *INDEXICAL-PERCEPTUAL-UNRELIABILITY*465,23470
-(def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*474,24096
-(def-backwards-reason *INDEXICAL-TEMPORAL-PROJECTION*481,24396
-(def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-TEMPORAL-PROJECTION*494,25059
-(def-forwards-reason *RELIABLE-INFORMANT*501,25471
-(def-forwards-reason *RELIABLE-INFORMANT*512,25966
-(def-backwards-reason strict-arithmetical-inequality537,27051
-(def-backwards-reason arithmetical-inequality545,27463
-(def-backwards-reason arithmetical-equality551,27642
-(def-backwards-reason arithmetical-nonequality572,29044
-(def-backwards-reason arithmetical-equality585,29756
-(def-backwards-reason arithmetical-nonequality590,29929
-(def-backwards-reason is-past-or-present598,30339
-(def-backwards-reason is-past606,30742
-(def-backwards-reason *CAUSAL-IMPLICATION*611,30906
-(def-backwards-reason *CAUSAL-IMPLICATION2*628,31947
-(def-backwards-reason *CAUSAL-IMPLICATION+*648,33126
-(def-backwards-reason *INDEXICAL-CAUSAL-IMPLICATION*666,34225
-(def-backwards-undercutter *CAUSAL-UNDERCUTTER*680,34934
-(def-backwards-undercutter *CAUSAL-UNDERCUTTER+*693,35676
-(def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER*706,36430
-(def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER+*719,37192
-(def-backwards-undercutter *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*733,37975
-(def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*746,38774
-(def-backwards-reason neg-at-intro759,39583
-(def-backwards-reason neg-at-intro2770,39976
-(def-forwards-reason neg-at-elimination775,40172
-(def-backwards-reason &-at-intro781,40422
-(def-forwards-reason &-at-elimination786,40637
-(def-backwards-reason ETERNAL-TRUTHS791,40853
-(def-backwards-reason *COLLISION*796,41038
-(def-forwards-reason COLLISION-SYMMETRY803,41413
-(def-backwards-reason *NEW-POSITION*808,41647
-(def-forwards-reason *POSITION-INCOMPATIBILITY*820,42292
-(def-backwards-reason *POSITION-INCOMPATIBILITY*830,42740
-(def-backwards-reason *POSITION-INCOMPATIBILITY-1*838,43100
-(def-backwards-reason *POSITION-INCOMPATIBILITY-2*845,43440
-(def-backwards-reason *VELOCITY-INCOMPATIBILITY-1*852,43781
-(def-backwards-reason *VELOCITY-INCOMPATIBILITY-2*858,44113
-(def-backwards-reason inequality-transitivity864,44445
-(def-backwards-reason inequality-transitivity2870,44699
-(def-backwards-reason PAIR-NONIDENTITY-AT-TIME876,44954
-(def-backwards-reason PAIR-NONIDENTITY882,45275
-(def-forwards-reason not-alive-elimination888,45577
-(def-forwards-reason not-dead-elimination894,45869
-(def-backwards-reason not-alive-introduction900,46160
-(def-backwards-reason not-dead-introduction906,46460
-(def-forwards-reason dead-elimination912,46759
-(def-backwards-reason dead-introduction918,47046
-(def-backwards-reason *NEW-POSITION-*927,47441
-(def-backwards-reason *CAUSAL-IMPLICATION-*939,48081
-(def-backwards-reason *TEMPORAL-PROJECTION-*952,48800
-
-problem.lisp,1110
-(defvar *display?* 1,0
-(defvar *proofs?* 2,24
-(defmacro define-forwards-reason29,1317
-(defun rectify-forwards-premises* 54,2573
-(defmacro define-backwards-reason80,3739
-(defun rectify-backwards-premises* 106,5034
-(defun display-problems 127,5913
-(defun display-problem 132,6077
-(defun display-reasons 161,7177
-(defun display-forwards-reason 180,8292
-(defun print-premise 192,8918
-(defun display-backwards-reason 199,9228
-(defvar *forwards-logical-reasons* 215,10164
-(defvar *backwards-logical-reasons* 217,10205
-(defun make-problem-list 220,10329
-(defun make-problem-from-string 223,10436
-(defun find-string 276,13623
-(defun trim-comments 282,13921
-(defun problem-strings 295,14412
-(defun find-forwards-pf-reasons 309,14982
-(defun find-forwards-con-reasons 371,18542
-(defun find-backwards-pf-reasons 423,21658
-(defun find-backwards-con-reasons 505,26933
-(defun string-list 582,31919
-(defun reform-list 598,32671
-(defun reform-forwards-premise-list 616,33518
-(defun collapse-strings 652,35424
-(defun find-premises-from-string 660,35796
-(defun find-conclusions-from-string 675,36457
-
-reason.lisp,1666
-(def-forwards-reason symbol16,683
-(def-forwards-reason symbol26,1234
-(def-forwards-reason *THERMOMETER*40,1979
-(def-forwards-reason GREEN-SLYME74,3297
-(defmacro def-forwards-reason 120,5256
-(defun rectify-conclusions-list 219,10439
-(defun rectify-forwards-premises 231,10988
-(defun make-clauses 270,13188
-(defun rectify-strength 282,13575
-(defun formula-condition 304,14709
-(defun rectify-formula-condition 323,15451
-(defun arithmetical-terms 341,16110
-(defun parse-arithmetical-formula 350,16491
-(defun rectify-backwards-premises 361,16942
-(defun simple-backwards-formula-condition 434,21553
-(defun backwards-formula-condition 459,22835
-(defun rectify-reason-condition 462,22916
-(defun formula-instantiator 470,23252
-(defun reason-instantiator 481,23700
-(defun conclusion-instantiator 505,24786
-(defun reason-instantiator- 514,25190
-(defun reason-instantiator- 533,26023
-(def-backwards-reason symbol544,26359
-(def-backwards-reason R560,27233
-(defmacro def-backwards-reason 611,29336
-(defun occur-unquoted 712,34857
-(defun occur-quoted 718,35084
-(defun o-occur 724,35309
-(defun o-occur+ 729,35481
-(defun o-occur* 734,35661
-(defun o-occur++ 738,35758
-(defmacro def-forwards-undercutter 744,35932
-(defmacro def-backwards-undercutter 810,39462
-(defun undercutters-for 873,42928
-(defun fp-formula* 886,43462
-(defun term-lists 894,43723
-(defun formula-profile 917,44839
-(defun binding-function 954,46508
-(defun refined-profile 1001,48376
-(defun refined-profile* 1005,48573
-(defun unify-premise-terms 1018,49211
-(defun unify-premise-terms* 1026,49525
-(defun unify-list 1046,50444
-(defun conditionally-write-to-string 1073,51705
-
-rule.lisp,1394
-(defun simp 25,1142
-(defun neg-elim 40,1625
-(defun neg-disj 54,2058
-(defun neg-condit 69,2603
-(defun neg-bicondit-simp 87,3342
-(defun DM 104,3890
-(defun bicondit-simp 120,4368
-(defun exportation 137,5049
-(defun disj-antecedent-simp 154,5624
-(defun cond-antecedent-simp 173,6437
-(defun disj-simp 192,7224
-(defun cond-simp1 207,7711
-(defun cond-simp2 233,8584
-(defun E-removal 256,9340
-(defun A-removal 277,10040
-(defun modus-ponens1 301,10816
-(defun modus-ponens2 333,12257
-(defun modus-tollens1 359,13241
-(defun modus-tollens2 389,14613
-(defun conditional-modus-tollens 413,15602
-(defun neg-UG 442,16926
-(defun neg-EG 459,17423
-(defun UI 476,17907
-(defun ei-level 495,18460
-(defun EI 497,18504
-(defun occurs-disjunctively-with 561,21232
-(defun occurs-conjunctively-with 571,21699
-(defun neg-in 579,22039
-(defun set-conclusions-function 594,22628
-(defun adjunction 610,23165
-(defun neg-intro 627,23746
-(defun i-neg-disj 645,24373
-(defun i-neg-condit 664,25048
-(defun bicondit-intro 684,25794
-(defun i-neg-bicondit 702,26431
-(defun disj-cond 720,27075
-(defun disj-cond-2 738,27674
-(defun i-DM 756,28276
-(defun i-neg-eg 777,29061
-(defun i-neg-ug 796,29708
-(defun UG 814,30290
-(defun EG 860,32343
-(def-backwards-reason VACUOUS-CONDITION883,33349
-(def-backwards-reason contra-conditionalization892,33620
-(def-backwards-reason conditionalization904,34230
-
-SET757+4-bug1.lisp,32
-(defunction DRAW-CONCLUSION1,0
-
-SET757+4-bug2.lisp,54
-(defunction discharge-appropriately-related-link 1,0
-
-syntax.lisp,2210
-(defvar *string-symbols* 7,274
-(defvar *operators* 8,304
-(defvar *reform-list* 9,329
-(defun negationp 15,506
-(defmacro negand 18,564
-(defun conjunctionp 22,656
-(defmacro conjunct1 25,717
-(defmacro conjunct2 29,779
-(defun disjunctionp 32,818
-(defmacro disjunct1 35,879
-(defmacro disjunct2 39,941
-(defun conditionalp 42,980
-(defmacro antecedent 45,1042
-(defmacro consequent 48,1082
-(defun biconditionalp 51,1122
-(defmacro bicond1 54,1187
-(defmacro bicond2 57,1224
-(defun undercutterp 60,1261
-(defmacro undercut1 63,1322
-(defmacro undercut2 66,1361
-(defun identityp 69,1400
-(defun iden1 73,1464
-(defun iden2 76,1494
-(defun subformula1 79,1524
-(defun subformula2 81,1558
-(defun predicationp 83,1592
-(defun arg-list 89,1740
-(defun atomic-formula 91,1770
-(defun literal 96,1892
-(defun tilde 100,1993
-(defun neg 102,2024
-(defun disj 106,2097
-(defun condit 108,2131
-(defun bicondit 110,2168
-(defun conj 112,2208
-(defun make-@ 114,2242
-(defun u-genp 116,2278
-(defun e-genp 119,2335
-(defun q-matrix 122,2393
-(defun quantifiers-matrix 124,2424
-(defun q-variable 128,2538
-(defun u-gen 130,2571
-(defun e-gen 132,2608
-(defun iden 134,2646
-(defun ?-genp 136,2680
-(defun whether-formula 139,2744
-(defun sequent-supposition 144,2874
-(defun sequent-formula 147,2930
-(defun constituent-terms-of 154,3122
-(defun terms-of 161,3383
-(defun all-terms-of 176,4032
-(defun arg-terms-of 189,4613
-(defun arg-list-of 202,5254
-(defun NON-ATOMIC-SUBTERMS 214,5798
-(defun PROPER-SUBTERMS 217,5900
-(defun u-vars 223,6117
-(defun u-matrix 228,6307
-(defun u-closure 233,6464
-(defun e-vars 238,6627
-(defun e-matrix 244,6820
-(defun disjuncts 253,7083
-(defun conjuncts 260,7310
-(defun gen-conjunction 266,7494
-(defun gen-disjunction 272,7688
-(defun disjunct-list 278,7901
-(defun generalized-e-gen 283,8044
-(defun occurs-with 288,8239
-(defun convert-to-string 324,10097
-(defun pretty 329,10265
-(defun find-match 392,13419
-(defun convert-to-symbol 409,14105
-(defun parse 428,15011
-(defun fix-nest 457,16332
-(defun resolve-variable-conflicts 469,16823
-(defun reform- 505,18473
-(defun convert-to-prefix-form 512,18706
-(defun reform 568,21623
-(defun reform-if-string 574,21859
-
-tool.lisp,5175
-(defvar *old-definitions* 5,133
-(defmacro mem1 9,235
-(defmacro mem2 10,265
-(defmacro mem3 11,296
-(defmacro mem4 12,328
-(defmacro mem5 13,360
-(defmacro mem6 14,392
-(defmacro mem7 15,424
-(defmacro mem8 16,456
-(defmacro mem9 17,488
-(defmacro mem10 18,520
-(defmacro mem11 19,553
-(defmacro mem12 20,587
-(defmacro mem13 21,621
-(defmacro mem14 22,655
-(defmacro mem15 23,689
-(defmacro mem16 24,723
-(defmacro mem17 25,757
-(defmacro mem18 26,791
-(defmacro element 29,854
-(defmacro lastmember 31,893
-(defmacro for-all 33,937
-(defmacro do-until 35,980
-(defmacro pp 39,1108
-(defmacro parameter-test 49,1558
-(defmacro image 58,1906
-(defmacro unionimage 61,1948
-(defmacro unionimage+ 65,2087
-(defmacro 0-insert 69,2238
-(defmacro pull 72,2328
-(defmacro redefine-constant 76,2444
-(defmacro unionmapcar 81,2542
-(defmacro unionmapcar+ 84,2643
-(defmacro unionmapcar=92,2821
-(defmacro unionmapcar2=100,3012
-(defmacro unionmapcar- 111,3287
-(defun print-pretty 118,3451
-(defun mem 128,3698
-(defun ===132,3777
-(defun compare-lists 140,4098
-(defun ===158,4542
-(defun << 167,4801
-(defun >> 169,4863
-(defun <<=171,4925
-(defun >>=174,5006
-(defun >< 177,5087
-(defun union=180,5168
-(defun adjoin=182,5215
-(defun remove-duplicates=184,5264
-(defun subset 188,5374
-(defun subsetp=191,5418
-(defun proper-subset 194,5471
-(defun disjoint 198,5585
-(defun disjointp 202,5689
-(defun crossproduct 205,5759
-(defun dot-product 212,5879
-(defun domain 216,6031
-(defun range 218,6101
-(defun a-range 221,6202
-(defun inverse 223,6273
-(defun genunion 227,6399
-(defun genunion+ 234,6543
-(defun =intersection =intersection239,6650
-(defun gen-intersection 241,6711
-(defun gencrossproduct 246,6869
-(defun powerset 256,7160
-(defun setdifference 261,7323
-(defun list-complexity 263,7386
-(defun cdddddr 275,7665
-(defun caddddr 276,7702
-(defun cadddddr 277,7739
-(defun cddddddr 278,7778
-(defun caddddddr 279,7817
-(defun member1 280,7858
-(defun member2 281,7886
-(defun member3 282,7915
-(defun member4 283,7945
-(defun member5 284,7975
-(defun member6 285,8005
-(defun member7 286,8035
-(defun member8 287,8065
-(defun member9 288,8095
-(defun member10 289,8125
-(defun member11 290,8156
-(defun member12 291,8188
-(defun member13 292,8220
-(defun member14 293,8252
-(defun member15 294,8284
-(defun member16 295,8316
-(defun member17 296,8348
-(defun member18 297,8380
-(defun first-n 301,8486
-(defun max+ 305,8576
-(defun maximum 311,8698
-(defun minimum 314,8799
-(defun maximum0 317,8904
-(defun minimum0 320,9021
-(defun funcall* 324,9130
-(defmacro funcall+ 326,9182
-(defun longest 330,9314
-(defun first-p 342,9862
-(defun r-first 347,10072
-(defun order 356,10363
-(defun fixed-length-subsets 361,10499
-(defun minimal-subsets 370,10916
-(defun maximal-subsets 385,11524
-(defun ordered-insert 400,12096
-(defun depth 417,12667
-(defun occur 421,12763
-(defun occur* 427,12937
-(defun occur1 431,13064
-(defun number-of-occurrences 445,13642
-(defun substructures 450,13833
-(defun s-find 456,14013
-(defun seq-subst 460,14149
-(defun =subst =subst467,14418
-(defun subst* 472,14528
-(defun sublis=476,14653
-(defun sublis-in-tree 480,14774
-(defun remove-if-equal 488,15063
-(defun replace-item-in-list 492,15184
-(defun delete-n 502,15474
-(defun splice 508,15683
-(defun insert 515,16048
-(defun unionmapcar 533,16550
-(defun unionmapcar+ 536,16645
-(defun unionmapcar=544,16813
-(defun unionmapcar2=552,16994
-(defun consistent-assignment 567,17449
-(defun value 571,17579
-(defun mapcar1 578,17832
-(defun e-assoc 583,17949
-(defun number-of 587,18050
-(defun time-dif 594,18315
-(defun nseq 610,19015
-(defun gdisc 615,19107
-(defun pl 621,19251
-(defun unboundp 624,19342
-(defun explode 629,19461
-(defun char-list 632,19519
-(defun char-num 640,19746
-(defun implode 645,19845
-(defun string-rep 650,20016
-(defun imp 652,20060
-(defun named-integer 659,20292
-(defun named-decimal-number 663,20394
-(defun cat 667,20495
-(defun cat-list 674,20637
-(defun word-list 684,20972
-(defun concatenate-words 702,21499
-(defun string-length 714,21846
-(defun match 721,22054
-(defun merge-matches 766,24621
-(defun nseq< 771,24728
-(defun match-sublis 777,24870
-(defun match-domain 781,24972
-(defun consistent-match 784,25032
-(defun set-match 822,26804
-(defun verbose-on 852,27975
-(defun verbose-off 855,28051
-(defun warn-on 858,28132
-(defun warn-off 861,28182
-(defun lessp 864,28235
-(defun gfunc 884,28852
-(defun factorial 889,28925
-(defun pause 895,29075
-(defun pause-flag-on 898,29160
-(defun pause-flag-off 902,29262
-(defun blank-indent 908,29424
-(defun bar-indent 911,29513
-(defun indent 915,29615
-(defun p-print 919,29749
-(defun p-princ 924,29885
-(defun print-list 929,30018
-(defun princ-list 948,30554
-(defun p-print-list 954,30667
-(defun prinp 963,30937
-(defun set-prinp 967,31037
-(defun prinp-sequent 975,31270
-(defun princ-set 983,31495
-(defun princ-sequent-set 992,31748
-(defun order-1 1000,31971
-(defun order-2 1002,32016
-(defun order-3 1004,32061
-(defun order-4 1006,32106
-(defun real-ratio 1009,32227
-(defun real-root 1014,32426
-(defun line-indent 1018,32561
-(defvar *tools-loaded* 1022,32667
-
-TEST-V-27.lisp,0
-
-TEST-IV-22.lisp,0
-
-SET757+4.reformatted.lisp,0
-
-SET757+4.lisp,0
-
-run.lisp,0
-
-problem-example.lisp,0
-
-perception-cause-example.lisp,0
-
-BUG.lisp,0
+monolithic-oscar.lisp,39595
+(defvar *package-name* 42,3444
+(defvar *temporal-projection* 44,3494
+(defvar *causal-implication* 45,3529
+(defvar *temporal-decay* 46,3563
+(defvar *temporal-decay-minimum* 47,3595
+(defvar *pause* 48,3665
+(defvar *time-limit* 49,3686
+(defvar *syntax-loaded* 50,3710
+(defvar *prob-compiler-loaded* 51,3739
+(defvar *problems-loaded* 52,3775
+(defvar *tools-loaded* 53,3806
+(defvar *premises* 54,3834
+(defvar *ultimate-epistemic-interests* 55,3858
+(defvar *permanent-ultimate-epistemic-interests* 56,3902
+(defvar *fixed-ultimate-epistemic-interests* 57,3956
+(defvar *forwards-rules* 58,4006
+(defvar *backwards-rules* 59,4036
+(defvar *auxiliary-forwards-rules* 60,4067
+(defvar *auxiliary-backwards-rules* 61,4107
+(defvar *optative-dispositions* 62,4148
+(defvar *doxastic-optative-dispositions* 63,4185
+(defvar *trees-loaded* 64,4231
+(defvar *display-inference-queue* 65,4259
+(defvar *display?* 66,4298
+(defvar *trace* 67,4322
+(defvar *d-trace* 68,4343
+(defvar *start-trace* 69,4366
+(defvar *start-display* 70,4393
+(defvar *proofs?* 71,4422
+(defvar *use-logic* 72,4445
+(defvar *use-reductio* 73,4468
+(defvar *log-on* 74,4494
+(defvar *priority-interests* 75,4516
+(defvar *blocked-conclusions* 76,4550
+(defvar *answered-discount* 77,4585
+(defvar *base-priority* 78,4617
+(defvar *reductio-interest* 79,4645
+(defvar *reductio-discount* 80,4678
+(defvar *quantifier-discount* 81,4711
+(defvar *EI-adjustment* 82,4746
+(defvar *skolem-multiplier* 83,4775
+(defvar *concluded-interest-priority* 84,4807
+(defvar *forwards-substantive-reasons* 85,4851
+(defvar *backwards-substantive-reasons* 86,4895
+(defvar *environmental-input* 87,4940
+(defvar *executable-operations* 88,4975
+(defvar *assignment-tree-dialog* 89,5012
+(defvar *assignment-tree-subview* 90,5050
+(defvar *monitor-assignment-tree* 91,5089
+(defvar *deductive-only* 92,5128
+(defvar *affected-nodes* 93,5158
+(defvar *graphics-on* 94,5188
+(defvar *graph-log* 95,5215
+(defvar *graphics-pause* 96,5240
+(defvar *graph-interests* 97,5270
+(defvar *package-name* 136,8642
+(defvar *temporal-projection* 138,8692
+(defvar *causal-implication* 139,8727
+(defvar *temporal-decay* 140,8761
+(defvar *temporal-decay-minimum* 141,8792
+(defvar *pause* 142,8862
+(defvar *time-limit* 143,8883
+(defvar *syntax-loaded* 144,8907
+(defvar *prob-compiler-loaded* 145,8936
+(defvar *problems-loaded* 146,8972
+(defvar *tools-loaded* 147,9003
+(defvar *menus-loaded* 148,9031
+(defvar *hypergraphs-loaded* 149,9059
+(defvar *premises* 150,9093
+(defvar *ultimate-epistemic-interests* 151,9117
+(defvar *permanent-ultimate-epistemic-interests* 152,9161
+(defvar *fixed-ultimate-epistemic-interests* 153,9215
+(defvar *forwards-rules* 154,9265
+(defvar *backwards-rules* 155,9295
+(defvar *auxiliary-forwards-rules* 156,9326
+(defvar *auxiliary-backwards-rules* 157,9366
+(defvar *optative-dispositions* 158,9407
+(defvar *doxastic-optative-dispositions* 159,9444
+(defvar *trees-loaded* 160,9490
+(defvar *display-inference-queue* 161,9518
+(defvar *display?* 162,9557
+(defvar *trace* 163,9581
+(defvar *d-trace* 164,9602
+(defvar *start-trace* 165,9625
+(defvar *start-display* 166,9652
+(defvar *proofs?* 167,9681
+(defvar *use-logic* 168,9704
+(defvar *use-reductio* 169,9727
+(defvar *log-on* 170,9753
+(defvar *priority-interests* 171,9775
+(defvar *blocked-conclusions* 172,9809
+(defvar *answered-discount* 173,9844
+(defvar *base-priority* 174,9876
+(defvar *reductio-interest* 175,9904
+(defvar *reductio-discount* 176,9937
+(defvar *quantifier-discount* 177,9970
+(defvar *EI-adjustment* 178,10005
+(defvar *skolem-multiplier* 179,10034
+(defvar *concluded-interest-priority* 180,10066
+(defvar *forwards-substantive-reasons* 181,10110
+(defvar *backwards-substantive-reasons* 182,10154
+(defvar *environmental-input* 183,10199
+(defvar *executable-operations* 184,10234
+(defvar *deductive-only* 185,10271
+(defvar *graphics-on* 186,10301
+(defvar *graph-log* 187,10328
+(defvar *graphics-pause* 188,10353
+(defvar *graph-interests* 189,10383
+(defvar *comparison-log* 190,10414
+(defvar *old-definitions* 195,10553
+(defmacro mem1 199,10655
+(defmacro mem2 200,10685
+(defmacro mem3 201,10716
+(defmacro mem4 202,10748
+(defmacro mem5 203,10780
+(defmacro mem6 204,10812
+(defmacro mem7 205,10844
+(defmacro mem8 206,10876
+(defmacro mem9 207,10908
+(defmacro mem10 208,10940
+(defmacro mem11 209,10973
+(defmacro mem12 210,11007
+(defmacro mem13 211,11041
+(defmacro mem14 212,11075
+(defmacro mem15 213,11109
+(defmacro mem16 214,11143
+(defmacro mem17 215,11177
+(defmacro mem18 216,11211
+(defmacro element 219,11274
+(defmacro lastmember 221,11313
+(defmacro for-all 223,11357
+(defmacro do-until 225,11400
+(defmacro pp 229,11528
+(defmacro parameter-test 239,11978
+(defmacro image 248,12326
+(defmacro unionimage 251,12368
+(defmacro unionimage+ 255,12507
+(defmacro 0-insert 259,12658
+(defmacro pull 262,12748
+(defmacro redefine-constant 266,12864
+(defmacro unionmapcar 271,12962
+(defmacro unionmapcar+ 274,13063
+(defmacro unionmapcar=282,13241
+(defmacro unionmapcar2=290,13432
+(defmacro unionmapcar- 301,13707
+(defun print-pretty 308,13871
+(defun mem 318,14118
+(defun ===322,14197
+(defun compare-lists 330,14518
+(defun ===348,14962
+(defun << 357,15221
+(defun >> 359,15283
+(defun <<=361,15345
+(defun >>=364,15426
+(defun >< 367,15507
+(defun union=370,15588
+(defun adjoin=372,15635
+(defun remove-duplicates=374,15684
+(defun subset 378,15794
+(defun subsetp=381,15838
+(defun proper-subset 384,15891
+(defun disjoint 388,16005
+(defun disjointp 392,16109
+(defun crossproduct 395,16179
+(defun dot-product 402,16299
+(defun domain 406,16451
+(defun range 408,16521
+(defun a-range 411,16622
+(defun inverse 413,16693
+(defun genunion 417,16819
+(defun genunion+ 424,16963
+(defun =intersection =intersection429,17070
+(defun gen-intersection 431,17131
+(defun gencrossproduct 436,17289
+(defun powerset 446,17580
+(defun setdifference 451,17743
+(defun list-complexity 453,17806
+(defun cdddddr 465,18085
+(defun caddddr 466,18122
+(defun cadddddr 467,18159
+(defun cddddddr 468,18198
+(defun caddddddr 469,18237
+(defun member1 470,18278
+(defun member2 471,18306
+(defun member3 472,18335
+(defun member4 473,18365
+(defun member5 474,18395
+(defun member6 475,18425
+(defun member7 476,18455
+(defun member8 477,18485
+(defun member9 478,18515
+(defun member10 479,18545
+(defun member11 480,18576
+(defun member12 481,18608
+(defun member13 482,18640
+(defun member14 483,18672
+(defun member15 484,18704
+(defun member16 485,18736
+(defun member17 486,18768
+(defun member18 487,18800
+(defun first-n 491,18906
+(defun max+ 495,18996
+(defun maximum 501,19118
+(defun minimum 504,19219
+(defun maximum0 507,19324
+(defun minimum0 510,19441
+(defun funcall* 514,19550
+(defmacro funcall+ 516,19602
+(defun longest 520,19734
+(defun first-p 532,20282
+(defun r-first 537,20492
+(defun order 546,20783
+(defun fixed-length-subsets 551,20919
+(defun minimal-subsets 560,21336
+(defun maximal-subsets 575,21944
+(defun ordered-insert 590,22516
+(defun depth 607,23087
+(defun occur 611,23183
+(defun occur* 617,23357
+(defun occur1 621,23484
+(defun number-of-occurrences 635,24062
+(defun substructures 640,24253
+(defun s-find 646,24433
+(defun seq-subst 650,24569
+(defun =subst =subst657,24838
+(defun subst* 662,24948
+(defun sublis=666,25073
+(defun sublis-in-tree 670,25194
+(defun remove-if-equal 678,25483
+(defun replace-item-in-list 682,25604
+(defun delete-n 692,25894
+(defun splice 698,26103
+(defun insert 705,26468
+(defun unionmapcar 723,26970
+(defun unionmapcar+ 726,27065
+(defun unionmapcar=734,27233
+(defun unionmapcar2=742,27414
+(defun consistent-assignment 757,27869
+(defun value 761,27999
+(defun mapcar1 768,28252
+(defun e-assoc 773,28369
+(defun number-of 777,28470
+(defun time-dif 784,28735
+(defun nseq 800,29435
+(defun gdisc 805,29527
+(defun pl 811,29671
+(defun unboundp 814,29762
+(defun explode 819,29881
+(defun char-list 822,29939
+(defun char-num 830,30166
+(defun implode 835,30265
+(defun string-rep 840,30436
+(defun imp 842,30480
+(defun named-integer 849,30712
+(defun named-decimal-number 853,30814
+(defun cat 857,30915
+(defun cat-list 864,31057
+(defun word-list 874,31392
+(defun concatenate-words 892,31919
+(defun string-length 904,32266
+(defun match 911,32474
+(defun merge-matches 956,35041
+(defun nseq< 961,35148
+(defun match-sublis 967,35290
+(defun match-domain 971,35392
+(defun consistent-match 974,35452
+(defun set-match 1012,37224
+(defun verbose-on 1042,38395
+(defun verbose-off 1045,38471
+(defun warn-on 1048,38552
+(defun warn-off 1051,38602
+(defun lessp 1054,38655
+(defun gfunc 1074,39272
+(defun factorial 1079,39345
+(defun pause 1085,39495
+(defun pause-flag-on 1088,39580
+(defun pause-flag-off 1092,39682
+(defvar *string-symbols* 1100,40005
+(defvar *operators* 1101,40035
+(defvar *reform-list* 1102,40060
+(defun negationp 1108,40237
+(defmacro negand 1111,40295
+(defun conjunctionp 1115,40387
+(defmacro conjunct1 1118,40448
+(defmacro conjunct2 1122,40510
+(defun disjunctionp 1125,40549
+(defmacro disjunct1 1128,40610
+(defmacro disjunct2 1132,40672
+(defun conditionalp 1135,40711
+(defmacro antecedent 1138,40773
+(defmacro consequent 1141,40813
+(defun biconditionalp 1144,40853
+(defmacro bicond1 1147,40918
+(defmacro bicond2 1150,40955
+(defun undercutterp 1153,40992
+(defmacro undercut1 1156,41053
+(defmacro undercut2 1159,41092
+(defun identityp 1162,41131
+(defun iden1 1166,41195
+(defun iden2 1169,41225
+(defun subformula1 1172,41255
+(defun subformula2 1174,41289
+(defun predicationp 1176,41323
+(defun arg-list 1182,41471
+(defun atomic-formula 1184,41501
+(defun literal 1189,41623
+(defun tilde 1193,41724
+(defun neg 1195,41755
+(defun disj 1199,41828
+(defun condit 1201,41862
+(defun bicondit 1203,41899
+(defun conj 1205,41939
+(defun make-@ 1207,41973
+(defun u-genp 1209,42009
+(defun e-genp 1212,42066
+(defun q-matrix 1215,42124
+(defun quantifiers-matrix 1217,42155
+(defun q-variable 1221,42269
+(defun u-gen 1223,42302
+(defun e-gen 1225,42339
+(defun iden 1227,42377
+(defun ?-genp 1229,42411
+(defun whether-formula 1232,42475
+(defun sequent-supposition 1237,42605
+(defun sequent-formula 1240,42661
+(defun constituent-terms-of 1247,42853
+(defun terms-of 1254,43114
+(defun all-terms-of 1269,43763
+(defun arg-terms-of 1282,44344
+(defun arg-list-of 1295,44985
+(defun NON-ATOMIC-SUBTERMS 1307,45529
+(defun PROPER-SUBTERMS 1310,45631
+(defun u-vars 1316,45848
+(defun u-matrix 1321,46038
+(defun u-closure 1326,46195
+(defun e-vars 1331,46358
+(defun e-matrix 1337,46551
+(defun disjuncts 1346,46814
+(defun conjuncts 1353,47041
+(defun gen-conjunction 1359,47225
+(defun gen-disjunction 1365,47419
+(defun disjunct-list 1371,47632
+(defun generalized-e-gen 1376,47775
+(defun occurs-with 1381,47970
+(defun convert-to-string 1417,49828
+(defun pretty 1422,49996
+(defun find-match 1485,53150
+(defun convert-to-symbol 1502,53836
+(defun parse 1521,54742
+(defun fix-nest 1550,56063
+(defun resolve-variable-conflicts 1562,56554
+(defun reform- 1598,58204
+(defun convert-to-prefix-form 1605,58437
+(defun reform 1661,61354
+(defun reform-if-string 1667,61590
+(defun blank-indent 1670,61682
+(defun bar-indent 1673,61771
+(defun indent 1677,61873
+(defun p-print 1681,62007
+(defun p-princ 1686,62143
+(defun print-list 1691,62276
+(defun princ-list 1710,62812
+(defun p-print-list 1716,62925
+(defun prinp 1725,63195
+(defun set-prinp 1729,63295
+(defun prinp-sequent 1737,63528
+(defun princ-set 1745,63753
+(defun princ-sequent-set 1754,64006
+(defun order-1 1762,64229
+(defun order-2 1764,64274
+(defun order-3 1766,64319
+(defun order-4 1768,64364
+(defun real-ratio 1771,64485
+(defun real-root 1776,64684
+(defun line-indent 1780,64819
+(defun term-lists 1799,65594
+(defun formula-profile 1822,66710
+(defun refined-profile* 1859,68379
+(defun refined-profile 1871,68958
+(defun binding-function 1875,69155
+(defun sequential-sublis 1925,71102
+(defun match-sequential-sublis 1931,71348
+(defun parallelize-match 1936,71536
+(defun merge-sequential-matches 1944,71794
+(defun variable-correspondence 1952,72184
+(defun mgu 1991,73998
+(defun unify-list 2029,75608
+(defun unify-premise-terms* 2056,76869
+(defun unify-premise-terms 2071,77725
+(defun conditionally-write-to-string 2085,78212
+(def-forwards-reason symbol2092,78427
+(def-forwards-reason symbol2102,78978
+(def-forwards-reason *THERMOMETER*2116,79723
+(def-forwards-reason GREEN-SLYME2150,81041
+(defun rectify-conclusions-list 2196,83000
+(defun arithmetical-terms 2208,83549
+(defun rectify-formula-condition 2217,83930
+(defun occur-unquoted 2235,84589
+(defun occur-quoted 2241,84816
+(defun o-occur 2247,85041
+(defun o-occur+ 2252,85213
+(defun o-occur* 2257,85393
+(defun o-occur++ 2261,85490
+(defun parse-arithmetical-formula 2265,85589
+(defun formula-condition 2279,86292
+(defstruct (forwards-premise2298,87034
+(defun def-instantiator 2316,87539
+(defun formula-instantiator 2336,88238
+(defun reason-instantiator 2347,88686
+(defun rectify-forwards-premises 2371,89772
+(defun make-clauses 2408,91882
+(defun rectify-strength 2420,92269
+(defstruct (interest 2439,93151
+(defun backwards-formula-condition 2485,95032
+(defstruct (backwards-premise2493,95505
+(defun simple-backwards-formula-condition 2510,96041
+(defun rectify-backwards-premises 2535,97323
+(defun rectify-reason-condition 2608,101934
+(defun conclusion-instantiator 2616,102270
+(defun reason-instantiator- 2625,102674
+(defun reason-instantiator- 2644,103507
+(defmacro def-forwards-reason 2650,103707
+(def-backwards-reason symbol2754,109026
+(def-backwards-reason R2770,109900
+(defmacro def-backwards-reason 2821,112003
+(defun fp-formula* 2924,117599
+(defstruct (reason 2936,118106
+(defun reason 2961,118834
+(defun premise-hypernode-specifier 2967,119059
+(defun undercutters-for 2971,119252
+(defmacro def-forwards-undercutter 2984,119786
+(defmacro def-backwards-undercutter 3050,123316
+(defun print-sequent 3120,127058
+(defstruct (hypernode 3123,127201
+(defstruct (hyperlink 3185,130671
+(defun hyperlink 3216,132248
+(defstruct (hyper-defeat-link 3222,132445
+(defun build-hyper-defeat-link 3239,133494
+(defun hyper-defeat-link 3248,133859
+(defun hypernode 3252,133988
+(defun nf 3256,134099
+(defun adjust-for-time 3261,134215
+(defun adjust-for-decay 3267,134472
+(defun current-maximal-degree-of-justification 3270,134592
+(defun current-degree-of-justification 3277,134855
+(defun compute-old-degree-of-justification 3284,135094
+(defun compute-discounted-node-strength 3289,135356
+(defun deductive-node 3294,135558
+(defun hypernode-consequences 3298,135698
+(defun subsumes 3301,135795
+(defun hypernode-defeatees 3305,135983
+(defun hyperlink-hypernode-defeaters 3308,136103
+(defstruct (d-node 3314,136361
+(defun d-node 3332,137074
+(defun formula-code* 3335,137170
+(defun formula-code 3367,138647
+(defun prinp-test 3372,138805
+(defstruct (c-list 3375,138934
+(defun notational-variant 3394,139583
+(defun processed-c-list-for 3413,140471
+(defun processed-nodes-for 3416,140607
+(defun display-conclusion 3420,140734
+(defun display-conclusions 3429,141089
+(defun display-conclusions-by-supposition 3447,141771
+(defun display-c-lists 3482,143343
+(defun display-processed-c-lists 3502,144216
+(defun ?-variables 3521,145031
+(defun search-d-nodes 3527,145284
+(defun pursue-d-node-for 3539,145785
+(defun d-node-for 3547,146052
+(defstruct (i-list 3551,146170
+(defun fetch-I-list-for 3567,146697
+(defstruct (query 3574,146951
+(defun var-kind 3598,148228
+(defun interest-variable 3600,148272
+(defun conclusion-variable 3603,148351
+(defun make-interest-variable 3606,148432
+(defun make-conclusion-variable 3612,148577
+(defun convert-interest-variables 3618,148766
+(defun convert-conclusion-variables 3629,149197
+(defun convert-unifier-variables 3641,149728
+(defun formula-hypernode-variables 3655,150354
+(defun make-skolem-e-function 3660,150587
+(defun make-skolem-i-function 3665,150707
+(defun make-skolem-e-constant 3670,150827
+(defun make-skolem-i-constant 3675,150947
+(defun skolem-function 3680,151067
+(defun skolem-functions 3683,151156
+(defun skolem-free 3690,151397
+(defun ?-query-p 3697,151621
+(defun ?-matrix 3701,151763
+(defun whether-query-p 3707,151952
+(defun query 3710,152037
+(defun show-query 3714,152152
+(defun show-queries 3719,152276
+(defun inclusive-hypernode-ancestors 3727,152472
+(defun ancestral-links 3730,152559
+(defun display-query 3733,152668
+(defun display-queries 3770,154825
+(defun instance-of 3779,155075
+(defun answers 3782,155181
+(defun complexity 3788,155372
+(defstruct (inference-queue-node3812,156579
+(defun i-preferred 3827,157165
+(defun query-preference 3831,157364
+(defun queue-query-for-interest 3841,157767
+(defstruct (instantiated-premise 3855,158390
+(defstruct (interest-scheme 3876,159421
+(defun interest-scheme 3890,160083
+(defun instantiated-premise 3901,160448
+(defmacro is-derived-interest-schemes 3911,160758
+(defstruct (interest-link 3913,160830
+(defun link 3946,162067
+(defun display-links 3949,162161
+(defun display-link 3952,162238
+(defun reverse-match 3962,162752
+(defun one-one-match 3967,162929
+(defun i-list-for 3979,163335
+(defun interests-for 3993,163923
+(defun in-interest 3999,164095
+(defun adopt-ultimate-interest 4005,164311
+(defun unifier* 4010,164497
+(defun unifier 4043,166122
+(defun interest 4052,166563
+(defun ni-unifier 4055,166652
+(defun hypernode-unifier 4059,166837
+(defun reductio-unifier 4063,167033
+(defun permutations 4067,167234
+(defun merge-matches* 4094,168414
+(defun set-mgu 4105,168792
+(defun set-unifier 4126,169652
+(defun constrained-assignment 4167,171343
+(defun constrained-assignment 4184,171910
+(defun matching-i-lists-for 4193,172250
+(defun matching-c-lists-for 4201,172597
+(defun appropriate-for-reductio-supposition 4208,172891
+(defun store-interest-at-new-d-node 4220,173305
+(defun index-interest-at-new-nodes 4243,174395
+(defun store-interest-at-d-node 4254,174969
+(defun index-interest 4284,176648
+(defun store-interest 4295,177197
+(defun pursue-i-lists-for 4308,177832
+(defun find-matching-i-lists-for 4316,178200
+(defun store-interest-with-c-lists 4320,178396
+(defun appropriate-for-reductio-interest 4354,180231
+(defun appropriate-for-contradictors 4369,180930
+(defun pursue-c-lists-for 4381,181318
+(defun find-matching-c-lists-for 4389,181686
+(defun store-hypernode-at-new-d-node 4394,181963
+(defun index-hypernode-at-new-nodes 4422,183213
+(defun fetch-c-list-for 4433,183778
+(defun is-inference 4437,183933
+(defun is-desire 4439,184023
+(defun is-percept 4441,184107
+(defun store-hypernode-at-d-node 4449,184291
+(defun index-hypernode 4480,185985
+(defun store-hypernode 4492,186530
+(defun c-list-for 4498,186805
+(defun nodes-for 4503,186931
+(defun pursue-c-list-for 4507,187038
+(defun store-hypernode-with-c-list 4515,187348
+(defun cancelled-c-list-for 4523,187692
+(defun store-processed-node 4526,187772
+(defun ? 4532,188047
+(defun degree-of-interest* 4553,189193
+(defun interest-sequent* 4556,189299
+(defun clue? 4559,189402
+(defun construct-forwards-premise 4563,189545
+(defmacro cfp 4571,189744
+(defun construct-backwards-premise 4573,189821
+(defmacro cbp 4581,190059
+(defstruct (forwards-reason 4583,190132
+(defstruct (backwards-reason 4591,190451
+(defun reason-ips 4604,191010
+(defun reason-iss 4612,191273
+(defun display-d-node 4619,191477
+(defun display-discrimination-node 4658,193206
+(defun display-discrimination-net 4705,195623
+(defun ddn 4712,195842
+(defun d-node-ancestors 4714,195931
+(defun d-node-descendants 4718,196042
+(defun show-d-node 4724,196322
+(defun show-interest 4729,196514
+(defun show-hypernode 4735,196761
+(defun show-reason 4742,197080
+(defun display-hypernode 4761,197923
+(defun display-hyperlink 4802,199965
+(defun make-oscar-window 4857,202649
+(defun draw-n 4858,202682
+(defun flash-nodes 4859,202730
+(defun hypernode-position 4860,202787
+(defun interest-position 4861,202843
+(defun hypernode-color 4862,202898
+(defun draw-just-node 4863,202951
+(defun draw-just-undefeated-node 4864,203011
+(defun draw-just-defeated-node 4865,203078
+(defun pause-graphics 4866,203143
+(defun draw-i 4867,203169
+(defun draw-interest 4868,203213
+(defun speak-text 4869,203268
+(defun pranc-to-string 4870,203312
+(defun monitor-assignment-tree 4871,203361
+(defun display-unsupported-hypernode 4873,203419
+(defun display-discharge-condition 4890,204271
+(defun display-interest 4897,204584
+(defun display-interests 4949,206981
+(defun interest-ancestor-chains 5014,209868
+(defun right-branches 5029,210493
+(defun good-interest-ancestor-chains 5042,210934
+(defun derived-interests 5072,212539
+(defun display-interests-by-supposition 5075,212635
+(defun display-i-lists 5117,214514
+(defun binding-unifier 5148,215906
+(defun funcall** 5158,216305
+(defun applied-forwards-reason-strength 5160,216357
+(defun appropriately-related-suppositions 5173,217177
+(defun appropriately-related-reductio-suppositions 5190,218120
+(defun appropriately-related-non-reductio-suppositions 5202,218831
+(defun appropriately-related-node-suppositions 5210,219384
+(defun appropriately-related-supposition 5217,219816
+(defun compute-interest-supposition-nodes 5231,220624
+(defun construct-new-interest-for5247,221382
+(defun interest-for 5279,223175
+(defun readopt-interest 5301,224212
+(defun compute-link-interest5312,224679
+(defun cancel-d-node 5354,226977
+(defun cancel-instantiated-premise 5366,227567
+(defun cancel-interest-scheme 5378,228078
+(defun compute-dependencies 5516,234925
+(defun cancel-interest-in-node 5655,242903
+(defun cancel-interest 5710,245874
+(defun cancel-interest-in 5743,247579
+(defun compute-dependencies-from-node 5823,251467
+(defun cancel-node 5911,256192
+(defun deductive-link 5930,257143
+(defun deductive-in 5934,257285
+(defun display-belief-changes 5950,257860
+(defun adopt-interest-in-Q&I-defeaters-for 6060,264372
+(defun base-reductio-supposition 6065,264518
+(defun base-test 6068,264627
+(defun link-ancestor 6073,264858
+(defun recursively-compute-hypernode-ancestors 6077,265004
+(defun compute-nearest-defeasible-ancestors 6085,265439
+(defun potent-suppositions 6096,265964
+(defun conclusion-data 6119,266839
+(defun defeater-priority 6199,270483
+(defun contradicting-nodes 6203,270569
+(defun inconsistent-supposition 6207,270774
+(defun deductive-consequences 6234,271957
+(defun supposition-variables 6248,272453
+(defun make-new-conclusion6251,272541
+(defun merge-unifiers* 6271,273394
+(defun non-circular 6275,273518
+(defstruct (percept6282,273698
+(defun convert-from-deductive-only 6297,274249
+(defun interest-preference 6316,275055
+(defun display-inference-queue 6319,275165
+(defun formula-complexity 6334,275929
+(defun sequent-complexity 6338,276054
+(defun sequent-complexity 6356,276795
+(defun queue-interest 6376,277727
+(defun discharged? 6401,279029
+(defun interest-link-priority 6406,279203
+(defun re-queue-interest 6414,279568
+(defun reason-code* 6432,280537
+(defun reason-code 6463,282129
+(defun rectify-binding 6468,282253
+(defun reductio-supposition 6479,282668
+(defun remove-double-negation 6484,282875
+(defun set-def-binding 6497,283310
+(defun display-instantiated-premise 6505,283595
+(defun store-instantiated-premise-at-d-node6518,284230
+(defun store-instantiated-premise-at-new-d-node6548,285619
+(defun index-instantiated-premise-at-new-nodes6559,286170
+(defun index-instantiated-premise6575,287015
+(defun store-interest-scheme-at-d-node 6597,288056
+(defun store-interest-scheme-at-new-d-node 6603,288323
+(defun index-interest-scheme-at-new-nodes 6612,288745
+(defun index-interest-scheme 6623,289331
+(defun store-interest-scheme 6636,289982
+(defun subsumed 6641,290189
+(defun subsuming-supposition 6707,293845
+(defun unifying-nodes 6727,294611
+(defun validating-deductive-node 6735,294856
+(defun display-interest-scheme 6746,295274
+(defun premise-preference 9000,431732
+(defstruct (goal9003,431819
+(defstruct (desire9020,432416
+(defun goal-generating-interest 9036,432957
+(defun desire-preference 9041,433176
+(defun percept-preference 9045,433356
+(defun retrieved-interest-priority 9050,433570
+(defun concluded-interest-priority 9055,433785
+(defun trace-on 9063,434087
+(defun trace-off 9064,434144
+(defun trace-from 9065,434202
+(defun display-on 9066,434275
+(defun display-off 9067,434317
+(defun display-from 9068,434412
+(defun proof-on 9069,434507
+(defun proof-off 9070,434546
+(defun logic-on 9071,434588
+(defun logic-off 9072,434653
+(defun reductio-on 9073,434723
+(defun reductio-off 9074,434791
+(defun log-on 9075,434841
+(defun log-off 9076,434877
+(defun IQ-on 9077,434916
+(defun IQ-off 9078,434968
+(defun graph-log-on 9079,435023
+(defun graph-log-off 9080,435068
+(defun graphics-pause-on 9085,435317
+(defun graphics-pause-off 9086,435372
+(defun store-backwards-reason-at-d-node 9088,435431
+(defun store-backwards-reason-at-new-d-node 9098,435925
+(defun index-backwards-reason-at-new-nodes 9107,436330
+(defun index-backwards-reason 9118,436892
+(defun store-backwards-reason 9132,437516
+(defun store-forwards-reason-at-d-node 9137,437704
+(defun store-forwards-reason-at-new-d-node 9152,438267
+(defun index-forwards-reason-at-new-nodes9161,438686
+(defun index-forwards-reason 9173,439271
+(defun store-forwards-reason 9187,439926
+(defun compute-forwards-reason-d-nodes 9192,440135
+(defun compute-backwards-reason-d-nodes 9199,440477
+(defun initialize-discrimination-net 9205,440748
+(defun adopt-interest-in-premise-defeater 9223,441712
+(defun queue-premise 9256,443356
+(defun initialize-reasoner 9306,445663
+(defun premise-code* 9371,448074
+(defun premise-code 9399,449443
+(defun queue-desire 9408,449845
+(defun queue-percept 9462,452723
+(defun pause-on 9495,454300
+(defun pause-off 9496,454337
+(defun display-run-time-in-seconds 9498,454378
+(defun display-test-log 9511,454879
+(defun reason-backwards-from-reason-node 9594,459456
+(defun reason-backwards-from-dominant-reason-nodes 9613,460670
+(defun apply-backwards-reasons 9620,461108
+(defun discharge-fortuitous-reductio-interests 9631,461760
+(defun DISCHARGE-RETROSPECTIVE-REDUCTIOS 9649,462746
+(defun non-reductio-interest-supposition 9727,467190
+(defun augment-inherited-non-reductio-suppositions 9748,468069
+(defun recompute-reductio-ancestors 9768,469077
+(defun discharge-new-reductio-interest 9777,469570
+(defun change-to-reductio-interest 9860,474541
+(defun generate-reductio-interests 9868,474932
+(defun START-REDUCTIO-INTERESTS 9936,478961
+(defun convert-non-reductio-sup 9963,480495
+(defun queue-for-inference 9973,481036
+(defun make-new-reductio-supposition 10001,482530
+(defun MAKE-REDUCTIO-SUPPOSITION 10048,484910
+(defun reason-backwards-from 10092,487295
+(defun form-epistemic-desires-for 10109,488162
+(defun record-query-answers 10113,488243
+(defun reason-backwards-from-whether-query 10165,490824
+(defun reason-backwards-from-simple-query 10310,499006
+(defun ?-positive-instruction 10385,502937
+(defun reason-backwards-from-?-query 10390,503080
+(defun reason-backwards-from-query 10448,506088
+(defun menu-item-disable 10460,506587
+(defun menu-item-enable 10461,506638
+(defun oscar-menu-item 10462,506688
+(defun ADOPT-REDUCTIO-INTEREST 10467,506935
+(defun reason-from-instantiated-premises 10479,507464
+(defun reason-from-dominant-premise-nodes 10493,508334
+(defun apply-forwards-reasons 10500,508715
+(defun discharge-delayed-reductios 10508,509056
+(defun reason-forwards-from 10583,513218
+(defvar *j-trace* 10602,514320
+(defvar *s-trace* 10607,514431
+(defvar *safe-trace* 10612,514540
+(defun ultimate-target 10620,514778
+(defun defeat-paths 10625,515033
+(defun defeat-loops 10663,517176
+(defun clear-hyperlink-defeat-loops 10668,517370
+(defun clear-criticalities 10671,517481
+(defun sigma-defeat-loop 10675,517621
+(defun critical-link 10679,517851
+(defun hereditarily-critical-link 10697,518622
+(defun critical-hyperlinks 10703,518867
+(defun convergent-support-path 10742,520792
+(defun safe-support-path 10764,521942
+(defun princ-sigma 10803,524251
+(defun link-descendant 10814,524824
+(defun independent-link-value 10823,525305
+(defun independent-hypernode-value 10831,525771
+(defun independent-hyper-defeat-link-value 10839,526266
+(defun initial-node 10843,526437
+(defun minimal-safe-arguments 10938,532248
+(defun clear-graph-memories 10952,533145
+(defun add-hyper-defeat-link-to-critical-graph 11164,544732
+(defun update-beliefs 11196,546519
+(defun last-link 11228,548041
+(defun record-dependencies 11242,548595
+(defun ~ 11254,549352
+(defun compute-affected-justifications 11533,568393
+(defun reset-memories 11546,569012
+(defun compute-hypernode-degrees-of-justification 11565,569885
+(defun display-belief-changes 11572,570158
+(defun critical-set 11683,576659
+(defun apply-optative-dispositions-to 11697,577287
+(defun apply-Q&I-modules-to 11703,577529
+(defun compute-interest-graph-defeat-statuses 11711,577933
+(defun discharge-ultimate-epistemic-interests 11762,580693
+(defun affected-items 11818,583925
+(defun broadly-generating-nodes 11852,585489
+(defun generating-reductio-interests 11857,585697
+(defun generating-non-reductio-interests 11861,585870
+(defun recompute-priorities 11865,586053
+(defun update-beliefs 12066,598731
+(defun think 12096,600155
+(defun try-to-perform 12147,602608
+(defun initiate-actions 12151,602743
+(defun update-environmental-input 12167,603466
+(defvar **percepts** 12182,604105
+(defun form-percept 12186,604234
+(defun update-percepts 12216,605750
+(defun OSCAR 12229,606489
+(defun add-relevant-nodes 12250,607206
+(defun compute-relevant-nodes 12258,607592
+(defun display-peripherals 12263,607731
+(defun strongly-discharging-node 12350,612881
+(defun display-node12379,613999
+(defun display-used-interest12529,622221
+(defun full-display-node 12650,628498
+(defun full-display-used-interest 12687,630418
+(defun link-interests 12717,632134
+(defun list-interest-schemes 12722,632314
+(defun process-unprocessed-node 12728,632587
+(defun process-unprocessed-interest 12765,634782
+(defun generated-nodes-and-interests 12787,636096
+(defun display-reasoning-fully 12801,636803
+(defun add-strictly-relevant-nodes 12867,640401
+(defun compute-strictly-relevant-nodes 12874,640741
+(defun strictly-relevant-nodes 12879,640916
+(defun not-strictly-relevant-nodes 12885,641129
+(defun display-reasoning 12889,641311
+(defstruct (argument12949,644574
+(defun deductive-argument 12967,645115
+(defun hypernode-basis-in-arg 12970,645227
+(defun clear-indent 12975,645451
+(defun print-supposition 12979,645568
+(defun print-formatted-argument 12992,646060
+(defun format-argument 13039,648725
+(defun display-argument 13091,650920
+(defun hypernode-arguments 13139,653281
+(defun find-defeating-arguments 13172,654676
+(defun hyperlink-strength+ 13222,657182
+(defun show-arguments 13228,657486
+(defun think-or-die 13289,660182
+(defun COGITATE 13348,663188
+(defvar *display?* 13415,666696
+(defvar *proofs?* 13416,666720
+(defun print-premise 13441,667892
+(defun display-forwards-reason 13448,668202
+(defun display-backwards-reason 13460,668828
+(defun display-reasons 13474,669693
+(defun display-problem 13493,670808
+(defun run-reasoning-problem 13522,671908
+(defun test 13544,672856
+(defvar *forwards-logical-reasons* 13611,675980
+(defvar *backwards-logical-reasons* 13613,676021
+(defun collapse-strings 13617,676162
+(defun string-list 13628,676751
+(defun reform-list 13644,677503
+(defun find-backwards-con-reasons 13658,678066
+(defun find-backwards-pf-reasons 13732,682835
+(defun find-conclusions-from-string 13814,688110
+(defun reform-forwards-premise-list 13832,689048
+(defun find-forwards-con-reasons 13866,690855
+(defun find-forwards-pf-reasons 13919,694029
+(defun find-premises-from-string 13981,697589
+(defun make-problem-from-string 13996,698250
+(defun trim-comments 14047,701246
+(defun problem-strings 14060,701737
+(defun make-problem-list 14074,702331
+(defun default-problem-list 14077,702438
+(defmacro define-forwards-reason15209,737117
+(defun rectify-forwards-premises* 15234,738373
+(defmacro define-backwards-reason15260,739539
+(defun rectify-backwards-premises* 15286,740834
+(defun display-problems 15307,741713
+(defun find-string 15315,742133
+(defun simp 15343,743507
+(defun neg-elim 15358,743990
+(defun neg-disj 15372,744423
+(defun neg-condit 15387,744968
+(defun neg-bicondit-simp 15405,745707
+(defun DM 15422,746255
+(defun bicondit-simp 15438,746733
+(defun exportation 15455,747414
+(defun disj-antecedent-simp 15472,747989
+(defun cond-antecedent-simp 15491,748802
+(defun neg-in 15504,749413
+(defun disj-simp 15524,750177
+(defun cond-simp1 15539,750664
+(defun cond-simp2 15565,751537
+(defun E-removal 15588,752293
+(defun A-removal 15609,752993
+(defun modus-ponens1 15633,753769
+(defun modus-ponens2 15665,755210
+(defun modus-tollens1 15691,756194
+(defun modus-tollens2 15721,757566
+(defun conditional-modus-tollens 15745,758555
+(defun neg-UG 15774,759879
+(defun neg-EG 15791,760376
+(defun UI 15808,760860
+(defun ei-level 15827,761413
+(defun EI 15851,762301
+(defun set-conclusions-function 15915,765029
+(defun adjunction 15931,765566
+(defun neg-intro 15948,766147
+(defun i-neg-disj 15966,766774
+(defun i-neg-condit 15985,767449
+(defun bicondit-intro 16005,768195
+(defun i-neg-bicondit 16023,768832
+(defun disj-cond 16041,769476
+(defun disj-cond-2 16059,770075
+(defun i-DM 16077,770677
+(defun i-neg-eg 16098,771462
+(defun i-neg-ug 16117,772109
+(defun UG 16135,772691
+(defun EG 16181,774744
+(def-backwards-reason VACUOUS-CONDITION16204,775750
+(def-backwards-reason contra-conditionalization16213,776021
+(def-backwards-reason conditionalization16225,776631
+(defun rerun 16244,777411
+(defun run 16303,780428
+(defun COGITATE0 16364,783487
+(defun run-reasoning-problem* 16378,783944
+(defun test* 16396,784652
+(defun test&load 16402,784830
+(defun test&compare 16409,785045
+(defun try 16425,785881
+(defun try-interest 16449,786881
+(defun display-reasoning-for 16453,787011
+(defun store-interest-record 16508,789665
+(defun relevant-nodes 16537,791055
+(defun is 16549,791633
+(defun list-instantiated-premises 16552,791724
+(defun ip 16558,792007
+(defun analyze-interest-schemes 16561,792103
+(defun analyze-instantiated-premises 16573,792544
+(defun analyze-schemes 16585,792999
+(defun subsumes-basis 16590,793175
+(defun condition-satisfying-interest 16621,794524
+(defun validating-node 16634,795077
+(defun construct-new-interest-for-sequent 16653,795892
+(defun adopt-interest 16673,796787
+(defun subsetp* 16715,799234
+(defun rewrite-u-vars 16725,799661
+(defun strictly-base-reductio-supposition 16734,800053
+(defun make-backwards-inference16740,800313
+(defun rebuts 16763,801713
+(defun undercuts 16767,801905
+(defun defeats 16778,802429
+(defun compute-undefeated-degrees-of-support 16787,802859
+(defun inference-descendants 16872,807485
+(defun interest-descendants 16884,807888
+(defun hypernode-descendants-of-interest 16898,808471
+(defun descendants-of 16907,808935
+(defun print-undefeated-degrees-of-support 16956,811232
+(defun display-inference-graph 16964,811634
+(defun independent-of 16972,811945
+(defun sup-order 16978,812163
+(defun print-argument-relations 16981,812253
+(defun display-arguments 16998,812945
+(defun display-settings 17007,813313
+(defvar *substantive-interests* 17063,815939
+(defun inference-number 17064,815976
+(defun SIMULATE-OSCAR 17067,816138
+(defun SO 17148,820362
+(defun competing-percepts 17150,820411
+(defmacro make-simulation-problem 17166,820852
+(def-forwards-reason *PERCEPTION*17241,824723
+(defun projectible 17250,825116
+(def-backwards-undercutter *PERCEPTUAL-RELIABILITY*17254,825221
+(def-forwards-reason *DISCOUNTED-PERCEPTION*17264,825824
+(def-backwards-undercutter *PERCEPTUAL-UNRELIABILITY*17277,826516
+(defun temporally-projectible 17289,827182
+(defun temporally-projectible 17298,827381
+(def-backwards-reason *TEMPORAL-PROJECTION*17306,827685
+(def-backwards-reason *TEMPORAL-PROJECTION*17322,828609
+(def-backwards-reason *TEMPORAL-PROJECTION*17336,829536
+(def-backwards-reason *TEMPORAL-PROJECTION*17348,830293
+(def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-TEMPORAL-PROJECTION*17364,831275
+(def-backwards-reason *INCOMPATIBLE-COLORS*17371,831667
+(def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*17378,831982
+(def-forwards-reason *INDEXICAL-PERCEPTION*17385,832287
+(def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-PERCEPTION*17395,832783
+(def-backwards-undercutter *INDEXICAL-PERCEPTUAL-RELIABILITY*17402,833177
+(def-forwards-reason *DISCOUNTED-INDEXICAL-PERCEPTION*17411,833780
+(def-backwards-undercutter *INDEXICAL-PERCEPTUAL-UNRELIABILITY*17425,834566
+(def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*17434,835192
+(def-backwards-reason *INDEXICAL-TEMPORAL-PROJECTION*17441,835492
+(def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-TEMPORAL-PROJECTION*17454,836155
+(def-forwards-reason *RELIABLE-INFORMANT*17461,836567
+(def-forwards-reason *RELIABLE-INFORMANT*17472,837062
+(def-backwards-reason strict-arithmetical-inequality17497,838147
+(def-backwards-reason arithmetical-inequality17505,838559
+(def-backwards-reason arithmetical-equality17511,838738
+(def-backwards-reason arithmetical-nonequality17532,840140
+(def-backwards-reason arithmetical-equality17545,840852
+(def-backwards-reason arithmetical-nonequality17550,841025
+(def-backwards-reason is-past-or-present17558,841435
+(def-backwards-reason is-past17566,841838
+(def-backwards-reason *CAUSAL-IMPLICATION*17571,842002
+(def-backwards-reason *CAUSAL-IMPLICATION2*17588,843043
+(def-backwards-reason *CAUSAL-IMPLICATION+*17608,844222
+(def-backwards-reason *INDEXICAL-CAUSAL-IMPLICATION*17626,845321
+(def-backwards-undercutter *CAUSAL-UNDERCUTTER+*17653,846784
+(def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER+*17679,848312
+(def-backwards-reason neg-at-intro17719,850727
+(def-backwards-reason neg-at-intro217730,851120
+(def-forwards-reason neg-at-elimination17735,851316
+(def-backwards-reason &-at-intro17741,851566
+(def-forwards-reason &-at-elimination17746,851781
+(def-backwards-reason ETERNAL-TRUTHS17751,851997
+(def-backwards-reason *COLLISION*17756,852182
+(def-forwards-reason COLLISION-SYMMETRY17763,852557
+(def-backwards-reason *NEW-POSITION*17768,852791
+(def-forwards-reason *POSITION-INCOMPATIBILITY*17780,853436
+(def-backwards-reason *POSITION-INCOMPATIBILITY*17790,853884
+(def-backwards-reason *POSITION-INCOMPATIBILITY-1*17798,854244
+(def-backwards-reason *POSITION-INCOMPATIBILITY-2*17805,854584
+(def-backwards-reason *VELOCITY-INCOMPATIBILITY-1*17812,854925
+(def-backwards-reason *VELOCITY-INCOMPATIBILITY-2*17818,855257
+(def-backwards-reason inequality-transitivity17824,855589
+(def-backwards-reason inequality-transitivity217830,855843
+(def-backwards-reason PAIR-NONIDENTITY-AT-TIME17836,856098
+(def-backwards-reason PAIR-NONIDENTITY17842,856419
+(def-forwards-reason not-alive-elimination17848,856721
+(def-forwards-reason not-dead-elimination17854,857013
+(def-backwards-reason not-alive-introduction17860,857304
+(def-backwards-reason not-dead-introduction17866,857604
+(def-forwards-reason dead-elimination17872,857903
+(def-backwards-reason dead-introduction17878,858190
+(def-backwards-reason *NEW-POSITION-*17887,858585
+(def-backwards-reason *CAUSAL-IMPLICATION-*17899,859225
+(def-backwards-reason *TEMPORAL-PROJECTION-*17912,859944
