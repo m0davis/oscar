@@ -3915,8 +3915,14 @@ It requires Hypergraphs11.lisp. |#
                              (declare (ignore depth))
                              (princ "#<" stream) (princ "Link " stream)
                              (princ (link-number x) stream)
-                             (when (link-resultant-interest x)
-                               (princ ": for  interest #" stream) (princ (interest-number (link-resultant-interest x)) stream))
+			     (let ((result (link-resultant-interest x)))
+			       (when result
+				 (cond ((interest-p result)
+					(princ ": for  interest #" stream) (princ (interest-number result) stream))
+				       ((query-p result)
+					(princ ": for  query #" stream) (princ (query-number result) stream))
+				       (t
+					(princ ": for UNKNOWN" stream)))))
                              (princ " by " stream) (princ (link-rule x) stream)
                              (princ ">" stream)))
                           (:conc-name nil))   ; "An interest-graph-link"
@@ -6326,7 +6332,8 @@ priority is the interest-priority and complexity is the complexity of the intere
             (cond ((eq (queue-item-kind q) :conclusion)
                    (hypernode-discounted-node-strength (queue-item q)))
                   ((eq (queue-item-kind q) :query) 1.0)
-                  ((eq (queue-item-kind q) :interest) (interest-priority (queue-item q))))))
+                  ((eq (queue-item-kind q) :interest) (interest-priority (queue-item q)))
+		  (t (error "UNEXPECTED")))))
       (princ "  priority = ")
       (princ (float (/ (truncate (* 1000 priority)) 1000))))
     (terpri)))
@@ -6828,7 +6835,7 @@ priority is the interest-priority and complexity is the complexity of the intere
                         (when (not (hypernode-cancelled-node node))
                           (when increased-justification?
                             (discharge-interest-in
-                              node i-lists old-degree new-node? (1+ depth) interests interest)
+                              node i-lists old-degree new-node? (1+ depth) interests :interest interest)
                             (cond (*use-reductio*
                                     (discharge-immediate-reductios
                                       node old-degree new-node? (1+ depth) interests interest))))
@@ -7955,7 +7962,7 @@ priority is the interest-priority and complexity is the complexity of the intere
   #| new? indicates whether the node is newly-constructed.  Old-degree
   is the old maximal-degree-of-justification  |#
   (defun DISCHARGE-INTEREST-IN
-    (node corresponding-i-lists old-degree new? depth interests &optional interest &key reductio-only)
+    (node corresponding-i-lists old-degree new? depth interests &key interest reductio-only)
     (let ((degree (current-maximal-degree-of-justification node)))
       (when (or new? (> degree old-degree))
         (when
@@ -9770,7 +9777,7 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
     (when assoc
       (pull assoc (hypernode-non-reductio-supposition node))
       (push assoc (hypernode-reductio-ancestors node))
-      (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) 0 t 1 nil nil :reductio-only t)
+      (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) 0 t 1 nil :interest nil :reductio-only t)
       (dolist (L (hypernode-consequent-links node))
         (recompute-reductio-ancestors (hyperlink-target L) sup)))))
 
@@ -18434,3 +18441,12 @@ alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
 ;  )
 
 (setf *problems* (eval-when (:compile-toplevel :execute) (default-problem-list)))
+
+(trace-on)
+(display-on)
+(proof-on)
+(logic-on)
+(reductio-on)
+(log-on)
+(IQ-on)
+(graph-log-on)
