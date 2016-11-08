@@ -13144,37 +13144,38 @@ ancestors are already in lines, and put its supposition in sups-used. |#
     ))
 
 (defun hypernode-arguments (node &optional used-sequents)
-  (if (hypernode-hyperlinks node)
-    (let ((S (hypernode-sequent node)))
-      ; (union=
-      (unionmapcar=
-        #'(lambda (L)
-            (if (hyperlink-basis L)
-              (when
-                (and
-                  (not (some #'(lambda (b)
-                                 (and (is-inference b) (subsumes (hypernode-sequent b) S)))
-                             (hyperlink-basis L)))
-                  (not (some #'(lambda (S)
-                                 (some #'(lambda (b)
-                                           (and (is-inference b) (subsumes (hypernode-sequent b) S)))
-                                       (hyperlink-basis L)))
-                             used-sequents)))
-                (mapcar
-                  #'(lambda (arg) (cons L arg))
-                  (mapcar
-                    #'genunion
-                    (gencrossproduct
-                      (append
-                        (mapcar
+  (when (hypernode-p node)
+    (if (hypernode-hyperlinks node)
+	(let ((S (hypernode-sequent node)))
+					; (union=
+	  (unionmapcar=
+	   #'(lambda (L)
+	       (if (hyperlink-basis L)
+		   (when
+		       (and
+			(not (some #'(lambda (b)
+				       (and (is-inference b) (subsumes (hypernode-sequent b) S)))
+				   (hyperlink-basis L)))
+			(not (some #'(lambda (S)
+				       (some #'(lambda (b)
+						 (and (is-inference b) (subsumes (hypernode-sequent b) S)))
+					     (hyperlink-basis L)))
+				   used-sequents)))
+		     (mapcar
+		      #'(lambda (arg) (cons L arg))
+		      (mapcar
+		       #'genunion
+		       (gencrossproduct
+			(append
+			 (mapcar
                           #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
                           (hypernode-motivating-nodes node))
-                        (mapcar
+			 (mapcar
                           #'(lambda (b) (hypernode-arguments b (cons S used-sequents)))
                           (hyperlink-basis L)))))))
-              (list (list L))))
-        (hypernode-hyperlinks node)))
-    (list nil)))
+		 (list (list L))))
+	   (hypernode-hyperlinks node)))
+      (list nil))))
 
 (defun find-defeating-arguments (argument)
   (dolist (L (argument-links argument))
