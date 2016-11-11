@@ -325,3 +325,158 @@ reason-from-interest-scheme
 discharge-interest-scheme
 
 --
+
+compute-hypernode-justification
+compute-link-justification
+compute-hyper-defeat-link-justification
+
+--
+
+callers of 'match'
+
+set-match
+ subsumed
+ cancel-subsumed-links
+pretty
+convert-to-prefix-form
+search-d-nodes
+instance-of
+one-one-match
+ i-list-for
+  interests-for
+  interest-for
+  construct-initial-interest-link
+subsumed
+ DRAW-CONCLUSION
+ draw-reductio-conclusion
+subsuming-supposition
+cancel-subsumed-links
+make-forwards-inference
+make-reductio-supposition
+EI
+
+--
+
+theorizing about set-match
+
+
+(defun set-match (patterns data vars)
+  (catch 'match
+    (let ((matches nil)
+	  (open nil)
+	  (closed nil))
+      (dolist (P patterns)
+	(if (some #'(lambda (v) (occur v P)) vars)
+	    (push P open)
+	  (if (mem P data)
+	      (push P closed)
+	    (throw 'match nil))))
+      (cond (open
+	     (let ((P (mem1 open)))
+	       (dolist (Q data)
+		 (let ((m (match P Q vars)))
+		   (when m
+		     (dolist (sm (set-match
+				  (match-sublis m (cdr open))
+				  data
+				  (setdifference vars (match-domain m))))
+		       (push (list (adjoin= Q (union= closed (mem1 sm)))
+				   (merge-matches m (mem2 sm)))
+			     matches)))))))
+	    (t (setf matches (list (list closed T)))))
+      (when (null matches) (throw 'match nil))
+      (princ matches) (terpri)
+      matches)))
+
+set-match ∷ Patterns → Formulas → Symbols → List (Formulas × Map Symbol Pattern)
+set-match [] _ _ = [ [] , ∅ ]
+set-match _ [] _ = []
+set-match pats@(_ ∷ _) dats@(_ ∷ _) []
+ with pats ⊂? dats
+... |  no _ = []
+... | yes _ = [ pats , ∅ ]
+set-match pats@(_ ∷ _) dats@(_ ∷ _) vars@(_ ∷ _) =
+  let open-pats = pats havingFreeVarsIn vars
+      closed-pats = pats - open
+  in
+  if closed-pats ⊂ dats then
+    let open-pat ∷ open-pats = open-pats in
+    foldl
+      λ { matches dat →
+        case match open-pat dat vars of λ where
+        ∅ → matches
+        open-pat-match →
+          foldl
+            λ { matches (sm-closeds , sm-matches) →
+              (sm-closeds ∪ closed-pats ∪ [ dat ] , sm-matches ∪ open-pat-match) ∷ matches }
+            matches
+            (set-match (substitute open-pat-match open-pats) data (vars - domain open-pat-match)) }
+      []
+      dats
+  else
+    []
+
+(set-match
+  '((f x)
+    (g y))
+  '((f A)
+    (f B)
+    (g A)
+    (g B))
+  '(x y))
+
+(set-match
+  '((f x y)
+    (g x y)
+    (h x y z)
+    (h x z)
+    (h x z)
+    (j x z)
+    (f y x))
+  '((f A A)
+    (g A A)
+    (h A A B)
+    (h A B)
+    (h A A)
+    (j A B)
+    (h A B)
+    (i A w))
+  '(x x y y z z w w))
+
+(set-match
+  '((f x y)
+    (g x y)
+    (f x x)
+    (g y y))
+  '((f A B)
+    (g A B))
+  '(x y))
+(set-match
+  '((SUBSET ^@y46 (INT (INV F c18 c0) (INV F c19 c0)))
+    (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0))
+    (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+    (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+    (SUBSET (INV F (INT c18 c19) c0) ^@y41))
+
+  '((SUBSET (INV F (INT c18 c19) c0) ^@y41)
+    (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+    (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+    (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0)))
+  '(^@y41 ^@y46))
+
+((SUBSET ^@y46 (INT (INV F c18 c0) (INV F c19 c0)))
+ (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0))
+ (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+ (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+ (SUBSET (INV F (INT c18 c19) c0) ^@y41))
+
+((SUBSET (INV F (INT c18 c19) c0) ^@y41)
+ (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+ (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+ (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0)))
+(^@y41 ^@y46)
+((((SUBSET (INV F (INT c18 c19) c0) ^@y41)
+   (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0))
+   (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+   (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0))))
+  ((^@y41 . ^@y41) (^@y46 . ^@y41))))

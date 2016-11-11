@@ -163,8 +163,7 @@
 (defmacro mem17 (x) `(nth 16 ,x))
 (defmacro mem18 (x) `(nth 17 ,x))
 
-					;nth element of sequence x:
-(defmacro element (n x) `(nth ,n ,x))
+(defmacro element (n x) "nth element of sequence x" `(nth ,n ,x))
 
 (defmacro lastmember (x) `(car (last ,x)))
 
@@ -979,6 +978,8 @@ patterns), and X is a subset of data.  This asssumes that vars do not occur in d
 			     matches)))))))
 	    (t (setf matches (list (list closed T)))))
       (when (null matches) (throw 'match nil))
+      (princ patterns) (terpri) (princ data) (terpri) (princ vars) (terpri)
+      (princ matches) (terpri) (terpri)
       matches)))
 
 					;                        * CONFIGURATION *
@@ -14037,7 +14038,7 @@ describing the individual problems. |#
 (defun default-problem-list ()
   (make-problem-list
    "
-Problem #81680082
+Problem #757
 Given premises:
 	(all A)(all B)((subset A B) <-> (all x) ((mem x A) -> (mem x B)))                                    justification = 1.0
 	(all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
@@ -18419,5 +18420,22 @@ b1 between 0 and 10, and we are given that 10 is between 0 and 10.
 ;(log-on)
 ;(IQ-on)
 ;(graph-log-on)
-
-(test)
+;
+;(test 757)
+;
+;(test)
+;
+;(so 1)
+;(so 2)
+;(so 3)
+;(so 4)
+;(so 5)
+;(so 6)
+;(so 7)
+;(so 8)
+;(so 9)
+;(so 10)
+;(so 11)
+;(so 12)
+;(so 13)
+;(so 14)
