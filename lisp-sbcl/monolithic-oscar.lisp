@@ -2,76 +2,182 @@
 
 (proclaim
  '(special
-   *act-executors* *altered-nodes* *answered-discount*
-   *auxiliary-backwards-rules* *auxiliary-forwards-rules*
-   *auxiliary-forwards-rules* *backwards-logical-reasons* *backwards-reasons* *backwards-rules*
-   *backwards-substantive-reasons* *base-interest* *base-priority* *blocked-conclusions*
-   *cancelled-c-lists* *comparison-log* *concluded-interest-priority* *d-trace*
-   *dependent-interests* *dependent-nodes* *desires* *direct-reductio-interests*
-   *display-inference-queue* *display?* *environmental-input* *executable-operations*
-   *forwards-logical-reasons* *forwards-reasons* *forwards-rules* *forwards-substantive-reasons*
-   *independent-reductio-suppositions* *inference-graph* *inference-number* *inference-number*
-   *inference-queue* *inherited-non-reductio-suppositions* *interest-links* *interest-map*
-   *interest-number* *interest-record* *interest-scheme-number* *interest-schemes* *interests*
-   *link-number* *log-on* *non-reductio-supposition-nodes* *optative-dispositions* *pause* *percepts*
-   *permanent-ultimate-epistemic-interests* *premises* *priority-interests* *prob-compiler-loaded*
-   *problem-number* *problems* *problems-loaded* *processed-conclusions* *processed-desires*
-   *q&i-modules* *query-number* *queue-number* *reasoning-log* *reductio-discount*
-   *reductio-interest* *reductio-supposition-nodes* *skolem-free-suppositions* *skolem-multiplier*
-   *start-trace* *support-link-number* *support-links* *test-log* *time-limit* *tools-loaded*
-   *trees-loaded* *ultimate-epistemic-interests* *unused-suppositions* *proofs?*
-   *use-logic* *use-reductio* *version* ei adjunction is-desire is-inference is-percept oscar-pathname reductio
-   *deleted-arguments* *relevant-nodes* *open-position-for-assignment-tree-window*
-   *flash-affected-nodes* *flash-defeatees* *flash-defeaters* *flash-ancestors*
-   *flash-consequences* *flash-support-link-bases* *flash-support-links* *deductive-only*
-   *flash-relevant-nodes* *graph-ancestors* *graph-relevant-nodes* *menu-dialog*
-   *message* *start-display* *cycle* *assignment-tree-window* *assignment-tree-subview*
-   *monitor-assignment-tree* *assignment-tree-window-size* *assignment-tree-dialog*
-   *graphics-initialized* *graphics-on* *graph-log* *graphics-pause* *nodes-displayed*
-   *og-nodes* *og* *graph-interests* *speak* *d-node-number* *discrimination-net*
-   *top-d-node* *operators* *quantifier-number* *conditional-node* *disjunction-node*
-   *undercutter-node* *conjunctive-undercutter-node* *ip-number* *is-number* *display-box*
-   *quantifier-discount* *package-name* *display-button* *trace-button* *constructed-plans*
-   *constructed-goals* *constructed-desires* *plan-number* *goal-number*
-   *fixed-ultimate-epistemic-interests* *temporal-decay* *temporal-projection* *causal-implication*
-   *new-links* *used-nodes* *used-interests* *unprocessed-nodes* *unprocessed-interests*
-   *interests-used-in-proof* *temporal-decay-minimum* *instantiated-premise-number*
-   *strictly-relevant-nodes* *not-strictly-relevant-nodes* ug
-   *act-executors* *altered-nodes* *answered-discount* *auxiliary-backwards-rules*
-   *auxiliary-forwards-rules* *auxiliary-forwards-rules* *backwards-logical-reasons*
-   *backwards-reasons* *backwards-rules* *backwards-substantive-reasons* *base-interest* *base-priority*
-   *blocked-conclusions* *cancelled-c-lists* *causal-implication* *comparison-log* *concluded-interest-priority*
-   *conditional-node* *conjunctive-undercutter-node* *constructed-desires* *constructed-goals*
-   *constructed-plans* *cycle* *d-node-number* *d-trace* *deductive-only* *hyper-defeat-link-number*
-   *hyper-defeat-links* *deleted-arguments* *dependent-interests* *dependent-nodes* *desires*
-   *direct-reductio-interests* *discrimination-net* *disjunction-node* *display-box* *display-button*
-   *display-inference-queue* *display?* *environmental-input* *executable-operations*
-   *fixed-ultimate-epistemic-interests* *flash-affected-nodes* *flash-ancestors* *flash-consequences*
-   *flash-defeatees* *flash-defeaters* *flash-relevant-nodes* *flash-hyperlink-bases*
-   *flash-hyperlinks* *forwards-logical-reasons* *forwards-reasons* *forwards-rules*
-   *forwards-substantive-reasons* *goal-number* *graph-ancestors* *graph-interests*
-   *graph-log* *graph-relevant-nodes* *graphics-initialized* *graphics-on* *graphics-pause* *hypergraphs-loaded*
-   *independent-reductio-suppositions* *hypergraph* *hypernode-number* *hypernode-number*
-   *inference-queue* *inherited-non-reductio-suppositions* *instantiated-premise-number*
-   *interest-links* *interest-map* *interest-number* *interest-record* *interest-scheme-number*
-   *interest-schemes* *interests* *interests-used-in-proof* *ip-number* *is-number* *interest-link-number*
-   *log-on* *menu-dialog* *menus-loaded* *message* *new-beliefs* *new-links* *new-retractions*
-   *nodes-displayed* *non-reductio-supposition-nodes* *not-strictly-relevant-nodes* *og* *og-nodes*
-   *operators* *optative-dispositions* *package-name* *pause* *percepts*
-   *permanent-ultimate-epistemic-interests* *plan-number* *premises* *priority-interests*
-   *prob-compiler-loaded* *problem-number* *problems* *problems-loaded* *processed-conclusions*
-   *processed-desires* *proofs?* *q&i-modules* *quantifier-discount* *quantifier-number* *query-number*
-   *queue-number* *reasoning-log* *reductio-discount* *reductio-interest* *reductio-supposition-nodes*
-   *relevant-nodes* *skolem-free-suppositions* *skolem-multiplier* *speak* *start-display* *start-trace*
-   *strictly-relevant-nodes* *hyperlink-number* *hyperlinks* *temporal-decay*
-   *temporal-decay-minimum* *temporal-projection* *test-log* *time-limit* *tools-loaded*
-   *top-d-node* *trace-button* *trees-loaded* *ultimate-epistemic-interests* *undercutter-node*
-   *unprocessed-interests* *unprocessed-nodes* *unused-suppositions* *use-logic* *use-reductio*
-   *used-interests* *used-nodes* *version* adjunction ei is-desire is-inference is-percept
-   oscar-pathname reductio ug
-   *VERBOSE-EVAL-SELECTION* *warn-if-redefine*
-   pause-flag *metered-calls* *callees* *blank-line* *line-columns* *uncalled-callers*
-   *indent-depth* *call-number*))
+   *act-executors*
+   *altered-nodes*
+   *answered-discount*
+   *assignment-tree-dialog*
+   *assignment-tree-subview*
+   *assignment-tree-window*
+   *assignment-tree-window-size*
+   *auxiliary-backwards-rules*
+   *auxiliary-forwards-rules*
+   *backwards-logical-reasons*
+   *backwards-reasons*
+   *backwards-rules*
+   *backwards-substantive-reasons*
+   *base-interest*
+   *base-priority*
+   *blank-line*
+   *blocked-conclusions*
+   *call-number*
+   *callees*
+   *cancelled-c-lists*
+   *causal-implication*
+   *comparison-log*
+   *concluded-interest-priority*
+   *conditional-node*
+   *conjunctive-undercutter-node*
+   *constructed-desires*
+   *constructed-goals*
+   *constructed-plans*
+   *cycle*
+   *d-node-number*
+   *d-trace*
+   *deductive-only*
+   *deleted-arguments*
+   *dependent-interests*
+   *dependent-nodes*
+   *desires*
+   *direct-reductio-interests*
+   *discrimination-net*
+   *disjunction-node*
+   *display-box*
+   *display-button*
+   *display-inference-queue*
+   *display?*
+   *environmental-input*
+   *executable-operations*
+   *fixed-ultimate-epistemic-interests*
+   *flash-affected-nodes*
+   *flash-ancestors*
+   *flash-consequences*
+   *flash-defeatees*
+   *flash-defeaters*
+   *flash-hyperlink-bases*
+   *flash-hyperlinks*
+   *flash-relevant-nodes*
+   *flash-support-link-bases*
+   *flash-support-links*
+   *forwards-logical-reasons*
+   *forwards-reasons*
+   *forwards-rules*
+   *forwards-substantive-reasons*
+   *goal-number*
+   *graph-ancestors*
+   *graph-interests*
+   *graph-log*
+   *graph-relevant-nodes*
+   *graphics-initialized*
+   *graphics-on*
+   *graphics-pause*
+   *hyper-defeat-link-number*
+   *hyper-defeat-links*
+   *hypergraph*
+   *hypergraphs-loaded*
+   *hyperlink-number*
+   *hyperlinks*
+   *hypernode-number*
+   *indent-depth*
+   *independent-reductio-suppositions*
+   *inference-graph*
+   *inference-number*
+   *inference-queue*
+   *inherited-non-reductio-suppositions*
+   *instantiated-premise-number*
+   *interest-link-number*
+   *interest-links*
+   *interest-map*
+   *interest-number*
+   *interest-record*
+   *interest-scheme-number*
+   *interest-schemes*
+   *interests*
+   *interests-used-in-proof*
+   *ip-number*
+   *is-number*
+   *line-columns*
+   *link-number*
+   *log-on*
+   *menu-dialog*
+   *menus-loaded*
+   *message*
+   *metered-calls*
+   *monitor-assignment-tree*
+   *new-beliefs*
+   *new-links*
+   *new-retractions*
+   *nodes-displayed*
+   *non-reductio-supposition-nodes*
+   *not-strictly-relevant-nodes*
+   *og*
+   *og-nodes*
+   *open-position-for-assignment-tree-window*
+   *operators*
+   *optative-dispositions*
+   *package-name*
+   *pause*
+   *percepts*
+   *permanent-ultimate-epistemic-interests*
+   *plan-number*
+   *premises*
+   *priority-interests*
+   *prob-compiler-loaded*
+   *problem-number*
+   *problems*
+   *problems-loaded*
+   *processed-conclusions*
+   *processed-desires*
+   *proofs?*
+   *q&i-modules*
+   *quantifier-discount*
+   *quantifier-number*
+   *query-number*
+   *queue-number*
+   *reasoning-log*
+   *reductio-discount*
+   *reductio-interest*
+   *reductio-supposition-nodes*
+   *relevant-nodes*
+   *skolem-free-suppositions*
+   *skolem-multiplier*
+   *speak*
+   *start-display*
+   *start-trace*
+   *strictly-relevant-nodes*
+   *support-link-number*
+   *support-links*
+   *temporal-decay*
+   *temporal-decay-minimum*
+   *temporal-projection*
+   *test-log*
+   *time-limit*
+   *tools-loaded*
+   *top-d-node*
+   *trace-button*
+   *trees-loaded*
+   *ultimate-epistemic-interests*
+   *uncalled-callers*
+   *undercutter-node*
+   *unprocessed-interests*
+   *unprocessed-nodes*
+   *unused-suppositions*
+   *use-logic*
+   *use-reductio*
+   *used-interests*
+   *used-nodes*
+   *verbose-eval-selection*
+   *version*
+   *warn-if-redefine*
+   adjunction
+   ei
+   is-desire
+   is-inference
+   is-percept
+   oscar-pathname
+   pause-flag
+   reductio
+   ug
+   ))
 
 (setf *version* "OSCAR_4.02")
 
@@ -172,18 +278,18 @@
 (defmacro do-until (P Q)
   (list 'loop Q (list 'if P '(return))))
 
-					;pretty print function definition (takes unquoted argument):
-(defmacro pp (f) `(let ((pv *print-level*)
-                        (pl *print-length*))
-                    (setq *print-level* nil)
-                    (setq *print-length* nil)
-                    (pprint (symbol-function ,f))
-                    (setq *print-level* pv)
-                    (setq *print-length* pl)))
+(defmacro pp (f)
+  "pretty print function definition (takes unquoted argument)"
+  `(let ((pv *print-level*)
+	 (pl *print-length*))
+     (setq *print-level* nil)
+     (setq *print-length* nil)
+     (pprint (symbol-function ,f))
+     (setq *print-level* pv)
+     (setq *print-length* pl)))
 
-					;to test the efficiency of different values of the parameter param in
-					;the list A.  Takes unquoted arguments for param and prog:
 (defmacro parameter-test (A param prog)
+  "to test the efficiency of different values of the parameter param in the list A.  Takes unquoted arguments for param and prog"
   `(progn (o-terpri) (gc)
           (for-all ,A #'(lambda (n)
                           (setq ,param n)
@@ -198,43 +304,75 @@
 (defmacro unionimage (K f)
   `(genunion (mapcar ,f ,K)))
 
-#| The following is unnecessary, because genunion already deletes duplicates. |#
 (defmacro unionimage+ (K f)
+  "The following is unnecessary, because genunion already deletes duplicates"
   `(remove-duplicates (genunion (mapcar ,f ,K)) :test 'equal))
 
-					;This puts something at the front of a queue with index 0:
 (defmacro 0-insert (F x A)
+  "This puts something at the front of a queue with index 0"
   `(setf (,F ,A) (cons 0 (cons (cons 0 ,x) (cadr (,F ,A))))))
 
 (defmacro pull (x s)
   `(setf ,s (remove-if-equal ,x ,s)))
 
-#| This redefines a constant defined by defconstant. |#
 (defmacro redefine-constant (x val)
+  "This redefines a constant defined by defconstant."
   `(progn
      (makunbound ',x)
      (defconstant ,x ,val)))
 
+#|
+(defun unionmapcar (f A) (apply 'append (mapcar f A)))
+
+;This removes duplicates with test eq.	;
+(defun unionmapcar+ (f X)
+  (let ((U nil))
+    (dolist (y X)
+      (dolist (z (funcall f y))
+        (pushnew z U)))
+    U))
+
+;This removes duplicates with test equal. ;
+(defun unionmapcar= (f X)
+  (let ((U nil))
+    (dolist (y X)
+      (dolist (z (funcall f y))
+        (pushnew z U :test 'equal)))
+    U))
+
+;This removes duplicates with test equal. ;
+(defun unionmapcar2= (f X Y)
+  (let ((U nil)
+        (X* X)
+        (Y* Y))
+    (loop
+     (when (null X*) (return U))
+     (dolist (z (funcall f (mem1 X*) (mem1 Y*)))
+       (pushnew z U :test 'equal))
+     (setf X* (cdr X*))
+     (setf Y* (cdr Y*)))))
+|#
+
 (defmacro unionmapcar (f A) `(apply 'append (mapcar, f ,A)))
 
-					;This removes duplicates with test eq.
 (defmacro unionmapcar+ (f X)
+  "removes duplicates with test eq"
   `(let ((U nil))
      (dolist (y ,X)
        (dolist (z (funcall ,f y))
          (pushnew z U)))
      U))
 
-					;This removes duplicates with test equal.
 (defmacro unionmapcar= (f X)
+  "removes duplicates with test equal"
   `(let ((U nil))
      (dolist (y ,X)
        (dolist (z (funcall ,f y))
          (pushnew z U :test 'equal)))
      U))
 
-					;This removes duplicates with test equal.
 (defmacro unionmapcar2= (f X Y)
+  "removes duplicates with test equal"
   `(let ((U nil)
          (X* ,X)
          (Y* ,Y))
@@ -270,9 +408,14 @@
            (subsetp x y :test 'equal)
            (subsetp y x :test 'equal))))
 
-;; this returns three values: (union x y), (setdifference x y), and (setdifference y x),
-;; but if a symbol occurs multiple times in x or y, they are treated as different smbols.
 (defun compare-lists (x y &key (test #'eq))
+  "this returns three values: (union x y), (setdifference x y), and (setdifference y x), but if a symbol occurs multiple times in x or y, they are treated as different smbols."
+#|
+(compare-lists '(a a b c) '(a b c d)) returns
+(c b a)
+(a)
+(d)
+|#
   (let ((xy nil))
     (dolist (z x)
       (block x+
@@ -282,13 +425,6 @@
                       (setf y (remove z y :count 1 :test test))
                       (push z xy) (return-from x+ nil))))))
     (values xy x y)))
-
-#|
-(compare-lists '(a a b c) '(a b c d)) returns
-(c b a)
-(a)
-(d)
-|#
 
 (defun === (x y &key (test 'equal))
   (or (eq x y)
@@ -329,12 +465,12 @@
 (defun proper-subset (X Y)
   (and (subsetp= X Y) (not (subsetp= Y X))))
 
-					;x and y are disjoint, with test 'equal:
 (defun disjoint (x y)
+  "x and y are disjoint, with test 'equal"
   (not (some #'(lambda (z) (mem z y)) x)))
 
-					;x and y are disjoint, with test 'eq:
 (defun disjointp (x y)
+  "x and y are disjoint, with test 'eq"
   (not (some #'(lambda (z) (member z y)) x)))
 
 (defun crossproduct (A B)
@@ -347,19 +483,21 @@
 (defun dot-product (x y)
   (unionmapcar #'(lambda (w) (mapcar #'(lambda (z) (cons w z)) y)) x))
 
-					;domain, range, and inverse of a set of ordered pairs:
-(defun domain (x) (remove-duplicates (mapcar #'car x) :test 'equal))
+(defun domain (x)
+  "domain, range, and inverse of a set of ordered pairs"
+  (remove-duplicates (mapcar #'car x) :test 'equal))
 
 (defun range (x) (remove-duplicates (mapcar #'cadr x) :test 'equal))
 
-					;range of an association list:
-(defun a-range (x) (remove-duplicates (mapcar #'cdr x) :test 'equal))
+(defun a-range (x)
+  "range of an association list"
+  (remove-duplicates (mapcar #'cdr x) :test 'equal))
 
 (defun inverse (R) (mapcar #'reverse R))
 
-					;(defun genunion (x) (apply 'append x))
-#| The following removes duplicates too. |#
 (defun genunion (x)
+  "The following removes duplicates too."
+					;(defun genunion (x) (apply 'append x))
   (let ((union nil))
     (dolist (y x)
       (dolist (z y)
@@ -428,55 +566,61 @@
 (defun member17 (x) (nth 16 x))
 (defun member18 (x) (nth 17 x))
 
-					;list of first n members of s:
 (proclaim '(sb-ext:maybe-inline first-n))
 (defun first-n (n s)
+  "list of first n members of s"
   (subseq s 0 n))
 
-					;This returns the (max m n) if both are non-null:
 (defun max+ (m n)
+  "This returns the (max m n) if both are non-null"
   (if m
       (if n (max m n) m)
     n))
 
-#|  This returns the maximum of an nonempty set of numbers.  |#
-(defun maximum (X) (apply #'max X))
+(defun maximum (X)
+  "This returns the maximum of an nonempty set of numbers."
+  (apply #'max X))
 
-#|  This returns the maximum of an nonempty set of numbers.  |#
-(defun minimum (X) (apply #'min X))
+(defun minimum (X)
+  "This returns the maximum of an nonempty set of numbers."
+  (apply #'min X))
 
-#|  This returns 0.0 if X is empty, otherwise the maximum of X.  |#
-(defun maximum0 (X) (if X (apply #'max X) 0.0))
+(defun maximum0 (X)
+  "This returns 0.0 if X is empty, otherwise the maximum of X."
+  (if X (apply #'max X) 0.0))
 
-#|  This returns 0.0 if X is empty, otherwise the minimum of X.  |#
-(defun minimum0 (X) (if X (apply #'min X) 0.0))
+(defun minimum0 (X)
+  "This returns 0.0 if X is empty, otherwise the minimum of X."
+  (if X (apply #'min X) 0.0))
 
-#| This returns T if F is nil, otherwise it funcalls F. |#
-
-(defun funcall* (f x) (or (null f) (funcall f x)))
+(defun funcall* (f x)
+  "This returns T if F is nil, otherwise it funcalls F."
+  (or (null f) (funcall f x)))
 
 (defmacro funcall+ (F &rest x)
   `(or (null ,F) (funcall ,F ,@x)))
 
-					;Given a list of lists, this returns the (or a) longest member:
-(defun longest (s) (prog (m n rest)
-                         (setq rest (cdr s))
-                         (setq m (car s))
-                         (setq n (length m))
-                         loop
-                         (cond ((null rest) (return m)))
-                         (cond ((> (length (car rest)) n)
-                                (setq m (car rest)) (setq n (length m))))
-                         (setq rest (cdr rest))
-                         (go loop)))
+(defun longest (s)
+  "Given a list of lists, this returns the (or a) longest member"
+  (prog (m n rest)
+	(setq rest (cdr s))
+	(setq m (car s))
+	(setq n (length m))
+	loop
+	(cond ((null rest) (return m)))
+	(cond ((> (length (car rest)) n)
+	       (setq m (car rest)) (setq n (length m))))
+	(setq rest (cdr rest))
+	(go loop)))
 
-					;first member of sequence x having property p, or "none" if there is none:
-(defun first-p (x P) (cond ((null x) "none")
-                           ((funcall P (car x)) (car x))
-                           (t (first-p (cdr x) P))))
+(defun first-p (x P)
+  "first member of sequence x having property p, or 'none' if there is none"
+  (cond ((null x) "none")
+	((funcall P (car x)) (car x))
+	(t (first-p (cdr x) P))))
 
-					;R-first member of sequence x, or "none" if x is nil:
 (defun r-first (x R)
+  "R-first member of sequence x, or 'none' if x is nil"
   (cond ((null x) "none")
         (t
 	 (do ((rest (cdr x) (cdr rest))
@@ -489,8 +633,8 @@
   (let ((X* (copy-list X)))
     (sort X* R)))
 
-#| This returns the set of non-repeating subsets of length i of X. |#
 (defun fixed-length-subsets (n set)
+  "This returns the set of non-repeating subsets of length i of X."
   (cond  ((> n (length set)) nil)
          ((zerop n) (list nil))
          ((= n 1) (mapcar #'list set))
@@ -498,8 +642,8 @@
                              (fixed-length-subsets (- n 1) (cdr set)))
                      (fixed-length-subsets n (cdr set))))))
 
-#| This returns the set of all minimal subsets of X that have the property P. |#
 (defun minimal-subsets (X P)
+  "This returns the set of all minimal subsets of X that have the property P."
   (cond ((funcall P nil) (list nil))
         (t
 	 (let ((S nil))
@@ -513,8 +657,8 @@
 		 (when (funcall P y) (push y S)))))
 	   S))))
 
-#| This returns the set of all maximal subsets of X that have the property P. |#
 (defun maximal-subsets (X P)
+  "This returns the set of all maximal subsets of X that have the property P."
   (cond ((funcall P X) (list X))
         (t
 	 (let ((S nil))
@@ -545,8 +689,8 @@
 	      (dolist (z head) (push z tail))
 	      (return tail)))))))
 
-					;depth of a list:
 (defun depth (s)
+  "depth of a list"
   (cond ((atom s) 1)
         (t (max (1+ (depth (car s))) (depth (cdr s))))))
 
@@ -559,8 +703,8 @@
 (defun occur* (x s &key (test 'eq))
   (or (funcall test x s) (occur x s :test test)))
 
-#| x occurs as a function-call in x. |#
 (defun occur1 (x s &key (test 'eq))
+  "x occurs as a function-call in x"
   (and s (listp s) (not (eq (car s) 'quote))
        (cond ((eq (car s) 'dolist)
               (occur1 x (cddr s)))
@@ -573,8 +717,8 @@
 		  (and (listp (cdr s))
 		       (some #'(lambda (y) (occur1 x y :test test)) (cdr s))))))))
 
-;; the number of occurrences of x in s
 (defun number-of-occurrences (x s)
+  "the number of occurrences of x in s"
   (cond ((atom s) (if (equal x s) 1 0))
         ((null s) 0)
         ((listp s) (+ (number-of-occurrences x (car s)) (number-of-occurrences x (cdr s))))))
@@ -584,12 +728,12 @@
   (cond ((atom s) nil)
         (t (cons s (unionmapcar #'substructures s)))))
 
-					;find substructures of s containing x:
 (defun s-find (x s)
+  "find substructures of s containing x"
   (subset #'(lambda (y) (mem x y)) (substructures s)))
 
-					;substitution of one subsequence for another in a sequence:
 (defun seq-subst (new old s)
+  "substitution of one subsequence for another in a sequence"
   (declare (inline first-n))
   (cond ((< (length s) (length old)) s)
         ((equal old (first-n (length old) s))
@@ -616,12 +760,12 @@
 
 					;                  * INSERTION AND DELETION *
 
-					;remove uses 'eql'.  This uses 'equal':
 (defun remove-if-equal (x y)
+  "remove uses 'eql'.  This uses 'equal'"
   (remove-if #'(lambda (z) (equal z x)) y))
 
-#| replace first occurrence of x by y in S. |#
 (defun replace-item-in-list (x y S)
+  "replace first occurrence of x by y in S"
   (let ((S0 S)
         (S* nil))
     (loop
@@ -630,21 +774,19 @@
      (setf S0 (cdr S0))
      (when (null S0) (return S)))))
 
-					;nondestructively delete nth member of y:
 (defun delete-n (n y)
+  "nondestructively delete nth member of y"
   (cond ((equal n (length y)) (first-n (1- n) y))
         ((> n (length y)) y)
         (t (append (first-n (1- n) y) (nthcdr n y)))))
 
-					;nondestructively splice x into y at the nth place:
 (defun splice (x n y)
+  "nondestructively splice x into y at the nth place"
   (cond ((> n (length y)) (append y (list x)))
         (t (append (first-n (1- n) y) (list x) (nthcdr (1- n) y)))))
 
-					;This inserts x into its appropriate place in A where A is ordered by R.  If R
-					;is a < relation, this puts x at the end of the sublist of equivalent items, and if
-					;R is a <= relation, this puts it at the start of the sublist.
 (defun insert (x A R)
+  "This inserts x into its appropriate place in A where A is ordered by R.  If R is a < relation, this puts x at the end of the sublist of equivalent items, and if R is a <= relation, this puts it at the start of the sublist."
   (let ((head nil)
         (tail A))
     (loop
@@ -659,56 +801,22 @@
 	      (setq head (cdr head)))))
     tail))
 
-
 					;                        * QUANTIFICATION *
-#|
-(defun unionmapcar (f A) (apply 'append (mapcar f A)))
-
-;This removes duplicates with test eq.	;
-(defun unionmapcar+ (f X)
-  (let ((U nil))
-    (dolist (y X)
-      (dolist (z (funcall f y))
-        (pushnew z U)))
-    U))
-
-;This removes duplicates with test equal. ;
-(defun unionmapcar= (f X)
-  (let ((U nil))
-    (dolist (y X)
-      (dolist (z (funcall f y))
-        (pushnew z U :test 'equal)))
-    U))
-
-;This removes duplicates with test equal. ;
-(defun unionmapcar2= (f X Y)
-  (let ((U nil)
-        (X* X)
-        (Y* Y))
-    (loop
-     (when (null X*) (return U))
-     (dolist (z (funcall f (mem1 X*) (mem1 Y*)))
-       (pushnew z U :test 'equal))
-     (setf X* (cdr X*))
-     (setf Y* (cdr Y*)))))
-|#
-;an assignment is a function in extension.  The following checks to see
-;whether a putative assignment is consistent, in the sense of assigning
-;only one object to each element of the domain:
 
 (defun consistent-assignment (s)
+  "an assignment is a function in extension.  The following checks to see whether a putative assignment is consistent, in the sense of assigning only one object to each element of the domain"
   (equal (length s) (length (domain s))))
 
-					;this returns the value of assignment for object obj:
 (defun value (assignment obj)
+  "this returns the value of assignment for object obj"
   (declare (inline subset))
   (cadr (apply #'append
                (subset #'(lambda (val-arg) (equal (car val-arg) obj))
                        assignment))))
 
-					;This maps a binary function f onto a set x, holding y fixed:
-(defun mapcar1 (f x y) (mapcar #'(lambda (z) (apply f (list z y))) x))
-
+(defun mapcar1 (f x y)
+  "This maps a binary function f onto a set x, holding y fixed"
+  (mapcar #'(lambda (z) (apply f (list z y))) x))
 
 					;                        * MISCELLANEOUS *
 
@@ -721,9 +829,8 @@
         ((funcall F (car x)) (1+ (number-of (cdr X) F)))
         (t (number-of (cdr X) F))))
 
-					;this returns the difference between two times t1 and t2 presented in
-					;the format of (multiple-value-list (get-decoded-time)):
 (defun time-dif (t1 t2)
+  "this returns the difference between two times t1 and t2 presented in the format of (multiple-value-list (get-decoded-time))"
   (let ((X t1))
     (cond ((<= (car t2) (car t1))
            (setq X (list (- (car t1) (car t2)) (cadr X) (mem3 X))))
@@ -787,23 +894,23 @@
         (t (coerce (mapcan #'char-num
                            (mapcan #'char-list s)) 'string))))
 
-					;this returns the integer named by a string:
 (defun named-integer (s)
+  "this returns the integer named by a string"
   (read-from-string s))
 
-					;this returns the decimal-number named by a string:
 (defun named-decimal-number (string)
+  "this returns the decimal-number named by a string"
   (float (read-from-string string)))
 
-					;concatenate two strings:
 (defun cat (x y)
-  (concatenate 'string x y))
-
+  "concatenate two strings"
 					;(defun cat (x y)
 					;   (imp (append (explode x) (explode y))))
+  (concatenate 'string x y))
 
-					;concatenate a list of strings:
+
 (defun cat-list (s)
+  "concatenate a list of strings"
   (cond ((null s) nil)
         (t (cat (mem1 s) (cat-list (cdr s))))))
 
@@ -812,8 +919,12 @@
 ;;(defun substring (s n &optional (m))
 ;;   (subseq s n m))
 
-#| This returns the word-strings in a string with spaces. |#
 (defun word-list (string)
+  "This returns the word-strings in a string with spaces."
+  #| example:
+  ? (word-list "Who is Henry's father")
+  ("Who" "is" "Henry's" "father")
+  |#
   (let ((letters (explode string))  ;; strings of length 1
         (words nil)
         (word nil))
@@ -825,25 +936,19 @@
     (if word (push (implode (reverse word)) words))
     (reverse words)))
 
-#| example:
-? (word-list "Who is Henry's father")
-("Who" "is" "Henry's" "father")
-|#
-
-#| This turns a list of strings into a string with spaces. |#
 (defun concatenate-words (word-list)
+  "This turns a list of strings into a string with spaces."
+  #| example:
+  ? (concatenate-words '("Who" "is" "Henry's" "father"))
+  "Who is Henry's father"
+  |#
   (cond ((cdr word-list)
          (cat (car word-list)
               (cat " " (concatenate-words (cdr word-list)))))
         (t (car word-list))))
 
-#| example:
-? (concatenate-words '("Who" "is" "Henry's" "father"))
-"Who is Henry's father"
-|#
-
-					;This returns the length of a string representation of the tree s:
 (defun string-length (s)
+  "This returns the length of a string representation of the tree s"
   (cond ((and s (listp s)) (+ 1 (length s) (apply #'+ (mapcar #'string-length s))))
         ((numberp s) (length (string-rep s)))
         (t (length (string s)))))
@@ -907,8 +1012,8 @@
        (s nil (cons i s)))
       ((>= i n) (reverse s))))
 
-					;this substitutes in accordance with a match m:
 (defun match-sublis (m x &key (test 'eq))
+  "this substitutes in accordance with a match m"
   (cond ((eq m t) x)
         (t (sublis m x :test test))))
 
@@ -921,9 +1026,6 @@
                                           (not (equal (cdr s) (cdr v)))))
                        p2)) p1)))
 
-#| (set-match patterns data vars) returns the set of pairs (X m) where m is an a-list of
-substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m p))
-patterns), and X is a subset of data.  This asssumes that vars do not occur in data. |#
 					;(defun set-match (patterns data vars)
 					;  (catch 'match (set-match-no-catch patterns data vars)))
 					;
@@ -954,6 +1056,7 @@ patterns), and X is a subset of data.  This asssumes that vars do not occur in d
 					;    matches))
 
 (defun set-match (patterns data vars)
+  "(set-match patterns data vars) returns the set of pairs (X m) where m is an a-list of substitutions for members of vars and X is (mapcar #'(lambda (p) (match-sublis m p)) patterns), and X is a subset of data.  This asssumes that vars do not occur in data."
   (catch 'match
     (let ((matches nil)
 	  (open nil)
@@ -1015,8 +1118,8 @@ patterns), and X is a subset of data.  This asssumes that vars do not occur in d
                ((lessp (car y) (car x)) nil)
                (t (lessp (cdr x) (cdr y)))))))
 
-					;This takes quoted arguments:
 (defun gfunc (f)
+  "This takes quoted arguments"
   (eval (list 'function f)))
 
 (setq *print-level* nil)
@@ -1024,8 +1127,6 @@ patterns), and X is a subset of data.  This asssumes that vars do not occur in d
 (defun factorial (n)
   (cond ((zerop n) 1)
         (t (* n (factorial (1- n))))))
-
-					;(setq param-list '(1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0))
 
 (defun pause ()
   (when (and (equal pause-flag t) (equal (read-char) 98)) (break)))
@@ -1188,15 +1289,15 @@ symbols.  It uses '@ for undercutting defeaters. |#
 
 ;;                              ******************  TERMS  ********************
 
-#| The constituent terms of a (possibly complex) term. |#
 (defun constituent-terms-of (c)
+  "the constituent terms of a (possibly complex) term"
   (cond ((stringp c) (list c))
         ((symbolp c) (list c))
         (t (cons c (remove-duplicates=
 		    (unionmapcar #'constituent-terms-of (arg-list c)))))))
 
-#| the list of terms having unbound occurrences |#
 (defun terms-of (p)
+  "the list of terms having unbound occurrences"
   (cond ((stringp p) nil)
         ((identityp p)
          (union= (constituent-terms-of (iden1 p))
@@ -1210,8 +1311,8 @@ symbols.  It uses '@ for undercutting defeaters. |#
                    (terms-of (q-matrix p)))))
         (t (union= (terms-of (subformula1 p)) (terms-of (subformula2 p))))))
 
-#| the list of all terms occurring in p, bound or free. |#
 (defun all-terms-of (p)
+  "the list of all terms occurring in p, bound or free"
   (cond ((stringp p) nil)
         ((identityp p)
          (union= (constituent-terms-of (iden1 p))
@@ -1222,9 +1323,8 @@ symbols.  It uses '@ for undercutting defeaters. |#
         ((or (u-genp p) (e-genp p)) (all-terms-of (q-matrix p)))
         (t (union= (all-terms-of (subformula1 p)) (all-terms-of (subformula2 p))))))
 
-#| this returns only terms serving as arguments of predications and identities
-(not their subterms) |#
 (defun arg-terms-of (p)
+  "returns only terms serving as arguments of predications and identities (not their subterms)"
   (cond ((stringp p) nil)
         ((identityp p) (if (equal (iden1 p) (iden2 p)) (list (iden1 p))
                          (list (iden1 p) (iden2 p))))
@@ -1236,8 +1336,8 @@ symbols.  It uses '@ for undercutting defeaters. |#
                    (arg-terms-of (q-matrix p)))))
         (t (union= (arg-terms-of (subformula1 p)) (arg-terms-of (subformula2 p))))))
 
-#| This is like arg-terms-of but does not delete repeated arguments |#
 (defun arg-list-of (p)
+  "like arg-terms-of, but does not delete repeated arguments"
   (cond ((stringp p) nil)
         ((identityp p) (if (equal (iden1 p) (iden2 p)) (list (iden1 p))
                          (list (iden1 p) (iden2 p))))
@@ -1255,65 +1355,61 @@ symbols.  It uses '@ for undercutting defeaters. |#
 (defun PROPER-SUBTERMS (x)
   (remove-if-equal x (constituent-terms-of x)))
 
-
 ;;                        ******************  VARIABLES  ********************
-#| the variables in the initial universal quantifiers of p |#
+
 (defun u-vars (p)
+  "the variables in the initial universal quantifiers of p"
   (cond ((not (u-genp p)) nil)
         (t (cons (q-variable p) (u-vars (q-matrix p))))))
 
-#| If p begins with a string of universal quantifiers, this returns the matrix |#
 (defun u-matrix (p)
+  "If p begins with a string of universal quantifiers, this returns the matrix"
   (cond ((not (u-genp p)) p)
         (t (u-matrix (q-matrix p)))))
 
-#| The universal closure of p with respect to the variables in X. |#
 (defun u-closure (p X)
+  "The universal closure of p with respect to the variables in X"
   (cond ((null X) p)
         (t (u-gen (mem1 X) (u-closure p (cdr X))))))
 
-#| the variables in the initial existential quantifiers of p. |#
 (defun e-vars (p)
+  "the variables in the initial existential quantifiers of p"
   (cond ((not (e-genp p)) nil)
         (t (cons (q-variable p) (e-vars (q-matrix p))))))
 
-#| If p begins with a string of existential quantifiers, this returns the
-matrix. |#
 (defun e-matrix (p)
+  "If p begins with a string of existential quantifiers, this returns the matrix"
   (cond ((not (e-genp p)) p)
         (t (e-matrix (q-matrix p)))))
 
-
 ;;       ***************  DISJUNCTIONS AND CONJUNCTIONS  ********************
 
-					;This returns the list of disjuncts of a long disjunction, or '(p) if p is
-					;not a disjunction:
 (defun disjuncts (p)
+  "This returns the list of disjuncts of a long disjunction, or '(p) if p is not a disjunction"
   (cond ((disjunctionp p)
          (union= (disjuncts (mem2 p)) (disjuncts (mem3 p))))
         (t (list p))))
 
-					;This returns the list of conjuncts of a long conjunction, or '(p) if p is
-					;not a conjunction:
 (defun conjuncts (p)
+  "This returns the list of conjuncts of a long conjunction, or '(p) if p is not a conjunction"
   (cond ((conjunctionp p)
          (union= (conjuncts (mem2 p)) (conjuncts (mem3 p))))
         (t (list p))))
 
-					;This conjoins a finite list of formulas, in order:
 (defun gen-conjunction (X)
+  "This conjoins a finite list of formulas, in order"
   (cond ((null X) nil)
         ((eq (length X) 1) (car X))
         (t (conj (car X) (gen-conjunction (cdr X))))))
 
-					;This disjoins a finite list of formulas, in order:
 (defun gen-disjunction (X)
+  "This disjoins a finite list of formulas, in order"
   (cond ((null X) nil)
         ((eq (length X) 1) (car X))
         (t (disj (car X) (gen-disjunction (cdr X))))))
 
-					;This differs from (disjuncts p) in that it lists redundant disjuncts:
 (defun disjunct-list (p)
+  "This differs from (disjuncts p) in that it lists redundant disjuncts"
   (cond ((disjunctionp p)
          (append (disjunct-list (car p)) (disjunct-list (mem3 p))))
         (t (list p))))
@@ -1322,8 +1418,8 @@ matrix. |#
   (cond ((null variables) P)
         (t (e-gen (car variables) (generalized-e-gen (cdr variables) P)))))
 
-#| x and y occur in the same atomic part of P. |#
 (defun occurs-with (x y P)
+  "x and y occur in the same atomic part of P"
   (cond
    ((conditionalp P) (or (occurs-with x y (antecedent P)) (occurs-with x y (consequent P))))
    ((biconditionalp P) (or (occurs-with x y (bicond1 P)) (occurs-with x y (bicond2 P))))
@@ -1363,8 +1459,8 @@ matrix. |#
   (let ((string (get s 'pretty-form)))
     (or string (princ-to-string s))))
 
-#| I want to use structures and conses as singular terms. |#
 (defun pretty (p)
+  "I want to use structures and conses as singular terms"
   (let ((p* nil))
     (cond ((stringp p) p)
           ((symbolp p) (convert-to-string p))
@@ -1425,11 +1521,8 @@ matrix. |#
           (t (write-to-string p))
           )))
 
-#| find-match, when applied to a list with "(" and ")", should return
-a list of the initial segment up to the first unmatched ")" and the
-remainder following the matching ")". |#
-
 (defun find-match (s)
+  "find-match, when applied to a list with \"(\" and \")\", should return a list of the initial segment up to the first unmatched \")\" and the remainder following the matching \")\"."
   (let ((number 1)
         (match nil)
         (rest s))
@@ -1463,9 +1556,8 @@ as S-expressions rather than strings. The members of variables are not gensymed.
 		      (push (cons form symbol) *string-symbols*))
 		    symbol)))))))
 
-#| This should convert a string of characters with " ", "(", and ")" in it
-into a tree of words: |#
 (defun parse (s variables)
+  "This should convert a string of characters with \" \", \"(\", and \")\" in it into a tree of words"
   (let ((parse-list nil)
         (word-list nil)
         (rest s))
@@ -1493,8 +1585,8 @@ into a tree of words: |#
 	      (return (reverse (cons (convert-to-symbol (implode (reverse word-list)) variables)
 				     parse-list)))))))))
 
-					;This fixes the nesting of tildes and quantifiers (they are listed by rs):
 (defun fix-nest (s)
+  "This fixes the nesting of tildes and quantifiers (they are listed by rs)"
   (cond ((or (symbolp s) (stringp s) (numberp s)) s)
         ((equal (length s) 1) (list (fix-nest (car s))))
         ((or (equal (car s) "~")
@@ -1518,8 +1610,6 @@ into a tree of words: |#
                  (t
 		  (list (mem1 p) var
 			(resolve-variable-conflicts (mem3 p) (cons var variables) nil))))))
-
-
         ((negationp p) (tilde (resolve-variable-conflicts (negand p) variables nil)))
         ((conjunctionp p)
          (conj (resolve-variable-conflicts (conjunct1 p) variables nil)
@@ -1574,7 +1664,6 @@ into a tree of words: |#
 		 (list '<-> (convert-to-prefix-form (mem1 P)) (convert-to-prefix-form (mem3 P))))
 		((equal mem2 "@")
 		 (list '@ (convert-to-prefix-form (mem1 P)) (convert-to-prefix-form (mem3 P))))
-
 		((equal mem2 '=)
 		 (list '= (convert-to-prefix-form (mem1 P)) (convert-to-prefix-form (mem3 P))))
 		;;========================================================
@@ -1624,8 +1713,8 @@ into a tree of words: |#
 (defun indent (depth &optional stream)
   (dotimes (i depth) (princ ". " stream)))
 
-					;print members of a sequence on consecutive lines:
 (defun p-print (x &optional indent)
+  "print members of a sequence on consecutive lines"
   (terpri)
   (mapc #'(lambda (l) (when indent (blank-indent indent)) (prin1 l) (terpri)) x)
   nil)
@@ -1634,8 +1723,8 @@ into a tree of words: |#
   (mapc #'(lambda (l) (princ l) (terpri)) x)
   nil)
 
-#| This prints a list, putting at most n items on a line. |#
 (defun print-list (L &optional (n 1) (indent-depth 0) stream)
+  "print a list, putting at most n items on a line"
   (indent indent-depth stream)
   (princ "(" stream)
   (let ((i 1)
@@ -1697,14 +1786,13 @@ into a tree of words: |#
     (for-all (cdr X) #'(lambda (Q) (princ " , " stream) (princ Q stream))))
   (princ " }" stream))
 
-					;pretty print a set of sequents
 (defun princ-sequent-set (X &optional stream)
+  "pretty print a set of sequents"
   (princ "{ " stream)
   (when X
     (prinp-sequent (mem1 X) stream)
     (for-all (cdr X) #'(lambda (Q) (princ " , " stream) (prinp-sequent Q stream))))
   (princ " }" stream))
-
 
 (defun order-1 (x y) (< (mem1 x) (mem1 y)))
 
@@ -1714,13 +1802,13 @@ into a tree of words: |#
 
 (defun order-4 (x y) (< (mem4 x) (mem4 y)))
 
-					;This returns the ratio of m and n as a real number, to two decimal places:
 (defun real-ratio (m n)
+  "This returns the ratio of m and n as a real number, to two decimal places"
   (cond ((zerop n) nil)
         (t (/ (coerce (round (coerce (* 100 (/ m n)) 'float)) 'float) 100))))
 
-					;This returns (expt m (/ 1 n)) as a real number, to two decimal places:
 (defun real-root (m n)
+  "This returns (expt m (/ 1 n)) as a real number, to two decimal places"
   (cond ((zerop n) nil)
         (t (/ (coerce (round (coerce (* 100 (expt m (/ 1 n))) 'float)) 'float) 100))))
 
@@ -1814,8 +1902,8 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
 		  ,@(=subst v term (refined-profile* (cdr profile) (1+ n))))))))
           (t (cons (car profile) (refined-profile* (cdr profile) n))))))
 
-#| This turns the formula-profile into a description, and replaces repetitive computations with lets. |#
 (defun refined-profile (profile)
+  "This turns the formula-profile into a description, and replaces repetitive computations with lets."
   (cond ((equal (caar profile) 'listp) (cons 'and (cons (car profile) (refined-profile* (cdr profile) 0))))
         (t (cons 'and (refined-profile* profile 0)))))
 
@@ -1867,20 +1955,19 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
 
 					;========================UNIFICATION=====================
 
-#| This does the substitutions sequentially rather than in parallel, and in
-the reverse order from their occurrence in m. |#
 (defun sequential-sublis (m X)
+  "This does the substitutions sequentially rather than in parallel, and in the reverse order from their occurrence in m."
   (cond ((eq (length m) 1)
          (subst (cdr (mem1 m)) (mem1 (mem1 m)) X))
         (t (subst (cdr (mem1 m)) (mem1 (mem1 m)) (sequential-sublis (cdr m) X)))))
 
-#| This substitutes in accordance with a match m. |#
 (defun match-sequential-sublis (m x)
+  "This substitutes in accordance with a match m."
   (cond ((eq m t) x)
         (t (sequential-sublis m x))))
 
-#| This turns a sequential-match into a parallel match (to be applied by match-sublis). |#
 (defun parallelize-match (sm vars)
+  "This turns a sequential-match into a parallel match (to be applied by match-sublis)."
   (cond ((eq sm t) t)
         (t (let ((m nil))
              (dolist (x vars)
@@ -1893,10 +1980,8 @@ the reverse order from their occurrence in m. |#
         ((equal m* t) m)
         (t (append m m*))))
 
-#| This returns the list (terms1 terms quantifier-variables) where terms1 and terms are the lists
-of corresponding terms to be unified and quantifier-variables is the list of pairs (x . y) of
-corresponding quantifier-variables used for testing for notational variants. |#
 (defun variable-correspondence (P Q P-vars Q-vars terms)
+  "This returns the list (terms1 terms quantifier-variables) where terms1 and terms are the lists of corresponding terms to be unified and quantifier-variables is the list of pairs (x . y) of corresponding quantifier-variables used for testing for notational variants."
   (cond
    ((member P P-vars)
     (let ((quantifier-variables (mem3 terms)))
@@ -1930,12 +2015,8 @@ corresponding quantifier-variables used for testing for notational variants. |#
      (cdr P) (cdr Q) P-vars Q-vars
      (variable-correspondence (car P) (car Q) P-vars Q-vars terms)))))
 
-#| (mgu p q) is a most general unifier for p and q for purposes of forwards
-reasoning..  This assumes that they have no free variables in common.  vars are
-the free variables (possibly) occurring in x y.  They are assumed to be
-interest-variables and hypernode-variables.  This produces a serial match that
-must be applied by match-sequential-sublis rather than match-sublis. |#
 (defun mgu (x y vars)
+  "(mgu p q) is a most general unifier for p and q for purposes of forwards reasoning..  This assumes that they have no free variables in common.  vars are the free variables (possibly) occurring in x y.  They are assumed to be interest-variables and hypernode-variables.  This produces a serial match that must be applied by match-sequential-sublis rather than match-sublis."
   (cond ((atom x)
          (cond ((eql x y) t)
                ((member x vars)
@@ -1974,63 +2055,59 @@ must be applied by match-sequential-sublis rather than match-sublis. |#
 					(t (append m* m)))))))))
 		   (mgu-list x y vars)))))))
 
-#| This returns the multiple values result unifier |#
 (defun unify-list (term-list vars unifier)
-  (labels
-   ((unify-list-aux
-     (term terms vars unifier0)
-     (cond ((null terms) (values (match-sublis unifier0 term) unifier0))
-	   (t
-	    (let* ((m (parallelize-match
-		       (mgu (match-sublis unifier0 term)
-			    (match-sublis unifier0 (car terms))
-			    vars) vars))
-		   (m* m))
-	      (when (not (eq unifier0 T))
-		(cond ((eq m T) (setf m* unifier0))
-		      (t (dolist (assoc unifier0)
-			   (setf (cdr assoc) (match-sublis m (cdr assoc)))
-			   (push assoc m*)))))
-	      (unify-list-aux
-	       (car terms) (cdr terms) vars m*))))))
-   (unify-list-aux (car term-list) (cdr term-list) vars unifier)))
-
+  "This returns the multiple values result unifier"
 					;(unify-list '(3) '(x) T)
 					;(unify-list '(x y z) '(x y z) T)
-
-#| (unify-list '((f x y) (f a (g z)) (f w (g b))) '(x y z w) T)
-produces
-(f a (g b))
-((x . a) (y g b) (z . b) (w . a))  |#
+  #| (unify-list '((f x y) (f a (g z)) (f w (g b))) '(x y z w) T)
+  produces
+  (f a (g b))
+  ((x . a) (y g b) (z . b) (w . a))  |#
+  (labels
+      ((unify-list-aux
+	(term terms vars unifier0)
+	(cond ((null terms) (values (match-sublis unifier0 term) unifier0))
+	      (t
+	       (let* ((m (parallelize-match
+			  (mgu (match-sublis unifier0 term)
+			       (match-sublis unifier0 (car terms))
+			       vars) vars))
+		      (m* m))
+		 (when (not (eq unifier0 T))
+		   (cond ((eq m T) (setf m* unifier0))
+			 (t (dolist (assoc unifier0)
+			      (setf (cdr assoc) (match-sublis m (cdr assoc)))
+			      (push assoc m*)))))
+		 (unify-list-aux
+		  (car terms) (cdr terms) vars m*))))))
+    (unify-list-aux (car term-list) (cdr term-list) vars unifier)))
 
 (defun unify-premise-terms* (term-lists vars unifier0)
   (multiple-value-bind (term unifier) (unify-list (car term-lists) vars unifier0)
-		       (let ((m unifier))
-			 (when (not (eq unifier0 T))
-			   (cond ((eq unifier T) (setf m unifier0))
-				 (t (dolist (assoc unifier0)
-				      (setf (cdr assoc) (match-sublis unifier (cdr assoc)))
-				      (pushnew assoc m :test 'equal)))))
-			 (cond ((null (cdr term-lists)) (values (list term) m))
-			       (t (multiple-value-bind
-				   (terms unifier*) (unify-premise-terms* (cdr term-lists) vars m)
-				   (values (cons (match-sublis unifier* term) terms) (merge-matches m unifier*))))))))
+    (let ((m unifier))
+      (when (not (eq unifier0 T))
+	(cond ((eq unifier T) (setf m unifier0))
+	      (t (dolist (assoc unifier0)
+		   (setf (cdr assoc) (match-sublis unifier (cdr assoc)))
+		   (pushnew assoc m :test 'equal)))))
+      (cond ((null (cdr term-lists)) (values (list term) m))
+	    (t (multiple-value-bind
+		   (terms unifier*) (unify-premise-terms* (cdr term-lists) vars m)
+		 (values (cons (match-sublis unifier* term) terms) (merge-matches m unifier*))))))))
 
-#| term-lists is the list of terms corresponding to the premise-variables.  This
-returns the list of terms that instantiate the premise-variables and the match. |#
 (defun unify-premise-terms (term-lists premise-variables vars unifier0)
+  "term-lists is the list of terms corresponding to the premise-variables.  This returns the list of terms that instantiate the premise-variables and the match."
+  #| (unify-premise-terms* '(((f x y) (f a (g z))) ((k x)) ((h w (g b)) (h b y))) '(x y z w) T)
+  returns:
+  ((f a (g b)) (k a) (h b (g b)))
+  ((x . a) (y g b) (z . b) (w . b))
+  |#
   (catch 'unifier
     (multiple-value-bind
-     (terms unifier) (unify-premise-terms* term-lists vars unifier0)
-     (values
-      (mapcar #'(lambda (x y) (cons x y)) premise-variables terms)
-      unifier))))
-
-#| (unify-premise-terms* '(((f x y) (f a (g z))) ((k x)) ((h w (g b)) (h b y))) '(x y z w) T)
-returns:
-((f a (g b)) (k a) (h b (g b)))
-((x . a) (y g b) (z . b) (w . b))
-|#
+	(terms unifier) (unify-premise-terms* term-lists vars unifier0)
+      (values
+       (mapcar #'(lambda (x y) (cons x y)) premise-variables terms)
+       unifier))))
 
 (defun conditionally-write-to-string (s)
   (if (stringp s) s (write-to-string s)))
@@ -2223,10 +2300,8 @@ constructs a reason with the reason-function:
                  (t (mapcar #'parse-arithmetical-formula p)))))
         (t p)))
 
-#| This allows us to write the conditions in forwards-reasons in the form '(x < y) or '(x <= y), or logical
-combinations thereof, without incorporating a check that x and y have arithmetical values.  +, *, -, /, and
-= can be used in infix notation. |#
 (defun formula-condition (formula premise-variables)
+  "This allows us to write the conditions in forwards-reasons in the form '(x < y) or '(x <= y), or logical combinations thereof, without incorporating a check that x and y have arithmetical values.  +, *, -, /, and = can be used in infix notation."
   (let ((formula* (rectify-formula-condition (parse-arithmetical-formula formula)))
         (variables (subset #'(lambda (v) (o-occur* v formula)) premise-variables)))
     (cond ((null premise-variables)
@@ -2248,10 +2323,10 @@ combinations thereof, without incorporating a check that x and y have arithmetic
 (defstruct (forwards-premise
 	    (:print-function
 	     (lambda (premise stream depth)
-               (declare (ignore depth))
-               (princ "#<premise: " stream)
-               (prinp (fp-formula premise) stream)
-               (princ ">" stream)))
+	       (declare (ignore depth))
+	       (princ "#<premise: " stream)
+	       (prinp (fp-formula premise) stream)
+	       (princ ">" stream)))
 	    (:conc-name fp-))
   (formula nil)
   (kind :inference)
@@ -2291,10 +2366,8 @@ combinations thereof, without incorporating a check that x and y have arithmetic
    ((member P variables) P)
    (t `',P)))
 
-#| The reason-instantiator binds unbound premise-variables in the premise to new interest-variables,
-and returns three values: the instantiated premise-formula, the new interest-variables, and the
-extended binding. |#
 (defun reason-instantiator (P variables)
+  "The reason-instantiator binds unbound premise-variables in the premise to new interest-variables, and returns three values: the instantiated premise-formula, the new interest-variables, and the extended binding."
   (cond ((and (listp P) (equal (car P) 'define))
          (def-instantiator (mem3 P) (remove-if-equal (mem2 P) variables)))
         (variables
@@ -2386,14 +2459,15 @@ extended binding. |#
                            (mapcar #'(lambda (v) `(,v (cdr (assoc ',v binding)))) variables)
                            formula*))))))))))
 
-(defstruct (interest (:print-function
-		      (lambda (x stream depth)
-                        (declare (ignore depth))
-                        (princ "#<" stream) (princ "Interest " stream)
-                        (princ (interest-number x) stream)
+(defstruct (interest
+	    (:print-function
+	     (lambda (x stream depth)
+	       (declare (ignore depth))
+	       (princ "#<" stream) (princ "Interest " stream)
+	       (princ (interest-number x) stream)
 					; (princ ": " stream) (prinp-sequent (interest-sequent x) stream)
-                        (princ ">" stream)))
-                     (:conc-name nil))   ; "An interest-graph-node"
+	       (princ ">" stream)))
+	    (:conc-name nil))   ; "An interest-graph-node"
   (interest-number 0)
   (interest-sequent nil)
   (interest-formula nil)
@@ -2666,18 +2740,14 @@ so that the resulting interest satisffies condition1. |#
             (cons 'list (rectify-backwards-premises backwards-premises (eval variables)))))
     (when premises
       (setf premises (cons 'list (rectify-forwards-premises premises (eval variables)))))
-
     (when (stringp name) (setf name (read-from-string name)))
-
     `(progn
        (proclaim (list 'special ',name))
-
        (let ((defeaters nil))
          (when (and (boundp ',name) ,name)
            (pull ,name *forwards-substantive-reasons*)
            (dolist (R defeaters) (pull ,name (reason-defeatees R)))
            (setf defeaters (reason-undercutting-defeaters ,name)))
-
          (setf ,name
                (make-forwards-reason
 		:reason-name ',name
@@ -2691,7 +2761,6 @@ so that the resulting interest satisffies condition1. |#
 		:reason-defeasible-rule ,defeasible?
 		:reason-temporal? ,temporal?
 		:reason-description ,description))
-
          (setf (reason-undercutting-defeaters ,name) defeaters)
          (dolist (R defeaters) (push ,name (reason-defeatees R)))
          (push ,name *forwards-substantive-reasons*)))))
@@ -2836,16 +2905,13 @@ expands into the following code:
     (when (stringp name) (setf name (read-from-string name)))
     (let* ((c-vars (remove-if-not #'(lambda (v) (o-occur* v (eval conclusion))) (eval variables)))
            (c-binding-function (binding-function (mem1 (eval conclusion)) c-vars)))
-
       `(progn
          (proclaim (list 'special ',name))
-
          (let ((defeaters nil))
            (when (and (boundp ',name) ,name)
              (pull ,name *backwards-substantive-reasons*)
              (dolist (R defeaters) (pull ,name (reason-defeatees R)))
              (setf defeaters (reason-undercutting-defeaters ,name)))
-
            (setf ,name
                  (make-backwards-reason
 		  :reason-name ',name
@@ -2864,7 +2930,6 @@ expands into the following code:
 		  :b-reason-conclusions-binding-function ,c-binding-function
 		  :b-reason-condition ,condition
 		  :reason-description ,description))
-
            (setf (reason-undercutting-defeaters ,name) defeaters)
            (dolist (R defeaters) (push ,name (reason-defeatees R)))
            (push ,name *backwards-substantive-reasons*))))))
@@ -2879,14 +2944,11 @@ expands into the following code:
 
 					; --------------------------------------  FORWARDS-REASONS --------------------------------------
 
-#| This defines a generic structure whose slots are those used in common by both
-backwards and forwards reasons.  If use-basis is nil, when a hyperlink is constructed,
-the basis is nil.  This is used by def-prob-rule. |#
-
 (defstruct (reason (:print-function
 		    (lambda (x stream depth)
 		      (declare (ignore depth)) (princ (reason-name x) stream)))
 		   (:conc-name nil))
+  "This defines a generic structure whose slots are those used in common by both backwards and forwards reasons.  If use-basis is nil, when a hyperlink is constructed, the basis is nil.  This is used by def-prob-rule."
   (reason-name nil)
   (reason-function nil)
   (reason-conclusions nil)
@@ -2902,8 +2964,7 @@ the basis is nil.  This is used by def-prob-rule. |#
   (reason-backwards-premises-function nil)
   (reason-temporal? nil)
   (reason-undercutting-defeaters nil)
-  (reason-defeatees)
-  )
+  (reason-defeatees))
 
 					;(defun reason-strength+ (reason)
 					;    (if (stringp reason) 1.0 (reason-strength reason)))
@@ -2967,18 +3028,14 @@ the basis is nil.  This is used by def-prob-rule. |#
               (cons 'list (rectify-backwards-premises backwards-premises (eval variables)))))
       (when premises
         (setf premises (cons 'list (rectify-forwards-premises premises (eval variables)))))
-
       (when (stringp name) (setf name (read-from-string name)))
-
       `(progn
          (proclaim (list 'special ',name))
-
          (let ((defeaters nil))
            (when (and (boundp ',name) ,name)
              (pull ,name *backwards-substantive-reasons*)
              (dolist (R defeaters) (pull ,name (reason-defeatees R)))
              (setf defeaters (reason-undercutting-defeaters ,name)))
-
            (setf ,name
                  (make-forwards-reason
 		  :reason-name ',name
@@ -2992,7 +3049,6 @@ the basis is nil.  This is used by def-prob-rule. |#
 		  :reason-defeasible-rule ,defeasible?
 		  :reason-temporal? ,temporal?
 		  :reason-description ,description))
-
            (setf (reason-undercutting-defeaters ,name) defeaters)
            (dolist (R defeaters) (push ,name (reason-defeatees R)))
            (push ,name *forwards-substantive-reasons*))))))
@@ -3029,16 +3085,13 @@ the basis is nil.  This is used by def-prob-rule. |#
       (setf backwards-premises
             (cons 'list (rectify-backwards-premises backwards-premises (eval variables) variables))))
     (when (stringp name) (setf name (read-from-string name)))
-
     `(progn
        (proclaim (list 'special ',name))
-
        (let ((defeaters nil))
          (when (and (boundp ',name) ,name)
            (pull ,name *backwards-substantive-reasons*)
            (setf defeaters (reason-undercutting-defeaters ,name))
            (dolist (d ,defeatee) (pull ,name (reason-undercutting-defeaters d))))
-
          (setf ,name
                (make-backwards-reason
 		:reason-name ',name
@@ -3054,11 +3107,11 @@ the basis is nil.  This is used by def-prob-rule. |#
 		:reason-temporal? ,temporal?
 		:b-reason-condition ,condition
 		:reason-description ,description))
-
          (setf (reason-undercutting-defeaters ,name) defeaters)
          (push ,name *backwards-substantive-reasons*)
          (dolist (d ,defeatee) (push ,name (reason-undercutting-defeaters d)))
          ))))
+
 #|This is the  agent-architecture OSCAR, described in chapter nine of COGNITIVE
 CARPENTRY.|#
 
@@ -3162,8 +3215,8 @@ It requires Hypergraphs11.lisp. |#
   (hyperlink-dependencies nil)  ;; list of sigmas
   )
 
-#| This finds the hyperlink with hyperlink-number n. |#
 (defun hyperlink (n)
+  "This finds the hyperlink with hyperlink-number n"
   (find-if #'(lambda (L) (equal (hyperlink-number L) n))
            *hyperlinks*))
 
@@ -3194,8 +3247,8 @@ It requires Hypergraphs11.lisp. |#
     (push DL *hyper-defeat-links*)
     DL))
 
-#| This finds the hyper-defeat-link with hyper-defeat-link-number n. |#
 (defun hyper-defeat-link (n)
+  "This finds the hyper-defeat-link with hyper-defeat-link-number n"
   (find-if #'(lambda (L) (equal (hyper-defeat-link-number L) n))
            *hyper-defeat-links*))
 
@@ -3269,7 +3322,7 @@ It requires Hypergraphs11.lisp. |#
                       (princ (d-node-number x) stream) (princ ">" stream))))
   d-node-number
   (d-node-description nil)
-  (d-node-discrimination-tests nil)
+  (d-node-discrimination-tests nil) ; an a-list of pairs (test . dn), where test has the form of the car of a formula-code, and dn is a d-node.
   (d-node-c-lists nil)
   (d-node-i-lists nil)
   (d-node-parent nil)
@@ -3564,8 +3617,8 @@ It requires Hypergraphs11.lisp. |#
     (setf (get var 'var-kind) :variable)
     var))
 
-;; This converts interest-variables into conclusion-variables in formula.
 (defun convert-interest-variables (formula variables)
+  "This converts interest-variables into conclusion-variables in formula"
   (let* ((vars nil)
          (substitution
 	  (mapcar #'(lambda (x)
@@ -3575,8 +3628,8 @@ It requires Hypergraphs11.lisp. |#
 		  variables)))
     (values (sublis substitution formula) vars)))
 
-;; This converts conclusion-variables into interest-variables in formula.
 (defun convert-conclusion-variables (formula variables)
+  "This converts conclusion-variables into interest-variables in formula"
   (let* ((vars nil)
          (substitution
 	  (mapcar #'(lambda (x)
@@ -3587,8 +3640,8 @@ It requires Hypergraphs11.lisp. |#
 					; (setf substitution (mapcar #'(lambda (x) (cons (cdr x) (car x))) substitution))
     (values (sublis substitution formula) vars substitution)))
 
-;; This converts conclusion-variables into interest-variables in a unifier
 (defun convert-unifier-variables (unifier variables)
+  "This converts conclusion-variables into interest-variables in a unifier"
 					; (when (> *gensym-counter* 78) (setf u unifier v variables) (break))
   (let ((u1 (mem1 unifier)) (u2 (mem2 unifier)))
     (if (eq u2 t) unifier
@@ -3601,8 +3654,8 @@ It requires Hypergraphs11.lisp. |#
 		      variables)))
         (list u1 (mapcar #'(lambda (x) (cons (car x) (sublis substitution (cdr x)))) u2))))))
 
-#| These are changed to allow conses in formulas. |#
 (defun formula-hypernode-variables (p)
+  "These are changed to allow conses in formulas"
   (cond ((and (symbolp p) (eq (get p 'var-kind) :variable)) (list p))
         ((and (listp p) p)
          (union (formula-hypernode-variables (car p)) (formula-hypernode-variables (cdr p))))))
@@ -3636,8 +3689,8 @@ It requires Hypergraphs11.lisp. |#
         ((stringp p) nil)
         ((listp p) (unionmapcar= #'skolem-functions p))))
 
-#| P contains no skolem constants, functions, or variables. |#
 (defun skolem-free (P)
+  "P contains no skolem constants, functions, or variables"
   (cond ((symbolp P)
          (let ((kind (get P 'var-kind)))
            (and (not (eq kind :variable)) (not (eq kind :skolem-function)))))
@@ -3647,8 +3700,8 @@ It requires Hypergraphs11.lisp. |#
 (defun ?-query-p (Q)
   (and (query-p Q) (?-genp (query-formula Q))))
 
-#| This returns two values: the matrix, and the list of ?-variables. |#
 (defun ?-matrix (p &optional vars)
+  "This returns two values: the matrix, and the list of ?-variables"
   (push (q-variable p) vars)
   (let ((formula (q-matrix p)))
     (cond ((?-genp formula) (?-matrix formula vars))
@@ -3725,8 +3778,8 @@ It requires Hypergraphs11.lisp. |#
   (dolist (Q *ultimate-epistemic-interests*)
     (display-query Q)))
 
-#| This assumes that formula2 is indefinite. |#
 (defun instance-of (formula1 formula2)
+  "This assumes that formula2 is indefinite"
   (match (mem2 formula2) formula1 (list (mem2 (mem1 formula2)))))
 
 (defun answers (formula query)
@@ -3773,12 +3826,12 @@ It requires Hypergraphs11.lisp. |#
   (queue-discounted-strength 0)
   (queue-degree-of-preference 0))
 
-#| *inference-queue* is ordered by i-preference: |#
 (defun i-preferred (node1 node2)
+  "*inference-queue* is ordered by i-preference"
   (> (queue-degree-of-preference node1) (queue-degree-of-preference node2)))
 
-#| The following is the default computation of the degree-of-preference for queries. |#
 (defun query-preference (query)
+  "The following is the default computation of the degree-of-preference for queries"
   (let ((complexity (complexity (query-formula query)))
         (strength
 	 (cond ((member query *permanent-ultimate-epistemic-interests*)
@@ -3836,8 +3889,8 @@ It requires Hypergraphs11.lisp. |#
   (instance-function nil)
   (generating-node nil))
 
-#| This finds the interest-scheme with is-number n. |#
 (defun interest-scheme (n)
+  "This finds the interest-scheme with is-number n"
   (let ((is nil))
     (some #'(lambda (dn)
               (find-if #'(lambda (i)
@@ -3847,8 +3900,8 @@ It requires Hypergraphs11.lisp. |#
           *discrimination-net*)
     is))
 
-#| This finds the instantiated-premise with ip-number n. |#
 (defun instantiated-premise (n)
+  "This finds the instantiated-premise with ip-number n"
   (let ((ip nil))
     (some #'(lambda (dn)
               (find-if #'(lambda (i)
@@ -3860,22 +3913,24 @@ It requires Hypergraphs11.lisp. |#
 
 (defmacro is-derived-interest-schemes (is) `(is-derived-premises ,is))
 
-(defstruct (interest-link (:print-function
-			   (lambda (x stream depth)
-                             (declare (ignore depth))
-                             (princ "#<" stream) (princ "Link " stream)
-                             (princ (link-number x) stream)
-			     (let ((result (link-resultant-interest x)))
-			       (when result
-				 (cond ((interest-p result)
-					(princ ": for  interest #" stream) (princ (interest-number result) stream))
-				       ((query-p result)
-					(princ ": for  query #" stream) (princ (query-number result) stream))
-				       (t
-					(princ ": for UNKNOWN" stream)))))
-                             (princ " by " stream) (princ (link-rule x) stream)
-                             (princ ">" stream)))
-                          (:conc-name nil))   ; "An interest-graph-link"
+(defstruct (interest-link
+	    (:print-function
+	     (lambda (x stream depth)
+	       (declare (ignore depth))
+	       (princ "#<" stream) (princ "Link " stream)
+	       (princ (link-number x) stream)
+	       (let ((result (link-resultant-interest x)))
+		 (when result
+		   (cond ((interest-p result)
+			  (princ ": for  interest #" stream) (princ (interest-number result) stream))
+			 ((query-p result)
+			  (princ ": for  query #" stream) (princ (query-number result) stream))
+			 (t
+			  (princ ": for UNKNOWN" stream)))))
+	       (princ " by " stream) (princ (link-rule x) stream)
+	       (princ ">" stream)))
+	    (:conc-name nil))
+  "An interest-graph-link"
   (link-number 0)
   (link-resultant-interest nil)
   (link-interest nil)
@@ -3896,8 +3951,7 @@ It requires Hypergraphs11.lisp. |#
   (link-interest-reverse-match nil)
   (link-generating nil)
   (link-premise nil)
-  (link-clues nil)
-  )
+  (link-clues nil))
 
 (defun link (n)
   (find-if #'(lambda (node) (equal (link-number node) n)) *interest-links*))
@@ -3919,8 +3973,8 @@ It requires Hypergraphs11.lisp. |#
   (if (eq m t) t
     (mapcar #'(lambda (x) (cons (cdr x) (mem1 x))) m)))
 
-#| If p and q match one-one, this returns the match and its reverse-match. |#
 (defun one-one-match (p q p-vars q-vars)
+  "If p and q match one-one, this returns the match and its reverse-match"
   (let* ((match (match p q p-vars))
          (match* (reverse-match match)))
     (when
@@ -3931,8 +3985,8 @@ It requires Hypergraphs11.lisp. |#
 		  (equal (match-sublis match* q) p))))
       (values match match*))))
 
-#| This returns three values -- the i-list and the match and its reverse. |#
 (defun i-list-for (formula i-vars)
+  "This returns three values -- the i-list and the match and its reverse"
   (multiple-value-bind (profile term-list) (formula-code formula)
 		       (let ((d-node (pursue-d-node-for profile *top-d-node*)))
 			 (when d-node
@@ -3945,8 +3999,8 @@ It requires Hypergraphs11.lisp. |#
 				   (return-from i-list-for (values il match match*)))))
 			    (d-node-i-lists d-node))))))
 
-#| This returns two values -- the list of interests, and the match |#
 (defun interests-for (formula i-vars)
+  "This returns two values -- the list of interests, and the match"
   (multiple-value-bind
    (i-list match)
    (i-list-for formula i-vars)
@@ -3991,12 +4045,8 @@ It requires Hypergraphs11.lisp. |#
 		(parallelize-match mgu p-vars)
 		(parallelize-match mgu q-vars)))))))
 
-#| If p and q have free variables in common, they must be rewritten before we can
-apply the unification algorithm.  The following produces a pair of substitutions
-(m1 m2) such that applying m1 to p and m2 to q unifies them.  m1 and m2 are
-parallel matches to be applied by match-sublis.  The p-vars and q-vars are the
-hypernode-variables. |#
 (defun unifier (p q p-vars q-vars)
+  "If p and q have free variables in common, they must be rewritten before we can apply the unification algorithm.  The following produces a pair of substitutions (m1 m2) such that applying m1 to p and m2 to q unifies them.  m1 and m2 are parallel matches to be applied by match-sublis.  The p-vars and q-vars are the hypernode-variables."
   (cond ((and (null p-vars) (null q-vars))
 					;  (if (equal p q) (list t t)))
          (if (or (equal p q) (notational-variant p q)) (list t t)))
@@ -4004,8 +4054,8 @@ hypernode-variables. |#
 	     (let ((terms (variable-correspondence p q p-vars q-vars (list nil nil nil))))
 	       (unifier* (mem1 terms) (mem2 terms) p-vars q-vars))))))
 
-#| This finds the interest with interest-number n. |#
 (defun interest (n)
+  "This finds the interest with interest-number n"
   (find-if #'(lambda (i) (eql (interest-number i) n)) *interests*))
 
 (defun ni-unifier (n m)
@@ -4046,8 +4096,8 @@ hypernode-variables. |#
 					;                      (when unifier (pushnew unifier unifiers :test 'equal))))
 					;               unifiers))))
 
-#| This produces a match equivalent to applying m1 first and then m2. |#
 (defun merge-matches* (m1 m2)
+  "This produces a match equivalent to applying m1 first and then m2"
   (cond ((null m1) m2)
         ((null m2) m1)
         ((eq m1 t) m2)
@@ -4135,9 +4185,8 @@ each other.
 	      vars2)))))
 |#
 
-#| This checks that interest-variables in vars1 and vars2 are not instantiated
-by terms containing those same variables. |#
 (defun constrained-assignment (unifier vars1 vars2)
+  "This checks that interest-variables in vars1 and vars2 are not instantiated by terms containing those same variables"
   (let ((u1 (mem1 unifier)))
     (or (eq u1 t)
         (not (some #'(lambda (v) (occur v (e-assoc v u1))) vars1))))
@@ -4145,16 +4194,16 @@ by terms containing those same variables. |#
     (or (eq u2 t)
         (not (some #'(lambda (v) (occur v (e-assoc v u2))) vars2)))))
 
-#| c-variables is the list of hypernode-variables. |#
 (defun matching-i-lists-for (term-list c-variables d-node)
+  "c-variables is the list of hypernode-variables"
   (let ((i-lists nil))
     (dolist (il (d-node-i-lists d-node))
       (let ((unifier (unifier term-list (i-list-term-list il) c-variables (i-list-variables il))))
         (if unifier (push (list il unifier) i-lists))))
     i-lists))
 
-#| c-variables is the list of hypernode-variables. |#
 (defun matching-c-lists-for (term-list i-variables d-node)
+  "c-variables is the list of hypernode-variables"
   (let ((c-lists nil))
     (dolist (cl (d-node-c-lists d-node))
       (let ((unifier (unifier  (c-list-term-list cl) term-list (c-list-variables cl) i-variables)))
@@ -4172,8 +4221,8 @@ by terms containing those same variables. |#
    (or (not (negationp formula))
        (atomic-formula (mem2 formula)))))
 
-#| Test is the final member of the formula-profile for the hypernode-formula. |#
 (defun store-interest-at-new-d-node (interest term-list d-node test)
+  "Test is the final member of the formula-profile for the hypernode-formula"
 					; (when (eq interest (interest 7)) (setf i interest tl term-list d d-node ts test) (break))
   ;; (step (store-interest-at-new-node i tl d ts))
   (let* ((i-variables (interest-variables interest))
@@ -4235,8 +4284,6 @@ by terms containing those same variables. |#
                  (push (cons i-list (cdr cl)) (c-list-corresponding-i-lists (mem1 cl)))))))
     (setf (interest-i-list interest) i-list)))
 
-#| (descrimination-tests d-node) is an a-list of pairs (test . dn), where test has the form of the
-car of a formula-code, and dn is a d-node. |#
 (defun index-interest (interest profile term-list d-node)
   (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
@@ -4346,8 +4393,8 @@ car of a formula-code, and dn is a d-node. |#
   (multiple-value-bind (profile term-list) (formula-code formula)
 		       (pursue-c-lists-for formula profile term-list variables *top-d-node*)))
 
-#| Test is the final member of the formula-profile for the hypernode-formula. |#
 (defun store-hypernode-at-new-d-node (node term-list d-node test)
+  "Test is the final member of the formula-profile for the hypernode-formula"
   (let* ((c-variables (hypernode-variables node))
          (dn (make-d-node
 	      :d-node-number (incf *d-node-number*)
@@ -4431,8 +4478,6 @@ car of a formula-code, and dn is a d-node. |#
                        (c-list-contradictors (mem1 cl)))))))
     (setf (hypernode-c-list node) c-list)))
 
-#| (descrimination-tests d-node) is an a-list of pairs (test . dn), where test has the form of the
-car of a formula-code, and dn is a d-node. |#
 (defun index-hypernode (node profile term-list d-node)
   (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node)))
         (new-profile (cdr profile)))
@@ -4483,9 +4528,8 @@ car of a formula-code, and dn is a d-node. |#
   (setf (hypernode-processed? node) T)
   (push node (c-list-processed-nodes (hypernode-c-list node))))
 
-#| (? formula), where formula can contain variables of the form "?x",  returns a list of all
-known conclusions matching the formula. |#
 (defun ? (formula)
+  "(? formula), where formula can contain variables of the form \"?x\",  returns a list of all known conclusions matching the formula."
   (when (stringp formula) (setf formula (reform formula)))
   (let* ((d-node (d-node-for formula))
          (nodes (search-d-nodes formula d-node)))
@@ -4505,8 +4549,8 @@ known conclusions matching the formula. |#
 	   (terpri)))
     nodes))
 
-#| This returns the degree of interest for either an interest or a query. |#
 (defun degree-of-interest* (n)
+  "This returns the degree of interest for either an interest or a query."
   (if (interest-p n) (interest-degree-of-interest n) (query-strength n)))
 
 (defun interest-sequent* (n)
@@ -4536,19 +4580,21 @@ known conclusions matching the formula. |#
 
 (defmacro cbp (P C1 C2 V) `(construct-backwards-premise ,P ,C1 ,C2 ,V))
 
-(defstruct (forwards-reason (:include reason)
-			    (:print-function
-			     (lambda (x stream depth)
-			       (declare (ignore depth)) (princ (reason-name x) stream)))
-                            (:conc-name nil)))
+(defstruct (forwards-reason
+	    (:include reason)
+	    (:print-function
+	     (lambda (x stream depth)
+	       (declare (ignore depth)) (princ (reason-name x) stream)))
+	    (:conc-name nil)))
 
 					; --------------------------------------  BACKWARDS-REASONS --------------------------------------
 
-(defstruct (backwards-reason (:include reason)
-			     (:print-function
-			      (lambda (x stream depth)
-				(declare (ignore depth)) (princ (reason-name x) stream)))
-                             (:conc-name nil))
+(defstruct (backwards-reason
+	    (:include reason)
+	    (:print-function
+	     (lambda (x stream depth)
+	       (declare (ignore depth)) (princ (reason-name x) stream)))
+	    (:conc-name nil))
   (b-reason-condition nil)  ;; this is a predicate applied to the binding
   (b-reason-discharge nil)
   (b-reason-length 1)  ;; this is the number of backwards-premises
@@ -4556,16 +4602,16 @@ known conclusions matching the formula. |#
   (b-reason-conclusion-variables nil)
   (b-reason-immediate nil))
 
-#| The list of instantiated-premises for a forwards-reason. |#
 (defun reason-ips (reason)
+  "the list of instantiated-premises for a forwards-reason"
   (let ((ips nil))
     (dolist (dn *discrimination-net*)
       (dolist (ip (d-node-forwards-reasons dn))
         (when (equal (ip-reason ip) reason) (push ip ips))))
     ips))
 
-#| The list of interest-schemes for a backwards-reason. |#
 (defun reason-iss (reason)
+  "the list of interest-schemes for a backwards-reason"
   (let ((iss nil))
     (dolist (dn *discrimination-net*)
       (dolist (is (d-node-interest-schemes dn))
@@ -4676,8 +4722,8 @@ known conclusions matching the formula. |#
     (let ((nodes (a-range (d-node-discrimination-tests dn))))
       (append nodes (unionmapcar #'d-node-descendants nodes)))))
 
-#| Display the part of the discrimination-net that contains d-node number n. |#
 (defun show-d-node (n)
+  "Display the part of the discrimination-net that contains d-node number n"
   (let* ((dn (if (numberp n) (d-node n) n))
          (nodes (cons dn (append (d-node-ancestors dn) (d-node-descendants dn)))))
     (display-discrimination-net nodes)))
@@ -4694,8 +4740,8 @@ known conclusions matching the formula. |#
          (nodes (cons dn (append (d-node-ancestors dn) (d-node-descendants dn)))))
     (display-discrimination-net nodes)))
 
-#| This displays all d-nodes directly relevant to the reason. |#
 (defun show-reason (reason)
+  "This displays all d-nodes directly relevant to the reason"
   (let ((nodes nil))
     (cond ((forwards-reason-p reason)
            (dolist (dn *discrimination-net*)
@@ -4826,7 +4872,7 @@ known conclusions matching the formula. |#
 (defun pranc-to-string (x) (declare (ignore x)))
 (defun monitor-assignment-tree (x) (declare (ignore x)))
 
-(defun display-unsupported-hypernode (n )
+(defun display-unsupported-hypernode (n)
   (if (numberp n) (setf n (hypernode n)))
   (terpri) (princ "  # ") (princ (hypernode-number n)) (princ "   ")
   (when (not (equal (hypernode-kind n) :inference)) (princ (hypernode-kind n)) (princ "         "))
@@ -4966,8 +5012,8 @@ known conclusions matching the formula. |#
       (princ "---------------------------------------------------") (terpri)))
   (princ ")") (terpri))
 
-#| This builds chains of inference-ancestors. |#
 (defun interest-ancestor-chains (interest)
+  "This builds chains of inference-ancestors"
   (cond ((interest-p interest)
          (let ((links (interest-right-links interest)))
            (cond ((null links) (list (list (list interest))))
@@ -4981,8 +5027,8 @@ known conclusions matching the formula. |#
 		   links)))))
         (t (list nil))))
 
-#| This is like interest-ancestor-chains, but leaves out the links. |#
 (defun right-branches (interest)
+  "This is like interest-ancestor-chains, but leaves out the links"
   (if (interest-p interest)
       (let ((links (interest-right-links interest)))
 	(cond ((null links) (list (list interest)))
@@ -5122,11 +5168,8 @@ known conclusions matching the formula. |#
 	(* strength (minimum (mapcar #'current-degree-of-justification basis)))
       (minimum (cons strength (mapcar #'current-degree-of-justification basis))))))
 
-#| For non-reductio-interests, this returns the list of unifiers unifying the hypernode-supposition of
-node into the the interest-supposition of interest.  For reductio-interests, this returns the list of
-unifiers unifying the non-inherited part of the hypernode-non-reductio-supposition into the
-interest-supposition. |#
 (defun appropriately-related-suppositions (node interest unifier &optional a-list target)
+  "For non-reductio-interests, this returns the list of unifiers unifying the hypernode-supposition of node into the the interest-supposition of interest.  For reductio-interests, this returns the list of unifiers unifying the non-inherited part of the hypernode-non-reductio-supposition into the interest-supposition."
   (when (null target) (setf target interest))
   (let* ((i-sup (match-sublis (mem2 unifier) (interest-supposition interest)))
          (c-vars (match-sublis (mem1 unifier) (hypernode-supposition-variables node)))
@@ -5161,9 +5204,8 @@ interest-supposition. |#
          (i-vars (match-sublis (mem2 unifier) (interest-variables interest))))
     (set-unifier (match-sublis (mem1 unifier) (hypernode-supposition node)) i-sup c-vars i-vars)))
 
-#| This returns the list of unifiers unifying the hypernode-supposition of  node into the the
-hypernode-supposition of node*. |#
 (defun appropriately-related-node-suppositions (node node* unifier)
+  "This returns the list of unifiers unifying the hypernode-supposition of  node into the the hypernode-supposition of node*"
   (let* ((sup (match-sublis (mem1 unifier) (hypernode-supposition node)))
          (sup* (match-sublis (mem2 unifier) (hypernode-supposition node*)))
          (vars (match-sublis (mem1 unifier) (hypernode-supposition-variables node)))
@@ -5251,22 +5293,19 @@ hypernode-supposition of node*. |#
      (when (and (null interest) (not (eq match t))) (setf i-list nil))
      (values interest i-list match match*))))
 
-#| If the interest is readopted as an interest in a defeater, defeated-nodes is the list of
-nodes for which it is a defeater.  When this is called by DISCHARGE-LINK, link is the
-link being discharged.  |#
 (defun readopt-interest (interest defeated-links)
+  "If the interest is readopted as an interest in a defeater, defeated-nodes is the list of nodes for which it is a defeater.  When this is called by DISCHARGE-LINK, link is the link being discharged."
   (when *display?*
     (princ "                                   Readopting interest in:") (terpri)
     (display-interest interest)
     (when defeated-links
       (princ
        "                                        Of interest as defeater for hyperlink ")
-      (princ (hyperlink-number (mem1 defeated-links))) (terpri)(terpri)))
-  )
+      (princ (hyperlink-number (mem1 defeated-links))) (terpri)(terpri))))
 
-#| new-vars are new variables introduced by the inference-rule, as in EG. |#
 (defun compute-link-interest
     (link condition1 condition2 degree max-degree depth priority &optional new-vars text-condition)
+  "new-vars are new variables introduced by the inference-rule, as in EG"
   (declare (ignore new-vars))
 					; (setf l link c1 condition1 c2 condition2 d degree md max-degree dp depth p priority nv new-vars) ; (break))
   ;; (step (compute-link-interest l c1 c2 d md dp p nv))
@@ -5276,36 +5315,36 @@ link being discharged.  |#
 	    (interest-priority (link-resultant-interest link))))
          (vars (formula-hypernode-variables (link-interest-formula link))))
     (multiple-value-bind
-     (interest i-list match match*)
-     (interest-for (list (link-supposition link) (link-interest-formula link)) vars condition1 link)
-     (cond
-      (interest
-       (setf (interest-degree-of-interest interest) (min (interest-degree-of-interest interest) degree))
-       (setf (interest-maximum-degree-of-interest interest)
-	     (max (interest-maximum-degree-of-interest interest) max-degree))
-       (when (not (interest-reductio interest))
-	 (setf (interest-reductio interest) (interest-reductio (link-resultant-interest link))))
-       (setf (interest-priority interest) (max (interest-priority interest) interest-priority))
-       (let ((gn (link-generating-node link)))
-	 (when gn
-	   (pushnew gn (interest-generating-nodes interest))
-	   (push interest (hypernode-generated-interests gn))))
-       (if (interest-right-links interest)
-	   (setf (interest-right-links interest) (reverse (cons link (reverse (interest-right-links interest)))))
-	 (setf (interest-right-links interest) (list link)))
-       (setf (link-interest-match link) match)
-       (setf (link-interest-reverse-match link) match*)
-       (readopt-interest interest nil))
-      (t
-       (setf interest
-	     (construct-new-interest-for
-	      link vars condition2 degree max-degree depth i-list text-condition))
-       (setf (interest-priority interest) interest-priority)
-       ))
-     (setf (link-interest link) interest)
+	(interest i-list match match*)
+	(interest-for (list (link-supposition link) (link-interest-formula link)) vars condition1 link)
+      (cond
+       (interest
+	(setf (interest-degree-of-interest interest) (min (interest-degree-of-interest interest) degree))
+	(setf (interest-maximum-degree-of-interest interest)
+	      (max (interest-maximum-degree-of-interest interest) max-degree))
+	(when (not (interest-reductio interest))
+	  (setf (interest-reductio interest) (interest-reductio (link-resultant-interest link))))
+	(setf (interest-priority interest) (max (interest-priority interest) interest-priority))
+	(let ((gn (link-generating-node link)))
+	  (when gn
+	    (pushnew gn (interest-generating-nodes interest))
+	    (push interest (hypernode-generated-interests gn))))
+	(if (interest-right-links interest)
+	    (setf (interest-right-links interest) (reverse (cons link (reverse (interest-right-links interest)))))
+	  (setf (interest-right-links interest) (list link)))
+	(setf (link-interest-match link) match)
+	(setf (link-interest-reverse-match link) match*)
+	(readopt-interest interest nil))
+       (t
+	(setf interest
+	      (construct-new-interest-for
+	       link vars condition2 degree max-degree depth i-list text-condition))
+	(setf (interest-priority interest) interest-priority)
+	))
+      (setf (link-interest link) interest)
 					; (dolist (p (interest-decision-plans (link-resultant-interest link)))
 					;     (pushnew p (interest-decision-plans interest)))
-     )))
+      )))
 
 (defun cancel-d-node (d-node)
   (when (not (eq d-node *top-d-node*))
@@ -5776,8 +5815,8 @@ link being discharged.  |#
 	   (anchor-hypernode-relative-to-node
 	    n* N0 (1+ indent) "discharges direct reductio interest: ")))))))
 
-#| This computation is exhibited by setting *d-trace* to t. |#
 (defun compute-dependencies-from-node (node)
+  "This computation is exhibited by setting *d-trace* to t"
 					; (when (eq node (node 703)) (break))
   (setf *dependent-interests* nil *dependent-nodes* (list node)
         *independent-reductio-suppositions* *reductio-supposition-nodes*)
@@ -5887,8 +5926,8 @@ link being discharged.  |#
 (defun deductive-link (L)
   (or (keywordp (hyperlink-rule L)) (not (reason-defeasible-rule (hyperlink-rule L)))))
 
-#| n is deductive in m. |#
 (defun deductive-in (n m)
+  "n is deductive in m"
   (and (member m (hypernode-ancestors n))
        (some
 	#'(lambda (L)
@@ -5905,8 +5944,6 @@ link being discharged.  |#
 	(hypernode-hyperlinks n))))
 
 (defun display-belief-changes  (links new-beliefs new-retractions)
-					; (when (member (hyperlink 12) links) (setf l links nb new-beliefs nr new-retractions) (break))
-  ;; (step (display-belief-changes l  nb nr))
   (when (or *display?* *log-on*)
     (cond
      ((and (not *deductive-only*) (or new-beliefs new-retractions))
@@ -6018,16 +6055,16 @@ link being discharged.  |#
   (declare (ignore sequent))
   T)
 
-#| This assumes that N is a reductio-supposition-node. |#
 (defun base-reductio-supposition (N)
+  "This assumes that N is a reductio-supposition-node"
   (not (some #'interest-reductio (hypernode-generating-interests N))))
 
 (defun base-test (R RA)
   (or (not (base-reductio-supposition (cdr R)))
       (every #'(lambda (x) (or (eq x R) (hypernode-non-reductio-supposition? (cdr x)))) RA)))
 
-#| L is an ancestor of hyperlink link, whose target is node. |#
 (defun link-ancestor (L link)
+  "L is an ancestor of hyperlink link, whose target is node"
   (some #'(lambda (N) (member L (hypernode-hyperlinks N)))
         (hypernode-ancestors (hyperlink-target link))))
 
@@ -6047,10 +6084,8 @@ link being discharged.  |#
 	       (mapcar #'hypernode-nearest-defeasible-ancestors basis)))
     (list nil)))
 
-#| RA does not contain two different base-reductio-suppositions, and if RA contains a
-base-reductio-supposition then for some generating-interest of the base-reductio-supposition,
-every member of NRS is an interest-supposition-node of that interest. |#
 (defun potent-suppositions (NRS RA)
+  "RA does not contain two different base-reductio-suppositions, and if RA contains a base-reductio-supposition then for some generating-interest of the base-reductio-supposition, every member of NRS is an interest-supposition-node of that interest."
 					; (setf nr nrs r ra); (break)
   ;; (step (potent-suppositions nr r))
   (every
@@ -6152,16 +6187,16 @@ every member of NRS is an interest-supposition-node of that interest. |#
               (setf instantiations+ (cdr instantiations+)))))
         (list RA NR (if (eq supposition t) sup (union= sup supposition)))))))
 
-#| The following is the default computation of interest-priority for defeaters. |#
 (defun defeater-priority (interest)
+  "The following is the default computation of interest-priority for defeaters"
   (declare (ignore interest))
   *base-priority*)
 
 (defun contradicting-nodes (n1 n2)
   (assoc (hypernode-c-list n1) (c-list-contradictors (hypernode-c-list n2))))
 
-#| Combining the suppositions of the nodes in basis yields an inconsistent supposition. |#
 (defun inconsistent-supposition (basis)
+  "Combining the suppositions of the nodes in basis yields an inconsistent supposition"
   (let ((B (cdr basis)) (n (mem1 basis)))
     (loop
      (when
@@ -6237,21 +6272,20 @@ every member of NRS is an interest-supposition-node of that interest. |#
    ancestors))
 
 (defstruct (percept
-	    (:print-function (lambda (percept stream depth)
-			       (declare (ignore depth))
-			       (princ "#<percept: " stream)
-			       (princ (pretty (percept-content percept)) stream)
-			       (princ ">" stream)))
+	    (:print-function
+	     (lambda (percept stream depth)
+	       (declare (ignore depth))
+	       (princ "#<percept: " stream)
+	       (princ (pretty (percept-content percept)) stream)
+	       (princ ">" stream)))
 	    (:conc-name nil))
   (percept-number 0)
   (percept-content nil)
   (percept-clarity 0)
   (percept-date 0))
 
-#| This converts the supporting-nodes of node and its descendants to non-deductive-only
-provided they are not inferred from other deductive-only conclusions.  It returns the list of
-converted nodes. |#
 (defun convert-from-deductive-only (node)
+  "This converts the supporting-nodes of node and its descendants to non-deductive-only provided they are not inferred from other deductive-only conclusions.  It returns the list of converted nodes."
   (setf (hypernode-deductive-only node) nil)
   (let ((nodes (list node)))
     (dolist (L (hypernode-consequent-links node))
@@ -6268,9 +6302,8 @@ converted nodes. |#
                 (union nodes (convert-from-deductive-only N))))))
     nodes))
 
-#| This is the default computation of degree-of-preference for an interest, where
-priority is the interest-priority and complexity is the complexity of the interest-sequent. |#
 (defun interest-preference (priority complexity)
+  "This is the default computation of degree-of-preference for an interest, where priority is the interest-priority and complexity is the complexity of the interest-sequent."
   (if (zerop complexity) priority (/ priority complexity)))
 
 (defun display-inference-queue ()
@@ -6330,8 +6363,8 @@ priority is the interest-priority and complexity is the complexity of the intere
       (if (> length 2) (* complexity (expt 10 (* length length))) complexity))))
 |#
 
-#| When a priority-interest is encountered, it is placed at the front of the inference-queue. |#
 (defun queue-interest (interest priority)
+  "When a priority-interest is encountered, it is placed at the front of the inference-queue"
 					; (when (eq interest (interest 7)) (setf i interest p priority) (break))
   ;; (step (queue-interest i p))
   (let* ((complexity (sequent-complexity (interest-sequent interest)))
@@ -6417,8 +6450,8 @@ priority is the interest-priority and complexity is the complexity of the intere
            (values description stop)))
         ((not (member P variables)) (values (list (cons descriptor P)) nil))))
 
-#| This is like premise-code, but it stops producing code when it comes to the first variable. |#
 (defun reason-code (P variables)
+  "This is like premise-code, but it stops producing code when it comes to the first variable"
   (when P
     (setf *quantifier-number* 0)
     (reverse (reason-code* P variables nil))))
@@ -6436,10 +6469,9 @@ priority is the interest-priority and complexity is the complexity of the intere
 
 (defun reductio-supposition (node) (eq (hypernode-justification node) :reductio-supposition))
 
+(defun remove-double-negation (P)
 					;(defun remove-double-negation (P)
 					;    (if (and (negationp P) (negationp (negand P))) (negand (negand P)) P))
-
-(defun remove-double-negation (P)
   (cond
    ((listp P)
     (cond ((and (negationp P) (negationp (negand P))) (negand (negand P)))
@@ -6454,11 +6486,11 @@ priority is the interest-priority and complexity is the complexity of the intere
 
 (defun set-def-binding (def-instantiator var binding)
   (multiple-value-bind
-   (val binding new-vars)
-   (funcall def-instantiator binding)
-   (values
-    (cons (cons var val) (remove (assoc var binding) binding :test 'equal))
-    new-vars (cons (e-assoc var binding) val))))
+      (val binding new-vars)
+      (funcall def-instantiator binding)
+    (values
+     (cons (cons var val) (remove (assoc var binding) binding :test 'equal))
+     new-vars (cons (e-assoc var binding) val))))
 
 (defun display-instantiated-premise (ip)
   (terpri)
@@ -6502,9 +6534,9 @@ priority is the interest-priority and complexity is the complexity of the intere
     (when *display?* (display-instantiated-premise ip))
     ip))
 
-#| Test is the final member of the formula-profile for the hypernode-formula. |#
 (defun store-instantiated-premise-at-new-d-node
     (reason premise node c-list binding instantiations ip d-node test remaining-premises)
+  "Test is the final member of the formula-profile for the hypernode-formula"
   (let ((dn (make-d-node
 	     :d-node-number (incf *d-node-number*)
 	     :d-node-description (cons test (d-node-description d-node))
@@ -6557,8 +6589,8 @@ priority is the interest-priority and complexity is the complexity of the intere
   (setf (is-d-node interest-scheme) d-node)
   interest-scheme)
 
-#| Test is the final member of the formula-profile for the hypernode-formula. |#
 (defun store-interest-scheme-at-new-d-node (interest-scheme  d-node test)
+  "Test is the final member of the formula-profile for the hypernode-formula"
   (let ((dn (make-d-node
 	     :d-node-number (incf *d-node-number*)
 	     :d-node-description (cons test (d-node-description d-node))
@@ -6590,8 +6622,8 @@ priority is the interest-priority and complexity is the complexity of the intere
 	   (index-interest-scheme-at-new-nodes interest-scheme d-node new-profile (car profile)))
           (t (store-interest-scheme-at-new-d-node interest-scheme d-node (car profile))))))
 
-#| This returns the ip at which the premise is stored. |#
 (defun store-interest-scheme (interest-scheme profile d-node)
+  "This returns the ip at which the premise is stored"
   (cond
    (profile (index-interest-scheme interest-scheme profile d-node))
    (t (store-interest-scheme-at-d-node interest-scheme d-node))))
@@ -6689,8 +6721,8 @@ priority is the interest-priority and complexity is the complexity of the intere
         (push c nodes)))
     nodes))
 
-#| This returns deductive-node. |#
 (defun validating-deductive-node (S deductive-rule?)
+  "This returns deductive-node"
   (let ((c-list (c-list-for (sequent-formula S))))
     (when c-list
       (let ((sup (sequent-supposition S)))
@@ -6715,12 +6747,10 @@ priority is the interest-priority and complexity is the complexity of the intere
 (labels
  ()
 
- #| Rule is either a member of *forwards-reasons* or *backwards-reasons*,
- or keyword describing an inference (:given, :Q&I, or :supposition).  basis
- is a list of conclusions.  If supposition is not T, it is added to the supposition.  |#
  (defun DRAW-CONCLUSION
      (formula basis rule instantiations discount depth interests defeasible?
 	      &key interest motivators binding link (supposition t) clues)
+   "Rule is either a member of *forwards-reasons* or *backwards-reasons*, or keyword describing an inference (:given, :Q&I, or :supposition).  basis is a list of conclusions.  If supposition is not T, it is added to the supposition."
    (when (and formula (not (some #'hypernode-cancelled-node basis))
 	      (not (inconsistent-supposition basis)))
      (setf basis (reverse basis))
@@ -6853,8 +6883,8 @@ priority is the interest-priority and complexity is the complexity of the intere
 			       (princ link) (princ " subsumes ") (princ L) (terpri))
 			     )))))))))))))))
 
- #| L0 subsumes link which supports node. |#
  (defun delete-arguments (link node L0 depth)
+   "L0 subsumes link which supports node"
    (declare (special *deleted-arguments*))
 					; (when (equal link (hyperlink 10)) (setf l link n node ll l0 d depth) (break))
    ;; (step (delete-arguments l n ll d t))
@@ -7135,12 +7165,9 @@ priority is the interest-priority and complexity is the complexity of the intere
 		   (cancel-subsumed-links hyperlink depth)
 		   ))))))))))
 
- #| This must recompute the set of hypernode-arguments for the hyperlink-target and its
- inference-descendants.  Node arguments are stored as triples (arg,strength,discounted-strength) |#
  (defun build-hyperlink (basis clues rule discount node NDA binding link instantiations depth defeasible?)
+   "This must recompute the set of hypernode-arguments for the hyperlink-target and its inference-descendants.  Node arguments are stored as triples (arg,strength,discounted-strength)"
 					; (setf b basis r rule d discount n node nd nda bi binding de depth)
-   ;; (when (eql *hyperlink-number* 20) (setf b basis cl clues r rule d discount n node nd nda bi binding li link in instantiations de depth def defeasible?) (break))
-   ;; (step (build-hyperlink b cl r d n nd bi li in de def))
    ;; (princ "Building link ") (princ *hyperlink-number*) (terpri) (break)
    (incf *hyperlink-number*)
    (when (not (some #'(lambda (L)
@@ -7202,9 +7229,9 @@ priority is the interest-priority and complexity is the complexity of the intere
 	 (when (not new?) (invert-contradictions-from-new-hyperlink link instantiations))
 	 link))))
 
- #| This returns the instantiated-premise. |#
  (defun store-instantiated-premise
      (reason node c-list binding instantiations ip remaining-premises &optional profile)
+   "This returns the instantiated-premise"
    (cond
     ((and (forwards-premise-p (car remaining-premises))
 	  (listp (fp-formula (car remaining-premises)))
@@ -7262,12 +7289,8 @@ priority is the interest-priority and complexity is the complexity of the intere
    (dolist (test (d-node-discrimination-tests d-node))
      (reason-from-subsidiary-c-lists (cdr test) depth ip)))
 
- #| This can be blocked by a prior reductio-supposition, but this then converts it so that it is
- no longer deductive-only.  Any hypernode-descendants not inferred from other deductive-only
- nodes are made not deductive-only, and all defeasible forwards-rules are applied to them. |#
  (defun queue-supposition (supposition instance-supposition e-vars discount-factor interest)
-					; (when (eq interest (interest 36)) (setf s supposition i instance-supposition e e-vars d discount-factor in interest) (break))
-   ;; (step (queue-supposition s i e d in))
+   "This can be blocked by a prior reductio-supposition, but this then converts it so that it is no longer deductive-only.  Any hypernode-descendants not inferred from other deductive-only nodes are made not deductive-only, and all defeasible forwards-rules are applied to them."
    (let ((sup (find-if #'(lambda (N) (equal (hypernode-formula N) supposition))
 		       *non-reductio-supposition-nodes*)))
      (cond (sup
@@ -7379,9 +7402,8 @@ priority is the interest-priority and complexity is the complexity of the intere
 	 (draw-n node *og* *nodes-displayed*) (push node *nodes-displayed*))
        (values node t))))
 
- #| This must recompute hypernode-reductio-ancestors, non-reductio-suppositions, deductive-only-status,
- and apply forwards defeasible reasons. |#
  (defun convert-reductio-supposition (sup discount-factor)
+   "This must recompute hypernode-reductio-ancestors, non-reductio-suppositions, deductive-only-status, and apply forwards defeasible reasons."
    (setf (hypernode-reductio-ancestors sup) (list (cons (hypernode-formula sup) sup)))
 					; (setf (hypernode-non-reductio-supposition sup) nil)
    (setf (hypernode-non-reductio-supposition? sup) t)
@@ -7745,19 +7767,14 @@ priority is the interest-priority and complexity is the complexity of the intere
    (let ((pn (d-node-parent d-node)))
      (when pn (reason-from-dominant-interest-schemes node pn old-degree depth))))
 
- #| old-degree is the maximal-degree-of-justification for the node the last
- time discharge-interest-schemes was applied to it. |#
  (defun discharge-interest-schemes (node old-degree depth)
-					; (when (equal node (node 54)) (setf n node o old-degree d depth) (break))
-   ;; (step (discharge-interest-schemes n o d))
+   "old-degree is the maximal-degree-of-justification for the node the last time discharge-interest-schemes was applied to it."
    (catch 'discharge-interest-schemes
      (let* ((c-list (hypernode-c-list node))
 	    (d-node (c-list-d-node c-list)))
        (reason-from-dominant-interest-schemes node d-node old-degree depth))))
 
  (defun discharge-interest-in-defeaters (node i-lists old-degree new?)
-					; (when (eq node (node 7)) (setf n node i i-lists o old-degree n? new?) (break))
-   ;; (step (discharge-interest-in-defeaters n i o n?))
    (let ((degree (current-maximal-degree-of-justification node))
 	 (cancellations nil))
      (dolist (il i-lists)
@@ -7911,10 +7928,9 @@ priority is the interest-priority and complexity is the complexity of the intere
 		       :link link :clues (link-clues link)))
 		     ))))))))))
 
- #| new? indicates whether the node is newly-constructed.  Old-degree
- is the old maximal-degree-of-justification  |#
  (defun DISCHARGE-INTEREST-IN
      (node corresponding-i-lists old-degree new? depth interests &key interest reductio-only)
+   "new? indicates whether the node is newly-constructed.  Old-degree is the old maximal-degree-of-justification"
    (let ((degree (current-maximal-degree-of-justification node)))
      (when (or new? (> degree old-degree))
        (when
@@ -8076,8 +8092,6 @@ priority is the interest-priority and complexity is the complexity of the intere
 					;               ))))
 
  (defun discharge-fortuitous-reductios (node d-interests depth)
-					; (when (eq node (node 4)) (setf n node di d-interests d depth) (break))
-   ;; (step (discharge-fortuitous-reductios n di d))
    (dolist (nl (c-list-contradictors (hypernode-c-list node)))
      (let ((unifier (mem2 nl)))
        (dolist (node* (c-list-nodes (mem1 nl)))
@@ -8320,9 +8334,8 @@ priority is the interest-priority and complexity is the complexity of the intere
 	    (pushnew node (interest-discharging-nodes rebutting-interest))
 	    (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
 
- #| The following assumes that the sequent and members of the basis share the same
- sequent-supposition.  Basis is a list of conclusions. |#
  (defun adopt-interest-in-defeaters-for (link instantiations &optional bindings)
+   "The following assumes that the sequent and members of the basis share the same sequent-supposition.  Basis is a list of conclusions."
    (cond ((hyperlink-defeasible? link)
 	  (let ((variables nil)
 		(reverse-binding nil)
@@ -8462,14 +8475,8 @@ priority is the interest-priority and complexity is the complexity of the intere
 	  (apply-degenerate-backwards-reasons (link-interest link) priority (1+ depth))
 	  ))))))
 
- #| The priority is the priority of the inference-queue node from which this link
- is derived, if this value is known.  This simplifies the computation of the interest-priority
- for the new interests produced by this operation.  degree is the degree of interest of
- the resultant-interest. |#
  (defun DISCHARGE-LINK (link depth degree priority interests)
-					; (when (eq link (link 159)) (setf l link d depth dg degree p priority in interests) (break))
-					; (setf l link d depth dg degree p priority in interests)
-   ;; (step (discharge-link l d dg p in))
+   "The priority is the priority of the inference-queue node from which this link is derived, if this value is known.  This simplifies the computation of the interest-priority for the new interests produced by this operation.  degree is the degree of interest of the resultant-interest."
    (when *trace* (indent depth) (princ "DISCHARGE-LINK: ") (princ link) (terpri))
    (let ((deductive-rule? (not (reason-defeasible-rule (link-rule link))))
 	 (hypernode-list nil)
@@ -8604,8 +8611,6 @@ priority is the interest-priority and complexity is the complexity of the intere
        )))
 
  (defun reason-substantively-from-backwards-reason (reason interest depth priority)
-					; (when (eq interest (interest 133)) (setf r reason n interest d depth p priority) (break))
-   ;; (step (reason-substantively-from-backwards-reason r n d p))
    (when *trace* (indent depth) (princ "REASON-SUBSTANTIVELY-FROM-BACKWARDS-REASON ")
 	 (princ reason) (terpri))
    (multiple-value-bind
@@ -8623,8 +8628,6 @@ priority is the interest-priority and complexity is the complexity of the intere
 	     reason binding interest (1+ depth) priority nil nil nil supposition)))))))
 
  (defun reason-degenerately-backwards-from-reason-node (interest priority depth d-node)
-					; (when (and (eq interest (interest 24)) (eq d-node (d-node 27))) (setf i interest p priority d depth dn d-node) (break))
-   ;; (step (reason-degenerately-backwards-from-reason-node i p d dn))
    (when *trace* (indent depth) (princ "REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE ")
 	 (princ interest) (princ " and ") (princ d-node) (terpri))
    (dolist (reason (d-node-degenerate-backwards-reasons d-node))
@@ -8662,9 +8665,6 @@ priority is the interest-priority and complexity is the complexity of the intere
  (defun construct-initial-interest-link
      (supporting-nodes instantiations reason resultant-interest depth priority binding supposition
 		       &key generating-node remaining-premises clues new-variables)
-					; (when (eq *cycle* 518) (setf sn supporting-nodes in instantiations r reason ri resultant-interest d depth p priority b binding s supposition gn generating-node rp remaining-premises cl clues nv new-variables) (break))
-					; (setf sn supporting-nodes in instantiations r reason ri resultant-interest d depth p priority b binding s supposition gn generating-node rp remaining-premises cl clues nv new-variables)
-   ;; (step (construct-initial-interest-link sn in r ri d p b s :generating-node gn :remaining-premises rp :clues cl :new-variables nv))
    (when *trace* (indent depth) (princ "CONSTRUCT-INITIAL-INTEREST-LINK for interest ")
 	 (princ (interest-number resultant-interest)) (princ " using ") (princ reason) (terpri))
    (when (null remaining-premises) (setf remaining-premises (reason-backwards-premises reason)))
@@ -8952,10 +8952,8 @@ priority is the interest-priority and complexity is the complexity of the intere
    (dolist (test (d-node-discrimination-tests d-node))
      (discharge-interest-scheme interest-scheme (cdr test) priority (1+ depth)))))
 
-#| This is the default computation of degree-of-preference for premises.  Premises
-are triples consisting of a formula, a supposition, and a degree-of-justification.
-Premises are queued for immediate retrieval. |#
 (defun premise-preference (premise)
+  "This is the default computation of degree-of-preference for premises.  Premises are triples consisting of a formula, a supposition, and a degree-of-justification. Premises are queued for immediate retrieval."
   (/ (mem2 premise) (complexity (mem1 premise))))
 
 (defstruct (goal
@@ -8995,22 +8993,20 @@ Premises are queued for immediate retrieval. |#
   (let ((desire (goal-generating-desire goal)))
     (when desire (desire-generating-interest desire))))
 
-#| This is the default computation of degree-of-preference for desires. |#
 (defun desire-preference (desire)
+  "This is the default computation of degree-of-preference for desires."
   (/ (desire-strength desire) (complexity (desire-content desire))))
 
-#| This is the default computation of degree-of-preference for percepts. |#
 (defun percept-preference (percept)
+  "This is the default computation of degree-of-preference for percepts."
   (/ (percept-clarity percept) (complexity (percept-content percept))))
 
-#| This reverses the default computation of degree-of-preference to compute priority
-from preference. |#
 (defun retrieved-interest-priority (preference complexity)
+  "This reverses the default computation of degree-of-preference to compute priority from preference."
   (* complexity preference))
 
-#| The following is the default computation of interest-priority for an interest on
-the inference-queue that is concluded. |#
 (defun concluded-interest-priority (Q)
+  "The following is the default computation of interest-priority for an interest on the inference-queue that is concluded."
   (declare (ignore Q))
   *concluded-interest-priority*)
 
@@ -9044,7 +9040,6 @@ in the Listener. |#
 (defun graphics-pause-off () (setf *graphics-pause* nil))
 
 (defun store-backwards-reason-at-d-node (reason d-node)
-					; (when (eq reason null-plan) (setf r reason d d-node) (break))
   (cond ((b-reason-immediate reason)
          (push reason (d-node-degenerate-backwards-reasons d-node)))
         ((reason-backwards-premises reason)
@@ -9052,8 +9047,8 @@ in the Listener. |#
         (t (push reason (d-node-degenerate-backwards-reasons d-node))))
   d-node)
 
-#| Test is the final member of the formula-profile for the hypernode-formula. |#
 (defun store-backwards-reason-at-new-d-node (reason d-node test)
+  "Test is the final member of the formula-profile for the hypernode-formula."
   (let ((dn (make-d-node
 	     :d-node-number (incf *d-node-number*)
 	     :d-node-description (cons test (d-node-description d-node))
@@ -9086,8 +9081,8 @@ in the Listener. |#
           (t
 	   (store-backwards-reason-at-new-d-node reason d-node (car profile))))))
 
-#| This returns the d-node at which the premise is stored. |#
 (defun store-backwards-reason (reason profile)
+  "This returns the d-node at which the premise is stored"
   (cond
    (profile (index-backwards-reason reason profile *top-d-node*))
    (t (store-backwards-reason-at-d-node reason *top-d-node*))))
@@ -9106,8 +9101,8 @@ in the Listener. |#
     (setf (ip-d-node ip) d-node)
     ip))
 
-#| Test is the final member of the formula-profile for the hypernode-formula. |#
 (defun store-forwards-reason-at-new-d-node (reason premise d-node test)
+  "Test is the final member of the formula-profile for the hypernode-formula"
   (let ((dn (make-d-node
 	     :d-node-number (incf *d-node-number*)
 	     :d-node-description (cons test (d-node-description d-node))
@@ -9141,8 +9136,8 @@ in the Listener. |#
           (t
 	   (store-forwards-reason-at-new-d-node reason premise d-node (car profile))))))
 
-#| This returns the ip at which the premise is stored. |#
 (defun store-forwards-reason (reason premise profile)
+  "This returns the ip at which the premise is stored"
   (cond
    (profile (index-forwards-reason reason premise profile *top-d-node*))
    (t (store-forwards-reason-at-d-node reason premise *top-d-node*))))
@@ -9210,8 +9205,8 @@ in the Listener. |#
           (t
 	   (readopt-interest rebutting-interest (list node))))))
 
-#| Premises are pairs (formula, degree-of-justification). |#
 (defun queue-premise (premise)
+  "Premises are pairs (formula, degree-of-justification)"
 					; (setf P premise)
   (let* ((formula (mem1 premise))
          (sequent (list nil formula))
@@ -9360,10 +9355,8 @@ in the Listener. |#
     (multiple-value-bind (code term-list) (premise-code* P variables nil)
 			 (values (reverse code) term-list))))
 
-#| The following introduces new nodes for a desire with a new content, resets the
-desire-strength for a previous desire with an altered strength, and retracts desires
-whose new desire-strengths are zero. |#
 (defun queue-desire (desire)
+  "introduces new nodes for a desire with a new content, resets the desire-strength for a previous desire with an altered strength, and retracts desires whose new desire-strengths are zero."
   (let* ((formula (desire-content desire))
          (sequent (list nil formula))
          (node (find-if
@@ -9414,10 +9407,8 @@ whose new desire-strengths are zero. |#
 	     (setf *inference-queue*
 		   (ordered-insert queue-node *inference-queue* #'i-preferred)))))))
 
-#| The following treats percepts as always new.  If they fade before they are retrieved
-from the *inference-queue*, this has no effect.  They are left on the queue anyway
-for subsequent processing. |#
 (defun queue-percept (percept)
+  "treats percepts as always new.  If they fade before they are retrieved from the *inference-queue*, this has no effect.  They are left on the queue anyway for subsequent processing."
   (let* ((formula (list 'throughout (percept-content percept)
                         (list 'closed (percept-date percept) (percept-date percept))))
          (sequent (list nil formula))
@@ -9550,8 +9541,6 @@ for subsequent processing. |#
 					;................................................. BACKWARDS REASONING ........................................
 
 (defun reason-backwards-from-reason-node (interest priority depth d-node)
-					; (when (eq interest (interest 5)) (setf i interest p priority d depth dn d-node) (break))
-  ;; (step (reason-backwards-from-reason-node i p d dn))
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM-REASON-NODE ")
 	(princ interest) (princ " and ") (princ d-node) (terpri))
   (dolist (reason (d-node-backwards-reasons d-node))
@@ -9576,9 +9565,6 @@ for subsequent processing. |#
     (when pn (reason-backwards-from-dominant-reason-nodes interest priority (1+ depth) pn))))
 
 (defun apply-backwards-reasons (interest priority depth)
-					; (when (eq interest (interest 9)) (setf i interest p priority d depth) (break))
-					; (setf i interest p priority d depth)
-  ;; (step (apply-backwards-reasons i p d))
   (when *trace* (indent depth) (princ "APPLY-BACKWARDS-REASONS ") (princ interest) (terpri))
   (catch 'apply-backwards-reasons
     (let* ((i-list (interest-i-list interest))
@@ -9587,8 +9573,6 @@ for subsequent processing. |#
   (setf (interest-last-processed-degree-of-interest interest) (interest-degree-of-interest interest)))
 
 (defun discharge-fortuitous-reductio-interests (interest depth)
-					; (when (eq interest (interest 88)) (setf i interest d depth) (break))
-  ;; (step (discharge-fortuitous-reductio-interests i d))
   (when *trace* (indent depth) (princ "DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS: ")
 	(princ interest) (terpri))
   (when (interest-reductio interest)
@@ -9602,11 +9586,8 @@ for subsequent processing. |#
                 (draw-conclusion
 		 (interest-formula interest) (list n* n) :fortuitous-reductio u 1.0 depth nil nil)))))))))
 
-#| node* is the node that generates interest, whose interest-formula is the
-negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO-INTERESTS. |#
 (defun DISCHARGE-RETROSPECTIVE-REDUCTIOS (node match interest depth)
-					; (when (eq interest (interest 37)) (setf n node m match i interest d depth) (break))
-  ;; (step (discharge-retrospective-reductios n m i d))
+  "node* is the node that generates interest, whose interest-formula is the negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO-INTERESTS."
   (when *trace* (indent depth) (princ "DISCHARGE-RETROSPECTIVE-REDUCTIOS-FROM ")
 	(princ node) (princ " and ") (princ interest) (terpri))
   (let* ((Y0 (match-sublis match (hypernode-supposition node)))
@@ -9887,13 +9868,8 @@ negation of the hypernode-formula of node*.  This is called by GENERATE-REDUCTIO
 		   (setf (interest-degree-of-interest interest) (max (interest-degree-of-interest interest) degree))))
 	       (readopt-interest interest nil))))))))
 
-#| Reductio-interests are started when the first reductio-supposition is made, and
-reductio-interests in the negations of reductio-suppositions are adopted when the
-suppositions are made.  Other direct-reductio-interests are adopted when the
-generating nodes are retrieved from the inference-queue. |#
 (defun START-REDUCTIO-INTERESTS (node depth interests)
-					; (when (equal node (node 7)) (setf c node d depth i interests) (break))
-  ;; (step (start-reductio-interests c d i))
+  "Reductio-interests are started when the first reductio-supposition is made, and reductio-interests in the negations of reductio-suppositions are adopted when the suppositions are made.  Other direct-reductio-interests are adopted when the generating nodes are retrieved from the inference-queue."
   (when *trace* (indent depth) (princ "ADOPT-REDUCTIO-INTEREST-FROM: ")
 	(princ node) (terpri))
   (let ((start-interests (null *reductio-supposition-nodes*)))
@@ -9913,12 +9889,8 @@ generating nodes are retrieved from the inference-queue. |#
     (when (c-list-reductio-interests (hypernode-c-list node))
       (generate-reductio-interests node depth interests))))
 
-#| When a hypernode-non-reductio-supposition is readopted as a reductio-supposition, for all
-of its inclusive-hypernode-descendants that are deductive in it, it is moved from the
-hypernode-non-reductio-supposition to the list of hypernode-reductio-ancestors.  For all of those altered
-nodes that are not still on the inference-queue, we discharge-interest-in them and
-reason-forwards-from them. |#
 (defun convert-non-reductio-sup (sup)
+  "When a hypernode-non-reductio-supposition is readopted as a reductio-supposition, for all of its inclusive-hypernode-descendants that are deductive in it, it is moved from the hypernode-non-reductio-supposition to the list of hypernode-reductio-ancestors.  For all of those altered nodes that are not still on the inference-queue, we discharge-interest-in them and reason-forwards-from them."
   (when *display?* (princ "Converting node ") (princ (hypernode-number sup))
 	(princ " to a reductio supposition") (terpri))
   (pull sup *non-reductio-supposition-nodes*)
@@ -9929,7 +9901,6 @@ reason-forwards-from them. |#
     (recompute-reductio-ancestors sup sup)))
 
 (defun queue-for-inference (node)
-					; (when (equal node (node 13)) (break))
   (when (not (hypernode-cancelled-node node))
     (cond ((mem (hypernode-number node) *blocked-conclusions*)
            (when *display?* (princ "Hypernode #") (princ (hypernode-number node))
@@ -10000,12 +9971,8 @@ reason-forwards-from them. |#
 	))
      (t (setf (i-list-reductio-trigger i-list) t)))))
 
-#| When an interest is retrieved from the inference-queue, check to see the value of
-reductio-trigger for its i-list.  If it is T, make a reductio-supposition for the negation
-of the interest-formula,  and reset reductio-trigger to NIL. |#
 (defun MAKE-REDUCTIO-SUPPOSITION (interest depth)
-					; (when (equal interest (interest 9)) (break))
-  ;; (step (make-reductio-supposition (interest 9) 0))
+  "When an interest is retrieved from the inference-queue, check to see the value of reductio-trigger for its i-list.  If it is T, make a reductio-supposition for the negation of the interest-formula,  and reset reductio-trigger to NIL."
   (when
       (not (interest-cancelled interest))
     (let ((q (interest-formula interest))
@@ -10044,12 +10011,8 @@ of the interest-formula,  and reset reductio-trigger to NIL. |#
 			(t (make-new-reductio-supposition interest X i-list P c-vars depth))))))
               (t (augment-inherited-non-reductio-suppositions interest)))))))
 
-#| Carrying along the priority of the inference-queue node from which
-backwards reasoning proceeds simplifies the computation of interest-priorities in
-discharge-link. |#
 (defun reason-backwards-from (interest priority depth)
-					; (when (equal interest (interest 1)) (setf i interest p priority d depth) (break))
-  ;; (step (reason-backwards-from i p d))
+  "Carrying along the priority of the inference-queue node from which backwards reasoning proceeds simplifies the computation of interest-priorities in discharge-link."
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM: ") (princ interest) (terpri))
   (apply-backwards-reasons interest priority depth)
   (when (and *use-reductio* (not (interest-cancelled interest)))
@@ -10062,9 +10025,8 @@ discharge-link. |#
   (dolist (rule *auxiliary-backwards-rules*)
     (funcall rule interest)))
 
-#| The following function is left undefined pending further specification of the form
-of epistemic desires. |#
 (defun form-epistemic-desires-for (interest)
+  "undefined pending further specification of the form of epistemic desires."
   (declare (ignore interest))
   T)
 
@@ -10402,10 +10364,8 @@ of epistemic desires. |#
 	   (pushnew (?-positive-instruction query) (query-positive-instructions query)))
 	 )))))
 
-#| This introduces ?P queries and whether-queries. |#
 (defun reason-backwards-from-query (query priority  depth)
-					; (when (equal query (query 3)) (setf q query p priority d depth) (break))
-  ;; (step (reason-backwards-from-query q p d))
+  "This introduces ?P queries and whether-queries."
   (let ((formula (query-formula query)))
     (cond
      ((whether-formula formula)
@@ -10617,8 +10577,8 @@ of epistemic desires. |#
                    (pushnew (cons d-link d-path) d-paths :test 'equal)))))))
     d-paths))
 
-;; defeat-loops are remembered
 (defun defeat-loops (link)
+  "defeat-loops are remembered"
   (cond ((eq (hyperlink-defeat-loops link) T)
          (setf (hyperlink-defeat-loops link) (defeat-paths link link nil)))
         (t (hyperlink-defeat-loops link))))
@@ -10629,13 +10589,12 @@ of epistemic desires. |#
 (defun clear-criticalities ()
   (dolist (DL *hyper-defeat-links*) (setf (hyper-defeat-link-critical? DL) nil)))
 
-;; d-loop is a defeat-loop
 (defun sigma-defeat-loop (d-loop sigma)
+  "d-loop is a defeat-loop"
   (or (null (cdr sigma)) (every #'(lambda (L) (mem (cdr sigma) (hyper-defeat-link-in L))) d-loop)))
 
-;; DL is a hyper-defeat-link and sigma a list of hyperlinks and unit sets of hyperlinks.
 (defun critical-link (DL sigma)
-					;  (when (eq dl (hyper-defeat-link 1)) (setf d dl x1 sigma) (break))
+  "DL is a hyper-defeat-link and sigma a list of hyperlinks and unit sets of hyperlinks."
   (when sigma
     (let ((L (car sigma)))
       (when (hyperlink-p L)
@@ -10651,14 +10610,14 @@ of epistemic desires. |#
 	    (push (cons sigma critical) (hyper-defeat-link-critical? DL))
 	    critical)))))))
 
-;; DL is a hyper-defeat-link and sigma a list of hyperlinks and unit sets of hyperlinks.
 (defun hereditarily-critical-link (DL sigma)
+  "DL is a hyper-defeat-link and sigma a list of hyperlinks and unit sets of hyperlinks."
   (and sigma (or (critical-link DL sigma) (hereditarily-critical-link DL (cdr sigma)))))
 
 ;; ================ splitting hypergraphs  ==================
 
-;; link is an sigma-critical-hyperlink for DL.
 (defun critical-hyperlinks (DL sigma)
+  "link is an sigma-critical-hyperlink for DL."
   (let ((L (car sigma))
         (critical-links nil))
     (when (hyperlink-p L)
@@ -10696,8 +10655,8 @@ of epistemic desires. |#
 		 (setf links (cdr links)))))))))
     critical-links))
 
-;; path is an sigma-convergent support-path for (hyper-defeat-link-root DL)
 (defun convergent-support-path (path sigma DL)
+  "path is an sigma-convergent support-path for (hyper-defeat-link-root DL)"
   (let ((L (car sigma)))
     (and (hyperlink-p L)
          (some     ;; (defeat-loops L)
@@ -10718,8 +10677,8 @@ of epistemic desires. |#
 		      (setf d-link (car d-links))))))
 	  (defeat-loops L)))))
 
-;; path is an sigma-safe support-path for (hyper-defeat-link-root DL)
 (defun safe-support-path (path sigma DL)
+  "path is an sigma-safe support-path for (hyper-defeat-link-root DL)"
   (let ((L (car sigma)))
     (and (hyperlink-p L)
          (every     ;; (defeat-loops L)
@@ -10775,30 +10734,24 @@ of epistemic desires. |#
                 (member (hyperlink-target link) (hypernode-ancestors b)))
             (hyperlink-basis L))))
 
-;; Where link has a previously computed value, link is sigma-independent and hence that value
-;; can be reused in computing the degree of justification of the first member of sigma. This returns
-;; the previously computed value.
 (defun independent-link-value (link sigma)
+  "Where link has a previously computed value, link is sigma-independent and hence that value can be reused in computing the degree of justification of the first member of sigma. This returns the previously computed value."
   (and (not (link-descendant link (car sigma)))
        (not (member sigma (hyperlink-dependencies link) :test 'equal))
        (assoc (cdr sigma) (hyperlink-justifications link) :test 'equal)))
 
-;; Where node has a previously computed-value, node is sigma-independent and hence that value
-;; can be reused in computing the degree of justification of the first member of sigma. This returns
-;; the previously computed-value.
 (defun independent-hypernode-value (node sigma)
+  "Where node has a previously computed-value, node is sigma-independent and hence that value can be reused in computing the degree of justification of the first member of sigma. This returns the previously computed-value."
   (and (not (member (hyperlink-target (car sigma)) (hypernode-ancestors node)))
        (not (member sigma (hypernode-dependencies node) :test 'equal))
        (assoc (cdr sigma) (hypernode-justifications node) :test 'equal)))
 
-;; Where dl has a previously computed-value, dl is L-independent and hence that value
-;; can be reused in computing the degree of justification of the first member of sigma. This returns
-;; the previously computed-value.
 (defun independent-hyper-defeat-link-value (dl sigma)
+  "Where dl has a previously computed-value, dl is L-independent and hence that value can be reused in computing the degree of justification of the first member of sigma. This returns the previously computed-value."
   (independent-hypernode-value (hyper-defeat-link-root dl) sigma))
 
-;; This assumes that (car sigma) is a hyperlink.
 (defun initial-node (node sigma)
+  "This assumes that (car sigma) is a hyperlink."
   (or (and (member node (hyperlink-basis (car sigma)))
            (assoc sigma (hypernode-justifications node) :test 'equal))
       (independent-hypernode-value node sigma)))
@@ -10811,9 +10764,8 @@ of epistemic desires. |#
 (labels
  ()
 
- ;; set of sigma-subsidiary-hyperlinks for node relative to path, where path is an sigma-support-path
- ;; for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links
  (defun subsidiary-hyperlinks-for-node (node sigma path DL indent)
+   "set of sigma-subsidiary-hyperlinks for node relative to path, where path is an sigma-support-path for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links"
    (when (and *display?* *safe-trace*)
      (indent indent) (princ "want subsidiary-hyperlinks-for ") (princ node)
      (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
@@ -10835,11 +10787,8 @@ of epistemic desires. |#
 	 (princ-sigma path) (princ " = ") (princ-sigma links) (terpri))
        (values links unsecured-links))))
 
- ;; set of sigma-subsidiary-hyperlinks for link relative to path, where path is an sigma-support-path
- ;; for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links. It assumes
- ;; (not (safe-support-path path sigma DL)), because the recursion would have stopped before
- ;; getting to such a path.
  (defun subsidiary-hyperlinks-for-link (link sigma path DL indent)
+   "set of sigma-subsidiary-hyperlinks for link relative to path, where path is an sigma-support-path for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links. It assumes (not (safe-support-path path sigma DL)), because the recursion would have stopped before getting to such a path."
    (when (and *display?* *safe-trace*)
      (indent indent) (princ "want subsidiary-hyperlinks-for ") (princ link)
      (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
@@ -10892,10 +10841,8 @@ of epistemic desires. |#
 	      nil)
 	     )))))
 
-;; This returns the lists of links and unsecured links in the minimal sigma-safe arguments for the root of DL.
 (defun minimal-safe-arguments (sigma  DL indent)
-					; (when (and (equal sigma (list (hyperlink 11))) (eq dl (hyper-defeat-link 2))) (setf s sigma d dl i indent) (break))
-  ;; (step (minimal-safe-arguments s d i))
+  "This returns the lists of links and unsecured links in the minimal sigma-safe arguments for the root of DL."
   (cond ((and *display?* *safe-trace*)
          (terpri) (terpri) (indent indent) (princ "Computing minimal ") (princ-sigma sigma)
          (princ "-safe-arguments for ") (princ DL) (terpri)
@@ -10915,10 +10862,8 @@ of epistemic desires. |#
 (labels
  ()
 
- ;; This adds link to the critical-graph sigma, and closes it under the closure conditions
  (defun add-link-to-critical-graph (link sigma1 sigma2 &optional (indent 0))
-					;  (when (and (eq link (hyperlink 6)) (equal sigma1 (list (hyperlink 11)))) (setf l link s1 sigma1 s2 sigma2 i indent) (break))
-					;  (step (add-link-to-critical-graph l s1 s2 i))
+   "This adds link to the critical-graph sigma, and closes it under the closure conditions"
    (when (not (mem sigma1 (hyperlink-in link)))
      (when (and *display?* *s-trace*)
        (terpri) (indent indent) (princ "Inserting ") (princ link) (princ " in ") (princ-sigma sigma1))
@@ -10963,8 +10908,8 @@ of epistemic desires. |#
 		      (when (not (independent-link-value L sigma1))
 			(add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))))))))
 
- ;; This adds node to the critical-graph sigma1, and closes it under the closure conditions
  (defun add-node-to-critical-graph (node sigma1 sigma2 &optional (indent 0))
+   "This adds node to the critical-graph sigma1, and closes it under the closure conditions"
    (when (not (member sigma1 (hypernode-in node)))
      (when (and *display?* *s-trace*)
        (terpri) (indent indent) (princ "Inserting ") (princ node) (princ " in ") (princ-sigma sigma1))
@@ -10978,6 +10923,29 @@ of epistemic desires. |#
  ()
 
  (defun display-hypergraphs (link)
+   #| On HG14:
+
+   ? (display-hypergraphs (hyperlink 7))
+
+   When sigma = (#<hyperlink #7 for node 8>):
+   #<Node 9> is in
+   #<Node 8> is in
+   #<Node 7> is in
+   #<Node 6> is in
+   #<hyperlink #10 for node 9> is in
+   #<hyperlink #7 for node 8> is in
+   #<hyperlink #6 for node 7> is in
+   #<hyperlink #5 for node 6> is in
+   #<hyper-defeat-link #2 for hyperlink 5 for node 6> is in
+   #<hyper-defeat-link #1 for hyperlink 7 for node 8> is in
+
+   When sigma = ((#<hyperlink #7 for node 8>)):
+   #<Node 9> is in
+   #<Node 7> is in
+   #<hyperlink #9 for node 9> is in
+   #<hyperlink #8 for node 7> is in
+
+   |#
    (compute-new-hypergraphs link)
    (terpri)  (princ "When sigma = ") (princ-sigma (list link)) (princ ":")
    (dolist (N *hypergraph*)
@@ -10994,31 +10962,6 @@ of epistemic desires. |#
      (when  (mem (list (list link)) (hyperlink-in L)) (terpri) (princ L) (princ " is in")))
    (dolist (L *hyper-defeat-links*)
      (when  (mem (list (list link)) (hyper-defeat-link-in L)) (terpri) (princ L) (princ " is in"))))
-
-
- #| On HG14:
-
- ? (display-hypergraphs (hyperlink 7))
-
- When sigma = (#<hyperlink #7 for node 8>):
- #<Node 9> is in
- #<Node 8> is in
- #<Node 7> is in
- #<Node 6> is in
- #<hyperlink #10 for node 9> is in
- #<hyperlink #7 for node 8> is in
- #<hyperlink #6 for node 7> is in
- #<hyperlink #5 for node 6> is in
- #<hyper-defeat-link #2 for hyperlink 5 for node 6> is in
- #<hyper-defeat-link #1 for hyperlink 7 for node 8> is in
-
- When sigma = ((#<hyperlink #7 for node 8>)):
- #<Node 9> is in
- #<Node 7> is in
- #<hyperlink #9 for node 9> is in
- #<hyperlink #8 for node 7> is in
-
- |#
 
  (defun display-hypergraph ()
    (terpri) (princ "(") (terpri)
@@ -11181,8 +11124,8 @@ of epistemic desires. |#
     )))
 |#
 
-;; This finds the hyperlink in values that occurs after all other hyperlinks in values in path
 (defun last-link (values path)
+  "This finds the hyperlink in values that occurs after all other hyperlinks in values in path"
   (let ((last-link nil)
         (remainder path))
     (dolist (value values)
@@ -11193,10 +11136,8 @@ of epistemic desires. |#
             (setf last-link value)))))
     last-link))
 
-;; This records node and hyperlink-dependencies discovered during the computation of
-;; degrees of justification. It is called by COMPUTE-LINK-JUSTIFICATION. It records the fact
-;; that link has been found to be sigma-dependent.
 (defun record-dependencies (link sigma indent)
+  "This records node and hyperlink-dependencies discovered during the computation of degrees of justification. It is called by COMPUTE-LINK-JUSTIFICATION. It records the fact that link has been found to be sigma-dependent."
   (when (and *display?* *j-trace*)
     (indent indent) (princ "RECORDING: ") (princ link) (princ " is ") (princ-sigma sigma)
     (princ "-dependent") (terpri) (indent indent) (princ "RECORDING: ") (princ (hyperlink-target link))
@@ -11214,12 +11155,8 @@ of epistemic desires. |#
 (labels
  ()
 
- ;; path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link.
- ;; Link0 is the hyperlink initiating the recursive computation leading to node.
- ;; This returns a hyperlink or numerical value.
  (defun compute-hyper-defeat-link-justification (DL sigma link0 &optional (indent 0) path)
-					;  (when (eq dl (hyper-defeat-link 2)) (setf d dl   l0 link0 s sigma i indent p path) (break))
-   ;; (step (compute-hyper-defeat-link-justification d  s l0 i p))
+   "path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or numerical value."
    (when (> indent 100) (break))
    (when (and *display?* *j-trace*)
      (cond ((zerop indent) (terpri) (princ "want justification of ") (princ DL))
@@ -11265,13 +11202,8 @@ of epistemic desires. |#
        (when path (princ ", path = ") (princ-sigma path)) (terpri))
      value))
 
- ;; path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link.
- ;; Link0 is the hyperlink initiating the recursive computation leading to node.
- ;; This returns a hyperlink or a numerical value.
  (defun compute-link-justification (link sigma link0 &optional (indent 0) path)
-					;  (setf l link l0 link0 s sigma  i indent p path)
-					; (when (eq link (hyperlink 3)) (setf l link l0 link0 s sigma  i indent p path) (break))
-   ;; (step (compute-link-justification l s l0 i p))
+   "path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or a numerical value."
    (when (> indent 100) (break))
    (when (and *display?* *j-trace*)
      (cond ((zerop indent) (terpri) (princ "want justification of ") (princ link))
@@ -11406,12 +11338,8 @@ of epistemic desires. |#
        (when path (princ ", path = ") (princ-sigma path)) (terpri))
      value))
 
- ;; path is the reverse of the  list of hyperlinks through whose defeaters the recursion has
- ;;  traversed before getting to node. Link0 is the hyperlink initiating the recursive computation
- ;; leading to node. This returns a hyperlink or numerical value.
  (defun compute-hypernode-justification (node sigma &optional link0 (indent 0) case path)
-					;  (when (and (equal sigma (list (list (hyperlink 3)))) (eq node (node 5))) (setf n node l link0 s sigma  i indent c case p path) (break))
-   ;; (step (compute-hypernode-justification n l s i c p))
+   "path is the reverse of the  list of hyperlinks through whose defeaters the recursion has traversed before getting to node. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or numerical value."
    (when (> indent 100) (break))
    (when (and *display?* *j-trace*)
      (cond ((zerop indent) (terpri) (princ "want justification of ") (princ node))
@@ -11654,17 +11582,15 @@ of epistemic desires. |#
   (dolist (O *doxastic-optative-dispositions*)
     (funcall O conclusion)))
 
-#| A Q&I-module is a function which, when applied to an appropriate conclusion, returns
-the sequent concluded. |#
 (defun apply-Q&I-modules-to (conclusion)
+  "A Q&I-module is a function which, when applied to an appropriate conclusion, returns the sequent concluded."
   (when (not (hypernode-deductive-only conclusion))
     (dolist (Q&I *Q&I-modules*)
       (let ((S (funcall Q&I conclusion)))
         (when S (draw-conclusion S nil :Q&I nil 1 0 nil nil))))))
 
-#| This computes defeat-statuses for interest-links and interests, and returns the list
-of all interests whose defeat-statuses change as a result of the computation.  |#
 (defun compute-interest-graph-defeat-statuses (new-beliefs new-retractions)
+  "This computes defeat-statuses for interest-links and interests, and returns the list of all interests whose defeat-statuses change as a result of the computation."
   (let ((altered-interests nil)
         (altered-links nil))
     (dolist (c new-beliefs)
@@ -12173,16 +12099,8 @@ which can then be run individually using the function (simulate-oscar n). |#
   (dolist (input *inputs*)
     (when (eq (car input) *cycle*) (apply #'form-percept (cdr input)))))
 
-#| The following does not perform the operations in parallel as it should, because
-this program is designed to run in serial LISP.  The functions update-environmental-
-input and update-percepts are extrinsic to the reasoner,
-and are supplied by the operating environment of the reasoner.
-Optative dispositions are functions from inputs to desires.  This code allows
-us to have premises supplied artificially rather than by perception.
-Premises are triples (formula, supposition, degree-of-justification).
-Premises can be defeated by rebutting defeaters, but there is no way
-to have an undercutting defeater.  |#
 (defun OSCAR ()
+  "The following does not perform the operations in parallel as it should, because this program is designed to run in serial LISP.  The functions update-environmental- input and update-percepts are extrinsic to the reasoner, and are supplied by the operating environment of the reasoner. Optative dispositions are functions from inputs to desires.  This code allows us to have premises supplied artificially rather than by perception. Premises are triples (formula, supposition, degree-of-justification). Premises can be defeated by rebutting defeaters, but there is no way to have an undercutting defeater."
   (initialize-reasoner)
   (dolist (query *ultimate-epistemic-interests*)
     (reason-backwards-from-query query (query-strength query) 0))
@@ -12606,8 +12524,8 @@ to have an undercutting defeater.  |#
     (when *graphics-pause* (pause-graphics))  ;; wait for a character to be typed in the Listener
     (draw-i interest *og*)))
 
-#| This precedes the line of nodes by || . |#
 (defun full-display-node (n proof-nodes)
+  "This precedes the line of nodes by || ."
   (princ "||  # ") (princ (hypernode-number n))
   (terpri)
   (princ "||  ") (prinp (hypernode-formula n))
@@ -12643,8 +12561,8 @@ to have an undercutting defeater.  |#
            (princ "||  This discharges interest ") (princ (interest-number (mem1 interests)))))
     (when interests (terpri))))
 
-#| This precedes the line of interests by || . |#
 (defun full-display-used-interest (interest)
+  "This precedes the line of interests by || ."
   (princ "                                        || # ") (princ (interest-number interest)) (terpri)
   (princ "                                        || ")
   (when (interest-deductive interest) (princ "deductive "))
@@ -12904,6 +12822,7 @@ to have an undercutting defeater.  |#
 	(when *graph-log* (invalidate-view *og*))
 	(princ "============================================================")
 	(terpri) (terpri))))))
+
 (proclaim '(special *arguments* *nodes-done* *arg-number* *nodes-used*))
 
 (defstruct (argument
@@ -12988,15 +12907,8 @@ to have an undercutting defeater.  |#
        (if (null nodes-left) (return))))
     (terpri fw)))
 
-#| Choose the first node all of whose ancestors are already in lines and whose
-supposition is the same as the last one, if there is one.  Otherwise, choose the
-first node all of whose ancestors are already in lines and whose supposition is
-such that every node having that supposition is such that all of its ancestors are
-either already in a line or have that same supposition.    Otherwise, choose the
-first node all of whose ancestors are already in lines and whose supposition
-is already used, if there is one.  Otherwise, choose the first line all of whose
-ancestors are already in lines, and put its supposition in sups-used. |#
 (defun format-argument (arg  &optional fw)
+  "Choose the first node all of whose ancestors are already in lines and whose supposition is the same as the last one, if there is one.  Otherwise, choose the first node all of whose ancestors are already in lines and whose supposition is such that every node having that supposition is such that all of its ancestors are either already in a line or have that same supposition.    Otherwise, choose the first node all of whose ancestors are already in lines and whose supposition is already used, if there is one.  Otherwise, choose the first line all of whose ancestors are already in lines, and put its supposition in sups-used."
   (let* ((nodes (order (argument-inclusive-nodes arg) 'sup-order))
          (sups-used (list nil))
          (sup nil)
@@ -13184,9 +13096,8 @@ ancestors are already in lines, and put its supposition in sups-used. |#
   (or (hyperlink-degree-of-justification L)
       (if (not (reason-defeasible-rule (hyperlink-rule L))) 1.0 0)))
 
-#| If nodes is nonempty, this constructs all arguments relevant to nodes.  Otherwise, it
-constructs all arguments relevant to ultimate-epistemic-interests. |#
 (defun show-arguments (&optional nodes)
+  "If nodes is nonempty, this constructs all arguments relevant to nodes.  Otherwise, it constructs all arguments relevant to ultimate-epistemic-interests."
   (setf *arg-number* 0 *nodes-used* nil *arguments* nil *nodes-done* nil)
   (when (null nodes)
     (setf nodes (unionmapcar+ #'query-answers *ultimate-epistemic-interests*)))
@@ -13246,9 +13157,8 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
     (princ (truncate (* argument-length 100) graph-size))
     (princ "% of the inference-graph was used in the argument.") (terpri)))
 
-#| This is the same as think, but it aborts when the *inference-queue* is empty. |#
 (defun think-or-die ()
-					; (when (eql *cycle* 82) (break))
+  "This is the same as think, but it aborts when the *inference-queue* is empty."
   (when (null *inference-queue*) (throw 'die nil))
   (when (read-char-no-hang) (clear-input) (throw 'die nil))
 					; (when (and (node 3) (not (zerop (hypernode-readopted-supposition (node 3))))) (break))
@@ -13301,12 +13211,8 @@ constructs all arguments relevant to ultimate-epistemic-interests. |#
     (update-beliefs)
     (setf *new-links* nil)))
 
-#|  COGITATE is used in place of OSCAR in TEST.  COGITATE does all reasoning
-from premises, ignoring environmental-input (desires) and percepts.
-Premises are triples (formula, supposition, degree-of-justification).
-Premises can be defeated by rebutting defeaters, but there is no way
-to have an undercutting defeater.  |#
 (defun COGITATE ()
+  "COGITATE is used in place of OSCAR in TEST.  COGITATE does all reasoning from premises, ignoring environmental-input (desires) and percepts. Premises are triples (formula, supposition, degree-of-justification). Premises can be defeated by rebutting defeaters, but there is no way to have an undercutting defeater."
   (let ((deductive-only *deductive-only*)
         (time nil))
     (unwind-protect
@@ -13496,13 +13402,8 @@ The listing of strengths in reasons is optional, the default being 1.0.
   (when *display?* (display-hypergraph))
   (terpri))
 
-#| The following runs individual problems or lists of problems from the list *problems*.
-(test) runs the entire set.  (test n) runs just problem n.  (test n t) starts with problem n
-and runs the rest of the set.  (test n m) runs problems n through m.  (test n :skip '(i j k))
-starts with problem n and runs the rest of the set except for i, j, and k.  (test n m :skip '(i j k))
-runs problems n through m, skipping i, j, and k.  (test :skip i j k) runs all the problems
-except i, j, k. |#
 (defun test (&rest rest)
+  "The following runs individual problems or lists of problems from the list *problems*. (test) runs the entire set.  (test n) runs just problem n.  (test n t) starts with problem n and runs the rest of the set.  (test n m) runs problems n through m.  (test n :skip '(i j k)) starts with problem n and runs the rest of the set except for i, j, and k.  (test n m :skip '(i j k)) runs problems n through m, skipping i, j, and k.  (test :skip i j k) runs all the problems except i, j, k."
   (terpri) (princ "(") (princ "                                 ") (princ *version*) (princ "          ")
   (let ((time (multiple-value-list (get-decoded-time))))
     (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
@@ -13573,9 +13474,8 @@ except i, j, k. |#
 
 (defvar *backwards-logical-reasons* nil)
 
-#| This recombines logical formulas containing whitespace that were taken apart by
-string-list. |#
 (defun collapse-strings (strings)
+  "This recombines logical formulas containing whitespace that were taken apart by string-list."
   (cond ((< (length strings) 2) strings)
         ((mem (mem2 strings) '("v" "->" "<->" "&" "@"))
          (let ((cs (collapse-strings (cddr strings))))
@@ -13583,10 +13483,8 @@ string-list. |#
                  (cdr cs))))
         (t (cons (mem1 strings) (collapse-strings (cdr strings))))))
 
-#| Where string contains spaces, this returns the list of words separated by spaces.
-Words can be separated by commas, provided there is whitespace between commas
-and adjoining words.  The commas are then removed. |#
 (defun string-list (string)
+  "Where string contains spaces, this returns the list of words separated by spaces. Words can be separated by commas, provided there is whitespace between commas and adjoining words.  The commas are then removed."
   (let ((string* (string-trim '(#\Space #\Tab #\Newline) string))
         (words nil))
     (when (not (eql (length string*) 0))
@@ -13600,9 +13498,8 @@ and adjoining words.  The commas are then removed. |#
 	 (setf string* (string-left-trim '(#\Space) (subseq string* pos))))))
     (collapse-strings words)))
 
-#| Where string is a string of pretty-formulas separated by commas (and whitespace on
-either side of the commas, if desired), this returns the list of formulas. |#
 (defun reform-list (string)
+  "Where string is a string of pretty-formulas separated by commas (and whitespace on either side of the commas, if desired), this returns the list of formulas."
   (let ((formulas nil)
         (string-remainder string))
     (loop
@@ -13786,12 +13683,8 @@ either side of the commas, if desired), this returns the list of formulas. |#
 	   (setf subseq (subseq subseq pos))
 	   (push (list (reform conclusion) degree) conclusions)))))))
 
-#| This allows the premises of a forwards-reason to be entered either as a single
-formula, or as a pair <formula , condition> where condition is either "inference",
-"desire", or "percept" (entered without quotes).  If a formula is entered alone,
-the default condition NIL is used. |#
 (defun reform-forwards-premise-list (string)
-					; (setf s string) (break)
+  "This allows the premises of a forwards-reason to be entered either as a single formula, or as a pair <formula , condition> where condition is either \"inference\", \"desire\", or \"percept\" (entered without quotes).  If a formula is entered alone, the default condition NIL is used."
   (let ((premises nil)
         (string-remainder (string-trim '(#\Space) string)))
     (loop
@@ -13876,8 +13769,8 @@ the default condition NIL is used. |#
 			       :variables ',variables))
 		      reasons))))))))))))
 
-#| If a strength is not listed, it is taken to be 1.0. |#
 (defun find-forwards-pf-reasons (string problem-number)
+  "If a strength is not listed, it is taken to be 1.0."
   (let ((reasons nil)
         (pos (search "forwards conclusive reasons" string :test 'string-equal)))
     (when (null pos)
@@ -14004,8 +13897,8 @@ the default condition NIL is used. |#
                         (reverse backwards-con-reasons)
                         problem-description))))))))))
 
-#| This removes comment-lines or comments from ends of lines. |#
 (defun trim-comments (string)
+  "This removes comment-lines or comments from ends of lines."
   (let ((pos (position #\; string)))
     (if pos
 	(let ((pos2 (position #\Newline string :start pos)))
@@ -14016,9 +13909,8 @@ the default condition NIL is used. |#
 		  (subseq string pos2)))))
       string)))
 
-#| Given a string set-string describing a set of problems, this returns the list of strings
-describing the individual problems. |#
 (defun problem-strings (set-string)
+  "Given a string set-string describing a set of problems, this returns the list of strings describing the individual problems."
   (setf set-string (trim-comments set-string))
   (let ((start (search "Problem #" set-string :test 'string-equal))
         (strings nil))
@@ -14031,8 +13923,8 @@ describing the individual problems. |#
 	      (push (subseq set-string start) strings)
 	      (return (reverse strings))))))))
 
-#| Given a string describing a problem-set, this returns the list of problems. |#
 (defun make-problem-list (set-string)
+  "Given a string describing a problem-set, this returns the list of problems."
   (mapcar #'make-problem-from-string (problem-strings set-string)))
 
 (defun default-problem-list ()
@@ -15182,20 +15074,13 @@ Ultimate epistemic interests:
 "
    ))
 
-#| This is similar to def-forwards-reason except that it does not put the reason into
-*forwards-substantive-reasons*. |#
 (defmacro define-forwards-reason
     (name &key reason-forwards-premises reason-backwards-premises conclusion
 	  (strength 1.0) variables defeasible? description)
-					; (setf n name fp reason-forwards-premises bp reason-backwards-premises c conclusion v variables d defeasible?)
-					; (break)
-  #| (step (define-forwards-reason n :reason-forwards-premises (eval fp) :reason-backwards-premises (eval bp)
-  :conclusion (eval c) :variables (eval v) :defeasible? (eval d)))  |#
+  "This is similar to def-forwards-reason except that it does not put the reason into *forwards-substantive-reasons*."
   (when (stringp name) (setf name (read-from-string name)))
-
   `(progn
      (proclaim (list 'special ',name))
-
      (setf ,name
            (make-forwards-reason
 	    :reason-name ',name
@@ -15232,17 +15117,13 @@ Ultimate epistemic interests:
 		 (union used-premise-variables premise-variables)))
 	 (when (null premise-list) (return (reverse premises)))))))
 
-#| This is similar to def-backwards-reason except that it does not put the reason into
-*backwards-substantive-reasons*. |#
-
 (defmacro define-backwards-reason
     (name &key reason-forwards-premises reason-backwards-premises conclusion (strength 1.0)
 	  condition variables defeasible? description)
+  "This is similar to def-backwards-reason except that it does not put the reason into *backwards-substantive-reasons*."
   (when (stringp name) (setf name (read-from-string name)))
-
   `(progn
      (proclaim (list 'special ',name))
-
      (let* ((c-vars (remove-if-not #'(lambda (v) (occur* v ,conclusion)) ,variables))
             (c-binding-function (eval (binding-function ,conclusion c-vars))))
        (setf ,name
@@ -15280,20 +15161,18 @@ Ultimate epistemic interests:
             premises))
 	 (when (null premise-list) (return (reverse premises)))))))
 
-#| This displays the problems in *problems* in readable form.  If n is non-nill,
-it displays just problem n. |#
 (defun display-problems (&optional n)
+  "This displays the problems in *problems* in readable form.  If n is non-nill, it displays just problem n."
   (cond ((null n)
          (dolist (P *problems*) (display-problem P)))
         (t (display-problem (assoc n *problems*)))))
 
-#| This finds the first occurrence (if any) of string1 in string2, and returns the next position
-after the end of string1.  If string1 does not occur in string2, this returns nil.  The comparison
-is not case-sensitive unless case-sensitive is set to t. |#
 (defun find-string (string1 string2 &optional case-sensitive)
+  "This finds the first occurrence (if any) of string1 in string2, and returns the next position after the end of string1.  If string1 does not occur in string2, this returns nil.  The comparison is not case-sensitive unless case-sensitive is set to t."
   (let ((length (length string1))
         (position (search string1 string2 :test (if case-sensitive 'string= 'string-equal))))
     (when position (+ length position))))
+
 					;                      INFERENCE-RULES FOR THE PROPOSITIONAL
 					;                                                 AND PREDICATE CALCULI
 
@@ -15415,8 +15294,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun bicondit-simp (c depth ip)
   (declare (ignore ip))
-					; (when (eq c (node 252)) (setf n c d depth i ip) (break))
-  ;; (step (bicondit-simp n d i))
   (when (is-inference c)
     (let* ((p (hypernode-formula c)))
       (draw-conclusion (condit (bicond1 p) (bicond2 p)) (list c) bicondit-simp (list t) 1.0 depth nil nil)
@@ -15609,27 +15486,25 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
        :reason-variables '(%P %Q)))
 
 (defun modus-ponens1 (c depth ip)
-					; (when (eq c (node 4)) (setf n c d depth i ip) (break))
-  ;; (step (modus-ponens1 n d i))
   (when (is-inference c)
     (let* ((p (hypernode-formula c))
            (p-vars (hypernode-variables c)))
       (multiple-value-bind (profile term-list) (formula-code (antecedent p))
-			   (let* ((binding (list (cons '%p (antecedent p)) (cons '%q (consequent p))))
-				  (dn
-				   (ip-d-node
-				    (store-instantiated-premise
-				     modus-ponens2 c nil binding (list t) ip (cdr (reason-forwards-premises modus-ponens1)) profile))))
-			     (dolist (c-list (d-node-c-lists dn))
-			       (when (c-list-processed-nodes c-list)
-				 (let ((unifier
-					(unifier (c-list-term-list c-list) term-list (c-list-variables c-list) p-vars)))
-				   (when unifier
-				     (let ((formula (match-sublis (mem2 unifier) (consequent p))))
-				       (dolist (c* (c-list-processed-nodes c-list))
-					 (when (is-inference c*)
-					   (draw-conclusion
-					    formula (list c* c) modus-ponens1 unifier 1.0 depth nil nil)))))))))))))
+	(let* ((binding (list (cons '%p (antecedent p)) (cons '%q (consequent p))))
+	       (dn
+		(ip-d-node
+		 (store-instantiated-premise
+		  modus-ponens2 c nil binding (list t) ip (cdr (reason-forwards-premises modus-ponens1)) profile))))
+	  (dolist (c-list (d-node-c-lists dn))
+	    (when (c-list-processed-nodes c-list)
+	      (let ((unifier
+		     (unifier (c-list-term-list c-list) term-list (c-list-variables c-list) p-vars)))
+		(when unifier
+		  (let ((formula (match-sublis (mem2 unifier) (consequent p))))
+		    (dolist (c* (c-list-processed-nodes c-list))
+		      (when (is-inference c*)
+			(draw-conclusion
+			 formula (list c* c) modus-ponens1 unifier 1.0 depth nil nil)))))))))))))
 
 (setf (reason-function modus-ponens1) #'modus-ponens1)
 
@@ -15641,8 +15516,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
        :reason-variables '(%P)))
 
 (defun modus-ponens2 (c depth ip)
-					; (when (eq c (node 3)) (setf n c d depth i ip) (break))
-  ;; (step (modus-ponens2 n d i))
   (when (is-inference c)
     (when (eq (ip-reason ip) modus-ponens2)
       (let* ((p (hypernode-formula c))
@@ -15671,21 +15544,21 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
     (let* ((p (hypernode-formula c))
            (p-vars (hypernode-variables c)))
       (multiple-value-bind (profile term-list) (formula-code (neg (consequent p)))
-			   (let* ((binding (list (cons '%p (antecedent p)) (cons '%q (consequent p))))
-				  (dn
-				   (ip-d-node
-				    (store-instantiated-premise
-				     modus-tollens2 c nil binding (list t) ip (cdr (reason-forwards-premises modus-tollens1)) profile))))
-			     (dolist (c-list (d-node-c-lists dn))
-			       (when (c-list-processed-nodes c-list)
-				 (let ((unifier
-					(unifier (c-list-term-list c-list) term-list (c-list-variables c-list) p-vars)))
-				   (when unifier
-				     (let ((formula (match-sublis (mem2 unifier) (neg (antecedent p)))))
-				       (dolist (c* (c-list-processed-nodes c-list))
-					 (when (is-inference c*)
-					   (draw-conclusion
-					    formula (list c* c) modus-tollens1 unifier 1.0 depth nil nil)))))))))))))
+	(let* ((binding (list (cons '%p (antecedent p)) (cons '%q (consequent p))))
+	       (dn
+		(ip-d-node
+		 (store-instantiated-premise
+		  modus-tollens2 c nil binding (list t) ip (cdr (reason-forwards-premises modus-tollens1)) profile))))
+	  (dolist (c-list (d-node-c-lists dn))
+	    (when (c-list-processed-nodes c-list)
+	      (let ((unifier
+		     (unifier (c-list-term-list c-list) term-list (c-list-variables c-list) p-vars)))
+		(when unifier
+		  (let ((formula (match-sublis (mem2 unifier) (neg (antecedent p)))))
+		    (dolist (c* (c-list-processed-nodes c-list))
+		      (when (is-inference c*)
+			(draw-conclusion
+			 formula (list c* c) modus-tollens1 unifier 1.0 depth nil nil)))))))))))))
 
 (setf (reason-function modus-tollens1) #'modus-tollens1)
 
@@ -15697,8 +15570,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
        :reason-variables '(%Q)))
 
 (defun modus-tollens2 (c depth ip)
-					; (when (eq c (node 136)) (setf n c d depth i ip) (break))
-  ;; (step (modus-tollens2 n d i))
   (when (is-inference c)
     (when (eq (ip-reason ip) modus-tollens2)
       (let* ((p- (neg (hypernode-formula c)))
@@ -15713,7 +15584,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (setf (reason-function modus-tollens2) #'modus-tollens2)
 
-#| From (P -> Q) and (P -> ~Q), infer ~P. |#
 (setf conditional-modus-tollens
       (make-forwards-reason
        :reason-name "conditional-modus-tollens"
@@ -15721,25 +15591,26 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
        :reason-variables '(P Q)))
 
 (defun conditional-modus-tollens (c depth ip)
+  "From (P -> Q) and (P -> ~Q), infer ~P."
   (declare (ignore ip))
   (when (is-inference c)
     (let* ((p (hypernode-formula c))
            (p-vars (hypernode-variables c)))
       (let ((p- (condit (antecedent p) (neg (consequent p)))))
         (multiple-value-bind (profile term-list) (formula-code p-)
-			     (let ((dn (pursue-d-node-for profile *top-d-node*)))
-			       (when dn
-				 (dolist (c-list (d-node-c-lists dn))
-				   (when (c-list-processed-nodes c-list)
-				     (let ((unifier
-					    (unifier term-list (c-list-term-list c-list) p-vars (c-list-variables c-list))))
-				       (when unifier
-					 (let ((formula (match-sublis (mem1 unifier) (neg (antecedent p)))))
-					   (dolist (c* (c-list-processed-nodes c-list))
-					     (when (is-inference c*)
-					       (draw-conclusion
-						formula (list c c*) conditional-modus-tollens
-						unifier 1.0 depth nil nil)))))))))))))))
+	  (let ((dn (pursue-d-node-for profile *top-d-node*)))
+	    (when dn
+	      (dolist (c-list (d-node-c-lists dn))
+		(when (c-list-processed-nodes c-list)
+		  (let ((unifier
+			 (unifier term-list (c-list-term-list c-list) p-vars (c-list-variables c-list))))
+		    (when unifier
+		      (let ((formula (match-sublis (mem1 unifier) (neg (antecedent p)))))
+			(dolist (c* (c-list-processed-nodes c-list))
+			  (when (is-inference c*)
+			    (draw-conclusion
+			     formula (list c c*) conditional-modus-tollens
+			     unifier 1.0 depth nil nil)))))))))))))))
 
 (setf (reason-function conditional-modus-tollens) #'conditional-modus-tollens)
 
@@ -15872,7 +15743,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (setf (reason-function EI) #'EI)
 
-
 (setf *forwards-logical-reasons*
       (reverse
        (list
@@ -15960,7 +15830,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
        :b-reason-length 2))
 
 (defun i-neg-condit (interest depth priority)
-					; (when (eq interest (interest 4)) (break))
   (let ((p (interest-formula interest)))
     (construct-initial-interest-link
      nil nil i-neg-condit interest depth priority
@@ -16396,10 +16265,8 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
             (princ "Hypernode ") (princ (hypernode-number node)) (princ " differs") (terpri))
           (setf graph (cdr graph)))))))
 
-#| This restarts the reasoning, beginning with the inference-queue item x.  x can be the
-number of a queue-node, or an interest or a conclusion.  If x is empty, reasoning restarts
-without altering the inference-queue. |#
 (defun try (&optional x)
+  "This restarts the reasoning, beginning with the inference-queue item x.  x can be the number of a queue-node, or an interest or a conclusion.  If x is empty, reasoning restarts without altering the inference-queue."
   (when x
     (let ((Q
 	   (cond ((numberp x)
@@ -16421,9 +16288,8 @@ without altering the inference-queue. |#
             (t
 	     (princ "Cumulative size of arguments = ") (princ argument-length) (terpri))))))
 
-#| When the following is run before a problem is run, when an interest of number n is
-queued, it goes on the front of the inference-queue. |#
 (defun try-interest (&optional n)
+  "When the following is run before a problem is run, when an interest of number n is queued, it goes on the front of the inference-queue."
   (cond ((null n) (setf *priority-interests* nil))
         (t (push n *priority-interests*))))
 
@@ -16563,8 +16429,8 @@ queued, it goes on the front of the inference-queue. |#
   (analyze-instantiated-premises)
   (analyze-interest-schemes))
 
-#| X and Y are sets of sequents, and every member of X subsumes some member of Y. |#
 (defun subsumes-basis (X Y)
+  "X and Y are sets of sequents, and every member of X subsumes some member of Y."
   (every
    #'(lambda (a)
        (some
@@ -16646,9 +16512,8 @@ queued, it goes on the front of the inference-queue. |#
     (if *log-on* (push interest *reasoning-log*))
     interest))
 
-#| This code is modified from DISCHARGE-LINK. |#
 (defun adopt-interest (S degree defeasible? binding)
-					; (setf ss s d degree df defeasible?)
+  "This code is modified from DISCHARGE-LINK."
   ;; the following assumes there are no i-variables in formula
   (let ((deductive-node (validating-deductive-node S (not defeasible?))))
     (or
@@ -16705,10 +16570,8 @@ queued, it goes on the front of the inference-queue. |#
 	(list (sublis a-list formula) a-list))
     (list formula t)))
 
-#| This assumes that N is a reductio-supposition-node.  The second conjunct could be
-made more efficient by storing the appropriate information in a slot
-non-reductio-generating-interests. |#
 (defun strictly-base-reductio-supposition (N)
+  "This assumes that N is a reductio-supposition-node.  The second conjunct could be made more efficient by storing the appropriate information in a slot non-reductio-generating-interests."
   (and
    (not (some #'interest-reductio (hypernode-generating-interests N)))
    (every #'(lambda (in) (equal (hypernode-formula N) (neg (interest-formula in))))
@@ -16750,9 +16613,8 @@ non-reductio-generating-interests. |#
                   (subsetp= (sequent-supposition sequent1) (hypernode-supposition b)))
               basis)))
 
-#| sequent1 has the correct syntactical form to defeat an inference from basis
-to sequent2. |#
 (defun defeats (sequent1 basis sequent2)
+  "sequent1 has the correct syntactical form to defeat an inference from basis to sequent2."
   (or (rebuts sequent1 sequent2)
       (undercuts sequent1 basis sequent2)))
 
@@ -16871,8 +16733,8 @@ undefeated-degrees-of-support have decreased as a result of this computation.
        (when (null interests)
 	 (return (order descendants #'(lambda (x y) (< (interest-number x) (interest-number y))))))))))
 
-					; The nodes inferred by discharging the interest-descendants of interest.
 (defun hypernode-descendants-of-interest (interest)
+  "The nodes inferred by discharging the interest-descendants of interest."
   (let ((interests (interest-descendants (list interest))))
     (order
      (inference-descendants
@@ -16880,8 +16742,8 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	      (unionmapcar #'interest-discharging-nodes interests)))
      #'(lambda (x y) (< (hypernode-number x) (hypernode-number y))))))
 
-#| Nodes and interests generated by node or interest. |#
 (defun descendants-of (N)
+  "Nodes and interests generated by node or interest."
   (let ((interests (if (interest-p N) (list N)))
         (nodes (if (hypernode-p N) (list N)))
         (interest-descendants nil)
@@ -16945,8 +16807,8 @@ undefeated-degrees-of-support have decreased as a result of this computation.
     (display-hypernode node)
     (princ "---------------------------------------------------") (terpri)))
 
-#| An argument is a list of hyperlinks. |#
 (defun independent-of (sequent argument)
+  "An argument is a list of hyperlinks."
   (not (some #'(lambda (L)
                  (some #'(lambda (b) (subsumes (hypernode-sequent b) sequent))
                        (hyperlink-basis L)))
@@ -17040,8 +16902,8 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 (defvar *substantive-interests* nil)
 (defun inference-number (x) (declare (ignore x)) (error "not implemented"))
 
-#| SIMULATE-OSCAR updates *percepts* by looking at a predetermined list *inputs*. |#
 (defun SIMULATE-OSCAR (n &optional (reductio? nil))
+  "updates *percepts* by looking at a predetermined list *inputs*."
   (let ((problem (assoc n *simulation-problems*)))
     (when (null problem)
       (princ "There is no problem of this number.") (terpri) (return-from simulate-oscar))
@@ -17897,6 +17759,7 @@ is not a interest-reductio. |#
   :strength  (- (* 2 (expt *temporal-reason-decay* (- now time0))) 1)
   :description
   "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
+
 ;; This runs on OSCAR_3.31
 #| To run these problems, first load Perception-Causes_3.31a.lisp.
 Then load this file. To run problem n, execute (simulate-oscar n). |#
@@ -17954,7 +17817,7 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
  *TEMPORAL-PROJECTION*
  *INCOMPATIBLE-COLORS*
  :inputs
- (1   "(the color of Fred is red)" 0.8)
+ (1    "(the color of Fred is red)" 0.8)
  (20   "(Merrill reports that I_am_wearing_blue_tinted_glasses)" 1.0)
  (30   "(the color of Fred is blue)" 0.8)
  :premises
@@ -17982,7 +17845,6 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
  neg-at-intro
  :inputs
  (10 "(the color of Fred is red)" 1.0)
-
  :premises
  ("((the probability of (the color of Fred is red) given
     ((I have a percept with content (the color of Fred is red))
@@ -18014,7 +17876,6 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
  neg-at-intro
  :inputs
  (10 "(the color of Fred is red)" 1.0)
-
  :premises
  ("((the probability of (the color of Fred is red) given
     ((I have a percept with content (the color of Fred is red))
