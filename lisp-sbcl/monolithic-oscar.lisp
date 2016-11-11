@@ -410,30 +410,30 @@
 
 (defun compare-lists (x y &key (test #'eq))
   "this returns three values: (union x y), (setdifference x y), and (setdifference y x), but if a symbol occurs multiple times in x or y, they are treated as different smbols."
-#|
-(compare-lists '(a a b c) '(a b c d)) returns
-(c b a)
-(a)
-(d)
-|#
+  #|
+  (compare-lists '(a a b c) '(a b c d)) returns
+  (c b a)
+  (a)
+  (d)
+  |#
   (let ((xy nil))
     (dolist (z x)
       (block x+
-             (dolist (w y)
-               (cond ((funcall test z w)
-                      (setf x (remove z x :count 1 :test test))
-                      (setf y (remove z y :count 1 :test test))
-                      (push z xy) (return-from x+ nil))))))
+	(dolist (w y)
+	  (cond ((funcall test z w)
+		 (setf x (remove z x :count 1 :test test))
+		 (setf y (remove z y :count 1 :test test))
+		 (push z xy) (return-from x+ nil))))))
     (values xy x y)))
 
 (defun === (x y &key (test 'equal))
   (or (eq x y)
       (and (listp x) (listp y)
            (multiple-value-bind
-	    (u d1 d2)
-	    (compare-lists x y :test test)
-	    (declare (ignore u))
-	    (and (null d1) (null d2))))))
+	       (u d1 d2)
+	       (compare-lists x y :test test)
+	     (declare (ignore u))
+	     (and (null d1) (null d2))))))
 
 (defun << (x y) (< (round (* 10000 x)) (round (* 10000 y))))
 
@@ -957,22 +957,22 @@
 
 (defun match (pat exp var)
   (labels
-   ((match*
-     (pat exp var bindings)
-     (cond ((atom pat)
-	    (cond ((mem pat var)
-		   (let ((assoc (assoc pat bindings :test 'equal)))
-		     (cond (assoc (equal exp (cdr assoc)))
-			   (t (list (cons pat exp))))))
-		  (t (equal pat exp))))
-	   ((listp pat)
-	    (when (listp exp)
-	      (let ((m (match* (car pat) (car exp) var bindings)))
-		(cond ((eq m t) (match* (cdr pat) (cdr exp) var bindings))
-		      (m (let ((m* (match* (cdr pat) (cdr exp) var (append m bindings))))
-			   (cond ((eq m* t) m)
-				 (m* (union= m m*))))))))))))
-   (match* pat exp var nil)))
+      ((match*
+	(pat exp var bindings)
+	(cond ((atom pat)
+	       (cond ((mem pat var)
+		      (let ((assoc (assoc pat bindings :test 'equal)))
+			(cond (assoc (equal exp (cdr assoc)))
+			      (t (list (cons pat exp))))))
+		     (t (equal pat exp))))
+	      ((listp pat)
+	       (when (listp exp)
+		 (let ((m (match* (car pat) (car exp) var bindings)))
+		   (cond ((eq m t) (match* (cdr pat) (cdr exp) var bindings))
+			 (m (let ((m* (match* (cdr pat) (cdr exp) var (append m bindings))))
+			      (cond ((eq m* t) m)
+				    (m* (union= m m*))))))))))))
+    (match* pat exp var nil)))
 
 					;this returns the association list of a match of variables to elements
 					;of s which, when substituted in l yields s.  So l is the pattern and s
@@ -1510,14 +1510,14 @@ symbols.  It uses '@ for undercutting defeaters. |#
 	      ;;========================================================
 	      (t
 	       (labels
-		((pretty-cons
-		  (x)
-		  (when x
-		    (cond ((listp x)
-			   (cond ((cdr x) (cons (pretty (car x)) (cons " " (pretty-cons (cdr x)))))
-				 (t (list (pretty (car x))))))
-			  (t (list ". " (pretty x)))))))
-		(imp (cons "(" (append (pretty-cons p) (list ")")))))))))
+		   ((pretty-cons
+		     (x)
+		     (when x
+		       (cond ((listp x)
+			      (cond ((cdr x) (cons (pretty (car x)) (cons " " (pretty-cons (cdr x)))))
+				    (t (list (pretty (car x))))))
+			     (t (list ". " (pretty x)))))))
+		 (imp (cons "(" (append (pretty-cons p) (list ")")))))))))
           (t (write-to-string p))
           )))
 
@@ -1866,11 +1866,11 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
                      ((not (listp Q)) (push `(equal ,Q-descriptor ',Q) description))
                      (t
 		      (multiple-value-bind (d tl) (formula-profile Q vars Q-descriptor)
-					   (setf description (append description d))
-					   (dolist (term-list tl)
-					     (let ((assoc (assoc (car term-list) term-lists :test 'equal)))
-					       (cond (assoc (setf (cdr assoc) (append (cdr term-list) (cdr assoc))))
-						     (t (push term-list term-lists)))))))))
+			(setf description (append description d))
+			(dolist (term-list tl)
+			  (let ((assoc (assoc (car term-list) term-lists :test 'equal)))
+			    (cond (assoc (setf (cdr assoc) (append (cdr term-list) (cdr assoc))))
+				  (t (push term-list term-lists)))))))))
              (incf elt-num))
            (values (cons `(listp ,descriptor) description) term-lists)))
         ((mem P vars) (values nil `((,P ,descriptor))))
@@ -1881,9 +1881,9 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
 (formula-profile '(& (F x y) (G x y)) '(x y) 'z nil)
 
 ((listp z)
- ; (equal (element 0 z) '&)		;
- ; (listp (element 1 z))		;
- ; (equal (element 0 (element 1 z)) 'f)	;
+ ; (equal (element 0 z) '&)
+ ; (listp (element 1 z))
+ ; (equal (element 0 (element 1 z)) 'f)
  (listp (element 2 z))
  (equal (element 0 (element 2 z)) 'g))
 
@@ -1909,49 +1909,49 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
 
 (defun binding-function (P vars)
   (multiple-value-bind
-   (profile term-lists)
-   (formula-profile P vars '%z)
-   (cond
-    ((every #'(lambda (tl) (null (cddr tl))) term-lists)
-     (cond
-      (profile
-       (if vars
-	   `#'(lambda (%z %v)
-		(declare (ignore %v))
-		(when
-                    ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
-		  (values
-		   ,(cons 'list
-			  (mapcar
-			   #'(lambda (x) (cons 'cons (cons (list 'quote (car x)) (cdr x))))
-			   term-lists))
-		   t)))
-	 `#'(lambda (%z %v)
-	      (declare (ignore %v))
-	      (when
-		  ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
-		(values nil t)))))
-      (t
-       `#'(lambda (%z %v)
-	    (declare (ignore %v))
-	    (values
-	     ,(cons 'list
-		    (mapcar
-		     #'(lambda (x) (cons 'cons (cons (list 'quote (car x)) (cdr x))))
-		     term-lists))
-	     t)))))
-    (profile
-     `#'(lambda (%z %v)
-	  (when
-	      ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
-	    (unify-premise-terms
-	     ,(cons 'list (mapcar #'(lambda (b) (cons 'list b)) (a-range term-lists)))
-	     ',(domain term-lists) %v T))))
-    (t
-     `#'(lambda (%z %v)
-	  (unify-premise-terms
-	   ,(cons 'list (mapcar #'(lambda (b) (cons 'list b)) (a-range term-lists)))
-	   ',(domain term-lists) %v T))))))
+      (profile term-lists)
+      (formula-profile P vars '%z)
+    (cond
+     ((every #'(lambda (tl) (null (cddr tl))) term-lists)
+      (cond
+       (profile
+	(if vars
+	    `#'(lambda (%z %v)
+		 (declare (ignore %v))
+		 (when
+		     ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
+		   (values
+		    ,(cons 'list
+			   (mapcar
+			    #'(lambda (x) (cons 'cons (cons (list 'quote (car x)) (cdr x))))
+			    term-lists))
+		    t)))
+	  `#'(lambda (%z %v)
+	       (declare (ignore %v))
+	       (when
+		   ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
+		 (values nil t)))))
+       (t
+	`#'(lambda (%z %v)
+	     (declare (ignore %v))
+	     (values
+	      ,(cons 'list
+		     (mapcar
+		      #'(lambda (x) (cons 'cons (cons (list 'quote (car x)) (cdr x))))
+		      term-lists))
+	      t)))))
+     (profile
+      `#'(lambda (%z %v)
+	   (when
+	       ,@ (list (if (cdr profile) (refined-profile profile) (car profile)))
+	     (unify-premise-terms
+	      ,(cons 'list (mapcar #'(lambda (b) (cons 'list b)) (a-range term-lists)))
+	      ',(domain term-lists) %v T))))
+     (t
+      `#'(lambda (%z %v)
+	   (unify-premise-terms
+	    ,(cons 'list (mapcar #'(lambda (b) (cons 'list b)) (a-range term-lists)))
+	    ',(domain term-lists) %v T))))))
 
 					;========================UNIFICATION=====================
 
@@ -2040,20 +2040,20 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
          (cond ((not (listp y)) (throw 'unifier nil))
                ((and (listp (cdr x)) (listp (cdr y)) (not (eql (length x) (length y)))) (throw 'unifier nil))
                (t (labels
-		   ((mgu-list
-		     (x y vars)
-		     (let ((m (mgu (mem1 x) (mem1 y) vars)))
-		       (cond ((null m) (throw 'unifier nil)))
-		       (cond ((null (cdr x)) m)
-			     ((eq m t)
-			      (mgu-list (cdr x) (cdr y) vars))
-			     (t (let ((m* (mgu-list
-					   (sequential-sublis m (cdr x))
-					   (sequential-sublis m (cdr y))
-					   vars)))
-				  (cond ((eq m* t) m)
-					(t (append m* m)))))))))
-		   (mgu-list x y vars)))))))
+		      ((mgu-list
+			(x y vars)
+			(let ((m (mgu (mem1 x) (mem1 y) vars)))
+			  (cond ((null m) (throw 'unifier nil)))
+			  (cond ((null (cdr x)) m)
+				((eq m t)
+				 (mgu-list (cdr x) (cdr y) vars))
+				(t (let ((m* (mgu-list
+					      (sequential-sublis m (cdr x))
+					      (sequential-sublis m (cdr y))
+					      vars)))
+				     (cond ((eq m* t) m)
+					   (t (append m* m)))))))))
+		    (mgu-list x y vars)))))))
 
 (defun unify-list (term-list vars unifier)
   "This returns the multiple values result unifier"
@@ -3360,9 +3360,9 @@ It requires Hypergraphs11.lisp. |#
                       (push (cons (reverse Q-descriptor) Q) description))
                      (t
 		      (multiple-value-bind (d tl) (formula-code* Q Q-descriptor)
-					   (setf term-list (append tl term-list))
-					   (setf description (append d description))
-					   )))
+			(setf term-list (append tl term-list))
+			(setf description (append d description))
+			)))
                (incf elt-num)))
            (values description term-list)))
         (t (values (list (cons descriptor P)) nil))))
@@ -3370,7 +3370,7 @@ It requires Hypergraphs11.lisp. |#
 (defun formula-code (P)
   (setf *quantifier-number* 0)
   (multiple-value-bind (code term-list) (formula-code* P nil)
-		       (values (reverse code) term-list)))
+    (values (reverse code) term-list)))
 
 (defun prinp-test (test)
   (princ "(") (princ (caar test)) (princ " . ") (prinp (cdar test)) (princ ") : ") (princ (cdr test)))
@@ -3988,23 +3988,23 @@ It requires Hypergraphs11.lisp. |#
 (defun i-list-for (formula i-vars)
   "This returns three values -- the i-list and the match and its reverse"
   (multiple-value-bind (profile term-list) (formula-code formula)
-		       (let ((d-node (pursue-d-node-for profile *top-d-node*)))
-			 (when d-node
-			   (some
-			    #'(lambda (il)
-				(multiple-value-bind
-				 (match match*)
-				 (one-one-match term-list (i-list-term-list il) i-vars (i-list-variables il))
-				 (when match
-				   (return-from i-list-for (values il match match*)))))
-			    (d-node-i-lists d-node))))))
+    (let ((d-node (pursue-d-node-for profile *top-d-node*)))
+      (when d-node
+	(some
+	 #'(lambda (il)
+	     (multiple-value-bind
+		 (match match*)
+		 (one-one-match term-list (i-list-term-list il) i-vars (i-list-variables il))
+	       (when match
+		 (return-from i-list-for (values il match match*)))))
+	 (d-node-i-lists d-node))))))
 
 (defun interests-for (formula i-vars)
   "This returns two values -- the list of interests, and the match"
   (multiple-value-bind
-   (i-list match)
-   (i-list-for formula i-vars)
-   (if i-list (values (i-list-interests i-list) match))))
+      (i-list match)
+      (i-list-for formula i-vars)
+    (if i-list (values (i-list-interests i-list) match))))
 
 (defun in-interest (sequent)
   (let ((interests (interests-for (sequent-formula sequent) nil)))
@@ -4306,7 +4306,7 @@ each other.
 	 (setf (interest-i-list interest) i-list))
         (t
 	 (multiple-value-bind (profile term-list) (formula-code (interest-formula interest))
-			      (index-interest interest profile term-list *top-d-node*)))))
+	   (index-interest interest profile term-list *top-d-node*)))))
 
 (defun pursue-i-lists-for (formula profile term-list variables d-node)
   (let ((dn (e-assoc (car profile) (d-node-discrimination-tests d-node))))
@@ -4318,41 +4318,41 @@ each other.
 
 (defun find-matching-i-lists-for (formula variables)
   (multiple-value-bind (profile term-list) (formula-code formula)
-		       (pursue-i-lists-for formula profile term-list variables *top-d-node*)))
+    (pursue-i-lists-for formula profile term-list variables *top-d-node*)))
 
 (defun store-interest-with-c-lists (interest c-lists)
 					;  (when (eq (interest-number interest) 25) (setf i interest cl c-lists) (break))
   ;; (step (store-interest-with-c-lists i cl))
   (multiple-value-bind (profile term-list) (formula-code (interest-formula interest))
-		       (declare (ignore profile))
-		       (cond
-			(c-lists
-			 (push interest *interests*)
-			 (let* ((formula (interest-formula interest))
-				(dn (c-list-d-node (caar c-lists)))
-				(i-list (fetch-i-list-for term-list dn))
-				(i-variables (interest-variables interest)))
-			   (cond (i-list
-				  (push interest (i-list-interests i-list))
-				  (let ((reductio-sup (i-list-reductio-supposition i-list)))
-				    (when reductio-sup
-				      (push interest  (hypernode-generating-interests reductio-sup))
-				      (push reductio-sup (interest-generated-suppositions interest)))))
-				 (t (setf i-list (make-i-list
-						  :i-list-formula formula
-						  :i-list-corresponding-c-lists c-lists
-						  :i-list-interests (list interest)
-						  :i-list-reductio-trigger
-						  (appropriate-for-reductio-supposition formula)
-						  :i-list-variables i-variables
-						  :i-list-term-list term-list
-						  :i-list-d-node dn
-						  ))
-				    (push i-list (d-node-i-lists dn))
-				    (dolist (cl c-lists)
-				      (push (cons i-list (cdr cl)) (c-list-corresponding-i-lists (mem1 cl))))))
-			   (setf (interest-i-list interest) i-list)))
-			(t (store-interest interest)))))
+    (declare (ignore profile))
+    (cond
+     (c-lists
+      (push interest *interests*)
+      (let* ((formula (interest-formula interest))
+	     (dn (c-list-d-node (caar c-lists)))
+	     (i-list (fetch-i-list-for term-list dn))
+	     (i-variables (interest-variables interest)))
+	(cond (i-list
+	       (push interest (i-list-interests i-list))
+	       (let ((reductio-sup (i-list-reductio-supposition i-list)))
+		 (when reductio-sup
+		   (push interest  (hypernode-generating-interests reductio-sup))
+		   (push reductio-sup (interest-generated-suppositions interest)))))
+	      (t (setf i-list (make-i-list
+			       :i-list-formula formula
+			       :i-list-corresponding-c-lists c-lists
+			       :i-list-interests (list interest)
+			       :i-list-reductio-trigger
+			       (appropriate-for-reductio-supposition formula)
+			       :i-list-variables i-variables
+			       :i-list-term-list term-list
+			       :i-list-d-node dn
+			       ))
+		 (push i-list (d-node-i-lists dn))
+		 (dolist (cl c-lists)
+		   (push (cons i-list (cdr cl)) (c-list-corresponding-i-lists (mem1 cl))))))
+	(setf (interest-i-list interest) i-list)))
+     (t (store-interest interest)))))
 
 (defun appropriate-for-reductio-interest (formula)
   (and
@@ -4391,7 +4391,7 @@ each other.
 
 (defun find-matching-c-lists-for (formula variables)
   (multiple-value-bind (profile term-list) (formula-code formula)
-		       (pursue-c-lists-for formula profile term-list variables *top-d-node*)))
+    (pursue-c-lists-for formula profile term-list variables *top-d-node*)))
 
 (defun store-hypernode-at-new-d-node (node term-list d-node test)
   "Test is the final member of the formula-profile for the hypernode-formula"
@@ -4494,7 +4494,7 @@ each other.
 					; (when (eql (hypernode-number node) 14) (setf n node f formula) (break))
   ;; (step (store-hypernode n f))
   (multiple-value-bind (profile term-list) (formula-code formula)
-		       (index-hypernode node profile term-list *top-d-node*)))
+    (index-hypernode node profile term-list *top-d-node*)))
 
 (defun c-list-for (formula)
   (let ((d-node (d-node-for formula)))
@@ -5244,8 +5244,6 @@ each other.
 
 (defun construct-new-interest-for
     (link vars condition degree maximum-degree depth i-list text-condition)
-					; (when (equal link (link 6)) (setf l link v vars c condition d degree m* maximum-degree d* depth i i-list) (break))
-  ;; (step (construct-new-interest-for l v c d m* d* i))
   (let* ((gn (link-generating-node link))
          (interest
 	  (make-interest
@@ -5276,22 +5274,22 @@ each other.
 
 (defun interest-for (sequent vars condition &optional link)
   (multiple-value-bind
-   (i-list match match*)
-   (i-list-for (sequent-formula sequent) vars)
-   (let*
-       ((sup
-         (if i-list (match-sublis match (sequent-supposition sequent)) (sequent-supposition sequent)))
-	(interest
-         (if i-list
-	     (find-if
-	      #'(lambda (i)
-		  (and (or condition (null (interest-discharge-condition i)))
-		       (funcall* condition i) (== (interest-supposition i) sup)
-		       (or (null link)
-			   (eq (interest-deductive i) (interest-deductive (link-resultant-interest link))))))
-	      (i-list-interests i-list)))))
-     (when (and (null interest) (not (eq match t))) (setf i-list nil))
-     (values interest i-list match match*))))
+      (i-list match match*)
+      (i-list-for (sequent-formula sequent) vars)
+    (let*
+	((sup
+	  (if i-list (match-sublis match (sequent-supposition sequent)) (sequent-supposition sequent)))
+	 (interest
+	  (if i-list
+	      (find-if
+	       #'(lambda (i)
+		   (and (or condition (null (interest-discharge-condition i)))
+			(funcall* condition i) (== (interest-supposition i) sup)
+			(or (null link)
+			    (eq (interest-deductive i) (interest-deductive (link-resultant-interest link))))))
+	       (i-list-interests i-list)))))
+      (when (and (null interest) (not (eq match t))) (setf i-list nil))
+      (values interest i-list match match*))))
 
 (defun readopt-interest (interest defeated-links)
   "If the interest is readopted as an interest in a defeater, defeated-nodes is the list of nodes for which it is a defeater.  When this is called by DISCHARGE-LINK, link is the link being discharged."
@@ -5387,127 +5385,127 @@ each other.
   (defun invalidate-view (x &optional y) (declare (ignore x y))))
 
 (labels
- ()
+    ()
 
- (defun anchor-interest-relative-to-interest (interest I indent msg)
-   (pull interest *dependent-interests*)
-   (when *d-trace*
-     (bar-indent indent) (princ msg) (princ interest) (terpri))
-   (dolist (L (interest-left-links interest))
-     (let ((in (link-interest L)))
-       (when (member in *dependent-interests*)
-	 (let ((cn (interest-cancelling-node in)))
-	   (when cn (anchor-hypernode-relative-to-interest cn I  (1+ indent) "cancelling-node: ")))
-	 (when (and (not (eq I in)) (member in *dependent-interests*))
-	   (anchor-interest-relative-to-interest in I (1+ indent) "left-link: ")))))
-   (dolist (n (interest-generated-suppositions interest))
-     (when (member n *dependent-nodes*)
-       (anchor-hypernode-relative-to-interest n I (1+ indent) "generated-supposition: "))))
+  (defun anchor-interest-relative-to-interest (interest I indent msg)
+    (pull interest *dependent-interests*)
+    (when *d-trace*
+      (bar-indent indent) (princ msg) (princ interest) (terpri))
+    (dolist (L (interest-left-links interest))
+      (let ((in (link-interest L)))
+	(when (member in *dependent-interests*)
+	  (let ((cn (interest-cancelling-node in)))
+	    (when cn (anchor-hypernode-relative-to-interest cn I  (1+ indent) "cancelling-node: ")))
+	  (when (and (not (eq I in)) (member in *dependent-interests*))
+	    (anchor-interest-relative-to-interest in I (1+ indent) "left-link: ")))))
+    (dolist (n (interest-generated-suppositions interest))
+      (when (member n *dependent-nodes*)
+	(anchor-hypernode-relative-to-interest n I (1+ indent) "generated-supposition: "))))
 
- (defun anchor-hypernode-relative-to-interest (node I indent msg)
-   (pull node *dependent-nodes*)
-   (when *d-trace*
-     (bar-indent indent) (princ msg) (princ node) (terpri))
-   (dolist (n (hypernode-consequences node))
-     (when
-	 (and
-          (member n *dependent-nodes*)
-          (some
-	   #'(lambda (L)
-	       (every #'(lambda (b)
-			  (and (not (hypernode-cancelled-node b))
-			       (not (member b *dependent-nodes*))))
-		      (hyperlink-basis L)))
-	   (hypernode-hyperlinks n)))
-       (anchor-hypernode-relative-to-interest n I (1+ indent) "hypernode-consequence: ")))
-   (when (and (eq (hypernode-justification node) :reductio-supposition)
-	      (null *independent-reductio-suppositions*))
-     (push node *independent-reductio-suppositions*)
-     (dolist (in *direct-reductio-interests*)
-       (when (and (not (eq I in)) (member in *dependent-interests*)
-		  (some
-		   #'(lambda (dr)
-		       (and
-			(not (hypernode-cancelled-node (car dr)))
-			(not (member (car dr) *dependent-nodes*))))
-		   (interest-direct-reductio in)))
-	 (anchor-interest-relative-to-interest
-	  in I (1+ indent) "*direct-reductio-interest*: "))
-       (let ((n* (interest-cancelling-node in)))
-	 (when (and n* (member n* *dependent-nodes*))
-	   (anchor-hypernode-relative-to-interest
-	    n* I (1+ indent) "discharges direct reductio interest: ")))))
-   (dolist (in (hypernode-generated-direct-reductio-interests node))
-     (when *independent-reductio-suppositions*
-       (when (and (not (eq I in)) (member in *dependent-interests*))
-	 (pull in *dependent-interests*)
-	 (anchor-interest-relative-to-interest
-	  in I (1+ indent) "generated-direct-reductio-interest: "))
-       (let ((n* (interest-cancelling-node in)))
-	 (when (and n* (member n* *dependent-nodes*))
-	   (anchor-hypernode-relative-to-interest
-	    n* I (1+ indent) "discharges direct reductio interest: ")))))))
+  (defun anchor-hypernode-relative-to-interest (node I indent msg)
+    (pull node *dependent-nodes*)
+    (when *d-trace*
+      (bar-indent indent) (princ msg) (princ node) (terpri))
+    (dolist (n (hypernode-consequences node))
+      (when
+	  (and
+	   (member n *dependent-nodes*)
+	   (some
+	    #'(lambda (L)
+		(every #'(lambda (b)
+			   (and (not (hypernode-cancelled-node b))
+				(not (member b *dependent-nodes*))))
+		       (hyperlink-basis L)))
+	    (hypernode-hyperlinks n)))
+	(anchor-hypernode-relative-to-interest n I (1+ indent) "hypernode-consequence: ")))
+    (when (and (eq (hypernode-justification node) :reductio-supposition)
+	       (null *independent-reductio-suppositions*))
+      (push node *independent-reductio-suppositions*)
+      (dolist (in *direct-reductio-interests*)
+	(when (and (not (eq I in)) (member in *dependent-interests*)
+		   (some
+		    #'(lambda (dr)
+			(and
+			 (not (hypernode-cancelled-node (car dr)))
+			 (not (member (car dr) *dependent-nodes*))))
+		    (interest-direct-reductio in)))
+	  (anchor-interest-relative-to-interest
+	   in I (1+ indent) "*direct-reductio-interest*: "))
+	(let ((n* (interest-cancelling-node in)))
+	  (when (and n* (member n* *dependent-nodes*))
+	    (anchor-hypernode-relative-to-interest
+	     n* I (1+ indent) "discharges direct reductio interest: ")))))
+    (dolist (in (hypernode-generated-direct-reductio-interests node))
+      (when *independent-reductio-suppositions*
+	(when (and (not (eq I in)) (member in *dependent-interests*))
+	  (pull in *dependent-interests*)
+	  (anchor-interest-relative-to-interest
+	   in I (1+ indent) "generated-direct-reductio-interest: "))
+	(let ((n* (interest-cancelling-node in)))
+	  (when (and n* (member n* *dependent-nodes*))
+	    (anchor-hypernode-relative-to-interest
+	     n* I (1+ indent) "discharges direct reductio interest: ")))))))
 
 (labels
- ()
+    ()
 
- (defun compute-interest-dependencies (interest indent msg)
+  (defun compute-interest-dependencies (interest indent msg)
 					; (when (eq interest (interest 105)) (setf i interest n indent m msg) (break))
-   ;; (step (compute-interest-dependencies i n m))
-   (when *d-trace*
-     (bar-indent indent) (princ msg) (princ interest)
-     (when (interest-cancelled interest) (princ " cancelled")) (terpri))
-   (dolist (s (interest-generated-suppositions interest))
-     (when (not (member s *dependent-nodes*))
-       (push s *dependent-nodes*)
-       (when (eq (hypernode-justification s) :reductio-supposition)
-	 (pull s *independent-reductio-suppositions*))
-       (compute-hypernode-dependencies s (1+ indent) "generated-supposition: ")))
-   (dolist (n (interest-anchored-nodes interest))
-     (when (and (not (hypernode-cancelled-node n)) (not (member n *dependent-nodes*)))
-       (push n *dependent-nodes*)
-       (when (eq (hypernode-justification n) :reductio-supposition)
-	 (pull n *independent-reductio-suppositions*))
-       (compute-hypernode-dependencies n (1+ indent) "partial-satisfier: ")))
-   (dolist (L (interest-left-links interest))
-     (let ((in (link-interest L)))
-       (when (not (member in *dependent-interests*))
-	 (cond ((not (interest-cancelled in))
-		(push in *dependent-interests*)
-		(compute-interest-dependencies in (1+ indent) "left-link: "))
-	       (t
-		(dolist (n (interest-discharging-nodes in))
-		  (when (and (not (member n *dependent-nodes*))
-			     (not (hypernode-cancelled-node n)))
-		    (push n *dependent-nodes*)
-		    (compute-hypernode-dependencies
-		     n (1+ indent) "discharging-node of left-link: ")))))))))
+    ;; (step (compute-interest-dependencies i n m))
+    (when *d-trace*
+      (bar-indent indent) (princ msg) (princ interest)
+      (when (interest-cancelled interest) (princ " cancelled")) (terpri))
+    (dolist (s (interest-generated-suppositions interest))
+      (when (not (member s *dependent-nodes*))
+	(push s *dependent-nodes*)
+	(when (eq (hypernode-justification s) :reductio-supposition)
+	  (pull s *independent-reductio-suppositions*))
+	(compute-hypernode-dependencies s (1+ indent) "generated-supposition: ")))
+    (dolist (n (interest-anchored-nodes interest))
+      (when (and (not (hypernode-cancelled-node n)) (not (member n *dependent-nodes*)))
+	(push n *dependent-nodes*)
+	(when (eq (hypernode-justification n) :reductio-supposition)
+	  (pull n *independent-reductio-suppositions*))
+	(compute-hypernode-dependencies n (1+ indent) "partial-satisfier: ")))
+    (dolist (L (interest-left-links interest))
+      (let ((in (link-interest L)))
+	(when (not (member in *dependent-interests*))
+	  (cond ((not (interest-cancelled in))
+		 (push in *dependent-interests*)
+		 (compute-interest-dependencies in (1+ indent) "left-link: "))
+		(t
+		 (dolist (n (interest-discharging-nodes in))
+		   (when (and (not (member n *dependent-nodes*))
+			      (not (hypernode-cancelled-node n)))
+		     (push n *dependent-nodes*)
+		     (compute-hypernode-dependencies
+		      n (1+ indent) "discharging-node of left-link: ")))))))))
 
- (defun compute-hypernode-dependencies (node indent msg)
-   (when *d-trace*
-     (bar-indent indent) (princ msg) (princ node)
-     (when (hypernode-cancelled-node node) (princ " cancelled")) (terpri))
-   (dolist (n (hypernode-consequences node))
-     (when (and (not (member n *dependent-nodes*))
-		(not (hypernode-cancelled-node n)))
-       (push n *dependent-nodes*)
-       (compute-hypernode-dependencies n (1+ indent) "hypernode-consequence: ")))
-   (dolist (in (hypernode-generated-direct-reductio-interests node))
-     (when (not (member in *dependent-interests*))
-       (push in *dependent-interests*)
-       (compute-interest-dependencies
-	in (1+ indent) "generated-direct-reductio-interest: ")))
-   (dolist (in (hypernode-generated-defeat-interests node))
-     (when (not (member in *dependent-interests*))
-       (push in *dependent-interests*)
-       (compute-interest-dependencies
-	in (1+ indent) "generated-defeat-interest: ")))
-   (when (eq (hypernode-justification node) :reductio-supposition)
-     (dolist (in *direct-reductio-interests*)
-       (when (not (member in *dependent-interests*))
-	 (push in *dependent-interests*)
-	 (compute-interest-dependencies
-	  in (1+ indent) "*direct-reductio-interest*: "))))))
+  (defun compute-hypernode-dependencies (node indent msg)
+    (when *d-trace*
+      (bar-indent indent) (princ msg) (princ node)
+      (when (hypernode-cancelled-node node) (princ " cancelled")) (terpri))
+    (dolist (n (hypernode-consequences node))
+      (when (and (not (member n *dependent-nodes*))
+		 (not (hypernode-cancelled-node n)))
+	(push n *dependent-nodes*)
+	(compute-hypernode-dependencies n (1+ indent) "hypernode-consequence: ")))
+    (dolist (in (hypernode-generated-direct-reductio-interests node))
+      (when (not (member in *dependent-interests*))
+	(push in *dependent-interests*)
+	(compute-interest-dependencies
+	 in (1+ indent) "generated-direct-reductio-interest: ")))
+    (dolist (in (hypernode-generated-defeat-interests node))
+      (when (not (member in *dependent-interests*))
+	(push in *dependent-interests*)
+	(compute-interest-dependencies
+	 in (1+ indent) "generated-defeat-interest: ")))
+    (when (eq (hypernode-justification node) :reductio-supposition)
+      (dolist (in *direct-reductio-interests*)
+	(when (not (member in *dependent-interests*))
+	  (push in *dependent-interests*)
+	  (compute-interest-dependencies
+	   in (1+ indent) "*direct-reductio-interest*: "))))))
 
 (defun compute-dependencies (interest)
 					; (when (eq interest (interest 105)) (setf i interest) (break))
@@ -5753,67 +5751,67 @@ each other.
   )
 
 (labels
- ()
+    ()
 
- (defun anchor-interest-relative-to-node (interest N0 indent msg)
-   (pull interest *dependent-interests*)
-   (when *d-trace*
-     (bar-indent indent) (princ msg) (princ interest) (terpri))
-   (dolist (L (interest-left-links interest))
-     (let ((in (link-interest L)))
-       (when (member in *dependent-interests*)
-	 (anchor-interest-relative-to-node in N0 (1+ indent) "left-link: ")
-	 (let ((cn (interest-cancelling-node in)))
-	   (when (and cn (member cn *dependent-nodes*))
-	     (anchor-hypernode-relative-to-interest cn N0  (1+ indent) "cancelling-node: "))))))
-   (dolist (n (interest-generated-suppositions interest))
-     (when (and (not (eq N N0)) (member n *dependent-nodes*))
-       (anchor-hypernode-relative-to-node n N0 (1+ indent) "generated-supposition: "))))
+  (defun anchor-interest-relative-to-node (interest N0 indent msg)
+    (pull interest *dependent-interests*)
+    (when *d-trace*
+      (bar-indent indent) (princ msg) (princ interest) (terpri))
+    (dolist (L (interest-left-links interest))
+      (let ((in (link-interest L)))
+	(when (member in *dependent-interests*)
+	  (anchor-interest-relative-to-node in N0 (1+ indent) "left-link: ")
+	  (let ((cn (interest-cancelling-node in)))
+	    (when (and cn (member cn *dependent-nodes*))
+	      (anchor-hypernode-relative-to-interest cn N0  (1+ indent) "cancelling-node: "))))))
+    (dolist (n (interest-generated-suppositions interest))
+      (when (and (not (eq N N0)) (member n *dependent-nodes*))
+	(anchor-hypernode-relative-to-node n N0 (1+ indent) "generated-supposition: "))))
 
- (defun anchor-hypernode-relative-to-node (node N0 indent msg)
-   (pull node *dependent-nodes*)
-   (when *d-trace*
-     (bar-indent indent) (princ msg) (princ node) (terpri))
-   (dolist (n (hypernode-consequences node))
-     (when
-	 (and
-          (not (eq N N0))
-          (member n *dependent-nodes*)
-          (some
-	   #'(lambda (L)
-	       (every #'(lambda (b)
-			  (and (not (hypernode-cancelled-node b))
-			       (not (member b *dependent-nodes*))))
-		      (hyperlink-basis L)))
-	   (hypernode-hyperlinks n)))
-       (anchor-hypernode-relative-to-node n N0 (1+ indent) "hypernode-consequence: ")))
-   (when (and (eq (hypernode-justification node) :reductio-supposition)
-	      (null *independent-reductio-suppositions*))
-     (push node *independent-reductio-suppositions*)
-     (dolist (in *direct-reductio-interests*)
-       (when (and (member in *dependent-interests*)
-		  (some
-		   #'(lambda (dr)
-		       (and
-			(not (hypernode-cancelled-node (car dr)))
-			(not (member (car dr) *dependent-nodes*))))
-		   (interest-direct-reductio in)))
-	 (anchor-interest-relative-to-node
-	  in N0 (1+ indent) "*direct-reductio-interest*: "))
-       (let ((n* (interest-cancelling-node in)))
-	 (when (and n* (not (eq n* N0)) (member n* *dependent-nodes*))
-	   (anchor-hypernode-relative-to-node
-	    n* N0 (1+ indent) "discharges direct reductio interest: ")))))
-   (dolist (in (hypernode-generated-direct-reductio-interests node))
-     (when *independent-reductio-suppositions*
-       (when (member in *dependent-interests*)
-	 (pull in *dependent-interests*)
-	 (anchor-interest-relative-to-node
-	  in N0 (1+ indent) "generated-direct-reductio-interest: "))
-       (let ((n* (interest-cancelling-node in)))
-	 (when (and n* (not (eq n* N0)) (member n* *dependent-nodes*))
-	   (anchor-hypernode-relative-to-node
-	    n* N0 (1+ indent) "discharges direct reductio interest: ")))))))
+  (defun anchor-hypernode-relative-to-node (node N0 indent msg)
+    (pull node *dependent-nodes*)
+    (when *d-trace*
+      (bar-indent indent) (princ msg) (princ node) (terpri))
+    (dolist (n (hypernode-consequences node))
+      (when
+	  (and
+	   (not (eq N N0))
+	   (member n *dependent-nodes*)
+	   (some
+	    #'(lambda (L)
+		(every #'(lambda (b)
+			   (and (not (hypernode-cancelled-node b))
+				(not (member b *dependent-nodes*))))
+		       (hyperlink-basis L)))
+	    (hypernode-hyperlinks n)))
+	(anchor-hypernode-relative-to-node n N0 (1+ indent) "hypernode-consequence: ")))
+    (when (and (eq (hypernode-justification node) :reductio-supposition)
+	       (null *independent-reductio-suppositions*))
+      (push node *independent-reductio-suppositions*)
+      (dolist (in *direct-reductio-interests*)
+	(when (and (member in *dependent-interests*)
+		   (some
+		    #'(lambda (dr)
+			(and
+			 (not (hypernode-cancelled-node (car dr)))
+			 (not (member (car dr) *dependent-nodes*))))
+		    (interest-direct-reductio in)))
+	  (anchor-interest-relative-to-node
+	   in N0 (1+ indent) "*direct-reductio-interest*: "))
+	(let ((n* (interest-cancelling-node in)))
+	  (when (and n* (not (eq n* N0)) (member n* *dependent-nodes*))
+	    (anchor-hypernode-relative-to-node
+	     n* N0 (1+ indent) "discharges direct reductio interest: ")))))
+    (dolist (in (hypernode-generated-direct-reductio-interests node))
+      (when *independent-reductio-suppositions*
+	(when (member in *dependent-interests*)
+	  (pull in *dependent-interests*)
+	  (anchor-interest-relative-to-node
+	   in N0 (1+ indent) "generated-direct-reductio-interest: "))
+	(let ((n* (interest-cancelling-node in)))
+	  (when (and n* (not (eq n* N0)) (member n* *dependent-nodes*))
+	    (anchor-hypernode-relative-to-node
+	     n* N0 (1+ indent) "discharges direct reductio interest: ")))))))
 
 (defun compute-dependencies-from-node (node)
   "This computation is exhibited by setting *d-trace* to t"
@@ -6358,8 +6356,8 @@ each other.
 				    (t (incf length) (complexity P))))
 			  sup))))
 		 (t (max 1 (formula-complexity formula))))))
-      ;  (when *display?*		;
-      ;       (princ "The complexity of ") (print-sequent sequent) (princ " is ") (princ complexity) (terpri)) ;
+      ;  (when *display?*		; ;
+      ;       (princ "The complexity of ") (print-sequent sequent) (princ " is ") (princ complexity) (terpri)) ; ;
       (if (> length 2) (* complexity (expt 10 (* length length))) complexity))))
 |#
 
@@ -6433,20 +6431,20 @@ each other.
 		  (not (member (car P) '(~ & v -> <-> all some ? @ at throughout))))
 	     (setf P (list (car P)))))
            (block stop-here
-                  (dolist (Q P)
-                    (cond
-		     ((member Q variables)
-		      (setf stop t)
-		      (return-from stop-here))
-		     (t
-		      (let ((Q-descriptor (cons elt-num descriptor)))
-			(cond ((not (listp Q))
-			       (push (cons (reverse Q-descriptor) Q) description))
-			      (t
-			       (multiple-value-bind (d st) (reason-code* Q variables Q-descriptor)
-						    (setf description (append d description))
-						    (when st (setf stop t) (return-from stop-here))))))))
-                    (incf elt-num)))
+	     (dolist (Q P)
+	       (cond
+		((member Q variables)
+		 (setf stop t)
+		 (return-from stop-here))
+		(t
+		 (let ((Q-descriptor (cons elt-num descriptor)))
+		   (cond ((not (listp Q))
+			  (push (cons (reverse Q-descriptor) Q) description))
+			 (t
+			  (multiple-value-bind (d st) (reason-code* Q variables Q-descriptor)
+			    (setf description (append d description))
+			    (when st (setf stop t) (return-from stop-here))))))))
+	       (incf elt-num)))
            (values description stop)))
         ((not (member P variables)) (values (list (cons descriptor P)) nil))))
 
@@ -6745,1299 +6743,1295 @@ each other.
   (terpri) (terpri))
 
 (labels
- ()
+    ()
 
- (defun DRAW-CONCLUSION
-     (formula basis rule instantiations discount depth interests defeasible?
-	      &key interest motivators binding link (supposition t) clues)
-   "Rule is either a member of *forwards-reasons* or *backwards-reasons*, or keyword describing an inference (:given, :Q&I, or :supposition).  basis is a list of conclusions.  If supposition is not T, it is added to the supposition."
-   (when (and formula (not (some #'hypernode-cancelled-node basis))
-	      (not (inconsistent-supposition basis)))
-     (setf basis (reverse basis))
-     (setf instantiations (reverse instantiations))
-     (let* ((NDA (compute-nearest-defeasible-ancestors basis rule))
-	    (discharge (if (backwards-reason-p rule)
-			   (remove-double-negation (match-sublis binding (b-reason-discharge rule)))))
-	    (CD (conclusion-data basis instantiations discharge supposition)))
-       (when CD
-	 (let* ((RA (mem1 CD))
-		(NR (mem2 CD))
-		(sup (mem3 CD))
-		(sequent (list sup formula))
-		(d-node (d-node-for formula))
-		(c-list (if d-node (fetch-c-list-for formula d-node)))
-		(proof-nodes (if c-list (c-list-nodes c-list)))
-		(node (find-if #'(lambda (c)
-				   (and (eq (hypernode-kind c) :inference)
-					(== (hypernode-supposition c) sup)))
-			       proof-nodes))
-		(new-node? (null node)))
-	   (when
-	       (and
-                (not (some #'(lambda (f) (mem (neg f) sup)) sup))
-                (or (null d-node)
-                    (not (subsumed node basis sequent NDA NR rule binding d-node))))
-	     (let* ((deductive-only (and (not (eq rule :reductio))
-					 (some #'hypernode-deductive-only basis))))
-	       (when (and node (hypernode-deductive-only node) (not deductive-only))
-		 (setf (hypernode-deductive-only node) nil))
-	       (when (null node)
-		 (setf node (make-new-conclusion sequent deductive-only RA NR)))
-	       (let ((old-degree (current-maximal-degree-of-justification node))
-		     (hyperlink
-		      (build-hyperlink
-		       basis clues rule discount node NDA binding link instantiations depth defeasible?)))
-		 (cond
-		  ((null hyperlink)
-		   (decf *hyperlink-number*)
-		   (when new-node? (decf *hypernode-number*)))
-		  (t
-		   (setf (hypernode-motivating-nodes node) (union clues motivators))
-		   (when new-node?
-		     (push node *hypergraph*)
-		     (store-hypernode-with-c-list
-		      node (sequent-formula sequent) c-list))
-		   (when interest
-		     (push interest (hypernode-enabling-interests node))
-		     (push node (interest-enabled-nodes interest)))
-		   (when *trace* (indent depth) (princ "DRAW CONCLUSION: ")
-			 (princ node) (terpri))
-		   (when (read-char-no-hang) (clear-input) (throw 'die nil))
-		   (let* ((i-lists (c-list-corresponding-i-lists (hypernode-c-list node)))
-			  (increased-justification?
-			   (or new-node? (> (hypernode-maximal-degree-of-justification node) old-degree)))
-			  (cancellations
-			   (when increased-justification?
-			     (discharge-interest-in-defeaters node i-lists old-degree new-node?))))
-		     (when *display?* (display-hyperlink hyperlink))
-		     (adopt-interest-in-defeaters-for hyperlink instantiations binding)
-		     (push hyperlink *new-links*)
+  (defun DRAW-CONCLUSION
+      (formula basis rule instantiations discount depth interests defeasible?
+	       &key interest motivators binding link (supposition t) clues)
+    "Rule is either a member of *forwards-reasons* or *backwards-reasons*, or keyword describing an inference (:given, :Q&I, or :supposition).  basis is a list of conclusions.  If supposition is not T, it is added to the supposition."
+    (when (and formula (not (some #'hypernode-cancelled-node basis))
+	       (not (inconsistent-supposition basis)))
+      (setf basis (reverse basis))
+      (setf instantiations (reverse instantiations))
+      (let* ((NDA (compute-nearest-defeasible-ancestors basis rule))
+	     (discharge (if (backwards-reason-p rule)
+			    (remove-double-negation (match-sublis binding (b-reason-discharge rule)))))
+	     (CD (conclusion-data basis instantiations discharge supposition)))
+	(when CD
+	  (let* ((RA (mem1 CD))
+		 (NR (mem2 CD))
+		 (sup (mem3 CD))
+		 (sequent (list sup formula))
+		 (d-node (d-node-for formula))
+		 (c-list (if d-node (fetch-c-list-for formula d-node)))
+		 (proof-nodes (if c-list (c-list-nodes c-list)))
+		 (node (find-if #'(lambda (c)
+				    (and (eq (hypernode-kind c) :inference)
+					 (== (hypernode-supposition c) sup)))
+				proof-nodes))
+		 (new-node? (null node)))
+	    (when
+		(and
+		 (not (some #'(lambda (f) (mem (neg f) sup)) sup))
+		 (or (null d-node)
+		     (not (subsumed node basis sequent NDA NR rule binding d-node))))
+	      (let* ((deductive-only (and (not (eq rule :reductio))
+					  (some #'hypernode-deductive-only basis))))
+		(when (and node (hypernode-deductive-only node) (not deductive-only))
+		  (setf (hypernode-deductive-only node) nil))
+		(when (null node)
+		  (setf node (make-new-conclusion sequent deductive-only RA NR)))
+		(let ((old-degree (current-maximal-degree-of-justification node))
+		      (hyperlink
+		       (build-hyperlink
+			basis clues rule discount node NDA binding link instantiations depth defeasible?)))
+		  (cond
+		   ((null hyperlink)
+		    (decf *hyperlink-number*)
+		    (when new-node? (decf *hypernode-number*)))
+		   (t
+		    (setf (hypernode-motivating-nodes node) (union clues motivators))
+		    (when new-node?
+		      (push node *hypergraph*)
+		      (store-hypernode-with-c-list
+		       node (sequent-formula sequent) c-list))
+		    (when interest
+		      (push interest (hypernode-enabling-interests node))
+		      (push node (interest-enabled-nodes interest)))
+		    (when *trace* (indent depth) (princ "DRAW CONCLUSION: ")
+			  (princ node) (terpri))
+		    (when (read-char-no-hang) (clear-input) (throw 'die nil))
+		    (let* ((i-lists (c-list-corresponding-i-lists (hypernode-c-list node)))
+			   (increased-justification?
+			    (or new-node? (> (hypernode-maximal-degree-of-justification node) old-degree)))
+			   (cancellations
+			    (when increased-justification?
+			      (discharge-interest-in-defeaters node i-lists old-degree new-node?))))
+		      (when *display?* (display-hyperlink hyperlink))
+		      (adopt-interest-in-defeaters-for hyperlink instantiations binding)
+		      (push hyperlink *new-links*)
 					; (update-beliefs hyperlink node)
-		     (dolist (node* cancellations) (cancel-node node* (if *trace* depth 0)))
-		     (when (not (hypernode-cancelled-node node))
-		       (when increased-justification?
-			 (discharge-interest-in
-			  node i-lists old-degree new-node? (1+ depth) interests :interest interest)
-			 (cond (*use-reductio*
-				(discharge-immediate-reductios
-				 node old-degree new-node? (1+ depth) interests interest))))
-		       (when new-node? (invert-contradictions node instantiations (1+ depth)))
-		       (cancel-subsumed-links hyperlink depth)))))))
-	     nil))))))
+		      (dolist (node* cancellations) (cancel-node node* (if *trace* depth 0)))
+		      (when (not (hypernode-cancelled-node node))
+			(when increased-justification?
+			  (discharge-interest-in
+			   node i-lists old-degree new-node? (1+ depth) interests :interest interest)
+			  (cond (*use-reductio*
+				 (discharge-immediate-reductios
+				  node old-degree new-node? (1+ depth) interests interest))))
+			(when new-node? (invert-contradictions node instantiations (1+ depth)))
+			(cancel-subsumed-links hyperlink depth)))))))
+	      nil))))))
 
- (defun cancel-subsumed-links (link depth)
+  (defun cancel-subsumed-links (link depth)
 					; (when (equal link (hyperlink 14)) (break))
-   ;; (step (cancel-subsumed-links (hyperlink 14) 0))
-   (when (not (hyperlink-defeasible? link))
-     (let* ((node (hyperlink-target link))
-	    (formula (hypernode-formula node))
-	    (f-vars (hypernode-variables node)))
-       (dolist (cl (d-node-c-lists (c-list-d-node (hypernode-c-list node))))
-	 (let* ((P (c-list-formula cl))
-		(m (match formula P f-vars)))
-	   (when (and m (equal P (match-sublis m formula)))
-	     (let* ((sup (match-sublis m (hypernode-supposition node)))
-		    (vars (setdifference (unionmapcar #'formula-hypernode-variables sup) f-vars))
-		    (NR (match-sublis m (hypernode-non-reductio-supposition node))))
-	       (dolist (M (c-list-nodes cl))
-		 (cond
-		  ((eq M node)
-		   (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
-		     (dolist (L (hypernode-hyperlinks M))
-		       (when
-                           (and (not (eq L link))
-                                (not (hyperlink-defeasible? L)))
-			 (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
-			   (when (every
-				  #'(lambda (Y)
-				      (some #'(lambda (X) (subsetp X Y)) NDA))
-				  NDA*)
-			     (delete-arguments L M link depth)
-			     (when *display?*
-			       (princ link) (princ " subsumes ") (princ L) (terpri))
+    ;; (step (cancel-subsumed-links (hyperlink 14) 0))
+    (when (not (hyperlink-defeasible? link))
+      (let* ((node (hyperlink-target link))
+	     (formula (hypernode-formula node))
+	     (f-vars (hypernode-variables node)))
+	(dolist (cl (d-node-c-lists (c-list-d-node (hypernode-c-list node))))
+	  (let* ((P (c-list-formula cl))
+		 (m (match formula P f-vars)))
+	    (when (and m (equal P (match-sublis m formula)))
+	      (let* ((sup (match-sublis m (hypernode-supposition node)))
+		     (vars (setdifference (unionmapcar #'formula-hypernode-variables sup) f-vars))
+		     (NR (match-sublis m (hypernode-non-reductio-supposition node))))
+		(dolist (M (c-list-nodes cl))
+		  (cond
+		   ((eq M node)
+		    (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
+		      (dolist (L (hypernode-hyperlinks M))
+			(when
+			    (and (not (eq L link))
+				 (not (hyperlink-defeasible? L)))
+			  (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
+			    (when (every
+				   #'(lambda (Y)
+				       (some #'(lambda (X) (subsetp X Y)) NDA))
+				   NDA*)
+			      (delete-arguments L M link depth)
+			      (when *display?*
+				(princ link) (princ " subsumes ") (princ L) (terpri))
 					; (pull L (hypernode-hyperlinks M))
-			     ))))))
-		  ((<= (length (hypernode-supposition node)) (length (hypernode-supposition M)))
-		   (let* ((M-sup (hypernode-supposition M))
-			  (SM (set-match sup M-sup vars)))
-		     (when
-                         (and SM
-                              (some
-			       #'(lambda (s)
-				   (subsetp=
-				    (match-sublis (mem2 s) NR)
-				    (hypernode-non-reductio-supposition M)))
-			       SM))
-		       (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
-			 (dolist (L (hypernode-hyperlinks M))
-			   (when
-                               (and (not (hypernode-cancelled-node (hyperlink-target L)))
-                                    (not (link-ancestor L link))
-                                    (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
-                                      (every
-				       #'(lambda (Y)
-					   (some #'(lambda (X) (subsetp X Y)) NDA))
-				       NDA*)))
-			     (delete-arguments L M link depth)
-			     (when *display?*
-			       (princ link) (princ " subsumes ") (princ L) (terpri))
-			     )))))))))))))))
+			      ))))))
+		   ((<= (length (hypernode-supposition node)) (length (hypernode-supposition M)))
+		    (let* ((M-sup (hypernode-supposition M))
+			   (SM (set-match sup M-sup vars)))
+		      (when
+			  (and SM
+			       (some
+				#'(lambda (s)
+				    (subsetp=
+				     (match-sublis (mem2 s) NR)
+				     (hypernode-non-reductio-supposition M)))
+				SM))
+			(let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
+			  (dolist (L (hypernode-hyperlinks M))
+			    (when
+				(and (not (hypernode-cancelled-node (hyperlink-target L)))
+				     (not (link-ancestor L link))
+				     (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
+				       (every
+					#'(lambda (Y)
+					    (some #'(lambda (X) (subsetp X Y)) NDA))
+					NDA*)))
+			      (delete-arguments L M link depth)
+			      (when *display?*
+				(princ link) (princ " subsumes ") (princ L) (terpri))
+			      )))))))))))))))
 
- (defun delete-arguments (link node L0 depth)
-   "L0 subsumes link which supports node"
-   (declare (special *deleted-arguments*))
+  (defun delete-arguments (link node L0 depth)
+    "L0 subsumes link which supports node"
+    (declare (special *deleted-arguments*))
 					; (when (equal link (hyperlink 10)) (setf l link n node ll l0 d depth) (break))
-   ;; (step (delete-arguments l n ll d t))
-   (setf *deleted-arguments* nil)
-   (when (and (not (member link *deleted-arguments*))
-	      (not (hypernode-cancelled-node node))
-	      (not (link-ancestor link L0)))
-     (push link *deleted-arguments*)
+    ;; (step (delete-arguments l n ll d t))
+    (setf *deleted-arguments* nil)
+    (when (and (not (member link *deleted-arguments*))
+	       (not (hypernode-cancelled-node node))
+	       (not (link-ancestor link L0)))
+      (push link *deleted-arguments*)
 					; (princ "**** Deleting ") (princ link) (terpri)
-     (pull link (hypernode-hyperlinks node))
-     (cond ((null (hypernode-hyperlinks node)) (cancel-node node (if *trace* depth 0)))
-	   (t
-	    (dolist (L (hypernode-hyperlinks node))
-	      (let ((NDA
-		     (cond ((hyperlink-defeasible? node)
-			    (mapcar #'genunion
-				    (gencrossproduct
-				     (mapcar #'hypernode-nearest-defeasible-ancestors
-					     (hyperlink-basis L)))))
-			   (t (list (list node))))))
-		(dolist (X NDA)
-		  (when
-                      (not (some #'(lambda (Y) (subsetp= Y X))
-                                 (hypernode-nearest-defeasible-ancestors node)))
-		    (dolist (Y (hypernode-nearest-defeasible-ancestors node))
-		      (when (subsetp= X Y) (pull Y (hypernode-nearest-defeasible-ancestors node))))
-		    (push X (hypernode-nearest-defeasible-ancestors node))))
-		(recursively-compute-nearest-defeasible-ancestors node)))
-	    (let ((ancestors
-		   (unionmapcar+
-		    #'(lambda (L)
-			(union (hyperlink-basis L)
-			       (unionmapcar+ #'hypernode-ancestors (hyperlink-basis L))))
-		    (hypernode-hyperlinks node))))
-	      (setf (hypernode-ancestors node) ancestors)
-	      (recursively-compute-hypernode-ancestors node ancestors)
-	      )))))
+      (pull link (hypernode-hyperlinks node))
+      (cond ((null (hypernode-hyperlinks node)) (cancel-node node (if *trace* depth 0)))
+	    (t
+	     (dolist (L (hypernode-hyperlinks node))
+	       (let ((NDA
+		      (cond ((hyperlink-defeasible? node)
+			     (mapcar #'genunion
+				     (gencrossproduct
+				      (mapcar #'hypernode-nearest-defeasible-ancestors
+					      (hyperlink-basis L)))))
+			    (t (list (list node))))))
+		 (dolist (X NDA)
+		   (when
+		       (not (some #'(lambda (Y) (subsetp= Y X))
+				  (hypernode-nearest-defeasible-ancestors node)))
+		     (dolist (Y (hypernode-nearest-defeasible-ancestors node))
+		       (when (subsetp= X Y) (pull Y (hypernode-nearest-defeasible-ancestors node))))
+		     (push X (hypernode-nearest-defeasible-ancestors node))))
+		 (recursively-compute-nearest-defeasible-ancestors node)))
+	     (let ((ancestors
+		    (unionmapcar+
+		     #'(lambda (L)
+			 (union (hyperlink-basis L)
+				(unionmapcar+ #'hypernode-ancestors (hyperlink-basis L))))
+		     (hypernode-hyperlinks node))))
+	       (setf (hypernode-ancestors node) ancestors)
+	       (recursively-compute-hypernode-ancestors node ancestors)
+	       )))))
 
- (defun recursively-compute-nearest-defeasible-ancestors
-     (node &optional nodes-done)
-   (push node nodes-done)
-   (dolist (L (hypernode-consequent-links node))
-     (when (not (hyperlink-defeasible? L))
-       (let ((NDA
-	      (mapcar #'genunion
-		      (gencrossproduct
-		       (mapcar #'hypernode-nearest-defeasible-ancestors (hyperlink-basis L)))))
-	     (target (hyperlink-target L)))
-	 (let ((old-NDA (hypernode-nearest-defeasible-ancestors node)))
-	   (dolist (X NDA)
-	     (when
-		 (not (some #'(lambda (Y) (subsetp Y X))
-			    (hypernode-nearest-defeasible-ancestors target)))
-	       (dolist (Y (hypernode-nearest-defeasible-ancestors target))
-		 (when (subsetp X Y) (pull Y (hypernode-nearest-defeasible-ancestors target))))
-	       (push X (hypernode-nearest-defeasible-ancestors target))
-	       (invert-contradictions-retrospectively node X old-NDA))))
-	 (when (not (member target nodes-done))
-	   (recursively-compute-nearest-defeasible-ancestors target nodes-done))))))
+  (defun recursively-compute-nearest-defeasible-ancestors
+      (node &optional nodes-done)
+    (push node nodes-done)
+    (dolist (L (hypernode-consequent-links node))
+      (when (not (hyperlink-defeasible? L))
+	(let ((NDA
+	       (mapcar #'genunion
+		       (gencrossproduct
+			(mapcar #'hypernode-nearest-defeasible-ancestors (hyperlink-basis L)))))
+	      (target (hyperlink-target L)))
+	  (let ((old-NDA (hypernode-nearest-defeasible-ancestors node)))
+	    (dolist (X NDA)
+	      (when
+		  (not (some #'(lambda (Y) (subsetp Y X))
+			     (hypernode-nearest-defeasible-ancestors target)))
+		(dolist (Y (hypernode-nearest-defeasible-ancestors target))
+		  (when (subsetp X Y) (pull Y (hypernode-nearest-defeasible-ancestors target))))
+		(push X (hypernode-nearest-defeasible-ancestors target))
+		(invert-contradictions-retrospectively node X old-NDA))))
+	  (when (not (member target nodes-done))
+	    (recursively-compute-nearest-defeasible-ancestors target nodes-done))))))
 
- (defun invert-contradictions-retrospectively (node NDA old-NDA)
-   (let ((c-list (hypernode-c-list node)))
-     (dolist (nl (c-list-contradictors c-list))
-       (let ((unifier (reverse (mem2 nl))))
-	 (dolist (node* (c-list-nodes (mem1 nl)))
-	   (dolist (u (appropriately-related-node-suppositions node node* unifier))
-	     (dolist (N NDA)
-	       (when
-		   (and (not (some #'(lambda (Y) (member N Y)) old-NDA))
-			(set-unifier
-                         (match-sublis (mem2 u) (hypernode-supposition node*))
-                         (hypernode-supposition N)
-                         (append (hypernode-variables node) (hypernode-variables node*))
-                         (hypernode-variables N)))
-		 (dolist (L (hypernode-hyperlinks N))
-		   (invert-contradiction L node node* NDA N u 0))))))))))
-
- (defun invert-contradiction  (L node node* D N instantiations depth)
-   (let ((variables nil)
-	 (reverse-binding nil)
-	 (reverse-binding* nil)
-	 (binding* nil))
-     (dolist (b (hyperlink-binding L))
-       (cond ((or (and (listp (cdr b)) (skolem-function (mem1 (cdr b))))
-		  (skolem-function (cdr b))
-		  (conclusion-variable (cdr b)))
-	      (push (car b) variables)
-	      (push (cons (cdr b) (car b)) reverse-binding)
-	      (push (cons (cdr b) (make-interest-variable)) reverse-binding*))
-	     (t (push b binding*))))
-     (let* ((S (hypernode-sequent (hyperlink-target L)))
-	    (B (hyperlink-basis L))
-	    (supposition
-	     (subset
-	      #'(lambda (P)
-		  (every #'(lambda (b) (not (occur (car b) P :test 'equal))) reverse-binding))
-	      (sequent-supposition S)))
-	    (sup-remainder (setdifference (sequent-supposition S) supposition))
-	    (antecedent (match-sublis reverse-binding sup-remainder :test 'equal))
-	    (antecedent*
-	     (gen-conjunction
-	      (match-sublis reverse-binding* sup-remainder :test 'equal)))
-	    (antecedent-variables
-	     (subset #'(lambda (v) (occur v antecedent)) variables))
-	    (sup
-	     (if sup-remainder
-                 (generalized-e-gen antecedent-variables (gen-conjunction antecedent))))
-	    (new-sup (if sup (cons sup supposition) supposition))
-	    (formula (match-sublis reverse-binding* (sequent-formula S)))
-	    (base
-	     (mapcar
-	      #'(lambda (c m)
-		  (cond ((is-desire c)
-			 (list 'I_desire_that
-			       (match-sublis reverse-binding*
-					     (match-sublis m (hypernode-formula c)))))
-			((is-percept c)
-			 (let ((time (percept-date (hypernode-justification c))))
-			   (list 'it-appears-to-me-that
-				 (match-sublis reverse-binding*
-					       (match-sublis m (mem2 (hypernode-formula c))))
-				 (list 'closed time time))))
-			(t (match-sublis reverse-binding*
-					 (match-sublis m (hypernode-formula c)) :test 'equal))))
-	      B instantiations))
-	    (rebutting-defeater
-	     (cond (antecedent* (conj antecedent* (conj (gen-conjunction base) (neg formula))))
-		   (variables (conj (gen-conjunction base) (neg formula)))
-		   (t (neg formula)))))
-       (draw-conclusion
-	rebutting-defeater (adjoin node* (remove N D))
-	(read-from-string
-	 (cat-list (list ":inversion_from_contradictory_nodes_"
-			 (string-rep (hypernode-number node))
-			 "_and_" (string-rep (hypernode-number node*)))))
-	nil 1 (1+ depth) nil nil :motivators (list node) :supposition new-sup))))
-
- (defun invert-contradictions-from-new-hyperlink (link instantiations)
-   (let ((target (hyperlink-target link)))
-     (dolist (node (deductive-consequences target))
-       (let ((c-list (hypernode-c-list node)))
-	 (dolist (nl (c-list-contradictors c-list))
-	   (let ((unifier (mem2 nl)))
-	     (dolist (node* (c-list-nodes (mem1 nl)))
-	       (when (not (deductive-node node*))
-		 (dolist (u (appropriately-related-node-suppositions node* node unifier))
-		   (when (set-unifier (match-sublis (mem2 u) (hypernode-supposition node))
-				      (hypernode-supposition target)
-				      (append (hypernode-variables node) (hypernode-variables node*))
-				      (hypernode-variables target))
-		     (dolist (D (hypernode-nearest-defeasible-ancestors node))
-		       (invert-contradiction link node node* D target instantiations 0))))))))))))
-
- (defun invert-contradictions (node instantiations depth)
-					; (when (eq node (node 43)) (break))
-   ;; (step (invert-contradictions (node 43) 0))
-   (let ((c-list (hypernode-c-list node)))
-     (dolist (nl (c-list-contradictors c-list))
-       (let* ((unifier (mem2 nl))
-	      (unifier* (reverse unifier)))
-	 (dolist (node* (c-list-nodes (mem1 nl)))
-	   (when (not (deductive-node node*))
-	     (dolist (u (appropriately-related-node-suppositions node* node unifier))
-	       (dolist (D (hypernode-nearest-defeasible-ancestors node))
-		 (dolist (N D)
-		   (when (set-unifier
-			  (match-sublis (mem2 u) (hypernode-supposition node))
-			  (hypernode-supposition N)
-			  (append (hypernode-variables node) (hypernode-variables node*))
-			  (hypernode-variables N))
-		     (dolist (L (hypernode-hyperlinks N))
-		       (invert-contradiction L node node* D N instantiations depth)))))))
-	   (when (not (deductive-node node))
-	     (dolist (u (appropriately-related-node-suppositions node node* unifier*))
-	       (dolist (D (hypernode-nearest-defeasible-ancestors node*))
-		 (dolist (N D)
-		   (when (set-unifier
+  (defun invert-contradictions-retrospectively (node NDA old-NDA)
+    (let ((c-list (hypernode-c-list node)))
+      (dolist (nl (c-list-contradictors c-list))
+	(let ((unifier (reverse (mem2 nl))))
+	  (dolist (node* (c-list-nodes (mem1 nl)))
+	    (dolist (u (appropriately-related-node-suppositions node node* unifier))
+	      (dolist (N NDA)
+		(when
+		    (and (not (some #'(lambda (Y) (member N Y)) old-NDA))
+			 (set-unifier
 			  (match-sublis (mem2 u) (hypernode-supposition node*))
 			  (hypernode-supposition N)
 			  (append (hypernode-variables node) (hypernode-variables node*))
-			  (hypernode-variables N))
-		     (dolist (L (hypernode-hyperlinks N))
-		       (invert-contradiction L node* node D N instantiations depth))))))))))))
+			  (hypernode-variables N)))
+		  (dolist (L (hypernode-hyperlinks N))
+		    (invert-contradiction L node node* NDA N u 0))))))))))
 
- (defun draw-reductio-conclusion (P node node* R Y Y* RA NR interest unifier depth d-interests)
-   (when (and (not (hypernode-cancelled-node node))
-	      (not (hypernode-cancelled-node node*))
-	      (not (mem (neg P) Y)) (not (mem (neg P) Y*))
-	      (not (inconsistent-supposition (list node node*)))
-	      ;; This prevents a reductio-ancestor from being instantiated in two different ways
-	      (not (some
-		    #'(lambda (R)
-			(some #'(lambda (R*)
-				  (and (not (eq R R*))
-				       (eq (cdr R) (cdr R*))
-				       (zerop (hypernode-readopted-supposition (cdr R)))))
-			      RA))
-		    RA))
-	      ;; This prevents a non-reductio-supposition from being instantiated in two different ways
-	      (not (some
-		    #'(lambda (R)
-			(some
-			 #'(lambda (R*)
-			     (and (not (eq R R*))
-				  (eq (cdr R) (cdr R*))
-				  (zerop (hypernode-readopted-supposition (cdr R)))))
-			 NR))
-		    NR)))
-     (let ((sup (remove-if-equal P (union= Y Y*))))
-       (when (not (some #'(lambda (f) (mem (neg f) sup)) sup))
+  (defun invert-contradiction  (L node node* D N instantiations depth)
+    (let ((variables nil)
+	  (reverse-binding nil)
+	  (reverse-binding* nil)
+	  (binding* nil))
+      (dolist (b (hyperlink-binding L))
+	(cond ((or (and (listp (cdr b)) (skolem-function (mem1 (cdr b))))
+		   (skolem-function (cdr b))
+		   (conclusion-variable (cdr b)))
+	       (push (car b) variables)
+	       (push (cons (cdr b) (car b)) reverse-binding)
+	       (push (cons (cdr b) (make-interest-variable)) reverse-binding*))
+	      (t (push b binding*))))
+      (let* ((S (hypernode-sequent (hyperlink-target L)))
+	     (B (hyperlink-basis L))
+	     (supposition
+	      (subset
+	       #'(lambda (P)
+		   (every #'(lambda (b) (not (occur (car b) P :test 'equal))) reverse-binding))
+	       (sequent-supposition S)))
+	     (sup-remainder (setdifference (sequent-supposition S) supposition))
+	     (antecedent (match-sublis reverse-binding sup-remainder :test 'equal))
+	     (antecedent*
+	      (gen-conjunction
+	       (match-sublis reverse-binding* sup-remainder :test 'equal)))
+	     (antecedent-variables
+	      (subset #'(lambda (v) (occur v antecedent)) variables))
+	     (sup
+	      (if sup-remainder
+		  (generalized-e-gen antecedent-variables (gen-conjunction antecedent))))
+	     (new-sup (if sup (cons sup supposition) supposition))
+	     (formula (match-sublis reverse-binding* (sequent-formula S)))
+	     (base
+	      (mapcar
+	       #'(lambda (c m)
+		   (cond ((is-desire c)
+			  (list 'I_desire_that
+				(match-sublis reverse-binding*
+					      (match-sublis m (hypernode-formula c)))))
+			 ((is-percept c)
+			  (let ((time (percept-date (hypernode-justification c))))
+			    (list 'it-appears-to-me-that
+				  (match-sublis reverse-binding*
+						(match-sublis m (mem2 (hypernode-formula c))))
+				  (list 'closed time time))))
+			 (t (match-sublis reverse-binding*
+					  (match-sublis m (hypernode-formula c)) :test 'equal))))
+	       B instantiations))
+	     (rebutting-defeater
+	      (cond (antecedent* (conj antecedent* (conj (gen-conjunction base) (neg formula))))
+		    (variables (conj (gen-conjunction base) (neg formula)))
+		    (t (neg formula)))))
+	(draw-conclusion
+	 rebutting-defeater (adjoin node* (remove N D))
+	 (read-from-string
+	  (cat-list (list ":inversion_from_contradictory_nodes_"
+			  (string-rep (hypernode-number node))
+			  "_and_" (string-rep (hypernode-number node*)))))
+	 nil 1 (1+ depth) nil nil :motivators (list node) :supposition new-sup))))
+
+  (defun invert-contradictions-from-new-hyperlink (link instantiations)
+    (let ((target (hyperlink-target link)))
+      (dolist (node (deductive-consequences target))
+	(let ((c-list (hypernode-c-list node)))
+	  (dolist (nl (c-list-contradictors c-list))
+	    (let ((unifier (mem2 nl)))
+	      (dolist (node* (c-list-nodes (mem1 nl)))
+		(when (not (deductive-node node*))
+		  (dolist (u (appropriately-related-node-suppositions node* node unifier))
+		    (when (set-unifier (match-sublis (mem2 u) (hypernode-supposition node))
+				       (hypernode-supposition target)
+				       (append (hypernode-variables node) (hypernode-variables node*))
+				       (hypernode-variables target))
+		      (dolist (D (hypernode-nearest-defeasible-ancestors node))
+			(invert-contradiction link node node* D target instantiations 0))))))))))))
+
+  (defun invert-contradictions (node instantiations depth)
+					; (when (eq node (node 43)) (break))
+    ;; (step (invert-contradictions (node 43) 0))
+    (let ((c-list (hypernode-c-list node)))
+      (dolist (nl (c-list-contradictors c-list))
+	(let* ((unifier (mem2 nl))
+	       (unifier* (reverse unifier)))
+	  (dolist (node* (c-list-nodes (mem1 nl)))
+	    (when (not (deductive-node node*))
+	      (dolist (u (appropriately-related-node-suppositions node* node unifier))
+		(dolist (D (hypernode-nearest-defeasible-ancestors node))
+		  (dolist (N D)
+		    (when (set-unifier
+			   (match-sublis (mem2 u) (hypernode-supposition node))
+			   (hypernode-supposition N)
+			   (append (hypernode-variables node) (hypernode-variables node*))
+			   (hypernode-variables N))
+		      (dolist (L (hypernode-hyperlinks N))
+			(invert-contradiction L node node* D N instantiations depth)))))))
+	    (when (not (deductive-node node))
+	      (dolist (u (appropriately-related-node-suppositions node node* unifier*))
+		(dolist (D (hypernode-nearest-defeasible-ancestors node*))
+		  (dolist (N D)
+		    (when (set-unifier
+			   (match-sublis (mem2 u) (hypernode-supposition node*))
+			   (hypernode-supposition N)
+			   (append (hypernode-variables node) (hypernode-variables node*))
+			   (hypernode-variables N))
+		      (dolist (L (hypernode-hyperlinks N))
+			(invert-contradiction L node* node D N instantiations depth))))))))))))
+
+  (defun draw-reductio-conclusion (P node node* R Y Y* RA NR interest unifier depth d-interests)
+    (when (and (not (hypernode-cancelled-node node))
+	       (not (hypernode-cancelled-node node*))
+	       (not (mem (neg P) Y)) (not (mem (neg P) Y*))
+	       (not (inconsistent-supposition (list node node*)))
+	       ;; This prevents a reductio-ancestor from being instantiated in two different ways
+	       (not (some
+		     #'(lambda (R)
+			 (some #'(lambda (R*)
+				   (and (not (eq R R*))
+					(eq (cdr R) (cdr R*))
+					(zerop (hypernode-readopted-supposition (cdr R)))))
+			       RA))
+		     RA))
+	       ;; This prevents a non-reductio-supposition from being instantiated in two different ways
+	       (not (some
+		     #'(lambda (R)
+			 (some
+			  #'(lambda (R*)
+			      (and (not (eq R R*))
+				   (eq (cdr R) (cdr R*))
+				   (zerop (hypernode-readopted-supposition (cdr R)))))
+			  NR))
+		     NR)))
+      (let ((sup (remove-if-equal P (union= Y Y*))))
+	(when (not (some #'(lambda (f) (mem (neg f) sup)) sup))
 					; (setf sup (order sup #'lessp))
-	 (let* ((P* (neg P))
-		(sequent (list sup P*))
-		(reductio-ancestors (remove-if-equal R RA))
-		(non-reductio-supposition
-		 (subset #'(lambda (S) (not (equal P (car S)))) NR))
-		(NDA
-		 (mapcar #'genunion
-			 (crossproduct (hypernode-nearest-defeasible-ancestors node)
-				       (hypernode-nearest-defeasible-ancestors node*))))
-		(d-node (d-node-for P*))
-		(c-list (if d-node (fetch-c-list-for P* d-node)))
-		(nodes (if c-list (c-list-nodes c-list)))
-		(N-conclusion
-		 (find-if #'(lambda (c)
-			      (and (eq (hypernode-kind c) :inference)
-				   (== (hypernode-supposition c) sup)
-				   (== (hypernode-reductio-ancestors c) reductio-ancestors)
-				   (== (hypernode-non-reductio-supposition c) non-reductio-supposition)))
-			  nodes))
-		(new-node? (null N-conclusion)))
-	   (when
-	       (or (null d-node)
-		   (not (subsumed N-conclusion (list node node*) sequent NDA
-				  non-reductio-supposition :reductio nil d-node)))
-	     (pushnew node (interest-discharging-nodes interest))
-	     (when (null N-conclusion)
-	       (setf N-conclusion
-		     (make-new-conclusion
-		      sequent reductio-ancestors reductio-ancestors non-reductio-supposition)))
-	     (let ((old-degree (current-maximal-degree-of-justification N-conclusion))
-		   (hyperlink
-		    (build-hyperlink
-		     (list node node*) nil :reductio 1.0 N-conclusion NDA nil nil unifier depth nil)))
-	       (cond
-		((null hyperlink)
-		 (decf *hyperlink-number*)
-		 (when new-node? (decf *hypernode-number*)))
-		(t
-		 (when new-node?
-		   (push N-conclusion *hypergraph*)
-		   (store-hypernode-with-c-list
-		    N-conclusion (sequent-formula sequent) c-list))
+	  (let* ((P* (neg P))
+		 (sequent (list sup P*))
+		 (reductio-ancestors (remove-if-equal R RA))
+		 (non-reductio-supposition
+		  (subset #'(lambda (S) (not (equal P (car S)))) NR))
+		 (NDA
+		  (mapcar #'genunion
+			  (crossproduct (hypernode-nearest-defeasible-ancestors node)
+					(hypernode-nearest-defeasible-ancestors node*))))
+		 (d-node (d-node-for P*))
+		 (c-list (if d-node (fetch-c-list-for P* d-node)))
+		 (nodes (if c-list (c-list-nodes c-list)))
+		 (N-conclusion
+		  (find-if #'(lambda (c)
+			       (and (eq (hypernode-kind c) :inference)
+				    (== (hypernode-supposition c) sup)
+				    (== (hypernode-reductio-ancestors c) reductio-ancestors)
+				    (== (hypernode-non-reductio-supposition c) non-reductio-supposition)))
+			   nodes))
+		 (new-node? (null N-conclusion)))
+	    (when
+		(or (null d-node)
+		    (not (subsumed N-conclusion (list node node*) sequent NDA
+				   non-reductio-supposition :reductio nil d-node)))
+	      (pushnew node (interest-discharging-nodes interest))
+	      (when (null N-conclusion)
+		(setf N-conclusion
+		      (make-new-conclusion
+		       sequent reductio-ancestors reductio-ancestors non-reductio-supposition)))
+	      (let ((old-degree (current-maximal-degree-of-justification N-conclusion))
+		    (hyperlink
+		     (build-hyperlink
+		      (list node node*) nil :reductio 1.0 N-conclusion NDA nil nil unifier depth nil)))
+		(cond
+		 ((null hyperlink)
+		  (decf *hyperlink-number*)
+		  (when new-node? (decf *hypernode-number*)))
+		 (t
+		  (when new-node?
+		    (push N-conclusion *hypergraph*)
+		    (store-hypernode-with-c-list
+		     N-conclusion (sequent-formula sequent) c-list))
 					; (when R
 					;      (setf (hypernode-enabling-interests N-conclusion)
 					;               (union (hypernode-enabling-interests N-conclusion)
 					;                          (hypernode-generating-interests (cdr R)))))
-		 (when *trace* (indent depth)
-		       (princ "draw-reductio-conclusion: ")
-		       (princ N-conclusion) (terpri))
-		 (when *display?* (display-hyperlink hyperlink))
-		 (when (read-char-no-hang) (clear-input) (throw 'die nil))
-		 (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list N-conclusion)))
-		       (increased-justification?
-			(or new-node? (> (current-maximal-degree-of-justification node) old-degree))))
-		   (when increased-justification?
-		     (discharge-interest-in-defeaters
-		      N-conclusion i-lists old-degree new-node?))
-		   (push hyperlink *new-links*)
-		   (when increased-justification?
-		     (discharge-interest-in
-		      N-conclusion i-lists old-degree new-node? (1+ depth) d-interests)
-		     (when (not (hypernode-cancelled-node N-conclusion))
-		       (discharge-immediate-reductios
-			N-conclusion old-degree new-node?
-			(1+ depth) d-interests interest)))
-		   (when new-node? (invert-contradictions node unifier (1+ depth)))
-		   (cancel-subsumed-links hyperlink depth)
-		   ))))))))))
+		  (when *trace* (indent depth)
+			(princ "draw-reductio-conclusion: ")
+			(princ N-conclusion) (terpri))
+		  (when *display?* (display-hyperlink hyperlink))
+		  (when (read-char-no-hang) (clear-input) (throw 'die nil))
+		  (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list N-conclusion)))
+			(increased-justification?
+			 (or new-node? (> (current-maximal-degree-of-justification node) old-degree))))
+		    (when increased-justification?
+		      (discharge-interest-in-defeaters
+		       N-conclusion i-lists old-degree new-node?))
+		    (push hyperlink *new-links*)
+		    (when increased-justification?
+		      (discharge-interest-in
+		       N-conclusion i-lists old-degree new-node? (1+ depth) d-interests)
+		      (when (not (hypernode-cancelled-node N-conclusion))
+			(discharge-immediate-reductios
+			 N-conclusion old-degree new-node?
+			 (1+ depth) d-interests interest)))
+		    (when new-node? (invert-contradictions node unifier (1+ depth)))
+		    (cancel-subsumed-links hyperlink depth)
+		    ))))))))))
 
- (defun build-hyperlink (basis clues rule discount node NDA binding link instantiations depth defeasible?)
-   "This must recompute the set of hypernode-arguments for the hyperlink-target and its inference-descendants.  Node arguments are stored as triples (arg,strength,discounted-strength)"
+  (defun build-hyperlink (basis clues rule discount node NDA binding link instantiations depth defeasible?)
+    "This must recompute the set of hypernode-arguments for the hyperlink-target and its inference-descendants.  Node arguments are stored as triples (arg,strength,discounted-strength)"
 					; (setf b basis r rule d discount n node nd nda bi binding de depth)
-   ;; (princ "Building link ") (princ *hyperlink-number*) (terpri) (break)
-   (incf *hyperlink-number*)
-   (when (not (some #'(lambda (L)
-			(and (equal (hyperlink-basis L) basis)
-			     (eq (hyperlink-rule L) rule)))
-		    (hypernode-hyperlinks node)))
-     (let* ((new? (null (hypernode-hyperlinks node)))
-	    (reason-strength
-	     (cond ((keywordp rule) 1.0)
-		   ((numberp (reason-strength rule)) (reason-strength rule))
-		   (t (let ((r (funcall (reason-strength rule) binding basis)))
-			(if (>= r 0) r 0)))))
-	    (link (make-hyperlink
-		   :hyperlink-number *hyperlink-number*
-		   :hyperlink-basis basis
-		   :hyperlink-clues clues
-		   :hyperlink-rule rule
-		   :hyperlink-target node
-		   :hyperlink-defeasible? defeasible?
-		   :hyperlink-temporal
-		   (if (or (and (not (keywordp rule)) (reason-temporal? rule))
-			   (some #'hypernode-temporal-node basis)) *cycle*)
-		   :hyperlink-reason-strength  reason-strength
-		   :hyperlink-binding binding
-		   :hyperlink-discount-factor
-		   (cond (discount discount)
-			 ((not (keywordp rule)) (reason-discount-factor rule))
-			 (t 1.0))
-		   :hyperlink-nearest-defeasible-ancestors
-		   (if defeasible? (list (list node)) NDA)
-		   :hyperlink-generating-interest-link link))
-	    (ancestors (union basis (unionmapcar+ #'hypernode-ancestors basis))))
-       (when (or (not (member nil NDA))
-		 (non-circular (hypernode-sequent node) ancestors))  ;; this is a circularity test
-	 (dolist (n basis) (push link (hypernode-consequent-links n)))
-	 (if (null (hypernode-temporal-node node)) (setf (hypernode-temporal-node node) (hyperlink-temporal link)))
-	 (push link *hyperlinks*)
-	 (add-hyperlink link node depth)
-	 (if *log-on* (push node *reasoning-log*))
-	 (when (and (not defeasible?) basis (every #'hypernode-background-knowledge basis))
-	   (setf (hypernode-background-knowledge node) t))
-	 (let ((old-NDA (hypernode-nearest-defeasible-ancestors node)))
-	   (cond (defeasible?
-		   (pushnew (list node) (hypernode-nearest-defeasible-ancestors node) :test 'equal))
-		 (t
-		  (dolist (X NDA)
-		    (when
-                        (not (some #'(lambda (Y) (subsetp Y X))
-                                   (hypernode-nearest-defeasible-ancestors node)))
-		      (dolist (Y (hypernode-nearest-defeasible-ancestors node))
-			(when (subsetp X Y) (pull Y (hypernode-nearest-defeasible-ancestors node))))
-		      (push X (hypernode-nearest-defeasible-ancestors node))))))
-	   (when (not new?)
-	     (dolist (X (hypernode-nearest-defeasible-ancestors node))
-	       (invert-contradictions-retrospectively node X old-NDA))))
-	 (recursively-compute-nearest-defeasible-ancestors node)
-	 (setf (hypernode-ancestors node) (union ancestors (hypernode-ancestors node)))
-	 (recursively-compute-hypernode-ancestors node ancestors)
-	 (when (not new?) (invert-contradictions-from-new-hyperlink link instantiations))
-	 link))))
+    ;; (princ "Building link ") (princ *hyperlink-number*) (terpri) (break)
+    (incf *hyperlink-number*)
+    (when (not (some #'(lambda (L)
+			 (and (equal (hyperlink-basis L) basis)
+			      (eq (hyperlink-rule L) rule)))
+		     (hypernode-hyperlinks node)))
+      (let* ((new? (null (hypernode-hyperlinks node)))
+	     (reason-strength
+	      (cond ((keywordp rule) 1.0)
+		    ((numberp (reason-strength rule)) (reason-strength rule))
+		    (t (let ((r (funcall (reason-strength rule) binding basis)))
+			 (if (>= r 0) r 0)))))
+	     (link (make-hyperlink
+		    :hyperlink-number *hyperlink-number*
+		    :hyperlink-basis basis
+		    :hyperlink-clues clues
+		    :hyperlink-rule rule
+		    :hyperlink-target node
+		    :hyperlink-defeasible? defeasible?
+		    :hyperlink-temporal
+		    (if (or (and (not (keywordp rule)) (reason-temporal? rule))
+			    (some #'hypernode-temporal-node basis)) *cycle*)
+		    :hyperlink-reason-strength  reason-strength
+		    :hyperlink-binding binding
+		    :hyperlink-discount-factor
+		    (cond (discount discount)
+			  ((not (keywordp rule)) (reason-discount-factor rule))
+			  (t 1.0))
+		    :hyperlink-nearest-defeasible-ancestors
+		    (if defeasible? (list (list node)) NDA)
+		    :hyperlink-generating-interest-link link))
+	     (ancestors (union basis (unionmapcar+ #'hypernode-ancestors basis))))
+	(when (or (not (member nil NDA))
+		  (non-circular (hypernode-sequent node) ancestors))  ;; this is a circularity test
+	  (dolist (n basis) (push link (hypernode-consequent-links n)))
+	  (if (null (hypernode-temporal-node node)) (setf (hypernode-temporal-node node) (hyperlink-temporal link)))
+	  (push link *hyperlinks*)
+	  (add-hyperlink link node depth)
+	  (if *log-on* (push node *reasoning-log*))
+	  (when (and (not defeasible?) basis (every #'hypernode-background-knowledge basis))
+	    (setf (hypernode-background-knowledge node) t))
+	  (let ((old-NDA (hypernode-nearest-defeasible-ancestors node)))
+	    (cond (defeasible?
+		    (pushnew (list node) (hypernode-nearest-defeasible-ancestors node) :test 'equal))
+		  (t
+		   (dolist (X NDA)
+		     (when
+			 (not (some #'(lambda (Y) (subsetp Y X))
+				    (hypernode-nearest-defeasible-ancestors node)))
+		       (dolist (Y (hypernode-nearest-defeasible-ancestors node))
+			 (when (subsetp X Y) (pull Y (hypernode-nearest-defeasible-ancestors node))))
+		       (push X (hypernode-nearest-defeasible-ancestors node))))))
+	    (when (not new?)
+	      (dolist (X (hypernode-nearest-defeasible-ancestors node))
+		(invert-contradictions-retrospectively node X old-NDA))))
+	  (recursively-compute-nearest-defeasible-ancestors node)
+	  (setf (hypernode-ancestors node) (union ancestors (hypernode-ancestors node)))
+	  (recursively-compute-hypernode-ancestors node ancestors)
+	  (when (not new?) (invert-contradictions-from-new-hyperlink link instantiations))
+	  link))))
 
- (defun store-instantiated-premise
-     (reason node c-list binding instantiations ip remaining-premises &optional profile)
-   "This returns the instantiated-premise"
-   (cond
-    ((and (forwards-premise-p (car remaining-premises))
-	  (listp (fp-formula (car remaining-premises)))
-	  (equal (car (fp-formula (car remaining-premises))) 'define))
-     (let* ((var (mem2 (fp-formula (car remaining-premises))))
-	    (def-instantiator (fp-instantiator (car remaining-premises)))
-	    (new-binding (set-def-binding def-instantiator var binding)))
-       (cond ((cdr remaining-premises)
-	      (when (funcall** (fp-condition (car remaining-premises)) nil new-binding)
-		(store-instantiated-premise
-		 reason node c-list new-binding instantiations ip (cdr remaining-premises))))
-	     ((funcall** (fp-condition (car remaining-premises)) nil new-binding)
-	      (make-forwards-inference
-	       new-binding instantiations
-	       (if (clue? (ip-premise ip)) (ip-basis ip) (cons node (ip-basis ip)))
-	       (if (clue? (ip-premise ip)) (cons node (ip-clues ip)) (ip-clues ip))
-	       0 ip)))))
-    (t
-     (let ((premise (mem1 remaining-premises)))
-       (when (null profile)
-	 (setf profile (reason-code (funcall (fp-instantiator premise) binding) (fp-variables premise))))
-       (cond (profile
-	      (index-instantiated-premise
-	       reason premise profile node c-list binding instantiations
-	       ip *top-d-node* (cdr remaining-premises)))
-	     (t (store-instantiated-premise-at-d-node
-		 reason premise node c-list binding instantiations
-		 ip *top-d-node* (cdr remaining-premises))))))))
+  (defun store-instantiated-premise
+      (reason node c-list binding instantiations ip remaining-premises &optional profile)
+    "This returns the instantiated-premise"
+    (cond
+     ((and (forwards-premise-p (car remaining-premises))
+	   (listp (fp-formula (car remaining-premises)))
+	   (equal (car (fp-formula (car remaining-premises))) 'define))
+      (let* ((var (mem2 (fp-formula (car remaining-premises))))
+	     (def-instantiator (fp-instantiator (car remaining-premises)))
+	     (new-binding (set-def-binding def-instantiator var binding)))
+	(cond ((cdr remaining-premises)
+	       (when (funcall** (fp-condition (car remaining-premises)) nil new-binding)
+		 (store-instantiated-premise
+		  reason node c-list new-binding instantiations ip (cdr remaining-premises))))
+	      ((funcall** (fp-condition (car remaining-premises)) nil new-binding)
+	       (make-forwards-inference
+		new-binding instantiations
+		(if (clue? (ip-premise ip)) (ip-basis ip) (cons node (ip-basis ip)))
+		(if (clue? (ip-premise ip)) (cons node (ip-clues ip)) (ip-clues ip))
+		0 ip)))))
+     (t
+      (let ((premise (mem1 remaining-premises)))
+	(when (null profile)
+	  (setf profile (reason-code (funcall (fp-instantiator premise) binding) (fp-variables premise))))
+	(cond (profile
+	       (index-instantiated-premise
+		reason premise profile node c-list binding instantiations
+		ip *top-d-node* (cdr remaining-premises)))
+	      (t (store-instantiated-premise-at-d-node
+		  reason premise node c-list binding instantiations
+		  ip *top-d-node* (cdr remaining-premises))))))))
 
- (defun reason-substantively-from-first-instantiated-premise (node depth ip)
-   (multiple-value-bind
-    (binding instantiation)
-    (funcall (fp-binding-function (ip-premise ip)) (hypernode-formula node) (hypernode-variables node))
-    (let ((spec (premise-hypernode-specifier (ip-premise ip))))
-      (when spec (push (cons spec node) binding)))
-    (when (and instantiation (equal (fp-kind (ip-premise ip)) (hypernode-kind node))
-	       (funcall** (fp-condition (ip-premise ip)) node binding))
-      (cond
-       ((ip-remaining-premises ip)
-	(let* ((ip*
-		(store-instantiated-premise
-		 (ip-reason ip) node nil binding (list instantiation) ip (ip-remaining-premises ip)))
-	       (dn (ip-d-node ip*)))
-	  (reason-from-subsidiary-c-lists dn depth ip*)))
-       (t (make-forwards-inference
-	   binding (if (not (clue? (ip-premise ip))) (list instantiation))
-	   (if (not (clue? (ip-premise ip))) (list node))
-	   (if (clue? (ip-premise ip)) (list node))
-	   depth ip))))))
+  (defun reason-substantively-from-first-instantiated-premise (node depth ip)
+    (multiple-value-bind
+	(binding instantiation)
+	(funcall (fp-binding-function (ip-premise ip)) (hypernode-formula node) (hypernode-variables node))
+      (let ((spec (premise-hypernode-specifier (ip-premise ip))))
+	(when spec (push (cons spec node) binding)))
+      (when (and instantiation (equal (fp-kind (ip-premise ip)) (hypernode-kind node))
+		 (funcall** (fp-condition (ip-premise ip)) node binding))
+	(cond
+	 ((ip-remaining-premises ip)
+	  (let* ((ip*
+		  (store-instantiated-premise
+		   (ip-reason ip) node nil binding (list instantiation) ip (ip-remaining-premises ip)))
+		 (dn (ip-d-node ip*)))
+	    (reason-from-subsidiary-c-lists dn depth ip*)))
+	 (t (make-forwards-inference
+	     binding (if (not (clue? (ip-premise ip))) (list instantiation))
+	     (if (not (clue? (ip-premise ip))) (list node))
+	     (if (clue? (ip-premise ip)) (list node))
+	     depth ip))))))
 
- (defun reason-from-subsidiary-c-lists (d-node depth ip)
-   (dolist (c-list (d-node-c-lists d-node))
-     (when (c-list-processed-nodes c-list)
-       (reason-substantively-from-non-initial-instantiated-premise c-list depth ip)))
-   (dolist (test (d-node-discrimination-tests d-node))
-     (reason-from-subsidiary-c-lists (cdr test) depth ip)))
+  (defun reason-from-subsidiary-c-lists (d-node depth ip)
+    (dolist (c-list (d-node-c-lists d-node))
+      (when (c-list-processed-nodes c-list)
+	(reason-substantively-from-non-initial-instantiated-premise c-list depth ip)))
+    (dolist (test (d-node-discrimination-tests d-node))
+      (reason-from-subsidiary-c-lists (cdr test) depth ip)))
 
- (defun queue-supposition (supposition instance-supposition e-vars discount-factor interest)
-   "This can be blocked by a prior reductio-supposition, but this then converts it so that it is no longer deductive-only.  Any hypernode-descendants not inferred from other deductive-only nodes are made not deductive-only, and all defeasible forwards-rules are applied to them."
-   (let ((sup (find-if #'(lambda (N) (equal (hypernode-formula N) supposition))
-		       *non-reductio-supposition-nodes*)))
-     (cond (sup
-	    (incf (hypernode-readopted-supposition sup))
-	    (push interest (hypernode-generating-interests sup))
-	    (push sup (interest-generated-suppositions interest))
-	    (when (and (hypernode-deductive-only sup) (not (interest-deductive interest)))
-	      (let ((nodes (convert-from-deductive-only sup)))
-		(dolist (C nodes)
-		  (apply-forwards-defeasible-reasons C))))
-	    (values sup nil))
-	   (t
-	    (setf sup (subsuming-supposition supposition))  ;; an hypernode
-	    (cond ((null sup)
-		   (queue-non-reductio-supposition
-		    supposition instance-supposition e-vars discount-factor interest))
-		  ((reductio-supposition sup)
-		   (incf (hypernode-readopted-supposition sup))
-		   (push interest (hypernode-generating-interests sup))
-		   (convert-reductio-supposition sup discount-factor)
-		   (values sup t)))))))
-
- (defun queue-non-reductio-defeater-supposition (supposition)
-   (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
-   (let* ((sequent (list (list supposition) supposition))
-	  (complexity
-	   (max 1 (* 2 (formula-complexity supposition))))
-	  (node
-	   (make-hypernode
-	    :hypernode-number (incf *hypernode-number*)
-	    :hypernode-sequent sequent
-	    :hypernode-formula supposition
-	    :hypernode-supposition (list supposition)
-	    :hypernode-kind :inference
-	    :hypernode-nearest-defeasible-ancestors (list nil)
-	    :hypernode-justification :supposition
-	    :hypernode-maximal-degree-of-justification 1.0
-	    :hypernode-degree-of-justification 1.0
-	    :hypernode-discounted-node-strength 1.0
-	    :hypernode-non-reductio-supposition? t))
-	  (queue-node
-	   (make-inference-queue-node
-	    :queue-number (incf *queue-number*)
-	    :queue-item node
-	    :queue-item-kind :conclusion
-	    :queue-item-complexity complexity
-	    :queue-discounted-strength 1.0
-	    :queue-degree-of-preference (/ 1.0 complexity))))
-     (setf (hypernode-non-reductio-supposition node) (list (cons supposition node)))
-     (setf (hypernode-queue-node node) queue-node)
-     (store-hypernode node supposition)
-     (push node *hypergraph*)
-     (push node *non-reductio-supposition-nodes*)
-     (if *log-on* (push node *reasoning-log*))
-     (when *display?* (display-unsupported-hypernode node))
-     (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
-     (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
-     (when (and *display?* *graphics-on*)
-       (when *graphics-pause* (pause-graphics))
-       (draw-n node *og* *nodes-displayed*) (push node *nodes-displayed*))
-     node))
-
- (defun queue-non-reductio-supposition
-     (supposition instance-supposition e-vars discount-factor interest)
-   (let* ((sequent (list instance-supposition supposition))
-	  (deductive-only (interest-deductive interest)))
-     (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
-     (let* ((complexity
-	     (max 1 (* 2 (formula-complexity supposition))))
-	    (priority (* discount-factor (interest-priority interest)))
-	    (node
-	     (make-hypernode
-	      :hypernode-number (incf *hypernode-number*)
-	      :hypernode-sequent sequent
-	      :hypernode-formula supposition
-	      :hypernode-supposition instance-supposition
-	      :hypernode-kind :inference
-	      :hypernode-nearest-defeasible-ancestors (list nil)
-	      :hypernode-justification :supposition
-	      :hypernode-maximal-degree-of-justification 1.0
-	      :hypernode-degree-of-justification 1.0
-	      :hypernode-discounted-node-strength priority
-	      :hypernode-deductive-only deductive-only
-	      :hypernode-variables e-vars
-	      :hypernode-supposition-variables e-vars
-	      :hypernode-discount-factor discount-factor
-	      :hypernode-generating-interests (list interest)
-	      :hypernode-non-reductio-supposition? t))
-	    (queue-node
-	     (make-inference-queue-node
-	      :queue-number (incf *queue-number*)
-	      :queue-item node
-	      :queue-item-kind :conclusion
-	      :queue-discounted-strength priority
-	      :queue-item-complexity complexity
-	      :queue-degree-of-preference (/ discount-factor complexity))))
-       (setf (hypernode-non-reductio-supposition node) (list (cons (mem1 instance-supposition) node)))
-       (setf (hypernode-queue-node node) queue-node)
-       (store-hypernode node (sequent-formula sequent))
-       (push node (interest-generated-suppositions interest))
-       (push node *hypergraph*)
-       (push node *non-reductio-supposition-nodes*)
-       (if *log-on* (push node *reasoning-log*))
-       (when *display?* (display-unsupported-hypernode node))
-       (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
-       (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
-       (when (and *display?* *graphics-on*)
-	 (when *graphics-pause* (pause-graphics))
-	 (draw-n node *og* *nodes-displayed*) (push node *nodes-displayed*))
-       (values node t))))
-
- (defun convert-reductio-supposition (sup discount-factor)
-   "This must recompute hypernode-reductio-ancestors, non-reductio-suppositions, deductive-only-status, and apply forwards defeasible reasons."
-   (setf (hypernode-reductio-ancestors sup) (list (cons (hypernode-formula sup) sup)))
-					; (setf (hypernode-non-reductio-supposition sup) nil)
-   (setf (hypernode-non-reductio-supposition? sup) t)
-   (let ((Q (hypernode-queue-node sup)))
-     (when Q
-       (setf (queue-degree-of-preference Q) (* discount-factor (/ 1 (queue-item-complexity Q))))
-       (setf *inference-queue*
-	     (ordered-insert Q (remove Q *inference-queue*) #'i-preferred))))
-   (let ((nodes
-	  (convert-from-deductive-only sup)))
-     (dolist (C nodes)
-       (when (deductive-in C sup)
-	 (let ((nr (find-if #'(lambda (x) (equal (cdr x) sup)) (hypernode-non-reductio-supposition C))))
-	   (when nr
-	     (pull nr (hypernode-non-reductio-supposition C))
-	     (push nr (hypernode-reductio-ancestors C))))))
-     (dolist (C nodes)
-       (apply-forwards-defeasible-reasons C))))
-
- (defun make-forwards-inference (binding instantiations basis clues depth ip)
-					; (when (eql *hypernode-number* 284) (setf b binding in instantiations bs basis cl clues d depth i ip) (break))
-   ;;  (step (make-forwards-inference b in bs cl d i))
-   (when *trace* (indent depth) (princ "MAKE-FORWARDS-INFERENCE from instantiated-premise ")
-	 (princ (ip-number ip)) (terpri))
-   (cond
-    ((reason-backwards-premises (ip-reason ip))
-     (let ((formulas (funcall (reason-conclusions-function (ip-reason ip)) binding))
-	   (sup nil)
-	   (instantiations+ instantiations)
-	   (variables (unionmapcar+ #'hypernode-variables basis))
-	   (new-vars nil))
-       (dolist (b basis)
-	 (let ((b-sup (hypernode-supposition b))
-	       (b-vars (setdifference (hypernode-supposition-variables b) (hypernode-variables b))))
-	   (dolist (var b-vars)
-	     (when (mem var variables)
-	       (let ((new-var (make-interest-variable)))
-		 (push new-var new-vars)
-		 (setf b-sup (=subst new-var var b-sup)))))
-	   (setf sup (union= sup (match-sublis (mem1 instantiations+) b-sup)))
-	   (setf instantiations+ (cdr instantiations+))))
-       (setf sup
-	     (remove-if
-	      #'(lambda (s)
-		  (some #'(lambda (b) (and (not (equal s b)) (match s b new-vars))) sup)) sup))
-       (dolist (formula formulas)
-	 (let* ((sequent (list sup (car formula)))
-		(deductive-node (validating-deductive-node sequent (not (reason-defeasible-rule (ip-reason ip))))))
-	   (cond (deductive-node
-		  (draw-conclusion
-		   (car formula) (cons deductive-node basis) (ip-reason ip) (cons t instantiations) 1 depth
-		   nil (cdr formula) :binding binding :clues clues))
-		 (t
-		  (let ((degree
-			 (minimum
-			  (cons (applied-forwards-reason-strength (ip-reason ip) binding basis)
-				(append
-				 (mapcar #'hypernode-degree-of-justification (ip-basis ip))
-				 (mapcar #'hypernode-degree-of-justification (ip-clues ip))
-				 (mapcar #'query-strength *ultimate-epistemic-interests*))))))
-		    (construct-initial-interest-link
-		     basis instantiations (ip-reason ip) nil depth degree binding sup
-		     :remaining-premises (reason-backwards-premises (ip-reason ip)) :clues clues))))))))
-    (t
-     (dolist (formula (funcall (reason-conclusions-function (ip-reason ip)) binding))
-       (draw-conclusion
-	(car formula) basis (ip-reason ip) instantiations (reason-discount-factor (ip-reason ip)) depth nil
-	(cdr formula) :binding binding :clues clues)))))
-
- (defun reason-substantively-from-non-initial-instantiated-premise
-     (c-list depth ip &optional node)
-					; (when (eq ip (ip 29)) (setf n node d depth p ip c c-list) (break))
-   ;; (step (reason-substantively-from-non-initial-instantiated-premise c d p n))
-   (let* ((vars (if node (hypernode-variables node) (c-list-variables c-list)))
-	  (formula (if node (hypernode-formula node) (c-list-formula c-list))))
-     (multiple-value-bind
-      (binding0 instantiation0)
-      (funcall (fp-binding-function (ip-premise ip)) formula vars)
-      (when instantiation0
-	(let ((unifier
-	       (binding-unifier
-		binding0 (ip-binding ip)
-		(ip-used-premise-variables ip) vars (ip-used-variables ip))))
-	  (when unifier
-	    (let
-                ((binding
-		  (rectify-binding binding0 unifier ip))
-                 (instantiations
-		  (cons (merge-matches* (mem1 unifier) instantiation0)
-			(mapcar #'(lambda (in) (merge-matches* (mem2 unifier) in))
-				(ip-instantiations ip))))
-                 (spec (premise-hypernode-specifier (ip-premise ip))))
-	      (let ((nodes nil))
-		(when
-                    (or
-		     (and node
-			  (equal (fp-kind (ip-premise ip)) (hypernode-kind node))
-			  (funcall** (fp-condition (ip-premise ip)) node
-				     (if spec (cons (cons spec node) binding) binding))
-			  (setf nodes (list node)))
-		     (and (null node)
-			  (setf nodes
-				(subset
-				 #'(lambda (c)
-				     (and (equal (fp-kind (ip-premise ip)) (hypernode-kind c))
-					  (funcall** (fp-condition (ip-premise ip)) c
-						     (if spec (cons (cons spec c) binding) binding))))
-				 (c-list-processed-nodes c-list)))))
-		  (cond
-		   ((ip-remaining-premises ip)
-		    (dolist (node nodes)
-		      (let* ((ip*
-			      (store-instantiated-premise
-			       (ip-reason ip) node c-list
-			       (if spec (cons (cons spec node) binding) binding)
-			       instantiations ip (ip-remaining-premises ip))))
-			(when ip* (reason-from-subsidiary-c-lists (ip-d-node ip*) depth ip*)))))
-		   (t
-		    (dolist (node nodes)
-		      (make-forwards-inference
-		       binding instantiations
-		       (if (clue? (ip-premise ip)) (ip-basis ip) (cons node (ip-basis ip)))
-		       (if (clue? (ip-premise ip)) (cons node (ip-clues ip)))
-		       depth ip)))))))))))))
-
- (defun reason-defeasibly-from-instantiated-premises (node d-node)
-   (dolist (ip (d-node-forwards-reasons d-node))
-     (let ((reason (ip-reason ip)))
-       (when (reason-defeasible-rule reason)
-	 (let ((reason-function (and (null (ip-basis ip)) (reason-function reason))))
-	   (when (hypernode-cancelled-node node) (throw 'apply-forwards-reasons nil))
-	   (when (not (hypernode-deductive-only node))
-	     (cond
-	      (reason-function (funcall reason-function node 0 ip))
-	      ((ip-basis ip)
-	       (reason-substantively-from-non-initial-instantiated-premise nil 0 ip node))
-	      (t (reason-substantively-from-first-instantiated-premise node 0 ip)))))))))
-
- (defun reason-defeasibly-from-dominant-premise-nodes (node d-node)
-   (reason-defeasibly-from-instantiated-premises node d-node)
-   (let ((pn (d-node-parent d-node)))
-     (when pn (reason-defeasibly-from-dominant-premise-nodes node pn))))
-
- (defun apply-forwards-defeasible-reasons (node)
-   (catch 'apply-forwards-defeasible-reasons
-     (let* ((c-list (hypernode-c-list node))
-	    (d-node (c-list-d-node c-list)))
-       (reason-defeasibly-from-dominant-premise-nodes node d-node))))
-
- (defun queue-defeater-supposition (sup)
-   (let ((sup-node (find-if #'(lambda (N) (equal (hypernode-formula N) sup))
-			    *non-reductio-supposition-nodes*)))
-     (cond (sup-node
-	    (incf (hypernode-readopted-supposition sup-node))
-	    (when (hypernode-deductive-only sup-node)
-	      (let ((nodes (convert-from-deductive-only sup-node)))
-		(dolist (C nodes)
-		  (apply-forwards-defeasible-reasons C)))))
-	   (t
-	    (setf sup-node (subsuming-supposition sup))  ;; an hypernode
-	    (cond ((null sup-node)
-		   (setf sup-node
-			 (queue-non-reductio-defeater-supposition sup)))
-		  ((reductio-supposition sup-node)
-		   (incf (hypernode-readopted-supposition sup-node))
-		   (convert-reductio-supposition sup-node 1.0)))))))
-
- (defun instantiate-defeater (undercutting-interest defeater antecedent* link reverse-binding)
-					;(setf u undercutting-interest d defeater a antecedent* l link r reverse-binding)
-   ;; (step (instantiate-defeater u d a l r))
-   (let ((binding (match-sublis reverse-binding (hyperlink-binding link) :test 'equal)))
-     (cond
-      (antecedent*
-       (let*
-	   ((i-link
-	     (construct-initial-interest-link
-	      nil nil adjunction undercutting-interest 0 *base-priority*
-	      (list (cons 'p defeater) (cons 'q antecedent*)) (interest-supposition undercutting-interest)))
-	    (interest (link-interest i-link)))
-	 (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
-	   (when (and (member reason *backwards-reasons*) (funcall* (b-reason-condition reason) binding))
-	     (let ((supposition (interest-supposition interest)))
-	       (cond
-		((reason-forwards-premises reason)
-		 (construct-interest-scheme
-		  reason nil interest binding nil (reason-forwards-premises reason) nil 1
-		  *base-priority* supposition))
-		(t (make-backwards-inference
-		    reason binding interest 1 *base-priority* nil nil nil supposition))))))))
-      (t
-       (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
-	 (when (and (member reason *backwards-reasons*) (funcall* (b-reason-condition reason) binding))
-	   (let ((supposition (interest-supposition undercutting-interest)))
-	     (cond
-	      ((reason-forwards-premises reason)
-	       (construct-interest-scheme
-		reason nil undercutting-interest binding nil (reason-forwards-premises reason) nil 1
-		*base-priority* supposition))
-	      (t (make-backwards-inference
-		  reason binding undercutting-interest 1 *base-priority* nil nil nil supposition))))))))))
-
- (defun make-undercutting-defeater (base formula supposition antecedent* link reverse-binding)
-					; (when (eql link 2812) (setf b base f formula s supposition a antecedent* l link rb reverse-binding) (break))
-   ;; (step (make-undercutting-defeater b f s a l rb))
-   (let* ((defeater (make-@ (gen-conjunction base) formula))
-	  (undercutting-defeater
-	   (cond (antecedent* (conj defeater antecedent*))
-		 (t defeater)))
-	  (undercutting-variables
-	   (formula-hypernode-variables undercutting-defeater)))
-     (multiple-value-bind
-      (undercutting-interest i-list)
-      (interest-for (list supposition undercutting-defeater)
-		    undercutting-variables nil nil)
-      (cond ((null undercutting-interest)
-	     (setf undercutting-interest
-		   (make-interest
-		    :interest-number (incf *interest-number*)
-		    :interest-sequent (list supposition undercutting-defeater)
-		    :interest-formula undercutting-defeater
-		    :interest-supposition supposition
-		    :interest-variables undercutting-variables
-		    :interest-supposition-variables (supposition-variables supposition)
-		    :interest-defeatees (list link)
-		    :interest-priority *base-priority*
-		    :interest-defeater-binding (hyperlink-binding link)
-		    :interest-generating-defeat-nodes (list (hyperlink-target link))))
-	     (store-interest undercutting-interest i-list)
-	     (pushnew undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
-	     (when *display?*
-	       (display-interest undercutting-interest)
-	       (princ
-		"                                        Of interest as defeater for hyperlink ")
-	       (princ (hyperlink-number link)) (terpri) (terpri))
-	     (when *log-on* (push undercutting-interest *reasoning-log*))
-	     (when (and *display?* *graphics-on* *graph-interests*)
-	       (draw-i undercutting-interest *og*))
-	     (instantiate-defeater
-	      undercutting-interest defeater antecedent* link reverse-binding))
+  (defun queue-supposition (supposition instance-supposition e-vars discount-factor interest)
+    "This can be blocked by a prior reductio-supposition, but this then converts it so that it is no longer deductive-only.  Any hypernode-descendants not inferred from other deductive-only nodes are made not deductive-only, and all defeasible forwards-rules are applied to them."
+    (let ((sup (find-if #'(lambda (N) (equal (hypernode-formula N) supposition))
+			*non-reductio-supposition-nodes*)))
+      (cond (sup
+	     (incf (hypernode-readopted-supposition sup))
+	     (push interest (hypernode-generating-interests sup))
+	     (push sup (interest-generated-suppositions interest))
+	     (when (and (hypernode-deductive-only sup) (not (interest-deductive interest)))
+	       (let ((nodes (convert-from-deductive-only sup)))
+		 (dolist (C nodes)
+		   (apply-forwards-defeasible-reasons C))))
+	     (values sup nil))
 	    (t
-	     (readopt-interest undercutting-interest (list link))
-	     (push undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
-	     (push (hyperlink-target link) (interest-generating-defeat-nodes undercutting-interest))
-	     (setf (interest-defeatees undercutting-interest)
-		   (cons link (interest-defeatees undercutting-interest)))))
-      (dolist (node (unifying-nodes undercutting-interest))
-	(when (subsetp= (hypernode-supposition node) supposition)
-	  (when *display?*
-	    (princ "  Node # ") (princ (hypernode-number node))
-	    (princ " defeats link # ")
-	    (princ (hyperlink-number link)) (terpri))
-	  (let ((DL (build-hyper-defeat-link node link)))
-	    (pushnew DL (hyperlink-defeaters link))
-	    (pushnew node (interest-discharging-nodes undercutting-interest))
-	    (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
+	     (setf sup (subsuming-supposition supposition))  ;; an hypernode
+	     (cond ((null sup)
+		    (queue-non-reductio-supposition
+		     supposition instance-supposition e-vars discount-factor interest))
+		   ((reductio-supposition sup)
+		    (incf (hypernode-readopted-supposition sup))
+		    (push interest (hypernode-generating-interests sup))
+		    (convert-reductio-supposition sup discount-factor)
+		    (values sup t)))))))
 
- (defun discharge-reductios (node old-degree depth d-interests)
-   (when *trace* (indent depth) (princ "DISCHARGE-REDUCTIOS-FROM ")
-	 (princ node) (terpri))
-   (when
-       (not (some
-             #'(lambda (il) (member (mem1 il) d-interests))
-             (hypernode-discharged-interests node)))
-     (setf (hypernode-reductios-discharged node) t)
-     (let ((reductio-ancestors (hypernode-reductio-ancestors node))
-	   (Y0 (hypernode-supposition node)))
-       (discharge-fortuitous-reductios node d-interests (1+ depth))
-       (dolist (il (hypernode-discharged-interests node))
-	 (let* ((interest (mem1 il))
-		(direct-reductio-interest (interest-direct-reductio interest))
-		(unifier (mem2 il))
-		(unifiers (mem3 il))
-		;; rewrite supposition-variables to avoid collision with formula-variables
-		(new-vars
-		 (mapcar #'(lambda (v) (cons v (make-interest-variable)))
-			 (intersection (interest-variables interest)
-				       (set-difference (hypernode-supposition-variables node)
-						       (hypernode-variables node)))))
-		(Y1 (remove-duplicates=
-		     (match-sublis (mem1 unifier) (sublis new-vars Y0)))))
+  (defun queue-non-reductio-defeater-supposition (supposition)
+    (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
+    (let* ((sequent (list (list supposition) supposition))
+	   (complexity
+	    (max 1 (* 2 (formula-complexity supposition))))
+	   (node
+	    (make-hypernode
+	     :hypernode-number (incf *hypernode-number*)
+	     :hypernode-sequent sequent
+	     :hypernode-formula supposition
+	     :hypernode-supposition (list supposition)
+	     :hypernode-kind :inference
+	     :hypernode-nearest-defeasible-ancestors (list nil)
+	     :hypernode-justification :supposition
+	     :hypernode-maximal-degree-of-justification 1.0
+	     :hypernode-degree-of-justification 1.0
+	     :hypernode-discounted-node-strength 1.0
+	     :hypernode-non-reductio-supposition? t))
+	   (queue-node
+	    (make-inference-queue-node
+	     :queue-number (incf *queue-number*)
+	     :queue-item node
+	     :queue-item-kind :conclusion
+	     :queue-item-complexity complexity
+	     :queue-discounted-strength 1.0
+	     :queue-degree-of-preference (/ 1.0 complexity))))
+      (setf (hypernode-non-reductio-supposition node) (list (cons supposition node)))
+      (setf (hypernode-queue-node node) queue-node)
+      (store-hypernode node supposition)
+      (push node *hypergraph*)
+      (push node *non-reductio-supposition-nodes*)
+      (if *log-on* (push node *reasoning-log*))
+      (when *display?* (display-unsupported-hypernode node))
+      (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+      (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
+      (when (and *display?* *graphics-on*)
+	(when *graphics-pause* (pause-graphics))
+	(draw-n node *og* *nodes-displayed*) (push node *nodes-displayed*))
+      node))
+
+  (defun queue-non-reductio-supposition
+      (supposition instance-supposition e-vars discount-factor interest)
+    (let* ((sequent (list instance-supposition supposition))
+	   (deductive-only (interest-deductive interest)))
+      (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
+      (let* ((complexity
+	      (max 1 (* 2 (formula-complexity supposition))))
+	     (priority (* discount-factor (interest-priority interest)))
+	     (node
+	      (make-hypernode
+	       :hypernode-number (incf *hypernode-number*)
+	       :hypernode-sequent sequent
+	       :hypernode-formula supposition
+	       :hypernode-supposition instance-supposition
+	       :hypernode-kind :inference
+	       :hypernode-nearest-defeasible-ancestors (list nil)
+	       :hypernode-justification :supposition
+	       :hypernode-maximal-degree-of-justification 1.0
+	       :hypernode-degree-of-justification 1.0
+	       :hypernode-discounted-node-strength priority
+	       :hypernode-deductive-only deductive-only
+	       :hypernode-variables e-vars
+	       :hypernode-supposition-variables e-vars
+	       :hypernode-discount-factor discount-factor
+	       :hypernode-generating-interests (list interest)
+	       :hypernode-non-reductio-supposition? t))
+	     (queue-node
+	      (make-inference-queue-node
+	       :queue-number (incf *queue-number*)
+	       :queue-item node
+	       :queue-item-kind :conclusion
+	       :queue-discounted-strength priority
+	       :queue-item-complexity complexity
+	       :queue-degree-of-preference (/ discount-factor complexity))))
+	(setf (hypernode-non-reductio-supposition node) (list (cons (mem1 instance-supposition) node)))
+	(setf (hypernode-queue-node node) queue-node)
+	(store-hypernode node (sequent-formula sequent))
+	(push node (interest-generated-suppositions interest))
+	(push node *hypergraph*)
+	(push node *non-reductio-supposition-nodes*)
+	(if *log-on* (push node *reasoning-log*))
+	(when *display?* (display-unsupported-hypernode node))
+	(discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+	(setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
+	(when (and *display?* *graphics-on*)
+	  (when *graphics-pause* (pause-graphics))
+	  (draw-n node *og* *nodes-displayed*) (push node *nodes-displayed*))
+	(values node t))))
+
+  (defun convert-reductio-supposition (sup discount-factor)
+    "This must recompute hypernode-reductio-ancestors, non-reductio-suppositions, deductive-only-status, and apply forwards defeasible reasons."
+    (setf (hypernode-reductio-ancestors sup) (list (cons (hypernode-formula sup) sup)))
+					; (setf (hypernode-non-reductio-supposition sup) nil)
+    (setf (hypernode-non-reductio-supposition? sup) t)
+    (let ((Q (hypernode-queue-node sup)))
+      (when Q
+	(setf (queue-degree-of-preference Q) (* discount-factor (/ 1 (queue-item-complexity Q))))
+	(setf *inference-queue*
+	      (ordered-insert Q (remove Q *inference-queue*) #'i-preferred))))
+    (let ((nodes
+	   (convert-from-deductive-only sup)))
+      (dolist (C nodes)
+	(when (deductive-in C sup)
+	  (let ((nr (find-if #'(lambda (x) (equal (cdr x) sup)) (hypernode-non-reductio-supposition C))))
+	    (when nr
+	      (pull nr (hypernode-non-reductio-supposition C))
+	      (push nr (hypernode-reductio-ancestors C))))))
+      (dolist (C nodes)
+	(apply-forwards-defeasible-reasons C))))
+
+  (defun make-forwards-inference (binding instantiations basis clues depth ip)
+    (when *trace* (indent depth) (princ "MAKE-FORWARDS-INFERENCE from instantiated-premise ")
+	  (princ (ip-number ip)) (terpri))
+    (cond
+     ((reason-backwards-premises (ip-reason ip))
+      (let ((formulas (funcall (reason-conclusions-function (ip-reason ip)) binding))
+	    (sup nil)
+	    (instantiations+ instantiations)
+	    (variables (unionmapcar+ #'hypernode-variables basis))
+	    (new-vars nil))
+	(dolist (b basis)
+	  (let ((b-sup (hypernode-supposition b))
+		(b-vars (setdifference (hypernode-supposition-variables b) (hypernode-variables b))))
+	    (dolist (var b-vars)
+	      (when (mem var variables)
+		(let ((new-var (make-interest-variable)))
+		  (push new-var new-vars)
+		  (setf b-sup (=subst new-var var b-sup)))))
+	    (setf sup (union= sup (match-sublis (mem1 instantiations+) b-sup)))
+	    (setf instantiations+ (cdr instantiations+))))
+	(setf sup
+	      (remove-if
+	       #'(lambda (s)
+		   (some #'(lambda (b) (and (not (equal s b)) (match s b new-vars))) sup)) sup))
+	(dolist (formula formulas)
+	  (let* ((sequent (list sup (car formula)))
+		 (deductive-node (validating-deductive-node sequent (not (reason-defeasible-rule (ip-reason ip))))))
+	    (cond (deductive-node
+		   (draw-conclusion
+		    (car formula) (cons deductive-node basis) (ip-reason ip) (cons t instantiations) 1 depth
+		    nil (cdr formula) :binding binding :clues clues))
+		  (t
+		   (let ((degree
+			  (minimum
+			   (cons (applied-forwards-reason-strength (ip-reason ip) binding basis)
+				 (append
+				  (mapcar #'hypernode-degree-of-justification (ip-basis ip))
+				  (mapcar #'hypernode-degree-of-justification (ip-clues ip))
+				  (mapcar #'query-strength *ultimate-epistemic-interests*))))))
+		     (construct-initial-interest-link
+		      basis instantiations (ip-reason ip) nil depth degree binding sup
+		      :remaining-premises (reason-backwards-premises (ip-reason ip)) :clues clues))))))))
+     (t
+      (dolist (formula (funcall (reason-conclusions-function (ip-reason ip)) binding))
+	(draw-conclusion
+	 (car formula) basis (ip-reason ip) instantiations (reason-discount-factor (ip-reason ip)) depth nil
+	 (cdr formula) :binding binding :clues clues)))))
+
+  (defun reason-substantively-from-non-initial-instantiated-premise
+      (c-list depth ip &optional node)
+					; (when (eq ip (ip 29)) (setf n node d depth p ip c c-list) (break))
+    ;; (step (reason-substantively-from-non-initial-instantiated-premise c d p n))
+    (let* ((vars (if node (hypernode-variables node) (c-list-variables c-list)))
+	   (formula (if node (hypernode-formula node) (c-list-formula c-list))))
+      (multiple-value-bind
+	  (binding0 instantiation0)
+	  (funcall (fp-binding-function (ip-premise ip)) formula vars)
+	(when instantiation0
+	  (let ((unifier
+		 (binding-unifier
+		  binding0 (ip-binding ip)
+		  (ip-used-premise-variables ip) vars (ip-used-variables ip))))
+	    (when unifier
+	      (let
+		  ((binding
+		    (rectify-binding binding0 unifier ip))
+		   (instantiations
+		    (cons (merge-matches* (mem1 unifier) instantiation0)
+			  (mapcar #'(lambda (in) (merge-matches* (mem2 unifier) in))
+				  (ip-instantiations ip))))
+		   (spec (premise-hypernode-specifier (ip-premise ip))))
+		(let ((nodes nil))
+		  (when
+		      (or
+		       (and node
+			    (equal (fp-kind (ip-premise ip)) (hypernode-kind node))
+			    (funcall** (fp-condition (ip-premise ip)) node
+				       (if spec (cons (cons spec node) binding) binding))
+			    (setf nodes (list node)))
+		       (and (null node)
+			    (setf nodes
+				  (subset
+				   #'(lambda (c)
+				       (and (equal (fp-kind (ip-premise ip)) (hypernode-kind c))
+					    (funcall** (fp-condition (ip-premise ip)) c
+						       (if spec (cons (cons spec c) binding) binding))))
+				   (c-list-processed-nodes c-list)))))
+		    (cond
+		     ((ip-remaining-premises ip)
+		      (dolist (node nodes)
+			(let* ((ip*
+				(store-instantiated-premise
+				 (ip-reason ip) node c-list
+				 (if spec (cons (cons spec node) binding) binding)
+				 instantiations ip (ip-remaining-premises ip))))
+			  (when ip* (reason-from-subsidiary-c-lists (ip-d-node ip*) depth ip*)))))
+		     (t
+		      (dolist (node nodes)
+			(make-forwards-inference
+			 binding instantiations
+			 (if (clue? (ip-premise ip)) (ip-basis ip) (cons node (ip-basis ip)))
+			 (if (clue? (ip-premise ip)) (cons node (ip-clues ip)))
+			 depth ip)))))))))))))
+
+  (defun reason-defeasibly-from-instantiated-premises (node d-node)
+    (dolist (ip (d-node-forwards-reasons d-node))
+      (let ((reason (ip-reason ip)))
+	(when (reason-defeasible-rule reason)
+	  (let ((reason-function (and (null (ip-basis ip)) (reason-function reason))))
+	    (when (hypernode-cancelled-node node) (throw 'apply-forwards-reasons nil))
+	    (when (not (hypernode-deductive-only node))
+	      (cond
+	       (reason-function (funcall reason-function node 0 ip))
+	       ((ip-basis ip)
+		(reason-substantively-from-non-initial-instantiated-premise nil 0 ip node))
+	       (t (reason-substantively-from-first-instantiated-premise node 0 ip)))))))))
+
+  (defun reason-defeasibly-from-dominant-premise-nodes (node d-node)
+    (reason-defeasibly-from-instantiated-premises node d-node)
+    (let ((pn (d-node-parent d-node)))
+      (when pn (reason-defeasibly-from-dominant-premise-nodes node pn))))
+
+  (defun apply-forwards-defeasible-reasons (node)
+    (catch 'apply-forwards-defeasible-reasons
+      (let* ((c-list (hypernode-c-list node))
+	     (d-node (c-list-d-node c-list)))
+	(reason-defeasibly-from-dominant-premise-nodes node d-node))))
+
+  (defun queue-defeater-supposition (sup)
+    (let ((sup-node (find-if #'(lambda (N) (equal (hypernode-formula N) sup))
+			     *non-reductio-supposition-nodes*)))
+      (cond (sup-node
+	     (incf (hypernode-readopted-supposition sup-node))
+	     (when (hypernode-deductive-only sup-node)
+	       (let ((nodes (convert-from-deductive-only sup-node)))
+		 (dolist (C nodes)
+		   (apply-forwards-defeasible-reasons C)))))
+	    (t
+	     (setf sup-node (subsuming-supposition sup))  ;; an hypernode
+	     (cond ((null sup-node)
+		    (setf sup-node
+			  (queue-non-reductio-defeater-supposition sup)))
+		   ((reductio-supposition sup-node)
+		    (incf (hypernode-readopted-supposition sup-node))
+		    (convert-reductio-supposition sup-node 1.0)))))))
+
+  (defun instantiate-defeater (undercutting-interest defeater antecedent* link reverse-binding)
+    (let ((binding (match-sublis reverse-binding (hyperlink-binding link) :test 'equal)))
+      (cond
+       (antecedent*
+	(let*
+	    ((i-link
+	      (construct-initial-interest-link
+	       nil nil adjunction undercutting-interest 0 *base-priority*
+	       (list (cons 'p defeater) (cons 'q antecedent*)) (interest-supposition undercutting-interest)))
+	     (interest (link-interest i-link)))
+	  (dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
+	    (when (and (member reason *backwards-reasons*) (funcall* (b-reason-condition reason) binding))
+	      (let ((supposition (interest-supposition interest)))
+		(cond
+		 ((reason-forwards-premises reason)
+		  (construct-interest-scheme
+		   reason nil interest binding nil (reason-forwards-premises reason) nil 1
+		   *base-priority* supposition))
+		 (t (make-backwards-inference
+		     reason binding interest 1 *base-priority* nil nil nil supposition))))))))
+       (t
+	(dolist (reason (reason-undercutting-defeaters (hyperlink-rule link)))
+	  (when (and (member reason *backwards-reasons*) (funcall* (b-reason-condition reason) binding))
+	    (let ((supposition (interest-supposition undercutting-interest)))
+	      (cond
+	       ((reason-forwards-premises reason)
+		(construct-interest-scheme
+		 reason nil undercutting-interest binding nil (reason-forwards-premises reason) nil 1
+		 *base-priority* supposition))
+	       (t (make-backwards-inference
+		   reason binding undercutting-interest 1 *base-priority* nil nil nil supposition))))))))))
+
+  (defun make-undercutting-defeater (base formula supposition antecedent* link reverse-binding)
+					; (when (eql link 2812) (setf b base f formula s supposition a antecedent* l link rb reverse-binding) (break))
+    ;; (step (make-undercutting-defeater b f s a l rb))
+    (let* ((defeater (make-@ (gen-conjunction base) formula))
+	   (undercutting-defeater
+	    (cond (antecedent* (conj defeater antecedent*))
+		  (t defeater)))
+	   (undercutting-variables
+	    (formula-hypernode-variables undercutting-defeater)))
+      (multiple-value-bind
+	  (undercutting-interest i-list)
+	  (interest-for (list supposition undercutting-defeater)
+			undercutting-variables nil nil)
+	(cond ((null undercutting-interest)
+	       (setf undercutting-interest
+		     (make-interest
+		      :interest-number (incf *interest-number*)
+		      :interest-sequent (list supposition undercutting-defeater)
+		      :interest-formula undercutting-defeater
+		      :interest-supposition supposition
+		      :interest-variables undercutting-variables
+		      :interest-supposition-variables (supposition-variables supposition)
+		      :interest-defeatees (list link)
+		      :interest-priority *base-priority*
+		      :interest-defeater-binding (hyperlink-binding link)
+		      :interest-generating-defeat-nodes (list (hyperlink-target link))))
+	       (store-interest undercutting-interest i-list)
+	       (pushnew undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
+	       (when *display?*
+		 (display-interest undercutting-interest)
+		 (princ
+		  "                                        Of interest as defeater for hyperlink ")
+		 (princ (hyperlink-number link)) (terpri) (terpri))
+	       (when *log-on* (push undercutting-interest *reasoning-log*))
+	       (when (and *display?* *graphics-on* *graph-interests*)
+		 (draw-i undercutting-interest *og*))
+	       (instantiate-defeater
+		undercutting-interest defeater antecedent* link reverse-binding))
+	      (t
+	       (readopt-interest undercutting-interest (list link))
+	       (push undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
+	       (push (hyperlink-target link) (interest-generating-defeat-nodes undercutting-interest))
+	       (setf (interest-defeatees undercutting-interest)
+		     (cons link (interest-defeatees undercutting-interest)))))
+	(dolist (node (unifying-nodes undercutting-interest))
+	  (when (subsetp= (hypernode-supposition node) supposition)
+	    (when *display?*
+	      (princ "  Node # ") (princ (hypernode-number node))
+	      (princ " defeats link # ")
+	      (princ (hyperlink-number link)) (terpri))
+	    (let ((DL (build-hyper-defeat-link node link)))
+	      (pushnew DL (hyperlink-defeaters link))
+	      (pushnew node (interest-discharging-nodes undercutting-interest))
+	      (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
+
+  (defun discharge-reductios (node old-degree depth d-interests)
+    (when *trace* (indent depth) (princ "DISCHARGE-REDUCTIOS-FROM ")
+	  (princ node) (terpri))
+    (when
+	(not (some
+	      #'(lambda (il) (member (mem1 il) d-interests))
+	      (hypernode-discharged-interests node)))
+      (setf (hypernode-reductios-discharged node) t)
+      (let ((reductio-ancestors (hypernode-reductio-ancestors node))
+	    (Y0 (hypernode-supposition node)))
+	(discharge-fortuitous-reductios node d-interests (1+ depth))
+	(dolist (il (hypernode-discharged-interests node))
+	  (let* ((interest (mem1 il))
+		 (direct-reductio-interest (interest-direct-reductio interest))
+		 (unifier (mem2 il))
+		 (unifiers (mem3 il))
+		 ;; rewrite supposition-variables to avoid collision with formula-variables
+		 (new-vars
+		  (mapcar #'(lambda (v) (cons v (make-interest-variable)))
+			  (intersection (interest-variables interest)
+					(set-difference (hypernode-supposition-variables node)
+							(hypernode-variables node)))))
+		 (Y1 (remove-duplicates=
+		      (match-sublis (mem1 unifier) (sublis new-vars Y0)))))
 					; (when new-vars (break))
-	   (when (and
-		  (setdifference (interest-supposition interest)
-				 *skolem-free-suppositions*)
-		  (> (interest-maximum-degree-of-interest interest) old-degree)
-		  (<= (interest-degree-of-interest interest)
-		      (current-maximal-degree-of-justification node)))
-	     (dolist (dr direct-reductio-interest)
-	       (let ((node* (car dr))
-		     (match (cdr dr)))
-		 (when (hypernode-cancelled-node node) (return-from discharge-reductios))
-		 (let ((Y*0 (remove-duplicates=
-			     (match-sublis
-			      (mem2 unifier)
+	    (when (and
+		   (setdifference (interest-supposition interest)
+				  *skolem-free-suppositions*)
+		   (> (interest-maximum-degree-of-interest interest) old-degree)
+		   (<= (interest-degree-of-interest interest)
+		       (current-maximal-degree-of-justification node)))
+	      (dolist (dr direct-reductio-interest)
+		(let ((node* (car dr))
+		      (match (cdr dr)))
+		  (when (hypernode-cancelled-node node) (return-from discharge-reductios))
+		  (let ((Y*0 (remove-duplicates=
 			      (match-sublis
-			       match (hypernode-supposition node*))))))
-		   (dolist (u unifiers)
-		     (let ((unifier* (merge-unifiers* unifier u))
-			   (Y (remove-duplicates=
-			       (match-sublis (mem1 u) Y1)))
-			   (Y* (remove-duplicates= (match-sublis (mem2 u) Y*0))))
-		       (let ((RA (union=
-				  (mapcar
-				   #'(lambda (x)
-				       (cons
-					(match-sublis
-					 (mem1 unifier*)
-					 (car x)) (cdr x)))
-				   reductio-ancestors)
-				  (mapcar
-				   #'(lambda (x)
-				       (cons (match-sublis
-					      (mem2 unifier*)
-					      (match-sublis match (car x))) (cdr x)))
-				   (hypernode-reductio-ancestors node*))))
-			     (NR (union=
-				  (mapcar
-				   #'(lambda (x)
-				       (cons
-					(match-sublis
-					 (mem1 unifier*)
-					 (car x)) (cdr x)))
-				   (hypernode-non-reductio-supposition node))
-				  (mapcar
-				   #'(lambda (x)
-				       (cons (match-sublis
-					      (mem2 unifier*)
-					      (match-sublis match (car x))) (cdr x)))
-				   (hypernode-non-reductio-supposition node*)))))
-			 (dolist (R RA)
-			   (when (base-test R RA)
-			     (let ((P (car R)))
-			       (draw-reductio-conclusion
-				P node node* R Y Y* RA NR interest unifier* (1+ depth)
-				d-interests))))))))))))))))
+			       (mem2 unifier)
+			       (match-sublis
+				match (hypernode-supposition node*))))))
+		    (dolist (u unifiers)
+		      (let ((unifier* (merge-unifiers* unifier u))
+			    (Y (remove-duplicates=
+				(match-sublis (mem1 u) Y1)))
+			    (Y* (remove-duplicates= (match-sublis (mem2 u) Y*0))))
+			(let ((RA (union=
+				   (mapcar
+				    #'(lambda (x)
+					(cons
+					 (match-sublis
+					  (mem1 unifier*)
+					  (car x)) (cdr x)))
+				    reductio-ancestors)
+				   (mapcar
+				    #'(lambda (x)
+					(cons (match-sublis
+					       (mem2 unifier*)
+					       (match-sublis match (car x))) (cdr x)))
+				    (hypernode-reductio-ancestors node*))))
+			      (NR (union=
+				   (mapcar
+				    #'(lambda (x)
+					(cons
+					 (match-sublis
+					  (mem1 unifier*)
+					  (car x)) (cdr x)))
+				    (hypernode-non-reductio-supposition node))
+				   (mapcar
+				    #'(lambda (x)
+					(cons (match-sublis
+					       (mem2 unifier*)
+					       (match-sublis match (car x))) (cdr x)))
+				    (hypernode-non-reductio-supposition node*)))))
+			  (dolist (R RA)
+			    (when (base-test R RA)
+			      (let ((P (car R)))
+				(draw-reductio-conclusion
+				 P node node* R Y Y* RA NR interest unifier* (1+ depth)
+				 d-interests))))))))))))))))
 
- (defun reason-from-current-interest-scheme (node d-node old-degree depth)
+  (defun reason-from-current-interest-scheme (node d-node old-degree depth)
 					; (when (eq node (node 28)) (setf n node dn d-node od old-degree d depth) (break))
-   ;; (step (reason-from-current-interest-scheme n dn od d))
-   (when *trace* (indent depth) (princ "REASON-FROM-CURRENT-INTEREST-SCHEME: ")
-	 (princ node) (princ " and ") (princ d-node) (terpri))
-   (dolist (is (d-node-interest-schemes d-node))
-     (let ((reason (is-reason is))
-	   (instance-function (is-instance-function is)))
-       (when (hypernode-cancelled-node node) (throw 'discharge-interest-schemes nil))
-       (when (and (or (not (hypernode-deductive-only node)) (not (reason-defeasible-rule reason)))
-		  (or (not (interest-deductive (is-target-interest is))) (deductive-node node)))
-	 (let ((degree* (interest-degree-of-interest (is-target-interest is))))
-	   (when (and (>= (current-maximal-degree-of-justification node) degree*)
-		      (> degree* old-degree))
-	     (cond
-	      (instance-function (funcall instance-function node (1+ depth) nil))
-	      (t (reason-from-interest-scheme
-		  node (interest-priority (is-target-interest is)) (1+ depth) is)))))))))
+    ;; (step (reason-from-current-interest-scheme n dn od d))
+    (when *trace* (indent depth) (princ "REASON-FROM-CURRENT-INTEREST-SCHEME: ")
+	  (princ node) (princ " and ") (princ d-node) (terpri))
+    (dolist (is (d-node-interest-schemes d-node))
+      (let ((reason (is-reason is))
+	    (instance-function (is-instance-function is)))
+	(when (hypernode-cancelled-node node) (throw 'discharge-interest-schemes nil))
+	(when (and (or (not (hypernode-deductive-only node)) (not (reason-defeasible-rule reason)))
+		   (or (not (interest-deductive (is-target-interest is))) (deductive-node node)))
+	  (let ((degree* (interest-degree-of-interest (is-target-interest is))))
+	    (when (and (>= (current-maximal-degree-of-justification node) degree*)
+		       (> degree* old-degree))
+	      (cond
+	       (instance-function (funcall instance-function node (1+ depth) nil))
+	       (t (reason-from-interest-scheme
+		   node (interest-priority (is-target-interest is)) (1+ depth) is)))))))))
 
- (defun reason-from-dominant-interest-schemes (node d-node old-degree depth)
+  (defun reason-from-dominant-interest-schemes (node d-node old-degree depth)
 					; (when (and (eq node (node 6)) (eq d-node (d-node 19)))
 					;      (setf n node dn d-node od old-degree d depth) (break))
-   ;; (step (reason-from-dominant-interest-schemes n dn od d))
-   (reason-from-current-interest-scheme node d-node old-degree depth)
-   (let ((pn (d-node-parent d-node)))
-     (when pn (reason-from-dominant-interest-schemes node pn old-degree depth))))
+    ;; (step (reason-from-dominant-interest-schemes n dn od d))
+    (reason-from-current-interest-scheme node d-node old-degree depth)
+    (let ((pn (d-node-parent d-node)))
+      (when pn (reason-from-dominant-interest-schemes node pn old-degree depth))))
 
- (defun discharge-interest-schemes (node old-degree depth)
-   "old-degree is the maximal-degree-of-justification for the node the last time discharge-interest-schemes was applied to it."
-   (catch 'discharge-interest-schemes
-     (let* ((c-list (hypernode-c-list node))
-	    (d-node (c-list-d-node c-list)))
-       (reason-from-dominant-interest-schemes node d-node old-degree depth))))
+  (defun discharge-interest-schemes (node old-degree depth)
+    "old-degree is the maximal-degree-of-justification for the node the last time discharge-interest-schemes was applied to it."
+    (catch 'discharge-interest-schemes
+      (let* ((c-list (hypernode-c-list node))
+	     (d-node (c-list-d-node c-list)))
+	(reason-from-dominant-interest-schemes node d-node old-degree depth))))
 
- (defun discharge-interest-in-defeaters (node i-lists old-degree new?)
-   (let ((degree (current-maximal-degree-of-justification node))
-	 (cancellations nil))
-     (dolist (il i-lists)
-       (let ((i-list (car il)))
-	 (dolist (N (i-list-interests i-list))
-	   (when (and  (interest-defeatees N)
-		       (<= (interest-degree-of-interest N) degree)
-		       (or new?
-			   (> (interest-maximum-degree-of-interest N) old-degree))
-		       (subsetp= (hypernode-supposition node)
-				 (interest-supposition N)))
-	     (pushnew N (hypernode-generating-defeat-interests node))
-	     (dolist (L (interest-defeatees N))
-	       (let ((DL (build-hyper-defeat-link node L)))
-		 (pushnew DL (hyperlink-defeaters L))
-		 (pushnew DL (hypernode-supported-hyper-defeat-links node)))
-	       (when (deductive-node node)
-		 (let ((node* (hyperlink-target L)))
-		   (setf (hyperlink-conclusive-defeat-status L) T)
-		   (cond ((every #'hyperlink-conclusive-defeat-status (hypernode-hyperlinks node*))
-			  (push node* cancellations))
-			 (t
-			  (dolist (L (hypernode-hyperlinks node*))
-			    (let ((NDA
-				   (cond ((hyperlink-defeasible? L)
-					  (mapcar #'genunion
-						  (gencrossproduct
-						   (mapcar #'hypernode-nearest-defeasible-ancestors
-							   (hyperlink-basis L)))))
-					 (t (list (list node*))))))
-			      (dolist (X NDA)
-				(when
-                                    (not (some #'(lambda (Y) (subsetp= Y X))
-                                               (hypernode-nearest-defeasible-ancestors node*)))
-				  (dolist (Y (hypernode-nearest-defeasible-ancestors node*))
-				    (when (subsetp= X Y) (pull Y (hypernode-nearest-defeasible-ancestors node*))))
-				  (push X (hypernode-nearest-defeasible-ancestors node*))))
-			      (recursively-compute-nearest-defeasible-ancestors node*)))
-			  (let ((ancestors
-				 (unionmapcar+
-				  #'(lambda (L)
-				      (union (hyperlink-basis L)
-					     (unionmapcar+ #'hypernode-ancestors (hyperlink-basis L))))
-				  (hypernode-hyperlinks node*))))
-			    (setf (hypernode-ancestors node*) ancestors)
-			    (recursively-compute-hypernode-ancestors node* ancestors)
-			    ))))))))))
-     (if (and cancellations
-	      (every #'(lambda (L)
-			 (and (not (keywordp (hyperlink-rule L)))
-			      (backwards-reason-p (hyperlink-rule L))))
-		     (hypernode-hyperlinks node)))
-	 (cons node cancellations) cancellations)))
+  (defun discharge-interest-in-defeaters (node i-lists old-degree new?)
+    (let ((degree (current-maximal-degree-of-justification node))
+	  (cancellations nil))
+      (dolist (il i-lists)
+	(let ((i-list (car il)))
+	  (dolist (N (i-list-interests i-list))
+	    (when (and  (interest-defeatees N)
+			(<= (interest-degree-of-interest N) degree)
+			(or new?
+			    (> (interest-maximum-degree-of-interest N) old-degree))
+			(subsetp= (hypernode-supposition node)
+				  (interest-supposition N)))
+	      (pushnew N (hypernode-generating-defeat-interests node))
+	      (dolist (L (interest-defeatees N))
+		(let ((DL (build-hyper-defeat-link node L)))
+		  (pushnew DL (hyperlink-defeaters L))
+		  (pushnew DL (hypernode-supported-hyper-defeat-links node)))
+		(when (deductive-node node)
+		  (let ((node* (hyperlink-target L)))
+		    (setf (hyperlink-conclusive-defeat-status L) T)
+		    (cond ((every #'hyperlink-conclusive-defeat-status (hypernode-hyperlinks node*))
+			   (push node* cancellations))
+			  (t
+			   (dolist (L (hypernode-hyperlinks node*))
+			     (let ((NDA
+				    (cond ((hyperlink-defeasible? L)
+					   (mapcar #'genunion
+						   (gencrossproduct
+						    (mapcar #'hypernode-nearest-defeasible-ancestors
+							    (hyperlink-basis L)))))
+					  (t (list (list node*))))))
+			       (dolist (X NDA)
+				 (when
+				     (not (some #'(lambda (Y) (subsetp= Y X))
+						(hypernode-nearest-defeasible-ancestors node*)))
+				   (dolist (Y (hypernode-nearest-defeasible-ancestors node*))
+				     (when (subsetp= X Y) (pull Y (hypernode-nearest-defeasible-ancestors node*))))
+				   (push X (hypernode-nearest-defeasible-ancestors node*))))
+			       (recursively-compute-nearest-defeasible-ancestors node*)))
+			   (let ((ancestors
+				  (unionmapcar+
+				   #'(lambda (L)
+				       (union (hyperlink-basis L)
+					      (unionmapcar+ #'hypernode-ancestors (hyperlink-basis L))))
+				   (hypernode-hyperlinks node*))))
+			     (setf (hypernode-ancestors node*) ancestors)
+			     (recursively-compute-hypernode-ancestors node* ancestors)
+			     ))))))))))
+      (if (and cancellations
+	       (every #'(lambda (L)
+			  (and (not (keywordp (hyperlink-rule L)))
+			       (backwards-reason-p (hyperlink-rule L))))
+		      (hypernode-hyperlinks node)))
+	  (cons node cancellations) cancellations)))
 
- (defun discharge-appropriately-related-link (link u* degree new? old-degree N node depth interests)
+  (defun discharge-appropriately-related-link (link u* degree new? old-degree N node depth interests)
 					; (when (eq link  (link 885)) (setf l link u u* d degree nw new? od old-degree n* n nd node dp depth in interests) (break))
-   ;; (step (discharge-appropriately-related-link l u d nw od n* nd dp in))
-   (when *trace* (indent depth) (princ "DISCHARGE-APPROPRIATELY-RELATED-LINK: ") (princ link) (terpri))
-   (let* ((degree* (degree-of-interest* (link-resultant-interest link)))
-	  (spec (premise-hypernode-specifier (link-premise link)))
-	  (binding (if spec (cons (cons spec node) (link-binding link)) (link-binding link))))
-     (when (and (<= degree* degree) (or new? (> (link-strength link) old-degree)))
-       (setf (link-discharged link) t)
-       (cond ((eq (link-rule link) :answer)
-	      (when (null (hypernode-supposition node))
-		(when (not (member node (link-supporting-nodes link)))
-		  (push node (link-supporting-nodes link))
-		  (push node (query-answers (link-resultant-interest link)))
-		  (pushnew (link-resultant-interest link) (hypernode-answered-queries node))
-		  (when (deductive-node node)
-		    (when (and
-			   (every
-			    #'(lambda (query)
-				(or (eq query (link-resultant-interest link))
-				    (some #'deductive-node (query-answers query))))
-			    *ultimate-epistemic-interests*)
-			   (not (some
-				 #'(lambda (Q) (eq (queue-item-kind Q) :query))
-				 *inference-queue*)))
-		      (setf (hypernode-degree-of-justification node) 1.0)
-		      (setf (query-answered? (link-resultant-interest link)) T)
-		      (let ((deductive-links nil)
-			    (deductive-nodes nil))
-			(dolist (L *new-links*)
-			  (when (deductive-node (hyperlink-target L))
-			    (push L deductive-links)
-			    (push (hyperlink-target L) deductive-nodes)))
-			(dolist (N deductive-nodes) (setf (hypernode-degree-of-justification N) 1.0))
-			(dolist (L deductive-links) (setf (hyperlink-degree-of-justification L) 1.0))
-			(display-belief-changes
-			 *new-links*
-			 deductive-nodes
-			 nil))
-		      (dolist (instruction (query-positive-instructions (link-resultant-interest link)))
-			(funcall instruction node))
-		      (when *display?*
-			(terpri)
-			(princ "             ALL QUERIES HAVE BEEN ANSWERED DEDUCTIVELY.")
-			(terpri))
+    ;; (step (discharge-appropriately-related-link l u d nw od n* nd dp in))
+    (when *trace* (indent depth) (princ "DISCHARGE-APPROPRIATELY-RELATED-LINK: ") (princ link) (terpri))
+    (let* ((degree* (degree-of-interest* (link-resultant-interest link)))
+	   (spec (premise-hypernode-specifier (link-premise link)))
+	   (binding (if spec (cons (cons spec node) (link-binding link)) (link-binding link))))
+      (when (and (<= degree* degree) (or new? (> (link-strength link) old-degree)))
+	(setf (link-discharged link) t)
+	(cond ((eq (link-rule link) :answer)
+	       (when (null (hypernode-supposition node))
+		 (when (not (member node (link-supporting-nodes link)))
+		   (push node (link-supporting-nodes link))
+		   (push node (query-answers (link-resultant-interest link)))
+		   (pushnew (link-resultant-interest link) (hypernode-answered-queries node))
+		   (when (deductive-node node)
+		     (when (and
+			    (every
+			     #'(lambda (query)
+				 (or (eq query (link-resultant-interest link))
+				     (some #'deductive-node (query-answers query))))
+			     *ultimate-epistemic-interests*)
+			    (not (some
+				  #'(lambda (Q) (eq (queue-item-kind Q) :query))
+				  *inference-queue*)))
+		       (setf (hypernode-degree-of-justification node) 1.0)
+		       (setf (query-answered? (link-resultant-interest link)) T)
+		       (let ((deductive-links nil)
+			     (deductive-nodes nil))
+			 (dolist (L *new-links*)
+			   (when (deductive-node (hyperlink-target L))
+			     (push L deductive-links)
+			     (push (hyperlink-target L) deductive-nodes)))
+			 (dolist (N deductive-nodes) (setf (hypernode-degree-of-justification N) 1.0))
+			 (dolist (L deductive-links) (setf (hyperlink-degree-of-justification L) 1.0))
+			 (display-belief-changes
+			  *new-links*
+			  deductive-nodes
+			  nil))
+		       (dolist (instruction (query-positive-instructions (link-resultant-interest link)))
+			 (funcall instruction node))
+		       (when *display?*
+			 (terpri)
+			 (princ "             ALL QUERIES HAVE BEEN ANSWERED DEDUCTIVELY.")
+			 (terpri))
 					; (cancel-interest-in (link-interest link) 0)
-		      (throw 'die nil)))
+		       (throw 'die nil)))
 					; (record-query-answers link)
-		  )))
-	     ((and (or (interest-non-reductio? (link-resultant-interest link)) (deductive-node node))
-		   (funcall+ (interest-discharge-condition N) node u*
-			     (match-sublis (link-interest-match link) binding)))
+		   )))
+	      ((and (or (interest-non-reductio? (link-resultant-interest link)) (deductive-node node))
+		    (funcall+ (interest-discharge-condition N) node u*
+			      (match-sublis (link-interest-match link) binding)))
 					; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
-	      (let
-		  (;(match (link-interest-match link))
-		   (match* (link-interest-reverse-match link)))
-		(setf u* (match-sublis match* u*))
-		(let* ((u1 (mem1 u*))
-		       (u2 (mem2 u*))
-		       (binding
-			(mapcar
-			 #'(lambda (assoc)
-			     (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding))
-		       (instantiations
-			(cons u1
-			      (mapcar
-			       #'(lambda (in)
-				   (cond ((eq in t) u2)
-					 (t (cons (car in) (match-sublis u2 (cdr in))))))
-			       (link-instantiations link))))
-		       (supposition (match-sublis u2 (link-supposition link))))
-		  (cond
-		   ((link-remaining-premises link)
-		    (construct-interest-link
-		     link node instantiations binding (link-remaining-premises link) supposition
-		     (interest-degree-of-interest N) (interest-maximum-degree-of-interest N) (1+ depth)
-		     (interest-priority (link-resultant-interest link)) interests))
-		   ((or (null (interest-right-links (link-resultant-interest link)))
-			(some #'(lambda (L) (eq (link-rule L) ug))
-			      (interest-right-links (link-resultant-interest link)))
-			(some #'(lambda (L)
-				  (funcall+ (interest-discharge-condition (link-resultant-interest link)) nil (list u1 u2)
-					    (match-sublis (link-interest-match link) (link-binding L))))
-			      (interest-right-links (link-resultant-interest link))))
-		    (cond
-		     ((reason-conclusions-function (link-rule link))
-		      (dolist (P (funcall (reason-conclusions-function (link-rule link)) binding))
-			(draw-conclusion
-			 (car P) (cons node (link-supporting-nodes link)) (link-rule link) instantiations
-			 (reason-discount-factor (link-rule link)) depth nil (cdr P) :binding binding :interest
-			 (link-resultant-interest link) :link link :clues (link-clues link))))
-		     (t
-		      (draw-conclusion
-		       (interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link))
-		       (link-rule link) instantiations (reason-discount-factor (link-rule link)) depth nil
-		       (reason-defeasible-rule (link-rule link)) :binding binding :interest (link-resultant-interest link)
-		       :link link :clues (link-clues link)))
-		     ))))))))))
+	       (let
+		   (;(match (link-interest-match link))
+		    (match* (link-interest-reverse-match link)))
+		 (setf u* (match-sublis match* u*))
+		 (let* ((u1 (mem1 u*))
+			(u2 (mem2 u*))
+			(binding
+			 (mapcar
+			  #'(lambda (assoc)
+			      (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding))
+			(instantiations
+			 (cons u1
+			       (mapcar
+				#'(lambda (in)
+				    (cond ((eq in t) u2)
+					  (t (cons (car in) (match-sublis u2 (cdr in))))))
+				(link-instantiations link))))
+			(supposition (match-sublis u2 (link-supposition link))))
+		   (cond
+		    ((link-remaining-premises link)
+		     (construct-interest-link
+		      link node instantiations binding (link-remaining-premises link) supposition
+		      (interest-degree-of-interest N) (interest-maximum-degree-of-interest N) (1+ depth)
+		      (interest-priority (link-resultant-interest link)) interests))
+		    ((or (null (interest-right-links (link-resultant-interest link)))
+			 (some #'(lambda (L) (eq (link-rule L) ug))
+			       (interest-right-links (link-resultant-interest link)))
+			 (some #'(lambda (L)
+				   (funcall+ (interest-discharge-condition (link-resultant-interest link)) nil (list u1 u2)
+					     (match-sublis (link-interest-match link) (link-binding L))))
+			       (interest-right-links (link-resultant-interest link))))
+		     (cond
+		      ((reason-conclusions-function (link-rule link))
+		       (dolist (P (funcall (reason-conclusions-function (link-rule link)) binding))
+			 (draw-conclusion
+			  (car P) (cons node (link-supporting-nodes link)) (link-rule link) instantiations
+			  (reason-discount-factor (link-rule link)) depth nil (cdr P) :binding binding :interest
+			  (link-resultant-interest link) :link link :clues (link-clues link))))
+		      (t
+		       (draw-conclusion
+			(interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link))
+			(link-rule link) instantiations (reason-discount-factor (link-rule link)) depth nil
+			(reason-defeasible-rule (link-rule link)) :binding binding :interest (link-resultant-interest link)
+			:link link :clues (link-clues link)))
+		      ))))))))))
 
- (defun DISCHARGE-INTEREST-IN
-     (node corresponding-i-lists old-degree new? depth interests &key interest reductio-only)
-   "new? indicates whether the node is newly-constructed.  Old-degree is the old maximal-degree-of-justification"
-   (let ((degree (current-maximal-degree-of-justification node)))
-     (when (or new? (> degree old-degree))
-       (when
-	   (every
-            #'(lambda (i-list)
-                (not (some
-		      #'(lambda (N) (member N interests))
-		      (i-list-interests (mem1 i-list)))))
-            corresponding-i-lists)
-	 (setf (hypernode-interests-discharged? node) t)
-	 (dolist (corresponding-i-list corresponding-i-lists)
-	   (let* ((i-list (mem1 corresponding-i-list))
-		  (interest-candidates
-		   (subset
-		    #'(lambda (N)
-			(not (member node (interest-discharging-nodes N))))
-		    (if (and interest (member interest (i-list-interests i-list)))
-			(cons interest (remove interest (i-list-interests i-list)))
-		      (i-list-interests i-list)))))
-	     (let* ((unifier (mem2 corresponding-i-list))
-		    (C-sup (match-sublis (mem1 unifier) (hypernode-supposition node))))
-	       (dolist (N interest-candidates)
-		 (when
-		     (and (or (null reductio-only) (interest-reductio N))
-			  (not (hypernode-cancelled-node node))
-			  (not (member N interests))
-			  (or (eq N interest)
-			      (and
-                               (or new?
-                                   (> (interest-maximum-degree-of-interest N) old-degree))
-                               (or (deductive-node node) (not (interest-deductive N)))
-                               (<= (interest-degree-of-interest N) degree)
-                               (not (assoc N (hypernode-discharged-interests node))))))
-		   (let ((unifiers
-			  (if
-                              (or (not (interest-direct-reductio N))
-                                  (some #'(lambda (L)
-                                            (or (eq (link-rule L) :answer)
-                                                (not (interest-reductio (link-resultant-interest L)))))
-                                        (interest-right-links N)))
-                              (appropriately-related-non-reductio-suppositions node N unifier)))
-			 (reductio-unifiers
-			  (if
-                              (or (interest-direct-reductio N)
-                                  (some #'(lambda (L)
-                                            (and (not (eq (link-rule L) :answer))
-                                                 (interest-reductio (link-resultant-interest L))))
-                                        (interest-right-links N)))
-                              (appropriately-related-reductio-suppositions node N unifier))))
-		     (when (or unifiers reductio-unifiers)
-		       (dolist (u unifiers)
-			 (let ((u* (merge-unifiers* unifier u)))
-			   (dolist (link (interest-right-links N))
-			     (let ((spec (premise-hypernode-specifier (link-premise link))))
-			       (when (and (or (not (interest-direct-reductio N))
-					      (eq (link-rule link) :answer)
-					      (not (interest-reductio (link-resultant-interest link))))
-					  (funcall+
-					   (interest-discharge-condition N) node unifier
-					   (match-sublis
-					    (link-interest-match link)
-					    (if spec (cons (cons spec node) (link-binding link))
-					      (link-binding link)))))
-				 (push (list N unifier (append unifiers reductio-unifiers)) (hypernode-discharged-interests node))
-				 (pushnew node (interest-discharging-nodes N))
-				 (when *display?* (princ "  Node ") (princ (hypernode-number node))
-				       (princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
-				 (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-IN: ")
-				       (princ N) (princ " from ") (princ node) (terpri))
-				 (discharge-appropriately-related-link
-				  link u* degree new? old-degree N node depth (cons N interests)))))))
-		       (when reductio-unifiers
-			 (push (list N unifier (append unifiers reductio-unifiers))
-			       (hypernode-discharged-interests node)))
-		       (dolist (u reductio-unifiers)
-			 (let ((u* (merge-unifiers* unifier u)))
-			   (dolist (link (interest-right-links N))
-			     (let ((spec (premise-hypernode-specifier (link-premise link))))
-			       (when (and (not (eq (link-rule link) :answer))
-					  (interest-reductio (link-resultant-interest link))
-					  (funcall+
-					   (interest-discharge-condition N) node unifier
-					   (match-sublis
-					    (link-interest-match link)
-					    (if spec (cons (cons spec node) (link-binding link))
-					      (link-binding link)))))
-				 (pushnew node (interest-discharging-nodes N))
-				 (when *display?* (princ "  Node ") (princ (hypernode-number node))
-				       (princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
-				 (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-IN: ")
-				       (princ N) (princ " from ") (princ node) (terpri))
-				 (discharge-appropriately-related-link
-				  link u* degree new? old-degree N node depth (cons N interests)))))))
-		       (when (and (not (interest-cancelled N))
-				  (eq (mem2 unifier) t)
-				  (subsetp= C-sup (interest-supposition N)))
-			 (cond ((deductive-node node)
-				(setf (interest-cancelling-node N) node)
-				(cancel-interest-in N (if *trace* depth 0)))
-			       (t
-				(dolist (sup-node (interest-generated-suppositions N))
-				  (when
-                                      (and
-				       (equal (hypernode-generating-interests sup-node) (list N))
-				       (deductive-in node sup-node))
-				    (cancel-node sup-node (if *trace* depth 0))))))
-			 ))))))))))))
+  (defun DISCHARGE-INTEREST-IN
+      (node corresponding-i-lists old-degree new? depth interests &key interest reductio-only)
+    "new? indicates whether the node is newly-constructed.  Old-degree is the old maximal-degree-of-justification"
+    (let ((degree (current-maximal-degree-of-justification node)))
+      (when (or new? (> degree old-degree))
+	(when
+	    (every
+	     #'(lambda (i-list)
+		 (not (some
+		       #'(lambda (N) (member N interests))
+		       (i-list-interests (mem1 i-list)))))
+	     corresponding-i-lists)
+	  (setf (hypernode-interests-discharged? node) t)
+	  (dolist (corresponding-i-list corresponding-i-lists)
+	    (let* ((i-list (mem1 corresponding-i-list))
+		   (interest-candidates
+		    (subset
+		     #'(lambda (N)
+			 (not (member node (interest-discharging-nodes N))))
+		     (if (and interest (member interest (i-list-interests i-list)))
+			 (cons interest (remove interest (i-list-interests i-list)))
+		       (i-list-interests i-list)))))
+	      (let* ((unifier (mem2 corresponding-i-list))
+		     (C-sup (match-sublis (mem1 unifier) (hypernode-supposition node))))
+		(dolist (N interest-candidates)
+		  (when
+		      (and (or (null reductio-only) (interest-reductio N))
+			   (not (hypernode-cancelled-node node))
+			   (not (member N interests))
+			   (or (eq N interest)
+			       (and
+				(or new?
+				    (> (interest-maximum-degree-of-interest N) old-degree))
+				(or (deductive-node node) (not (interest-deductive N)))
+				(<= (interest-degree-of-interest N) degree)
+				(not (assoc N (hypernode-discharged-interests node))))))
+		    (let ((unifiers
+			   (if
+			       (or (not (interest-direct-reductio N))
+				   (some #'(lambda (L)
+					     (or (eq (link-rule L) :answer)
+						 (not (interest-reductio (link-resultant-interest L)))))
+					 (interest-right-links N)))
+			       (appropriately-related-non-reductio-suppositions node N unifier)))
+			  (reductio-unifiers
+			   (if
+			       (or (interest-direct-reductio N)
+				   (some #'(lambda (L)
+					     (and (not (eq (link-rule L) :answer))
+						  (interest-reductio (link-resultant-interest L))))
+					 (interest-right-links N)))
+			       (appropriately-related-reductio-suppositions node N unifier))))
+		      (when (or unifiers reductio-unifiers)
+			(dolist (u unifiers)
+			  (let ((u* (merge-unifiers* unifier u)))
+			    (dolist (link (interest-right-links N))
+			      (let ((spec (premise-hypernode-specifier (link-premise link))))
+				(when (and (or (not (interest-direct-reductio N))
+					       (eq (link-rule link) :answer)
+					       (not (interest-reductio (link-resultant-interest link))))
+					   (funcall+
+					    (interest-discharge-condition N) node unifier
+					    (match-sublis
+					     (link-interest-match link)
+					     (if spec (cons (cons spec node) (link-binding link))
+					       (link-binding link)))))
+				  (push (list N unifier (append unifiers reductio-unifiers)) (hypernode-discharged-interests node))
+				  (pushnew node (interest-discharging-nodes N))
+				  (when *display?* (princ "  Node ") (princ (hypernode-number node))
+					(princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
+				  (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-IN: ")
+					(princ N) (princ " from ") (princ node) (terpri))
+				  (discharge-appropriately-related-link
+				   link u* degree new? old-degree N node depth (cons N interests)))))))
+			(when reductio-unifiers
+			  (push (list N unifier (append unifiers reductio-unifiers))
+				(hypernode-discharged-interests node)))
+			(dolist (u reductio-unifiers)
+			  (let ((u* (merge-unifiers* unifier u)))
+			    (dolist (link (interest-right-links N))
+			      (let ((spec (premise-hypernode-specifier (link-premise link))))
+				(when (and (not (eq (link-rule link) :answer))
+					   (interest-reductio (link-resultant-interest link))
+					   (funcall+
+					    (interest-discharge-condition N) node unifier
+					    (match-sublis
+					     (link-interest-match link)
+					     (if spec (cons (cons spec node) (link-binding link))
+					       (link-binding link)))))
+				  (pushnew node (interest-discharging-nodes N))
+				  (when *display?* (princ "  Node ") (princ (hypernode-number node))
+					(princ " discharges interest ") (princ (interest-number N)) (terpri) (terpri))
+				  (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-IN: ")
+					(princ N) (princ " from ") (princ node) (terpri))
+				  (discharge-appropriately-related-link
+				   link u* degree new? old-degree N node depth (cons N interests)))))))
+			(when (and (not (interest-cancelled N))
+				   (eq (mem2 unifier) t)
+				   (subsetp= C-sup (interest-supposition N)))
+			  (cond ((deductive-node node)
+				 (setf (interest-cancelling-node N) node)
+				 (cancel-interest-in N (if *trace* depth 0)))
+				(t
+				 (dolist (sup-node (interest-generated-suppositions N))
+				   (when
+				       (and
+					(equal (hypernode-generating-interests sup-node) (list N))
+					(deductive-in node sup-node))
+				     (cancel-node sup-node (if *trace* depth 0))))))
+			  ))))))))))))
 
 					;(defun discharge-fortuitous-reductios (node d-interests depth)
 					;    ; (when (eq node (node 399)) (setf n node di d-interests d depth) (break))
@@ -8091,866 +8085,866 @@ each other.
 					;                                           (list node* node) :fortuitous-reductio unifier* 1 (1+ depth) d-interests)))))))
 					;               ))))
 
- (defun discharge-fortuitous-reductios (node d-interests depth)
-   (dolist (nl (c-list-contradictors (hypernode-c-list node)))
-     (let ((unifier (mem2 nl)))
-       (dolist (node* (c-list-nodes (mem1 nl)))
-	 (when (and (null (hypernode-supposition node))
-		    (null (hypernode-supposition node*))
-		    (deductive-node node)
-		    (deductive-node node*))
-	   (dolist (Q *ultimate-epistemic-interests*)
-	     (let ((in (query-interest Q)))
-	       (draw-conclusion
-		(match-sublis (mem1 unifier) (interest-formula in))
-		(list node node*) :fortuitous-reductio unifier 1 (1+ depth) d-interests nil))))
-	 (let ((nodes nil))
-	   (dolist (n (hypernode-reductio-ancestors node)) (pushnew (cdr n) nodes))
-	   (dolist (n (hypernode-non-reductio-supposition node)) (pushnew (cdr n) nodes))
-	   (dolist (n (hypernode-reductio-ancestors node*)) (pushnew (cdr n) nodes))
-	   (dolist (n (hypernode-non-reductio-supposition node*)) (pushnew (cdr n) nodes))
-	   (dolist (n nodes)
-	     (dolist (interest (hypernode-generated-interests n))
-	       (when (subsetp nodes (interest-supposition-nodes interest))
-		 (draw-conclusion
-		  (interest-formula interest) (list node node*) :discharge-fortuitous-reductios
-		  unifier 1 (1+ depth) d-interests nil)))))))))
+  (defun discharge-fortuitous-reductios (node d-interests depth)
+    (dolist (nl (c-list-contradictors (hypernode-c-list node)))
+      (let ((unifier (mem2 nl)))
+	(dolist (node* (c-list-nodes (mem1 nl)))
+	  (when (and (null (hypernode-supposition node))
+		     (null (hypernode-supposition node*))
+		     (deductive-node node)
+		     (deductive-node node*))
+	    (dolist (Q *ultimate-epistemic-interests*)
+	      (let ((in (query-interest Q)))
+		(draw-conclusion
+		 (match-sublis (mem1 unifier) (interest-formula in))
+		 (list node node*) :fortuitous-reductio unifier 1 (1+ depth) d-interests nil))))
+	  (let ((nodes nil))
+	    (dolist (n (hypernode-reductio-ancestors node)) (pushnew (cdr n) nodes))
+	    (dolist (n (hypernode-non-reductio-supposition node)) (pushnew (cdr n) nodes))
+	    (dolist (n (hypernode-reductio-ancestors node*)) (pushnew (cdr n) nodes))
+	    (dolist (n (hypernode-non-reductio-supposition node*)) (pushnew (cdr n) nodes))
+	    (dolist (n nodes)
+	      (dolist (interest (hypernode-generated-interests n))
+		(when (subsetp nodes (interest-supposition-nodes interest))
+		  (draw-conclusion
+		   (interest-formula interest) (list node node*) :discharge-fortuitous-reductios
+		   unifier 1 (1+ depth) d-interests nil)))))))))
 
- (defun discharge-immediate-reductios
-     (node old-degree new? depth d-interests d-interest)
+  (defun discharge-immediate-reductios
+      (node old-degree new? depth d-interests d-interest)
 					; (when (eq node (node 6)) (setf c node o old-degree n new? d depth di d-interests di* d-interest) (break))
 					;(setf c node o old-degree n new? d depth di d-interests di* d-interest)
-   ;; (step (discharge-immediate-reductios c o n d di di*))
-   (when *trace* (indent depth) (princ "DISCHARGE-IMMEDIATE-REDUCTIOS-FROM ")
-	 (princ node) (terpri))
-   (when
-       (and
-        (<= (length (setdifference (hypernode-supposition node) *skolem-free-suppositions*)) 1)
-        (not (member d-interest d-interests)))
-     (setf (hypernode-reductios-discharged node) t)
-     (let ((reductio-ancestors (hypernode-reductio-ancestors node))
-	   (Y0 (hypernode-supposition node)))
-       (discharge-fortuitous-reductios node d-interests (1+ depth))
-       (dolist (il (hypernode-discharged-interests node))
-	 (let* ((interest (mem1 il))
-		(direct-reductio-interest (interest-direct-reductio interest))
-		(unifier (mem2 il))  ;; this unifies node with interest
-		(unifiers
-		 (if (mem3 il)
-                     (mem3 il)
-		   (appropriately-related-suppositions node interest unifier)))
-		(Y1 (remove-duplicates= (match-sublis (mem1 unifier) Y0))))
-	   (when (or  (eq interest d-interest)
-		      (and
-		       (not (member interest d-interests))
-		       (or new?
-			   (> (interest-maximum-degree-of-interest interest) old-degree))
-		       (<= (interest-degree-of-interest interest)
-			   (current-maximal-degree-of-justification node))))
-	     (dolist (dr direct-reductio-interest)
-	       (let ((node* (car dr))
-		     (match (cdr dr)))
-		 (when (hypernode-cancelled-node node) (return-from discharge-immediate-reductios))
-		 ;; to use unifier we must first transform node* to make it like interest
-		 (let ((Y*0 (remove-duplicates=
-			     (match-sublis
-			      (mem2 unifier)
+    ;; (step (discharge-immediate-reductios c o n d di di*))
+    (when *trace* (indent depth) (princ "DISCHARGE-IMMEDIATE-REDUCTIOS-FROM ")
+	  (princ node) (terpri))
+    (when
+	(and
+	 (<= (length (setdifference (hypernode-supposition node) *skolem-free-suppositions*)) 1)
+	 (not (member d-interest d-interests)))
+      (setf (hypernode-reductios-discharged node) t)
+      (let ((reductio-ancestors (hypernode-reductio-ancestors node))
+	    (Y0 (hypernode-supposition node)))
+	(discharge-fortuitous-reductios node d-interests (1+ depth))
+	(dolist (il (hypernode-discharged-interests node))
+	  (let* ((interest (mem1 il))
+		 (direct-reductio-interest (interest-direct-reductio interest))
+		 (unifier (mem2 il))  ;; this unifies node with interest
+		 (unifiers
+		  (if (mem3 il)
+		      (mem3 il)
+		    (appropriately-related-suppositions node interest unifier)))
+		 (Y1 (remove-duplicates= (match-sublis (mem1 unifier) Y0))))
+	    (when (or  (eq interest d-interest)
+		       (and
+			(not (member interest d-interests))
+			(or new?
+			    (> (interest-maximum-degree-of-interest interest) old-degree))
+			(<= (interest-degree-of-interest interest)
+			    (current-maximal-degree-of-justification node))))
+	      (dolist (dr direct-reductio-interest)
+		(let ((node* (car dr))
+		      (match (cdr dr)))
+		  (when (hypernode-cancelled-node node) (return-from discharge-immediate-reductios))
+		  ;; to use unifier we must first transform node* to make it like interest
+		  (let ((Y*0 (remove-duplicates=
 			      (match-sublis
-			       match (hypernode-supposition node*))))))
-		   (dolist (u unifiers)
-		     (let ((unifier* (merge-unifiers* unifier u))
-			   (Y (remove-duplicates= (match-sublis (mem1 u) Y1)))
-			   (Y* (remove-duplicates= (match-sublis (mem2 u) Y*0))))
-		       (let ((RA (union=
-				  (mapcar
-				   #'(lambda (x)
-				       (cons
-					(match-sublis
-					 (mem1 unifier*)
-					 (car x)) (cdr x)))
-				   reductio-ancestors)
-				  (mapcar
-				   #'(lambda (x)
-				       (cons (match-sublis
-					      (mem2 unifier*)
-					      (match-sublis match (car x))) (cdr x)))
-				   (hypernode-reductio-ancestors node*))))
-			     (NR (union=
-				  (mapcar
-				   #'(lambda (x)
-				       (cons
-					(match-sublis
-					 (mem1 unifier*)
-					 (car x)) (cdr x)))
-				   (hypernode-non-reductio-supposition node))
-				  (mapcar
-				   #'(lambda (x)
-				       (cons (match-sublis
-					      (mem2 unifier*)
-					      (match-sublis match (car x))) (cdr x)))
-				   (hypernode-non-reductio-supposition node*)))))
-			 (dolist (R RA)
-			   (when (base-test R RA)
-			     (let ((P (car R)))
-			       (draw-reductio-conclusion
-				P node node* R Y Y* RA NR interest unifier* (1+ depth)
-				(cons d-interest d-interests)))))))))))))))))
+			       (mem2 unifier)
+			       (match-sublis
+				match (hypernode-supposition node*))))))
+		    (dolist (u unifiers)
+		      (let ((unifier* (merge-unifiers* unifier u))
+			    (Y (remove-duplicates= (match-sublis (mem1 u) Y1)))
+			    (Y* (remove-duplicates= (match-sublis (mem2 u) Y*0))))
+			(let ((RA (union=
+				   (mapcar
+				    #'(lambda (x)
+					(cons
+					 (match-sublis
+					  (mem1 unifier*)
+					  (car x)) (cdr x)))
+				    reductio-ancestors)
+				   (mapcar
+				    #'(lambda (x)
+					(cons (match-sublis
+					       (mem2 unifier*)
+					       (match-sublis match (car x))) (cdr x)))
+				    (hypernode-reductio-ancestors node*))))
+			      (NR (union=
+				   (mapcar
+				    #'(lambda (x)
+					(cons
+					 (match-sublis
+					  (mem1 unifier*)
+					  (car x)) (cdr x)))
+				    (hypernode-non-reductio-supposition node))
+				   (mapcar
+				    #'(lambda (x)
+					(cons (match-sublis
+					       (mem2 unifier*)
+					       (match-sublis match (car x))) (cdr x)))
+				    (hypernode-non-reductio-supposition node*)))))
+			  (dolist (R RA)
+			    (when (base-test R RA)
+			      (let ((P (car R)))
+				(draw-reductio-conclusion
+				 P node node* R Y Y* RA NR interest unifier* (1+ depth)
+				 (cons d-interest d-interests)))))))))))))))))
 
- (defun adjust-support-for-consequences (node old-degree depth)
+  (defun adjust-support-for-consequences (node old-degree depth)
 					; (setf n node o old-degree d depth)
-   ;; (step (adjust-support-for-consequences n o d))
-   (when *trace* (indent depth) (princ "ADJUST-SUPPORT-FOR-CONSEQUENCES for ")
-	 (princ node) (terpri))
-   (dolist (L (hypernode-consequent-links node))
-     (let ((n (hyperlink-target L)))
-       (cond ((hypernode-temporal-node node)
-	      (let* ((decay (expt *temporal-decay* (- *cycle* (hypernode-temporal-node n))))
-		     (adjusted-old-degree (adjust-for-decay old-degree decay)))
-		(when (>< adjusted-old-degree (hypernode-maximal-degree-of-justification n))
-		  (let* ((temp
-			  (or (eq (hyperlink-rule L) *temporal-projection*)
-			      (eq (hyperlink-rule L) *causal-implication*)
-			      (and (not (keywordp (hyperlink-rule L)))
-				   (reason-temporal? (hyperlink-rule L)))))
-			 (degree-of-justification
-			  (if temp
-                              (* (adjust-for-decay (hyperlink-reason-strength L) decay)
-                                 (minimum
-				  (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))
-			    (adjust-for-decay
-			     (minimum
-			      (cons (hyperlink-reason-strength L)
-				    (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))
-			     decay))))
-		    (when (> degree-of-justification adjusted-old-degree)
-		      (setf (hypernode-maximal-degree-of-justification n) degree-of-justification)
-		      (dolist (L (hypernode-hyperlinks node))
-			(setf (hyperlink-degree-of-justification L) (adjust-for-decay (hyperlink-degree-of-justification L) decay))
-			(when (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
-			  (setf (hyperlink-reason-strength L)
-				(adjust-for-decay (hyperlink-reason-strength L) decay)))
-			(setf (hyperlink-temporal L) *cycle*))
-		      (setf (hypernode-temporal-node n) *cycle*)
-		      (setf (hyperlink-temporal L) *cycle*)
-		      (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list n))))
-			(discharge-interest-in-defeaters n i-lists old-degree nil)
-			(discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
-			(when (hypernode-processed? N)
-			  (discharge-interest-schemes N old-degree (1+ depth)))
-			(when *use-reductio*
-			  (cond ((hypernode-queue-node n)
-				 (discharge-immediate-reductios n old-degree nil (1+ depth) nil nil))
-				(t (discharge-reductios n old-degree (1+ depth) nil)))))
-		      (adjust-support-for-consequences n old-degree depth))))))
-	     ((eql (hypernode-maximal-degree-of-justification n) old-degree)
-	      (let ((degree-of-justification
-		     (maximum
-		      (cons (hyperlink-reason-strength L)
-			    (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))))
-		(when (> degree-of-justification old-degree)
-		  (setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
-		  (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list n))))
-		    (discharge-interest-in-defeaters n i-lists old-degree nil)
-		    (discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
-		    (when (hypernode-processed? N)
-		      (discharge-interest-schemes N old-degree (1+ depth)))
-		    (when *use-reductio*
-		      (cond ((hypernode-queue-node n)
-			     (discharge-immediate-reductios n old-degree nil (1+ depth) nil nil))
-			    (t (discharge-reductios n old-degree (1+ depth) nil)))))
-		  (adjust-support-for-consequences n old-degree depth))))))))
+    ;; (step (adjust-support-for-consequences n o d))
+    (when *trace* (indent depth) (princ "ADJUST-SUPPORT-FOR-CONSEQUENCES for ")
+	  (princ node) (terpri))
+    (dolist (L (hypernode-consequent-links node))
+      (let ((n (hyperlink-target L)))
+	(cond ((hypernode-temporal-node node)
+	       (let* ((decay (expt *temporal-decay* (- *cycle* (hypernode-temporal-node n))))
+		      (adjusted-old-degree (adjust-for-decay old-degree decay)))
+		 (when (>< adjusted-old-degree (hypernode-maximal-degree-of-justification n))
+		   (let* ((temp
+			   (or (eq (hyperlink-rule L) *temporal-projection*)
+			       (eq (hyperlink-rule L) *causal-implication*)
+			       (and (not (keywordp (hyperlink-rule L)))
+				    (reason-temporal? (hyperlink-rule L)))))
+			  (degree-of-justification
+			   (if temp
+			       (* (adjust-for-decay (hyperlink-reason-strength L) decay)
+				  (minimum
+				   (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))
+			     (adjust-for-decay
+			      (minimum
+			       (cons (hyperlink-reason-strength L)
+				     (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))
+			      decay))))
+		     (when (> degree-of-justification adjusted-old-degree)
+		       (setf (hypernode-maximal-degree-of-justification n) degree-of-justification)
+		       (dolist (L (hypernode-hyperlinks node))
+			 (setf (hyperlink-degree-of-justification L) (adjust-for-decay (hyperlink-degree-of-justification L) decay))
+			 (when (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
+			   (setf (hyperlink-reason-strength L)
+				 (adjust-for-decay (hyperlink-reason-strength L) decay)))
+			 (setf (hyperlink-temporal L) *cycle*))
+		       (setf (hypernode-temporal-node n) *cycle*)
+		       (setf (hyperlink-temporal L) *cycle*)
+		       (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list n))))
+			 (discharge-interest-in-defeaters n i-lists old-degree nil)
+			 (discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
+			 (when (hypernode-processed? N)
+			   (discharge-interest-schemes N old-degree (1+ depth)))
+			 (when *use-reductio*
+			   (cond ((hypernode-queue-node n)
+				  (discharge-immediate-reductios n old-degree nil (1+ depth) nil nil))
+				 (t (discharge-reductios n old-degree (1+ depth) nil)))))
+		       (adjust-support-for-consequences n old-degree depth))))))
+	      ((eql (hypernode-maximal-degree-of-justification n) old-degree)
+	       (let ((degree-of-justification
+		      (maximum
+		       (cons (hyperlink-reason-strength L)
+			     (mapcar #'hypernode-maximal-degree-of-justification (hyperlink-basis L))))))
+		 (when (> degree-of-justification old-degree)
+		   (setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
+		   (let ((i-lists (c-list-corresponding-i-lists (hypernode-c-list n))))
+		     (discharge-interest-in-defeaters n i-lists old-degree nil)
+		     (discharge-interest-in n i-lists old-degree (1+ depth) nil nil)
+		     (when (hypernode-processed? N)
+		       (discharge-interest-schemes N old-degree (1+ depth)))
+		     (when *use-reductio*
+		       (cond ((hypernode-queue-node n)
+			      (discharge-immediate-reductios n old-degree nil (1+ depth) nil nil))
+			     (t (discharge-reductios n old-degree (1+ depth) nil)))))
+		   (adjust-support-for-consequences n old-degree depth))))))))
 
- (defun add-hyperlink (link node depth)
+  (defun add-hyperlink (link node depth)
 					; (setf l link n node d depth)
 					; (when (eq link (hyperlink 21)) (setf l link n node d depth) (break))
-   ;; (step (add-hyperlink l n d))
-   (push link (hypernode-hyperlinks node))
-   (let ((degree-of-justification
-	  (minimum (cons (hyperlink-reason-strength link)
-			 (mapcar #'current-maximal-degree-of-justification (hyperlink-basis link))))))
-     (cond ((and (hyperlink-temporal link) (not (eql (hypernode-temporal-node node) *cycle*)))
-	    (let* ((decay (expt *temporal-decay* (- *cycle* (hypernode-temporal-node node))))
-		   (old-degree (adjust-for-decay (hypernode-maximal-degree-of-justification node) decay)))
-	      (when (> degree-of-justification old-degree)
-		(setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
-		(setf (hypernode-temporal-node node) *cycle*)
-		(adjust-support-for-consequences node old-degree depth))))
-	   (t
-	    (let ((old-degree (hypernode-maximal-degree-of-justification node)))
-	      (when (> degree-of-justification old-degree)
-		(setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
-		(adjust-support-for-consequences node old-degree depth)))))))
-
- (defun make-rebutting-defeater (variables base formula supposition antecedent* link)
-   (let ((rebutting-defeater
-	  (cond (antecedent* (conj antecedent* (conj (gen-conjunction base) (neg formula))))
-		(variables (conj (gen-conjunction base) (neg formula)))
-		(t (neg formula))))
-	 (rebutting-variables
-	  (hypernode-variables (hyperlink-target link))))
-     (multiple-value-bind
-      (rebutting-interest i-list)
-      (interest-for (list supposition rebutting-defeater) rebutting-variables nil nil)
-      (cond ((null rebutting-interest)
-	     (setf rebutting-interest
-		   (make-interest
-		    :interest-number (incf *interest-number*)
-		    :interest-sequent (list supposition rebutting-defeater)
-		    :interest-formula rebutting-defeater
-		    :interest-supposition supposition
-		    :interest-variables rebutting-variables
-		    :interest-supposition-variables (supposition-variables supposition)
-		    :interest-defeatees (list link)
-		    :interest-priority *base-priority*
-		    :interest-generating-defeat-nodes (list (hyperlink-target link))))
-	     (store-interest rebutting-interest i-list)
-	     (pushnew rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
-	     (when *display?*
-	       (display-interest rebutting-interest)
-	       (princ
-		"                                        Of interest as defeater for hyperlink ")
-	       (princ (hyperlink-number link)) (terpri) (terpri))
-	     (when *log-on* (push rebutting-interest *reasoning-log*))
-	     (when (and *display?* *graphics-on* *graph-interests*)
-	       (draw-i rebutting-interest *og*))
-	     (let ((priority (defeater-priority rebutting-interest)))
-	       (queue-interest
-		rebutting-interest priority)
-	       (apply-degenerate-backwards-reasons rebutting-interest priority 0)))
+    ;; (step (add-hyperlink l n d))
+    (push link (hypernode-hyperlinks node))
+    (let ((degree-of-justification
+	   (minimum (cons (hyperlink-reason-strength link)
+			  (mapcar #'current-maximal-degree-of-justification (hyperlink-basis link))))))
+      (cond ((and (hyperlink-temporal link) (not (eql (hypernode-temporal-node node) *cycle*)))
+	     (let* ((decay (expt *temporal-decay* (- *cycle* (hypernode-temporal-node node))))
+		    (old-degree (adjust-for-decay (hypernode-maximal-degree-of-justification node) decay)))
+	       (when (> degree-of-justification old-degree)
+		 (setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
+		 (setf (hypernode-temporal-node node) *cycle*)
+		 (adjust-support-for-consequences node old-degree depth))))
 	    (t
-	     (readopt-interest rebutting-interest (list link))
-	     (push rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
-	     (push (hyperlink-target link) (interest-generating-defeat-nodes rebutting-interest))
-	     (setf (interest-defeatees rebutting-interest)
-		   (cons link (interest-defeatees rebutting-interest)))))
-      (dolist (node (unifying-nodes rebutting-interest))
-	(when (subsetp= (hypernode-supposition node) supposition)
-	  (when *display?*
-	    (princ "  Node # ") (princ (hypernode-number node))
-	    (princ " defeats link # ")
-	    (princ (hyperlink-number link)) (terpri))
-	  (let ((DL (build-hyper-defeat-link node link)))
-	    (pushnew DL (hyperlink-defeaters link))
-	    (pushnew node (interest-discharging-nodes rebutting-interest))
-	    (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
+	     (let ((old-degree (hypernode-maximal-degree-of-justification node)))
+	       (when (> degree-of-justification old-degree)
+		 (setf (hypernode-maximal-degree-of-justification node) degree-of-justification)
+		 (adjust-support-for-consequences node old-degree depth)))))))
 
- (defun adopt-interest-in-defeaters-for (link instantiations &optional bindings)
-   "The following assumes that the sequent and members of the basis share the same sequent-supposition.  Basis is a list of conclusions."
-   (cond ((hyperlink-defeasible? link)
-	  (let ((variables nil)
-		(reverse-binding nil)
-		(reverse-binding* nil)
-		(binding* nil))
-	    (dolist (b bindings)
-	      (cond ((or (and (listp (cdr b)) (skolem-function (mem1 (cdr b))))
-			 (skolem-function (cdr b))
-			 (conclusion-variable (cdr b))
-			 )
-		     (push (car b) variables)
-		     (push (cons (cdr b) (car b)) reverse-binding)
-		     (push (cons (cdr b) (make-interest-variable)) reverse-binding*))
-		    (t (push b binding*))))
-	    (let* ((S (hypernode-sequent (hyperlink-target link)))
-		   (B (hyperlink-basis link))
-		   (supposition
-		    (subset
-		     #'(lambda (P)
-			 (every #'(lambda (b) (not (occur (car b) P :test 'equal))) reverse-binding))
-		     (sequent-supposition S)))
-		   (sup-remainder (setdifference (sequent-supposition S) supposition))
-		   (antecedent (match-sublis reverse-binding sup-remainder :test 'equal))
-		   (antecedent*
-		    (gen-conjunction
-		     (match-sublis reverse-binding* sup-remainder :test 'equal)))
-		   (antecedent-variables
-		    (subset #'(lambda (v) (occur v antecedent)) variables))
-		   (sup
-		    (if sup-remainder
-                        (generalized-e-gen antecedent-variables (gen-conjunction antecedent))))
-		   (new-sup (if sup (cons sup supposition) supposition))
-		   (formula (match-sublis reverse-binding* (sequent-formula S)))
-		   (base
-		    (mapcar
-		     #'(lambda (c m)
-			 (cond ((is-desire c)
-				(list 'I_desire_that
-				      (match-sublis reverse-binding*
-						    (match-sublis m (hypernode-formula c)))))
-			       ((is-percept c)
-				(let ((time (percept-date (hypernode-justification c))))
-				  (list 'it-appears-to-me-that
-					(match-sublis reverse-binding*
-						      (match-sublis m (mem2 (hypernode-formula c))))
-					(list 'closed time time))))
-			       (t (match-sublis reverse-binding*
-						(match-sublis m (hypernode-formula c)) :test 'equal))))
-		     B instantiations)))
-	      (when sup (queue-defeater-supposition sup))
-	      (when base
-		(make-undercutting-defeater base formula new-sup antecedent* link reverse-binding*))
-	      (make-rebutting-defeater variables base formula new-sup antecedent* link))))
-	 ((eq (hyperlink-rule link) :Q&I)
-	  (adopt-interest-in-Q&I-defeaters-for (hypernode-sequent (hyperlink-target link))))))
-
- (defun construct-interest-link
-     (link0 node instantiations binding remaining-premises supposition degree
-	    max-degree depth priority interests &key new-variables)
-   (when *trace* (indent depth) (princ "CONSTRUCT-INTEREST-LINK for interest ")
-	 (princ (interest-number (link-resultant-interest link0))) (princ " using ") (princ (link-rule link0))
-	 (princ " and nodes ") (princ (mapcar #'hypernode-number (link-supporting-nodes link0)))
-	 (terpri))
-   (cond
-    ((and (backwards-premise-p (car remaining-premises))
-	  (listp (bp-formula (car remaining-premises)))
-	  (equal (car (bp-formula (car remaining-premises))) 'define))
-     (let* ((var (mem2 (bp-formula (car remaining-premises))))
-	    (def-instantiator (bp-instantiator (car remaining-premises))))
-       (multiple-value-bind
-	(new-binding new-vars match)
-	(set-def-binding def-instantiator var binding)
-	(when (funcall** (bp-condition1 (car remaining-premises)) nil new-binding)
-	  (cond ((cdr remaining-premises)
-		 (construct-interest-link
-		  link0 node instantiations new-binding (cdr remaining-premises)
-		  supposition degree max-degree depth priority interests
-		  :new-variables (append new-vars new-variables)))
-		((funcall+
-		  (interest-discharge-condition (link-resultant-interest link0)) nil (list t t)
-		  (subst (cdr match) (car match)
-			 (link-binding (car (interest-right-links (link-resultant-interest link0))))))
-		 (cond
-		  ((reason-conclusions-function (link-rule link0))
-		   (dolist (P (funcall (reason-conclusions-function (link-rule link0)) new-binding))
-		     (draw-conclusion
-		      (car P) (cons node (link-supporting-nodes link0)) (link-rule link0) instantiations
-		      (reason-discount-factor (link-rule link0)) depth nil (cdr P) :binding new-binding :interest
-		      (link-resultant-interest link0) :link link0 :clues (link-clues link0))))
-		  (t (draw-conclusion
-		      (interest-formula (link-resultant-interest link0)) (cons node (link-supporting-nodes link0))
-		      (link-rule link0) instantiations (reason-discount-factor (link-rule link0)) depth nil
-		      (reason-defeasible-rule (link-rule link0)) :binding new-binding
-		      :interest (link-resultant-interest link0) :link link0 :clues (link-clues link0)))
-		  )))))))
-    (t
-     (let* ((premise0 (car remaining-premises))
-	    (premise
-	     (if (backwards-premise-p premise0) premise0
-	       (funcall premise0 nil binding))))
-       (multiple-value-bind
-	(interest-formula new-vars new-binding)
-	(funcall (bp-instantiator premise) binding)
-	(let ((link
-	       (make-interest-link
-		:link-number (incf *interest-link-number*)
-		:link-resultant-interest (link-resultant-interest link0)
-		:link-interest-formula (remove-double-negation interest-formula)
-		:link-interest-condition (bp-condition2 premise)
-		:link-rule (link-rule link0)
-		:link-premise premise
-		:link-remaining-premises (cdr remaining-premises)
-		:link-supporting-nodes
-		(if (bp-clue? (link-premise link0))
-		    (link-supporting-nodes link0) (cons node (link-supporting-nodes link0)))
-		:link-clues
-		(if (bp-clue? (link-premise link0))
-		    (cons node (link-clues link0)) (link-clues link0))
-		:link-instantiations instantiations
-		:link-supposition supposition
-		:link-strength
-		(cond ((eq (link-rule link0) :answer)
-		       (interest-maximum-degree-of-interest (link-resultant-interest link0)))
-		      ((numberp (reason-strength (link-rule link0))) (reason-strength (link-rule link0)))
-		      (t (interest-maximum-degree-of-interest (link-resultant-interest link0))))
-		:link-generating-node (link-generating-node link0)
-		:link-binding new-binding
-		:link-generating link0
-		)))
-	  (push link *interest-links*)
-	  (push link (interest-left-links (link-resultant-interest link0)))
-	  (compute-link-interest
-	   link (bp-condition1 premise) (bp-condition2 premise)
-	   degree max-degree depth priority (append new-vars new-variables)
-	   (bp-text-condition premise))
-	  (discharge-link link (1+ depth) (interest-degree-of-interest (link-resultant-interest link0)) priority interests)
-	  (apply-degenerate-backwards-reasons (link-interest link) priority (1+ depth))
-	  ))))))
-
- (defun DISCHARGE-LINK (link depth degree priority interests)
-   "The priority is the priority of the inference-queue node from which this link is derived, if this value is known.  This simplifies the computation of the interest-priority for the new interests produced by this operation.  degree is the degree of interest of the resultant-interest."
-   (when *trace* (indent depth) (princ "DISCHARGE-LINK: ") (princ link) (terpri))
-   (let ((deductive-rule? (not (reason-defeasible-rule (link-rule link))))
-	 (hypernode-list nil)
-	 (interest (link-interest link))
-	 (reason (link-rule link))
-	 (condition (link-interest-condition link))
-					; (match (link-interest-match link))
-	 (match* (link-interest-reverse-match link))
-	 (spec (premise-hypernode-specifier (link-premise link))))
-     (block nodes
-	    (dolist  (cl (i-list-corresponding-c-lists (interest-i-list interest)))
-	      (let* ((c-list (car cl))
-		     (unifier0 (mem2 cl))
-		     (unifier
-		      (match-sublis match* unifier0)))
-		(dolist (node (c-list-nodes c-list))
-		  (when (and (funcall+
-			      (interest-discharge-condition interest) node unifier
-			      (if spec (cons (cons spec node) (link-binding link)) (link-binding link)))
-			     (or (not (hypernode-deductive-only node)) deductive-rule?)
-			     (or (interest-non-reductio? interest) (deductive-node node)))
-		    (when (and (deductive-node node)
-			       (null condition)
-			       (eq (mem2 unifier) t)
-			       (subsetp= (match-sublis (mem1 unifier) (hypernode-supposition node))
-					 (link-supposition link)))
-		      (setf hypernode-list (list (cons node unifier)))
-		      (setf (interest-cancelling-node interest) node)
-		      (return-from nodes))
-		    (when (>= (current-maximal-degree-of-justification node) degree)
-		      (push (cons node unifier) hypernode-list))))))
-	    (re-queue-interest link priority (link-interest link) degree))
-     (dolist (nl hypernode-list)
-       (let* ((node (car nl))
-	      (unifier (cdr nl))
-	      (unifiers
-	       (appropriately-related-supposition
-		node (link-interest link) (link-supposition link) (interest-supposition-variables interest) unifier)))
-	 (when unifiers (setf (link-discharged link) t))
-	 (dolist (u unifiers)
-	   (let ((u* (merge-unifiers* unifier u)))
-	     (when (interest-cancelled (link-interest link)) (return-from discharge-link))
-	     (when
-		 (constrained-assignment
-                  u* (hypernode-supposition-variables node) (interest-variables (link-interest link)))
+  (defun make-rebutting-defeater (variables base formula supposition antecedent* link)
+    (let ((rebutting-defeater
+	   (cond (antecedent* (conj antecedent* (conj (gen-conjunction base) (neg formula))))
+		 (variables (conj (gen-conjunction base) (neg formula)))
+		 (t (neg formula))))
+	  (rebutting-variables
+	   (hypernode-variables (hyperlink-target link))))
+      (multiple-value-bind
+	  (rebutting-interest i-list)
+	  (interest-for (list supposition rebutting-defeater) rebutting-variables nil nil)
+	(cond ((null rebutting-interest)
+	       (setf rebutting-interest
+		     (make-interest
+		      :interest-number (incf *interest-number*)
+		      :interest-sequent (list supposition rebutting-defeater)
+		      :interest-formula rebutting-defeater
+		      :interest-supposition supposition
+		      :interest-variables rebutting-variables
+		      :interest-supposition-variables (supposition-variables supposition)
+		      :interest-defeatees (list link)
+		      :interest-priority *base-priority*
+		      :interest-generating-defeat-nodes (list (hyperlink-target link))))
+	       (store-interest rebutting-interest i-list)
+	       (pushnew rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
 	       (when *display?*
-		 (princ "                                        ") (princ "Hypernode #") (princ (hypernode-number node))
-		 (princ " discharges interest #") (princ (interest-number interest)) (terpri) (terpri))
-	       (pushnew node (interest-discharging-nodes interest))
-					; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
-	       (let
-		   ((binding
-                     (mapcar
-		      #'(lambda (assoc) (cons (car assoc) (match-sublis (mem2 u*) (cdr assoc))))
-		      (if spec (cons (cons spec node) (link-binding link)) (link-binding link))))
-		    (instantiations
-                     (cons (mem1 u*)
-                           (mapcar #'(lambda (in) (merge-matches* in (mem2 u*))) (link-instantiations link))))
-		    (supposition (match-sublis (mem2 u*) (link-supposition link))))
-		 (cond
-		  ((eq (link-rule link) :answer)
-		   (push node (query-answers (link-resultant-interest link)))
-		   (pushnew (link-resultant-interest link) (hypernode-answered-queries node))
-		   (when (deductive-node node)
-		     (when (and
-			    (every
-			     #'(lambda (query)
-				 (or (eq query (link-resultant-interest link))
-				     (some #'deductive-node (query-answers query))))
-			     *ultimate-epistemic-interests*)
-			    (not (some
-				  #'(lambda (Q) (eq (queue-item-kind Q) :query))
-				  *inference-queue*)))
-		       (setf (hypernode-degree-of-justification node) 1.0)
-		       (setf (query-answered? (link-resultant-interest link)) T)
-		       (let ((deductive-links nil)
-			     (deductive-nodes nil))
-			 (dolist (L *new-links*)
-			   (when (deductive-node (hyperlink-target L))
-			     (push L deductive-links)
-			     (push (hyperlink-target L) deductive-nodes)))
-			 (dolist (N deductive-nodes) (setf (hypernode-degree-of-justification N) 1.0))
-			 (dolist (L deductive-links) (setf (hyperlink-degree-of-justification L) 1.0))
-			 (display-belief-changes
-			  *new-links*
-			  deductive-nodes
-			  nil))
-		       (dolist (instruction (query-positive-instructions (link-resultant-interest link)))
-			 (funcall instruction node))
-		       (when *display?*
-			 (terpri)
-			 (princ "             ALL QUERIES HAVE BEEN ANSWERED DEDUCTIVELY.")
-			 (terpri))
-					; (cancel-interest-in (link-interest link) 0)
-		       (throw 'die nil)))
-					; (record-query-answers link)
-		   )
-		  ((link-remaining-premises link)
-		   (construct-interest-link
-		    link node instantiations binding (link-remaining-premises link) supposition
-		    (interest-degree-of-interest (link-interest link))
-		    (interest-maximum-degree-of-interest (link-interest link)) (1+ depth) priority interests))
-		  ((or
-		    (some #'(lambda (L) (eq (link-rule L) ug)) (interest-left-links (link-resultant-interest link)))
-		    (funcall+ (interest-discharge-condition interest) nil u binding))
-		   (cond
-		    ((reason-conclusions-function reason)
-		     (dolist (P (funcall (reason-conclusions-function reason) binding))
-		       (draw-conclusion
-			(car P) (cons node (link-supporting-nodes link)) reason instantiations
-			(reason-discount-factor reason) depth nil (cdr P) :binding binding :interest
-			(link-resultant-interest link) :link link :clues (link-clues link))))
-		    (t
-		     (draw-conclusion
-		      (interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link)) reason
-		      instantiations (reason-discount-factor reason) depth nil (reason-defeasible-rule reason)
-		      :binding binding :interest (link-resultant-interest link) :link link :clues (link-clues link)))
-		    )))))))
-	 (when (and (interest-cancelling-node interest) (every #'link-discharged (interest-right-links interest)))
-	   (cancel-interest-in interest (if *trace* depth 0)))
-	 (when (and
-		unifiers
-		(not (interest-cancelled interest))
-		(equal (hypernode-formula node) (interest-formula interest))
-		(subsetp= (hypernode-supposition node) (interest-supposition interest))
-		(dolist (sup-node (interest-generated-suppositions interest))
-		  (when
-                      (and
-		       (equal (hypernode-generating-interests sup-node) (list interest))
-		       (deductive-in node sup-node))
-		    (cancel-node sup-node (if *trace* depth 0)))))))
-       )))
+		 (display-interest rebutting-interest)
+		 (princ
+		  "                                        Of interest as defeater for hyperlink ")
+		 (princ (hyperlink-number link)) (terpri) (terpri))
+	       (when *log-on* (push rebutting-interest *reasoning-log*))
+	       (when (and *display?* *graphics-on* *graph-interests*)
+		 (draw-i rebutting-interest *og*))
+	       (let ((priority (defeater-priority rebutting-interest)))
+		 (queue-interest
+		  rebutting-interest priority)
+		 (apply-degenerate-backwards-reasons rebutting-interest priority 0)))
+	      (t
+	       (readopt-interest rebutting-interest (list link))
+	       (push rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
+	       (push (hyperlink-target link) (interest-generating-defeat-nodes rebutting-interest))
+	       (setf (interest-defeatees rebutting-interest)
+		     (cons link (interest-defeatees rebutting-interest)))))
+	(dolist (node (unifying-nodes rebutting-interest))
+	  (when (subsetp= (hypernode-supposition node) supposition)
+	    (when *display?*
+	      (princ "  Node # ") (princ (hypernode-number node))
+	      (princ " defeats link # ")
+	      (princ (hyperlink-number link)) (terpri))
+	    (let ((DL (build-hyper-defeat-link node link)))
+	      (pushnew DL (hyperlink-defeaters link))
+	      (pushnew node (interest-discharging-nodes rebutting-interest))
+	      (pushnew DL (hypernode-supported-hyper-defeat-links node))))))))
 
- (defun reason-substantively-from-backwards-reason (reason interest depth priority)
-   (when *trace* (indent depth) (princ "REASON-SUBSTANTIVELY-FROM-BACKWARDS-REASON ")
-	 (princ reason) (terpri))
-   (multiple-value-bind
-    (binding instantiation)
-    (funcall (b-reason-conclusions-binding-function reason)
-	     (interest-formula interest) (interest-variables interest))
-    (when (and instantiation (funcall* (b-reason-condition reason) binding))
-      (let ((supposition (match-sublis instantiation (interest-supposition interest))))
-	(cond
-	 ((reason-forwards-premises reason)
-	  (construct-interest-scheme
-	   reason nil interest binding nil
-	   (reason-forwards-premises reason) nil (1+ depth) priority supposition))
-	 (t (make-backwards-inference
-	     reason binding interest (1+ depth) priority nil nil nil supposition)))))))
+  (defun adopt-interest-in-defeaters-for (link instantiations &optional bindings)
+    "The following assumes that the sequent and members of the basis share the same sequent-supposition.  Basis is a list of conclusions."
+    (cond ((hyperlink-defeasible? link)
+	   (let ((variables nil)
+		 (reverse-binding nil)
+		 (reverse-binding* nil)
+		 (binding* nil))
+	     (dolist (b bindings)
+	       (cond ((or (and (listp (cdr b)) (skolem-function (mem1 (cdr b))))
+			  (skolem-function (cdr b))
+			  (conclusion-variable (cdr b))
+			  )
+		      (push (car b) variables)
+		      (push (cons (cdr b) (car b)) reverse-binding)
+		      (push (cons (cdr b) (make-interest-variable)) reverse-binding*))
+		     (t (push b binding*))))
+	     (let* ((S (hypernode-sequent (hyperlink-target link)))
+		    (B (hyperlink-basis link))
+		    (supposition
+		     (subset
+		      #'(lambda (P)
+			  (every #'(lambda (b) (not (occur (car b) P :test 'equal))) reverse-binding))
+		      (sequent-supposition S)))
+		    (sup-remainder (setdifference (sequent-supposition S) supposition))
+		    (antecedent (match-sublis reverse-binding sup-remainder :test 'equal))
+		    (antecedent*
+		     (gen-conjunction
+		      (match-sublis reverse-binding* sup-remainder :test 'equal)))
+		    (antecedent-variables
+		     (subset #'(lambda (v) (occur v antecedent)) variables))
+		    (sup
+		     (if sup-remainder
+			 (generalized-e-gen antecedent-variables (gen-conjunction antecedent))))
+		    (new-sup (if sup (cons sup supposition) supposition))
+		    (formula (match-sublis reverse-binding* (sequent-formula S)))
+		    (base
+		     (mapcar
+		      #'(lambda (c m)
+			  (cond ((is-desire c)
+				 (list 'I_desire_that
+				       (match-sublis reverse-binding*
+						     (match-sublis m (hypernode-formula c)))))
+				((is-percept c)
+				 (let ((time (percept-date (hypernode-justification c))))
+				   (list 'it-appears-to-me-that
+					 (match-sublis reverse-binding*
+						       (match-sublis m (mem2 (hypernode-formula c))))
+					 (list 'closed time time))))
+				(t (match-sublis reverse-binding*
+						 (match-sublis m (hypernode-formula c)) :test 'equal))))
+		      B instantiations)))
+	       (when sup (queue-defeater-supposition sup))
+	       (when base
+		 (make-undercutting-defeater base formula new-sup antecedent* link reverse-binding*))
+	       (make-rebutting-defeater variables base formula new-sup antecedent* link))))
+	  ((eq (hyperlink-rule link) :Q&I)
+	   (adopt-interest-in-Q&I-defeaters-for (hypernode-sequent (hyperlink-target link))))))
 
- (defun reason-degenerately-backwards-from-reason-node (interest priority depth d-node)
-   (when *trace* (indent depth) (princ "REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE ")
-	 (princ interest) (princ " and ") (princ d-node) (terpri))
-   (dolist (reason (d-node-degenerate-backwards-reasons d-node))
-     (when (interest-cancelled interest) (throw 'apply-backwards-reasons nil))
-     (when (or (not (interest-deductive interest)) (not (reason-defeasible-rule reason)))
-       (let ((strength (reason-strength reason)))
-	 (when
-	     (or (not (numberp strength))
-		 (and (>= strength (interest-degree-of-interest interest))
-		      (or (null (interest-last-processed-degree-of-interest interest))
-			  (< strength (interest-last-processed-degree-of-interest interest)))))
-	   (let ((reason-function (reason-function reason)))
-	     (cond
-	      (reason-function (funcall (reason-function reason) interest (1+ depth) priority))
-	      (t (reason-substantively-from-backwards-reason reason interest (1+ depth) priority)))))))))
-
- (defun reason-degenerately-backwards-from-dominant-reason-nodes
-     (interest priority depth d-node)
-   (when *trace* (indent depth)
-	 (princ "REASON-DEGENERATELY-BACKWARDS-FROM-DOMINANT-REASON-NODES ")
-	 (princ interest) (princ " and ") (princ d-node) (terpri))
-   (reason-degenerately-backwards-from-reason-node interest priority (1+ depth) d-node)
-   (let ((pn (d-node-parent d-node)))
-     (when pn (reason-degenerately-backwards-from-dominant-reason-nodes interest priority (1+ depth) pn))))
-
- (defun apply-degenerate-backwards-reasons (interest priority depth)
-					; (when (eq interest (interest 97)) (setf i interest p priority d depth) (break))
-   ;; (step (apply-degenerate-backwards-reasons i p d))
-   (when *trace* (indent depth) (princ "APPLY-DEGENERATE-BACKWARDS-REASONS ") (princ interest) (terpri))
-   (catch 'apply-backwards-reasons
-     (let* ((i-list (interest-i-list interest))
-	    (d-node (i-list-d-node i-list)))
-       (reason-degenerately-backwards-from-dominant-reason-nodes interest priority (1+ depth) d-node))))
-
- (defun construct-initial-interest-link
-     (supporting-nodes instantiations reason resultant-interest depth priority binding supposition
-		       &key generating-node remaining-premises clues new-variables)
-   (when *trace* (indent depth) (princ "CONSTRUCT-INITIAL-INTEREST-LINK for interest ")
-	 (princ (interest-number resultant-interest)) (princ " using ") (princ reason) (terpri))
-   (when (null remaining-premises) (setf remaining-premises (reason-backwards-premises reason)))
-   (cond
-    ((and (backwards-premise-p (car remaining-premises))
-	  (listp (bp-formula (car remaining-premises)))
-	  (equal (car (bp-formula (car remaining-premises))) 'define))
-     (let* ((var (mem2 (bp-formula (car remaining-premises))))
-	    (def-instantiator (bp-instantiator (car remaining-premises))))
-       (multiple-value-bind
-	(new-binding new-vars)
-	(set-def-binding def-instantiator var binding)
-	(when (funcall** (bp-condition1 (car remaining-premises)) nil new-binding)
-	  (cond ((cdr remaining-premises)
-		 (construct-initial-interest-link
-		  supporting-nodes instantiations reason resultant-interest depth priority new-binding
-		  supposition :generating-node generating-node :remaining-premises (cdr remaining-premises)
-		  :clues clues :new-variables (append new-vars new-variables)))
-		((reason-conclusions-function reason)
-		 (dolist (P (funcall (reason-conclusions-function reason) new-binding))
-		   (draw-conclusion
-		    (car P) supporting-nodes
-		    reason instantiations (reason-discount-factor reason) depth nil
-		    (reason-defeasible-rule reason) :binding new-binding
-		    :interest resultant-interest :clues clues)))
-		(t (draw-conclusion
-		    (interest-formula resultant-interest) supporting-nodes
-		    reason instantiations (reason-discount-factor reason) depth nil
-		    (reason-defeasible-rule reason) :binding new-binding
-		    :interest resultant-interest :clues clues)))))))
-    (t
-     (when (null resultant-interest)
-       (multiple-value-bind
-	(formulas vars)
-	(funcall (reason-conclusions-function reason) binding)
+  (defun construct-interest-link
+      (link0 node instantiations binding remaining-premises supposition degree
+	     max-degree depth priority interests &key new-variables)
+    (when *trace* (indent depth) (princ "CONSTRUCT-INTEREST-LINK for interest ")
+	  (princ (interest-number (link-resultant-interest link0))) (princ " using ") (princ (link-rule link0))
+	  (princ " and nodes ") (princ (mapcar #'hypernode-number (link-supporting-nodes link0)))
+	  (terpri))
+    (cond
+     ((and (backwards-premise-p (car remaining-premises))
+	   (listp (bp-formula (car remaining-premises)))
+	   (equal (car (bp-formula (car remaining-premises))) 'define))
+      (let* ((var (mem2 (bp-formula (car remaining-premises))))
+	     (def-instantiator (bp-instantiator (car remaining-premises))))
 	(multiple-value-bind
-	 (i-list match)
-	 (i-list-for (caar formulas) vars)
-	 (let ((sup (if i-list (match-sublis match supposition) supposition)))
-	   (setf resultant-interest
-		 (if i-list
-		     (find-if #'(lambda (i) (== (interest-supposition i) sup))
-			      (i-list-interests i-list))))))))
-     (let* ((premise0 (car remaining-premises))
-	    (premise
-	     (if (backwards-premise-p premise0) premise0
-	       (funcall premise0
-			(interest-defeater-binding resultant-interest) binding)))
-	    (discharge (if (and (backwards-reason-p reason) (b-reason-discharge reason))
-			   (remove-double-negation
-			    (match-sublis binding (b-reason-discharge reason))))))
-       (multiple-value-bind
-	(generating-node new?)
-	(if (and discharge (null supporting-nodes))
-	    (queue-supposition
-	     discharge (list discharge)
-	     (subset #'(lambda (v) (occur v discharge)) (interest-variables resultant-interest))
-	     (reason-discount-factor reason) resultant-interest)
-	  generating-node)
-	(when (or generating-node new? (null discharge) supporting-nodes)
+	    (new-binding new-vars match)
+	    (set-def-binding def-instantiator var binding)
+	  (when (funcall** (bp-condition1 (car remaining-premises)) nil new-binding)
+	    (cond ((cdr remaining-premises)
+		   (construct-interest-link
+		    link0 node instantiations new-binding (cdr remaining-premises)
+		    supposition degree max-degree depth priority interests
+		    :new-variables (append new-vars new-variables)))
+		  ((funcall+
+		    (interest-discharge-condition (link-resultant-interest link0)) nil (list t t)
+		    (subst (cdr match) (car match)
+			   (link-binding (car (interest-right-links (link-resultant-interest link0))))))
+		   (cond
+		    ((reason-conclusions-function (link-rule link0))
+		     (dolist (P (funcall (reason-conclusions-function (link-rule link0)) new-binding))
+		       (draw-conclusion
+			(car P) (cons node (link-supporting-nodes link0)) (link-rule link0) instantiations
+			(reason-discount-factor (link-rule link0)) depth nil (cdr P) :binding new-binding :interest
+			(link-resultant-interest link0) :link link0 :clues (link-clues link0))))
+		    (t (draw-conclusion
+			(interest-formula (link-resultant-interest link0)) (cons node (link-supporting-nodes link0))
+			(link-rule link0) instantiations (reason-discount-factor (link-rule link0)) depth nil
+			(reason-defeasible-rule (link-rule link0)) :binding new-binding
+			:interest (link-resultant-interest link0) :link link0 :clues (link-clues link0)))
+		    )))))))
+     (t
+      (let* ((premise0 (car remaining-premises))
+	     (premise
+	      (if (backwards-premise-p premise0) premise0
+		(funcall premise0 nil binding))))
+	(multiple-value-bind
+	    (interest-formula new-vars new-binding)
+	    (funcall (bp-instantiator premise) binding)
+	  (let ((link
+		 (make-interest-link
+		  :link-number (incf *interest-link-number*)
+		  :link-resultant-interest (link-resultant-interest link0)
+		  :link-interest-formula (remove-double-negation interest-formula)
+		  :link-interest-condition (bp-condition2 premise)
+		  :link-rule (link-rule link0)
+		  :link-premise premise
+		  :link-remaining-premises (cdr remaining-premises)
+		  :link-supporting-nodes
+		  (if (bp-clue? (link-premise link0))
+		      (link-supporting-nodes link0) (cons node (link-supporting-nodes link0)))
+		  :link-clues
+		  (if (bp-clue? (link-premise link0))
+		      (cons node (link-clues link0)) (link-clues link0))
+		  :link-instantiations instantiations
+		  :link-supposition supposition
+		  :link-strength
+		  (cond ((eq (link-rule link0) :answer)
+			 (interest-maximum-degree-of-interest (link-resultant-interest link0)))
+			((numberp (reason-strength (link-rule link0))) (reason-strength (link-rule link0)))
+			(t (interest-maximum-degree-of-interest (link-resultant-interest link0))))
+		  :link-generating-node (link-generating-node link0)
+		  :link-binding new-binding
+		  :link-generating link0
+		  )))
+	    (push link *interest-links*)
+	    (push link (interest-left-links (link-resultant-interest link0)))
+	    (compute-link-interest
+	     link (bp-condition1 premise) (bp-condition2 premise)
+	     degree max-degree depth priority (append new-vars new-variables)
+	     (bp-text-condition premise))
+	    (discharge-link link (1+ depth) (interest-degree-of-interest (link-resultant-interest link0)) priority interests)
+	    (apply-degenerate-backwards-reasons (link-interest link) priority (1+ depth))
+	    ))))))
+
+  (defun DISCHARGE-LINK (link depth degree priority interests)
+    "The priority is the priority of the inference-queue node from which this link is derived, if this value is known.  This simplifies the computation of the interest-priority for the new interests produced by this operation.  degree is the degree of interest of the resultant-interest."
+    (when *trace* (indent depth) (princ "DISCHARGE-LINK: ") (princ link) (terpri))
+    (let ((deductive-rule? (not (reason-defeasible-rule (link-rule link))))
+	  (hypernode-list nil)
+	  (interest (link-interest link))
+	  (reason (link-rule link))
+	  (condition (link-interest-condition link))
+					; (match (link-interest-match link))
+	  (match* (link-interest-reverse-match link))
+	  (spec (premise-hypernode-specifier (link-premise link))))
+      (block nodes
+	(dolist  (cl (i-list-corresponding-c-lists (interest-i-list interest)))
+	  (let* ((c-list (car cl))
+		 (unifier0 (mem2 cl))
+		 (unifier
+		  (match-sublis match* unifier0)))
+	    (dolist (node (c-list-nodes c-list))
+	      (when (and (funcall+
+			  (interest-discharge-condition interest) node unifier
+			  (if spec (cons (cons spec node) (link-binding link)) (link-binding link)))
+			 (or (not (hypernode-deductive-only node)) deductive-rule?)
+			 (or (interest-non-reductio? interest) (deductive-node node)))
+		(when (and (deductive-node node)
+			   (null condition)
+			   (eq (mem2 unifier) t)
+			   (subsetp= (match-sublis (mem1 unifier) (hypernode-supposition node))
+				     (link-supposition link)))
+		  (setf hypernode-list (list (cons node unifier)))
+		  (setf (interest-cancelling-node interest) node)
+		  (return-from nodes))
+		(when (>= (current-maximal-degree-of-justification node) degree)
+		  (push (cons node unifier) hypernode-list))))))
+	(re-queue-interest link priority (link-interest link) degree))
+      (dolist (nl hypernode-list)
+	(let* ((node (car nl))
+	       (unifier (cdr nl))
+	       (unifiers
+		(appropriately-related-supposition
+		 node (link-interest link) (link-supposition link) (interest-supposition-variables interest) unifier)))
+	  (when unifiers (setf (link-discharged link) t))
+	  (dolist (u unifiers)
+	    (let ((u* (merge-unifiers* unifier u)))
+	      (when (interest-cancelled (link-interest link)) (return-from discharge-link))
+	      (when
+		  (constrained-assignment
+		   u* (hypernode-supposition-variables node) (interest-variables (link-interest link)))
+		(when *display?*
+		  (princ "                                        ") (princ "Hypernode #") (princ (hypernode-number node))
+		  (princ " discharges interest #") (princ (interest-number interest)) (terpri) (terpri))
+		(pushnew node (interest-discharging-nodes interest))
+					; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
+		(let
+		    ((binding
+		      (mapcar
+		       #'(lambda (assoc) (cons (car assoc) (match-sublis (mem2 u*) (cdr assoc))))
+		       (if spec (cons (cons spec node) (link-binding link)) (link-binding link))))
+		     (instantiations
+		      (cons (mem1 u*)
+			    (mapcar #'(lambda (in) (merge-matches* in (mem2 u*))) (link-instantiations link))))
+		     (supposition (match-sublis (mem2 u*) (link-supposition link))))
+		  (cond
+		   ((eq (link-rule link) :answer)
+		    (push node (query-answers (link-resultant-interest link)))
+		    (pushnew (link-resultant-interest link) (hypernode-answered-queries node))
+		    (when (deductive-node node)
+		      (when (and
+			     (every
+			      #'(lambda (query)
+				  (or (eq query (link-resultant-interest link))
+				      (some #'deductive-node (query-answers query))))
+			      *ultimate-epistemic-interests*)
+			     (not (some
+				   #'(lambda (Q) (eq (queue-item-kind Q) :query))
+				   *inference-queue*)))
+			(setf (hypernode-degree-of-justification node) 1.0)
+			(setf (query-answered? (link-resultant-interest link)) T)
+			(let ((deductive-links nil)
+			      (deductive-nodes nil))
+			  (dolist (L *new-links*)
+			    (when (deductive-node (hyperlink-target L))
+			      (push L deductive-links)
+			      (push (hyperlink-target L) deductive-nodes)))
+			  (dolist (N deductive-nodes) (setf (hypernode-degree-of-justification N) 1.0))
+			  (dolist (L deductive-links) (setf (hyperlink-degree-of-justification L) 1.0))
+			  (display-belief-changes
+			   *new-links*
+			   deductive-nodes
+			   nil))
+			(dolist (instruction (query-positive-instructions (link-resultant-interest link)))
+			  (funcall instruction node))
+			(when *display?*
+			  (terpri)
+			  (princ "             ALL QUERIES HAVE BEEN ANSWERED DEDUCTIVELY.")
+			  (terpri))
+					; (cancel-interest-in (link-interest link) 0)
+			(throw 'die nil)))
+					; (record-query-answers link)
+		    )
+		   ((link-remaining-premises link)
+		    (construct-interest-link
+		     link node instantiations binding (link-remaining-premises link) supposition
+		     (interest-degree-of-interest (link-interest link))
+		     (interest-maximum-degree-of-interest (link-interest link)) (1+ depth) priority interests))
+		   ((or
+		     (some #'(lambda (L) (eq (link-rule L) ug)) (interest-left-links (link-resultant-interest link)))
+		     (funcall+ (interest-discharge-condition interest) nil u binding))
+		    (cond
+		     ((reason-conclusions-function reason)
+		      (dolist (P (funcall (reason-conclusions-function reason) binding))
+			(draw-conclusion
+			 (car P) (cons node (link-supporting-nodes link)) reason instantiations
+			 (reason-discount-factor reason) depth nil (cdr P) :binding binding :interest
+			 (link-resultant-interest link) :link link :clues (link-clues link))))
+		     (t
+		      (draw-conclusion
+		       (interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link)) reason
+		       instantiations (reason-discount-factor reason) depth nil (reason-defeasible-rule reason)
+		       :binding binding :interest (link-resultant-interest link) :link link :clues (link-clues link)))
+		     )))))))
+	  (when (and (interest-cancelling-node interest) (every #'link-discharged (interest-right-links interest)))
+	    (cancel-interest-in interest (if *trace* depth 0)))
+	  (when (and
+		 unifiers
+		 (not (interest-cancelled interest))
+		 (equal (hypernode-formula node) (interest-formula interest))
+		 (subsetp= (hypernode-supposition node) (interest-supposition interest))
+		 (dolist (sup-node (interest-generated-suppositions interest))
+		   (when
+		       (and
+			(equal (hypernode-generating-interests sup-node) (list interest))
+			(deductive-in node sup-node))
+		     (cancel-node sup-node (if *trace* depth 0)))))))
+	)))
+
+  (defun reason-substantively-from-backwards-reason (reason interest depth priority)
+    (when *trace* (indent depth) (princ "REASON-SUBSTANTIVELY-FROM-BACKWARDS-REASON ")
+	  (princ reason) (terpri))
+    (multiple-value-bind
+	(binding instantiation)
+	(funcall (b-reason-conclusions-binding-function reason)
+		 (interest-formula interest) (interest-variables interest))
+      (when (and instantiation (funcall* (b-reason-condition reason) binding))
+	(let ((supposition (match-sublis instantiation (interest-supposition interest))))
+	  (cond
+	   ((reason-forwards-premises reason)
+	    (construct-interest-scheme
+	     reason nil interest binding nil
+	     (reason-forwards-premises reason) nil (1+ depth) priority supposition))
+	   (t (make-backwards-inference
+	       reason binding interest (1+ depth) priority nil nil nil supposition)))))))
+
+  (defun reason-degenerately-backwards-from-reason-node (interest priority depth d-node)
+    (when *trace* (indent depth) (princ "REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE ")
+	  (princ interest) (princ " and ") (princ d-node) (terpri))
+    (dolist (reason (d-node-degenerate-backwards-reasons d-node))
+      (when (interest-cancelled interest) (throw 'apply-backwards-reasons nil))
+      (when (or (not (interest-deductive interest)) (not (reason-defeasible-rule reason)))
+	(let ((strength (reason-strength reason)))
+	  (when
+	      (or (not (numberp strength))
+		  (and (>= strength (interest-degree-of-interest interest))
+		       (or (null (interest-last-processed-degree-of-interest interest))
+			   (< strength (interest-last-processed-degree-of-interest interest)))))
+	    (let ((reason-function (reason-function reason)))
+	      (cond
+	       (reason-function (funcall (reason-function reason) interest (1+ depth) priority))
+	       (t (reason-substantively-from-backwards-reason reason interest (1+ depth) priority)))))))))
+
+  (defun reason-degenerately-backwards-from-dominant-reason-nodes
+      (interest priority depth d-node)
+    (when *trace* (indent depth)
+	  (princ "REASON-DEGENERATELY-BACKWARDS-FROM-DOMINANT-REASON-NODES ")
+	  (princ interest) (princ " and ") (princ d-node) (terpri))
+    (reason-degenerately-backwards-from-reason-node interest priority (1+ depth) d-node)
+    (let ((pn (d-node-parent d-node)))
+      (when pn (reason-degenerately-backwards-from-dominant-reason-nodes interest priority (1+ depth) pn))))
+
+  (defun apply-degenerate-backwards-reasons (interest priority depth)
+					; (when (eq interest (interest 97)) (setf i interest p priority d depth) (break))
+    ;; (step (apply-degenerate-backwards-reasons i p d))
+    (when *trace* (indent depth) (princ "APPLY-DEGENERATE-BACKWARDS-REASONS ") (princ interest) (terpri))
+    (catch 'apply-backwards-reasons
+      (let* ((i-list (interest-i-list interest))
+	     (d-node (i-list-d-node i-list)))
+	(reason-degenerately-backwards-from-dominant-reason-nodes interest priority (1+ depth) d-node))))
+
+  (defun construct-initial-interest-link
+      (supporting-nodes instantiations reason resultant-interest depth priority binding supposition
+			&key generating-node remaining-premises clues new-variables)
+    (when *trace* (indent depth) (princ "CONSTRUCT-INITIAL-INTEREST-LINK for interest ")
+	  (princ (interest-number resultant-interest)) (princ " using ") (princ reason) (terpri))
+    (when (null remaining-premises) (setf remaining-premises (reason-backwards-premises reason)))
+    (cond
+     ((and (backwards-premise-p (car remaining-premises))
+	   (listp (bp-formula (car remaining-premises)))
+	   (equal (car (bp-formula (car remaining-premises))) 'define))
+      (let* ((var (mem2 (bp-formula (car remaining-premises))))
+	     (def-instantiator (bp-instantiator (car remaining-premises))))
+	(multiple-value-bind
+	    (new-binding new-vars)
+	    (set-def-binding def-instantiator var binding)
+	  (when (funcall** (bp-condition1 (car remaining-premises)) nil new-binding)
+	    (cond ((cdr remaining-premises)
+		   (construct-initial-interest-link
+		    supporting-nodes instantiations reason resultant-interest depth priority new-binding
+		    supposition :generating-node generating-node :remaining-premises (cdr remaining-premises)
+		    :clues clues :new-variables (append new-vars new-variables)))
+		  ((reason-conclusions-function reason)
+		   (dolist (P (funcall (reason-conclusions-function reason) new-binding))
+		     (draw-conclusion
+		      (car P) supporting-nodes
+		      reason instantiations (reason-discount-factor reason) depth nil
+		      (reason-defeasible-rule reason) :binding new-binding
+		      :interest resultant-interest :clues clues)))
+		  (t (draw-conclusion
+		      (interest-formula resultant-interest) supporting-nodes
+		      reason instantiations (reason-discount-factor reason) depth nil
+		      (reason-defeasible-rule reason) :binding new-binding
+		      :interest resultant-interest :clues clues)))))))
+     (t
+      (when (null resultant-interest)
+	(multiple-value-bind
+	    (formulas vars)
+	    (funcall (reason-conclusions-function reason) binding)
 	  (multiple-value-bind
-	   (interest-formula new-vars new-binding)
-	   (funcall (bp-instantiator premise) binding)
-	   (setf interest-formula (remove-double-negation interest-formula))
-	   (when (or (not (equal interest-formula (interest-formula resultant-interest)))
-		     (not (mem discharge supposition)))
-	     (let ((link
-		    (make-interest-link
-		     :link-number (incf *interest-link-number*)
-		     :link-resultant-interest resultant-interest
-		     :link-interest-formula interest-formula
-		     :link-interest-condition (bp-condition2 premise)
-		     :link-rule reason
-		     :link-premise premise
-		     :link-remaining-premises (cdr remaining-premises)
-		     :link-supporting-nodes supporting-nodes
-		     :link-clues clues
-		     :link-instantiations instantiations
-		     :link-supposition (if (and discharge (not (mem discharge supposition)))
-					   (cons discharge supposition) supposition)
-		     :link-strength
-		     (cond ((eq reason :answer)
-			    (interest-maximum-degree-of-interest resultant-interest))
-			   ((numberp (reason-strength reason)) (reason-strength reason))
-			   (t (interest-maximum-degree-of-interest resultant-interest)))
-		     :link-generating-node generating-node
-		     :link-binding new-binding
-		     )))
-	       (push link *interest-links*)
-	       (push link (interest-left-links resultant-interest))
-	       (compute-link-interest
-		link (bp-condition1 premise) (bp-condition2 premise)
-		(interest-degree-of-interest resultant-interest)
-		(interest-maximum-degree-of-interest resultant-interest) depth priority
-		(append new-vars new-variables) (bp-text-condition premise))
-	       (discharge-link
-		link (1+ depth) (interest-degree-of-interest resultant-interest)
-		(interest-priority (link-interest link)) nil)
-	       (apply-degenerate-backwards-reasons
-		(link-interest link) (interest-priority (link-interest link)) (1+ depth))
-	       link)))))))))
+	      (i-list match)
+	      (i-list-for (caar formulas) vars)
+	    (let ((sup (if i-list (match-sublis match supposition) supposition)))
+	      (setf resultant-interest
+		    (if i-list
+			(find-if #'(lambda (i) (== (interest-supposition i) sup))
+				 (i-list-interests i-list))))))))
+      (let* ((premise0 (car remaining-premises))
+	     (premise
+	      (if (backwards-premise-p premise0) premise0
+		(funcall premise0
+			 (interest-defeater-binding resultant-interest) binding)))
+	     (discharge (if (and (backwards-reason-p reason) (b-reason-discharge reason))
+			    (remove-double-negation
+			     (match-sublis binding (b-reason-discharge reason))))))
+	(multiple-value-bind
+	    (generating-node new?)
+	    (if (and discharge (null supporting-nodes))
+		(queue-supposition
+		 discharge (list discharge)
+		 (subset #'(lambda (v) (occur v discharge)) (interest-variables resultant-interest))
+		 (reason-discount-factor reason) resultant-interest)
+	      generating-node)
+	  (when (or generating-node new? (null discharge) supporting-nodes)
+	    (multiple-value-bind
+		(interest-formula new-vars new-binding)
+		(funcall (bp-instantiator premise) binding)
+	      (setf interest-formula (remove-double-negation interest-formula))
+	      (when (or (not (equal interest-formula (interest-formula resultant-interest)))
+			(not (mem discharge supposition)))
+		(let ((link
+		       (make-interest-link
+			:link-number (incf *interest-link-number*)
+			:link-resultant-interest resultant-interest
+			:link-interest-formula interest-formula
+			:link-interest-condition (bp-condition2 premise)
+			:link-rule reason
+			:link-premise premise
+			:link-remaining-premises (cdr remaining-premises)
+			:link-supporting-nodes supporting-nodes
+			:link-clues clues
+			:link-instantiations instantiations
+			:link-supposition (if (and discharge (not (mem discharge supposition)))
+					      (cons discharge supposition) supposition)
+			:link-strength
+			(cond ((eq reason :answer)
+			       (interest-maximum-degree-of-interest resultant-interest))
+			      ((numberp (reason-strength reason)) (reason-strength reason))
+			      (t (interest-maximum-degree-of-interest resultant-interest)))
+			:link-generating-node generating-node
+			:link-binding new-binding
+			)))
+		  (push link *interest-links*)
+		  (push link (interest-left-links resultant-interest))
+		  (compute-link-interest
+		   link (bp-condition1 premise) (bp-condition2 premise)
+		   (interest-degree-of-interest resultant-interest)
+		   (interest-maximum-degree-of-interest resultant-interest) depth priority
+		   (append new-vars new-variables) (bp-text-condition premise))
+		  (discharge-link
+		   link (1+ depth) (interest-degree-of-interest resultant-interest)
+		   (interest-priority (link-interest link)) nil)
+		  (apply-degenerate-backwards-reasons
+		   (link-interest link) (interest-priority (link-interest link)) (1+ depth))
+		  link)))))))))
 
- (defun make-backwards-inference
-     (reason binding interest depth priority supporting-nodes clues instantiations supposition
-	     &optional generating-node)
-   (cond
-    ((or (reason-backwards-premises reason) (reason-backwards-premises-function reason))
-     (construct-initial-interest-link
-      supporting-nodes instantiations reason interest depth priority binding supposition
-      :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
-    ((or (numberp (reason-strength reason))
-	 (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
-     (dolist (P (funcall (reason-conclusions-function reason) binding))
-       (draw-conclusion
-	(car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
-	:binding binding :clues clues)))))
+  (defun make-backwards-inference
+      (reason binding interest depth priority supporting-nodes clues instantiations supposition
+	      &optional generating-node)
+    (cond
+     ((or (reason-backwards-premises reason) (reason-backwards-premises-function reason))
+      (construct-initial-interest-link
+       supporting-nodes instantiations reason interest depth priority binding supposition
+       :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
+     ((or (numberp (reason-strength reason))
+	  (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
+      (dolist (P (funcall (reason-conclusions-function reason) binding))
+	(draw-conclusion
+	 (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
+	 :binding binding :clues clues)))))
 
- (defun construct-interest-scheme
-     (reason node interest binding instantiations remaining-premises is0
-	     depth priority supposition)
-   (cond
-    ((and (forwards-premise-p (car remaining-premises))
-	  (listp (fp-formula (car remaining-premises)))
-	  (equal (car (fp-formula (car remaining-premises))) 'define))
-     (let* ((var (mem2 (fp-formula (car remaining-premises))))
-	    (def-instantiator (fp-instantiator (car remaining-premises)))
-	    (new-binding (set-def-binding def-instantiator var binding)))
-       (when (funcall** (fp-condition (car remaining-premises)) nil new-binding)
-	 (cond ((cdr remaining-premises)
-		(construct-interest-scheme
-		 reason node interest new-binding instantiations (cdr remaining-premises)
-		 is0 depth priority supposition))
-	       (is0
-		(make-backwards-inference
-		 (is-reason is0) new-binding (is-target-interest is0) (1+ depth) priority
-		 (if (fp-clue? (is-premise is0)) (is-basis is0) (cons node (is-basis is0)))
-		 (if (fp-clue? (is-premise is0)) (cons node (is-clues is0)) (is-clues is0))
-		 instantiations supposition (is-generating-node is0)))
-	       (t
-		(make-backwards-inference
-		 reason new-binding interest (1+ depth) priority nil nil instantiations supposition nil))))))
-    (t
-     (let* ((basis
-	     (when is0
-	       (cond ((fp-clue? (is-premise is0)) (is-basis is0))
-		     (t (if node (cons node (is-basis is0)) (is-basis is0))))))
-	    (clues
-	     (when is0
-	       (cond ((fp-clue? (is-premise is0)) (if node (cons node (is-clues is0)) (is-clues is0)))
-		     (t (is-clues is0)))))
-	    (discharge (if (and (null basis)
-				(null (if is0 (is-generating-node is0)))
-				(b-reason-discharge reason))
-			   (remove-double-negation
-			    (match-sublis binding (b-reason-discharge reason))))))
-       (multiple-value-bind
-	(generating-node new-sup?)
-	(if discharge
-	    (queue-supposition
-	     discharge (list discharge)
-	     (subset #'(lambda (v) (occur v discharge)) (interest-variables interest))
-	     (reason-discount-factor reason) interest))
-	(when (or new-sup? (null discharge))
-	  (let* ((premise (mem1 remaining-premises))
-		 (profile (reason-code (fp-formula premise) (reason-variables reason)))
-		 (d-node (pursue-d-node-for profile *top-d-node*))
-		 (generating-node
-		  (cond (new-sup? generating-node) (is0 (is-generating-node is0))))
-		 (interest-scheme
-		  (when d-node
-		    (find-if
-		     #'(lambda (is)
-			 (and
-			  (eq (is-reason is) reason)
-			  (eq (is-premise is) premise)
-			  (eq (is-target-interest is) interest)
-			  (eq (is-basis is) basis)
-			  (eq (is-remaining-premises is) (cdr remaining-premises))
-			  (eq (is-binding is) binding)
-			  (eq (is-supposition is) supposition)
-			  (eq (is-generating-node is) generating-node)))
-		     (d-node-interest-schemes d-node)))))
-	    (when (null interest-scheme)
-	      (incf *interest-scheme-number*)
-	      (setf interest-scheme
-		    (make-interest-scheme
-		     :reason reason
-		     :premise premise
-		     :number (incf *is-number*)
-		     :target-interest interest
-		     :basis basis
-		     :clues clues
-		     :remaining-premises (cdr remaining-premises)
-		     :binding binding
-		     :instantiations instantiations
-		     :supposition supposition
-		     :generating-node generating-node
-		     :supposition-variables (supposition-variables supposition)
-		     :used-premise-variables
-		     (if is0 (union (fp-variables premise) (is-used-premise-variables is0))
-		       (fp-variables premise))
-		     :used-variables
-		     (if is0 (union (hypernode-variables node) (is-used-variables is0))
-		       (interest-variables interest))))
-	      (if d-node
-		  (store-interest-scheme-at-d-node interest-scheme d-node)
-		(store-interest-scheme interest-scheme profile *top-d-node*))
-	      (when *display?* (display-interest-scheme interest-scheme))
-	      (if node (pushnew interest-scheme (c-list-generated-instantiated-premises (hypernode-c-list node))))
-	      (when is0 (pushnew interest-scheme (is-derived-premises is0)))
-	      (discharge-interest-scheme
-	       interest-scheme (is-d-node interest-scheme) priority depth))
-	    interest-scheme)))))))
+  (defun construct-interest-scheme
+      (reason node interest binding instantiations remaining-premises is0
+	      depth priority supposition)
+    (cond
+     ((and (forwards-premise-p (car remaining-premises))
+	   (listp (fp-formula (car remaining-premises)))
+	   (equal (car (fp-formula (car remaining-premises))) 'define))
+      (let* ((var (mem2 (fp-formula (car remaining-premises))))
+	     (def-instantiator (fp-instantiator (car remaining-premises)))
+	     (new-binding (set-def-binding def-instantiator var binding)))
+	(when (funcall** (fp-condition (car remaining-premises)) nil new-binding)
+	  (cond ((cdr remaining-premises)
+		 (construct-interest-scheme
+		  reason node interest new-binding instantiations (cdr remaining-premises)
+		  is0 depth priority supposition))
+		(is0
+		 (make-backwards-inference
+		  (is-reason is0) new-binding (is-target-interest is0) (1+ depth) priority
+		  (if (fp-clue? (is-premise is0)) (is-basis is0) (cons node (is-basis is0)))
+		  (if (fp-clue? (is-premise is0)) (cons node (is-clues is0)) (is-clues is0))
+		  instantiations supposition (is-generating-node is0)))
+		(t
+		 (make-backwards-inference
+		  reason new-binding interest (1+ depth) priority nil nil instantiations supposition nil))))))
+     (t
+      (let* ((basis
+	      (when is0
+		(cond ((fp-clue? (is-premise is0)) (is-basis is0))
+		      (t (if node (cons node (is-basis is0)) (is-basis is0))))))
+	     (clues
+	      (when is0
+		(cond ((fp-clue? (is-premise is0)) (if node (cons node (is-clues is0)) (is-clues is0)))
+		      (t (is-clues is0)))))
+	     (discharge (if (and (null basis)
+				 (null (if is0 (is-generating-node is0)))
+				 (b-reason-discharge reason))
+			    (remove-double-negation
+			     (match-sublis binding (b-reason-discharge reason))))))
+	(multiple-value-bind
+	    (generating-node new-sup?)
+	    (if discharge
+		(queue-supposition
+		 discharge (list discharge)
+		 (subset #'(lambda (v) (occur v discharge)) (interest-variables interest))
+		 (reason-discount-factor reason) interest))
+	  (when (or new-sup? (null discharge))
+	    (let* ((premise (mem1 remaining-premises))
+		   (profile (reason-code (fp-formula premise) (reason-variables reason)))
+		   (d-node (pursue-d-node-for profile *top-d-node*))
+		   (generating-node
+		    (cond (new-sup? generating-node) (is0 (is-generating-node is0))))
+		   (interest-scheme
+		    (when d-node
+		      (find-if
+		       #'(lambda (is)
+			   (and
+			    (eq (is-reason is) reason)
+			    (eq (is-premise is) premise)
+			    (eq (is-target-interest is) interest)
+			    (eq (is-basis is) basis)
+			    (eq (is-remaining-premises is) (cdr remaining-premises))
+			    (eq (is-binding is) binding)
+			    (eq (is-supposition is) supposition)
+			    (eq (is-generating-node is) generating-node)))
+		       (d-node-interest-schemes d-node)))))
+	      (when (null interest-scheme)
+		(incf *interest-scheme-number*)
+		(setf interest-scheme
+		      (make-interest-scheme
+		       :reason reason
+		       :premise premise
+		       :number (incf *is-number*)
+		       :target-interest interest
+		       :basis basis
+		       :clues clues
+		       :remaining-premises (cdr remaining-premises)
+		       :binding binding
+		       :instantiations instantiations
+		       :supposition supposition
+		       :generating-node generating-node
+		       :supposition-variables (supposition-variables supposition)
+		       :used-premise-variables
+		       (if is0 (union (fp-variables premise) (is-used-premise-variables is0))
+			 (fp-variables premise))
+		       :used-variables
+		       (if is0 (union (hypernode-variables node) (is-used-variables is0))
+			 (interest-variables interest))))
+		(if d-node
+		    (store-interest-scheme-at-d-node interest-scheme d-node)
+		  (store-interest-scheme interest-scheme profile *top-d-node*))
+		(when *display?* (display-interest-scheme interest-scheme))
+		(if node (pushnew interest-scheme (c-list-generated-instantiated-premises (hypernode-c-list node))))
+		(when is0 (pushnew interest-scheme (is-derived-premises is0)))
+		(discharge-interest-scheme
+		 interest-scheme (is-d-node interest-scheme) priority depth))
+	      interest-scheme)))))))
 
- (defun reason-from-interest-scheme (node priority depth is)
+  (defun reason-from-interest-scheme (node priority depth is)
 					; (when (and (eq node (node 56)) (eq is (interest-scheme 20))) (setf n node p priority d depth i is) (break))
-   ;; (step (reason-from-interest-scheme n p d i))
-   (when *trace* (indent depth) (princ "REASON-FROM-INTEREST-SCHEME ")
-	 (princ (is-number is)) (terpri))
-   (cond
-    ((is-instance-function is) (funcall (is-instance-function is) node (1+ depth) priority))
-    (t
-     (let* ((vars (if node (hypernode-variables node)))
-	    (formula (if node (hypernode-formula node))))
-       (multiple-value-bind
-	(binding0 instantiation0)
-	(funcall (fp-binding-function (is-premise is)) formula vars)
-	(when
-	    (and instantiation0 (equal (fp-kind (is-premise is)) (hypernode-kind node)))
-	  (let ((unifier
-		 (binding-unifier
-		  binding0 (is-binding is)
-		  (is-used-premise-variables is) vars (is-used-variables is))))
-	    (when unifier
-	      (let ((unifiers
-		     (appropriately-related-supposition
-		      node (is-target-interest is)
-		      (if (b-reason-discharge (is-reason is))
-			  (cons (remove-double-negation
-				 (match-sublis (is-binding is) (b-reason-discharge (is-reason is))))
-				(is-supposition is))
-			(is-supposition is))
-		      (is-supposition-variables is) unifier)))
-		(dolist (u unifiers)
-		  (let ((u* (merge-unifiers* unifier u)))
-		    (when (interest-cancelled (is-target-interest is))
-		      (return-from reason-from-interest-scheme))
-		    (when
-			(constrained-assignment
-			 u* (hypernode-supposition-variables node)
-			 (interest-variables (is-target-interest is)))
-		      (let ((binding (rectify-binding binding0 u* is))
-			    (spec (premise-hypernode-specifier (is-premise is))))
-			(when spec (push (cons spec node) binding))
-			(when (funcall** (fp-condition (is-premise is)) node binding)
-			  (let
-			      ((instantiations
-				(if (fp-clue? (is-premise is))
-				    (mapcar #'(lambda (in) (merge-matches* (mem2 u*) in))
-					    (is-instantiations is))
-				  (cons (merge-matches* (mem1 u*) instantiation0)
-					(mapcar #'(lambda (in) (merge-matches* (mem2 u*) in))
-						(is-instantiations is)))))
-			       (supposition (match-sublis (mem2 u) (is-supposition is))))
-			    (cond
-			     ((is-remaining-premises is)
-			      (construct-interest-scheme
-			       (is-reason is) node (is-target-interest is) binding
-			       instantiations (is-remaining-premises is)
-			       is (1+ depth) priority supposition))
-			     (t
-			      (make-backwards-inference
-			       (is-reason is) binding (is-target-interest is) (1+ depth) priority
-			       (if (fp-clue? (is-premise is)) (is-basis is) (cons node (is-basis is)))
-			       (if (fp-clue? (is-premise is)) (cons node (is-clues is)) (is-clues is))
-			       instantiations supposition (is-generating-node is)))))
-			  ))))))))))))))
+    ;; (step (reason-from-interest-scheme n p d i))
+    (when *trace* (indent depth) (princ "REASON-FROM-INTEREST-SCHEME ")
+	  (princ (is-number is)) (terpri))
+    (cond
+     ((is-instance-function is) (funcall (is-instance-function is) node (1+ depth) priority))
+     (t
+      (let* ((vars (if node (hypernode-variables node)))
+	     (formula (if node (hypernode-formula node))))
+	(multiple-value-bind
+	    (binding0 instantiation0)
+	    (funcall (fp-binding-function (is-premise is)) formula vars)
+	  (when
+	      (and instantiation0 (equal (fp-kind (is-premise is)) (hypernode-kind node)))
+	    (let ((unifier
+		   (binding-unifier
+		    binding0 (is-binding is)
+		    (is-used-premise-variables is) vars (is-used-variables is))))
+	      (when unifier
+		(let ((unifiers
+		       (appropriately-related-supposition
+			node (is-target-interest is)
+			(if (b-reason-discharge (is-reason is))
+			    (cons (remove-double-negation
+				   (match-sublis (is-binding is) (b-reason-discharge (is-reason is))))
+				  (is-supposition is))
+			  (is-supposition is))
+			(is-supposition-variables is) unifier)))
+		  (dolist (u unifiers)
+		    (let ((u* (merge-unifiers* unifier u)))
+		      (when (interest-cancelled (is-target-interest is))
+			(return-from reason-from-interest-scheme))
+		      (when
+			  (constrained-assignment
+			   u* (hypernode-supposition-variables node)
+			   (interest-variables (is-target-interest is)))
+			(let ((binding (rectify-binding binding0 u* is))
+			      (spec (premise-hypernode-specifier (is-premise is))))
+			  (when spec (push (cons spec node) binding))
+			  (when (funcall** (fp-condition (is-premise is)) node binding)
+			    (let
+				((instantiations
+				  (if (fp-clue? (is-premise is))
+				      (mapcar #'(lambda (in) (merge-matches* (mem2 u*) in))
+					      (is-instantiations is))
+				    (cons (merge-matches* (mem1 u*) instantiation0)
+					  (mapcar #'(lambda (in) (merge-matches* (mem2 u*) in))
+						  (is-instantiations is)))))
+				 (supposition (match-sublis (mem2 u) (is-supposition is))))
+			      (cond
+			       ((is-remaining-premises is)
+				(construct-interest-scheme
+				 (is-reason is) node (is-target-interest is) binding
+				 instantiations (is-remaining-premises is)
+				 is (1+ depth) priority supposition))
+			       (t
+				(make-backwards-inference
+				 (is-reason is) binding (is-target-interest is) (1+ depth) priority
+				 (if (fp-clue? (is-premise is)) (is-basis is) (cons node (is-basis is)))
+				 (if (fp-clue? (is-premise is)) (cons node (is-clues is)) (is-clues is))
+				 instantiations supposition (is-generating-node is)))))
+			    ))))))))))))))
 
- (defun discharge-interest-scheme (interest-scheme d-node priority depth)
-   (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-SCHEME ")
-	 (princ (is-number interest-scheme)) (terpri))
-   (dolist (c-list (d-node-c-lists d-node))
-     (dolist (node (c-list-processed-nodes c-list))
-       (reason-from-interest-scheme node priority (1+ depth) interest-scheme)))
-   (dolist (test (d-node-discrimination-tests d-node))
-     (discharge-interest-scheme interest-scheme (cdr test) priority (1+ depth)))))
+  (defun discharge-interest-scheme (interest-scheme d-node priority depth)
+    (when *trace* (indent depth) (princ "DISCHARGE-INTEREST-SCHEME ")
+	  (princ (is-number interest-scheme)) (terpri))
+    (dolist (c-list (d-node-c-lists d-node))
+      (dolist (node (c-list-processed-nodes c-list))
+	(reason-from-interest-scheme node priority (1+ depth) interest-scheme)))
+    (dolist (test (d-node-discrimination-tests d-node))
+      (discharge-interest-scheme interest-scheme (cdr test) priority (1+ depth)))))
 
 (defun premise-preference (premise)
   "This is the default computation of degree-of-preference for premises.  Premises are triples consisting of a formula, a supposition, and a degree-of-justification. Premises are queued for immediate retrieval."
@@ -9342,9 +9336,9 @@ in the Listener. |#
                           (push (cons (reverse Q-descriptor) Q) description)))
                        (t
 			(multiple-value-bind (d tl) (premise-code* Q variables Q-descriptor)
-					     (setf term-list (append tl term-list))
-					     (setf description (append d description))
-					     )))))
+			  (setf term-list (append tl term-list))
+			  (setf description (append d description))
+			  )))))
              (incf elt-num))
            (values description term-list)))
         ((not (member P variables)) (values (list (cons descriptor P)) nil))))
@@ -9353,7 +9347,7 @@ in the Listener. |#
   (when P
     (setf *quantifier-number* 0)
     (multiple-value-bind (code term-list) (premise-code* P variables nil)
-			 (values (reverse code) term-list))))
+      (values (reverse code) term-list))))
 
 (defun queue-desire (desire)
   "introduces new nodes for a desire with a new content, resets the desire-strength for a previous desire with an altered strength, and retracts desires whose new desire-strengths are zero."
@@ -9809,64 +9803,64 @@ in the Listener. |#
 					; (when (eq node (node 54)) (setf n node d depth di d-interests) (break))
   ;; (step (generate-reductio-interests n d di))
   (multiple-value-bind
-   (sequent vars substitution)
-   (convert-conclusion-variables
-    (list (domain (hypernode-non-reductio-supposition node)) (neg (hypernode-formula node))) (hypernode-variables node))
-   (let ((P (sequent-formula sequent))
-	 (sup (sequent-supposition sequent)))
-     (multiple-value-bind
-      (interest i-list match)
-      (interest-for sequent vars nil nil)
-      (let* ((interests (unionmapcar #'hypernode-generating-interests *reductio-supposition-nodes*))
-	     (degree (maximum (mapcar #'interest-degree-of-interest interests)))
-	     (priority
-	      (* *reductio-interest*
-		 (maximum
-		  (mapcar #'compute-discounted-node-strength *reductio-supposition-nodes*)))))
-	(cond ((null interest)
-	       (setf interest
-		     (make-interest
-		      :interest-number (incf *interest-number*)
-		      :interest-sequent sequent
-		      :interest-formula P
-		      :interest-supposition sup
-		      :interest-variables vars
-		      :interest-supposition-variables (supposition-variables sup)
-		      :interest-degree-of-interest degree
-		      :interest-priority priority
-		      :interest-maximum-degree-of-interest degree
-		      :interest-reductio t
-		      :interest-direct-reductio (list (cons node substitution))
-		      :interest-non-reductio? nil
-		      ))
-	       (push interest (hypernode-generated-direct-reductio-interests node))
-	       (if i-list
-                   (store-interest interest i-list)
-		 (let ((c-lists (c-list-contradictors (hypernode-c-list node))))
-		   (setf c-lists
-			 (mapcar
-			  #'(lambda (cl)
-			      (cons (car cl) (match-sublis substitution (cdr cl))))
-			  c-lists))
-		   (store-interest-with-c-lists interest c-lists)))
-	       (when *display?*
-		 (display-interest interest) (princ "                                        ")
-		 (princ "using node ") (princ (hypernode-number node)) (terpri))
-	       (when *log-on* (push interest *reasoning-log*))
-	       (when (and *display?* *graphics-on* *graph-interests*) (draw-i interest *og*))
-	       (queue-interest interest priority)
-	       (push interest *direct-reductio-interests*))
-	      (t
-	       (let ((direct-reductio-interest (interest-direct-reductio interest)))
-		 (pushnew (cons node (merge-matches* substitution match))
-			  (interest-direct-reductio interest))
-		 (pushnew interest (hypernode-generated-direct-reductio-interests node))
-		 (when (not direct-reductio-interest)
-		   (push interest *direct-reductio-interests*)
-		   (setf (interest-priority interest) (max (interest-priority interest) priority))
-		   (change-to-reductio-interest interest depth d-interests)
-		   (setf (interest-degree-of-interest interest) (max (interest-degree-of-interest interest) degree))))
-	       (readopt-interest interest nil))))))))
+      (sequent vars substitution)
+      (convert-conclusion-variables
+       (list (domain (hypernode-non-reductio-supposition node)) (neg (hypernode-formula node))) (hypernode-variables node))
+    (let ((P (sequent-formula sequent))
+	  (sup (sequent-supposition sequent)))
+      (multiple-value-bind
+	  (interest i-list match)
+	  (interest-for sequent vars nil nil)
+	(let* ((interests (unionmapcar #'hypernode-generating-interests *reductio-supposition-nodes*))
+	       (degree (maximum (mapcar #'interest-degree-of-interest interests)))
+	       (priority
+		(* *reductio-interest*
+		   (maximum
+		    (mapcar #'compute-discounted-node-strength *reductio-supposition-nodes*)))))
+	  (cond ((null interest)
+		 (setf interest
+		       (make-interest
+			:interest-number (incf *interest-number*)
+			:interest-sequent sequent
+			:interest-formula P
+			:interest-supposition sup
+			:interest-variables vars
+			:interest-supposition-variables (supposition-variables sup)
+			:interest-degree-of-interest degree
+			:interest-priority priority
+			:interest-maximum-degree-of-interest degree
+			:interest-reductio t
+			:interest-direct-reductio (list (cons node substitution))
+			:interest-non-reductio? nil
+			))
+		 (push interest (hypernode-generated-direct-reductio-interests node))
+		 (if i-list
+		     (store-interest interest i-list)
+		   (let ((c-lists (c-list-contradictors (hypernode-c-list node))))
+		     (setf c-lists
+			   (mapcar
+			    #'(lambda (cl)
+				(cons (car cl) (match-sublis substitution (cdr cl))))
+			    c-lists))
+		     (store-interest-with-c-lists interest c-lists)))
+		 (when *display?*
+		   (display-interest interest) (princ "                                        ")
+		   (princ "using node ") (princ (hypernode-number node)) (terpri))
+		 (when *log-on* (push interest *reasoning-log*))
+		 (when (and *display?* *graphics-on* *graph-interests*) (draw-i interest *og*))
+		 (queue-interest interest priority)
+		 (push interest *direct-reductio-interests*))
+		(t
+		 (let ((direct-reductio-interest (interest-direct-reductio interest)))
+		   (pushnew (cons node (merge-matches* substitution match))
+			    (interest-direct-reductio interest))
+		   (pushnew interest (hypernode-generated-direct-reductio-interests node))
+		   (when (not direct-reductio-interest)
+		     (push interest *direct-reductio-interests*)
+		     (setf (interest-priority interest) (max (interest-priority interest) priority))
+		     (change-to-reductio-interest interest depth d-interests)
+		     (setf (interest-degree-of-interest interest) (max (interest-degree-of-interest interest) degree))))
+		 (readopt-interest interest nil))))))))
 
 (defun START-REDUCTIO-INTERESTS (node depth interests)
   "Reductio-interests are started when the first reductio-supposition is made, and reductio-interests in the negations of reductio-suppositions are adopted when the suppositions are made.  Other direct-reductio-interests are adopted when the generating nodes are retrieved from the inference-queue."
@@ -9982,33 +9976,33 @@ in the Listener. |#
         (cond ((i-list-reductio-trigger i-list)
                (setf (i-list-reductio-trigger i-list) nil)
                (multiple-value-bind
-		(P c-vars)
-		(convert-interest-variables (neg q) (interest-variables interest))
-		(let ((sup (find-if #'(lambda (N) (equal (hypernode-formula N) P))
-				    *reductio-supposition-nodes*)))
-		  (when (null sup)
-		    (setf sup
-			  (find-if
-			   #'(lambda (R)
-			       (let* ((vars (hypernode-variables R))
-				      (R-formula (hypernode-formula R))
-				      (m (match R-formula P vars)))
-				 (and m (equal (match-sublis m R-formula) P))))
-			   *reductio-supposition-nodes*))
-		    (when (null sup)
-		      (setf sup
-			    (find-if
-			     #'(lambda (R)
-				 (let ((vars (hypernode-variables R))
-				       (R-formula (hypernode-formula R)))
-				   (match R-formula P vars)))
-			     *non-reductio-supposition-nodes*))))
-		  (cond (sup
-			 (incf (hypernode-readopted-supposition sup))
-			 (setf (hypernode-justification sup) :reductio-supposition)
-			 (push interest (hypernode-generating-interests sup))
-			 (convert-non-reductio-sup sup))
-			(t (make-new-reductio-supposition interest X i-list P c-vars depth))))))
+		   (P c-vars)
+		   (convert-interest-variables (neg q) (interest-variables interest))
+		 (let ((sup (find-if #'(lambda (N) (equal (hypernode-formula N) P))
+				     *reductio-supposition-nodes*)))
+		   (when (null sup)
+		     (setf sup
+			   (find-if
+			    #'(lambda (R)
+				(let* ((vars (hypernode-variables R))
+				       (R-formula (hypernode-formula R))
+				       (m (match R-formula P vars)))
+				  (and m (equal (match-sublis m R-formula) P))))
+			    *reductio-supposition-nodes*))
+		     (when (null sup)
+		       (setf sup
+			     (find-if
+			      #'(lambda (R)
+				  (let ((vars (hypernode-variables R))
+					(R-formula (hypernode-formula R)))
+				    (match R-formula P vars)))
+			      *non-reductio-supposition-nodes*))))
+		   (cond (sup
+			  (incf (hypernode-readopted-supposition sup))
+			  (setf (hypernode-justification sup) :reductio-supposition)
+			  (push interest (hypernode-generating-interests sup))
+			  (convert-non-reductio-sup sup))
+			 (t (make-new-reductio-supposition interest X i-list P c-vars depth))))))
               (t (augment-inherited-non-reductio-suppositions interest)))))))
 
 (defun reason-backwards-from (interest priority depth)
@@ -10313,56 +10307,56 @@ in the Listener. |#
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM-QUERY") (terpri))
   (let ((p (query-formula query)))
     (multiple-value-bind
-     (formula ?-vars) (?-matrix p)
-     (let ((vars nil))
-       (dolist (v ?-vars)
-	 (let ((var (make-interest-variable)))
-	   (setf formula (subst var v formula))
-	   (push var vars)))
-       (let* ((sequent (list nil formula))
-	      (link
-	       (make-interest-link
-		:link-number (incf *interest-link-number*)
-		:link-resultant-interest query
-		:link-strength (query-strength query)
-		:link-rule :answer))
-	      (interest
-	       (make-interest
-		:interest-number (incf *interest-number*)
-		:interest-sequent sequent
-		:interest-formula formula
-		:interest-variables vars
-		:interest-right-links (list link)
-		:interest-degree-of-interest (query-strength query)
-		:interest-maximum-degree-of-interest (query-strength query)
-		:interest-priority (query-strength query)
-		:interest-discharge-condition
-		(if (query-?-constraint query) (funcall (query-?-constraint query) vars))
-		:interest-deductive (query-deductive query))))
-	 (store-interest interest)
-	 (when *display?* (display-interest interest))
-	 (when *log-on* (push interest *reasoning-log*))
-	 (when (and *display?* *graphics-on* *graph-interests*) (draw-i interest *og*))
-	 (setf (link-interest link) interest)
-	 (push link *interest-links*)
-	 (apply-degenerate-backwards-reasons interest priority (1+ depth))
-	 (reason-backwards-from interest priority (1+ depth))
-	 (form-epistemic-desires-for interest)
-	 (setf (query-interest query) interest)
-	 (dolist (cl (i-list-corresponding-c-lists (interest-i-list interest)))
-	   (let ((conclusion
-		  (find-if
-		   #'(lambda (c)
-		       (and (null (hypernode-supposition c))
-			    (>= (current-maximal-degree-of-justification c)
-				(query-strength query))))
-		   (c-list-nodes  (mem1 cl)))))
-	     (when (and conclusion (not (member conclusion (link-supporting-nodes link))))
-	       (push conclusion (link-supporting-nodes link))
-	       (record-query-answers link))))
-	 (when (not (member query *permanent-ultimate-epistemic-interests*))
-	   (pushnew (?-positive-instruction query) (query-positive-instructions query)))
-	 )))))
+	(formula ?-vars) (?-matrix p)
+      (let ((vars nil))
+	(dolist (v ?-vars)
+	  (let ((var (make-interest-variable)))
+	    (setf formula (subst var v formula))
+	    (push var vars)))
+	(let* ((sequent (list nil formula))
+	       (link
+		(make-interest-link
+		 :link-number (incf *interest-link-number*)
+		 :link-resultant-interest query
+		 :link-strength (query-strength query)
+		 :link-rule :answer))
+	       (interest
+		(make-interest
+		 :interest-number (incf *interest-number*)
+		 :interest-sequent sequent
+		 :interest-formula formula
+		 :interest-variables vars
+		 :interest-right-links (list link)
+		 :interest-degree-of-interest (query-strength query)
+		 :interest-maximum-degree-of-interest (query-strength query)
+		 :interest-priority (query-strength query)
+		 :interest-discharge-condition
+		 (if (query-?-constraint query) (funcall (query-?-constraint query) vars))
+		 :interest-deductive (query-deductive query))))
+	  (store-interest interest)
+	  (when *display?* (display-interest interest))
+	  (when *log-on* (push interest *reasoning-log*))
+	  (when (and *display?* *graphics-on* *graph-interests*) (draw-i interest *og*))
+	  (setf (link-interest link) interest)
+	  (push link *interest-links*)
+	  (apply-degenerate-backwards-reasons interest priority (1+ depth))
+	  (reason-backwards-from interest priority (1+ depth))
+	  (form-epistemic-desires-for interest)
+	  (setf (query-interest query) interest)
+	  (dolist (cl (i-list-corresponding-c-lists (interest-i-list interest)))
+	    (let ((conclusion
+		   (find-if
+		    #'(lambda (c)
+			(and (null (hypernode-supposition c))
+			     (>= (current-maximal-degree-of-justification c)
+				 (query-strength query))))
+		    (c-list-nodes  (mem1 cl)))))
+	      (when (and conclusion (not (member conclusion (link-supporting-nodes link))))
+		(push conclusion (link-supporting-nodes link))
+		(record-query-answers link))))
+	  (when (not (member query *permanent-ultimate-epistemic-interests*))
+	    (pushnew (?-positive-instruction query) (query-positive-instructions query)))
+	  )))))
 
 (defun reason-backwards-from-query (query priority  depth)
   "This introduces ?P queries and whether-queries."
@@ -10762,84 +10756,84 @@ in the Listener. |#
 					;            (independent-hypernode-value node sigma)))
 
 (labels
- ()
+    ()
 
- (defun subsidiary-hyperlinks-for-node (node sigma path DL indent)
-   "set of sigma-subsidiary-hyperlinks for node relative to path, where path is an sigma-support-path for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links"
-   (when (and *display?* *safe-trace*)
-     (indent indent) (princ "want subsidiary-hyperlinks-for ") (princ node)
-     (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-     (princ-sigma path) (terpri))
-   (let ((links nil) (unsecured-links nil))
-     (when (not (initial-node node sigma))
-       (dolist (L (hypernode-hyperlinks node))
-	 (multiple-value-bind
-	  (L-links L-unsecured-links)
-	  (subsidiary-hyperlinks-for-link L sigma path DL (1+ indent))
-	  (dolist (L-link L-links)
-	    (when (and (not (member L-link path))
-		       (not (convergent-support-path (cons L-link path) sigma DL)))
-	      (push L-link links)
-	      (when (member L-link L-unsecured-links) (push L-link unsecured-links))))))
-       (when (and *display?* *safe-trace*)
-	 (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ node)
-	 (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-	 (princ-sigma path) (princ " = ") (princ-sigma links) (terpri))
-       (values links unsecured-links))))
+  (defun subsidiary-hyperlinks-for-node (node sigma path DL indent)
+    "set of sigma-subsidiary-hyperlinks for node relative to path, where path is an sigma-support-path for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links"
+    (when (and *display?* *safe-trace*)
+      (indent indent) (princ "want subsidiary-hyperlinks-for ") (princ node)
+      (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+      (princ-sigma path) (terpri))
+    (let ((links nil) (unsecured-links nil))
+      (when (not (initial-node node sigma))
+	(dolist (L (hypernode-hyperlinks node))
+	  (multiple-value-bind
+	      (L-links L-unsecured-links)
+	      (subsidiary-hyperlinks-for-link L sigma path DL (1+ indent))
+	    (dolist (L-link L-links)
+	      (when (and (not (member L-link path))
+			 (not (convergent-support-path (cons L-link path) sigma DL)))
+		(push L-link links)
+		(when (member L-link L-unsecured-links) (push L-link unsecured-links))))))
+	(when (and *display?* *safe-trace*)
+	  (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ node)
+	  (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+	  (princ-sigma path) (princ " = ") (princ-sigma links) (terpri))
+	(values links unsecured-links))))
 
- (defun subsidiary-hyperlinks-for-link (link sigma path DL indent)
-   "set of sigma-subsidiary-hyperlinks for link relative to path, where path is an sigma-support-path for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links. It assumes (not (safe-support-path path sigma DL)), because the recursion would have stopped before getting to such a path."
-   (when (and *display?* *safe-trace*)
-     (indent indent) (princ "want subsidiary-hyperlinks-for ") (princ link)
-     (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-     (princ-sigma path) (terpri))
-   (when (not (member link path))
-     (let ((new-path (cons link path)))
-       (cond ((or
-	       (cond ((and *display?* *safe-trace*)
-		      (let ((ind (independent-link-value link sigma)))
-			(when ind
-			  (indent indent) (princ-sigma link) (princ " is ") (princ-sigma sigma)
-			  (princ "-independent, so") (terpri)
-			  (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
-			  (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-			  (princ-sigma path) (princ " = ") (princ-sigma (list link)) (terpri))
-			ind))
-		     (t (independent-link-value link sigma)))
-	       (cond ((and *display?* *safe-trace*)
-		      (let ((safe (safe-support-path new-path sigma DL)))
-			(when safe
-			  (indent indent) (princ-sigma new-path) (princ " is a ") (princ-sigma sigma)
-			  (princ "-safe support-path, so") (terpri)
-			  (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
-			  (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-			  (princ-sigma path) (princ " = ") (princ-sigma (list link)) (terpri))
-			safe))
-		     (t (safe-support-path new-path sigma DL))))
-	      (values (list link) (list link)))
-	     ((not (convergent-support-path new-path sigma DL))
-	      (let ((links nil) (unsecured-links nil))
-		(dolist (B (hyperlink-basis link))
-		  (when (not (initial-node B sigma))
-		    (multiple-value-bind
-		     (B-links B-unsecured-links)
-		     (subsidiary-hyperlinks-for-node B sigma (cons link path) DL (1+ indent))
-		     (when (null B-links) (return-from subsidiary-hyperlinks-for-link))
-		     (setf links (cons link (append B-links links)))
-		     (setf unsecured-links (append B-unsecured-links unsecured-links)))))
-		(when (and *display?* *safe-trace*)
-		  (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
-		  (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-		  (princ-sigma path) (princ " = ") (princ-sigma links) (terpri))
-		(values links unsecured-links)))
-	     ((and *display?* *safe-trace*)
-	      (indent indent) (princ-sigma new-path) (princ " is ") (princ-sigma sigma)
-	      (princ "-convergent, so") (terpri)
-	      (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
-	      (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
-	      (princ-sigma path) (princ " = nil") (terpri)
-	      nil)
-	     )))))
+  (defun subsidiary-hyperlinks-for-link (link sigma path DL indent)
+    "set of sigma-subsidiary-hyperlinks for link relative to path, where path is an sigma-support-path for (hyper-defeat-link-root DL). This returns the two values links and unsecured-links. It assumes (not (safe-support-path path sigma DL)), because the recursion would have stopped before getting to such a path."
+    (when (and *display?* *safe-trace*)
+      (indent indent) (princ "want subsidiary-hyperlinks-for ") (princ link)
+      (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+      (princ-sigma path) (terpri))
+    (when (not (member link path))
+      (let ((new-path (cons link path)))
+	(cond ((or
+		(cond ((and *display?* *safe-trace*)
+		       (let ((ind (independent-link-value link sigma)))
+			 (when ind
+			   (indent indent) (princ-sigma link) (princ " is ") (princ-sigma sigma)
+			   (princ "-independent, so") (terpri)
+			   (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
+			   (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+			   (princ-sigma path) (princ " = ") (princ-sigma (list link)) (terpri))
+			 ind))
+		      (t (independent-link-value link sigma)))
+		(cond ((and *display?* *safe-trace*)
+		       (let ((safe (safe-support-path new-path sigma DL)))
+			 (when safe
+			   (indent indent) (princ-sigma new-path) (princ " is a ") (princ-sigma sigma)
+			   (princ "-safe support-path, so") (terpri)
+			   (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
+			   (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+			   (princ-sigma path) (princ " = ") (princ-sigma (list link)) (terpri))
+			 safe))
+		      (t (safe-support-path new-path sigma DL))))
+	       (values (list link) (list link)))
+	      ((not (convergent-support-path new-path sigma DL))
+	       (let ((links nil) (unsecured-links nil))
+		 (dolist (B (hyperlink-basis link))
+		   (when (not (initial-node B sigma))
+		     (multiple-value-bind
+			 (B-links B-unsecured-links)
+			 (subsidiary-hyperlinks-for-node B sigma (cons link path) DL (1+ indent))
+		       (when (null B-links) (return-from subsidiary-hyperlinks-for-link))
+		       (setf links (cons link (append B-links links)))
+		       (setf unsecured-links (append B-unsecured-links unsecured-links)))))
+		 (when (and *display?* *safe-trace*)
+		   (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
+		   (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+		   (princ-sigma path) (princ " = ") (princ-sigma links) (terpri))
+		 (values links unsecured-links)))
+	      ((and *display?* *safe-trace*)
+	       (indent indent) (princ-sigma new-path) (princ " is ") (princ-sigma sigma)
+	       (princ "-convergent, so") (terpri)
+	       (indent indent) (princ "the set of subsidiary-hyperlinks-for ") (princ link)
+	       (princ " in ") (princ-sigma sigma) (princ " for ") (princ DL) (princ " relative to path ")
+	       (princ-sigma path) (princ " = nil") (terpri)
+	       nil)
+	      )))))
 
 (defun minimal-safe-arguments (sigma  DL indent)
   "This returns the lists of links and unsecured links in the minimal sigma-safe arguments for the root of DL."
@@ -10847,11 +10841,11 @@ in the Listener. |#
          (terpri) (terpri) (indent indent) (princ "Computing minimal ") (princ-sigma sigma)
          (princ "-safe-arguments for ") (princ DL) (terpri)
          (multiple-value-bind
-	  (links unsecured-links)
-	  (subsidiary-hyperlinks-for-node (hyper-defeat-link-root DL) sigma nil DL (1+ indent))
-	  (indent indent) (princ "The set of hyperlinks in minimal ") (princ-sigma sigma)
-	  (princ "-safe-arguments for ") (princ DL) (princ " = ") (princ-sigma links) (terpri)
-	  (values links unsecured-links)))
+	     (links unsecured-links)
+	     (subsidiary-hyperlinks-for-node (hyper-defeat-link-root DL) sigma nil DL (1+ indent))
+	   (indent indent) (princ "The set of hyperlinks in minimal ") (princ-sigma sigma)
+	   (princ "-safe-arguments for ") (princ DL) (princ " = ") (princ-sigma links) (terpri)
+	   (values links unsecured-links)))
         (t (subsidiary-hyperlinks-for-node (hyper-defeat-link-root DL) sigma nil DL (1+ indent)))))
 
 (defun clear-graph-memories ()
@@ -10860,204 +10854,204 @@ in the Listener. |#
   (dolist (DL *hyper-defeat-links*) (setf (hyper-defeat-link-in DL) nil)))
 
 (labels
- ()
+    ()
 
- (defun add-link-to-critical-graph (link sigma1 sigma2 &optional (indent 0))
-   "This adds link to the critical-graph sigma, and closes it under the closure conditions"
-   (when (not (mem sigma1 (hyperlink-in link)))
-     (when (and *display?* *s-trace*)
-       (terpri) (indent indent) (princ "Inserting ") (princ link) (princ " in ") (princ-sigma sigma1))
-     (push sigma1 (hyperlink-in link))
-     ;; if a hyperlink is in sigma1 then all members of its basis are in sigma1
-     (dolist (B (hyperlink-basis link))
-       (add-node-to-critical-graph B sigma1 sigma2 (1+ indent)))
-     (dolist (dl (hyperlink-defeaters link))
-       (when (and (mem (cdr sigma1) (hyper-defeat-link-in dl)) (not (mem sigma1 (hyper-defeat-link-in dl))))
-	 ;; if a hyperlink is in sigma1 all of its sigma1-noncritical hyper-defeat-links and their roots are in sigma1
-	 (cond ((not (critical-link dl sigma1))
-		(push sigma1 (hyper-defeat-link-in dl))
-		(when (and *display?* *s-trace*)
-		  (terpri) (indent (1+ indent)) (princ "Inserting ") (princ dl) (princ " in ") (princ-sigma sigma1))
-		(add-node-to-critical-graph (hyper-defeat-link-root dl) sigma1 sigma2 (1+ indent)))
-	       ;; if a sigma1-critical hyper-defeat-link has minimal sigma1-safe arguments, it is in sigma1
-	       ;; and all hyperlinks and their targets in the minimal sigma1-safe arguments
-	       ;; are in the noncritical-graph sigma2. If one of these hyperlinks is (cdr sigma1)-
-	       ;; unsecured and it is not sigma1-independent, it is also in the critical-graph sigma1.
-	       (t  (multiple-value-bind
-		    (links unsecured-links)
-		    (minimal-safe-arguments sigma1 dl indent)
-		    (when links
-		      (when (and *display?* *s-trace*)
-			(terpri) (indent (1+ indent)) (princ "Inserting ") (princ dl) (princ " in ") (princ-sigma sigma1))
-		      (pushnew sigma1 (hyper-defeat-link-in dl)))
-		    (dolist (L links)
-		      (when (not (mem sigma2 (hypernode-in (hyperlink-target L))))
+  (defun add-link-to-critical-graph (link sigma1 sigma2 &optional (indent 0))
+    "This adds link to the critical-graph sigma, and closes it under the closure conditions"
+    (when (not (mem sigma1 (hyperlink-in link)))
+      (when (and *display?* *s-trace*)
+	(terpri) (indent indent) (princ "Inserting ") (princ link) (princ " in ") (princ-sigma sigma1))
+      (push sigma1 (hyperlink-in link))
+      ;; if a hyperlink is in sigma1 then all members of its basis are in sigma1
+      (dolist (B (hyperlink-basis link))
+	(add-node-to-critical-graph B sigma1 sigma2 (1+ indent)))
+      (dolist (dl (hyperlink-defeaters link))
+	(when (and (mem (cdr sigma1) (hyper-defeat-link-in dl)) (not (mem sigma1 (hyper-defeat-link-in dl))))
+	  ;; if a hyperlink is in sigma1 all of its sigma1-noncritical hyper-defeat-links and their roots are in sigma1
+	  (cond ((not (critical-link dl sigma1))
+		 (push sigma1 (hyper-defeat-link-in dl))
+		 (when (and *display?* *s-trace*)
+		   (terpri) (indent (1+ indent)) (princ "Inserting ") (princ dl) (princ " in ") (princ-sigma sigma1))
+		 (add-node-to-critical-graph (hyper-defeat-link-root dl) sigma1 sigma2 (1+ indent)))
+		;; if a sigma1-critical hyper-defeat-link has minimal sigma1-safe arguments, it is in sigma1
+		;; and all hyperlinks and their targets in the minimal sigma1-safe arguments
+		;; are in the noncritical-graph sigma2. If one of these hyperlinks is (cdr sigma1)-
+		;; unsecured and it is not sigma1-independent, it is also in the critical-graph sigma1.
+		(t  (multiple-value-bind
+			(links unsecured-links)
+			(minimal-safe-arguments sigma1 dl indent)
+		      (when links
 			(when (and *display?* *s-trace*)
-			  (terpri) (indent (1+ indent)) (princ "Inserting ") (princ (hyperlink-target L))
-			  (princ " in noncritical graph  ") (princ-sigma sigma2))
-			(push sigma2 (hypernode-in (hyperlink-target L)))
-			)
-		      (when (not (mem sigma2 (hyperlink-in L)))
-			(when (and *display?* *s-trace*)
-			  (terpri) (indent (1+ indent)) (princ "Inserting ") (princ L)
-			  (princ " in noncritical graph ") (princ-sigma sigma2))
-			(push sigma2 (hyperlink-in L))
-			))
-		    (dolist (L unsecured-links)
-		      (push sigma2 (hyperlink-unsecured? L))
-		      (when (not (independent-link-value L sigma1))
-			(add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))))))))
+			  (terpri) (indent (1+ indent)) (princ "Inserting ") (princ dl) (princ " in ") (princ-sigma sigma1))
+			(pushnew sigma1 (hyper-defeat-link-in dl)))
+		      (dolist (L links)
+			(when (not (mem sigma2 (hypernode-in (hyperlink-target L))))
+			  (when (and *display?* *s-trace*)
+			    (terpri) (indent (1+ indent)) (princ "Inserting ") (princ (hyperlink-target L))
+			    (princ " in noncritical graph  ") (princ-sigma sigma2))
+			  (push sigma2 (hypernode-in (hyperlink-target L)))
+			  )
+			(when (not (mem sigma2 (hyperlink-in L)))
+			  (when (and *display?* *s-trace*)
+			    (terpri) (indent (1+ indent)) (princ "Inserting ") (princ L)
+			    (princ " in noncritical graph ") (princ-sigma sigma2))
+			  (push sigma2 (hyperlink-in L))
+			  ))
+		      (dolist (L unsecured-links)
+			(push sigma2 (hyperlink-unsecured? L))
+			(when (not (independent-link-value L sigma1))
+			  (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))))))))
 
- (defun add-node-to-critical-graph (node sigma1 sigma2 &optional (indent 0))
-   "This adds node to the critical-graph sigma1, and closes it under the closure conditions"
-   (when (not (member sigma1 (hypernode-in node)))
-     (when (and *display?* *s-trace*)
-       (terpri) (indent indent) (princ "Inserting ") (princ node) (princ " in ") (princ-sigma sigma1))
-     (push sigma1 (hypernode-in node))
-     ;; if a node is in sigma1, it is not  sigma1-initial, all of its hyperlinks are in sigma1
-     (when (not (initial-node node sigma1))
-       (dolist (L (hypernode-hyperlinks node))
-	 (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))))
+  (defun add-node-to-critical-graph (node sigma1 sigma2 &optional (indent 0))
+    "This adds node to the critical-graph sigma1, and closes it under the closure conditions"
+    (when (not (member sigma1 (hypernode-in node)))
+      (when (and *display?* *s-trace*)
+	(terpri) (indent indent) (princ "Inserting ") (princ node) (princ " in ") (princ-sigma sigma1))
+      (push sigma1 (hypernode-in node))
+      ;; if a node is in sigma1, it is not  sigma1-initial, all of its hyperlinks are in sigma1
+      (when (not (initial-node node sigma1))
+	(dolist (L (hypernode-hyperlinks node))
+	  (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))))
 
 (labels
- ()
+    ()
 
- (defun display-hypergraphs (link)
-   #| On HG14:
+  (defun display-hypergraphs (link)
+    #| On HG14:
 
-   ? (display-hypergraphs (hyperlink 7))
+    ? (display-hypergraphs (hyperlink 7))
 
-   When sigma = (#<hyperlink #7 for node 8>):
-   #<Node 9> is in
-   #<Node 8> is in
-   #<Node 7> is in
-   #<Node 6> is in
-   #<hyperlink #10 for node 9> is in
-   #<hyperlink #7 for node 8> is in
-   #<hyperlink #6 for node 7> is in
-   #<hyperlink #5 for node 6> is in
-   #<hyper-defeat-link #2 for hyperlink 5 for node 6> is in
-   #<hyper-defeat-link #1 for hyperlink 7 for node 8> is in
+    When sigma = (#<hyperlink #7 for node 8>):
+    #<Node 9> is in
+    #<Node 8> is in
+    #<Node 7> is in
+    #<Node 6> is in
+    #<hyperlink #10 for node 9> is in
+    #<hyperlink #7 for node 8> is in
+    #<hyperlink #6 for node 7> is in
+    #<hyperlink #5 for node 6> is in
+    #<hyper-defeat-link #2 for hyperlink 5 for node 6> is in
+    #<hyper-defeat-link #1 for hyperlink 7 for node 8> is in
 
-   When sigma = ((#<hyperlink #7 for node 8>)):
-   #<Node 9> is in
-   #<Node 7> is in
-   #<hyperlink #9 for node 9> is in
-   #<hyperlink #8 for node 7> is in
+    When sigma = ((#<hyperlink #7 for node 8>)):
+    #<Node 9> is in
+    #<Node 7> is in
+    #<hyperlink #9 for node 9> is in
+    #<hyperlink #8 for node 7> is in
 
-   |#
-   (compute-new-hypergraphs link)
-   (terpri)  (princ "When sigma = ") (princ-sigma (list link)) (princ ":")
-   (dolist (N *hypergraph*)
-     (when (mem (list link) (hypernode-in  N)) (terpri) (princ N) (princ " is in")))
-   (dolist (L *hyperlinks*)
-     (when (mem (list link) (hyperlink-in L)) (terpri) (princ L) (princ " is in")))
-   (dolist (L *hyper-defeat-links*)
-     (when (mem (list link) (hyper-defeat-link-in L)) (terpri) (princ L) (princ " is in")))
-   (terpri)
-   (terpri) (princ "When sigma = ") (princ-sigma (list (list link))) (princ ":")
-   (dolist (N *hypergraph*)
-     (when (mem (list (list link)) (hypernode-in N)) (terpri) (princ N) (princ " is in")))
-   (dolist (L *hyperlinks*)
-     (when  (mem (list (list link)) (hyperlink-in L)) (terpri) (princ L) (princ " is in")))
-   (dolist (L *hyper-defeat-links*)
-     (when  (mem (list (list link)) (hyper-defeat-link-in L)) (terpri) (princ L) (princ " is in"))))
+    |#
+    (compute-new-hypergraphs link)
+    (terpri)  (princ "When sigma = ") (princ-sigma (list link)) (princ ":")
+    (dolist (N *hypergraph*)
+      (when (mem (list link) (hypernode-in  N)) (terpri) (princ N) (princ " is in")))
+    (dolist (L *hyperlinks*)
+      (when (mem (list link) (hyperlink-in L)) (terpri) (princ L) (princ " is in")))
+    (dolist (L *hyper-defeat-links*)
+      (when (mem (list link) (hyper-defeat-link-in L)) (terpri) (princ L) (princ " is in")))
+    (terpri)
+    (terpri) (princ "When sigma = ") (princ-sigma (list (list link))) (princ ":")
+    (dolist (N *hypergraph*)
+      (when (mem (list (list link)) (hypernode-in N)) (terpri) (princ N) (princ " is in")))
+    (dolist (L *hyperlinks*)
+      (when  (mem (list (list link)) (hyperlink-in L)) (terpri) (princ L) (princ " is in")))
+    (dolist (L *hyper-defeat-links*)
+      (when  (mem (list (list link)) (hyper-defeat-link-in L)) (terpri) (princ L) (princ " is in"))))
 
- (defun display-hypergraph ()
-   (terpri) (princ "(") (terpri)
-   (dolist (node (reverse *hypergraph*)) (princ node)
-	   (princ "  --  ") (princ "justification = ") (princ (hypernode-degree-of-justification node)) (terpri)
-	   (when (hypernode-hyperlinks node)
-	     (princ "     hyperlinkS:") (terpri)
-	     (dolist (link (reverse (hypernode-hyperlinks node)))
-	       (princ "          ") (princ link) (princ " from ") (princ (hyperlink-basis link)) (terpri)
-	       (when (hyperlink-defeaters link)
-		 (princ "               hyper-defeat-linkS-FOR:") (terpri)
-		 (dolist (dl (reverse (hyperlink-defeaters link)))
-		   (princ "                    ") (princ dl) (princ " from ") (princ (hyper-defeat-link-root dl)) (terpri)))))
-	   (when (hypernode-consequent-links node)
-	     (princ "     CONSEQUENT-LINKS:") (terpri)
-	     (dolist (link (reverse (hypernode-consequent-links node)))
-	       (princ "          ") (princ link) (terpri)
-	       (when (hyperlink-defeaters link)
-		 (princ "               hyper-defeat-linkS-FOR:") (terpri)
-		 (dolist (dl (reverse (hyperlink-defeaters link)))
-		   (princ "                    ") (princ dl) (princ " from ") (princ (hyper-defeat-link-root dl)) (terpri)))))
-	   (when (hypernode-supported-hyper-defeat-links node)
-	     (princ "     SUPPORTED-hyper-defeat-linkS:") (terpri)
-	     (dolist (dl (reverse (hypernode-supported-hyper-defeat-links node)))
-	       (princ "          ") (princ dl) (terpri))))
-   (princ ")") (terpri))
+  (defun display-hypergraph ()
+    (terpri) (princ "(") (terpri)
+    (dolist (node (reverse *hypergraph*)) (princ node)
+	    (princ "  --  ") (princ "justification = ") (princ (hypernode-degree-of-justification node)) (terpri)
+	    (when (hypernode-hyperlinks node)
+	      (princ "     hyperlinkS:") (terpri)
+	      (dolist (link (reverse (hypernode-hyperlinks node)))
+		(princ "          ") (princ link) (princ " from ") (princ (hyperlink-basis link)) (terpri)
+		(when (hyperlink-defeaters link)
+		  (princ "               hyper-defeat-linkS-FOR:") (terpri)
+		  (dolist (dl (reverse (hyperlink-defeaters link)))
+		    (princ "                    ") (princ dl) (princ " from ") (princ (hyper-defeat-link-root dl)) (terpri)))))
+	    (when (hypernode-consequent-links node)
+	      (princ "     CONSEQUENT-LINKS:") (terpri)
+	      (dolist (link (reverse (hypernode-consequent-links node)))
+		(princ "          ") (princ link) (terpri)
+		(when (hyperlink-defeaters link)
+		  (princ "               hyper-defeat-linkS-FOR:") (terpri)
+		  (dolist (dl (reverse (hyperlink-defeaters link)))
+		    (princ "                    ") (princ dl) (princ " from ") (princ (hyper-defeat-link-root dl)) (terpri)))))
+	    (when (hypernode-supported-hyper-defeat-links node)
+	      (princ "     SUPPORTED-hyper-defeat-linkS:") (terpri)
+	      (dolist (dl (reverse (hypernode-supported-hyper-defeat-links node)))
+		(princ "          ") (princ dl) (terpri))))
+    (princ ")") (terpri))
 
- (defun display-split (link sigma indent)
-   (terpri)
-   (let ((S (cons link sigma)))
-     (terpri) (indent indent)  (princ "When sigma = ") (princ-sigma S) (princ ":")
-     (when (mem S (hyperlink-in link))
-       (terpri) (indent (+ 2 indent)) (princ link) (princ " is in")
-       (dolist (DL (reverse (hyperlink-defeaters link)))
-	 (when (mem S (hyper-defeat-link-in DL))
-	   (terpri)  (indent (+ 4 indent)) (princ DL) (princ " is in"))))
-     (dolist (N (reverse *hypergraph*))
-       (when (mem S (hypernode-in  N))  (terpri)
-	     (indent indent) (princ N) (princ " is in")
-	     (dolist (L (reverse (hypernode-hyperlinks N)))
-	       (when (mem S (hyperlink-in L))
-		 (terpri) (indent (+ 2 indent)) (princ L) (princ " is in")
-		 (dolist (DL (reverse (hyperlink-defeaters L)))
-		   (when (mem S (hyper-defeat-link-in DL))
-		     (terpri)  (indent (+ 4 indent)) (princ DL) (princ " is in")))))))
-     (dolist (L (reverse *hyperlinks*))
-       (when (and (not (eq L link)) (mem S (hyperlink-in L)) (not (mem S (hypernode-in (hyperlink-target L)))))
-	 (terpri) (indent (+ 2 indent)) (princ L) (princ " is in")
-	 (dolist (DL (reverse (hyperlink-defeaters L)))
-	   (when (mem S (hyper-defeat-link-in DL))
-	     (terpri)  (indent (+ 4 indent)) (princ DL) (princ " is in"))))))
-   (terpri)
-   (let ((S (cons (list link) sigma)) (empty? t))
-     (terpri) (indent indent)  (princ "When sigma = ") (princ-sigma S) (princ ":")
-     (dolist (N (reverse *hypergraph*))
-       (when (mem S (hypernode-in  N))  (terpri)
-	     (indent indent) (princ N) (princ " is in") (setf empty? nil)
-	     (dolist (L (reverse (hypernode-hyperlinks N)))
-	       (when (mem S (hyperlink-in L))
-		 (terpri) (indent (+ 2 indent)) (princ L) (princ " is in") (setf empty? nil)
-		 (dolist (DL (reverse (hyperlink-defeaters L)))
-		   (when (mem S (hyper-defeat-link-in DL))
-		     (terpri) (indent (+ 4 indent)) (princ DL) (princ " is in") (setf empty? nil)))))))
-     (when empty? (princ "   This hypergraph is empty.")))
-   (terpri) (terpri))
+  (defun display-split (link sigma indent)
+    (terpri)
+    (let ((S (cons link sigma)))
+      (terpri) (indent indent)  (princ "When sigma = ") (princ-sigma S) (princ ":")
+      (when (mem S (hyperlink-in link))
+	(terpri) (indent (+ 2 indent)) (princ link) (princ " is in")
+	(dolist (DL (reverse (hyperlink-defeaters link)))
+	  (when (mem S (hyper-defeat-link-in DL))
+	    (terpri)  (indent (+ 4 indent)) (princ DL) (princ " is in"))))
+      (dolist (N (reverse *hypergraph*))
+	(when (mem S (hypernode-in  N))  (terpri)
+	      (indent indent) (princ N) (princ " is in")
+	      (dolist (L (reverse (hypernode-hyperlinks N)))
+		(when (mem S (hyperlink-in L))
+		  (terpri) (indent (+ 2 indent)) (princ L) (princ " is in")
+		  (dolist (DL (reverse (hyperlink-defeaters L)))
+		    (when (mem S (hyper-defeat-link-in DL))
+		      (terpri)  (indent (+ 4 indent)) (princ DL) (princ " is in")))))))
+      (dolist (L (reverse *hyperlinks*))
+	(when (and (not (eq L link)) (mem S (hyperlink-in L)) (not (mem S (hypernode-in (hyperlink-target L)))))
+	  (terpri) (indent (+ 2 indent)) (princ L) (princ " is in")
+	  (dolist (DL (reverse (hyperlink-defeaters L)))
+	    (when (mem S (hyper-defeat-link-in DL))
+	      (terpri)  (indent (+ 4 indent)) (princ DL) (princ " is in"))))))
+    (terpri)
+    (let ((S (cons (list link) sigma)) (empty? t))
+      (terpri) (indent indent)  (princ "When sigma = ") (princ-sigma S) (princ ":")
+      (dolist (N (reverse *hypergraph*))
+	(when (mem S (hypernode-in  N))  (terpri)
+	      (indent indent) (princ N) (princ " is in") (setf empty? nil)
+	      (dolist (L (reverse (hypernode-hyperlinks N)))
+		(when (mem S (hyperlink-in L))
+		  (terpri) (indent (+ 2 indent)) (princ L) (princ " is in") (setf empty? nil)
+		  (dolist (DL (reverse (hyperlink-defeaters L)))
+		    (when (mem S (hyper-defeat-link-in DL))
+		      (terpri) (indent (+ 4 indent)) (princ DL) (princ " is in") (setf empty? nil)))))))
+      (when empty? (princ "   This hypergraph is empty.")))
+    (terpri) (terpri))
 					;  (when (eq link (hyperlink 11)) (break)))
 
- (defun split-hypergraph (link &optional sigma (indent 0))
+  (defun split-hypergraph (link &optional sigma (indent 0))
 					;  (when (equal *cycle* 5) (setf l link s sigma i indent) (break))
-   ;; (split-hypergraph l s i)
-   ;; (step (split-hypergraph l s i))
-   (when (and *display?* *s-trace*)
-     (terpri) (princ "------The current hypergraph is-------") (terpri)
-     (display-hypergraph)
-     (princ "-----------------------------------") (terpri)
-     (terpri) (indent indent) (princ "Splitting the hypergraph ")
-     (princ-sigma sigma) (princ " relative to ") (princ link) (terpri))
-   (let ((sigma1 (cons link sigma))             ;; the link-critical graph
-	 (sigma2 (cons (list link) sigma)))      ;; the link-noncritical graph
-     ;; add link to the critical-graph and close under the closure conditions
-     (add-link-to-critical-graph link sigma1 sigma2 indent)
-     ;; for each hyperlink that is sigma1-critical for the hyper-defeat-link-root of a link-defeater of link, add it and
-     ;; its target to the critical-graph, and close under the closure conditions.
-     (dolist (dl (hyperlink-defeaters link))
-       (dolist (L (critical-hyperlinks dl sigma1))
-	 (when (not  (member sigma1 (hypernode-in (hyperlink-target L)) :test 'equal))
-	   (when (and *display?* *s-trace*)
-	     (terpri) (indent indent) (princ "Inserting ") (princ (hyperlink-target L))
-	     (princ " in ") (princ-sigma sigma1))
-	   (push sigma1 (hypernode-in (hyperlink-target L))))
-	 (add-link-to-critical-graph L sigma1 sigma2 (1+ indent))))
-     (when (and *display?* *j-trace*) (display-split link sigma indent))))
+    ;; (split-hypergraph l s i)
+    ;; (step (split-hypergraph l s i))
+    (when (and *display?* *s-trace*)
+      (terpri) (princ "------The current hypergraph is-------") (terpri)
+      (display-hypergraph)
+      (princ "-----------------------------------") (terpri)
+      (terpri) (indent indent) (princ "Splitting the hypergraph ")
+      (princ-sigma sigma) (princ " relative to ") (princ link) (terpri))
+    (let ((sigma1 (cons link sigma))             ;; the link-critical graph
+	  (sigma2 (cons (list link) sigma)))      ;; the link-noncritical graph
+      ;; add link to the critical-graph and close under the closure conditions
+      (add-link-to-critical-graph link sigma1 sigma2 indent)
+      ;; for each hyperlink that is sigma1-critical for the hyper-defeat-link-root of a link-defeater of link, add it and
+      ;; its target to the critical-graph, and close under the closure conditions.
+      (dolist (dl (hyperlink-defeaters link))
+	(dolist (L (critical-hyperlinks dl sigma1))
+	  (when (not  (member sigma1 (hypernode-in (hyperlink-target L)) :test 'equal))
+	    (when (and *display?* *s-trace*)
+	      (terpri) (indent indent) (princ "Inserting ") (princ (hyperlink-target L))
+	      (princ " in ") (princ-sigma sigma1))
+	    (push sigma1 (hypernode-in (hyperlink-target L))))
+	  (add-link-to-critical-graph L sigma1 sigma2 (1+ indent))))
+      (when (and *display?* *j-trace*) (display-split link sigma indent))))
 
- (defun compute-new-hypergraphs (link &optional sigma (indent 0))
-   (clear-graph-memories)
-   (split-hypergraph link sigma indent)))
+  (defun compute-new-hypergraphs (link &optional sigma (indent 0))
+    (clear-graph-memories)
+    (split-hypergraph link sigma indent)))
 
 #|
 ;; This adds the hyper-defeat-link dl to the critical-graph sigma and closes it under the closure conditions
@@ -11072,20 +11066,20 @@ in the Listener. |#
     ;; it is also in the critical-graph sigma1.
     (cond ((critical-link dl sigma1)
            (multiple-value-bind
-	    (links unsecured-links)
-	    (minimal-safe-arguments sigma1 dl)
-	    (dolist (L links)
-	      (when (not (mem sigma2 (hyperlink-in L)))
-		(push sigma2 (hyperlink-in L))
-		(when (and *display?* *s-trace*)
-		  (terpri) (indent indent) (princ "Inserting ") (princ L) (princ " in ") (princ-sigma sigma2)))
-	      (when (not (mem sigma2 (hyperlink-in (hyperlink-target L))))
-		(push sigma2 (hypernode-in (hyperlink-target L)))
-		(when (and *display?* *s-trace*)
-		  (terpri) (indent indent) (princ "Inserting ") (princ (hyperlink-target L))
-		  (princ " in ") (princ-sigma sigma2))))
-	    (dolist (L unsecured-links)
-	      (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))
+	       (links unsecured-links)
+	       (minimal-safe-arguments sigma1 dl)
+	     (dolist (L links)
+	       (when (not (mem sigma2 (hyperlink-in L)))
+		 (push sigma2 (hyperlink-in L))
+		 (when (and *display?* *s-trace*)
+		   (terpri) (indent indent) (princ "Inserting ") (princ L) (princ " in ") (princ-sigma sigma2)))
+	       (when (not (mem sigma2 (hyperlink-in (hyperlink-target L))))
+		 (push sigma2 (hypernode-in (hyperlink-target L)))
+		 (when (and *display?* *s-trace*)
+		   (terpri) (indent indent) (princ "Inserting ") (princ (hyperlink-target L))
+		   (princ " in ") (princ-sigma sigma2))))
+	     (dolist (L unsecured-links)
+	       (add-link-to-critical-graph L sigma1 sigma2 (1+ indent)))))
           (t
 	   (add-node-to-critical-graph (hyper-defeat-link-root dl) sigma1 sigma2 (1+ indent))))))
 |#
@@ -11094,8 +11088,8 @@ in the Listener. |#
 
 #|
 (defun update-beliefs ()
-  ; (when (equal *cycle* 2) (break))	;
-  ; (step (update-beliefs))		;
+  ; (when (equal *cycle* 2) (break))	; ;
+  ; (step (update-beliefs))		; ;
   (cond
    (*deductive-only*
     (dolist (link *new-links*)
@@ -11106,7 +11100,7 @@ in the Listener. |#
 	(setf (hypernode-discounted-node-strength node) (hyperlink-discount-factor link))
 	(when (null (hypernode-old-degree-of-justification node))
 	  (queue-for-inference node))
-          ; (display-belief-changes (list link) (list node) nil) ;
+          ; (display-belief-changes (list link) (list node) nil) ; ;
 	(discharge-ultimate-epistemic-interests (list node) nil))))
    (t
     (setf *new-beliefs* nil)
@@ -11153,266 +11147,266 @@ in the Listener. |#
   (if (>= y x) 0.0 (- x y)))
 
 (labels
- ()
+    ()
 
- (defun compute-hyper-defeat-link-justification (DL sigma link0 &optional (indent 0) path)
-   "path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or numerical value."
-   (when (> indent 100) (break))
-   (when (and *display?* *j-trace*)
-     (cond ((zerop indent) (terpri) (princ "want justification of ") (princ DL))
-	   (t
-	    (indent indent) (princ "need justification of ") (princ DL)
-	    (when sigma (princ " relative to ") (princ-sigma sigma))
-	    (when path (princ " and path ") (princ-sigma path))))
-     (terpri))
-   (let ((value nil))
-     (cond
-      ;; If the value has already been computed and either link0 = NIL or the value is link0-independent, use it
-      ((or
-	(and (null link0) (setf value (cdr (assoc sigma (hyper-defeat-link-justifications DL) :test 'equal))))
-	(and link0 (setf value (cdr (independent-hyper-defeat-link-value DL (cons link0 sigma))))))
-       (when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
-       t)
-      ;; If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
-      ((and sigma
-	    (or
-	     (and (null link0) (setf value (assoc (cdr sigma) (hyper-defeat-link-justifications DL) :test 'equal)))
-	     (and link0 (setf value (independent-hyper-defeat-link-value DL (cons  link0 (cdr sigma)))))))
-       (when (and *display?* *j-trace*)
-	 (indent indent)  (princ "This hyper-defeat-link is ") (princ sigma)
-	 (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
-       (setf value (cdr value))
-       (push (cons sigma value) (hyper-defeat-link-justifications DL)))
-      (t
-       (let ((root (hyper-defeat-link-root DL)))
-	 (setf value
-	       (cond ((critical-link DL sigma)
-		      ;; critical-hyper-defeat-links inherit their value from the noncritical hypergraph
-		      (let ((sigma+ (cons (list (car sigma)) (cdr sigma))))
-			(when (and *display?* *j-trace*)
-			  (indent (1+ indent)) (princ "This hyper-defeat-link was imported from ")
-			  (princ-sigma sigma+) (terpri))
-			(compute-hypernode-justification root sigma+ link0 (1+ indent) :dep path)))
-		     ;; noncritical-hyper-defeat-links have the value of their root
-		     (t (compute-hypernode-justification root sigma link0 (1+ indent) :ind path))))
-	 (when (numberp value) (push (cons sigma value) (hyper-defeat-link-justifications DL))))))
-     (when (and *display?* *j-trace*)
-       (indent indent)
-       (princ "(justification ") (princ DL) (princ " ") (princ-sigma sigma) (princ ") = ") (princ value)
-       (when path (princ ", path = ") (princ-sigma path)) (terpri))
-     value))
+  (defun compute-hyper-defeat-link-justification (DL sigma link0 &optional (indent 0) path)
+    "path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or numerical value."
+    (when (> indent 100) (break))
+    (when (and *display?* *j-trace*)
+      (cond ((zerop indent) (terpri) (princ "want justification of ") (princ DL))
+	    (t
+	     (indent indent) (princ "need justification of ") (princ DL)
+	     (when sigma (princ " relative to ") (princ-sigma sigma))
+	     (when path (princ " and path ") (princ-sigma path))))
+      (terpri))
+    (let ((value nil))
+      (cond
+       ;; If the value has already been computed and either link0 = NIL or the value is link0-independent, use it
+       ((or
+	 (and (null link0) (setf value (cdr (assoc sigma (hyper-defeat-link-justifications DL) :test 'equal))))
+	 (and link0 (setf value (cdr (independent-hyper-defeat-link-value DL (cons link0 sigma))))))
+	(when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
+	t)
+       ;; If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
+       ((and sigma
+	     (or
+	      (and (null link0) (setf value (assoc (cdr sigma) (hyper-defeat-link-justifications DL) :test 'equal)))
+	      (and link0 (setf value (independent-hyper-defeat-link-value DL (cons  link0 (cdr sigma)))))))
+	(when (and *display?* *j-trace*)
+	  (indent indent)  (princ "This hyper-defeat-link is ") (princ sigma)
+	  (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
+	(setf value (cdr value))
+	(push (cons sigma value) (hyper-defeat-link-justifications DL)))
+       (t
+	(let ((root (hyper-defeat-link-root DL)))
+	  (setf value
+		(cond ((critical-link DL sigma)
+		       ;; critical-hyper-defeat-links inherit their value from the noncritical hypergraph
+		       (let ((sigma+ (cons (list (car sigma)) (cdr sigma))))
+			 (when (and *display?* *j-trace*)
+			   (indent (1+ indent)) (princ "This hyper-defeat-link was imported from ")
+			   (princ-sigma sigma+) (terpri))
+			 (compute-hypernode-justification root sigma+ link0 (1+ indent) :dep path)))
+		      ;; noncritical-hyper-defeat-links have the value of their root
+		      (t (compute-hypernode-justification root sigma link0 (1+ indent) :ind path))))
+	  (when (numberp value) (push (cons sigma value) (hyper-defeat-link-justifications DL))))))
+      (when (and *display?* *j-trace*)
+	(indent indent)
+	(princ "(justification ") (princ DL) (princ " ") (princ-sigma sigma) (princ ") = ") (princ value)
+	(when path (princ ", path = ") (princ-sigma path)) (terpri))
+      value))
 
- (defun compute-link-justification (link sigma link0 &optional (indent 0) path)
-   "path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or a numerical value."
-   (when (> indent 100) (break))
-   (when (and *display?* *j-trace*)
-     (cond ((zerop indent) (terpri) (princ "want justification of ") (princ link))
-	   (t
-	    (indent indent) (princ "need justification of  ") (princ link)
-	    (when sigma (princ " relative to ") (princ-sigma sigma))
-	    (when path (princ " and path ") (princ-sigma path))))
-     (terpri))
-   (let ((value nil))
-     (cond
-      ;; If the value has already been computed and either link0 = NIL or the value is link0-independent, use it
-      ((or
-	(and (null link0) (setf value (cdr (assoc sigma (hyperlink-justifications link) :test 'equal))))
-	(and link0 (setf value  (cdr (independent-link-value link (cons link0 sigma))))))
-       (when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
-       t)
-      ;; if path contains link, return link
-      ((member link path)
-       (when (and *display?* *j-trace*)
-	 (indent indent) (princ "This path of computation is circular.") (terpri))
-       (setf value link))
-      ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
-      ((and sigma
-	    (or
-	     (and (null link0) (setf value (assoc (cdr sigma) (hyperlink-justifications link) :test 'equal)))
-	     (and link0 (setf value (independent-link-value link (cons link0 (cdr sigma)))))))
-       (when (and *display?* *j-trace*)
-	 (indent indent)  (princ "This hyperlink is ") (princ sigma)
-	 (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
-       (setf value (cdr value))
-       (push (cons sigma value) (hyperlink-justifications link)))
-      ;; if (car sigma) is a bracketed-hyperlink and link is sigma-unsecured, compute the link-justification
-      ;; in the critical hypergraph.
-      ((and sigma (not (hyperlink-p (car sigma))) (mem sigma (hyperlink-unsecured? link)))
-       (let ((sigma-  (cons (caar sigma) (cdr sigma))))
-	 (when (and *display?* *j-trace*)
-	   (indent indent)  (princ "This hyperlink was imported from ") (princ-sigma sigma-) (terpri))
-	 (setf value (compute-link-justification link sigma- link0 (1+ indent) path))
-	 (push (cons sigma value) (hyperlink-justifications link))))
-      ;; if link is not sigma-unsecured, and all defeaters have numerical-values
-      ;; then value is the min of the reason-strength and the degrees of justification of elements of
-      ;; the basis, less the degree of justification of the undercutting defeater if there is one. The
-      ;; defeaters having numerical values signifies that the link is not self-dependent.
-      (t
-       (block compute-value
-	      (let ((basis (hyperlink-basis link)))
-		(cond
-		 (basis
-		  (let ((D nil) (B nil))
-		    (cond ((null link0)
-			   ;; if link0 = NIL, compute the degrees of justification for the members of the basis
-			   ;; without requiring independence, and compute the degrees of justification of
-			   ;; the hyper-defeat-links requiring hyperlink-independence.
-			   (dolist (bs basis)
-			     (let ((bs-value (compute-hypernode-justification bs sigma nil (1+ indent) :basis path)))
-			       (when (eq bs-value 0.0)
-				 (setf value 0.0)
-				 (push (cons sigma 0.0) (hyperlink-justifications link))
-				 (return-from compute-value))
-			       (push bs-value B)))
-			   (dolist (dl (hyperlink-defeaters link))
-			     (when (member sigma (hyper-defeat-link-in dl) :test 'equal)
-			       (push (compute-hyper-defeat-link-justification dl sigma link (1+ indent)  (cons link path)) D)))
+  (defun compute-link-justification (link sigma link0 &optional (indent 0) path)
+    "path is the reverse of the  list of hyperlinks the recursion has traversed before getting to link. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or a numerical value."
+    (when (> indent 100) (break))
+    (when (and *display?* *j-trace*)
+      (cond ((zerop indent) (terpri) (princ "want justification of ") (princ link))
+	    (t
+	     (indent indent) (princ "need justification of  ") (princ link)
+	     (when sigma (princ " relative to ") (princ-sigma sigma))
+	     (when path (princ " and path ") (princ-sigma path))))
+      (terpri))
+    (let ((value nil))
+      (cond
+       ;; If the value has already been computed and either link0 = NIL or the value is link0-independent, use it
+       ((or
+	 (and (null link0) (setf value (cdr (assoc sigma (hyperlink-justifications link) :test 'equal))))
+	 (and link0 (setf value  (cdr (independent-link-value link (cons link0 sigma))))))
+	(when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
+	t)
+       ;; if path contains link, return link
+       ((member link path)
+	(when (and *display?* *j-trace*)
+	  (indent indent) (princ "This path of computation is circular.") (terpri))
+	(setf value link))
+       ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
+       ((and sigma
+	     (or
+	      (and (null link0) (setf value (assoc (cdr sigma) (hyperlink-justifications link) :test 'equal)))
+	      (and link0 (setf value (independent-link-value link (cons link0 (cdr sigma)))))))
+	(when (and *display?* *j-trace*)
+	  (indent indent)  (princ "This hyperlink is ") (princ sigma)
+	  (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
+	(setf value (cdr value))
+	(push (cons sigma value) (hyperlink-justifications link)))
+       ;; if (car sigma) is a bracketed-hyperlink and link is sigma-unsecured, compute the link-justification
+       ;; in the critical hypergraph.
+       ((and sigma (not (hyperlink-p (car sigma))) (mem sigma (hyperlink-unsecured? link)))
+	(let ((sigma-  (cons (caar sigma) (cdr sigma))))
+	  (when (and *display?* *j-trace*)
+	    (indent indent)  (princ "This hyperlink was imported from ") (princ-sigma sigma-) (terpri))
+	  (setf value (compute-link-justification link sigma- link0 (1+ indent) path))
+	  (push (cons sigma value) (hyperlink-justifications link))))
+       ;; if link is not sigma-unsecured, and all defeaters have numerical-values
+       ;; then value is the min of the reason-strength and the degrees of justification of elements of
+       ;; the basis, less the degree of justification of the undercutting defeater if there is one. The
+       ;; defeaters having numerical values signifies that the link is not self-dependent.
+       (t
+	(block compute-value
+	  (let ((basis (hyperlink-basis link)))
+	    (cond
+	     (basis
+	      (let ((D nil) (B nil))
+		(cond ((null link0)
+		       ;; if link0 = NIL, compute the degrees of justification for the members of the basis
+		       ;; without requiring independence, and compute the degrees of justification of
+		       ;; the hyper-defeat-links requiring hyperlink-independence.
+		       (dolist (bs basis)
+			 (let ((bs-value (compute-hypernode-justification bs sigma nil (1+ indent) :basis path)))
+			   (when (eq bs-value 0.0)
+			     (setf value 0.0)
+			     (push (cons sigma 0.0) (hyperlink-justifications link))
+			     (return-from compute-value))
+			   (push bs-value B)))
+		       (dolist (dl (hyperlink-defeaters link))
+			 (when (member sigma (hyper-defeat-link-in dl) :test 'equal)
+			   (push (compute-hyper-defeat-link-justification dl sigma link (1+ indent)  (cons link path)) D)))
 					; (when (not (and (every #'numberp D)
 					;                                     (every #'(lambda (dl) (independent-hyper-defeat-link-value dl (cons link sigma)))
 					;                                                    (hyperlink-defeaters link))))
-			   (when (not (every #'numberp D))
-			     (setf link0 link)))
-			  (t
-			   ;; if link0 is not NIL, compute the degrees of justification for the members of the basis
-			   ;;and  the hyper-defeat-links requiring link0-independence.
+		       (when (not (every #'numberp D))
+			 (setf link0 link)))
+		      (t
+		       ;; if link0 is not NIL, compute the degrees of justification for the members of the basis
+		       ;;and  the hyper-defeat-links requiring link0-independence.
+		       (dolist (bs basis)
+			 (let ((bs-value (compute-hypernode-justification bs sigma link0 (1+ indent) :basis path)))
+			   (when (eq bs-value 0.0)
+			     (setf value 0.0)
+			     (push (cons sigma 0.0) (hyperlink-justifications link))
+			     (return-from compute-value))
+			   (push bs-value B)))
+		       (dolist (dl (hyperlink-defeaters link))
+			 (when (member sigma (hyper-defeat-link-in dl) :test 'equal)
+			   (push (compute-hyper-defeat-link-justification dl sigma link0 (1+ indent)  (cons link path)) D)))))
+		(cond ((and (every #'numberp B) (every #'numberp D))
+		       (setf value (~ (min (hyperlink-reason-strength link) (minimum B)) (maximum0 D)))
+		       (push (cons sigma value) (hyperlink-justifications link)))
+		      ;; if some defeater is assigned a hyperlink, and the path is either empty or contains
+		      ;; no hyperlinks assigned as values to defeaters of link, then then link is self-dependent
+		      ;; and its value is of use in computing the degree of justification of link0. So we split the
+		      ;; hypergraph and compute its value accordingly.
+		      ((and (every #'(lambda (sl) (and (not (member sl B)) (not (member sl D)))) path))
+		       (when (and *display?* *j-trace*)
+			 (indent indent) (princ link) (princ " is self-dependent") (terpri))
+		       (let ((independent-defeaters nil)
+			     (dependent-defeaters nil)
+			     (sigma1 (cons link sigma))
+			     (sigma2 (cons (list link) sigma))
+			     (D1 nil) (D2 nil))
+			 (split-hypergraph link sigma (1+ indent))
+			 (dolist (DL (hyperlink-defeaters link))
+			   (when (mem sigma (hyper-defeat-link-in DL))
+			     (let ((root (hyper-defeat-link-root DL)))
+			       (cond ((mem sigma1 (hypernode-in root))
+				      (push root dependent-defeaters)
+				      (when (mem sigma2 (hypernode-in root)) (push root independent-defeaters)))
+				     ((mem sigma2 (hypernode-in root)) (push root independent-defeaters))))))
+			 (when (not (every #'numberp B))
+			   (setf B nil)
 			   (dolist (bs basis)
-			     (let ((bs-value (compute-hypernode-justification bs sigma link0 (1+ indent) :basis path)))
+			     (let ((bs-value (compute-hypernode-justification bs sigma link0 (1+ indent) :basis)))
 			       (when (eq bs-value 0.0)
 				 (setf value 0.0)
 				 (push (cons sigma 0.0) (hyperlink-justifications link))
 				 (return-from compute-value))
-			       (push bs-value B)))
-			   (dolist (dl (hyperlink-defeaters link))
-			     (when (member sigma (hyper-defeat-link-in dl) :test 'equal)
-			       (push (compute-hyper-defeat-link-justification dl sigma link0 (1+ indent)  (cons link path)) D)))))
-		    (cond ((and (every #'numberp B) (every #'numberp D))
-			   (setf value (~ (min (hyperlink-reason-strength link) (minimum B)) (maximum0 D)))
-			   (push (cons sigma value) (hyperlink-justifications link)))
-			  ;; if some defeater is assigned a hyperlink, and the path is either empty or contains
-			  ;; no hyperlinks assigned as values to defeaters of link, then then link is self-dependent
-			  ;; and its value is of use in computing the degree of justification of link0. So we split the
-			  ;; hypergraph and compute its value accordingly.
-			  ((and (every #'(lambda (sl) (and (not (member sl B)) (not (member sl D)))) path))
-			   (when (and *display?* *j-trace*)
-			     (indent indent) (princ link) (princ " is self-dependent") (terpri))
-			   (let ((independent-defeaters nil)
-				 (dependent-defeaters nil)
-				 (sigma1 (cons link sigma))
-				 (sigma2 (cons (list link) sigma))
-				 (D1 nil) (D2 nil))
-			     (split-hypergraph link sigma (1+ indent))
-			     (dolist (DL (hyperlink-defeaters link))
-			       (when (mem sigma (hyper-defeat-link-in DL))
-				 (let ((root (hyper-defeat-link-root DL)))
-				   (cond ((mem sigma1 (hypernode-in root))
-					  (push root dependent-defeaters)
-					  (when (mem sigma2 (hypernode-in root)) (push root independent-defeaters)))
-					 ((mem sigma2 (hypernode-in root)) (push root independent-defeaters))))))
-			     (when (not (every #'numberp B))
-			       (setf B nil)
-			       (dolist (bs basis)
-				 (let ((bs-value (compute-hypernode-justification bs sigma link0 (1+ indent) :basis)))
-				   (when (eq bs-value 0.0)
-				     (setf value 0.0)
-				     (push (cons sigma 0.0) (hyperlink-justifications link))
-				     (return-from compute-value))
-				   (push bs-value B))))
-			     (dolist (d independent-defeaters)
-			       (push (compute-hypernode-justification D sigma2 link0 (1+ indent) :ind) D1))
-			     (dolist (d dependent-defeaters)
-			       (push (compute-hypernode-justification D sigma1 link0 (1+ indent) :dep) D2))
-			     (setf
-			      value
-			      (~ (min (hyperlink-reason-strength link) (minimum B))
-				 (+ (maximum0 D1) (maximum0 D2))))
-			     (push (cons sigma value) (hyperlink-justifications link))))
-			  ;; otherwise, its value is last-link.
-			  (t (setf value (last-link (append B D) path))
-			     (record-dependencies value (cons link sigma) indent)))))
-		 (t (setf value (hypernode-degree-of-justification (hyperlink-target link)))
-		    (push (cons sigma value) (hyperlink-justifications link))))))))
-     (when (and (null sigma) (numberp value)) (setf (hyperlink-degree-of-justification link) value))
-     (when (and *display?* *j-trace*)
-       (indent indent)
-       (princ "(justification ") (princ link) (princ " ") (princ-sigma sigma) (princ ") = ") (princ value)
-       (when path (princ ", path = ") (princ-sigma path)) (terpri))
-     value))
+			       (push bs-value B))))
+			 (dolist (d independent-defeaters)
+			   (push (compute-hypernode-justification D sigma2 link0 (1+ indent) :ind) D1))
+			 (dolist (d dependent-defeaters)
+			   (push (compute-hypernode-justification D sigma1 link0 (1+ indent) :dep) D2))
+			 (setf
+			  value
+			  (~ (min (hyperlink-reason-strength link) (minimum B))
+			     (+ (maximum0 D1) (maximum0 D2))))
+			 (push (cons sigma value) (hyperlink-justifications link))))
+		      ;; otherwise, its value is last-link.
+		      (t (setf value (last-link (append B D) path))
+			 (record-dependencies value (cons link sigma) indent)))))
+	     (t (setf value (hypernode-degree-of-justification (hyperlink-target link)))
+		(push (cons sigma value) (hyperlink-justifications link))))))))
+      (when (and (null sigma) (numberp value)) (setf (hyperlink-degree-of-justification link) value))
+      (when (and *display?* *j-trace*)
+	(indent indent)
+	(princ "(justification ") (princ link) (princ " ") (princ-sigma sigma) (princ ") = ") (princ value)
+	(when path (princ ", path = ") (princ-sigma path)) (terpri))
+      value))
 
- (defun compute-hypernode-justification (node sigma &optional link0 (indent 0) case path)
-   "path is the reverse of the  list of hyperlinks through whose defeaters the recursion has traversed before getting to node. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or numerical value."
-   (when (> indent 100) (break))
-   (when (and *display?* *j-trace*)
-     (cond ((zerop indent) (terpri) (princ "want justification of ") (princ node))
-	   (t
-	    (indent indent)
-	    (cond ((eq case :basis) (princ "need justification of basis element ") (princ node))
-		  ((eq case :ind) (princ "need justification of ") (princ node)
-		   (princ " as the root of an independent hyper-defeat-link"))
-		  ((eq case :dep) (princ "need justification of ") (princ node)
-		   (princ " as the root of a dependent hyper-defeat-link")))
-	    (when sigma (princ " relative to ") (princ-sigma sigma))
-	    (when path (princ " and path ") (princ-sigma path))))
-     (terpri))
-   (let ((value nil))
-     (cond
-      ;; If the value has already been computed and either link0 = NIL or node is in the hyperlink-basis
-      ;; of link0 or the value is link0-independent, use it
-      ((or
-	(and
-	 (or (null link0) (member node (hyperlink-basis link0)))
-	 (setf value (cdr (assoc sigma (hypernode-justifications node) :test 'equal))))
-	(and link0 (setf value (cdr (independent-hypernode-value node (cons link0 sigma))))))
-       (when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
-       t)
-      ;; Initial nodes get their assigned degrees of justification
-      ((eq (hypernode-justification node) :given)
-       (when (and *display?* *j-trace*) (indent indent) (princ "This is an initial node.") (terpri))
-       (setf value (hypernode-degree-of-justification node))
-       (push (cons sigma value) (hypernode-justifications node)))
-      ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
-      ((and sigma
-	    (or
-	     (and (or (null link0) (member node (hyperlink-basis link0)))
-		  (setf value (assoc (cdr sigma) (hypernode-justifications node) :test 'equal)))
-	     (and link0 (setf value (independent-hypernode-value node (cons link0 (cdr sigma)))))))
-       (when (and *display?* *j-trace*) (indent indent) (princ "This node is ") (princ sigma)
-	     (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
-       (setf value (cdr value))
-       (push (cons sigma value) (hypernode-justifications node)))
-      (t
-       (let ((values nil))
-	 (dolist (link  (subset #'(lambda (link) (mem sigma (hyperlink-in link))) (hypernode-hyperlinks node)))
-	   (push (compute-link-justification link sigma link0 (1+ indent) path) values))
-	 ;;  it receives the maximum value of its sigma-hyperlinks if they all have numerical values.
-	 (cond ((every #'numberp values)
-		(setf value (maximum0 values))
-		(push (cons sigma value) (hypernode-justifications node))
-		;; The following is standard stuff from OSCAR_3.33
-		(when (null sigma)
-		  (let ((old-value (hypernode-degree-of-justification node)))
-		    (setf (hypernode-degree-of-justification node) value)
-		    (setf (hypernode-discounted-node-strength node)
-			  (if (hypernode-hyperlinks node)
-			      (* (hyperlink-discount-factor (car (hypernode-hyperlinks node))) value)
-			    value))
-		    (when (null old-value) (queue-for-inference node))
-		    (setf (hypernode-old-degree-of-justification node) old-value)
-		    (cond
-		     ((null old-value)
-		      (cond ((not (zerop value)) (push node *new-beliefs*))
-			    ((not (member nil (hypernode-nearest-defeasible-ancestors node)))
-			     (push node *new-retractions*))))
-		     ((> value old-value) (push node *new-beliefs*))
-		     ((< value old-value) (push node *new-retractions*)))
-		    )))
-	       ;;  If any of them are assigned hyperlinks (signifying circularity in the computation)
-	       ;; then it receives as its value the latest of those hyperlinks in the path.
-	       (t (setf value (last-link values path)))))))
-     (when (and *display?* *j-trace*)
-       (indent indent)
-       (princ "(justification ") (princ node) (princ " ") (princ-sigma sigma) (princ ") = ") (princ value)
-       (when path (princ ", path = ") (princ-sigma path)) (terpri))
-     value)))
+  (defun compute-hypernode-justification (node sigma &optional link0 (indent 0) case path)
+    "path is the reverse of the  list of hyperlinks through whose defeaters the recursion has traversed before getting to node. Link0 is the hyperlink initiating the recursive computation leading to node. This returns a hyperlink or numerical value."
+    (when (> indent 100) (break))
+    (when (and *display?* *j-trace*)
+      (cond ((zerop indent) (terpri) (princ "want justification of ") (princ node))
+	    (t
+	     (indent indent)
+	     (cond ((eq case :basis) (princ "need justification of basis element ") (princ node))
+		   ((eq case :ind) (princ "need justification of ") (princ node)
+		    (princ " as the root of an independent hyper-defeat-link"))
+		   ((eq case :dep) (princ "need justification of ") (princ node)
+		    (princ " as the root of a dependent hyper-defeat-link")))
+	     (when sigma (princ " relative to ") (princ-sigma sigma))
+	     (when path (princ " and path ") (princ-sigma path))))
+      (terpri))
+    (let ((value nil))
+      (cond
+       ;; If the value has already been computed and either link0 = NIL or node is in the hyperlink-basis
+       ;; of link0 or the value is link0-independent, use it
+       ((or
+	 (and
+	  (or (null link0) (member node (hyperlink-basis link0)))
+	  (setf value (cdr (assoc sigma (hypernode-justifications node) :test 'equal))))
+	 (and link0 (setf value (cdr (independent-hypernode-value node (cons link0 sigma))))))
+	(when (and *display?* *j-trace*) (indent indent) (princ "This value has already been computed.") (terpri))
+	t)
+       ;; Initial nodes get their assigned degrees of justification
+       ((eq (hypernode-justification node) :given)
+	(when (and *display?* *j-trace*) (indent indent) (princ "This is an initial node.") (terpri))
+	(setf value (hypernode-degree-of-justification node))
+	(push (cons sigma value) (hypernode-justifications node)))
+       ;;  If the value has been computed in (cdr sigma) and either link0 = NIL or it is link0-independent, use it
+       ((and sigma
+	     (or
+	      (and (or (null link0) (member node (hyperlink-basis link0)))
+		   (setf value (assoc (cdr sigma) (hypernode-justifications node) :test 'equal)))
+	      (and link0 (setf value (independent-hypernode-value node (cons link0 (cdr sigma)))))))
+	(when (and *display?* *j-trace*) (indent indent) (princ "This node is ") (princ sigma)
+	      (princ "-independent. It inherits its value from ") (princ-sigma (cdr sigma)) (terpri))
+	(setf value (cdr value))
+	(push (cons sigma value) (hypernode-justifications node)))
+       (t
+	(let ((values nil))
+	  (dolist (link  (subset #'(lambda (link) (mem sigma (hyperlink-in link))) (hypernode-hyperlinks node)))
+	    (push (compute-link-justification link sigma link0 (1+ indent) path) values))
+	  ;;  it receives the maximum value of its sigma-hyperlinks if they all have numerical values.
+	  (cond ((every #'numberp values)
+		 (setf value (maximum0 values))
+		 (push (cons sigma value) (hypernode-justifications node))
+		 ;; The following is standard stuff from OSCAR_3.33
+		 (when (null sigma)
+		   (let ((old-value (hypernode-degree-of-justification node)))
+		     (setf (hypernode-degree-of-justification node) value)
+		     (setf (hypernode-discounted-node-strength node)
+			   (if (hypernode-hyperlinks node)
+			       (* (hyperlink-discount-factor (car (hypernode-hyperlinks node))) value)
+			     value))
+		     (when (null old-value) (queue-for-inference node))
+		     (setf (hypernode-old-degree-of-justification node) old-value)
+		     (cond
+		      ((null old-value)
+		       (cond ((not (zerop value)) (push node *new-beliefs*))
+			     ((not (member nil (hypernode-nearest-defeasible-ancestors node)))
+			      (push node *new-retractions*))))
+		      ((> value old-value) (push node *new-beliefs*))
+		      ((< value old-value) (push node *new-retractions*)))
+		     )))
+		;;  If any of them are assigned hyperlinks (signifying circularity in the computation)
+		;; then it receives as its value the latest of those hyperlinks in the path.
+		(t (setf value (last-link values path)))))))
+      (when (and *display?* *j-trace*)
+	(indent indent)
+	(princ "(justification ") (princ node) (princ " ") (princ-sigma sigma) (princ ") = ") (princ value)
+	(when path (princ ", path = ") (princ-sigma path)) (terpri))
+      value)))
 
 (defun compute-affected-justifications (link)
 					; (when (eq link (hyperlink 4)) (break))
@@ -11454,7 +11448,7 @@ in the Listener. |#
 
 #|
 (defun display-belief-changes  (links new-beliefs new-retractions)
-  ; (when (member (hyperlink 12) links) (setf l links nb new-beliefs nr new-retractions) (break)) ;
+  ; (when (member (hyperlink 12) links) (setf l links nb new-beliefs nr new-retractions) (break)) ; ;
   ;; (step (display-belief-changes l  nb nr))
   (when (or *display?* *log-on*)
     (cond
@@ -15676,25 +15670,25 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (defun ei-level (var) (get var 'ei-level))
 
 (labels
- ()
+    ()
 
- (defun occurs-disjunctively-with (x y P)
-   (cond
-    ((conditionalp P)
-     (or (occurs-conjunctively-with x y (antecedent P)) (occurs-disjunctively-with x y (consequent P))))
-    ((disjunctionp P)
-     (or (occurs-disjunctively-with x y (disjunct1 P)) (occurs-disjunctively-with x y (disjunct2 P))))
-    ((negationp P) (occurs-conjunctively-with x y (negand P)))
-    ((e-genp P) (occurs-disjunctively-with x y (e-matrix P)))
-    (t (and (occur x P) (occur y P)))))
+  (defun occurs-disjunctively-with (x y P)
+    (cond
+     ((conditionalp P)
+      (or (occurs-conjunctively-with x y (antecedent P)) (occurs-disjunctively-with x y (consequent P))))
+     ((disjunctionp P)
+      (or (occurs-disjunctively-with x y (disjunct1 P)) (occurs-disjunctively-with x y (disjunct2 P))))
+     ((negationp P) (occurs-conjunctively-with x y (negand P)))
+     ((e-genp P) (occurs-disjunctively-with x y (e-matrix P)))
+     (t (and (occur x P) (occur y P)))))
 
- (defun occurs-conjunctively-with (x y P)
-   (cond
-    ((conjunctionp P)
-     (or (occurs-conjunctively-with x y (conjunct1 P)) (occurs-conjunctively-with x y (conjunct2 P))))
-    ((negationp P) (occurs-disjunctively-with x y (negand P)))
-    ((u-genp P) (occurs-conjunctively-with x y (u-matrix P)))
-    (t (and (occur x P) (occur y P))))))
+  (defun occurs-conjunctively-with (x y P)
+    (cond
+     ((conjunctionp P)
+      (or (occurs-conjunctively-with x y (conjunct1 P)) (occurs-conjunctively-with x y (conjunct2 P))))
+     ((negationp P) (occurs-disjunctively-with x y (negand P)))
+     ((u-genp P) (occurs-conjunctively-with x y (u-matrix P)))
+     (t (and (occur x P) (occur y P))))))
 
 (defun EI (c depth ip)
   (declare (ignore ip))
@@ -15980,19 +15974,19 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun UG (interest depth priority)
   (let* ((p (interest-formula interest))
-         (q-var (q-variable p))
-         (e-vars (interest-variables interest))
-         (e=vars (subset #'(lambda (v) (occurs-conjunctively-with v q-var (q-matrix p))) e-vars))
-         (fun (if e=vars (make-skolem-i-function) (make-skolem-i-constant)))
-         (substitution (if e=vars (cons fun e=vars) fun))
-         (ug-condition
+	 (q-var (q-variable p))
+	 (e-vars (interest-variables interest))
+	 (e=vars (subset #'(lambda (v) (occurs-conjunctively-with v q-var (q-matrix p))) e-vars))
+	 (fun (if e=vars (make-skolem-i-function) (make-skolem-i-constant)))
+	 (substitution (if e=vars (cons fun e=vars) fun))
+	 (ug-condition
 	  #'(lambda (c unifier binding)
 	      (declare (ignore binding))
 	      (and
 	       (or (not (listp (mem2 unifier)))
 		   (not (some #'(lambda (x) (occur* fun (cdr x))) (mem2 unifier))))
 	       (not (occur fun (match-sublis (mem1 unifier) (hypernode-supposition c)))))))
-         (link
+	 (link
 	  (make-interest-link
 	   :link-number (incf *interest-link-number*)
 	   :link-resultant-interest interest
@@ -16026,8 +16020,8 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun EG (interest depth priority)
   (let* ((p (interest-formula interest))
-         (var (make-interest-variable))
-         (link
+	 (var (make-interest-variable))
+	 (link
 	  (make-interest-link
 	   :link-number (incf *interest-link-number*)
 	   :link-resultant-interest interest
@@ -16080,19 +16074,19 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (setf *backwards-logical-reasons*
       (list adjunction neg-intro i-neg-disj i-neg-condit i-neg-bicondit
-            bicondit-intro disj-cond i-DM conditionalization
-            i-neg-ug i-neg-eg EG UG
-            disj-cond-2
-            contra-conditionalization
+	    bicondit-intro disj-cond i-DM conditionalization
+	    i-neg-ug i-neg-eg EG UG
+	    disj-cond-2
+	    contra-conditionalization
 					; vacuous-condition
-            ))
+	    ))
 
 (defun rerun (&rest args)
   (progn
-    (terpri) (princ "(") (princ "                                 ") (princ *version*) (princ "          ")
+    (terpri) (princ "(") (princ "				  ") (princ *version*) (princ "		 ")
     (let ((time (multiple-value-list (get-decoded-time))))
       (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+      (princ (mem6 time)) (princ "	    ") (princ (mem3 time))
       (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
       (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
       (terpri) (terpri))
@@ -16103,15 +16097,15 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
   (if (stringp (mem1 *test-log*)) (setf *test-log* (cdr (mem6 *test-log*))))
   (let ((rest (cons *problem-number* args)))
     (cond ((equal (mem1 rest) :skip)
-           ;; (test :skip i j k)
-           (dolist (P *problems*)
-             (when (not (mem (car P) (cdr rest)))
-               (run-reasoning-problem P)
-               (when *pause*
-                 (terpri) (princ "Type any key to continue.") (terpri) (terpri)
-                 (read-char)))))
-          (t (let ((start (mem1 rest)))
-               (cond
+	   ;; (test :skip i j k)
+	   (dolist (P *problems*)
+	     (when (not (mem (car P) (cdr rest)))
+	       (run-reasoning-problem P)
+	       (when *pause*
+		 (terpri) (princ "Type any key to continue.") (terpri) (terpri)
+		 (read-char)))))
+	  (t (let ((start (mem1 rest)))
+	       (cond
 		((null (cdr rest))
 		 ;; (test n)
 		 (run-reasoning-problem (assoc start *problems*)))
@@ -16139,8 +16133,8 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 		       (terpri) (princ "Type any key to continue.") (terpri) (terpri)
 		       (read-char))))))))))
   (setf *test-log*
-        (list *version* *reductio-discount* *reductio-interest* *skolem-multiplier*
-              *quantifier-discount* *test-log*))
+	(list *version* *reductio-discount* *reductio-interest* *skolem-multiplier*
+	      *quantifier-discount* *test-log*))
   (when (not *display?*) (display-test-log))
   (terpri)
   (princ *test-log*)
@@ -16148,10 +16142,10 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun run (&rest args)
   (progn
-    (terpri) (princ "(") (princ "                                 ") (princ *version*) (princ "          ")
+    (terpri) (princ "(") (princ "				  ") (princ *version*) (princ "		 ")
     (let ((time (multiple-value-list (get-decoded-time))))
       (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+      (princ (mem6 time)) (princ "	    ") (princ (mem3 time))
       (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
       (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
       (terpri) (terpri))
@@ -16162,15 +16156,15 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
   (when (stringp (mem1 *test-log*)) (setf *test-log* (mem6 *test-log*)))
   (let ((rest (cons (1+ *problem-number*) args)))
     (cond ((equal (mem1 rest) :skip)
-           ;; (test :skip i j k)
-           (dolist (P *problems*)
-             (when (not (mem (car P) (cdr rest)))
-               (run-reasoning-problem P)
-               (when *pause*
-                 (terpri) (princ "Type any key to continue.") (terpri) (terpri)
-                 (read-char)))))
-          (t (let ((start (mem1 rest)))
-               (cond
+	   ;; (test :skip i j k)
+	   (dolist (P *problems*)
+	     (when (not (mem (car P) (cdr rest)))
+	       (run-reasoning-problem P)
+	       (when *pause*
+		 (terpri) (princ "Type any key to continue.") (terpri) (terpri)
+		 (read-char)))))
+	  (t (let ((start (mem1 rest)))
+	       (cond
 		((null (cdr rest))
 		 ;; (test n)
 		 (run-reasoning-problem (assoc start *problems*)))
@@ -16198,8 +16192,8 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 		       (terpri) (princ "Type any key to continue.") (terpri) (terpri)
 		       (read-char))))))))))
   (setf *test-log*
-        (list *version* *reductio-discount* *reductio-interest* *skolem-multiplier*
-              *quantifier-discount* *test-log*))
+	(list *version* *reductio-discount* *reductio-interest* *skolem-multiplier*
+	      *quantifier-discount* *test-log*))
   (when (not *display?*) (display-test-log))
   (terpri)
   (princ *test-log*)
@@ -16241,9 +16235,9 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun test* (&optional n)
   (cond ((null n)
-         (dolist (P *problems*)
-           (run-reasoning-problem* P)))
-        (t (run-reasoning-problem* (assoc n *problems*)))))
+	 (dolist (P *problems*)
+	   (run-reasoning-problem* P)))
+	(t (run-reasoning-problem* (assoc n *problems*)))))
 
 (defun test&load ()
   (setf *comparison-graphs* nil)
@@ -16257,13 +16251,13 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
     (dolist (P *problems*)
       (run-reasoning-problem* P)
       (let ((graph (car comparison-graphs)))
-        (setf comparison-graphs (cdr comparison-graphs))
-        (dolist (node *hypergraph*)
-          (when (not (= (hypernode-degree-of-justification node)
-                        (hypernode-degree-of-justification (mem1 graph))))
-            (PRINC "problem #") (princ *problem-number*) (princ ": ")
-            (princ "Hypernode ") (princ (hypernode-number node)) (princ " differs") (terpri))
-          (setf graph (cdr graph)))))))
+	(setf comparison-graphs (cdr comparison-graphs))
+	(dolist (node *hypergraph*)
+	  (when (not (= (hypernode-degree-of-justification node)
+			(hypernode-degree-of-justification (mem1 graph))))
+	    (PRINC "problem #") (princ *problem-number*) (princ ": ")
+	    (princ "Hypernode ") (princ (hypernode-number node)) (princ " differs") (terpri))
+	  (setf graph (cdr graph)))))))
 
 (defun try (&optional x)
   "This restarts the reasoning, beginning with the inference-queue item x.  x can be the number of a queue-node, or an interest or a conclusion.  If x is empty, reasoning restarts without altering the inference-queue."
@@ -16281,17 +16275,17 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
   (let ((nodes nil))
     (dolist (query *ultimate-epistemic-interests*)
       (dolist (N (query-answers query))
-        (pushnew N nodes)))
+	(pushnew N nodes)))
     (compute-relevant-nodes nodes)
     (let ((argument-length (length *relevant-nodes*)))
       (cond (*proofs?* (terpri) (show-arguments))
-            (t
+	    (t
 	     (princ "Cumulative size of arguments = ") (princ argument-length) (terpri))))))
 
 (defun try-interest (&optional n)
   "When the following is run before a problem is run, when an interest of number n is queued, it goes on the front of the inference-queue."
   (cond ((null n) (setf *priority-interests* nil))
-        (t (push n *priority-interests*))))
+	(t (push n *priority-interests*))))
 
 (defun display-reasoning-for (node)
   (progn
@@ -16304,38 +16298,38 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
   (let ((nodes (list node)))
     (compute-relevant-nodes nodes)
     (let* (
-           (enabling-interests
+	   (enabling-interests
 	    (union (unionmapcar+ #'hypernode-enabling-interests *relevant-nodes*)
 		   (unionmapcar+ #'hypernode-generating-defeat-interests *relevant-nodes*)))
-           (closure (generated-nodes-and-interests *relevant-nodes* enabling-interests nil))
-           (nodes-used (remove-duplicates (mem1 closure)))
-           (interests-used (remove-duplicates (mem2 closure)))
-           (interests-used-in-proof (remove-duplicates (mem3 closure)))
-           (log (reverse *reasoning-log*))
-           (boundary nil)
-           (nodes-displayed nil))
+	   (closure (generated-nodes-and-interests *relevant-nodes* enabling-interests nil))
+	   (nodes-used (remove-duplicates (mem1 closure)))
+	   (interests-used (remove-duplicates (mem2 closure)))
+	   (interests-used-in-proof (remove-duplicates (mem3 closure)))
+	   (log (reverse *reasoning-log*))
+	   (boundary nil)
+	   (nodes-displayed nil))
       (when *graph-log* (make-oscar-window))
       (dolist (x log)
-        (cond ((hypernode-p x)
-               (when (member x nodes-used)
-                 (display-node
+	(cond ((hypernode-p x)
+	       (when (member x nodes-used)
+		 (display-node
 		  x *relevant-nodes* nodes-used interests-used enabling-interests nodes-displayed)
-                 (push x nodes-displayed)))
-              ((interest-p x)
-               (when (member x interests-used)
-                 (display-used-interest
+		 (push x nodes-displayed)))
+	      ((interest-p x)
+	       (when (member x interests-used)
+		 (display-used-interest
 		  x *relevant-nodes* nodes-used interests-used
 		  enabling-interests interests-used-in-proof)))
-              (t (setf boundary (display-peripherals x boundary nodes-used)))))
+	      (t (setf boundary (display-peripherals x boundary nodes-used)))))
       (when (and *graph-log* (boundp '*speak*) *speak*)
-        (setf nodes
-              (subset
+	(setf nodes
+	      (subset
 	       #'(lambda (n)
 		   (some #'(lambda (q) (>= (current-degree-of-justification n) (query-strength q)))
 			 (hypernode-answered-queries n)))
 	       nodes))
-        (when nodes
-          (speak-text
+	(when nodes
+	  (speak-text
 	   (cond
 	    ((cdr nodes)
 	     (cat-list
@@ -16351,31 +16345,31 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (defun store-interest-record (in record)
   (let ((in-record (assoc in *interest-record*)))
     (cond (in-record (push record (cdr in-record)))
-          (t (push (list in record) *interest-record*)))))
+	  (t (push (list in record) *interest-record*)))))
 
 					;(defun generating-right-link (in used-interests used-nodes)
 					;   ; (when (eq in (interest 19)) (setf i in u used-interests un used-nodes) (break))
 					;   ;; (step (generating-right-link i u un))
 					;    (let ((L (find-if
-					;                  #'(lambda (L)
-					;                        (and
-					;                          (member (link-resultant-interest L) used-interests)
-					;                          (some #'(lambda (n) (member n used-nodes)) (interest-discharging-nodes (link-interest L)))))
-					;                  (interest-right-links in))))
-					;       (when (null L)
-					;            (setf L
-					;                     (find-if
-					;                       #'(lambda (L)
-					;                             (some #'(lambda (n) (member n used-nodes)) (interest-discharging-nodes (link-interest L))))
-					;                       (interest-right-links in))))
-					;       (when (null L)
-					;            (setf L (mem1
-					;                          (last (subset
-					;                                    #'(lambda (L) (member (link-resultant-interest L) used-interests))
-					;                                                (interest-right-links in))))))
-					;       (when (null L)
-					;            (setf L (mem1 (last (interest-right-links in)))))
-					;       L))
+					;		   #'(lambda (L)
+					;			 (and
+					;			   (member (link-resultant-interest L) used-interests)
+					;			   (some #'(lambda (n) (member n used-nodes)) (interest-discharging-nodes (link-interest L)))))
+					;		   (interest-right-links in))))
+					;	(when (null L)
+					;	     (setf L
+					;		      (find-if
+					;			#'(lambda (L)
+					;			      (some #'(lambda (n) (member n used-nodes)) (interest-discharging-nodes (link-interest L))))
+					;			(interest-right-links in))))
+					;	(when (null L)
+					;	     (setf L (mem1
+					;			   (last (subset
+					;				     #'(lambda (L) (member (link-resultant-interest L) used-interests))
+					;						 (interest-right-links in))))))
+					;	(when (null L)
+					;	     (setf L (mem1 (last (interest-right-links in)))))
+					;	L))
 
 (defun relevant-nodes (node &optional nodes-used)
   (when (not (member node nodes-used))
@@ -16384,9 +16378,9 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
       (setf nodes-used (union (relevant-nodes m nodes-used) nodes-used)))
     (dolist (L (hypernode-hyperlinks node))
       (dolist (b (hyperlink-basis L))
-        (setf nodes-used (union (relevant-nodes b nodes-used) nodes-used)))
+	(setf nodes-used (union (relevant-nodes b nodes-used) nodes-used)))
       (dolist (d (hyperlink-defeaters L))
-        (setf nodes-used (union (relevant-nodes (hyper-defeat-link-root d) nodes-used) nodes-used))))
+	(setf nodes-used (union (relevant-nodes (hyper-defeat-link-root d) nodes-used) nodes-used))))
     nodes-used))
 
 (defun is (n)
@@ -16395,18 +16389,18 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 (defun list-instantiated-premises (&optional d-node)
   (when (null d-node) (setf d-node (d-node 1)))
   (append (d-node-forwards-reasons d-node)
-          (unionmapcar #'(lambda (d) (list-instantiated-premises (cdr d)))
-                       (d-node-discrimination-tests d-node))))
+	  (unionmapcar #'(lambda (d) (list-instantiated-premises (cdr d)))
+		       (d-node-discrimination-tests d-node))))
 
 (defun ip (n)
   (find-if #'(lambda (x) (equal (ip-number x) n)) (list-instantiated-premises)))
 
 (defun analyze-interest-schemes ()
   (let ((schemes (list-interest-schemes))
-        (reasons nil))
+	(reasons nil))
     (dolist (s schemes)
       (when (not (member (ip-reason s) *backwards-logical-reasons*))
-        (pushnew (ip-reason s) reasons)))
+	(pushnew (ip-reason s) reasons)))
     (dolist (R reasons)
       (princ "There are ")
       (princ (number-of schemes #'(lambda (x) (eq (ip-reason x) R))))
@@ -16415,10 +16409,10 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun analyze-instantiated-premises ()
   (let ((schemes (list-instantiated-premises))
-        (reasons nil))
+	(reasons nil))
     (dolist (s schemes)
       (when (not (member (ip-reason s) *forwards-logical-reasons*))
-        (pushnew (ip-reason s) reasons)))
+	(pushnew (ip-reason s) reasons)))
     (dolist (R reasons)
       (princ "There are ")
       (princ (number-of schemes #'(lambda (x) (eq (ip-reason x) R))))
@@ -16442,37 +16436,37 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 					;other supporting the undercutting defeater.  It creates them if necessary.  |#
 					;(defun defeaters-for (sequent basis)
 					;    (let* ((formula (sequent-formula sequent))
-					;              (base (mapcar #'sequent-formula basis))
-					;              (rebut (neg formula))
-					;              (undercut (make-@ (gen-conjunction base) formula))
-					;              (rebutting-c-list (c-list-for rebut))
-					;              (undercutting-c-list (c-list-for undercut)))
-					;       (when (null rebutting-c-list)
-					;            (setf rebutting-c-list
-					;                     (make-c-list
-					;                       :c-list-formula rebut
-					;                       :c-list-corresponding-i-lists (matching-i-lists-for rebut nil)))
-					;            (push (cons rebut rebutting-c-list) *conclusions*))
-					;       (when (null undercutting-c-list)
-					;            (setf undercutting-c-list
-					;                     (make-c-list
-					;                       :c-list-formula undercut
-					;                       :c-list-corresponding-i-lists (matching-i-lists-for undercut nil)))
-					;            (push (cons undercut undercutting-c-list) *conclusions*))
-					;       (list rebutting-c-list undercutting-c-list)))
+					;	       (base (mapcar #'sequent-formula basis))
+					;	       (rebut (neg formula))
+					;	       (undercut (make-@ (gen-conjunction base) formula))
+					;	       (rebutting-c-list (c-list-for rebut))
+					;	       (undercutting-c-list (c-list-for undercut)))
+					;	(when (null rebutting-c-list)
+					;	     (setf rebutting-c-list
+					;		      (make-c-list
+					;			:c-list-formula rebut
+					;			:c-list-corresponding-i-lists (matching-i-lists-for rebut nil)))
+					;	     (push (cons rebut rebutting-c-list) *conclusions*))
+					;	(when (null undercutting-c-list)
+					;	     (setf undercutting-c-list
+					;		      (make-c-list
+					;			:c-list-formula undercut
+					;			:c-list-corresponding-i-lists (matching-i-lists-for undercut nil)))
+					;	     (push (cons undercut undercutting-c-list) *conclusions*))
+					;	(list rebutting-c-list undercutting-c-list)))
 
 (defun condition-satisfying-interest (S condition link vars)
   (multiple-value-bind
-   (interests match)
-   (interests-for (sequent-formula S) vars)
-   (when interests
-     (let ((sup (match-sublis match (sequent-supposition S))))
-       (find-if #'(lambda (i)
-		    (and (eq (interest-deductive i)
-			     (interest-deductive (link-resultant-interest link)))
-			 (funcall* (mem1 condition) i)
-			 (== (interest-supposition i) sup)))
-		interests)))))
+      (interests match)
+      (interests-for (sequent-formula S) vars)
+    (when interests
+      (let ((sup (match-sublis match (sequent-supposition S))))
+	(find-if #'(lambda (i)
+		     (and (eq (interest-deductive i)
+			      (interest-deductive (link-resultant-interest link)))
+			  (funcall* (mem1 condition) i)
+			  (== (interest-supposition i) sup)))
+		 interests)))))
 
 (defun validating-node (interest degree binding)
   (let ((node nil))
@@ -16521,11 +16515,11 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
      ;; code from condition-satisfying-interest
      (let ((interest
 	    (multiple-value-bind
-	     (interests match)
-	     (interests-for (sequent-formula S) nil)
-	     (when interests
-	       (let ((sup (match-sublis match (sequent-supposition S))))
-		 (find-if #'(lambda (i) (== (interest-supposition i) sup)) interests))))))
+		(interests match)
+		(interests-for (sequent-formula S) nil)
+	      (when interests
+		(let ((sup (match-sublis match (sequent-supposition S))))
+		  (find-if #'(lambda (i) (== (interest-supposition i) sup)) interests))))))
        (cond (interest
 	      (setf (interest-degree-of-interest interest) (min (interest-degree-of-interest interest) degree))
 	      (setf (interest-maximum-degree-of-interest interest)
@@ -16537,7 +16531,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 	      (let ((conclusion (validating-node interest degree binding)))
 		(when conclusion
 		  (when *display?*
-		    (princ "                                        ")
+		    (princ "					    ")
 		    (princ "Hypernode #")
 		    (princ (hypernode-number conclusion))
 		    (princ " discharges interest #")
@@ -16556,13 +16550,13 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun subsetp* (X Y)
   (subsetp X Y :test #'(lambda (z w)
-                         (and (equal (car z) (car w))
-                              (or (reductio-supposition (cdr z))
-                                  (not (reductio-supposition (cdr w))))))))
+			 (and (equal (car z) (car w))
+			      (or (reductio-supposition (cdr z))
+				  (not (reductio-supposition (cdr w))))))))
 
 					;(defun inference-descendants (N)
 					;    (let ((consequences (hypernode-consequences N)))
-					;       (union consequences (unionmapcar+ #'inference-descendants consequences))))
+					;	(union consequences (unionmapcar+ #'inference-descendants consequences))))
 
 (defun rewrite-u-vars (formula vars)
   (if vars
@@ -16571,7 +16565,7 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
     (list formula t)))
 
 (defun strictly-base-reductio-supposition (N)
-  "This assumes that N is a reductio-supposition-node.  The second conjunct could be made more efficient by storing the appropriate information in a slot non-reductio-generating-interests."
+  "This assumes that N is a reductio-supposition-node.	The second conjunct could be made more efficient by storing the appropriate information in a slot non-reductio-generating-interests."
   (and
    (not (some #'interest-reductio (hypernode-generating-interests N)))
    (every #'(lambda (in) (equal (hypernode-formula N) (neg (interest-formula in))))
@@ -16606,12 +16600,12 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
 
 (defun undercuts (sequent1 basis sequent2)
   (and (equal (sequent-formula sequent1)
-              (make-@ (gen-conjunction (mapcar #'hypernode-formula basis))
-                      (sequent-formula sequent2)))
+	      (make-@ (gen-conjunction (mapcar #'hypernode-formula basis))
+		      (sequent-formula sequent2)))
        (subsetp= (sequent-supposition sequent1) (sequent-supposition sequent2))
        (every #'(lambda (b)
-                  (subsetp= (sequent-supposition sequent1) (hypernode-supposition b)))
-              basis)))
+		  (subsetp= (sequent-supposition sequent1) (hypernode-supposition b)))
+	      basis)))
 
 (defun defeats (sequent1 basis sequent2)
   "sequent1 has the correct syntactical form to defeat an inference from basis to sequent2."
@@ -16624,15 +16618,15 @@ as a result of the computation and new-retractions is the list of nodes whose
 undefeated-degrees-of-support have decreased as a result of this computation.
 
 (defun compute-undefeated-degrees-of-support () ; (break)
-  ; (when (member (hyperlink 2) *new-links*) (break)) ;
+  ; (when (member (hyperlink 2) *new-links*) (break)) ; ;
   ;; (step (compute-undefeated-degrees-of-support))
   (let* ((immediately-altered-nodes
 	  (remove-duplicates (mapcar #'hyperlink-target *altered-links*)))
-         (altered-nodes (inference-descendants immediately-altered-nodes))
-         (altered-nodes-
+	 (altered-nodes (inference-descendants immediately-altered-nodes))
+	 (altered-nodes-
 	  (subset #'(lambda (N) (not (member nil (hypernode-nearest-defeasible-ancestors N)))) altered-nodes))
-         (new-beliefs nil)
-         (new-retractions nil))
+	 (new-beliefs nil)
+	 (new-retractions nil))
     (dolist (N altered-nodes)
       (setf (hypernode-old-degree-of-justification N) (hypernode-degree-of-justification N)))
     (let ((undefeated-links
@@ -16648,17 +16642,17 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 		       (hypernode-hyperlinks N))))
 	    (reverse altered-nodes))))
       (dolist (pair undefeated-links)
-        (dolist (L (cdr pair))
-          (when (every #'hypernode-degree-of-justification (hyperlink-basis L))
-            (setf (hyperlink-degree-of-justification L)
-                  (if (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
+	(dolist (L (cdr pair))
+	  (when (every #'hypernode-degree-of-justification (hyperlink-basis L))
+	    (setf (hyperlink-degree-of-justification L)
+		  (if (and (not (keywordp (hyperlink-rule L))) (reason-temporal? (hyperlink-rule L)))
 		      (prog1
 			  (* (hyperlink-reason-strength L)
 			     (minimum
 			      (mapcar #'current-degree-of-justification
 				      (hyperlink-basis L))))
 			(setf (hyperlink-temporal L) *cycle*))
-                    (minimum
+		    (minimum
 		     (cons (hyperlink-reason-strength L)
 			   (mapcar #'current-degree-of-justification
 				   (hyperlink-basis L)))))))))
@@ -16690,11 +16684,11 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 			      (mapcar #'current-degree-of-justification
 				      (hyperlink-basis L)))))))))))
       (dolist (N altered-nodes)
-        (when (not (zerop (hypernode-degree-of-justification N)))
-          (recompute-descendant-udoss N)))
+	(when (not (zerop (hypernode-degree-of-justification N)))
+	  (recompute-descendant-udoss N)))
       (dolist (node altered-nodes)
-        (let ((hypernode-old-degree-of-justification (compute-old-degree-of-justification node)))
-          (cond
+	(let ((hypernode-old-degree-of-justification (compute-old-degree-of-justification node)))
+	  (cond
 	   ((null (hypernode-old-degree-of-justification node))
 	    (cond ((not (zerop (hypernode-degree-of-justification node)))
 		   (push node new-beliefs))
@@ -16745,9 +16739,9 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 (defun descendants-of (N)
   "Nodes and interests generated by node or interest."
   (let ((interests (if (interest-p N) (list N)))
-        (nodes (if (hypernode-p N) (list N)))
-        (interest-descendants nil)
-        (hypernode-descendants nil))
+	(nodes (if (hypernode-p N) (list N)))
+	(interest-descendants nil)
+	(hypernode-descendants nil))
     (loop
      (when (and (null nodes) (null interests))
        (p-print
@@ -16810,9 +16804,9 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 (defun independent-of (sequent argument)
   "An argument is a list of hyperlinks."
   (not (some #'(lambda (L)
-                 (some #'(lambda (b) (subsumes (hypernode-sequent b) sequent))
-                       (hyperlink-basis L)))
-             argument)))
+		 (some #'(lambda (b) (subsumes (hypernode-sequent b) sequent))
+		       (hyperlink-basis L)))
+	     argument)))
 
 (defun sup-order (n m)
   (subsetp= (hypernode-supposition n) (hypernode-supposition m)))
@@ -16827,10 +16821,10 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	       (not (some
 		     #'(lambda (s) (subsetp (argument-links arg) (argument-links s)))
 		     subarguments)))
-        (dolist (s subarguments)
-          (when (subsetp (argument-links s) (argument-links arg))
-            (pull s subarguments)))
-        (push a2 subarguments)))
+	(dolist (s subarguments)
+	  (when (subsetp (argument-links s) (argument-links arg))
+	    (pull s subarguments)))
+	(push a2 subarguments)))
     (dolist (s subarguments)
       (print-argument-relations s subarguments (+ 5 depth)))))
 
@@ -16839,7 +16833,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
     (princ n) (princ " for ") (print-sequent (hypernode-sequent n)) (terpri)
     (let ((arguments (subset #'(lambda (a) (eq (argument-node a) n)) *arguments*)))
       (dolist (arg arguments)
-        (princ arg) (terpri)))
+	(princ arg) (terpri)))
 					; (print-argument-relations arg)))
     (princ "-------------------------") (terpri)))
 
@@ -16848,34 +16842,34 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   (princ "(") (terpri)
   (princ "======================================================================")
   (terpri) (terpri)
-  (princ "                                 ") (princ *version*) (princ "          ")
+  (princ "				   ") (princ *version*) (princ "	  ")
   (let ((time (multiple-value-list (get-decoded-time))))
     (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-    (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+    (princ (mem6 time)) (princ "	  ") (princ (mem3 time))
     (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
     (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
     (terpri) (terpri))
   (when *msg* (princ *msg*) (terpri) (terpri))
   (princ "Forwards-substantive-reasons:") (terpri)
   (dolist (R *forwards-substantive-reasons*)
-    (princ "          ") (princ R) (terpri))
+    (princ "	      ") (princ R) (terpri))
   (terpri)
   (princ "Backwards-substantive-reasons:") (terpri)
   (dolist (R *backwards-substantive-reasons*)
-    (princ "          ") (princ R) (terpri))
+    (princ "	      ") (princ R) (terpri))
   (terpri)
   (when (not (zerop *start-time*))
     (princ "Start reasoning at cycle ") (princ *start-time*) (terpri) (terpri))
   (princ "Inputs:") (terpri)
   (dolist (x *inputs*)
-    (princ "          ") (prinp (mem2 x)) (princ " : at cycle ") (princ (mem1 x))
+    (princ "	      ") (prinp (mem2 x)) (princ " : at cycle ") (princ (mem1 x))
     (princ " with justification ") (princ (mem3 x)) (terpri))
   (terpri)
   (when **premises**
     (setf **premises** (mapcar #'(lambda (x) (cons (reform-if-string (car x)) (cdr x))) **premises**))
     (princ "Given:") (terpri)
     (dolist (P **premises**)
-      (princ "          ") (prinp (mem1 P)) (princ "  : ")
+      (princ "		") (prinp (mem1 P)) (princ "  : ")
       (when (mem3 P) (princ " at cycle ") (princ (mem3 P)))
       (princ " with justification = ") (princ (mem2 P)) (terpri))
     (terpri))
@@ -16890,11 +16884,11 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	      :query-number (incf *query-number*)
 	      :query-formula (reform-if-string (mem1 interest))
 	      :query-strength (mem2 interest))))
-        (pushnew query *fixed-ultimate-epistemic-interests*
-                 :test #'(lambda (x y) (equal (query-formula x) (query-formula y))))
-        (princ "     ")
-        (prinp (query-formula query)) (princ "    degree of interest = ") (princ (mem2 interest))
-        (terpri))))
+	(pushnew query *fixed-ultimate-epistemic-interests*
+		 :test #'(lambda (x y) (equal (query-formula x) (query-formula y))))
+	(princ "     ")
+	(prinp (query-formula query)) (princ "	  degree of interest = ") (princ (mem2 interest))
+	(terpri))))
   (princ "======================================================================")
   (terpri) (terpri))
 
@@ -16922,14 +16916,14 @@ undefeated-degrees-of-support have decreased as a result of this computation.
       (setf *premises* **premises**)
       (initialize-reasoner)
       (dolist (query *ultimate-epistemic-interests*)
-        (reason-backwards-from-query query (query-strength query) 0))
+	(reason-backwards-from-query query (query-strength query) 0))
       (setf *empty-inference-queue* nil)
       (setf *cycle* *start-time*)
       (let* ((max-input-cycle (maximum0 (union= (domain *inputs*) (mapcar #'caddr *premises*))))
-             (time (get-internal-run-time))
-             (abort-time (if *time-limit* (+ (* *time-limit* internal-time-units-per-second 60) time))))
+	     (time (get-internal-run-time))
+	     (abort-time (if *time-limit* (+ (* *time-limit* internal-time-units-per-second 60) time))))
 					; (when (not *display?*) (gc))
-        (catch 'die
+	(catch 'die
 	  (loop
 	   (cond (*inference-queue*
 		  (if *empty-inference-queue* (setf *empty-inference-queue* nil)))
@@ -16940,7 +16934,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 		  (when *display?*
 		    (terpri) (terpri)
 		    (princ "-------------------------------------------------") (terpri) (terpri)
-		    (princ "                    Waiting for input") (terpri) (terpri)
+		    (princ "			Waiting for input") (terpri) (terpri)
 		    (princ "-------------------------------------------------") (terpri)
 		    (terpri) (terpri))))
 	   (incf *cycle*)
@@ -16958,31 +16952,31 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	     (throw 'die nil))
 					; (initiate-actions)
 	   ))
-        (setf time (- (get-internal-run-time) time))
-        (display-queries) (terpri)
-        (when (not *display?*)
-          (princ "Elapsed time = ") (display-run-time-in-seconds time) (terpri))
-        (let ((nodes nil))
-          (dolist (query *ultimate-epistemic-interests*)
-            (dolist (N (query-answers query))
-              (pushnew N nodes)))
-          (compute-relevant-nodes nodes)
-          (let ((argument-length (length *relevant-nodes*)))
-            (cond (*proofs?* (terpri) (show-arguments))
-                  (t (princ "Cumulative size of arguments = ") (princ argument-length) (terpri)
-                     (princ "Size of inference-graph = TODO N/A") ; TODO N/A (princ *inference-number*)
-                     (princ " of which ") (princ *unused-suppositions*)
-                     (princ " were unused suppositions.") (terpri)
+	(setf time (- (get-internal-run-time) time))
+	(display-queries) (terpri)
+	(when (not *display?*)
+	  (princ "Elapsed time = ") (display-run-time-in-seconds time) (terpri))
+	(let ((nodes nil))
+	  (dolist (query *ultimate-epistemic-interests*)
+	    (dolist (N (query-answers query))
+	      (pushnew N nodes)))
+	  (compute-relevant-nodes nodes)
+	  (let ((argument-length (length *relevant-nodes*)))
+	    (cond (*proofs?* (terpri) (show-arguments))
+		  (t (princ "Cumulative size of arguments = ") (princ argument-length) (terpri)
+		     (princ "Size of inference-graph = TODO N/A") ; TODO N/A (princ *inference-number*)
+		     (princ " of which ") (princ *unused-suppositions*)
+		     (princ " were unused suppositions.") (terpri)
 					; TODO N/A (princ (truncate (* argument-length 100) *inference-number*))
-                     (princ "(TODO N/A) % of the inference-graph was used in the argument.") (terpri)))
-            (princ *interest-number*) (princ " interests were adopted.") (terpri)
-            (when *display?*
-              (princ "The following nodes were used in the arguments:") (terpri)
-              (print-list (order (mapcar #'inference-number *relevant-nodes*) #'<) 40))))
-        (terpri)
-        (when *log-on* (terpri) (display-reasoning) (display-queries))
-        (princ ")") (terpri)
-        (setf *print-pretty* pp)))))
+		     (princ "(TODO N/A) % of the inference-graph was used in the argument.") (terpri)))
+	    (princ *interest-number*) (princ " interests were adopted.") (terpri)
+	    (when *display?*
+	      (princ "The following nodes were used in the arguments:") (terpri)
+	      (print-list (order (mapcar #'inference-number *relevant-nodes*) #'<) 40))))
+	(terpri)
+	(when *log-on* (terpri) (display-reasoning) (display-queries))
+	(princ ")") (terpri)
+	(setf *print-pretty* pp)))))
 
 (defun SO (n &optional r) (simulate-oscar n r))
 
@@ -16991,7 +16985,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
       (cond
        ((listp Q)
 	(when (listp P)
-	  (cond  ;; P has the form ('color-of x y)
+	  (cond	 ;; P has the form ('color-of x y)
 	   ((equal (car P) 'color-of)
 	    (and
 	     (equal (car Q) 'color-of)
@@ -17005,36 +16999,36 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 (defmacro make-simulation-problem (&rest body)
   (when (not (boundp '*simulation-problems*)) (setf *simulation-problems* nil))
   (let* ((newbody (make-clauses body))
-         (number (cadr (find-if #'(lambda (x) (eq (car x) :number)) newbody)))
-         (start-time (cadr (find-if #'(lambda (x) (eq (car x) :start-time)) newbody)))
-         (message
+	 (number (cadr (find-if #'(lambda (x) (eq (car x) :number)) newbody)))
+	 (start-time (cadr (find-if #'(lambda (x) (eq (car x) :start-time)) newbody)))
+	 (message
 	  (if number (cat-list
 		      (list "Problem number " (write-to-string number) ":  "
 			    (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
 	    (cadr (find-if #'(lambda (x) (eq (car x) :message)) newbody))))
-         (reasons
+	 (reasons
 	  (mapcar 'eval (cdr (find-if #'(lambda (x) (eq (car x) :reasons)) newbody))))
-         (forwards-reasons (subset #'forwards-reason-p reasons))
-         (backwards-reasons (subset #'backwards-reason-p reasons))
-         (inputs
+	 (forwards-reasons (subset #'forwards-reason-p reasons))
+	 (backwards-reasons (subset #'backwards-reason-p reasons))
+	 (inputs
 	  (mapcar #'(lambda (x) (list (car x) (reform-if-string (mem2 x)) (mem3 x)))
 		  (cdr (find-if #'(lambda (x) (eq (car x) :inputs)) newbody))))
-         (premises (cdr (find-if #'(lambda (x) (eq (car x) :premises)) newbody)))
-         (interests
+	 (premises (cdr (find-if #'(lambda (x) (eq (car x) :premises)) newbody)))
+	 (interests
 	  (mapcar #'(lambda (x) (cons (reform-if-string (car x)) (cdr x)))
 		  (cdr (find-if #'(lambda (x) (eq (car x) :interests)) newbody)))))
     (when premises
       (setf premises
-            (mapcar #'(lambda (p) (list (mem1 p) (mem2 p) (mem3 p))) premises)))
+	    (mapcar #'(lambda (p) (list (mem1 p) (mem2 p) (mem3 p))) premises)))
     `(setf *simulation-problems*
-           (cons (list ,number ,message (or ,start-time 0) ',forwards-reasons
-                       ',backwards-reasons ',inputs ',premises ',interests)
-                 (remove-if-equal (assoc ,number *simulation-problems*)
-                                  *simulation-problems*)))))
+	   (cons (list ,number ,message (or ,start-time 0) ',forwards-reasons
+		       ',backwards-reasons ',inputs ',premises ',interests)
+		 (remove-if-equal (assoc ,number *simulation-problems*)
+				  *simulation-problems*)))))
 
 					; `(pushnew (list ,number ,message (or ,start-time 0) ',forwards-reasons
-					;                     ',backwards-reasons ',inputs ',premises ',interests)
-					;                     *simulation-problems* :test 'equal)))
+					;		      ',backwards-reasons ',inputs ',premises ',interests)
+					;		      *simulation-problems* :test 'equal)))
 
 ;; ======================================================================
 
@@ -17043,31 +17037,31 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   (dolist
       (pair
        (list
-        `((,P throughout (,op ,x ,y)) (throughout ,P (,op ,x ,y)) (,P ,op ,x ,y))
-        `((,P at ,x) (throughout ,P (closed ,x ,x)) (,P ,x))
-        `((,P now) (at ,P now) (,P))
-        `(((it appears to me that ,Q) at ,x) (it-appears-to-me-that ,Q (closed ,x ,x)) (,Q ,x))
-        `((the probability of ,P given ,Q) (the-probability-of ,P ,Q) (,P ,Q))
-        `((I  have a percept with content ,Q) (I-have-a-percept-with-content ,Q) (,Q))
-        `((,x < ,y) (< ,x ,y) (,x ,y))
-        `((,x <= ,y) (<= ,x ,y) (,x ,y))
-        `((,x = ,y) (= ,x ,y) (,x ,y))
-        `((,x + ,y) (+ ,x ,y) (,x ,y))
-        `((,x * ,y) (* ,x ,y) (,x ,y))
-        `((,x expt ,y) (expt ,x ,y) (,x ,y))
-        `((,x - ,y) (- ,x ,y) (,x ,y))
-        `((,x is a reliable informant) (reliable-informant ,x) (,x))
-        `((,x reports that ,P) (reports-that ,x ,P) (,x ,P))
-        `((the color of ,x is ,y) (color-of ,x ,y) (,x ,y))
-        `((,P when ,A is causally sufficient for ,Q after an interval ,x)
-          (causally-sufficient ,P ,A ,Q ,x) (,P ,A ,Q ,x))
-        `((,x and ,y collide) (collide ,x ,y) (,x ,y))
-        `((the position of ,x is (,y ,z)) (position-of ,x ,y ,z) (,x ,y ,z))
-        `((the velocity of ,x is (,y ,z)) (velocity-of ,x ,y ,z) (,x ,y ,z))
-        `((,x is dead) (dead ,x) (,x))
-        `((,x is alive) (alive ,x) (,x))
-        `((,x is a dimensionless billiard ball) (dimensionless-billiard-ball ,x) (,x))
-        ))
+	`((,P throughout (,op ,x ,y)) (throughout ,P (,op ,x ,y)) (,P ,op ,x ,y))
+	`((,P at ,x) (throughout ,P (closed ,x ,x)) (,P ,x))
+	`((,P now) (at ,P now) (,P))
+	`(((it appears to me that ,Q) at ,x) (it-appears-to-me-that ,Q (closed ,x ,x)) (,Q ,x))
+	`((the probability of ,P given ,Q) (the-probability-of ,P ,Q) (,P ,Q))
+	`((I  have a percept with content ,Q) (I-have-a-percept-with-content ,Q) (,Q))
+	`((,x < ,y) (< ,x ,y) (,x ,y))
+	`((,x <= ,y) (<= ,x ,y) (,x ,y))
+	`((,x = ,y) (= ,x ,y) (,x ,y))
+	`((,x + ,y) (+ ,x ,y) (,x ,y))
+	`((,x * ,y) (* ,x ,y) (,x ,y))
+	`((,x expt ,y) (expt ,x ,y) (,x ,y))
+	`((,x - ,y) (- ,x ,y) (,x ,y))
+	`((,x is a reliable informant) (reliable-informant ,x) (,x))
+	`((,x reports that ,P) (reports-that ,x ,P) (,x ,P))
+	`((the color of ,x is ,y) (color-of ,x ,y) (,x ,y))
+	`((,P when ,A is causally sufficient for ,Q after an interval ,x)
+	  (causally-sufficient ,P ,A ,Q ,x) (,P ,A ,Q ,x))
+	`((,x and ,y collide) (collide ,x ,y) (,x ,y))
+	`((the position of ,x is (,y ,z)) (position-of ,x ,y ,z) (,x ,y ,z))
+	`((the velocity of ,x is (,y ,z)) (velocity-of ,x ,y ,z) (,x ,y ,z))
+	`((,x is dead) (dead ,x) (,x))
+	`((,x is alive) (alive ,x) (,x))
+	`((,x is a dimensionless billiard ball) (dimensionless-billiard-ball ,x) (,x))
+	))
     (pushnew pair *reform-list* :test 'equal)))
 
 (setf (get 'i 'pretty-form) "I")
@@ -17137,13 +17131,13 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 (defun temporally-projectible (p)
   (or (atomic-formula p)
       (and (negationp p)
-           (or (atomic-formula (negand p))
-               (and (listp (negand p))
-                    (mem (mem1 (negand p)) *binary-predicates*))))
+	   (or (atomic-formula (negand p))
+	       (and (listp (negand p))
+		    (mem (mem1 (negand p)) *binary-predicates*))))
       (and (conjunctionp p) (every #'atomic-formula (conjuncts p)))))
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
-  :conclusions  "(p throughout (op time* time))"
+  :conclusions	"(p throughout (op time* time))"
   :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
 		   (or (eq op 'open) (eq op 'closed) (eq op 'clopen)))
   :reason-forwards-premises
@@ -17159,7 +17153,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 ;; The condition does not work, because there could be a later argument proving such a support-link,
 ;; and the inference would not then be redone.
 (def-backwards-reason *TEMPORAL-PROJECTION*
-  :conclusions  "(p throughout (op time* time))"
+  :conclusions	"(p throughout (op time* time))"
   :reason-forwards-premises
   "(p at time0)"
   (:condition (some #'(lambda (L) (not (eq (support-link-rule L) *temporal-projection*)))
@@ -17173,7 +17167,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
-  :conclusions  "(p throughout (op time* time))"
+  :conclusions	"(p throughout (op time* time))"
   :reason-forwards-premises
   "(p at time0)"
   :condition  (and (temporally-projectible p) (numberp time*) (numberp time) (<= time* time)
@@ -17185,7 +17179,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 
 (def-backwards-reason *TEMPORAL-PROJECTION*
-  :conclusions  "(p throughout (op time* time))"
+  :conclusions	"(p throughout (op time* time))"
   :reason-forwards-premises
   "(p at time0)"
   (:condition (and  (numberp time*) (time0 <= time*)
@@ -17229,7 +17223,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   :strength  (min .98 (expt *temporal-reason-decay* (- *cycle* time)))
   :defeasible? t
   :reason-temporal? t
-  :description  "When information is input, it is defeasibly reasonable to believe it.")
+  :description	"When information is input, it is defeasibly reasonable to believe it.")
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-PERCEPTION*
   :defeatee  *indexical-perception*
@@ -17278,7 +17272,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
   :variables  x y z)
 
 (def-backwards-reason *INDEXICAL-TEMPORAL-PROJECTION*
-  :conclusions  "p"
+  :conclusions	"p"
   :reason-forwards-premises
   "(p at time0)"
   (:condition (time0 < now))
@@ -17326,7 +17320,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 ;   :conclusions  "~((the color of x is y) now)"
 ;    :reason-forwards-premises
 ;    "((the color of x is w) now)"
-;       (:condition (and (is-inference c) (not (equal w y))))
+;	(:condition (and (is-inference c) (not (equal w y))))
 ;    :variables x y w
 ;    :defeasible? nil)
 
@@ -17334,7 +17328,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a interest-reductio. |#
 (def-backwards-reason strict-arithmetical-inequality
-  :conclusions  "(x < y)"
+  :conclusions	"(x < y)"
   :condition  (x < y)
   :variables  x y)
 
@@ -17342,13 +17336,13 @@ is not a interest-reductio. |#
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a interest-reductio. |#
 (def-backwards-reason arithmetical-inequality
-  :conclusions  "(x <= y)"
+  :conclusions	"(x <= y)"
   :condition  (x <= y)
   :variables  x y)
 
 #|
 (def-backwards-reason arithmetical-equality
-  :conclusions  "(x = y)"
+  :conclusions	"(x = y)"
   :condition   (catch 'numbers
 		 (cond
 		  ((interest-variable x)
@@ -17369,7 +17363,7 @@ is not a interest-reductio. |#
   :variables  x y)
 
 (def-backwards-reason arithmetical-nonequality
-  :conclusions  "~(x = y)"
+  :conclusions	"~(x = y)"
   :condition   (catch 'numbers
 		 (let ((val1 (arithmetical-value x))
 		       (val2 (arithmetical-value y)))
@@ -17382,12 +17376,12 @@ is not a interest-reductio. |#
 |#
 
 (def-backwards-reason arithmetical-equality
-  :conclusions  "(x = y)"
+  :conclusions	"(x = y)"
   :condition   (x = y)
   :variables  x y)
 
 (def-backwards-reason arithmetical-nonequality
-  :conclusions  "~(x = y)"
+  :conclusions	"~(x = y)"
   :condition   (not (x = y))
   :variables  x y)
 
@@ -17395,7 +17389,7 @@ is not a interest-reductio. |#
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a interest-reductio. |#
 (def-backwards-reason is-past-or-present
-  :conclusions  "(x <= now)"
+  :conclusions	"(x <= now)"
   :condition  (<= x *cycle*)
   :variables  x)
 
@@ -17403,12 +17397,12 @@ is not a interest-reductio. |#
 If it is then the conclusion is drawn, and if it is not then the interest is cancelled as long as it
 is not a interest-reductio. |#
 (def-backwards-reason is-past
-  :conclusions  "(x < now)"
+  :conclusions	"(x < now)"
   :condition  (< x *cycle*)
   :variables  x)
 
 (def-backwards-reason *CAUSAL-IMPLICATION*
-  :conclusions  "(Q throughout (op time* time**))"
+  :conclusions	"(Q throughout (op time* time**))"
   :condition (and (numberp time*) (<= time* time**))
   :reason-forwards-premises
   "(A when P is causally sufficient for Q after an interval interval)"
@@ -17422,10 +17416,10 @@ is not a interest-reductio. |#
   "(P at time)"
   :variables  A P Q interval time time* time** op
   :strength  (expt *temporal-reason-decay* (- time** time))
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-reason *CAUSAL-IMPLICATION2*
-  :conclusions  "(Q throughout (op time* time**))"
+  :conclusions	"(Q throughout (op time* time**))"
   :condition (and (numberp time*) (<= time* time**))
   :reason-forwards-premises
   "(A when P is causally sufficient for Q after an interval interval)"
@@ -17442,10 +17436,10 @@ is not a interest-reductio. |#
   "(P at time)"
   :variables  A P Q interval time time* time** time- op
   :strength  (expt *temporal-reason-decay* (- time** time))
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-reason *CAUSAL-IMPLICATION+*
-  :conclusions  "(Q throughout (op time* time**))"
+  :conclusions	"(Q throughout (op time* time**))"
   :condition (and (numberp time*) (<= time* time**))
   :reason-forwards-premises
   "((R at time*) -> (Q at time*))"
@@ -17460,10 +17454,10 @@ is not a interest-reductio. |#
   "(P at time)"
   :variables  A P Q R interval time time* time** op
   :strength  (expt *temporal-reason-decay* (- time** time))
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-reason *INDEXICAL-CAUSAL-IMPLICATION*
-  :conclusions  "Q"
+  :conclusions	"Q"
   :reason-forwards-premises
   "(A when P is causally sufficient for Q after an interval interval)"
   (:condition (every #'temporally-projectible (conjuncts Q)))
@@ -17472,7 +17466,7 @@ is not a interest-reductio. |#
   :reason-backwards-premises
   "(P at time)"
   :variables  A P Q interval time
-  :defeasible?  T
+  :defeasible?	T
   :strength  (expt *temporal-reason-decay* (- now time))
   :reason-temporal? T)
 
@@ -17487,7 +17481,7 @@ is not a interest-reductio. |#
   "(Q at time00)"
   (:condition (time00 <= time1))
   :variables  A Q p -p time0 time00 time time* time1 interval op
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER+*
   :defeatee *temporal-projection*
@@ -17500,7 +17494,7 @@ is not a interest-reductio. |#
   "(Q at time00)"
   (:condition (time00 <= time1))
   :variables  A Q p  R time0 time00 time time* time1 interval op
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER*
   :defeatee *indexical-temporal-projection*
@@ -17513,7 +17507,7 @@ is not a interest-reductio. |#
   "(Q at time00)"
   (:condition (time00 <= time1))
   :variables  A Q p -p time0 time00 time time* time1 interval op
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER+*
   :defeatee *indexical-temporal-projection*
@@ -17526,7 +17520,7 @@ is not a interest-reductio. |#
   "(Q at time00)"
   (:condition (time00 <= time1))
   :variables  A Q p R time0 time00 time1 interval
-  :defeasible?  T
+  :defeasible?	T
   :reason-temporal? T)
 
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
@@ -17540,7 +17534,7 @@ is not a interest-reductio. |#
   "(R at time00)"
   (:condition (time00 <= time1))
   :variables  A P Q interval time time* time** op A* R -q interval* time1 time00
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
   :defeatee *indexical-causal-implication*
@@ -17553,47 +17547,47 @@ is not a interest-reductio. |#
   "(R at time00)"
   (:condition (time00 <= time1))
   :variables  A P Q interval time time* op A* R -q interval* time1 time00
-  :defeasible?  T)
+  :defeasible?	T)
 
 (def-backwards-reason neg-at-intro
-  :conclusions  "~(P at time)"
+  :conclusions	"~(P at time)"
   :condition (not (negationp P))
   :reason-backwards-premises   "(~P at time)"
   :variables  P time)
 
 (def-backwards-reason neg-at-intro
-  :conclusions  "~(P at time)"
+  :conclusions	"~(P at time)"
   :reason-backwards-premises   "(~P at time)"
   :variables  P time)
 
 (def-backwards-reason neg-at-intro2
-  :conclusions  "~(~P at time)"
+  :conclusions	"~(~P at time)"
   :reason-backwards-premises   "(P at time)"
   :variables  P time)
 
 (def-forwards-reason neg-at-elimination
   :reason-forwards-premises   "~(P at time)"
   (:condition (not (negationp P)))
-  :conclusions  "(~P at time)"
+  :conclusions	"(~P at time)"
   :variables  P time)
 
 (def-backwards-reason &-at-intro
-  :conclusions  "((P & Q) at time)"
+  :conclusions	"((P & Q) at time)"
   :reason-backwards-premises   "((P at time) & (Q at time))"
   :variables  P Q time)
 
 (def-forwards-reason &-at-elimination
   :reason-forwards-premises   "((P & Q) at time)"
-  :conclusions  "((P at time) & (Q at time))"
+  :conclusions	"((P at time) & (Q at time))"
   :variables  P Q time)
 
 (def-backwards-reason ETERNAL-TRUTHS
-  :conclusions  "(P at time)"
+  :conclusions	"(P at time)"
   :reason-backwards-premises  "P"
   :variables   P time)
 
 (def-backwards-reason *COLLISION*
-  :conclusions  "((b1 and b2 collide) at time)"
+  :conclusions	"((b1 and b2 collide) at time)"
   :reason-backwards-premises
   "(some x)(some y)(((the position of b1 is (x y)) at time) & ((the position of b2 is (x y)) at time))"
   :variables   b1 b2 time)
@@ -17601,23 +17595,23 @@ is not a interest-reductio. |#
 #| Should this be a degenerate backwards-reason? |#
 (def-forwards-reason COLLISION-SYMMETRY
   :reason-forwards-premises   "((B1 and B2 collide) at time)"
-  :conclusions  "((B2 and B1 collide) at time)"
+  :conclusions	"((B2 and B1 collide) at time)"
   :variables  B1 B2 time)
 
 (def-backwards-reason *NEW-POSITION*
-  :conclusions  "((the position of b is (x y)) at time1)"
+  :conclusions	"((the position of b is (x y)) at time1)"
   :reason-forwards-premises
   "((the position of b is (x0 y0)) at time0)"
   (:condition (time0 < time1))
   :reason-backwards-premises
   "(some vx)(some vy)
-                      (& ((the velocity of b is (vx vy)) throughout (clopen time0 time1))
-                         (x = (x0 + (vx * (time1 - time0))))
-                         (y = (y0 + (vy * (time1 - time0)))))"
+		      (& ((the velocity of b is (vx vy)) throughout (clopen time0 time1))
+			 (x = (x0 + (vx * (time1 - time0))))
+			 (y = (y0 + (vy * (time1 - time0)))))"
   :variables  b time1 x y x0 y0 time0)
 
 (def-forwards-reason *POSITION-INCOMPATIBILITY*
-  :conclusions  "~((the position of b is (z w)) at time)"
+  :conclusions	"~((the position of b is (z w)) at time)"
   :reason-forwards-premises
   "((the position of b is (x y)) at time)"
   "((the position of b is (z w)) at time)"
@@ -17627,7 +17621,7 @@ is not a interest-reductio. |#
 
 #|
 (def-backwards-reason *POSITION-INCOMPATIBILITY*
-  :conclusions  "~((the position of b is (z w)) at time)"
+  :conclusions	"~((the position of b is (z w)) at time)"
   :reason-forwards-premises
   "((the position of b is (x y)) at time)"
   (:condition (or (not (x = z)) (not (y = w))))
@@ -17635,51 +17629,51 @@ is not a interest-reductio. |#
 |#
 
 (def-backwards-reason *POSITION-INCOMPATIBILITY-1*
-  :conclusions  "~((the position of b is (z w)) at time)"
+  :conclusions	"~((the position of b is (z w)) at time)"
   :reason-forwards-premises
   "((the position of b is (x y)) at time)"
   (:condition (not (x = z)))
   :variables  b time x y z w)
 
 (def-backwards-reason *POSITION-INCOMPATIBILITY-2*
-  :conclusions  "~((the position of b is (z w)) at time)"
+  :conclusions	"~((the position of b is (z w)) at time)"
   :reason-forwards-premises
   "((the position of b is (x y)) at time)"
   (:condition  (not (y = w)))
   :variables  b time x y z w)
 
 (def-backwards-reason *VELOCITY-INCOMPATIBILITY-1*
-  :conclusions  "~((the velocity of b is (z w)) at time)"
+  :conclusions	"~((the velocity of b is (z w)) at time)"
   :reason-forwards-premises   "((the velocity of b is (x y)) at time)"
   :reason-backwards-premises  "~(x = z)"
   :variables  b time x y z w)
 
 (def-backwards-reason *VELOCITY-INCOMPATIBILITY-2*
-  :conclusions  "~((the velocity of b is (z w)) at time)"
+  :conclusions	"~((the velocity of b is (z w)) at time)"
   :reason-forwards-premises   "((the velocity of b is (x y)) at time)"
   :reason-backwards-premises  "~(y = w)"
   :variables  b time x y z w)
 
 (def-backwards-reason inequality-transitivity
-  :conclusions  "(x < y)"
+  :conclusions	"(x < y)"
   :reason-forwards-premises  "(z < y)"
   :reason-backwards-premises  "(x <= z)"
   :variables  x y z)
 
 (def-backwards-reason inequality-transitivity2
-  :conclusions  "(x < y)"
+  :conclusions	"(x < y)"
   :reason-forwards-premises  "(x < z)"
   :reason-backwards-premises  "(z <= y)"
   :variables  x y z)
 
 (def-backwards-reason PAIR-NONIDENTITY-AT-TIME
-  :conclusions  "(~((x y) = (z w)) at time)"
+  :conclusions	"(~((x y) = (z w)) at time)"
   :reason-backwards-premises  "~((x y) = (z w))"
   :condition  (and (numberp x) (numberp y) (numberp z) (numberp w))
   :variables  b time x y z w )
 
 (def-backwards-reason PAIR-NONIDENTITY
-  :conclusions  "~((x y) = (z w))"
+  :conclusions	"~((x y) = (z w))"
   :condition  (and (numberp x) (numberp y) (numberp z) (numberp w)
 		   (or (not (eql x z)) (not (eql y w))))
   :variables  x y z w)
@@ -17697,25 +17691,25 @@ is not a interest-reductio. |#
   :description "A person is alive iff he is not dead.")
 
 (def-backwards-reason not-alive-introduction
-  :conclusions  "(~(x is alive) at time)"
+  :conclusions	"(~(x is alive) at time)"
   :reason-backwards-premises  "((x is dead) at time)"
   :variables   x time
   :description "A person is dead iff he is not alive.")
 
 (def-backwards-reason not-dead-introduction
-  :conclusions  "(~(x is dead) at time)"
+  :conclusions	"(~(x is dead) at time)"
   :reason-backwards-premises  "((x is alive) at time)"
   :variables   x time
   :description "A person is alive iff he is not dead.")
 
 (def-forwards-reason dead-elimination
   :reason-forwards-premises  "((x is dead) at time)"
-  :conclusions  "(~(x is alive) at time)"
+  :conclusions	"(~(x is alive) at time)"
   :variables   x time
   :description "A person is dead iff he is not alive")
 
 (def-backwards-reason dead-introduction
-  :conclusions  "((x is dead) at time)"
+  :conclusions	"((x is dead) at time)"
   :reason-backwards-premises  "(~(x is alive) at time)"
   :variables   x time
   :description "A person is dead iff he is not alive")
@@ -17724,19 +17718,19 @@ is not a interest-reductio. |#
 					;    (declare (ignore interest defeated-links)))
 
 (def-backwards-reason *NEW-POSITION-*
-  :conclusions  "((the position of b is (x y)) at time1)"
+  :conclusions	"((the position of b is (x y)) at time1)"
   :reason-forwards-premises
   "((the position of b is (x0 y0)) at time0)"
   (:condition (time0 < time1))
   :reason-backwards-premises
   "(some vx)(some vy)
-                      (& ((the velocity of b is (vx vy)) throughout- (time0 time1))
-                         (x = (x0 + (vx * (time1 - time0))))
-                         (y = (y0 + (vy * (time1 - time0)))))"
+		      (& ((the velocity of b is (vx vy)) throughout- (time0 time1))
+			 (x = (x0 + (vx * (time1 - time0))))
+			 (y = (y0 + (vy * (time1 - time0)))))"
   :variables  b time1 x y x0 y0 time0)
 
 (def-backwards-reason *CAUSAL-IMPLICATION-*
-  :conclusions  "(Q throughout- (time* time**))"
+  :conclusions	"(Q throughout- (time* time**))"
   :reason-forwards-premises
   "(A when P is causally sufficient for Q after an interval interval)"
   (:condition (every #'temporally-projectible (conjuncts Q)))
@@ -17749,7 +17743,7 @@ is not a interest-reductio. |#
   :strength  (expt *temporal-reason-decay* (- time** time)))
 
 (def-backwards-reason *TEMPORAL-PROJECTION-*
-  :conclusions  "(p throughout- (time* time))"
+  :conclusions	"(p throughout- (time* time))"
   :reason-forwards-premises
   "(p at time0)"
   (:condition (time0 < time*))
@@ -17766,8 +17760,7 @@ Then load this file. To run problem n, execute (simulate-oscar n). |#
 
 (setf *simulation-problems* nil)
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  1
  :message
@@ -17784,8 +17777,7 @@ What should I conclude about the color of Fred?"
  ("(? x)((the color of Fred is x) at 50)" 0.2)
  )
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  2
  :message
@@ -17801,12 +17793,11 @@ What should I conclude about the color of Fred?"
  ("(? x)(the color of Fred is x)" 0.75)
  )
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  3
  :message
- "First, Fred looks red to me.  Later, I am informed by Merrill that I am then
+ "First, Fred looks red to me.	Later, I am informed by Merrill that I am then
 wearing blue-tinted glasses.  Later still, Fred looks blue to me.  All along, I know that the
 probability is not high of Fred being blue given that Fred looks blue to me, but I am
 wearing blue tinted glasses.  What should I conclude about the color of Fred?"
@@ -17829,9 +17820,8 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
  ("(? x)((the color of Fred is x) at 50)" 0.55)
  )
 
-					;======================================================================
+;;======================================================================
 ;; This requires the temporal-projectibility of ~my_surroundings_are_illuminated_by_red_light.
-
 (make-simulation-problem
  :number  4
  :message
@@ -17860,9 +17850,8 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
  ("((the color of Fred is red) at 10)" 0.5)
  )
 
-					;======================================================================
+;;======================================================================
 ;; This requires the temporal-projectibility of ~my_surroundings_are_illuminated_by_red_light.
-
 (make-simulation-problem
  :number  5
  :message
@@ -17891,13 +17880,13 @@ wearing blue tinted glasses.  What should I conclude about the color of Fred?"
  ("(the color of Fred is red)" 0.5)
  )
 
-					;======================================================================
+;;======================================================================
 (make-simulation-problem
  :number  6
  :message
  "This is the Yale Shooting Problem.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
-alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
+alive.	Later, the gun is fired.  Should I conclude that Jones becomes dead?"
  :reasons
  neg-at-elimination
  *TEMPORAL-PROJECTION*
@@ -17911,19 +17900,19 @@ alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
  ("(the_gun_is_fired at 30)" 1.0)
  ("(all x)(all time)(((x is dead) at time) <-> ~((x is alive) at time))" 1.0)
  ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
-                           (Jones is dead) after an interval 10)" 1.0)
+			   (Jones is dead) after an interval 10)" 1.0)
  :interests
  ("((Jones is alive) at 50)" 0.75)
  ("((Jones is dead) at 50)" 0.75)
  )
 
-					;======================================================================
+;;======================================================================
 (make-simulation-problem
  :number  7
  :message
  "This is the solved Yale Shooting Problem.  I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
-alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
+alive.	Later, the gun is fired.  Should I conclude that Jones becomes dead?"
  :reasons
  neg-at-elimination
  *TEMPORAL-PROJECTION*
@@ -17936,77 +17925,18 @@ alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
  ("((Jones is alive) at 20)" 1.0)
  ("(the_gun_is_fired at 30)" 1.0)
  ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
-                           ~(Jones is alive) after an interval 10)" 1.0)
+			   ~(Jones is alive) after an interval 10)" 1.0)
  :interests
  ("(? ((Jones is alive) at 50))" 0.75)
  )
 
-					;======================================================================
-(make-simulation-problem
- :number  13
- :message
- "This illustrates sequential causation. This requires causal undercutting for
-causal implication.  I know that the gun being fired while loaded
-will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
-alive.  Later, the gun is fired. But I also know that he will be resuscitated later, and then he will
-be alive.  Should I conclude that Jones becomes dead? This version is solved incorrectly."
- :reasons
- neg-at-elimination
- *TEMPORAL-PROJECTION*
- *CAUSAL-UNDERCUTTER*
- *CAUSAL-IMPLICATION*
- neg-at-intro
- neg-at-intro2
- :inputs
- :premises
- ("(the_gun_is_loaded at 20)" 1.0)
- ("((Jones is alive) at 20)" 1.0)
- ("(the_gun_is_fired at 30)" 1.0)
- ("(Jones_is_resuscitated at 45)" 1.0)
- ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
-                           ~(Jones is alive) after an interval 10)" 1.0)
- ("(Jones_is_resuscitated when ~(Jones is alive) is causally sufficient for
-                           (Jones is alive) after an interval 5)" 1.0)
- :interests
- ("(? ((Jones is alive) at 60))" 0.75)
- )
-					;======================================================================
-(make-simulation-problem
- :number  14
- :message
- "This illustrates sequential causation. This requires causal undercutting for
-causal implication.  I know that the gun being fired while loaded
-will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
-alive.  Later, the gun is fired. But I also know that he will be resuscitated later, and then he will
-be alive.  Should I conclude that Jones becomes dead?"
- :reasons
- neg-at-elimination
- *TEMPORAL-PROJECTION*
- *CAUSAL-UNDERCUTTER*
- *CAUSAL-IMPLICATION*
- *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
- neg-at-intro
- neg-at-intro2
- :inputs
- :premises
- ("(the_gun_is_loaded at 20)" 1.0)
- ("((Jones is alive) at 20)" 1.0)
- ("(the_gun_is_fired at 30)" 1.0)
- ("(Jones_is_resuscitated at 45)" 1.0)
- ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
-                           ~(Jones is alive) after an interval 10)" 1.0)
- ("(Jones_is_resuscitated when ~(Jones is alive) is causally sufficient for
-                           (Jones is alive) after an interval 5)" 1.0)
- :interests
- ("(? ((Jones is alive) at 60))" 0.75)
- )
-					;======================================================================
+;;======================================================================
 (make-simulation-problem
  :number  8
  :message
- "This is the indexical Yale Shooting Problem.  I know that the gun being fired while loaded
+ "This is the indexical Yale Shooting Problem.	I know that the gun being fired while loaded
 will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
-alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
+alive.	Later, the gun is fired.  Should I conclude that Jones becomes dead?"
  :reasons
  *INDEXICAL-TEMPORAL-PROJECTION*
  *TEMPORAL-PROJECTION*
@@ -18019,13 +17949,12 @@ alive.  Later, the gun is fired.  Should I conclude that Jones becomes dead?"
  ("(the_gun_is_loaded at 20)" 1.0)
  ("(the_gun_is_fired at 30)" 1.0)
  ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
-                           ~(Jones is alive) after an interval 10)" 1.0)
+			   ~(Jones is alive) after an interval 10)" 1.0)
  :interests
  ("(? (Jones is alive))" 0.75)
  )
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  9
  :message
@@ -18079,8 +18008,7 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
  ("(? x)(? y) ((the position of b1 is (x y)) at 10)" 0.75)
  )
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  10
  :message
@@ -18138,8 +18066,7 @@ inference, leaving us with a unique conclusion regarding the positions at 10 (th
  ("(? ((b1 and b2 collide) at 10))" 0.75)
  )
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  11
  :message
@@ -18148,7 +18075,7 @@ We are interested in the velocity of b1 at 20.
 
 2.  By causal-implication, we can infer that the velocity of b1 at 20 is (.4 .3).
 
-3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).  But this
+3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).	 But this
 is defeated by causal-undercutter+, because we also know that if the velocity is (.4 .3) then
 it is not (.5 .0).
 "
@@ -18176,45 +18103,44 @@ it is not (.5 .0).
  ("(((.5 expt 2) + (0.0 expt 2)) = ((.4 expt 2) + (.3 expt 2)))" 1.0)
  ("(same-mass b1 b2)" 1.0)
  ("(all b)(all time) (((the velocity of b is (0.4 0.3)) at time)
-                              -> ~((the velocity of b is (0.5 0.0)) at time))" 1.0)
+			      -> ~((the velocity of b is (0.5 0.0)) at time))" 1.0)
  ("(all b)(all time) (((the velocity of b is (0.5 0.0)) at time)
-                              -> ~((the velocity of b is (0.4 0.3)) at time))" 1.0)
+			      -> ~((the velocity of b is (0.4 0.3)) at time))" 1.0)
  ("(all b1)(all b2)(all v1x)(all v1y)(all v2x)(all v2y)
     ((((b1 is a dimensionless billiard ball) & (b2 is a dimensionless billiard ball))
       & ((same-mass b1 b2) & (((v1x expt 2) + (v1y expt 2)) = ((v2x expt 2) + (v2y expt 2)))))
       ->
       ((b1 and b2 collide)
-         when (the velocity of b2 is (v2x v2y))
-        is causally sufficient for (the velocity of b1 is (v2x v2y))
-        after an interval 0))" 1.0)
+	 when (the velocity of b2 is (v2x v2y))
+	is causally sufficient for (the velocity of b1 is (v2x v2y))
+	after an interval 0))" 1.0)
  ("(all b1)(all b2)(all v1x)(all v1y)(all v2x)(all v2y)
     ((((b1 is a dimensionless billiard ball) & (b2 is a dimensionless billiard ball))
       & ((same-mass b1 b2) & (((v1x expt 2) + (v1y expt 2)) = ((v2x expt 2) + (v2y expt 2)))))
       ->
       ((b1 and b2 collide)
-         when (the velocity of b1 is (v2x v2y))
-        is causally sufficient for (the velocity of b2 is (v2x v2y))
-        after an interval 0))" 1.0)
+	 when (the velocity of b1 is (v2x v2y))
+	is causally sufficient for (the velocity of b2 is (v2x v2y))
+	after an interval 0))" 1.0)
 
  :interests
  ("(? x)(? y) ((the velocity of b1 is (x y)) at 20)" 0.75)
  )
 
-					;======================================================================
-
+;;======================================================================
 (make-simulation-problem
  :number  12
  :message
  "  This is the Extended Prediction Problem.
 
 1.  We are given the velocities of b1 and b2 at 0, and are told they collide at (5 3) at 10.
-We are interested in the position of b1 at 20.  Given knowledge of the position of b1 at 10,
+We are interested in the position of b1 at 20.	Given knowledge of the position of b1 at 10,
 this generates an interest in the velocity of b1 between 10 and 20.
 
 2.  By causal-implication, we can infer that the velocity of b1 between 10 and 20 is (.4 .3).
 From this we can compute that the position of b1 at 20 is (9.0 6.0).
 
-3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).  But this
+3.  By temporal projection, we can also infer that the velocity of b1 at 20 is (.5 .0).	 But this
 is defeated by causal-undercutter, because we also know that if the velocity is (.4 .3) then
 it is not (.5 .0).
 
@@ -18253,9 +18179,9 @@ b1 between 0 and 10, and we are given that 10 is between 0 and 10.
       & ((same-mass b1 b2) & (((v1x expt 2) + (v1y expt 2)) = ((v2x expt 2) + (v2y expt 2)))))
       ->
       ((b1 and b2 collide)
-         when (the velocity of b2 is (v2x v2y))
-        is causally sufficient for (the velocity of b1 is (v2x v2y))
-        after an interval 0))" 1.0)
+	 when (the velocity of b2 is (v2x v2y))
+	is causally sufficient for (the velocity of b1 is (v2x v2y))
+	after an interval 0))" 1.0)
  ("(same-mass b1 b2)" 1.0)
  ("(5.0 = (0.0 + (0.5 * (10 - 0))))" 1.0)
  ("(3.0 = (3.0 + (0.0 * (10 - 0))))" 1.0)
@@ -18271,32 +18197,95 @@ b1 between 0 and 10, and we are given that 10 is between 0 and 10.
  ("(? x)(? y) ((the position of b1 is (x y)) at 20)" 0.75)
  )
 
+;;======================================================================
+(make-simulation-problem
+ :number  13
+ :message
+ "This illustrates sequential causation. This requires causal undercutting for
+causal implication.  I know that the gun being fired while loaded
+will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
+alive.	Later, the gun is fired. But I also know that he will be resuscitated later, and then he will
+be alive.  Should I conclude that Jones becomes dead? This version is solved incorrectly."
+ :reasons
+ neg-at-elimination
+ *TEMPORAL-PROJECTION*
+ *CAUSAL-UNDERCUTTER*
+ *CAUSAL-IMPLICATION*
+ neg-at-intro
+ neg-at-intro2
+ :inputs
+ :premises
+ ("(the_gun_is_loaded at 20)" 1.0)
+ ("((Jones is alive) at 20)" 1.0)
+ ("(the_gun_is_fired at 30)" 1.0)
+ ("(Jones_is_resuscitated at 45)" 1.0)
+ ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
+			   ~(Jones is alive) after an interval 10)" 1.0)
+ ("(Jones_is_resuscitated when ~(Jones is alive) is causally sufficient for
+			   (Jones is alive) after an interval 5)" 1.0)
+ :interests
+ ("(? ((Jones is alive) at 60))" 0.75)
+ )
+
+;;======================================================================
+(make-simulation-problem
+ :number  14
+ :message
+ "This illustrates sequential causation. This requires causal undercutting for
+causal implication.  I know that the gun being fired while loaded
+will cause Jones to become dead.  I know that the gun is initially loaded, and Jones is initially
+alive.	Later, the gun is fired. But I also know that he will be resuscitated later, and then he will
+be alive.  Should I conclude that Jones becomes dead?"
+ :reasons
+ neg-at-elimination
+ *TEMPORAL-PROJECTION*
+ *CAUSAL-UNDERCUTTER*
+ *CAUSAL-IMPLICATION*
+ *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
+ neg-at-intro
+ neg-at-intro2
+ :inputs
+ :premises
+ ("(the_gun_is_loaded at 20)" 1.0)
+ ("((Jones is alive) at 20)" 1.0)
+ ("(the_gun_is_fired at 30)" 1.0)
+ ("(Jones_is_resuscitated at 45)" 1.0)
+ ("(the_gun_is_fired when the_gun_is_loaded is causally sufficient for
+			   ~(Jones is alive) after an interval 10)" 1.0)
+ ("(Jones_is_resuscitated when ~(Jones is alive) is causally sufficient for
+			   (Jones is alive) after an interval 5)" 1.0)
+ :interests
+ ("(? ((Jones is alive) at 60))" 0.75)
+ )
+
 (setf *problems* (eval-when (:compile-toplevel :execute) (default-problem-list)))
 
-;(trace-on)
-;(display-on)
-;(proof-on)
-;(logic-on)
-;(reductio-on)
-;(log-on)
-;(IQ-on)
-;(graph-log-on)
-;
-;(test 757)
-;
-;(test)
-;
-;(so 1)
-;(so 2)
-;(so 3)
-;(so 4)
-;(so 5)
-;(so 6)
-;(so 7)
-;(so 8)
-;(so 9)
-;(so 10)
-;(so 11)
-;(so 12)
-;(so 13)
-;(so 14)
+#|
+(trace-on)
+(display-on)
+(proof-on)
+(logic-on)
+(reductio-on)
+(log-on)
+(IQ-on)
+(graph-log-on)
+
+(test 757)
+
+(test)
+
+(so 1)
+(so 2)
+(so 3)
+(so 4)
+(so 5)
+(so 6)
+(so 7)
+(so 8)
+(so 9)
+(so 10)
+(so 11)
+(so 12)
+(so 13)
+(so 14)
+|#
