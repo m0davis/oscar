@@ -1081,8 +1081,6 @@
 			     matches)))))))
 	    (t (setf matches (list (list closed T)))))
       (when (null matches) (throw 'match nil))
-      (princ patterns) (terpri) (princ data) (terpri) (princ vars) (terpri)
-      (princ matches) (terpri) (terpri)
       matches)))
 
 					;                        * CONFIGURATION *
