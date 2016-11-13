@@ -1,1 +1,1 @@
-sbcl --load monolithic-oscar.lisp --eval "(quit)" 2>&1 | tee run.log
+sbcl --noinform --load monolithic-oscar.lisp --non-interactive 2>&1 | tee run.log > /dev/null

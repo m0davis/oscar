@@ -416,6 +416,8 @@ set-match pats@(_ ∷ _) dats@(_ ∷ _) vars@(_ ∷ _) =
   else
     []
 
+
+
 (set-match
   '((f x)
     (g y))
@@ -480,3 +482,23 @@ set-match pats@(_ ∷ _) dats@(_ ∷ _) vars@(_ ∷ _) =
    (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
    (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0))))
   ((^@y41 . ^@y41) (^@y46 . ^@y41))))
+
+--
+
+conclusion-instantiator
+ define-forwards-reason
+  find-forwards-con-reasons
+   make-problem-from-string
+  find-forwards-pf-reasons
+ define-backwards-reason
+ set-conclusions-function
+
+rectify-formula-condition
+ formula-condition
+  rectify-forwards-premises
+   def-forwards-reason
+    define-forwards-reason
+  rectify-backwards-premises
+ rectify-strength
+ simple-backwards-formula-condition
+ rectify-reason-condition
