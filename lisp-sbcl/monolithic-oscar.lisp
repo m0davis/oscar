@@ -1,4 +1,6 @@
-(proclaim '(optimize (debug 3)))
+;;SECTION initial
+
+(proclaim '(optimize (debug 3) (safety 3) (space 0) (speed 0) (compilation-speed 0)))
 
 (proclaim
  '(special
@@ -256,6 +258,8 @@
 (defvar *og* nil)
 (defvar *old-definitions* nil)
 
+(setq *print-level* nil)
+
 (setf oscar-pathname "./")
 
 					;                                                           *MACROS*
@@ -268,16 +272,6 @@
 (defmacro mem6 (x) `(nth 5 ,x))
 (defmacro mem7 (x) `(nth 6 ,x))
 (defmacro mem8 (x) `(nth 7 ,x))
-(defmacro mem9 (x) `(nth 8 ,x))
-(defmacro mem10 (x) `(nth 9 ,x))
-(defmacro mem11 (x) `(nth 10 ,x))
-(defmacro mem12 (x) `(nth 11 ,x))
-(defmacro mem13 (x) `(nth 12 ,x))
-(defmacro mem14 (x) `(nth 13 ,x))
-(defmacro mem15 (x) `(nth 14 ,x))
-(defmacro mem16 (x) `(nth 15 ,x))
-(defmacro mem17 (x) `(nth 16 ,x))
-(defmacro mem18 (x) `(nth 17 ,x))
 
 (defmacro element (n x) "nth element of sequence x" `(nth ,n ,x))
 
@@ -334,7 +328,7 @@
 #|
 (defun unionmapcar (f A) (apply 'append (mapcar f A)))
 
-;This removes duplicates with test eq.	;
+;This removes duplicates with test eq.	; ; ; ;
 (defun unionmapcar+ (f X)
   (let ((U nil))
     (dolist (y X)
@@ -342,7 +336,7 @@
         (pushnew z U)))
     U))
 
-;This removes duplicates with test equal. ;
+;This removes duplicates with test equal. ; ; ; ;
 (defun unionmapcar= (f X)
   (let ((U nil))
     (dolist (y X)
@@ -350,7 +344,7 @@
         (pushnew z U :test 'equal)))
     U))
 
-;This removes duplicates with test equal. ;
+;This removes duplicates with test equal. ; ; ; ;
 (defun unionmapcar2= (f X Y)
   (let ((U nil)
         (X* X)
@@ -1054,12 +1048,6 @@
                ((lessp (car x) (car y)) t)
                ((lessp (car y) (car x)) nil)
                (t (lessp (cdr x) (cdr y)))))))
-
-(defun gfunc (f)
-  "This takes quoted arguments"
-  (eval (list 'function f)))
-
-(setq *print-level* nil)
 
 (defun factorial (n)
   (cond ((zerop n) 1)
@@ -1942,9 +1930,9 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
 (formula-profile '(& (F x y) (G x y)) '(x y) 'z nil)
 
 ((listp z)
- ; (equal (element 0 z) '&)
- ; (listp (element 1 z))
- ; (equal (element 0 (element 1 z)) 'f)
+ ; (equal (element 0 z) '&)		; ; ;
+ ; (listp (element 1 z))		; ; ;
+ ; (equal (element 0 (element 1 z)) 'f)	; ; ;
  (listp (element 2 z))
  (equal (element 0 (element 2 z)) 'g))
 
@@ -2041,6 +2029,7 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
         ((equal m* t) m)
         (t (append m m*))))
 
+#|
 (defun variable-correspondence (P Q P-vars Q-vars terms)
   "This returns the list (terms1 terms quantifier-variables) where terms1 and terms are the lists of corresponding terms to be unified and quantifier-variables is the list of pairs (x . y) of corresponding quantifier-variables used for testing for notational variants."
   (cond
@@ -2055,6 +2044,69 @@ problems with case-sensitivity.  Otherwise the variables can simply be listed.
     (cond ((null Q) terms)
 	  (t (throw 'unifier nil))))
    ((null Q) (throw 'unifier nil))
+   ((not (listp P))
+    (cond ((not (listp Q))
+	   (cond ((member Q Q-vars)
+		  (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))
+		 ((eql P Q) terms)
+		 ((eql (cdr (assoc P (mem3 terms))) Q) terms)
+		 (t (throw 'unifier nil))))
+	  (t (throw 'unifier nil))))
+   ((not (listp Q)) (throw 'unifier nil))
+   ((or (eq (car P) 'all) (eq (car P) 'some))
+    (cond ((eql (car P) (car Q))
+	   (variable-correspondence
+	    (mem3 P) (mem3 Q) P-vars Q-vars
+	    (list (mem1 terms) (mem2 terms)
+		  (cons (cons (mem2 P) (mem2 Q)) (mem3 terms)))))
+	  (t (throw 'unifier nil))))
+   (t
+    (variable-correspondence
+     (cdr P) (cdr Q) P-vars Q-vars
+     (variable-correspondence (car P) (car Q) P-vars Q-vars terms)))))
+|#
+
+(defstruct (plan-node
+	    (:print-function
+	     (lambda (node stream depth)
+	       (declare (ignore depth))
+	       (cond ((eql (plan-node-number node) 0) (princ "*start*" stream))
+		     ((eql (plan-node-number node) -1) (princ "*finish*" stream))
+		     (t
+		      (princ "<pn" stream)
+		      (princ (plan-node-number node) stream)
+		      (princ ": " stream)
+		      (princ (plan-node-action node) stream)
+		      (princ ">" stream)))))
+	    (:conc-name nil))
+  (plan-node-number 0)
+  (plan-node-action nil))
+
+(defun variable-correspondence (P Q P-vars Q-vars terms)
+  (cond
+   ((equal P Q) terms)
+   ((member P P-vars)
+    (let ((quantifier-variables (mem3 terms)))
+      (cond ((rassoc Q quantifier-variables) (throw 'unifier nil))
+	    (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) quantifier-variables)))))
+   ((member Q Q-vars)
+    (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
+	  (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
+   ((null P)
+    (cond ((null Q) terms)
+	  (t (throw 'unifier nil))))
+   ((null Q) (throw 'unifier nil))
+   ((plan-p P)
+    (cond ((plan-p Q) (throw 'unifier nil))
+	  ((member Q Q-vars)
+	   (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
+		 (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
+	  (t (throw 'unifier nil))))
+   ((plan-node-p P)
+    (cond ((member Q Q-vars)
+	   (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
+		 (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
+	  (t (throw 'unifier nil))))
    ((not (listp P))
     (cond ((not (listp Q))
 	   (cond ((member Q Q-vars)
@@ -2316,7 +2368,9 @@ constructs a reason with the reason-function:
 		    (t (pull v terms))))
 	    `(let
 		 ,@
-		 (list (mapcar #'(lambda (v) `(,(cdr (assoc v a-list)) (ignore-errors (eval ,v)))) terms)
+		 (list (mapcar #'(lambda (v) `(,(cdr (assoc v a-list))
+					       (ignore-errors (eval ,v))))
+			       terms)
 		       `(and ,@ terms* ,(sublis a-list p))))))
       p)))
 
@@ -2949,14 +3003,16 @@ expands into the following code:
 			    (rectify-conclusions-list
 			     (mapcar
 			      #'(lambda (x) (formula-instantiator x c-vars))
-			      (eval conclusion)) defeasible?))))))
+			      (eval conclusion))
+			     defeasible?))))))
        (t
 	(setf conclusion-function
 	      `#'(lambda (binding) (declare (ignore binding))
 		   ,(cons 'list (rectify-conclusions-list
 				 (mapcar
 				  #'(lambda (x) (formula-instantiator x nil))
-				  (eval conclusion)) defeasible?) )))))))
+				  (eval conclusion))
+				 defeasible?) )))))))
     (when forwards-premises
       (setf forwards-premises
             (cons 'list (rectify-forwards-premises forwards-premises (eval variables) c-vars))))
@@ -4013,7 +4069,7 @@ It requires Hypergraphs11.lisp. |#
               (t (setf (interest-priority interest) (interest-maximum-degree-of-interest interest))
                  (when display (princ "reinstating query interest ")
 		       (princ interest) (terpri))))))
-					; (dolist (N new-retractions)
+					; (dolist (N new-retractions) ; ; ;
     (dolist (N affected-nodes)
       (when (every
 	     #'(lambda (L)
@@ -4093,14 +4149,14 @@ It requires Hypergraphs11.lisp. |#
                (princ (hypernode-discounted-node-strength node)) (terpri))
              (let ((Q (node-queue-node node)))
                (when Q (pushnew Q altered-queue))))))
-					;---------------------------------
+					;--------------------------------- ; ; ;
     (loop
      (when display (princ "=======") (terpri))
-					; (when (eql *cycle* 89) (setf af affected-interests) (break))
-					; (p-print (setf af affected-interests))
+					; (when (eql *cycle* 89) (setf af affected-interests) (break)) ; ; ;
+					; (p-print (setf af affected-interests)) ; ; ;
      (when (and (null affected-nodes) (null affected-interests)) (return))
      (let ((changes? nil))
-					; ===============
+					; =============== ; ; ;
        ;; For each altered-node or altered-interest whose discounted-node-strength
        ;; or interest-priority can be computed without appealing to any other altered-nodes
        ;; or altered-interests, we do so and remove them from the lists of altered-nodes
@@ -4187,7 +4243,7 @@ It requires Hypergraphs11.lisp. |#
 		     (when Q (pushnew Q altered-queue)))))))
 	(when (and (null affected-nodes) (null affected-interests)) (return))
 	(when (null changes?) (return)))
-					; ===============
+					; =============== ; ; ;
        (when (and (null affected-nodes) (null affected-interests)) (return))
        ;; For any remaining nodes or interests, we want to compute their discounted-
        ;; nodes-strengths and interest-priorities just in terms of the nodes and interests
@@ -4272,7 +4328,7 @@ It requires Hypergraphs11.lisp. |#
 	       (princ (interest-priority interest)) (terpri))
 	     (let ((Q (interest-queue-node interest)))
 	       (when Q (pushnew Q altered-queue))))))))
-					;---------------------------------
+					;--------------------------------- ; ; ;
     (when display (princ "----------------") (terpri))
     (dolist (Q altered-queue)
       (cond ((eq (queue-item-kind Q) :conclusion)
@@ -6755,22 +6811,6 @@ each other.
 (defun supposition-variables (sup)
   (unionmapcar= #'formula-hypernode-variables sup))
 
-(defstruct (plan-node
-	    (:print-function
-	     (lambda (node stream depth)
-	       (declare (ignore depth))
-	       (cond ((eql (plan-node-number node) 0) (princ "*start*" stream))
-		     ((eql (plan-node-number node) -1) (princ "*finish*" stream))
-		     (t
-		      (princ "<pn" stream)
-		      (princ (plan-node-number node) stream)
-		      (princ ": " stream)
-		      (princ (plan-node-action node) stream)
-		      (princ ">" stream)))))
-	    (:conc-name nil))
-  (plan-node-number 0)
-  (plan-node-action nil))
-
 (defstruct (causal-link
 	    (:print-function
 	     (lambda (link stream depth)
@@ -7051,8 +7091,8 @@ each other.
 				    (t (incf length) (complexity P))))
 			  sup))))
 		 (t (max 1 (formula-complexity formula))))))
-      ;  (when *display?*		; ;
-      ;       (princ "The complexity of ") (print-sequent sequent) (princ " is ") (princ complexity) (terpri)) ; ;
+      ;  (when *display?*		; ; ; ; ;
+      ;       (princ "The complexity of ") (print-sequent sequent) (princ " is ") (princ complexity) (terpri)) ; ; ; ; ;
       (if (> length 2) (* complexity (expt 10 (* length length))) complexity))))
 |#
 
@@ -9455,6 +9495,23 @@ each other.
 		   (link-interest link) (interest-priority (link-interest link)) (1+ depth))
 		  link)))))))))
 
+  #|
+  (defun make-backwards-inference
+  (reason binding interest depth priority supporting-nodes clues instantiations supposition
+  &optional generating-node)
+  (cond
+  ((or (reason-backwards-premises reason) (reason-backwards-premises-function reason))
+  (construct-initial-interest-link
+  supporting-nodes instantiations reason interest depth priority binding supposition
+  :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
+  ((or (numberp (reason-strength reason))
+  (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
+  (dolist (P (funcall (reason-conclusions-function reason) binding))
+  (draw-conclusion
+  (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
+  :binding binding :clues clues)))))
+  |#
+
   (defun make-backwards-inference
       (reason binding interest depth priority supporting-nodes clues instantiations supposition
 	      &optional generating-node)
@@ -9465,10 +9522,16 @@ each other.
        :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
      ((or (numberp (reason-strength reason))
 	  (>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
-      (dolist (P (funcall (reason-conclusions-function reason) binding))
-	(draw-conclusion
-	 (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
-	 :binding binding :clues clues)))))
+      (cond
+       ((reason-conclusions-function reason)
+	(dolist (P (funcall (reason-conclusions-function reason) binding))
+	  (draw-conclusion
+	   (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
+	   :binding binding :clues clues)))
+       (t (draw-conclusion
+	   (interest-formula interest) supporting-nodes reason instantiations
+	   (reason-discount-factor reason) depth nil (reason-defeasible-rule reason) :binding binding :clues clues)))
+      )))
 
   (defun construct-interest-scheme
       (reason node interest binding instantiations remaining-premises is0
@@ -11782,8 +11845,8 @@ in the Listener. |#
 
 #|
 (defun update-beliefs ()
-  ; (when (equal *cycle* 2) (break))	; ;
-  ; (step (update-beliefs))		; ;
+  ; (when (equal *cycle* 2) (break))	; ; ; ; ;
+  ; (step (update-beliefs))		; ; ; ; ;
   (cond
    (*deductive-only*
     (dolist (link *new-links*)
@@ -11794,7 +11857,7 @@ in the Listener. |#
 	(setf (hypernode-discounted-node-strength node) (hyperlink-discount-factor link))
 	(when (null (hypernode-old-degree-of-justification node))
 	  (queue-for-inference node))
-          ; (display-belief-changes (list link) (list node) nil) ; ;
+          ; (display-belief-changes (list link) (list node) nil) ; ; ; ; ;
 	(discharge-ultimate-epistemic-interests (list node) nil))))
    (t
     (setf *new-beliefs* nil)
@@ -12142,7 +12205,7 @@ in the Listener. |#
 
 #|
 (defun display-belief-changes  (links new-beliefs new-retractions)
-  ; (when (member (hyperlink 12) links) (setf l links nb new-beliefs nr new-retractions) (break)) ; ;
+  ; (when (member (hyperlink 12) links) (setf l links nb new-beliefs nr new-retractions) (break)) ; ; ; ; ;
   ;; (step (display-belief-changes l  nb nr))
   (when (or *display?* *log-on*)
     (cond
@@ -17299,29 +17362,6 @@ contradictors in cases syntactically appropriate for adopting reductio-interests
    (every #'(lambda (in) (equal (hypernode-formula N) (neg (interest-formula in))))
 	  (hypernode-generating-interests N))))
 
-(defun make-backwards-inference
-    (reason binding interest depth priority supporting-nodes clues instantiations supposition
-	    &optional generating-node)
-					; (when (eq *cycle* 518) (setf r reason b binding i interest d depth p priority s supporting-nodes in instantiations u supposition) (break))
-  ;; (step (make-backwards-inference r b i d p s in u))
-  (cond
-   ((or (reason-backwards-premises reason) (reason-backwards-premises-function reason))
-    (construct-initial-interest-link
-     supporting-nodes instantiations reason interest depth priority binding supposition
-     :generating-node generating-node :remaining-premises (reason-backwards-premises reason) :clues clues))
-   ((or (numberp (reason-strength reason))
-	(>= (funcall (reason-strength reason) binding supporting-nodes) (interest-degree-of-interest interest)))
-    (cond
-     ((reason-conclusions-function reason)
-      (dolist (P (funcall (reason-conclusions-function reason) binding))
-	(draw-conclusion
-	 (car P) supporting-nodes reason instantiations (reason-discount-factor reason) depth nil (cdr P)
-	 :binding binding :clues clues)))
-     (t (draw-conclusion
-	 (interest-formula interest) supporting-nodes reason instantiations
-	 (reason-discount-factor reason) depth nil (reason-defeasible-rule reason) :binding binding :clues clues)))
-    )))
-
 (defun rebuts (sequent1 sequent2)
   (and (equal (sequent-formula sequent1) (neg (sequent-formula sequent2)))
        (subsetp= (sequent-supposition sequent1) (sequent-supposition sequent2))))
@@ -17836,7 +17876,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	`((,x is alive) (alive ,x) (,x))
 	`((,x is a dimensionless billiard ball) (dimensionless-billiard-ball ,x) (,x))
 	`((,P => ,Q) (=> ,P ,Q) (,P ,Q))
-	;`((,P is a plan for ,Q) (plan-for ,P ,Q) (,P ,Q))
+					;`((,P is a plan for ,Q) (plan-for ,P ,Q) (,P ,Q))
 	))
     (pushnew pair *reform-list* :test 'equal)))
 
@@ -17897,7 +17937,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 		  :plan-node-number (plan-node-number x)
 		  :plan-node-action action)))
 	    (error "unimplemented plan-node-p")
-	    ;(draw-conclusion `(plan-node ,node) nil :given nil 1.0 1 nil nil)
+	    ;(draw-conclusion `(plan-node ,node) nil :given nil 1.0 1 nil nil) ; ; ;
 	    node)
 	x)))
    (t (let ((assoc (assoc x m :test test)))
@@ -18005,10 +18045,10 @@ undefeated-degrees-of-support have decreased as a result of this computation.
        (t
 	(let ((node-match (mapcar #'(lambda (x y) (cons x y)) (plan-steps x) plan-steps)))
 	  (error "plan-subst-plan not implemented")
-	  ;(setf before-nodes (sublis node-match before-nodes))
-	  ;(setf not-between (sublis node-match not-between))
-	  ;(setf causal-links (sublis node-match causal-links))
-	  ;(build-plan plan-steps (plan-goal p) causal-links before-nodes not-between)
+	  ;(setf before-nodes (sublis node-match before-nodes)) ; ; ;
+	  ;(setf not-between (sublis node-match not-between)) ; ; ;
+	  ;(setf causal-links (sublis node-match causal-links)) ; ; ;
+	  ;(build-plan plan-steps (plan-goal p) causal-links before-nodes not-between) ; ; ;
 	  )))))
    ((plan-node-p p)
     (let ((action (plan-subst x y (plan-node-action p) :test test)))
@@ -18018,57 +18058,11 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 		  :plan-node-number (plan-node-number p)
 		  :plan-node-action action)))
 	    (error "plan-subst-plan-node not implemented")
-	    ;(draw-conclusion `(plan-node ,node) nil :given nil 1.0 1 nil nil)
+	    ;(draw-conclusion `(plan-node ,node) nil :given nil 1.0 1 nil nil) ; ; ;
 	    node)
 	p)))
    (t (if (funcall test y p) x p))))
 |#
-
-(defun variable-correspondence (P Q P-vars Q-vars terms)
-  (cond
-   ((equal P Q) terms)
-   ((member P P-vars)
-    (let ((quantifier-variables (mem3 terms)))
-      (cond ((rassoc Q quantifier-variables) (throw 'unifier nil))
-	    (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) quantifier-variables)))))
-   ((member Q Q-vars)
-    (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
-	  (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
-   ((null P)
-    (cond ((null Q) terms)
-	  (t (throw 'unifier nil))))
-   ((null Q) (throw 'unifier nil))
-   ((plan-p P)
-    (cond ((plan-p Q) (throw 'unifier nil))
-	  ((member Q Q-vars)
-	   (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
-		 (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
-	  (t (throw 'unifier nil))))
-   ((plan-node-p P)
-    (cond ((member Q Q-vars)
-	   (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
-		 (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
-	  (t (throw 'unifier nil))))
-   ((not (listp P))
-    (cond ((not (listp Q))
-	   (cond ((member Q Q-vars)
-		  (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))
-		 ((eql P Q) terms)
-		 ((eql (cdr (assoc P (mem3 terms))) Q) terms)
-		 (t (throw 'unifier nil))))
-	  (t (throw 'unifier nil))))
-   ((not (listp Q)) (throw 'unifier nil))
-   ((or (eq (car P) 'all) (eq (car P) 'some))
-    (cond ((eql (car P) (car Q))
-	   (variable-correspondence
-	    (mem3 P) (mem3 Q) P-vars Q-vars
-	    (list (mem1 terms) (mem2 terms)
-		  (cons (cons (mem2 P) (mem2 Q)) (mem3 terms)))))
-	  (t (throw 'unifier nil))))
-   (t
-    (variable-correspondence
-     (cdr P) (cdr Q) P-vars Q-vars
-     (variable-correspondence (car P) (car Q) P-vars Q-vars terms)))))
 
 #|TODO?
 (defun sequential-sublis (m X)
@@ -18194,8 +18188,8 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 #|TODO?
 (defun display-belief-changes  (links new-beliefs new-retractions)
   (when *monitor-assignment-tree* (monitor-assignment-tree links))
-					; (when (and (not (complete-tree *assignment-tree*)) (null *deductive-only*))
-					;      (princ links) (terpri) (break))
+					; (when (and (not (complete-tree *assignment-tree*)) (null *deductive-only*)) ; ; ;
+					;      (princ links) (terpri) (break)) ; ; ;
   (when (or *display?* *log-on*)
     (cond
      ((and (not *deductive-only*) (or new-beliefs new-retractions))
@@ -18214,7 +18208,7 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	  (princ "---------------------------------------------------------------------------")
 	  (terpri))
 	(princ "Recomputed assignment-tree:") (terpri)
-	;(display-assignment-tree)
+	;(display-assignment-tree)	; ; ;
 	)
       (when (and *display?* *graphics-on*)
 	(when *graphics-pause* (pause-graphics))
@@ -18471,8 +18465,8 @@ undefeated-degrees-of-support have decreased as a result of this computation.
             (princ "  defeaters: ")
             (princ-set (mapcar #'inference-number (support-link-defeaters L*))))
           (terpri))))
-					; (princ "  nearest-defeasible-ancestors: ")
-					; (princ (hypernode-nearest-defeasible-ancestors n)) (terpri)
+					; (princ "  nearest-defeasible-ancestors: ") ; ; ;
+					; (princ (hypernode-nearest-defeasible-ancestors n)) (terpri) ; ; ;
     (when (node-defeatees n)
       (princ "  defeatees: ")
       (princ "{ ")
@@ -18515,20 +18509,20 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 					;                         (interest-left-links interest))))
 
 (labels
- ()
+    ()
 
- (defun decided-node (node)
-   (and (every #'decided-interest (hypernode-generated-defeat-interests node))
-	(every #'(lambda (L)
-		   (every #'decided-node (hyperlink-defeaters L)))
-	       (hypernode-hyperlinks node))))
+  (defun decided-node (node)
+    (and (every #'decided-interest (hypernode-generated-defeat-interests node))
+	 (every #'(lambda (L)
+		    (every #'decided-node (hyperlink-defeaters L)))
+		(hypernode-hyperlinks node))))
 
- (defun decided-interest (interest)
-   (and (null (interest-queue-node interest))
-	(every #'decided-node (interest-discharging-nodes interest))
-	(every #'(lambda (L)
-		   (decided-interest (link-interest L)))
-	       (interest-left-links interest)))))
+  (defun decided-interest (interest)
+    (and (null (interest-queue-node interest))
+	 (every #'decided-node (interest-discharging-nodes interest))
+	 (every #'(lambda (L)
+		    (decided-interest (link-interest L)))
+		(interest-left-links interest)))))
 
 (defun SOLVE-PLANNING-PROBLEM ()
   (let ((pp *print-pretty*)
@@ -18809,45 +18803,45 @@ undefeated-degrees-of-support have decreased as a result of this computation.
         (node2 (causal-link-target link)))
     (when (or (not (eq node1 *start*)) (and (plan-node-p node2) (not (eq node2 *finish*))))
       (multiple-value-bind
-       (before not-between)
-       (add-<> node node1 node2 plan (before-nodes plan) (not-between plan))
-       (cond
-	((or before not-between)
-	 (setf before (order before #'before-order))
-	 (setf not-between (order not-between #'not-between-order))
-	 (let ((plan*
-		(find-if #'(lambda (p)
-			     (and (equal (plan-steps p) (plan-steps plan))
-				  (equal (plan-goal p) (plan-goal plan))
-				  (equal (causal-links p) (causal-links plan))
-				  (equal (before-nodes p) before)
-				  (equal (not-between p) not-between)))
-			 *plans*)))
-	   (when (null plan*)
-	     (setf plan*
-		   (make-plan
-		    :plan-number (incf *plan-number*)
-		    :plan-steps (plan-steps plan)
-		    :plan-goal (plan-goal plan)
-		    :causal-links (causal-links plan)
-		    :before-nodes before
-		    :not-between not-between))
-	     (push plan* *plans*))
-	   #| The following is a kludge.  It will not work if new information is imported during the
-	   processing and it can lead to additional undermining.  The purpose of this code
-	   is to prevent rechecking previously checked causal-links in the plan produced
-	   by adding ordering-constraints. |#
-	   (when record?
-	     (setf (live-links? plan*) t)
-	     (setf (live-causal-links plan*)
-		   (subset
-		    #'(lambda (L)
-			(let
-			    ((interest (interest-for `(nil (plan-undermines-causal-link ,plan x y ,L z)) '(x y z) nil)))
-			  (or (null interest) (live-interest interest))))
+	  (before not-between)
+	  (add-<> node node1 node2 plan (before-nodes plan) (not-between plan))
+	(cond
+	 ((or before not-between)
+	  (setf before (order before #'before-order))
+	  (setf not-between (order not-between #'not-between-order))
+	  (let ((plan*
+		 (find-if #'(lambda (p)
+			      (and (equal (plan-steps p) (plan-steps plan))
+				   (equal (plan-goal p) (plan-goal plan))
+				   (equal (causal-links p) (causal-links plan))
+				   (equal (before-nodes p) before)
+				   (equal (not-between p) not-between)))
+			  *plans*)))
+	    (when (null plan*)
+	      (setf plan*
+		    (make-plan
+		     :plan-number (incf *plan-number*)
+		     :plan-steps (plan-steps plan)
+		     :plan-goal (plan-goal plan)
+		     :causal-links (causal-links plan)
+		     :before-nodes before
+		     :not-between not-between))
+	      (push plan* *plans*))
+	    #| The following is a kludge.  It will not work if new information is imported during the
+	    processing and it can lead to additional undermining.  The purpose of this code
+	    is to prevent rechecking previously checked causal-links in the plan produced
+	    by adding ordering-constraints. |#
+	    (when record?
+	      (setf (live-links? plan*) t)
+	      (setf (live-causal-links plan*)
+		    (subset
+		     #'(lambda (L)
+			 (let
+			     ((interest (interest-for `(nil (plan-undermines-causal-link ,plan x y ,L z)) '(x y z) nil)))
+			   (or (null interest) (live-interest interest))))
 					; (remove link (if (live-links? plan) (live-causal-links plan) (causal-links plan))))))
-		    (if (live-links? plan) (live-causal-links plan) (causal-links plan)))))
-	   plan*)))))))
+		     (if (live-links? plan) (live-causal-links plan) (causal-links plan)))))
+	    plan*)))))))
 
 (defun add-befores (befores before not-between plan)
   (cond ((null befores) (values before not-between))
@@ -18860,10 +18854,10 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 		   (not (member (cdr x) (plan-steps plan)))
 		   (member (car x) (possibly-preceding-nodes (cdr x) plan (plan-steps plan) before)))
 	       (multiple-value-bind
-		(before-nodes* not-between*)
-		(add-before (car x) (cdr x) plan before not-between)
-		(when (and (null before-nodes*) (null not-between*)) (throw 'merge-plans nil))
-		(setf before before-nodes* not-between not-between*)))
+		   (before-nodes* not-between*)
+		   (add-before (car x) (cdr x) plan before not-between)
+		 (when (and (null before-nodes*) (null not-between*)) (throw 'merge-plans nil))
+		 (setf before before-nodes* not-between not-between*)))
 	      (t (throw 'merge-plans nil)))))
 	 (values before not-between))))
 
@@ -18874,21 +18868,21 @@ undefeated-degrees-of-support have decreased as a result of this computation.
 	 (dolist (x not-betweens)
 	   (when (not (mem x not-between))
 	     (multiple-value-bind
-	      (before-nodes* not-between*)
-	      (add-<> (car x) (cadr x) (cddr x) plan before not-between)
-	      (when (and (null before-nodes*) (null not-between*)) (throw 'merge-plans nil))
-	      (setf before before-nodes* not-between not-between*))))))
+		 (before-nodes* not-between*)
+		 (add-<> (car x) (cadr x) (cddr x) plan before not-between)
+	       (when (and (null before-nodes*) (null not-between*)) (throw 'merge-plans nil))
+	       (setf before before-nodes* not-between not-between*))))))
   (values before not-between))
 
 (defun add-constraints (befores not-betweens before not-between plan)
   (catch 'merge-plans
     (multiple-value-bind
-     (before* not-between*)
-     (add-befores befores before not-between plan)
-     (multiple-value-bind
-      (before* not-between*)
-      (add-not-betweens not-betweens before* not-between* plan)
-      (values before* not-between*)))))
+	(before* not-between*)
+	(add-befores befores before not-between plan)
+      (multiple-value-bind
+	  (before* not-between*)
+	  (add-not-betweens not-betweens before* not-between* plan)
+	(values before* not-between*)))))
 
 (defun merge-plans (plan1 plan2 goal1 goal2)
 					; (when (eq *cycle* 127) (setf p1 plan1 p2 plan2 g1 goal1 g2 goal2) (break))
@@ -18900,13 +18894,13 @@ undefeated-degrees-of-support have decreased as a result of this computation.
          (before-nodes (before-nodes plan1))
          (not-between (not-between plan1)))
     (multiple-value-bind
-     (before not-between)
-     (add-constraints (before-nodes plan2) (not-between plan2) before-nodes not-between plan1)
-     (when (or before not-between
-	       (and (null (before-nodes plan2)) (null (not-between plan2))
-		    (null before-nodes) (null not-between)))
-       (let* ((causal-links (union (causal-links plan1) (causal-links plan2))))
-	 (setf plan (build-plan plan-steps g causal-links before not-between)))))
+	(before not-between)
+	(add-constraints (before-nodes plan2) (not-between plan2) before-nodes not-between plan1)
+      (when (or before not-between
+		(and (null (before-nodes plan2)) (null (not-between plan2))
+		     (null before-nodes) (null not-between)))
+	(let* ((causal-links (union (causal-links plan1) (causal-links plan2))))
+	  (setf plan (build-plan plan-steps g causal-links before not-between)))))
     plan))
 
 (defun extend-plan (action goal plan bad-link &optional new?)
@@ -18943,10 +18937,10 @@ undefeated-degrees-of-support have decreased as a result of this computation.
         (when (and (not (eq (causal-link-root x) *start*))
                    (not (member (causal-link-root x) (preceding-nodes node plan before))))
           (multiple-value-bind
-	   (before-nodes* not-between*)
-	   (add-before (causal-link-root x) node plan before not-between)
-	   (when (and (null before-nodes*) (null not-between*)) (return-from extend-plan nil))
-	   (setf before before-nodes* not-between not-between*))))
+	      (before-nodes* not-between*)
+	      (add-before (causal-link-root x) node plan before not-between)
+	    (when (and (null before-nodes*) (null not-between*)) (return-from extend-plan nil))
+	    (setf before before-nodes* not-between not-between*))))
       (setf causal-links (order causal-links #'causal-link-order))
       (setf before (order before #'before-order))
       (setf not-between (order not-between #'not-between-order))
@@ -19130,18 +19124,18 @@ indicated number of spaces for the last indent.  To finish with a bar, use 0 for
     (when before
       (dolist (n (possibly-succeeding-nodes new-node subplan (plan-steps plan+) before))
         (multiple-value-bind
-	 (before-nodes* not-between*)
-	 (add-before *finish* n subplan before not-between)
-	 (when (and (null before-nodes*) (null not-between*)) (return-from extend-embellished-plan nil))
-	 (setf before before-nodes* not-between not-between*)))
+	    (before-nodes* not-between*)
+	    (add-before *finish* n subplan before not-between)
+	  (when (and (null before-nodes*) (null not-between*)) (return-from extend-embellished-plan nil))
+	  (setf before before-nodes* not-between not-between*)))
       (dolist (x (call-set *finish* subplan))
         (when (and (not (eq (causal-link-root x) *start*))
                    (not (member (causal-link-root x) (preceding-nodes new-node subplan before))))
           (multiple-value-bind
-	   (before-nodes* not-between*)
-	   (add-before (causal-link-root x) new-node subplan before not-between)
-	   (when (and (null before-nodes*) (null not-between*)) (return-from extend-embellished-plan nil))
-	   (setf before before-nodes* not-between not-between*))))
+	      (before-nodes* not-between*)
+	      (add-before (causal-link-root x) new-node subplan before not-between)
+	    (when (and (null before-nodes*) (null not-between*)) (return-from extend-embellished-plan nil))
+	    (setf before before-nodes* not-between not-between*))))
       (setf causal-links (order causal-links #'causal-link-order))
       (setf before (order before #'before-order))
       (setf not-between (order not-between #'not-between-order))
@@ -19181,7 +19175,7 @@ indicated number of spaces for the last indent.  To finish with a bar, use 0 for
                                     (m (let ((m* (match* (cdr pattern) (cdr expression) (append m bindings))))
                                          (cond ((eq m* t) m)
                                                (m* (union= m m*))))))))))))
-	  (match* pattern expression nil)))
+    (match* pattern expression nil)))
 
 #| This moves *finish* to the right place, ie., preceding all nodes of plan+. |#
 (defun embedded-null-plan (goal plan+ before not-between)
@@ -19191,10 +19185,10 @@ indicated number of spaces for the last indent.  To finish with a bar, use 0 for
   (setf not-between (remove-not-between-finish before not-between))
   (dolist (n (plan-steps plan+))
     (multiple-value-bind
-     (before-nodes* not-between*)
-     (add-before *finish* n plan+ before not-between)
-     (when (and (null before-nodes*) (null not-between*)) (return-from embedded-null-plan nil))
-     (setf before before-nodes* not-between not-between*)))
+	(before-nodes* not-between*)
+	(add-before *finish* n plan+ before not-between)
+      (when (and (null before-nodes*) (null not-between*)) (return-from embedded-null-plan nil))
+      (setf before before-nodes* not-between not-between*)))
   (setf before (order before #'before-order))
   (setf not-between (order not-between #'not-between-order))
   (or
@@ -19224,10 +19218,10 @@ indicated number of spaces for the last indent.  To finish with a bar, use 0 for
          (before (union= before1 (union= before2 (remove-finish (before-nodes plan2))))))
     (dolist (n (possibly-succeeding-nodes *finish* plan2 (plan-steps plan2) before))
       (multiple-value-bind
-       (before-nodes* not-between*)
-       (add-before *finish* n plan2 before not-between)
-       (when (and (null before-nodes*) (null not-between*)) (return-from merge-embellished-plans nil))
-       (setf before before-nodes* not-between not-between*)))
+	  (before-nodes* not-between*)
+	  (add-before *finish* n plan2 before not-between)
+	(when (and (null before-nodes*) (null not-between*)) (return-from merge-embellished-plans nil))
+	(setf before before-nodes* not-between not-between*)))
     (build-plan (plan-steps plan1) g causal-links before not-between)))
 
 ;;========================= patching plans ===========================
@@ -19286,68 +19280,68 @@ an interest in plan relative to the goal-stack goals. |#
 
 (defun replace-subplan (new-plan0 plan+ bad-link)
   (multiple-value-bind
-   (nodes links)
-   (remove-subplan plan+ bad-link)
-   (let ((plan-steps (union nodes (plan-steps new-plan0)))
-	 (before-nodes
-	  (subset #'(lambda (x) (and (member (car x) nodes)
-				     (or (eq (cdr x) *finish*) (member (cdr x) nodes))))
-		  (before-nodes plan+)))
-	 (not-between-nodes
-	  (subset #'(lambda (x) (and (member (car x) nodes)
-				     (member (cadr x) nodes) (member (cddr x) nodes)))
-		  (not-between plan+))))
-     (dolist (node nodes)
-       (when (null (assoc node before-nodes)) (push (cons node *finish*) before-nodes)))
-     (multiple-value-bind
-      (before not-between)
-      (add-constraints
-       (before-nodes new-plan0) (not-between new-plan0)
-       before-nodes not-between-nodes new-plan0)
-      (when (or before not-between
-		(and (null (before-nodes new-plan0)) (null (not-between new-plan0))
-		     (null before-nodes) (null not-between-nodes)))
-	(dolist (link (causal-links new-plan0))
-	  (cond ((eq (causal-link-target link) *finish*)
-		 (pushnew
-		  (build-causal-link
-		   (causal-link-root link) (causal-link-goal link) (causal-link-target bad-link))
-		  links)
-		 (multiple-value-bind
-		  (before+ not-between+)
-		  (add-before (causal-link-root link) (causal-link-target bad-link)
-			      plan+ before not-between)
-		  (setf before before+ not-between not-between+)
-		  (when (null before) (return-from replace-subplan))))
-		(t (pushnew link links))))
-	(let ((plan
-	       (build-plan plan-steps (plan-goal plan+) links before not-between)))
-	  (when plan
-	    (let ((live-links
-		   (subset
-		    #'(lambda (L)
-			(let
-			    ((interest
-			      (interest-for `(nil (plan-undermines-causal-link ,plan+ x y ,L z)) '(x y z) nil)))
-			  (or (null interest) (live-interest interest))))
-		    (remove bad-link
-			    (or (live-causal-links plan+) (causal-links plan+)))))
-		  (nodes (set-difference (plan-steps plan) (plan-steps plan+))))
-	      (setf (live-causal-links plan)
-		    (append
-					; (intersection live-links (causal-links plan))
-		     (subset #'(lambda (L) (member L (causal-links plan))) live-links)
-		     (set-difference (causal-links plan) (causal-links plan+))
+      (nodes links)
+      (remove-subplan plan+ bad-link)
+    (let ((plan-steps (union nodes (plan-steps new-plan0)))
+	  (before-nodes
+	   (subset #'(lambda (x) (and (member (car x) nodes)
+				      (or (eq (cdr x) *finish*) (member (cdr x) nodes))))
+		   (before-nodes plan+)))
+	  (not-between-nodes
+	   (subset #'(lambda (x) (and (member (car x) nodes)
+				      (member (cadr x) nodes) (member (cddr x) nodes)))
+		   (not-between plan+))))
+      (dolist (node nodes)
+	(when (null (assoc node before-nodes)) (push (cons node *finish*) before-nodes)))
+      (multiple-value-bind
+	  (before not-between)
+	  (add-constraints
+	   (before-nodes new-plan0) (not-between new-plan0)
+	   before-nodes not-between-nodes new-plan0)
+	(when (or before not-between
+		  (and (null (before-nodes new-plan0)) (null (not-between new-plan0))
+		       (null before-nodes) (null not-between-nodes)))
+	  (dolist (link (causal-links new-plan0))
+	    (cond ((eq (causal-link-target link) *finish*)
+		   (pushnew
+		    (build-causal-link
+		     (causal-link-root link) (causal-link-goal link) (causal-link-target bad-link))
+		    links)
+		   (multiple-value-bind
+		       (before+ not-between+)
+		       (add-before (causal-link-root link) (causal-link-target bad-link)
+				   plan+ before not-between)
+		     (setf before before+ not-between not-between+)
+		     (when (null before) (return-from replace-subplan))))
+		  (t (pushnew link links))))
+	  (let ((plan
+		 (build-plan plan-steps (plan-goal plan+) links before not-between)))
+	    (when plan
+	      (let ((live-links
 		     (subset
 		      #'(lambda (L)
-			  (some
-			   #'(lambda (n)
-			       (possibly-preceding-node n (causal-link-target L) plan ))
-			   nodes))
+			  (let
+			      ((interest
+				(interest-for `(nil (plan-undermines-causal-link ,plan+ x y ,L z)) '(x y z) nil)))
+			    (or (null interest) (live-interest interest))))
+		      (remove bad-link
+			      (or (live-causal-links plan+) (causal-links plan+)))))
+		    (nodes (set-difference (plan-steps plan) (plan-steps plan+))))
+		(setf (live-causal-links plan)
+		      (append
+					; (intersection live-links (causal-links plan))
+		       (subset #'(lambda (L) (member L (causal-links plan))) live-links)
+		       (set-difference (causal-links plan) (causal-links plan+))
+		       (subset
+			#'(lambda (L)
+			    (some
+			     #'(lambda (n)
+				 (possibly-preceding-node n (causal-link-target L) plan ))
+			     nodes))
 					; (set-difference (remove bad-link (causal-links plan)) live-links))))
-		      (set-difference (causal-links plan) live-links))))
-	      (setf (live-links? plan) t)))
-	  plan))))))
+			(set-difference (causal-links plan) live-links))))
+		(setf (live-links? plan) t)))
+	    plan))))))
 
 (defun extend-plan-with-node (node goal plan bad-link)
 					; (when (eq plan (plan 13)) (setf n node g goal p plan) (break))
@@ -19370,10 +19364,10 @@ an interest in plan relative to the goal-stack goals. |#
       (when (and (not (eq (causal-link-root x) *start*))
                  (not (member (causal-link-root x) (preceding-nodes node plan before))))
         (multiple-value-bind
-	 (before-nodes* not-between*)
-	 (add-before (causal-link-root x) node plan before not-between)
-	 (when (and (null before-nodes*) (null not-between*)) (return-from extend-plan-with-node nil))
-	 (setf before before-nodes* not-between not-between*))))
+	    (before-nodes* not-between*)
+	    (add-before (causal-link-root x) node plan before not-between)
+	  (when (and (null before-nodes*) (null not-between*)) (return-from extend-plan-with-node nil))
+	  (setf before before-nodes* not-between not-between*))))
     (build-plan plan-steps goal causal-links before not-between)))
 
 ;;========================= confrontation ===========================
@@ -19410,16 +19404,16 @@ an interest in plan relative to the goal-stack goals. |#
 		       (t link)))
 	     (causal-links repair-plan))))
       (multiple-value-bind
-       (before not-between)
-       (add-constraints
-	(append new-befores (before-nodes repair-plan))
-	(not-between repair-plan) before-nodes not-between plan)
-       (when before
-	 (let ((plan
-		(build-plan plan-steps (plan-goal plan) (union causal-links (causal-links plan))
-			    before not-between)))
-	   (setf (fixed-links plan) (causal-links e-plan))
-	   plan))))))
+	  (before not-between)
+	  (add-constraints
+	   (append new-befores (before-nodes repair-plan))
+	   (not-between repair-plan) before-nodes not-between plan)
+	(when before
+	  (let ((plan
+		 (build-plan plan-steps (plan-goal plan) (union causal-links (causal-links plan))
+			     before not-between)))
+	    (setf (fixed-links plan) (causal-links e-plan))
+	    plan))))))
 
 ;;============================ plan histories ================================
 
@@ -19491,28 +19485,28 @@ an interest in plan relative to the goal-stack goals. |#
 (defun plan-histories (plan)
   (when (numberp plan) (setf plan (plan plan)))
   (multiple-value-bind
-   (parents generators)
-   (plan-parents plan)
-   (values
-    (unionmapcar
-     #'(lambda (x)
-	 (if x
-	     (mapcar
-	      #'(lambda (z) (cons (car x) z))
-	      (gencrossproduct
-	       (mapcar
-		#'(lambda (p)
-		    (multiple-value-bind
-		     (histories p-generators)
-		     (plan-histories p)
-		     (mapcar
-		      #'(lambda (h)
-			  (dolist (g p-generators) (pushnew g generators :test 'equal))
-			  (if h (list p h) (list p))) histories)))
-		(cdr x))))
-	   (list nil)))
-     parents)
-    generators)))
+      (parents generators)
+      (plan-parents plan)
+    (values
+     (unionmapcar
+      #'(lambda (x)
+	  (if x
+	      (mapcar
+	       #'(lambda (z) (cons (car x) z))
+	       (gencrossproduct
+		(mapcar
+		 #'(lambda (p)
+		     (multiple-value-bind
+			 (histories p-generators)
+			 (plan-histories p)
+		       (mapcar
+			#'(lambda (h)
+			    (dolist (g p-generators) (pushnew g generators :test 'equal))
+			    (if h (list p h) (list p))) histories)))
+		 (cdr x))))
+	    (list nil)))
+      parents)
+     generators)))
 
 (defun space-indent (depth &optional stream)
   (dotimes (i depth) (princ " " stream)))
@@ -19546,17 +19540,17 @@ an interest in plan relative to the goal-stack goals. |#
   (terpri) (space-indent (1- indent)) (princ "Plan history for Plan #") (princ (plan-number plan)) (terpri)
   (space-indent (1- indent)) (princ "---------------------------------") (terpri)
   (multiple-value-bind
-   (histories generators)
-   (plan-histories plan)
-   (dolist (H histories)
-     (display-plan-history plan H (list indent) full nil ) (terpri))
-   (dolist (g (setdifference generators used-generators))
-     (terpri) (terpri) (space-indent (1- (+ indent 40)))
-     (princ "Plan #") (princ (plan-number (mem2 g))) (princ " was generated from Plan #")
-     (princ (plan-number (mem3 g))) (princ " using ") (princ (mem1 g)) (terpri)
-     (space-indent (1- (+ indent 40)))
-     (princ "---------------------------------------------------------------------------------------") (terpri)
-     (plan-history (mem3 g) full (+ indent 40) (union generators used-generators)))))
+      (histories generators)
+      (plan-histories plan)
+    (dolist (H histories)
+      (display-plan-history plan H (list indent) full nil ) (terpri))
+    (dolist (g (setdifference generators used-generators))
+      (terpri) (terpri) (space-indent (1- (+ indent 40)))
+      (princ "Plan #") (princ (plan-number (mem2 g))) (princ " was generated from Plan #")
+      (princ (plan-number (mem3 g))) (princ " using ") (princ (mem1 g)) (terpri)
+      (space-indent (1- (+ indent 40)))
+      (princ "---------------------------------------------------------------------------------------") (terpri)
+      (plan-history (mem3 g) full (+ indent 40) (union generators used-generators)))))
 
 ;;============================ running a plan-set ================================
 
@@ -19640,6 +19634,8 @@ an interest in plan relative to the goal-stack goals. |#
   (princ *test-log*)
   (terpri) (princ ")")
   (terpri))
+
+;;SECTION algebra
 
 ;; ====================FACTORING POLYNOMIALS ==================
 ;; For a sketch of the algorithm, see "factoring.doc".
@@ -19821,10 +19817,19 @@ The default values of atoms should be set by ANALYZE-PRODUCT-STRUCTURE.
 			(t 1))))))
 	(t (car x))))
 
+#|
 (defun as-quotient (x y)
   (cond ((eq x 0) 0)
 	((eq y 1) x)
 	(t (list '/ x y))))
+|#
+
+(defun as-quotient (x y)
+  (cond
+   ((eq y 1) x)
+   ((and (listp x) (eq (car x) '-) (null (mem3 x)) (listp y) (eq (car y) '-) (null (mem3 y)))
+    (list '/ (mem2 x) (mem2 y)))
+   (t (list '/ x y))))
 
 ;; fac is an atom, an exponentiation, a power of the latter, or a sum or difference of such products and terms.
 (defun dif-atoms (fac)
@@ -19900,10 +19905,10 @@ The default values of atoms should be set by ANALYZE-PRODUCT-STRUCTURE.
 ;; This returns the integer for a floating point number
 (defun float-integer (x)
   (multiple-value-bind
-   (a b c)
-   (decode-float x)
-   (declare (ignore a c))
-   b))
+      (a b c)
+      (decode-float x)
+    (declare (ignore a c))
+    b))
 
 (defun factor-number (n)
   (cond ((< n 0) (negate (factor-number (- n))))
@@ -20029,20 +20034,20 @@ The default values of atoms should be set by ANALYZE-PRODUCT-STRUCTURE.
 	     (remove-common-factors (mem2 left) (mem3 left)))
 	    ((mem3 left) (remove-common-factors (mem2 left) (list '+ (mem3 left))))
 	    (t (multiple-value-bind
-		(terms factors)
-		(remove-common-factors (mem2 left))
-		(values (if (mem2 terms) (list (mem2 terms) (mem1 terms))
-			  (list (negate (mem1 terms)) nil))
-			factors)))))
+		   (terms factors)
+		   (remove-common-factors (mem2 left))
+		 (values (if (mem2 terms) (list (mem2 terms) (mem1 terms))
+			   (list (negate (mem1 terms)) nil))
+			 factors)))))
      ((and (listp (mem3 left)) (eq (car (mem3 left)) '+))
       (remove-common-factors (list '+ (mem2 left)) (mem3 left)))
      ((mem3 left) (remove-common-factors (list '+ (mem2 left)) (list '+ (mem3 left))))
      (t (multiple-value-bind
-	 (terms factors)
-	 (remove-common-factors (list '+ (mem2 left)))
-	 (values (if (mem2 terms) (list (mem2 terms) (mem1 terms))
-		   (list (negate (mem1 terms)) nil))
-		 factors)))))
+	    (terms factors)
+	    (remove-common-factors (list '+ (mem2 left)))
+	  (values (if (mem2 terms) (list (mem2 terms) (mem1 terms))
+		    (list (negate (mem1 terms)) nil))
+		  factors)))))
    ((and (and (listp left) (or (eq (car left) '+) (eq (car left) '*)))
 	 (or (null right) (and (listp right) (or (eq (car right) '+) (eq (car right) '*)))))
     (when (and (listp left) (eq (car left) '*)) (setf left (list '+ left)))
@@ -20055,7 +20060,7 @@ The default values of atoms should be set by ANALYZE-PRODUCT-STRUCTURE.
 	       (cond ((and (listp (mem2 left)) (eq (car (mem2 left)) '+))
 		      (when (eq (mem2 (mem2 left)) 1)
 			(return-from remove-common-factors
-				     (list (as-sum (cdr left)) (as-sum (cdr right)))))
+			  (list (as-sum (cdr left)) (as-sum (cdr right)))))
 		      (setf term (mem2 (mem2 left)))
 		      (setf left-terms (cddr (mem2  left))))
 		     (t (setf term (mem2 left))))
@@ -20065,7 +20070,7 @@ The default values of atoms should be set by ANALYZE-PRODUCT-STRUCTURE.
 	      ((eq (car left) '+)
 	       (when (eq (mem2 left) 1)
 		 (return-from remove-common-factors
-			      (list (as-sum (cdr left)) (as-sum (cdr right)))))
+		   (list (as-sum (cdr left)) (as-sum (cdr right)))))
 	       (setf term (mem2 left))
 	       (setf left-terms (cddr left)))
 	      (t (setf term left)))
@@ -20261,7 +20266,8 @@ The default values of atoms should be set by ANALYZE-PRODUCT-STRUCTURE.
 	(when excluded-atoms
 	  (list (setdifference atoms excluded-atoms) excluded-atoms))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;SECTION polynomial
+
 #|								ARITHMETICAL SIMPLIFICATION
 
 D-SIMPLIFY simplifies terms to the form ((t1 ... tn) (tm ... tk)), representing (- (+ t1 ... tn) (+ tm ... tk)) where the ti are atoms or products of atoms.
@@ -20324,52 +20330,52 @@ Then SIMPLIFY converts them into standard form. |#
 	(t x)))
 
 (labels
- ()
+    ()
 
- (defun convert-to-prefix (x)
-   (cond ((atom x) x)
-	 ((equal (car x) '-) (list '- (convert-to-prefix (mem2 x))))
-	 ((equal (mem2 x) '+) (cons '+ (cons (convert-to-prefix (mem1 x)) (convert-list-to-prefix (cddr x)))))
-	 ((equal (mem2 x) '-) (cons '- (cons (convert-to-prefix (mem1 x)) (convert-list-to-prefix (cddr x)))))
-	 ((equal (mem2 x) '*) (cons '* (cons (convert-to-prefix (mem1 x)) (convert-list-to-prefix (cddr x)))))
-	 ((equal (mem2 x) '/) (list '/ (convert-to-prefix (mem1 x)) (convert-to-prefix (mem3 x))))
-	 ((equal (mem2 x) '^) (list 'expt (convert-to-prefix (mem1 x)) (convert-to-prefix (mem3 x))))
-	 (t x)))
+  (defun convert-to-prefix (x)
+    (cond ((atom x) x)
+	  ((equal (car x) '-) (list '- (convert-to-prefix (mem2 x))))
+	  ((equal (mem2 x) '+) (cons '+ (cons (convert-to-prefix (mem1 x)) (convert-list-to-prefix (cddr x)))))
+	  ((equal (mem2 x) '-) (cons '- (cons (convert-to-prefix (mem1 x)) (convert-list-to-prefix (cddr x)))))
+	  ((equal (mem2 x) '*) (cons '* (cons (convert-to-prefix (mem1 x)) (convert-list-to-prefix (cddr x)))))
+	  ((equal (mem2 x) '/) (list '/ (convert-to-prefix (mem1 x)) (convert-to-prefix (mem3 x))))
+	  ((equal (mem2 x) '^) (list 'expt (convert-to-prefix (mem1 x)) (convert-to-prefix (mem3 x))))
+	  (t x)))
 
- (defun convert-list-to-prefix (x)
-   (let ((results nil))
-     (dolist (y x)
-       (when (and (not (eq y '+)) (not (eq y '-)) (not (eq y '*)))
-	 (push (convert-to-prefix y) results)))
-     (reverse results))))
+  (defun convert-list-to-prefix (x)
+    (let ((results nil))
+      (dolist (y x)
+	(when (and (not (eq y '+)) (not (eq y '-)) (not (eq y '*)))
+	  (push (convert-to-prefix y) results)))
+      (reverse results))))
 
 (labels
- ()
+    ()
 
- ;; This returns the list of multipliers resulting from turning a quotient into a multiplication
- (defun collect-quotient-multipliers (x)
-   (let ((mult nil))
-     (cond ((listp (mem2 x))
-	    (cond ((eq (car (mem2 x)) '*) (setf mult (collect-multipliers (cdr (mem2 x)))))
-		  ((eq (car (mem2 x)) '/) (setf mult (collect-quotient-multipliers (mem2 x))))
-		  ((eq (car (mem2 x)) 'expt) (setf mult (list (list (mem2 (mem2 x)) (mem3 (mem2 x))))))
-		  (t (setf mult (list (list (mem2 x) 1))))))
-	   ((not (eq (mem2 x) 1)) (setf mult (list (list (mem2 x) 1)))))
-     (append mult (mapcar #'(lambda (z) (list (car z) (list '- (mem2 z)))) (collect-multipliers (cddr x))))))
+  ;; This returns the list of multipliers resulting from turning a quotient into a multiplication
+  (defun collect-quotient-multipliers (x)
+    (let ((mult nil))
+      (cond ((listp (mem2 x))
+	     (cond ((eq (car (mem2 x)) '*) (setf mult (collect-multipliers (cdr (mem2 x)))))
+		   ((eq (car (mem2 x)) '/) (setf mult (collect-quotient-multipliers (mem2 x))))
+		   ((eq (car (mem2 x)) 'expt) (setf mult (list (list (mem2 (mem2 x)) (mem3 (mem2 x))))))
+		   (t (setf mult (list (list (mem2 x) 1))))))
+	    ((not (eq (mem2 x) 1)) (setf mult (list (list (mem2 x) 1)))))
+      (append mult (mapcar #'(lambda (z) (list (car z) (list '- (mem2 z)))) (collect-multipliers (cddr x))))))
 
- ;; This returns the expanded list of multipliers for a multiplication term
- ;; x is the cdr of the term. The multipliers are represented in the form
- ;; (x n) where n is the exponent.
- (defun collect-multipliers (x)
-   (let ((mult nil))
-     (dolist (y x)
-       (cond ((listp y)
-	      (cond ((equal (car y) '*) (setf mult (append mult (collect-multipliers (cdr y)))))
-		    ((equal (car y) '/) (setf mult (append mult (collect-quotient-multipliers y))))
-		    ((equal (car y) 'expt) (push (list (mem2 y) (mem3 y)) mult))
-		    (t (push (list y 1) mult))))
-	     ((not (eq y 1)) (push (list y 1) mult))))
-     mult)))
+  ;; This returns the expanded list of multipliers for a multiplication term
+  ;; x is the cdr of the term. The multipliers are represented in the form
+  ;; (x n) where n is the exponent.
+  (defun collect-multipliers (x)
+    (let ((mult nil))
+      (dolist (y x)
+	(cond ((listp y)
+	       (cond ((equal (car y) '*) (setf mult (append mult (collect-multipliers (cdr y)))))
+		     ((equal (car y) '/) (setf mult (append mult (collect-quotient-multipliers y))))
+		     ((equal (car y) 'expt) (push (list (mem2 y) (mem3 y)) mult))
+		     (t (push (list y 1) mult))))
+	      ((not (eq y 1)) (push (list y 1) mult))))
+      mult)))
 ;; (collect-multipliers (cdr '(* x (* y z) (/ u v)))) = ((x 1) (z 1) (y 1) (u 1) (v (- 1)))
 
 ;; n is an integer
@@ -20380,11 +20386,11 @@ Then SIMPLIFY converts them into standard form. |#
 	    (unionmapcar
 	     #'(lambda (y)
 		 (multiple-value-bind
-		  (k remainder)
-		  (round (/ (count y (cdr dif) :test #'term-equal) n))
-		  (when (not (zerop remainder)) (return-from divide-by-integer))
-		  (let ((z nil)) (dotimes (i k) (push y z))
-		       z)))
+		     (k remainder)
+		     (round (/ (count y (cdr dif) :test #'term-equal) n))
+		   (when (not (zerop remainder)) (return-from divide-by-integer))
+		   (let ((z nil)) (dotimes (i k) (push y z))
+			z)))
 	     (remove-duplicates (cdr dif) :test 'term-equal))))
 	  ((eq (car dif) '-)
 	   (cond ((mem3 dif)
@@ -20401,633 +20407,633 @@ Then SIMPLIFY converts them into standard form. |#
 (setf *repeated-exponents* nil)
 
 (labels
- ()
+    ()
 
- (defun subtract-terms (x y)
-   (simplify-difference (list '- x y)))
+  (defun subtract-terms (x y)
+    (simplify-difference (list '- x y)))
 
- (defun simplify (x &key (expand-times nil))
-   (cond
-    ((atom x) x)
-    ((eq (car x) '-) (simplify-difference x))
-    ((eq (car x) '+) (simplify-sum x))
-    ((eq (car x) '*) (simplify-product x :expand-times expand-times))
-    ((eq (car x) '/) (simplify-quotient x))
-    ((eq (car x) 'expt) (simplify-exponentiation x :expand-times expand-times))))
+  (defun simplify (x &key (expand-times nil))
+    (cond
+     ((atom x) x)
+     ((eq (car x) '-) (simplify-difference x))
+     ((eq (car x) '+) (simplify-sum x))
+     ((eq (car x) '*) (simplify-product x :expand-times expand-times))
+     ((eq (car x) '/) (simplify-quotient x))
+     ((eq (car x) 'expt) (simplify-exponentiation x :expand-times expand-times))))
 
- (defun factor-atoms (x)
-   (cond
-    ((atom x) x)
-    ((eq (car x) '+)
-     (multiple-value-bind
-      (base factors)
-      (remove-common-factors x nil)
-      (as-product
-       (cons (car base)
-	     (mapcar
-	      #'(lambda (z) (if (eq (mem2 z) 1) (mem1 z) (list 'expt (car z) (mem2 z)))) factors)))))
-    ((eq (car x) '-)
-     (multiple-value-bind
-      (base factors)
-      (remove-common-factors (mem2 x) (mem3 x))
-      (cond (factors
-	     (as-product
-	      (cons
-	       (if (mem2 base) (list '- (car base) (mem2 base)) (list '- (car base)))
+  (defun factor-atoms (x)
+    (cond
+     ((atom x) x)
+     ((eq (car x) '+)
+      (multiple-value-bind
+	  (base factors)
+	  (remove-common-factors x nil)
+	(as-product
+	 (cons (car base)
 	       (mapcar
-		#'(lambda (z) (if (eq (mem2 z) 1) (mem1 z) (list 'expt (car z) (mem2 z)))) factors))))
-	    ((mem2 base) (list '- (car base) (mem2 base)))
-	    (t (list '- (car base))))))
-    ((eq (car x) '*)
-     (let ((xx (mapcar #'factor-atoms (cdr x))))
-       (cond ((equal (cdr x) xx) x)
-	     (t (simplify (as-product xx))))))
-    ((eq (car x) '/)
-     (combine-exponents
-      (collect-quotient-multipliers (list '/ (factor-atoms (mem2 x)) (factor-atoms (mem3 x))))))
-    ((eq (car x) 'expt)
-     (multiple-value-bind
-      (base factors)
-      (remove-common-factors (mem2 x) nil)
-      (as-product
-       (cons (list 'expt (if (mem2 base) (list '- (car base) (mem2 base)) (car base))
-		   (mem3 x))
-	     (mapcar #'(lambda (z)
-			 (let ((ex (list '* (mem2 z) (mem3 x))))
-			   (if (eq ex 1) (mem1 z) (list 'expt (mem1 z) ex)))) factors)))))))
+		#'(lambda (z) (if (eq (mem2 z) 1) (mem1 z) (list 'expt (car z) (mem2 z)))) factors)))))
+     ((eq (car x) '-)
+      (multiple-value-bind
+	  (base factors)
+	  (remove-common-factors (mem2 x) (mem3 x))
+	(cond (factors
+	       (as-product
+		(cons
+		 (if (mem2 base) (list '- (car base) (mem2 base)) (list '- (car base)))
+		 (mapcar
+		  #'(lambda (z) (if (eq (mem2 z) 1) (mem1 z) (list 'expt (car z) (mem2 z)))) factors))))
+	      ((mem2 base) (list '- (car base) (mem2 base)))
+	      (t (list '- (car base))))))
+     ((eq (car x) '*)
+      (let ((xx (mapcar #'factor-atoms (cdr x))))
+	(cond ((equal (cdr x) xx) x)
+	      (t (simplify (as-product xx))))))
+     ((eq (car x) '/)
+      (combine-exponents
+       (collect-quotient-multipliers (list '/ (factor-atoms (mem2 x)) (factor-atoms (mem3 x))))))
+     ((eq (car x) 'expt)
+      (multiple-value-bind
+	  (base factors)
+	  (remove-common-factors (mem2 x) nil)
+	(as-product
+	 (cons (list 'expt (if (mem2 base) (list '- (car base) (mem2 base)) (car base))
+		     (mem3 x))
+	       (mapcar #'(lambda (z)
+			   (let ((ex (list '* (mem2 z) (mem3 x))))
+			     (if (eq ex 1) (mem1 z) (list 'expt (mem1 z) ex)))) factors)))))))
 
- (defun factor-without-cancellation (dif)
-   (let ((b (find-if #'(lambda (x) (unique-power-in-formula x dif)) (dif-atoms dif))))
-     (cond
-      ((null b) (factor-square dif))
-      (t (let ((f0 (subterm-of #'(lambda (x) (subproduct b x)) dif)))
-	   (cond
-	    ((or (atom f0)
-		 (and (eq (car f0) '-) (null (mem3 f0)) (atom (mem2 f0))))
-	     dif)
-	    (t
-	     (let* ((f1 (factor (order-factor (decrement-term-count b f0))))   ;; order factors here
-		    (factors
-		     (cond ((and (listp f1) (eq (car f1) '*)) (cdr f1))
-			   (t (list f1))))
-		    (dif* dif)
-		    (final-factors nil))
-	       (dolist (f factors)
-		 (let ((d (divide-difference dif* f)))
-		   (when d
-		     (push f final-factors)
-		     (setf dif* d))))
-	       (when final-factors
-		 (as-product (cons dif* final-factors)))))))))))
+  (defun factor-without-cancellation (dif)
+    (let ((b (find-if #'(lambda (x) (unique-power-in-formula x dif)) (dif-atoms dif))))
+      (cond
+       ((null b) (factor-square dif))
+       (t (let ((f0 (subterm-of #'(lambda (x) (subproduct b x)) dif)))
+	    (cond
+	     ((or (atom f0)
+		  (and (eq (car f0) '-) (null (mem3 f0)) (atom (mem2 f0))))
+	      dif)
+	     (t
+	      (let* ((f1 (factor (order-factor (decrement-term-count b f0))))   ;; order factors here
+		     (factors
+		      (cond ((and (listp f1) (eq (car f1) '*)) (cdr f1))
+			    (t (list f1))))
+		     (dif* dif)
+		     (final-factors nil))
+		(dolist (f factors)
+		  (let ((d (divide-difference dif* f)))
+		    (when d
+		      (push f final-factors)
+		      (setf dif* d))))
+		(when final-factors
+		  (as-product (cons dif* final-factors)))))))))))
 
- (defun factor-with-cancellation (dif partition)
-   (let* ((f1 (factor-square
-	       (subterm-of
-		#'(lambda (x) (some #'(lambda (y) (occur* y x)) (mem1 partition)))
-		dif)))
-	  (f2 (factor-square
-	       (negate
+  (defun factor-with-cancellation (dif partition)
+    (let* ((f1 (factor-square
 		(subterm-of
-		 #'(lambda (x) (some #'(lambda (y) (occur* y x)) (mem2 partition)))
-		 dif)))))
-     (when (and f1 f2)
-       (let ((factor1 (list '+ f1 f2))
-	     (factor2 (list '- f1 f2)))
-	 (when (eq 0 (subtract-terms dif (multiply-terms factor1 factor2)))
-	   (order-factors factor1 factor2))))))
+		 #'(lambda (x) (some #'(lambda (y) (occur* y x)) (mem1 partition)))
+		 dif)))
+	   (f2 (factor-square
+		(negate
+		 (subterm-of
+		  #'(lambda (x) (some #'(lambda (y) (occur* y x)) (mem2 partition)))
+		  dif)))))
+      (when (and f1 f2)
+	(let ((factor1 (list '+ f1 f2))
+	      (factor2 (list '- f1 f2)))
+	  (when (eq 0 (subtract-terms dif (multiply-terms factor1 factor2)))
+	    (order-factors factor1 factor2))))))
 
- ;; This fails in the special case in which every atom the occurs in one factor
- ;;  but not the other occurs with multiple powers in that factor.
- (defun factor-difference (dif)
-   (let ((n (ignore-errors (eval dif))))
-     (cond
-      ((integerp n) (factor-number n))
-      ((and (listp dif) (eq (car dif) 'expt) (integerp (mem3 dif)))
-       (let ((y nil)) (dotimes (i (mem3 dif)) (push (mem2 dif) y))
-	    (cons '* y)))
-      ((eq (car dif) '*) dif)
-      (t
-       (let ((f-dif (factor-atoms dif))
-	     (dif* dif))
-	 (when (and (listp f-dif) (eq (car f-dif) '*)) (setf dif* (mem2 f-dif)))
-	 (let* ((partition (possible-cancellation dif*))
-		(factorization
-		 (cond (partition (factor-with-cancellation dif* partition))
-		       (t (factor-without-cancellation dif*)))))
-	   (cond (factorization
-		  (cond ((eq (car f-dif) '*) (flatten-product (list '* factorization (as-product (cddr f-dif)))))
-			(t factorization)))
-		 (t f-dif))))))))
+  ;; This fails in the special case in which every atom the occurs in one factor
+  ;;  but not the other occurs with multiple powers in that factor.
+  (defun factor-difference (dif)
+    (let ((n (ignore-errors (eval dif))))
+      (cond
+       ((integerp n) (factor-number n))
+       ((and (listp dif) (eq (car dif) 'expt) (integerp (mem3 dif)))
+	(let ((y nil)) (dotimes (i (mem3 dif)) (push (mem2 dif) y))
+	     (cons '* y)))
+       ((eq (car dif) '*) dif)
+       (t
+	(let ((f-dif (factor-atoms dif))
+	      (dif* dif))
+	  (when (and (listp f-dif) (eq (car f-dif) '*)) (setf dif* (mem2 f-dif)))
+	  (let* ((partition (possible-cancellation dif*))
+		 (factorization
+		  (cond (partition (factor-with-cancellation dif* partition))
+			(t (factor-without-cancellation dif*)))))
+	    (cond (factorization
+		   (cond ((eq (car f-dif) '*) (flatten-product (list '* factorization (as-product (cddr f-dif)))))
+			 (t factorization)))
+		  (t f-dif))))))))
 
- #|
- (defun factor (x)
- (let ((x* (factor-difference x)))
- (cond ((equal x x*) x)
- (t (flatten-product (cons '* (mapcar #'factor (cdr x*))))))))
- |#
+  #|
+  (defun factor (x)
+  (let ((x* (factor-difference x)))
+  (cond ((equal x x*) x)
+  (t (flatten-product (cons '* (mapcar #'factor (cdr x*))))))))
+  |#
 
- (defun factor (x)
-   (cond ((atom x) x)
-	 ((or (eq (car x) '+) (eq (car x) '-) (eq (car x) 'expt))
-	  (let ((x* (factor-difference x)))
-	    (cond ((atom x*) x*)
-		  ((equal (car x*) '*)
-		   (flatten-product (cons '* (mapcar #'factor (cdr x*)))))
-		  (t x*))))
-	 ((eq (car x) '*)
-	  (flatten-product (as-product (mapcar #'factor (cdr x)))))
-	 ((eq (car x) '/) (as-quotient (factor (mem2 x)) (factor (mem3 x))))
-	 (t x)))
+  (defun factor (x)
+    (cond ((atom x) x)
+	  ((or (eq (car x) '+) (eq (car x) '-) (eq (car x) 'expt))
+	   (let ((x* (factor-difference x)))
+	     (cond ((atom x*) x*)
+		   ((equal (car x*) '*)
+		    (flatten-product (cons '* (mapcar #'factor (cdr x*)))))
+		   (t x*))))
+	  ((eq (car x) '*)
+	   (flatten-product (as-product (mapcar #'factor (cdr x)))))
+	  ((eq (car x) '/) (as-quotient (factor (mem2 x)) (factor (mem3 x))))
+	  (t x)))
 
- (defun combine-exponents0 (x)
-   (let ((x-rest x) (mult1 nil) (mult2 nil) (sign nil))
-     (loop (let* ((y (car x-rest))
-		  (y-terms (subset #'(lambda (z) (term-equal (car z) (car y))) x-rest))
-		  (neg-y-terms (subset #'(lambda (z) (term-neg-equal (car z) (car y))) x-rest)))
-	     (setf x-rest (setdifference (setdifference x-rest y-terms) neg-y-terms))
-	     (when (eq (car y) 0) (return-from combine-exponents0 0))
-	     (when (not (eq (car y) 1))
-	       (let* ((pos-ex (mapcar #'(lambda (z) (mem2 z)) y-terms))
-		      (neg-ex (mapcar #'(lambda (z) (mem2 z)) neg-y-terms))
-		      (ex (simplify-sum (cons '+ (append pos-ex neg-ex)))))
-		 (let ((y (ignore-errors (eval ex))))
-		   (when (integerp y) (setf ex y)))
-		 (setf neg-ex (if neg-ex (cons '+ neg-ex) 0))
-		 (let ((y (ignore-errors (eval neg-ex))))
-		   (when (integerp y) (setf neg-ex y)))
-		 (cond ((equal (car y) '(- 1)) (push (cons '+ pos-ex) sign))
-		       ((not (eq neg-ex 0)) (push neg-ex sign)))
-		 (when (not (equal (car y) '(- 1)))
-		   (cond ((eq ex 1) (push (car y) mult1))
-			 ((equal ex -1) (push (car y) mult2))
-			 ((not (eq (car y) 1))
-			  (cond ((and (numberp ex) (< ex 0)) (push (list 'expt (car y) (- ex)) mult2))
-				((and (listp ex) (eq (car ex) '-) (null (cddr ex)))
-				 (push (list 'expt (car y) (mem2 ex)) mult2))
-				((and (not (eq ex 0)) (not (eq ex -1))) (push (list 'expt (car y) ex) mult1)))))))))
-	   (when (null x-rest)
-	     (let* ((sign-ex (if sign (simplify-sum (cons '+ sign)) 0))
-		    (y (ignore-errors (eval sign-ex))))
-	       (cond ((integerp y)
-		      (cond ((oddp y) (setf sign -1))
-			    (t (setf sign 1))))
-		     (t (setf sign (list 'expt '(- 1) sign-ex)))))
-	     (cond ((eq sign 1)
-		    (return (cond ((and (null mult1) (null mult2)) 1)
-				  ((null mult1) (list '/ 1 (as-product mult2)))
-				  ((null mult2) (as-product mult1))
-				  (t (list '/ (as-product mult1) (as-product mult2))))))
-		   ((eq sign -1)
-		    (return (cond ((and (null mult1) (null mult2)) -1)
-				  ((null mult1) (list '/ 1 (negate (as-product mult2))))
-				  ((null mult2) (negate (as-product mult1)))
-				  (t (list '/ (negate (as-product mult1)) (as-product mult2))))))
-		   (t
-		    (return (cond ((and (null mult1) (null mult2)) sign)
-				  ((null mult1) (list '/ sign (as-product mult2)))
-				  ((null mult2) (if (cdr mult1) (cons '* (cons sign mult1)) (list '* sign (car mult1))))
-				  (t (list '/ (if (cdr mult1) (cons '* (cons sign mult1)) (list '* sign (car mult1)))
-					   (as-product mult2)))))))))))
+  (defun combine-exponents0 (x)
+    (let ((x-rest x) (mult1 nil) (mult2 nil) (sign nil))
+      (loop (let* ((y (car x-rest))
+		   (y-terms (subset #'(lambda (z) (term-equal (car z) (car y))) x-rest))
+		   (neg-y-terms (subset #'(lambda (z) (term-neg-equal (car z) (car y))) x-rest)))
+	      (setf x-rest (setdifference (setdifference x-rest y-terms) neg-y-terms))
+	      (when (eq (car y) 0) (return-from combine-exponents0 0))
+	      (when (not (eq (car y) 1))
+		(let* ((pos-ex (mapcar #'(lambda (z) (mem2 z)) y-terms))
+		       (neg-ex (mapcar #'(lambda (z) (mem2 z)) neg-y-terms))
+		       (ex (simplify-sum (cons '+ (append pos-ex neg-ex)))))
+		  (let ((y (ignore-errors (eval ex))))
+		    (when (integerp y) (setf ex y)))
+		  (setf neg-ex (if neg-ex (cons '+ neg-ex) 0))
+		  (let ((y (ignore-errors (eval neg-ex))))
+		    (when (integerp y) (setf neg-ex y)))
+		  (cond ((equal (car y) '(- 1)) (push (cons '+ pos-ex) sign))
+			((not (eq neg-ex 0)) (push neg-ex sign)))
+		  (when (not (equal (car y) '(- 1)))
+		    (cond ((eq ex 1) (push (car y) mult1))
+			  ((equal ex -1) (push (car y) mult2))
+			  ((not (eq (car y) 1))
+			   (cond ((and (numberp ex) (< ex 0)) (push (list 'expt (car y) (- ex)) mult2))
+				 ((and (listp ex) (eq (car ex) '-) (null (cddr ex)))
+				  (push (list 'expt (car y) (mem2 ex)) mult2))
+				 ((and (not (eq ex 0)) (not (eq ex -1))) (push (list 'expt (car y) ex) mult1)))))))))
+	    (when (null x-rest)
+	      (let* ((sign-ex (if sign (simplify-sum (cons '+ sign)) 0))
+		     (y (ignore-errors (eval sign-ex))))
+		(cond ((integerp y)
+		       (cond ((oddp y) (setf sign -1))
+			     (t (setf sign 1))))
+		      (t (setf sign (list 'expt '(- 1) sign-ex)))))
+	      (cond ((eq sign 1)
+		     (return (cond ((and (null mult1) (null mult2)) 1)
+				   ((null mult1) (list '/ 1 (as-product mult2)))
+				   ((null mult2) (as-product mult1))
+				   (t (list '/ (as-product mult1) (as-product mult2))))))
+		    ((eq sign -1)
+		     (return (cond ((and (null mult1) (null mult2)) -1)
+				   ((null mult1) (list '/ 1 (negate (as-product mult2))))
+				   ((null mult2) (negate (as-product mult1)))
+				   (t (list '/ (negate (as-product mult1)) (as-product mult2))))))
+		    (t
+		     (return (cond ((and (null mult1) (null mult2)) sign)
+				   ((null mult1) (list '/ sign (as-product mult2)))
+				   ((null mult2) (if (cdr mult1) (cons '* (cons sign mult1)) (list '* sign (car mult1))))
+				   (t (list '/ (if (cdr mult1) (cons '* (cons sign mult1)) (list '* sign (car mult1)))
+					    (as-product mult2)))))))))))
 
- #|
- (defun f-simplify (num den)
- (cond
- ((atom num)
- (cond
- ((atom den) (if (eq num den) 1 (list '/ num den)))
- ((subproduct num den) (as-quotient 1 (factor-atom num den)))
- (t (list '/ num den))))
- ((or (eq (car num) '-) (eq (car num) '+) (eq (car num) 'expt))
- (cond
- ((not (productp den)) (or (divide-difference num den) (as-quotient num den)))
- (t
- (let ((factors (cdr den))
- (new-den nil))
- (loop
- (let ((d (divide-difference num (car factors))))
- (cond (d (setf num d))
- (t (push (car factors) new-den)))
- (setf factors (cdr factors))
- (when (null factors) (return (if new-den (as-quotient num (as-product new-den)) num)))))))))
- ((productp num)
- (let ((x0 (f-simplify (mem2 num) den)))
- (cond ((quotientp x0)
- (let ((x1 (f-simplify  (as-product (cddr num)) (mem3 x0))))
- (cond ((quotientp x1)
- (as-quotient (flatten-product (as-product (list (mem2 x0) (mem2 x1)))) (mem3 x1)))
- (t (flatten-product (as-product (list (mem2 x0) x1)))))))
- (t (as-product (cons x0 (cddr num)))))))
-     ; ((and (exponentiationp num) (eq (mem3 num) 1)) (f-simplify (mem2 num) den)) ; ;
-     ; ((and (exponentiationp num) (integerp (mem3 num)) (> (mem3 num) 1)) ; ;
-      ;  (f-simplify (list '* (mem2 num) (list 'expt (mem2 num) (1- (mem3 num)))) den)) ; ;
- (t
- (let ((d (divide-difference num den)))
- (or d (as-quotient num den))))))
- |#
+  #|
+  (defun f-simplify (num den)
+  (cond
+  ((atom num)
+  (cond
+  ((atom den) (if (eq num den) 1 (list '/ num den)))
+  ((subproduct num den) (as-quotient 1 (factor-atom num den)))
+  (t (list '/ num den))))
+  ((or (eq (car num) '-) (eq (car num) '+) (eq (car num) 'expt))
+  (cond
+  ((not (productp den)) (or (divide-difference num den) (as-quotient num den)))
+  (t
+  (let ((factors (cdr den))
+  (new-den nil))
+  (loop
+  (let ((d (divide-difference num (car factors))))
+  (cond (d (setf num d))
+  (t (push (car factors) new-den)))
+  (setf factors (cdr factors))
+  (when (null factors) (return (if new-den (as-quotient num (as-product new-den)) num)))))))))
+  ((productp num)
+  (let ((x0 (f-simplify (mem2 num) den)))
+  (cond ((quotientp x0)
+  (let ((x1 (f-simplify  (as-product (cddr num)) (mem3 x0))))
+  (cond ((quotientp x1)
+  (as-quotient (flatten-product (as-product (list (mem2 x0) (mem2 x1)))) (mem3 x1)))
+  (t (flatten-product (as-product (list (mem2 x0) x1)))))))
+  (t (as-product (cons x0 (cddr num)))))))
+     ; ((and (exponentiationp num) (eq (mem3 num) 1)) (f-simplify (mem2 num) den)) ; ; ; ; ;
+     ; ((and (exponentiationp num) (integerp (mem3 num)) (> (mem3 num) 1)) ; ; ; ; ;
+      ;  (f-simplify (list '* (mem2 num) (list 'expt (mem2 num) (1- (mem3 num)))) den)) ; ; ; ; ;
+  (t
+  (let ((d (divide-difference num den)))
+  (or d (as-quotient num den))))))
+  |#
 
- (defun f-simplify (num den)
-   (cond
-    ((atom num)
-     (cond
-      ((atom den) (if (eq num den) 1 (list '/ num den)))
-      ((subproduct num den) (as-quotient 1 (factor-atom num den)))
-      (t (list '/ num den))))
-    ((or (eq (car num) '-) (eq (car num) '+) )
-     (cond
-      ((not (productp den)) (or (divide-difference num den) (as-quotient num den)))
-      (t
-       (let ((factors (cdr den))
-	     (new-den nil))
-	 (loop
-	  (let ((d (divide-difference num (car factors))))
-	    (cond (d (setf num d))
-		  (t (push (car factors) new-den)))
-	    (setf factors (cdr factors))
-	    (when (null factors) (return (if new-den (as-quotient num (as-product new-den)) num)))))))))
-    ((productp num)
-     (let ((x0 (f-simplify (mem2 num) den)))
-       (cond ((quotientp x0)
-	      (let ((x1 (f-simplify  (as-product (cddr num)) (mem3 x0))))
-		(cond ((quotientp x1)
-		       (as-quotient (flatten-product (as-product (list (mem2 x0) (mem2 x1)))) (mem3 x1)))
-		      (t (flatten-product (as-product (list (mem2 x0) x1)))))))
-	     (t (as-product (cons x0 (cddr num)))))))
-    ((and (exponentiationp num) (eq (mem3 num) 1)) (f-simplify (mem2 num) den))
-    ((and (exponentiationp num) (integerp (mem3 num)) (> (mem3 num) 1))
-     (f-simplify (list '* (mem2 num) (list 'expt (mem2 num) (1- (mem3 num)))) den))
-    (t
-     (let ((d (divide-difference num den)))
-       (or d (as-quotient num den))))))
+  (defun f-simplify (num den)
+    (cond
+     ((atom num)
+      (cond
+       ((atom den) (if (eq num den) 1 (list '/ num den)))
+       ((subproduct num den) (as-quotient 1 (factor-atom num den)))
+       (t (list '/ num den))))
+     ((or (eq (car num) '-) (eq (car num) '+) )
+      (cond
+       ((not (productp den)) (or (divide-difference num den) (as-quotient num den)))
+       (t
+	(let ((factors (cdr den))
+	      (new-den nil))
+	  (loop
+	   (let ((d (divide-difference num (car factors))))
+	     (cond (d (setf num d))
+		   (t (push (car factors) new-den)))
+	     (setf factors (cdr factors))
+	     (when (null factors) (return (if new-den (as-quotient num (as-product new-den)) num)))))))))
+     ((productp num)
+      (let ((x0 (f-simplify (mem2 num) den)))
+	(cond ((quotientp x0)
+	       (let ((x1 (f-simplify  (as-product (cddr num)) (mem3 x0))))
+		 (cond ((quotientp x1)
+			(as-quotient (flatten-product (as-product (list (mem2 x0) (mem2 x1)))) (mem3 x1)))
+		       (t (flatten-product (as-product (list (mem2 x0) x1)))))))
+	      (t (as-product (cons x0 (cddr num)))))))
+     ((and (exponentiationp num) (eq (mem3 num) 1)) (f-simplify (mem2 num) den))
+     ((and (exponentiationp num) (integerp (mem3 num)) (> (mem3 num) 1))
+      (f-simplify (list '* (mem2 num) (list 'expt (mem2 num) (1- (mem3 num)))) den))
+     (t
+      (let ((d (divide-difference num den)))
+	(or d (as-quotient num den))))))
 
- #| We want to factor the denominator, and then divide the numerator by each factor. If that returns nil,
- we retain that factor in the denominator, otherwise we drop it and simplify the numerator. |#
- ;; This factors the denominator and tries dividing each factor into the numerator.
- (defun f-simplify-quotient (x)
+  #| We want to factor the denominator, and then divide the numerator by each factor. If that returns nil,
+  we retain that factor in the denominator, otherwise we drop it and simplify the numerator. |#
+  ;; This factors the denominator and tries dividing each factor into the numerator.
+  (defun f-simplify-quotient (x)
 					;(setf xx x) (terpri) (princ "f-simplify-quotient: ") (print-tree x) ;(break)
-   (cond
-    ((and (quotientp x) (not (occur '/ (mem2 x))) (not (occur '/ (mem3 x))))
-     (let ((num (simplify (mem2 x)))
-	   (den (factor (simplify (mem3 x)))))
-       (f-simplify num den)))
-    (t x)))
+    (cond
+     ((and (quotientp x) (not (occur '/ (mem2 x))) (not (occur '/ (mem3 x))))
+      (let ((num (simplify (mem2 x)))
+	    (den (factor (simplify (mem3 x)))))
+	(f-simplify num den)))
+     (t x)))
 
- ;; x is the list of multipliers returned by COLLECT-MULTIPLIERS
- (defun combine-exponents (x)
+  ;; x is the list of multipliers returned by COLLECT-MULTIPLIERS
+  (defun combine-exponents (x)
 					; (setf xxx x)
-   (or (e-assoc x *repeated-exponents*)
-       (let ((y (f-simplify-quotient (combine-exponents0 x)))) (push (cons x y) *repeated-exponents*) y)))
+    (or (e-assoc x *repeated-exponents*)
+	(let ((y (f-simplify-quotient (combine-exponents0 x)))) (push (cons x y) *repeated-exponents*) y)))
 
- ;; x and y are simplified terms
- (defun expand-times (x y)
-   (let ((x+ (append (crossproduct (mem1 x) (mem1 y))
-		     (crossproduct (mem2 x) (mem2 y))))
-	 (x- (append (crossproduct (mem1 x) (mem2 y))
-		     (crossproduct (mem2 x) (mem1 y)))))
-     (list (mapcar #'(lambda (z)
-		       (setf z (remove 1 z))
-		       (when (null z) (setf z  '(1)))
-		       (if (cdr z) (combine-exponents
-				    (collect-multipliers
-				     (cdr (flatten-product (cons '* z))))) (car z))) x+)
-	   (mapcar #'(lambda (z)
-		       (setf z (remove 1 z))
-		       (when (null z) (setf z  '(1)))
-		       (if (cdr z) (combine-exponents
-				    (collect-multipliers
-				     (cdr (flatten-product (cons '* z))))) (car z))) x-))))
+  ;; x and y are simplified terms
+  (defun expand-times (x y)
+    (let ((x+ (append (crossproduct (mem1 x) (mem1 y))
+		      (crossproduct (mem2 x) (mem2 y))))
+	  (x- (append (crossproduct (mem1 x) (mem2 y))
+		      (crossproduct (mem2 x) (mem1 y)))))
+      (list (mapcar #'(lambda (z)
+			(setf z (remove 1 z))
+			(when (null z) (setf z  '(1)))
+			(if (cdr z) (combine-exponents
+				     (collect-multipliers
+				      (cdr (flatten-product (cons '* z))))) (car z))) x+)
+	    (mapcar #'(lambda (z)
+			(setf z (remove 1 z))
+			(when (null z) (setf z  '(1)))
+			(if (cdr z) (combine-exponents
+				     (collect-multipliers
+				      (cdr (flatten-product (cons '* z))))) (car z))) x-))))
 
- ;; x is a product or the cdr of a product. This returns a simplified term.
- (defun expand-product (x)
-   (when (eq (car x) '*) (setf x (cdr x)))
-   (cond ((cdr x)
-	  (expand-times (d-simplify (car x) :expand-times t) (expand-product (cdr x))))
-	 (t (d-simplify (car x) :expand-times t))))
+  ;; x is a product or the cdr of a product. This returns a simplified term.
+  (defun expand-product (x)
+    (when (eq (car x) '*) (setf x (cdr x)))
+    (cond ((cdr x)
+	   (expand-times (d-simplify (car x) :expand-times t) (expand-product (cdr x))))
+	  (t (d-simplify (car x) :expand-times t))))
 
- #| D-SIMPLIFY leaves sums and differences in normal form. SIMPLIFY converts them into LISP terms. |#
- (defun d-simplify (x &key (expand-times nil))
-   (cond
-    ((atom x) (list (list x) nil))
-    ((eq (car x) '-) (d-simplify-difference x))
-    ((eq (car x) '+) (d-simplify-sum x))
-    ((eq (car x) '*) (d-simplify-product x :expand-times expand-times))
-    ((eq (car x) '/) (d-simplify-quotient x))
-    ((eq (car x) 'expt) (d-simplify-exponentiation x :expand-times expand-times))))
+  #| D-SIMPLIFY leaves sums and differences in normal form. SIMPLIFY converts them into LISP terms. |#
+  (defun d-simplify (x &key (expand-times nil))
+    (cond
+     ((atom x) (list (list x) nil))
+     ((eq (car x) '-) (d-simplify-difference x))
+     ((eq (car x) '+) (d-simplify-sum x))
+     ((eq (car x) '*) (d-simplify-product x :expand-times expand-times))
+     ((eq (car x) '/) (d-simplify-quotient x))
+     ((eq (car x) 'expt) (d-simplify-exponentiation x :expand-times expand-times))))
 
- (defun d-simplify-product (x &key expand-times)
-   (when (member 0 (cdr x)) (return-from d-simplify-product (list '(0) nil)))
-   (setf x (remove 1 x))
-   (when (mem '(- 1) (cdr x))
-     (setf x (remove '(- 1) x :test 'equal))
-     (cond ((cdr x) (setf x (negate x)))
-	   (t (return-from d-simplify-product (list nil '(1))))))
-   (let ((w (find-if #'(lambda (y) (and (listp y) (eq (car y) 'expt) (eq (mem2 y) (- 1)) (numberp (mem3 y))))
-		     (cdr x))))
-     (cond ((and w (evenp (mem3 w))) (setf x (remove w x :test 'equal)))
-	   (w (setf x (remove w x :test 'equal))
-	      (setf x (cons '* (cons (negate (mem2 x)) (cddr x)))))))
-   (cond ((null (cdr x)) 1)
-	 ((cddr x)
-	  (cond ((every #'atom x) (list (list x) nil))
-		(expand-times (expand-product (cdr x)))
-		(t (list (list (cons '* (mapcar #'(lambda (z) (simplify z)) (cdr x)))) nil))))
-	 (t (d-simplify (mem2 x)))))
+  (defun d-simplify-product (x &key expand-times)
+    (when (member 0 (cdr x)) (return-from d-simplify-product (list '(0) nil)))
+    (setf x (remove 1 x))
+    (when (mem '(- 1) (cdr x))
+      (setf x (remove '(- 1) x :test 'equal))
+      (cond ((cdr x) (setf x (negate x)))
+	    (t (return-from d-simplify-product (list nil '(1))))))
+    (let ((w (find-if #'(lambda (y) (and (listp y) (eq (car y) 'expt) (eq (mem2 y) (- 1)) (numberp (mem3 y))))
+		      (cdr x))))
+      (cond ((and w (evenp (mem3 w))) (setf x (remove w x :test 'equal)))
+	    (w (setf x (remove w x :test 'equal))
+	       (setf x (cons '* (cons (negate (mem2 x)) (cddr x)))))))
+    (cond ((null (cdr x)) 1)
+	  ((cddr x)
+	   (cond ((every #'atom x) (list (list x) nil))
+		 (expand-times (expand-product (cdr x)))
+		 (t (list (list (cons '* (mapcar #'(lambda (z) (simplify z)) (cdr x)))) nil))))
+	  (t (d-simplify (mem2 x)))))
 
- (defun d-simplify-difference (x)
-   (when (eq (car x) '-) (setf x (cdr x)))
-   (cond ((cdr x)
-	  (let* ((x2 (d-simplify (mem1 x) :expand-times t))
+  (defun d-simplify-difference (x)
+    (when (eq (car x) '-) (setf x (cdr x)))
+    (cond ((cdr x)
+	   (let* ((x2 (d-simplify (mem1 x) :expand-times t))
 					; (x3 (if (cddr x) (d-simplify-sum (cdr x))
 					;            (d-simplify (cadr x) :expand-times t)))
-		 (x3 (d-simplify (cadr x) :expand-times t))
-		 (x+ (append (mem1 x2) (mem2 x3)))
-		 (x- (append (mem2 x2) (mem1 x3))))
-	    (let ((x+0 nil))
-	      (dolist (y x+)
-		(block x+
-		       (dolist (z x-)
-			 (when (=== y z) (setf x- (remove z x- :count 1)) (return-from x+ nil)))
-		       (push y x+0)))
-	      (setf x+ x+0))
-	    (cond ((equal x- (list 0)) (list x+ nil))
-		  ((equal x+ (list 0)) (list nil x-))
-		  (t (list x+ x-)))))
-	 (t (let ((d (d-simplify (mem1 x) :expand-times t)))
-	      (list (mem2 d) (mem1 d))))))
+		  (x3 (d-simplify (cadr x) :expand-times t))
+		  (x+ (append (mem1 x2) (mem2 x3)))
+		  (x- (append (mem2 x2) (mem1 x3))))
+	     (let ((x+0 nil))
+	       (dolist (y x+)
+		 (block x+
+		   (dolist (z x-)
+		     (when (=== y z) (setf x- (remove z x- :count 1)) (return-from x+ nil)))
+		   (push y x+0)))
+	       (setf x+ x+0))
+	     (cond ((equal x- (list 0)) (list x+ nil))
+		   ((equal x+ (list 0)) (list nil x-))
+		   (t (list x+ x-)))))
+	  (t (let ((d (d-simplify (mem1 x) :expand-times t)))
+	       (list (mem2 d) (mem1 d))))))
 
- (defun d-simplify-sum (x)
-   (when (eq (car x) '+) (setf x (cdr x)))
-   (setf x (remove 0 x))
-   (cond ((null x) (list (list 0) nil))
-	 ((cdr x)
-	  (let ((c (mapcar #'(lambda (z) (d-simplify z :expand-times t)) x))
-		(x+ nil)
-		(x- nil))
-	    (dolist (y c)
-	      (setf x+ (append (car y) x+))
-	      (setf x- (append (cadr y) x-)))
-	    (let ((x+0 nil))
-	      (dolist (y x+)
-		(block x+
-		       (dolist (z x-)
-			 (when (=== y z) (setf x- (remove z x- :count 1)) (return-from x+ nil)))
-		       (push y x+0)))
-	      (setf x+ x+0))
-	    (list x+ x-)))
-	 (t (d-simplify (car x) :expand-times t))))
+  (defun d-simplify-sum (x)
+    (when (eq (car x) '+) (setf x (cdr x)))
+    (setf x (remove 0 x))
+    (cond ((null x) (list (list 0) nil))
+	  ((cdr x)
+	   (let ((c (mapcar #'(lambda (z) (d-simplify z :expand-times t)) x))
+		 (x+ nil)
+		 (x- nil))
+	     (dolist (y c)
+	       (setf x+ (append (car y) x+))
+	       (setf x- (append (cadr y) x-)))
+	     (let ((x+0 nil))
+	       (dolist (y x+)
+		 (block x+
+		   (dolist (z x-)
+		     (when (=== y z) (setf x- (remove z x- :count 1)) (return-from x+ nil)))
+		   (push y x+0)))
+	       (setf x+ x+0))
+	     (list x+ x-)))
+	  (t (d-simplify (car x) :expand-times t))))
 
- (defun d-simplify-quotient (x)
-   (cond ((term-equal (mem2 x) (mem3 x)) (list  (list 1) nil))
-	 ((term-neg-equal (mem2 x) (mem3 x)) (list (list -1) nil))
-	 (t
-	  (list (list (combine-exponents
-		       (collect-quotient-multipliers
-			(list '/ (factor-atoms (mem2 x)) (factor-atoms (mem3 x)))))) nil))))
+  (defun d-simplify-quotient (x)
+    (cond ((term-equal (mem2 x) (mem3 x)) (list  (list 1) nil))
+	  ((term-neg-equal (mem2 x) (mem3 x)) (list (list -1) nil))
+	  (t
+	   (list (list (combine-exponents
+			(collect-quotient-multipliers
+			 (list '/ (factor-atoms (mem2 x)) (factor-atoms (mem3 x)))))) nil))))
 
- (defun d-simplify-exponentiation (x &key recursive-call expand-times)
-   (let ((base (mem2 x))
-	 (n (if recursive-call (mem3 x) (simplify (mem3 x)))))
-     (let ((y (ignore-errors (eval n))))
-       (when (integerp y) (setf n y)))
-     (cond ((eq n 0) (list (list 1) nil))
-	   ((eq n 1) (d-simplify base))
-	   ((equal n -1) (list (list (list '/ 1 (simplify base))) nil))
-	   ((and (integerp n) expand-times)
-	    (let ((y nil) (s-base (simplify base)))
-	      (cond ((atom s-base) (list (list (list 'expt s-base n)) nil))
-		    (t (dotimes (i n) (push s-base y))
-		       (d-simplify-product (cons '* y) :expand-times t)))))
-	   ((eq base 1) (list (list 1) nil))
-	   ((eq base 0) (list (list 0) nil))
-	   ((and (listp base) (eq (car base) '/))
-	    (list (list (list '* (simplify-exponentiation (list 'expt (mem2 base) n) :recursive-call t)
-			      (simplify-exponentiation (list 'expt (mem3 base) (negate n)) :recursive-call t)))
-		  nil))
-	   ((and (listp base) (eq (car base) '*))
-	    (list
+  (defun d-simplify-exponentiation (x &key recursive-call expand-times)
+    (let ((base (mem2 x))
+	  (n (if recursive-call (mem3 x) (simplify (mem3 x)))))
+      (let ((y (ignore-errors (eval n))))
+	(when (integerp y) (setf n y)))
+      (cond ((eq n 0) (list (list 1) nil))
+	    ((eq n 1) (d-simplify base))
+	    ((equal n -1) (list (list (list '/ 1 (simplify base))) nil))
+	    ((and (integerp n) expand-times)
+	     (let ((y nil) (s-base (simplify base)))
+	       (cond ((atom s-base) (list (list (list 'expt s-base n)) nil))
+		     (t (dotimes (i n) (push s-base y))
+			(d-simplify-product (cons '* y) :expand-times t)))))
+	    ((eq base 1) (list (list 1) nil))
+	    ((eq base 0) (list (list 0) nil))
+	    ((and (listp base) (eq (car base) '/))
+	     (list (list (list '* (simplify-exponentiation (list 'expt (mem2 base) n) :recursive-call t)
+			       (simplify-exponentiation (list 'expt (mem3 base) (negate n)) :recursive-call t)))
+		   nil))
+	    ((and (listp base) (eq (car base) '*))
 	     (list
-	      (cons
-	       '* (mapcar #'(lambda (y) (simplify-exponentiation (list 'expt y n) :recursive-call t))
-			  (cdr base))))))
-	   ((equal base '(- 1)) (list (list 'expt base n) nil))
+	      (list
+	       (cons
+		'* (mapcar #'(lambda (y) (simplify-exponentiation (list 'expt y n) :recursive-call t))
+			   (cdr base))))))
+	    ((equal base '(- 1)) (list (list 'expt base n) nil))
 					; ((and (listp base) (eq n 2) (or (eq (car base) '+) (eq (car base) '-)))
 					;   (d-simplify-product (list '* base base) t))
-	   (t (list (list (list 'expt (simplify base) n)) nil)))))
+	    (t (list (list (list 'expt (simplify base) n)) nil)))))
 
- (defun simplify-sum (x)
-   (format-difference (d-simplify-sum x)))
+  (defun simplify-sum (x)
+    (format-difference (d-simplify-sum x)))
 
- ;; This divides a sum or difference of products (or exponentials), or in the limiting case, a single
- ;; product or exponential, by atom, where it is already know that atom is a subproduct
- ;; of each of them.
- (defun factor-atom (atom x)
+  ;; This divides a sum or difference of products (or exponentials), or in the limiting case, a single
+  ;; product or exponential, by atom, where it is already know that atom is a subproduct
+  ;; of each of them.
+  (defun factor-atom (atom x)
 					; (setf aa atom xx x)
-   (cond
-    ((atom x) 1)
-    ((eq (car x) '+)
-     (multiple-value-bind
-      (base factors)
-      (remove-common-factor atom x nil)
-      (as-product
-       (cons (car base)
-	     (mapcar #'(lambda (z)
-			 (if (eq (mem2 z) 1) (mem1 z)
-			   (list 'expt (car z) (mem2 z)))) factors)))))
-    ((eq (car x) '-)
-     (multiple-value-bind
-      (base factors)
-      (remove-common-factor atom (mem2 x) (mem3 x))
-      (cond (factors
-	     (as-product
-	      (cons
-	       (if (mem2 base) (list '- (car base) (mem2 base)) (list '- (car base)))
+    (cond
+     ((atom x) 1)
+     ((eq (car x) '+)
+      (multiple-value-bind
+	  (base factors)
+	  (remove-common-factor atom x nil)
+	(as-product
+	 (cons (car base)
 	       (mapcar #'(lambda (z)
 			   (if (eq (mem2 z) 1) (mem1 z)
-			     (list 'expt (car z) (mem2 z)))) factors))))
-	    ((mem2 base) (list '- (car base) (mem2 base)))
-	    (t (list '- (car base))))))
-    ((eq (car x) '*)
-     (as-product (remove atom (cdr x))))
-    ((eq (car x) '/)
-     (simplify-quotient (list '/ (factor-atom atom (mem2 x)) (mem3 x))))
-    ((eq (car x) 'expt)
-     (cond
-      ((atom (mem2 x)) (if (eq (mem2 x) atom) (decrement-term-count atom x) x))
-      ((eq (mem1 (mem2 x)) '*)
-       (let ((y (as-product (remove atom (cdr (mem2 x))))))
-	 (simplify-product
-	  (list '* (list 'expt y (mem3 x))
-		(simplify-exponentiation (list 'expt atom (simplify-difference (list - (mem3 x) 1)))
-					 :recursive-call t)))))))))
+			     (list 'expt (car z) (mem2 z)))) factors)))))
+     ((eq (car x) '-)
+      (multiple-value-bind
+	  (base factors)
+	  (remove-common-factor atom (mem2 x) (mem3 x))
+	(cond (factors
+	       (as-product
+		(cons
+		 (if (mem2 base) (list '- (car base) (mem2 base)) (list '- (car base)))
+		 (mapcar #'(lambda (z)
+			     (if (eq (mem2 z) 1) (mem1 z)
+			       (list 'expt (car z) (mem2 z)))) factors))))
+	      ((mem2 base) (list '- (car base) (mem2 base)))
+	      (t (list '- (car base))))))
+     ((eq (car x) '*)
+      (as-product (remove atom (cdr x))))
+     ((eq (car x) '/)
+      (simplify-quotient (list '/ (factor-atom atom (mem2 x)) (mem3 x))))
+     ((eq (car x) 'expt)
+      (cond
+       ((atom (mem2 x)) (if (eq (mem2 x) atom) (decrement-term-count atom x) x))
+       ((eq (mem1 (mem2 x)) '*)
+	(let ((y (as-product (remove atom (cdr (mem2 x))))))
+	  (simplify-product
+	   (list '* (list 'expt y (mem3 x))
+		 (simplify-exponentiation (list 'expt atom (simplify-difference (list - (mem3 x) 1)))
+					  :recursive-call t)))))))))
 
- #| s-atoms is the set of atoms from fac occuring without exponents in dif. When
- s-atoms is non-empty, we can just find the subset of terms of dif in which an
- s-atom occurs, divide by the s-atom and its coefficient, and return the result. |#
- (defun divide-simple-difference (dif fac s-atoms terms)
-   (let ((s-atom (find-if #'(lambda (x) (occurs-once-in x terms)) s-atoms)))
-     (when (null s-atom) (setf s-atom (car s-atoms)))
-     (let ((sa (subterm-for s-atom fac)))
-       (when sa
-	 (let* ((a (factor-atom s-atom sa))
-		(sf (subterm-for s-atom dif)))
-	   (when sf
-	     (let ((factor (divide-difference (factor-atom s-atom sf) a)))
-	       (when (eq 0 (subtract-terms dif (multiply-terms factor fac))) factor))))))))
+  #| s-atoms is the set of atoms from fac occuring without exponents in dif. When
+  s-atoms is non-empty, we can just find the subset of terms of dif in which an
+  s-atom occurs, divide by the s-atom and its coefficient, and return the result. |#
+  (defun divide-simple-difference (dif fac s-atoms terms)
+    (let ((s-atom (find-if #'(lambda (x) (occurs-once-in x terms)) s-atoms)))
+      (when (null s-atom) (setf s-atom (car s-atoms)))
+      (let ((sa (subterm-for s-atom fac)))
+	(when sa
+	  (let* ((a (factor-atom s-atom sa))
+		 (sf (subterm-for s-atom dif)))
+	    (when sf
+	      (let ((factor (divide-difference (factor-atom s-atom sf) a)))
+		(when (eq 0 (subtract-terms dif (multiply-terms factor fac))) factor))))))))
 
- ;; This divides difference by term.
- (defun divide-difference (dif fac &optional (recursive-call nil))
+  ;; This divides difference by term.
+  (defun divide-difference (dif fac &optional (recursive-call nil))
 					; (progn (terpri) (prin1 dif) (princ " / ") (prin1 fac))
-   (cond
-    ((eq fac 1) dif)
-    ((equal fac '(- 1)) (negate dif))
-    ((atom fac) (decrement-term-count fac dif))
-    ((and (eq (car fac) '-) (null (mem3 fac)))
-     (cond
-      ((atom (mem2 fac)) (decrement-term-count (mem2 fac) (negate dif)))
-      (t (divide-difference (negate dif) (mem2 fac)))))
-    ((term-equal dif fac) 1)
-    ((term-neg-equal dif fac) -1)
-    ((listp dif)
-     (let ((n (ignore-errors (eval fac))))
-       (cond
-	((and (not (eq n 0)) (integerp n)) (divide-by-integer dif n))
-	(t
-	 (let ((terms (factor-terms fac))
-	       (atoms (dif-atoms fac)))
-	   ;; if dif contains a term in which no atoms from fac occur, division is impossible.
-	   (when
-	       (or (member 1 atoms) (member -1 atoms)
-		   (not
-		    (or
-		     (and (atom dif) (not (member dif atoms)))
-		     (and
-		      (listp dif)
-		      (or (and
-			   (eq (car dif) '+)
-			   (some #'(lambda (x) (not (some #'(lambda (y) (occur* y x)) atoms))) (cdr dif)))
-			  (and
-			   (eq (car dif) '-)
-			   (or
-			    (and (atom (mem2 dif)) (not (member (mem2 dif) atoms)))
-			    (and
-			     (listp (mem2 dif)) (eq (mem1 (mem2 dif)) '+)
-			     (some #'(lambda (x) (not (some #'(lambda (y) (occur* y x)) atoms)))
-				   (cdr (mem2 dif))))
-			    (and
-			     (listp (mem2 dif)) (eq (mem1 (mem2 dif)) 'expt)
-			     (not (member (mem2 (mem2 dif)) atoms)))
-			    (and (mem3 dif) (atom (mem3 dif)) (not (member (mem3 dif) atoms)))
-			    (and
-			     (mem3 dif) (listp (mem3 dif)) (eq (mem1 (mem3 dif)) 'expt)
-			     (not (member (mem2 (mem3 dif)) atoms)))
-			    (and
-			     (mem3 dif) (listp (mem3 dif)) (eq (mem1 (mem3 dif)) '+)
-			     (some
-			      #'(lambda (x) (not (some #'(lambda (y) (occur* y x)) atoms)))
-			      (cdr (mem3 dif)))))))))))
-	     (let ((s-atoms (subset #'(lambda (x) (no-exponentiation-in-formula x dif)) (term-atoms fac))))
-	       (cond    ;; case (2)
-		(s-atoms (divide-simple-difference dif fac s-atoms terms))
-		(t
-		 (let* ((x (first-non-number atoms)))
-		   (when (occur* x dif)
-		     (let* ((n (max-exponent x dif))  ;; we know that n >= 2.
-			    (m (max-exponent x fac))
-			    (fx (subterm-of #'(lambda (y)
-						(cond ((> m 1) (subproduct (list 'expt x m) y))
-						      (t (subproduct x y)))) fac))
-			    (f (factor-atom x fx))
-			    (axn-1 (divide-difference
-				    (decrement-term-count
-				     x (subterm-of #'(lambda (g) (subproduct (list 'expt x n) g)) dif))
-				    f))
-			    (dif* (subtract-terms dif (multiply-terms fac axn-1))))
-		       (when axn-1
-			 (cond ((eq dif* 0) axn-1)
-			       (t
-				(let ((factor (divide-difference dif* fac t)))
-				  (when factor
-				    (setf factor (simplify-sum (list '+ axn-1 factor)))
-				    (cond ((null recursive-call)
-					   (when (eq 0 (subtract-terms dif (multiply-terms factor fac)))
-					     factor))
-					  (t factor)))))))))))))))))))))
+    (cond
+     ((eq fac 1) dif)
+     ((equal fac '(- 1)) (negate dif))
+     ((atom fac) (decrement-term-count fac dif))
+     ((and (eq (car fac) '-) (null (mem3 fac)))
+      (cond
+       ((atom (mem2 fac)) (decrement-term-count (mem2 fac) (negate dif)))
+       (t (divide-difference (negate dif) (mem2 fac)))))
+     ((term-equal dif fac) 1)
+     ((term-neg-equal dif fac) -1)
+     ((listp dif)
+      (let ((n (ignore-errors (eval fac))))
+	(cond
+	 ((and (not (eq n 0)) (integerp n)) (divide-by-integer dif n))
+	 (t
+	  (let ((terms (factor-terms fac))
+		(atoms (dif-atoms fac)))
+	    ;; if dif contains a term in which no atoms from fac occur, division is impossible.
+	    (when
+		(or (member 1 atoms) (member -1 atoms)
+		    (not
+		     (or
+		      (and (atom dif) (not (member dif atoms)))
+		      (and
+		       (listp dif)
+		       (or (and
+			    (eq (car dif) '+)
+			    (some #'(lambda (x) (not (some #'(lambda (y) (occur* y x)) atoms))) (cdr dif)))
+			   (and
+			    (eq (car dif) '-)
+			    (or
+			     (and (atom (mem2 dif)) (not (member (mem2 dif) atoms)))
+			     (and
+			      (listp (mem2 dif)) (eq (mem1 (mem2 dif)) '+)
+			      (some #'(lambda (x) (not (some #'(lambda (y) (occur* y x)) atoms)))
+				    (cdr (mem2 dif))))
+			     (and
+			      (listp (mem2 dif)) (eq (mem1 (mem2 dif)) 'expt)
+			      (not (member (mem2 (mem2 dif)) atoms)))
+			     (and (mem3 dif) (atom (mem3 dif)) (not (member (mem3 dif) atoms)))
+			     (and
+			      (mem3 dif) (listp (mem3 dif)) (eq (mem1 (mem3 dif)) 'expt)
+			      (not (member (mem2 (mem3 dif)) atoms)))
+			     (and
+			      (mem3 dif) (listp (mem3 dif)) (eq (mem1 (mem3 dif)) '+)
+			      (some
+			       #'(lambda (x) (not (some #'(lambda (y) (occur* y x)) atoms)))
+			       (cdr (mem3 dif)))))))))))
+	      (let ((s-atoms (subset #'(lambda (x) (no-exponentiation-in-formula x dif)) (term-atoms fac))))
+		(cond    ;; case (2)
+		 (s-atoms (divide-simple-difference dif fac s-atoms terms))
+		 (t
+		  (let* ((x (first-non-number atoms)))
+		    (when (occur* x dif)
+		      (let* ((n (max-exponent x dif))  ;; we know that n >= 2.
+			     (m (max-exponent x fac))
+			     (fx (subterm-of #'(lambda (y)
+						 (cond ((> m 1) (subproduct (list 'expt x m) y))
+						       (t (subproduct x y)))) fac))
+			     (f (factor-atom x fx))
+			     (axn-1 (divide-difference
+				     (decrement-term-count
+				      x (subterm-of #'(lambda (g) (subproduct (list 'expt x n) g)) dif))
+				     f))
+			     (dif* (subtract-terms dif (multiply-terms fac axn-1))))
+			(when axn-1
+			  (cond ((eq dif* 0) axn-1)
+				(t
+				 (let ((factor (divide-difference dif* fac t)))
+				   (when factor
+				     (setf factor (simplify-sum (list '+ axn-1 factor)))
+				     (cond ((null recursive-call)
+					    (when (eq 0 (subtract-terms dif (multiply-terms factor fac)))
+					      factor))
+					   (t factor)))))))))))))))))))))
 
- (defun multiply-terms (x y)
-   (format-difference (expand-product (list '* x y))))
+  (defun multiply-terms (x y)
+    (format-difference (expand-product (list '* x y))))
 
- ;; This tries to factor dif as the square of a single factor
- (defun factor-square (dif)
-   (let* ((terms (factor-terms dif))
-	  (square-terms
-	   (mapcar
-	    #'root-of-square
-	    (subset
-	     #'(lambda (term)
-		 (or (square-term term)
-		     (and (listp term)
-			  (eq (car term) '*)
-			  (every #'square-term (cdr term)))))
-	     terms)))
-	  (sq-terms nil))
-     (when square-terms
-       (dolist (y (remove-duplicates square-terms :test 'term-equal))
-	 (let* ((y2-num (length (subset #'(lambda (z) (term-equal z y)) square-terms)))
-		(y-num (float-integer (expt y2-num (/ 1 2)))))
-	   (when (not (eq y2-num (* y-num y-num))) (return-from factor-square nil))
-	   (dotimes (i y-num) (push y sq-terms))))
-       (let* ((x (car sq-terms))
-	      (pos (list x))
-	      (neg nil)
-	      (neg-terms nil)
-	      (pos-terms nil))
-	 (cond
-	  ((and (listp dif) (eq (car dif) '-))
-	   (setf neg-terms
-		 (cond
-		  ((mem3 dif)
-		   (cond ((and (listp (mem3 dif)) (eq (car (mem3 dif)) '+)) (cdr (mem3 dif)))
-			 (t (list (mem3 dif)))))
-		  (t
-		   (cond ((and (listp (mem2 dif)) (eq (car (mem2 dif)) '+)) (cdr (mem2 dif)))
-			 (t (list (mem2 dif)))))))
-	   (when (mem3 dif)
-	     (setf pos-terms
-		   (cond
-		    ((and (listp (mem2 dif)) (eq (car (mem2 dif)) '+)) (cdr (mem2 dif)))
-		    (t (list (mem2 dif))))))
-	   (when (mem x neg-terms) (push 1 neg))
-	   (when (mem x pos-terms) (push 1 pos))
-	   (dolist (y (cdr sq-terms))
-	     (if
-		 (and
-		  (not (eq x y))
-		  (some
-		   #'(lambda (term) (eq (subtract-terms term (multiply-terms x y)) 0))
-		   neg-terms))
-		 (push y neg)
-	       (push y pos))))
-	  (t (setf pos sq-terms)
-	     (when (occur 1 dif) (push 1 pos))))
-	 (let ((factor
-		(cond (neg (list '- (as-sum pos) (as-sum neg)))
-		      (t (as-sum pos)))))
-	   (when (eq 0 (subtract-terms dif (multiply-terms factor factor)))
-	     (order-factors factor factor)))))))
+  ;; This tries to factor dif as the square of a single factor
+  (defun factor-square (dif)
+    (let* ((terms (factor-terms dif))
+	   (square-terms
+	    (mapcar
+	     #'root-of-square
+	     (subset
+	      #'(lambda (term)
+		  (or (square-term term)
+		      (and (listp term)
+			   (eq (car term) '*)
+			   (every #'square-term (cdr term)))))
+	      terms)))
+	   (sq-terms nil))
+      (when square-terms
+	(dolist (y (remove-duplicates square-terms :test 'term-equal))
+	  (let* ((y2-num (length (subset #'(lambda (z) (term-equal z y)) square-terms)))
+		 (y-num (float-integer (expt y2-num (/ 1 2)))))
+	    (when (not (eq y2-num (* y-num y-num))) (return-from factor-square nil))
+	    (dotimes (i y-num) (push y sq-terms))))
+	(let* ((x (car sq-terms))
+	       (pos (list x))
+	       (neg nil)
+	       (neg-terms nil)
+	       (pos-terms nil))
+	  (cond
+	   ((and (listp dif) (eq (car dif) '-))
+	    (setf neg-terms
+		  (cond
+		   ((mem3 dif)
+		    (cond ((and (listp (mem3 dif)) (eq (car (mem3 dif)) '+)) (cdr (mem3 dif)))
+			  (t (list (mem3 dif)))))
+		   (t
+		    (cond ((and (listp (mem2 dif)) (eq (car (mem2 dif)) '+)) (cdr (mem2 dif)))
+			  (t (list (mem2 dif)))))))
+	    (when (mem3 dif)
+	      (setf pos-terms
+		    (cond
+		     ((and (listp (mem2 dif)) (eq (car (mem2 dif)) '+)) (cdr (mem2 dif)))
+		     (t (list (mem2 dif))))))
+	    (when (mem x neg-terms) (push 1 neg))
+	    (when (mem x pos-terms) (push 1 pos))
+	    (dolist (y (cdr sq-terms))
+	      (if
+		  (and
+		   (not (eq x y))
+		   (some
+		    #'(lambda (term) (eq (subtract-terms term (multiply-terms x y)) 0))
+		    neg-terms))
+		  (push y neg)
+		(push y pos))))
+	   (t (setf pos sq-terms)
+	      (when (occur 1 dif) (push 1 pos))))
+	  (let ((factor
+		 (cond (neg (list '- (as-sum pos) (as-sum neg)))
+		       (t (as-sum pos)))))
+	    (when (eq 0 (subtract-terms dif (multiply-terms factor factor)))
+	      (order-factors factor factor)))))))
 
- (defun simplify-difference (x)
-   (format-difference (d-simplify-difference x)))
+  (defun simplify-difference (x)
+    (format-difference (d-simplify-difference x)))
 
- (defun simplify-product (x &key expand-times)
-   (format-difference (d-simplify-product x :expand-times expand-times)))
+  (defun simplify-product (x &key expand-times)
+    (format-difference (d-simplify-product x :expand-times expand-times)))
 
- (defun simplify-quotient (x)
-   (format-difference (d-simplify-quotient x)))
+  (defun simplify-quotient (x)
+    (format-difference (d-simplify-quotient x)))
 
- (defun simplify-exponentiation (x &key recursive-call expand-times)
-   (format-difference
-    (d-simplify-exponentiation x :recursive-call recursive-call :expand-times expand-times)))
+  (defun simplify-exponentiation (x &key recursive-call expand-times)
+    (format-difference
+     (d-simplify-exponentiation x :recursive-call recursive-call :expand-times expand-times)))
 
- )
+  )
 
 (defun as-product* (x)
   (cond ((null x) 1)
@@ -21058,244 +21064,244 @@ Then SIMPLIFY converts them into standard form. |#
 (defun prod (x y) (as-product* (list x y)))
 
 (labels
- ()
+    ()
 
- (defun expand-quotients-in-quotient (x)
-   (let ((x1 (expand-quotients (mem2 x)))
-	 (x2 (expand-quotients (mem3 x))))
-     (cond
-      ((and (listp x1) (eq (car x1) '/))
-       (cond
-	((and (listp x2) (eq (car x2) '/))
-	 (multiple-value-bind
-	  (common num1 den1)
-	  (compare-lists (num-terms x1) (num-terms x2) :test 'term-equal)
-	  (declare (ignore common))
+  (defun expand-quotients-in-quotient (x)
+    (let ((x1 (expand-quotients (mem2 x)))
+	  (x2 (expand-quotients (mem3 x))))
+      (cond
+       ((and (listp x1) (eq (car x1) '/))
+	(cond
+	 ((and (listp x2) (eq (car x2) '/))
 	  (multiple-value-bind
-	   (common num2 den2)
-	   (compare-lists (den-terms x2) (den-terms x1) :test 'term-equal)
-	   (declare (ignore common))
-	   (as-quotient (as-product* (append num1 num2)) (as-product* (append den1 den2))))))
-	(t ;; x1 is a quotient but x2 is not
-	 (let ((x1* (if (productp (mem3 x1)) (cdr (mem3 x1)) (list (mem3 x1))))
-	       (x2* (if (productp x2) (cdr x2) (list x2))))
-	   (multiple-value-bind
-	    (common num den)
-	    (compare-lists (num-terms x1) x2* :test 'term-equal)
+	      (common num1 den1)
+	      (compare-lists (num-terms x1) (num-terms x2) :test 'term-equal)
 	    (declare (ignore common))
-	    (as-quotient (as-product* num) (as-product* (append x1* den))))))))
-      ((and (listp x2) (eq (car x2) '/))  ;; x2 is a quotient but x1 is not
-       (let ((x2* (if (productp (mem3 x2)) (cdr (mem3 x2)) (list (mem3 x2))))
-	     (x1* (if (productp x1) (cdr x1) (list x1))))
-	 (multiple-value-bind
-	  (common num den)
-	  (compare-lists x1* (num-terms x2) :test 'term-equal)
-	  (declare (ignore common))
-	  (as-quotient (as-product* (append x2* num)) (as-product* den)))))
-      (t x))))
+	    (multiple-value-bind
+		(common num2 den2)
+		(compare-lists (den-terms x2) (den-terms x1) :test 'term-equal)
+	      (declare (ignore common))
+	      (as-quotient (as-product* (append num1 num2)) (as-product* (append den1 den2))))))
+	 (t ;; x1 is a quotient but x2 is not
+	  (let ((x1* (if (productp (mem3 x1)) (cdr (mem3 x1)) (list (mem3 x1))))
+		(x2* (if (productp x2) (cdr x2) (list x2))))
+	    (multiple-value-bind
+		(common num den)
+		(compare-lists (num-terms x1) x2* :test 'term-equal)
+	      (declare (ignore common))
+	      (as-quotient (as-product* num) (as-product* (append x1* den))))))))
+       ((and (listp x2) (eq (car x2) '/))  ;; x2 is a quotient but x1 is not
+	(let ((x2* (if (productp (mem3 x2)) (cdr (mem3 x2)) (list (mem3 x2))))
+	      (x1* (if (productp x1) (cdr x1) (list x1))))
+	  (multiple-value-bind
+	      (common num den)
+	      (compare-lists x1* (num-terms x2) :test 'term-equal)
+	    (declare (ignore common))
+	    (as-quotient (as-product* (append x2* num)) (as-product* den)))))
+       (t x))))
 
- (defun expand-quotients (x)
+  (defun expand-quotients (x)
 					;(progn (terpri) (princ "expand-quotients: ") (princ x))
-   (cond
-    ((atom x) x)
-    ((eq (car x) '+) (expand-quotients-in-sum x))
-    ((eq (car x) '-) (expand-quotients-in-difference x))
-    ((eq (car x) '*)  ;; cancel common multipliers here
-     (let ((x1 (expand-quotients (mem2 x)))
-	   (x2 (expand-quotients (if (cdddr x) (cons '* (cddr x)) (mem3 x)))))
-       (cond
-	((and (listp x1) (eq (car x1) '/))
-	 (cond
-	  ((and (listp x2) (eq (car x2) '/))
-	   (list '/ (prod (mem2 x1) (mem2 x2)) (prod (mem3 x1) (mem3 x2))))
-	  (t (list '/ (prod (mem2 x1) x2) (mem3 x1)))))
-	((and (listp x2) (eq (car x2) '/))
-	 (list '/ (prod (mem2 x2) x1) (mem3 x2))) (t x))))
-    ((eq (car x) '/) (expand-quotients-in-quotient x))
-    ((eq (car x) 'expt)
-     (let ((n (mem3 x)))
-       (cond
-	((integerp n)
-	 (let ((prod nil))
-	   (cond
-	    ((< n 0)
-	     (dotimes (i (- n)) (push (mem2 x) prod))
-	     (expand-quotients (list '/ 1 (cons '* prod))))
-	    (t (dotimes (i n) (push (mem2 x) prod))
-	       (expand-quotients (cons '* prod))))))
-	(t x))))))
+    (cond
+     ((atom x) x)
+     ((eq (car x) '+) (expand-quotients-in-sum x))
+     ((eq (car x) '-) (expand-quotients-in-difference x))
+     ((eq (car x) '*)  ;; cancel common multipliers here
+      (let ((x1 (expand-quotients (mem2 x)))
+	    (x2 (expand-quotients (if (cdddr x) (cons '* (cddr x)) (mem3 x)))))
+	(cond
+	 ((and (listp x1) (eq (car x1) '/))
+	  (cond
+	   ((and (listp x2) (eq (car x2) '/))
+	    (list '/ (prod (mem2 x1) (mem2 x2)) (prod (mem3 x1) (mem3 x2))))
+	   (t (list '/ (prod (mem2 x1) x2) (mem3 x1)))))
+	 ((and (listp x2) (eq (car x2) '/))
+	  (list '/ (prod (mem2 x2) x1) (mem3 x2))) (t x))))
+     ((eq (car x) '/) (expand-quotients-in-quotient x))
+     ((eq (car x) 'expt)
+      (let ((n (mem3 x)))
+	(cond
+	 ((integerp n)
+	  (let ((prod nil))
+	    (cond
+	     ((< n 0)
+	      (dotimes (i (- n)) (push (mem2 x) prod))
+	      (expand-quotients (list '/ 1 (cons '* prod))))
+	     (t (dotimes (i n) (push (mem2 x) prod))
+		(expand-quotients (cons '* prod))))))
+	 (t x))))))
 
- #|
- (defun expand-quotients-in-sum (x)
-   ; (setf xx x)			;
- (let ((x1 (expand-quotients (mem2 x)))
- (x2 (expand-quotients (if (cdddr x) (cons '+ (cddr x)) (mem3 x)))))
- (cond
- ((and (listp x1) (eq (car x1) '/))
- (cond
- ((and (listp x2) (eq (car x2) '/))
- (cond
- ((term-equal (mem3 x1) (mem3 x2))
- (list '/ (simplify-sum (list '+ (mem2 x1) (mem2 x2))) (mem3 x1)))
- ((term-neg-equal (mem3 x1) (mem3 x2))
- (list '/ (simplify-difference (list '- (mem2 x1) (mem2 x2))) (mem3 x1)))
- ((and (listp (mem3 x1)) (eq (car (mem3 x1)) '*))
- (cond
- ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
- (multiple-value-bind
- (common den1 den2)
- (compare-lists (cdr (mem3 x1)) (cdr (mem3 x2)) :test 'term-equal)
- (list '/ (simplify-sum (list '+ (as-product* (cons (mem2 x1) den2)) (as-product* (cons (mem2 x2) den1))))
- (as-product* (append common den1 den2)))))
- ((member (mem3 x2) (cdr (mem3 x1)) :test 'term-equal)
- (list '/
- (simplify-sum
- (list '+ (mem2 x1)
- (as-product* (cons (mem2 x2)
- (remove (mem3 x2) (cdr (mem3 x1))
- :test 'term-equal :count 1)))))
- (mem3 x1)))
- (t
- (list '/ (simplify-sum (list '+ (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
- (prod (mem3 x1) (mem3 x2))))))
- ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
- (cond
- ((member (mem3 x1) (cdr (mem3 x2)) :test 'term-equal)
- (list '/
- (simplify-sum
- (list '+ (mem2 x2)
- (as-product* (cons (mem2 x1)
- (remove (mem3 x1) (cdr (mem3 x2))
- :test 'term-equal :count 1)))))
- (mem3 x2)))
- (t
- (list '/ (simplify-sum (list '+ (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
- (prod (mem3 x1) (mem3 x2))))))
- (t (list '/ (simplify-sum (list '+ (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
- (prod (mem3 x1) (mem3 x2))))))
- (t (list '/ (simplify-sum (list '+ (mem2 x1) (prod (mem3 x1) x2))) (mem3 x1)))))
- ((and (listp x2) (eq (car x2) '/))
- (list '/ (simplify-sum (list '+ (mem2 x2) (prod (mem3 x2) x1))) (mem3 x2)))
- (t x))))
- |#
+  #|
+  (defun expand-quotients-in-sum (x)
+   ; (setf xx x)			; ; ; ;
+  (let ((x1 (expand-quotients (mem2 x)))
+  (x2 (expand-quotients (if (cdddr x) (cons '+ (cddr x)) (mem3 x)))))
+  (cond
+  ((and (listp x1) (eq (car x1) '/))
+  (cond
+  ((and (listp x2) (eq (car x2) '/))
+  (cond
+  ((term-equal (mem3 x1) (mem3 x2))
+  (list '/ (simplify-sum (list '+ (mem2 x1) (mem2 x2))) (mem3 x1)))
+  ((term-neg-equal (mem3 x1) (mem3 x2))
+  (list '/ (simplify-difference (list '- (mem2 x1) (mem2 x2))) (mem3 x1)))
+  ((and (listp (mem3 x1)) (eq (car (mem3 x1)) '*))
+  (cond
+  ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
+  (multiple-value-bind
+  (common den1 den2)
+  (compare-lists (cdr (mem3 x1)) (cdr (mem3 x2)) :test 'term-equal)
+  (list '/ (simplify-sum (list '+ (as-product* (cons (mem2 x1) den2)) (as-product* (cons (mem2 x2) den1))))
+  (as-product* (append common den1 den2)))))
+  ((member (mem3 x2) (cdr (mem3 x1)) :test 'term-equal)
+  (list '/
+  (simplify-sum
+  (list '+ (mem2 x1)
+  (as-product* (cons (mem2 x2)
+  (remove (mem3 x2) (cdr (mem3 x1))
+  :test 'term-equal :count 1)))))
+  (mem3 x1)))
+  (t
+  (list '/ (simplify-sum (list '+ (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
+  (prod (mem3 x1) (mem3 x2))))))
+  ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
+  (cond
+  ((member (mem3 x1) (cdr (mem3 x2)) :test 'term-equal)
+  (list '/
+  (simplify-sum
+  (list '+ (mem2 x2)
+  (as-product* (cons (mem2 x1)
+  (remove (mem3 x1) (cdr (mem3 x2))
+  :test 'term-equal :count 1)))))
+  (mem3 x2)))
+  (t
+  (list '/ (simplify-sum (list '+ (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
+  (prod (mem3 x1) (mem3 x2))))))
+  (t (list '/ (simplify-sum (list '+ (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
+  (prod (mem3 x1) (mem3 x2))))))
+  (t (list '/ (simplify-sum (list '+ (mem2 x1) (prod (mem3 x1) x2))) (mem3 x1)))))
+  ((and (listp x2) (eq (car x2) '/))
+  (list '/ (simplify-sum (list '+ (mem2 x2) (prod (mem3 x2) x1))) (mem3 x2)))
+  (t x))))
+  |#
 
- (defun expand-quotients-in-sum (x)
-   (let ((x-terms (mapcar #'expand-quotients (cdr x)))
-	 (new-x-terms nil)
-	 (denominators nil))
-     (dolist (y x-terms)
-       (cond ((and (listp y) (eq (car y) '/))
-	      (let ((den0 nil)
-		    (den1 nil))
-		(cond ((and (exponentiationp (mem3 y)) (integerp (mem3 (mem3 y))))
-		       (dotimes (xx (mem3 (mem3 y))) (push (mem2 y) den0)))
-		      ((productp (mem3 y))
-		       (dolist (z (cdr (mem3 y)))
-			 (cond ((and (exponentiationp z) (integerp (mem3 z)))
-				(dotimes (xx (mem3 z) (push (mem2 z) den0))))
-			       (t (push z den0)))))
-		      (t (push (mem3 y) den0)))
-		(let ((dens denominators))
-		  (dolist (z den0)
-		    (let ((z* (find-if #'(lambda (w) (term-equal w z)) dens)))
-		      (cond (z* (push z* den1) (setf dens (remove z* dens :count 1 :test 'equal)))
-			    (t (push z den1) (push z denominators))))))
-		(push (list (mem2 y) den1) new-x-terms)))
-	     (t (push (list y nil) new-x-terms))))
-     (cond ((null denominators) x)
-	   (t
-	    (list '/
-		  (simplify
-		   (as-sum
-		    (mapcar
-		     #'(lambda (y)
-			 (let ((den denominators))
-			   (dolist (z (mem2 y)) (setf den (remove z den :count 1 :test 'equal)))
-			   (as-product (cons (car y) den))))
-		     new-x-terms))
-		   :expand-times t)
-		  (as-product denominators))))))
+  (defun expand-quotients-in-sum (x)
+    (let ((x-terms (mapcar #'expand-quotients (cdr x)))
+	  (new-x-terms nil)
+	  (denominators nil))
+      (dolist (y x-terms)
+	(cond ((and (listp y) (eq (car y) '/))
+	       (let ((den0 nil)
+		     (den1 nil))
+		 (cond ((and (exponentiationp (mem3 y)) (integerp (mem3 (mem3 y))))
+			(dotimes (xx (mem3 (mem3 y))) (push (mem2 y) den0)))
+		       ((productp (mem3 y))
+			(dolist (z (cdr (mem3 y)))
+			  (cond ((and (exponentiationp z) (integerp (mem3 z)))
+				 (dotimes (xx (mem3 z) (push (mem2 z) den0))))
+				(t (push z den0)))))
+		       (t (push (mem3 y) den0)))
+		 (let ((dens denominators))
+		   (dolist (z den0)
+		     (let ((z* (find-if #'(lambda (w) (term-equal w z)) dens)))
+		       (cond (z* (push z* den1) (setf dens (remove z* dens :count 1 :test 'equal)))
+			     (t (push z den1) (push z denominators))))))
+		 (push (list (mem2 y) den1) new-x-terms)))
+	      (t (push (list y nil) new-x-terms))))
+      (cond ((null denominators) x)
+	    (t
+	     (list '/
+		   (simplify
+		    (as-sum
+		     (mapcar
+		      #'(lambda (y)
+			  (let ((den denominators))
+			    (dolist (z (mem2 y)) (setf den (remove z den :count 1 :test 'equal)))
+			    (as-product (cons (car y) den))))
+		      new-x-terms))
+		    :expand-times t)
+		   (as-product denominators))))))
 
- (defun expand-quotients-in-difference (x)
-   (cond
-    ((null (mem3 x)) (negate (expand-quotients (mem2 x))))
-    (t
-     (let ((x1 (expand-quotients (mem2 x)))
-	   (x2 (expand-quotients (if (cdddr x) (cons '+ (cddr x)) (mem3 x)))))
-       (cond
-	((and (listp x1) (eq (car x1) '/))
-	 (cond
-	  ((and (listp x2) (eq (car x2) '/))
-	   (cond
-	    ((term-equal (mem3 x1) (mem3 x2))
-	     (list '/ (simplify-difference (list '- (mem2 x1) (mem2 x2))) (mem3 x1)))
-	    ((term-neg-equal (mem3 x1) (mem3 x2))
-	     (list '/ (simplify-sum (list '+ (mem2 x2) (mem2 x1))) (mem3 x1)))
-	    ((and (listp (mem3 x1)) (eq (car (mem3 x1)) '*))
-	     (cond
-	      ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
-	       (multiple-value-bind
-		(common den1 den2)
-		(compare-lists (cdr (mem3 x1)) (cdr (mem3 x2)) :test 'term-equal)
-		(list '/ (simplify-difference (list '- (as-product* (cons (mem2 x1) den2))
-						    (as-product* (cons (mem2 x2) den1))))
-		      (as-product* (append common den1 den2)))))
-	      ((member (mem3 x2) (cdr (mem3 x1)) :test 'term-equal)
-	       (list '/
-		     (simplify-difference
-		      (list '- (mem2 x1)
-			    (as-product* (cons (mem2 x2)
-					       (remove (mem3 x2) (cdr (mem3 x1))
-						       :test 'term-equal :count 1)))))
-		     (mem3 x1)))
-	      (t
-	       (list '/ (simplify-difference (list '- (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
-		     (prod (mem3 x1) (mem3 x2))))))
-	    ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
-	     (cond
-	      ((member (mem3 x1) (cdr (mem3 x2)) :test 'term-equal)
-	       (list '/
-		     (simplify-difference
-		      (list '- (as-product* (cons (mem2 x1)
-						  (remove (mem3 x1) (cdr (mem3 x2))
-							  :test 'term-equal :count 1)))
-			    (mem2 x2)))
-		     (mem3 x2)))
-	      (t
-	       (list '/ (simplify-difference (list '- (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
-		     (prod (mem3 x1) (mem3 x2))))))
-	    (t (list '/ (simplify-difference (list '- (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
-		     (prod (mem3 x1) (mem3 x2))))))
-	  (t (list '/ (simplify-difference (list '- (mem2 x1) (prod (mem3 x1) x2))) (mem3 x1)))))
-	((and (listp x2) (eq (car x2) '/))
-	 (list '/ (simplify-difference (list '- (prod (mem3 x2) x1) (mem2 x2))) (mem3 x2)))
-	(t x)))))))
+  (defun expand-quotients-in-difference (x)
+    (cond
+     ((null (mem3 x)) (negate (expand-quotients (mem2 x))))
+     (t
+      (let ((x1 (expand-quotients (mem2 x)))
+	    (x2 (expand-quotients (if (cdddr x) (cons '+ (cddr x)) (mem3 x)))))
+	(cond
+	 ((and (listp x1) (eq (car x1) '/))
+	  (cond
+	   ((and (listp x2) (eq (car x2) '/))
+	    (cond
+	     ((term-equal (mem3 x1) (mem3 x2))
+	      (list '/ (simplify-difference (list '- (mem2 x1) (mem2 x2))) (mem3 x1)))
+	     ((term-neg-equal (mem3 x1) (mem3 x2))
+	      (list '/ (simplify-sum (list '+ (mem2 x2) (mem2 x1))) (mem3 x1)))
+	     ((and (listp (mem3 x1)) (eq (car (mem3 x1)) '*))
+	      (cond
+	       ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
+		(multiple-value-bind
+		    (common den1 den2)
+		    (compare-lists (cdr (mem3 x1)) (cdr (mem3 x2)) :test 'term-equal)
+		  (list '/ (simplify-difference (list '- (as-product* (cons (mem2 x1) den2))
+						      (as-product* (cons (mem2 x2) den1))))
+			(as-product* (append common den1 den2)))))
+	       ((member (mem3 x2) (cdr (mem3 x1)) :test 'term-equal)
+		(list '/
+		      (simplify-difference
+		       (list '- (mem2 x1)
+			     (as-product* (cons (mem2 x2)
+						(remove (mem3 x2) (cdr (mem3 x1))
+							:test 'term-equal :count 1)))))
+		      (mem3 x1)))
+	       (t
+		(list '/ (simplify-difference (list '- (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
+		      (prod (mem3 x1) (mem3 x2))))))
+	     ((and (listp (mem3 x2))  (eq (car (mem3 x2)) '*))
+	      (cond
+	       ((member (mem3 x1) (cdr (mem3 x2)) :test 'term-equal)
+		(list '/
+		      (simplify-difference
+		       (list '- (as-product* (cons (mem2 x1)
+						   (remove (mem3 x1) (cdr (mem3 x2))
+							   :test 'term-equal :count 1)))
+			     (mem2 x2)))
+		      (mem3 x2)))
+	       (t
+		(list '/ (simplify-difference (list '- (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
+		      (prod (mem3 x1) (mem3 x2))))))
+	     (t (list '/ (simplify-difference (list '- (prod (mem2 x1) (mem3 x2)) (prod (mem3 x1) (mem2 x2))))
+		      (prod (mem3 x1) (mem3 x2))))))
+	   (t (list '/ (simplify-difference (list '- (mem2 x1) (prod (mem3 x1) x2))) (mem3 x1)))))
+	 ((and (listp x2) (eq (car x2) '/))
+	  (list '/ (simplify-difference (list '- (prod (mem3 x2) x1) (mem2 x2))) (mem3 x2)))
+	 (t x)))))))
 
 #|
 (defun a-simplify (x &key (expand-times nil))
-    (cond ((atom x) x)
-                (t (format-difference (d-simplify x :expand-times expand-times)))))
+  (cond ((atom x) x)
+	(t (format-difference (d-simplify x :expand-times expand-times)))))
 |#
 
 (defun simplified-form (x)
-    (cond ((atom x) (list (list x) nil))
-                ((eq (car x) '+) (list (cdr x) nil))
-                ((eq (car x) '-)
-                  (cond ((null (mem3 x))
-                               (cond ((atom (mem2 x)) (list nil (list (mem2 x))))
-                                           ((eq (car (mem2 x)) '+) (list nil (cdr (mem2 x))))
-                                           (t (list nil (list (mem2 x))))))
-                              ((atom (mem3 x))
-                                (cond ((atom (mem2 x)) (list (list (mem2 x)) (list (mem3 x))))
-                                            ((eq (car (mem2 x)) '+) (list (cdr (mem2 x)) (list (mem3 x))))
-                                            (t (list (list (mem2 x)) (list (mem3 x))))))
-                              ((eq (car (mem3 x)) '+)
-                                (cond ((atom (mem2 x)) (list (list (mem2 x)) (cdr (mem3 x))))
-                                            ((eq (car (mem2 x)) '+) (list (cdr (mem2 x)) (cdr (mem3 x))))
-                                            (t (list (list (mem2 x)) (cdr (mem3 x))))))
-                              (t (cond ((atom (mem2 x)) (list (list (mem2 x)) (list (mem3 x))))
-                                             ((eq (car (mem2 x)) '+) (list (cdr (mem2 x)) (list (mem3 x))))
-                                             (t (list (list (mem2 x)) (list (mem3 x))))))))))
+  (cond ((atom x) (list (list x) nil))
+	((eq (car x) '+) (list (cdr x) nil))
+	((eq (car x) '-)
+	 (cond ((null (mem3 x))
+		(cond ((atom (mem2 x)) (list nil (list (mem2 x))))
+		      ((eq (car (mem2 x)) '+) (list nil (cdr (mem2 x))))
+		      (t (list nil (list (mem2 x))))))
+	       ((atom (mem3 x))
+		(cond ((atom (mem2 x)) (list (list (mem2 x)) (list (mem3 x))))
+		      ((eq (car (mem2 x)) '+) (list (cdr (mem2 x)) (list (mem3 x))))
+		      (t (list (list (mem2 x)) (list (mem3 x))))))
+	       ((eq (car (mem3 x)) '+)
+		(cond ((atom (mem2 x)) (list (list (mem2 x)) (cdr (mem3 x))))
+		      ((eq (car (mem2 x)) '+) (list (cdr (mem2 x)) (cdr (mem3 x))))
+		      (t (list (list (mem2 x)) (cdr (mem3 x))))))
+	       (t (cond ((atom (mem2 x)) (list (list (mem2 x)) (list (mem3 x))))
+			((eq (car (mem2 x)) '+) (list (cdr (mem2 x)) (list (mem3 x))))
+			(t (list (list (mem2 x)) (list (mem3 x))))))))))
 
 ;; This also flattens products within products of quotients
 (defun flatten-product+ (x)
@@ -21325,12 +21331,12 @@ Then SIMPLIFY converts them into standard form. |#
   (let ((a (car w)) (b (mem2 w)) (x nil))
     (dolist (y a)
       (block x
-	     (dolist (z b)
-	       (when (=== y z) (setf b (remove z b :count 1)) (return-from x nil)))
-	     (when (and (listp y)
-			(some #'(lambda (z) (and (listp z) (eq (car z) 'expt) (eq (mem2 z) no-exponents))) y))
-	       (throw 'no-exponents nil))
-	     (push y x)))
+	(dolist (z b)
+	  (when (=== y z) (setf b (remove z b :count 1)) (return-from x nil)))
+	(when (and (listp y)
+		   (some #'(lambda (z) (and (listp z) (eq (car z) 'expt) (eq (mem2 z) no-exponents))) y))
+	  (throw 'no-exponents nil))
+	(push y x)))
     (list x b)))
 
 ;; x and y are in simplified form
@@ -21340,9 +21346,9 @@ Then SIMPLIFY converts them into standard form. |#
     (let ((x+0 nil))
       (dolist (y x+)
 	(block x+
-	       (dolist (z x-)
-		 (when (=== y z) (setf x- (remove z x- :count 1)) (return-from x+ nil)))
-	       (push y x+0)))
+	  (dolist (z x-)
+	    (when (=== y z) (setf x- (remove z x- :count 1)) (return-from x+ nil)))
+	  (push y x+0)))
       (setf x+ x+0))
     (list x+ x-)))
 
@@ -21360,7 +21366,7 @@ Then SIMPLIFY converts them into standard form. |#
 
 #|
 (defun f-simplify-quotient (x)
-    ;(setf xx x) (terpri) (princ "f-simplify-quotient: ") (print-tree x) ;(break) ; ;
+    ;(setf xx x) (terpri) (princ "f-simplify-quotient: ") (print-tree x) ;(break) ; ; ; ; ;
   (cond
    ((and (listp x) (eq (car x) '/) (not (occur '/ (mem2 x))) (not (occur '/ (mem3 x)))) ;(not (atom (mem3 x))))
     (let ((num (simplify (mem2 x)))
@@ -21431,13 +21437,6 @@ Then SIMPLIFY converts them into standard form. |#
 ;; y is a product and x is one of the terms in the product
 (defun term-of (x y) (member x (cdr y) :test 'term-equal))
 
-(defun as-quotient (x y)
-  (cond
-   ((eq y 1) x)
-   ((and (listp x) (eq (car x) '-) (null (mem3 x)) (listp y) (eq (car y) '-) (null (mem3 y)))
-    (list '/ (mem2 x) (mem2 y)))
-   (t (list '/ x y))))
-
 (defun expand-quotients-in-product (x)
   (let ((x1 (expand-quotients (mem2 x)))
 	(x2 (expand-quotients (as-product* (cddr x)))))
@@ -21446,30 +21445,30 @@ Then SIMPLIFY converts them into standard form. |#
       (cond
        ((and (listp x2) (eq (car x2) '/))
 	(multiple-value-bind
-	 (common num1 den1)
-	 (compare-lists (num-terms x1) (den-terms x2) :test 'term-equal)
-	 (declare (ignore common))
-	 (multiple-value-bind
-	  (common num2 den2)
-	  (compare-lists (num-terms x2) (den-terms x1) :test 'term-equal)
+	    (common num1 den1)
+	    (compare-lists (num-terms x1) (den-terms x2) :test 'term-equal)
 	  (declare (ignore common))
-	  (as-quotient (as-product* (append num1 num2)) (as-product* (append den1 den2))))))
+	  (multiple-value-bind
+	      (common num2 den2)
+	      (compare-lists (num-terms x2) (den-terms x1) :test 'term-equal)
+	    (declare (ignore common))
+	    (as-quotient (as-product* (append num1 num2)) (as-product* (append den1 den2))))))
        (t ;; x1 is a quotient but x2 is not
 	(let ((x1* (if (productp (mem2 x1)) (cdr (mem2 x1)) (list (mem2 x1))))
 	      (x2* (if (productp x2) (cdr x2) (list x2))))
 	  (multiple-value-bind
-	   (common num den)
-	   (compare-lists x2* (den-terms x1) :test 'term-equal)
-	   (declare (ignore common))
-	   (as-quotient (as-product* (append x1* num)) (as-product* den)))))))
+	      (common num den)
+	      (compare-lists x2* (den-terms x1) :test 'term-equal)
+	    (declare (ignore common))
+	    (as-quotient (as-product* (append x1* num)) (as-product* den)))))))
      ((and (listp x2) (eq (car x2) '/))  ;; x2 is a quotient but x1 is not
       (let ((x2* (if (productp (mem2 x2)) (cdr (mem2 x2)) (list (mem2 x2))))
 	    (x1* (if (productp x1) (cdr x1) (list x1))))
 	(multiple-value-bind
-	 (common num den)
-	 (compare-lists x1* (den-terms x2) :test 'term-equal)
-	 (declare (ignore common))
-	 (as-quotient (as-product* (append x2* num)) (as-product* den)))))
+	    (common num den)
+	    (compare-lists x1* (den-terms x2) :test 'term-equal)
+	  (declare (ignore common))
+	  (as-quotient (as-product* (append x2* num)) (as-product* den)))))
      (t x))))
 
 ;; (term-count 'cd '(* (expt cd (+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)) f1 f4 c (expt d (+ 1 1 1))))
@@ -21480,7 +21479,7 @@ Then SIMPLIFY converts them into standard form. |#
 #|
 ;; This assumes that x occurs in term.
 (defun decrease-term-count (x term n)
-    ;(setf xx x tt term nn n)		; ;
+    ;(setf xx x tt term nn n)		; ; ; ; ;
   (cond
    ((eq n 1)
     (cond
@@ -21673,6 +21672,8 @@ Then SIMPLIFY converts them into standard form. |#
 	      ((eq (car x) 'expt) (* (term-length (mem2 x)) (term-length (mem3 x))))
 	      (t 1)))))
 
+;;SECTION probability
+
 #|							ANALYZE-PROBABILITY-STRUCTURES
 
 version of 8/7/07
@@ -21685,37 +21686,37 @@ the pathnames (above) to indicate where the files are on your computer.
 Here is an example of the use of ANALYZE-PROBABILITY-STRUCTURE:
 
 (analyze-probability-structure
-  :subsets '(A B C D)
-  :constants '(a b c d r s)
-  :constraints '((abc = (* s bc)))
-  :probability-constraints '((prob(A / B) = r))
-  :subset-constraints '((D subset C))
-  :probability-queries '(prob(A / (B & C))
-                                            prob(A / B)
-                                            prob(A / (B & (C & D))))
-  :independence-queries '((A B C) (A C B) (A C U) (A D (B & C)))
-  :display-infix t)
+ :subsets '(A B C D)
+ :constants '(a b c d r s)
+ :constraints '((abc = (* s bc)))
+ :probability-constraints '((prob(A / B) = r))
+ :subset-constraints '((D subset C))
+ :probability-queries '(prob(A / (B & C))
+			    prob(A / B)
+			    prob(A / (B & (C & D))))
+ :independence-queries '((A B C) (A C B) (A C U) (A D (B & C)))
+ :display-infix t)
 
 The general form of a function call is:
 
 (ANALYZE-PROBABILITY-STRUCTURE
-  :subsets a list of atoms
-  :constants a list of atoms
-  :constraints a list of linear equations in prefix notation
-  :probability-constraints a list of probability specifications
-  :subset-constraints a list of subset relations
-  :higher-order t or nil
-  :probability-queries a list of probability formulas
-  :independence-queries a list of triples of formulas
-  :display-infix t or nil
-  :display t or nil
-  :display-details t or nil
-  :display-results t or nil
-  :expand-defs t or nil
-  :display-terms t or nil
-  :remove-u t or nil
-  :parallel-term-characterizations t or nil
-  :name a string)
+ :subsets a list of atoms
+ :constants a list of atoms
+ :constraints a list of linear equations in prefix notation
+ :probability-constraints a list of probability specifications
+ :subset-constraints a list of subset relations
+ :higher-order t or nil
+ :probability-queries a list of probability formulas
+ :independence-queries a list of triples of formulas
+ :display-infix t or nil
+ :display t or nil
+ :display-details t or nil
+ :display-results t or nil
+ :expand-defs t or nil
+ :display-terms t or nil
+ :remove-u t or nil
+ :parallel-term-characterizations t or nil
+ :name a string)
 
 Note that all the displays work best if you set your LISP to display S-expressions in lower case.
 
@@ -21785,7 +21786,7 @@ that is sometimes faster in its attempt to find expectable values. This is nil b
 
 name Sometimes ANALYZE-PROBABILITY-STRUCTURE is unable to find definitions for all the variables. In that
 case, one can still solve the problems numerically using FIND-EXPECTABLE-VALUES (defined in a separate
-file). To make the use of FIND-EXPECTABLE-VALUES more efficient, ANALYZE-PROBABILITY-STRUCTURE
+										  file). To make the use of FIND-EXPECTABLE-VALUES more efficient, ANALYZE-PROBABILITY-STRUCTURE
 saves its results in a structure called a probability-structure, which can be used by FIND-EXPECTABLE-VALUES.
 If no name is supplied, a name is generated for the probability structure, and the probability structure is bound
 to the name. If a name is supplied, it should be a string consisting of a single atom (e.g., "my-ps"). The atom is taken as the
@@ -21797,253 +21798,253 @@ not originally queried, or for checking independenced in cases not originally qu
 Here is an example of ANALYZE-PROBABILITY-STRUCTURE with display-details = nil:
 
 (analyze-probability-structure
-  :subsets '(A B C)
-  :name "my-ps"
-  :constants '(a b c r s)
-  :probability-constraints '((prob(A / C) = r)
-                                               (prob(B / C) = s))
-  :probability-queries '(prob((A & B) / C))
-  :independence-queries '((A B C)
-                                                (A B U))
-  :display-infix t)
+ :subsets '(A B C)
+ :name "my-ps"
+ :constants '(a b c r s)
+ :probability-constraints '((prob(A / C) = r)
+			    (prob(B / C) = s))
+ :probability-queries '(prob((A & B) / C))
+ :independence-queries '((A B C)
+			 (A B U))
+ :display-infix t)
 
 (
-========================================================
-Dividing U into 3 subsets A,B,C whose probabilities relative to U are a, b, c,
-if the following constraints are satisfied:
-     prob(A / C) = r
-     prob(B / C) = s
-and the values of a, b, c, r, s are held constant,
-grounded definitions of the expectable values were found for all the variables.
-----------------------------------------------------------------------------------------------
-The following definitions of expectable values were found that appeal only to the constants:
-----------
-abc = (s * r * c)
-----------
-ab = ((((s * r * c) + (a * b)) - ((r * c * b) + (a * s * c))) / (1 - c))
-========================================================
-The following characterizations were found for the expectable values of the probabilities wanted:
-----------
-prob((A & B) / C) = (s * r)
-----------
-========================================================
-A and B are STATISTICALLY INDEPENDENT  relative to C
+ ========================================================
+ Dividing U into 3 subsets A,B,C whose probabilities relative to U are a, b, c,
+ if the following constraints are satisfied:
+ prob(A / C) = r
+ prob(B / C) = s
+ and the values of a, b, c, r, s are held constant,
+ grounded definitions of the expectable values were found for all the variables.
+ ----------------------------------------------------------------------------------------------
+ The following definitions of expectable values were found that appeal only to the constants:
+ ----------
+ abc = (s * r * c)
+ ----------
+ ab = ((((s * r * c) + (a * b)) - ((r * c * b) + (a * s * c))) / (1 - c))
+ ========================================================
+ The following characterizations were found for the expectable values of the probabilities wanted:
+ ----------
+ prob((A & B) / C) = (s * r)
+ ----------
+ ========================================================
+ A and B are STATISTICALLY INDEPENDENT  relative to C
 
-A and B are NOT statistically independent  relative to U
-     (prob(A / U) * prob(B / U)) Ö prob((A & B) / U) =
-          (((1 - c) * a * b) / (((a * b) + (s * r * c)) - ((r * c * b) + (a * s * c))))
-========================================================
-These results are encoded in the probability structure my-ps
-)
+ A and B are NOT statistically independent  relative to U
+ (prob(A / U) * prob(B / U)) Ö prob((A & B) / U) =
+ (((1 - c) * a * b) / (((a * b) + (s * r * c)) - ((r * c * b) + (a * s * c))))
+ ========================================================
+ These results are encoded in the probability structure my-ps
+ )
 
 Setting display-details = t produces a proof of the results (but to see that it is a proof, you must
-be familiar with some of the theorems in the paper "Probable probabilities":
+								 be familiar with some of the theorems in the paper "Probable probabilities":
 
-(analyze-probability-structure
-  :subsets '(A B C)
-  :constants '(a b c r s)
-  :probability-constraints '((prob(A / C) = r)
-                                               (prob(B / C) = s))
-  :probability-queries '(prob((A & B) / C))
-  :independence-queries '((A B C)
-                                                (A B U))
-  :display-infix t
-  :display-details t)
+								 (analyze-probability-structure
+								  :subsets '(A B C)
+								  :constants '(a b c r s)
+								  :probability-constraints '((prob(A / C) = r)
+											     (prob(B / C) = s))
+								  :probability-queries '(prob((A & B) / C))
+								  :independence-queries '((A B C)
+											  (A B U))
+								  :display-infix t
+								  :display-details t)
 
-(
-========================================================
-Dividing U into 3 subsets A,B,C whose probabilities relative to U are a, b, c,
-if the following constraints are satisfied:
-     prob(A / C) = r
-     prob(B / C) = s
-and the values of a, b, c, r, s are held constant,
-then the term-set consisting of the cardinalities of the partition of U is:
-    {
-     (ab - abc)
-     abc
-     ((a + abc) - (ab + (r * c)))
-     ((r * c) - abc)
-     ((b + abc) - (ab + (s * c)))
-     ((s * c) - abc)
-     ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))
-     ((c + abc) - ((r * c) + (s * c)))
-    }
-The subset of terms in the term-set that contain abc is:
-          {
-          (ab - abc)
-          abc
-          ((a + abc) - (ab + (r * c)))
-          ((r * c) - abc)
-          ((b + abc) - (ab + (s * c)))
-          ((s * c) - abc)
-          ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))
-          ((c + abc) - ((r * c) + (s * c)))
-          }
-The expectable-value of abc is then the real-valued solution to the following equation:
-1 = (((ab - abc) ^ ((ab - (abc + 1)) - (ab - abc)))
-         * (abc ^ ((abc + 1) - abc))
-         * (((a + abc) - (ab + (r * c))) ^ (((a + (abc + 1)) - (ab + (r * c))) - ((a + abc) - (ab + (r * c)))))
-         * (((r * c) - abc) ^ (((r * c) - (abc + 1)) - ((r * c) - abc)))
-         * (((b + abc) - (ab + (s * c))) ^ (((b + (abc + 1)) - (ab + (s * c))) - ((b + abc) - (ab + (s * c)))))
-         * (((s * c) - abc) ^ (((s * c) - (abc + 1)) - ((s * c) - abc)))
-         * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^
-            (((ab + u + (r * c) + (s * c)) - (a + b + (abc + 1) + c)) - ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))))
-         * (((c + abc) - ((r * c) + (s * c))) ^ (((c + (abc + 1)) - ((r * c) + (s * c))) - ((c + abc) - ((r * c) + (s * c))))))
-   = (((ab - abc) ^ (- 1))
-         * (abc ^ 1)
-         * (((a + abc) - (ab + (r * c))) ^ 1)
-         * (((r * c) - abc) ^ (- 1))
-         * (((b + abc) - (ab + (s * c))) ^ 1)
-         * (((s * c) - abc) ^ (- 1))
-         * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^ (- 1))
-         * (((c + abc) - ((r * c) + (s * c))) ^ 1))
-   = ((1 / (ab - abc))
-         * abc
-         * ((abc + a) - (ab + (r * c)))
-         * (1 / ((r * c) - abc))
-         * ((abc + b) - (ab + (s * c)))
-         * (1 / ((s * c) - abc))
-         * (1 / (((s * c) + (r * c) + u + ab) - (a + b + abc + c)))
-         * ((abc + c) - ((r * c) + (s * c))))
-   = (abc * ((abc + a) - (ab + (r * c))) * ((abc + b) - (ab + (s * c))) * ((abc + c) - ((r * c) + (s * c)))
-            * (1 / (((s * c) + (r * c) + u + ab) - (a + b + abc + c))) * (1 / ((s * c) - abc))
-            * (1 / ((r * c) - abc)) * (1 / (ab - abc)))
-   = ((((c + abc) - ((r * c) + (s * c))) * ((b + abc) - (ab + (s * c))) * ((a + abc) - (ab + (r * c))) * abc)
-         / ((ab - abc) * ((r * c) - abc) * ((s * c) - abc) * ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))))
-The subset of terms in the term-set that contain ab is:
-          {
-          (ab - abc)
-          ((a + abc) - (ab + (r * c)))
-          ((b + abc) - (ab + (s * c)))
-          ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))
-          }
-The expectable-value of ab is then the real-valued solution to the following equation:
-1 = (((ab - abc) ^ (((ab + 1) - abc) - (ab - abc)))
-         *
-         (((a + abc) - (ab + (r * c))) ^ (((a + abc) - ((ab + 1) + (r * c))) - ((a + abc) - (ab + (r * c)))))
-         * (((b + abc) - (ab + (s * c))) ^ (((b + abc) - ((ab + 1) + (s * c))) - ((b + abc) - (ab + (s * c)))))
-         * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^
-            ((((ab + 1) + u + (r * c) + (s * c)) - (a + b + abc + c)) - ((ab + u + (r * c) + (s * c)) - (a + b + abc + c)))))
-   = (((ab - abc) ^ 1) * (((a + abc) - (ab + (r * c))) ^ (- 1)) * (((b + abc) - (ab + (s * c))) ^ (- 1))
-         * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^ 1))
-   = ((ab - abc) * (1 / ((abc + a) - (ab + (r * c)))) * (1 / ((abc + b) - (ab + (s * c)))) *
-            (((s * c) + (r * c) + u + ab) - (a + b + abc + c)))
-   = ((ab - abc) * (((s * c) + (r * c) + u + ab) - (a + b + abc + c)) *
-            (1 / ((abc + b) - (ab + (s * c)))) * (1 / ((abc + a) - (ab + (r * c)))))
-   = ((((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) * (ab - abc))
-         / (((a + abc) - (ab + (r * c))) * ((b + abc) - (ab + (s * c)))))
-The preceding term-characterization for ab simplifies to:
-. . ((((c * ab) + (u * abc) + (a * b) + (r * s * (c ^ 2))) - ((c * abc) + (u * ab) + (a * s * c) + (r * c * b)))
-      = 0)
-Solving for ab:
-. . ab = ((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc))) / (u - c))
-Substituting the preceding definition for ab into the previous term-characterizations
-produces the new term-characterizations:
-. . . . . abc: 1 = ((((c + abc) - ((r * c) + (s * c))) *
-                            ((b + abc)
-                              - (((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc))) / (u - c))
-                                  + (s * c)))
-                            * ((a + abc)
-                              -
-                              (((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc))) / (u - c))
-                                + (r * c)))
-                            * abc)
-                           / ((((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc)))
-                                 / (u - c))
-                               - abc)
-                             * ((r * c) - abc)
-                             * ((s * c) - abc)
-                             * ((((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc)))
-                                   / (u - c))
-                                 + u + (r * c) + (s * c))
-                               - (a + b + abc + c))))
-These term-characterizations simplify to yield the following term-characterizations:
-. . . . . abc: 1 = ((abc * ((c + abc) - ((r * c) + (s * c)))) / (((s * c) - abc) * ((r * c) - abc)))
-. The preceding term-characterization for abc simplifies to:
-. . . (((s * r * (c ^ 2)) - (abc * c)) = 0)
-. Solving for abc:
-. . . abc = (s * r * c)
-. . . Substituting the new definition for abc into the previous definition for ab produces:
-. . . ab = ((((u * (s * r * c)) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * (s * r * c))))
-                 / (u - c))
-. . . which simplifies to:
-. . . ab = ((((a * b) + (u * s * r * c)) - ((r * c * b) + (a * s * c))) / (u - c))
+								 (
+								  ========================================================
+								  Dividing U into 3 subsets A,B,C whose probabilities relative to U are a, b, c,
+								  if the following constraints are satisfied:
+								  prob(A / C) = r
+								  prob(B / C) = s
+								  and the values of a, b, c, r, s are held constant,
+								  then the term-set consisting of the cardinalities of the partition of U is:
+								  {
+								  (ab - abc)
+								  abc
+								  ((a + abc) - (ab + (r * c)))
+								  ((r * c) - abc)
+								  ((b + abc) - (ab + (s * c)))
+								  ((s * c) - abc)
+								  ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))
+								  ((c + abc) - ((r * c) + (s * c)))
+								  }
+								  The subset of terms in the term-set that contain abc is:
+								  {
+								  (ab - abc)
+								  abc
+								  ((a + abc) - (ab + (r * c)))
+								  ((r * c) - abc)
+								  ((b + abc) - (ab + (s * c)))
+								  ((s * c) - abc)
+								  ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))
+								  ((c + abc) - ((r * c) + (s * c)))
+								  }
+								  The expectable-value of abc is then the real-valued solution to the following equation:
+								  1 = (((ab - abc) ^ ((ab - (abc + 1)) - (ab - abc)))
+								       * (abc ^ ((abc + 1) - abc))
+								       * (((a + abc) - (ab + (r * c))) ^ (((a + (abc + 1)) - (ab + (r * c))) - ((a + abc) - (ab + (r * c)))))
+								       * (((r * c) - abc) ^ (((r * c) - (abc + 1)) - ((r * c) - abc)))
+								       * (((b + abc) - (ab + (s * c))) ^ (((b + (abc + 1)) - (ab + (s * c))) - ((b + abc) - (ab + (s * c)))))
+								       * (((s * c) - abc) ^ (((s * c) - (abc + 1)) - ((s * c) - abc)))
+								       * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^
+									  (((ab + u + (r * c) + (s * c)) - (a + b + (abc + 1) + c)) - ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))))
+								       * (((c + abc) - ((r * c) + (s * c))) ^ (((c + (abc + 1)) - ((r * c) + (s * c))) - ((c + abc) - ((r * c) + (s * c))))))
+								  = (((ab - abc) ^ (- 1))
+								     * (abc ^ 1)
+								     * (((a + abc) - (ab + (r * c))) ^ 1)
+								     * (((r * c) - abc) ^ (- 1))
+								     * (((b + abc) - (ab + (s * c))) ^ 1)
+								     * (((s * c) - abc) ^ (- 1))
+								     * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^ (- 1))
+								     * (((c + abc) - ((r * c) + (s * c))) ^ 1))
+								  = ((1 / (ab - abc))
+								     * abc
+								     * ((abc + a) - (ab + (r * c)))
+								     * (1 / ((r * c) - abc))
+								     * ((abc + b) - (ab + (s * c)))
+								     * (1 / ((s * c) - abc))
+								     * (1 / (((s * c) + (r * c) + u + ab) - (a + b + abc + c)))
+								     * ((abc + c) - ((r * c) + (s * c))))
+								  = (abc * ((abc + a) - (ab + (r * c))) * ((abc + b) - (ab + (s * c))) * ((abc + c) - ((r * c) + (s * c)))
+									 * (1 / (((s * c) + (r * c) + u + ab) - (a + b + abc + c))) * (1 / ((s * c) - abc))
+									 * (1 / ((r * c) - abc)) * (1 / (ab - abc)))
+								  = ((((c + abc) - ((r * c) + (s * c))) * ((b + abc) - (ab + (s * c))) * ((a + abc) - (ab + (r * c))) * abc)
+								     / ((ab - abc) * ((r * c) - abc) * ((s * c) - abc) * ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))))
+								  The subset of terms in the term-set that contain ab is:
+								  {
+								  (ab - abc)
+								  ((a + abc) - (ab + (r * c)))
+								  ((b + abc) - (ab + (s * c)))
+								  ((ab + u + (r * c) + (s * c)) - (a + b + abc + c))
+								  }
+								  The expectable-value of ab is then the real-valued solution to the following equation:
+								  1 = (((ab - abc) ^ (((ab + 1) - abc) - (ab - abc)))
+								       *
+								       (((a + abc) - (ab + (r * c))) ^ (((a + abc) - ((ab + 1) + (r * c))) - ((a + abc) - (ab + (r * c)))))
+								       * (((b + abc) - (ab + (s * c))) ^ (((b + abc) - ((ab + 1) + (s * c))) - ((b + abc) - (ab + (s * c)))))
+								       * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^
+									  ((((ab + 1) + u + (r * c) + (s * c)) - (a + b + abc + c)) - ((ab + u + (r * c) + (s * c)) - (a + b + abc + c)))))
+								  = (((ab - abc) ^ 1) * (((a + abc) - (ab + (r * c))) ^ (- 1)) * (((b + abc) - (ab + (s * c))) ^ (- 1))
+								     * (((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) ^ 1))
+								  = ((ab - abc) * (1 / ((abc + a) - (ab + (r * c)))) * (1 / ((abc + b) - (ab + (s * c)))) *
+								     (((s * c) + (r * c) + u + ab) - (a + b + abc + c)))
+								  = ((ab - abc) * (((s * c) + (r * c) + u + ab) - (a + b + abc + c)) *
+								     (1 / ((abc + b) - (ab + (s * c)))) * (1 / ((abc + a) - (ab + (r * c)))))
+								  = ((((ab + u + (r * c) + (s * c)) - (a + b + abc + c)) * (ab - abc))
+								     / (((a + abc) - (ab + (r * c))) * ((b + abc) - (ab + (s * c)))))
+								  The preceding term-characterization for ab simplifies to:
+								  . . ((((c * ab) + (u * abc) + (a * b) + (r * s * (c ^ 2))) - ((c * abc) + (u * ab) + (a * s * c) + (r * c * b)))
+								       = 0)
+								  Solving for ab:
+								  . . ab = ((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc))) / (u - c))
+								  Substituting the preceding definition for ab into the previous term-characterizations
+								  produces the new term-characterizations:
+								  . . . . . abc: 1 = ((((c + abc) - ((r * c) + (s * c))) *
+										       ((b + abc)
+											- (((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc))) / (u - c))
+											   + (s * c)))
+										       * ((a + abc)
+											  -
+											  (((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc))) / (u - c))
+											   + (r * c)))
+										       * abc)
+										      / ((((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc)))
+											   / (u - c))
+											  - abc)
+											 * ((r * c) - abc)
+											 * ((s * c) - abc)
+											 * ((((((u * abc) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * abc)))
+											      / (u - c))
+											     + u + (r * c) + (s * c))
+											    - (a + b + abc + c))))
+								  These term-characterizations simplify to yield the following term-characterizations:
+								  . . . . . abc: 1 = ((abc * ((c + abc) - ((r * c) + (s * c)))) / (((s * c) - abc) * ((r * c) - abc)))
+								  . The preceding term-characterization for abc simplifies to:
+								  . . . (((s * r * (c ^ 2)) - (abc * c)) = 0)
+								  . Solving for abc:
+								  . . . abc = (s * r * c)
+								  . . . Substituting the new definition for abc into the previous definition for ab produces:
+								  . . . ab = ((((u * (s * r * c)) + (a * b) + (r * s * (c ^ 2))) - ((r * c * b) + (a * s * c) + (c * (s * r * c))))
+									      / (u - c))
+								  . . . which simplifies to:
+								  . . . ab = ((((a * b) + (u * s * r * c)) - ((r * c * b) + (a * s * c))) / (u - c))
 
-Grounded definitions of the expectable values were found for all the variables.
-----------------------------------------------------------------------------------------------
-The following definitions of expectable values were found that appeal only to the constants:
-----------
-abc = (s * r * c)
-----------
-ab = ((((s * r * c) + (a * b)) - ((r * c * b) + (a * s * c))) / (1 - c))
-========================================================
-The following characterizations were found for the expectable values of the probabilities wanted:
-----------
-prob((A & B) / C) = (s * r)
-----------
-========================================================
-A and B are STATISTICALLY INDEPENDENT  relative to C
+								  Grounded definitions of the expectable values were found for all the variables.
+								  ----------------------------------------------------------------------------------------------
+								  The following definitions of expectable values were found that appeal only to the constants:
+								  ----------
+								  abc = (s * r * c)
+								  ----------
+								  ab = ((((s * r * c) + (a * b)) - ((r * c * b) + (a * s * c))) / (1 - c))
+								  ========================================================
+								  The following characterizations were found for the expectable values of the probabilities wanted:
+								  ----------
+								  prob((A & B) / C) = (s * r)
+								  ----------
+								  ========================================================
+								  A and B are STATISTICALLY INDEPENDENT  relative to C
 
-A and B are NOT statistically independent  relative to U
-     (prob(A / U) * prob(B / U)) Ö prob((A & B) / U) =
-          (((1 - c) * a * b) / (((a * b) + (s * r * c)) - ((r * c * b) + (a * s * c))))
-========================================================
-These results are encoded in the probability structure ps7562
-)
+								  A and B are NOT statistically independent  relative to U
+								  (prob(A / U) * prob(B / U)) Ö prob((A & B) / U) =
+								  (((1 - c) * a * b) / (((a * b) + (s * r * c)) - ((r * c * b) + (a * s * c))))
+								  ========================================================
+								  These results are encoded in the probability structure ps7562
+								  )
 
 
-ANALYZE-PROBABILITY-STRUCTURE finds the expectable values of probabilities by converting
-the problem into one of solving a system of simultaneous equations. Occasionally,
-ANALYZE-PROBABILITY-STRUCTURE can construct the system of equations but cannot solve
-them. It may be possible to solve them in a comptuer algebra program instead. Thus we also
-have a function ANALYZE-PROBABILITY-STRUCTURE-in-MAPLE that constructs the system of
-equations and then prints out a Maple instruction which can be pasted into Maple for solving the
-equations. For example,
+								 ANALYZE-PROBABILITY-STRUCTURE finds the expectable values of probabilities by converting
+								 the problem into one of solving a system of simultaneous equations. Occasionally,
+								 ANALYZE-PROBABILITY-STRUCTURE can construct the system of equations but cannot solve
+								 them. It may be possible to solve them in a comptuer algebra program instead. Thus we also
+								 have a function ANALYZE-PROBABILITY-STRUCTURE-in-MAPLE that constructs the system of
+								 equations and then prints out a Maple instruction which can be pasted into Maple for solving the
+								 equations. For example,
 
-(analyze-probability-structure-in-Maple
-  :subsets '(A B C D)
-  :constants '(a b c d bc bd r s v)
-  :probability-constraints '((prob(A / B) = r)
-                                               (prob(A / (B & C)) = s)
-                                               (prob(A / (B & D)) = v)))
+								 (analyze-probability-structure-in-Maple
+								  :subsets '(A B C D)
+								  :constants '(a b c d bc bd r s v)
+								  :probability-constraints '((prob(A / B) = r)
+											     (prob(A / (B & C)) = s)
+											     (prob(A / (B & D)) = v)))
 
-produces the Maple instruction
+								 produces the Maple instruction
 
-solve({((((ac + abcd) - ((s * bc) + acd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd)))) /
-        ((((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)) * (((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)))) = 1,
-(((((r * b) + abcd) - ((s * bc) + (v * bd))) * abcd * ((ad + abcd) - ((v * bd) + acd)) * ((ac + abcd) - ((s * bc) + acd)) *
-  ((bd + abcd) - ((v * bd) + bcd)) * ((bc + abcd) - ((s * bc) + bcd)) *
-  ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) * ((cd + abcd) - (acd + bcd)))
- /
- ((((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) * (bcd - abcd) *
-  (((s * bc) + b + (v * bd) + bcd) - ((r * b) + bc + abcd + bd)) * (acd - abcd) * (((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)) *
-  ((s * bc) - abcd) * ((v * bd) - abcd))) = 1,
-((((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) * ((cd + abcd) - (acd + bcd))) /
- ((((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)))) = 1,
-(((((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)) * (acd - abcd) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) *
-  (((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)))
- /
- (((cd + abcd) - (acd + bcd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) *
-  ((ac + abcd) - ((s * bc) + acd)) * ((ad + abcd) - ((v * bd) + acd)))) = 1,
-(((((s * bc) + b + (v * bd) + bcd) - ((r * b) + bc + abcd + bd)) * (bcd - abcd) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) *
-  (((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)))
- /
- (((cd + abcd) - (acd + bcd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) *
-  ((bc + abcd) - ((s * bc) + bcd)) * ((bd + abcd) - ((v * bd) + bcd)))) = 1,
-((((ad + abcd) - ((v * bd) + acd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd)))) /
- ((((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) * (((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)))) = 1},
-[ac, abcd, cd, acd, bcd, ad])
+								 solve({((((ac + abcd) - ((s * bc) + acd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd)))) /
+									 ((((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)) * (((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)))) = 1,
+									 (((((r * b) + abcd) - ((s * bc) + (v * bd))) * abcd * ((ad + abcd) - ((v * bd) + acd)) * ((ac + abcd) - ((s * bc) + acd)) *
+									   ((bd + abcd) - ((v * bd) + bcd)) * ((bc + abcd) - ((s * bc) + bcd)) *
+									   ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) * ((cd + abcd) - (acd + bcd)))
+									  /
+									  ((((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) * (bcd - abcd) *
+									   (((s * bc) + b + (v * bd) + bcd) - ((r * b) + bc + abcd + bd)) * (acd - abcd) * (((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)) *
+									   ((s * bc) - abcd) * ((v * bd) - abcd))) = 1,
+									   ((((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) * ((cd + abcd) - (acd + bcd))) /
+									    ((((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)))) = 1,
+									    (((((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)) * (acd - abcd) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) *
+									      (((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)))
+									     /
+									     (((cd + abcd) - (acd + bcd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) *
+									      ((ac + abcd) - ((s * bc) + acd)) * ((ad + abcd) - ((v * bd) + acd)))) = 1,
+									      (((((s * bc) + b + (v * bd) + bcd) - ((r * b) + bc + abcd + bd)) * (bcd - abcd) * (((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) *
+										(((s * bc) + c + acd + bcd) - (ac + bc + abcd + cd)))
+									       /
+									       (((cd + abcd) - (acd + bcd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd))) *
+										((bc + abcd) - ((s * bc) + bcd)) * ((bd + abcd) - ((v * bd) + bcd)))) = 1,
+										((((ad + abcd) - ((v * bd) + acd)) * ((bc + ac + 1 + (r * b) + ad + bd + abcd + cd) - (a + b + (s * bc) + c + bcd + acd + d + (v * bd)))) /
+										 ((((v * bd) + d + acd + bcd) - (ad + bd + abcd + cd)) * (((s * bc) + a + (v * bd) + acd) - ((r * b) + ac + abcd + ad)))) = 1},
+										 [ac, abcd, cd, acd, bcd, ad])
 
-When this is pasted into Maple and executed, it produces the same solution as ANALYZE-PROBABILITY-STRUCTURE. Usually,
-Maple is somewhat slower than ANALYZE-PROBABILITY-STRUCTURE, but occasionally it can solve problems that ANALYZE-
-PROBABILITY-STRUCTURE cannot solve.
+								 When this is pasted into Maple and executed, it produces the same solution as ANALYZE-PROBABILITY-STRUCTURE. Usually,
+								 Maple is somewhat slower than ANALYZE-PROBABILITY-STRUCTURE, but occasionally it can solve problems that ANALYZE-
+								 PROBABILITY-STRUCTURE cannot solve.
 
-One can also try to solve the problems in Mathematica, but my experience is that Mathematica is rarely able to solve the
-systems of equations. ANALYZE-PROBABILITY-STRUCTURE does much better.
+								 One can also try to solve the problems in Mathematica, but my experience is that Mathematica is rarely able to solve the
+								 systems of equations. ANALYZE-PROBABILITY-STRUCTURE does much better.
 
-In complex cases there may be no analytic characterization of the expectable values of the probabilities. This happens
-when the set of simultaneous equations has no analytic solution. But it is still possible to generate that set of
-equations and then solve them numerically. This is done by FIND-EXPECTABLE-VALUES in the file "Probability
+								 In complex cases there may be no analytic characterization of the expectable values of the probabilities. This happens
+								 when the set of simultaneous equations has no analytic solution. But it is still possible to generate that set of
+								 equations and then solve them numerically. This is done by FIND-EXPECTABLE-VALUES in the file "Probability
 structures.lisp".
 |#
 
@@ -22055,32 +22056,32 @@ structures.lisp".
 	       (declare (ignore depth))
 	       (princ "#<probability-structure " stream) (princ (ps-name x) stream) (princ ">" stream)))
 	    (:conc-name ps-))
-    (name nil)
-    (subsets nil)
-    (constants nil)
-    (constraints nil)  ;; a list of equalities, with the left term one of the terms
-    (subset-constraints nil)
-    (probability-constraints nil)
-    (terms nil)
-    (atoms nil)
-    (term-characterizations nil)
-    (log-term-characterizations nil)
-    (term-definitions nil)   ;; this is an a-list
-    (partition nil)
-    (sample-args nil))
+  (name nil)
+  (subsets nil)
+  (constants nil)
+  (constraints nil)  ;; a list of equalities, with the left term one of the terms
+  (subset-constraints nil)
+  (probability-constraints nil)
+  (terms nil)
+  (atoms nil)
+  (term-characterizations nil)
+  (log-term-characterizations nil)
+  (term-definitions nil)   ;; this is an a-list
+  (partition nil)
+  (sample-args nil))
 
 (proclaim '(special *default-line-length* *definitions* *term-characterizations* *TC* *loaded* *args* *ps*))
 
-;(defun print-probability (P)
-;    (cond ((eq P '&) (princ " & "))
-;                ((eq P 'v) (princ " v "))
-;                ((eq P '/) (princ " / "))
-;                ((eq P '~) (princ "~"))
-;                ((atom P)
-;                  (let ((P* (explode (string P))))
-;                     (cond ((eq (car P*) "~") (princ "~") (dolist (x (cdr P*)) (princ (coerce x 'string))))
-;                                 (t (dolist (x P*) (princ (coerce x 'string)))))))
-;                ((listp P) (princ "(") (dolist (x P) (print-probability x)) (princ ")"))))
+					;(defun print-probability (P)
+					;    (cond ((eq P '&) (princ " & "))
+					;                ((eq P 'v) (princ " v "))
+					;                ((eq P '/) (princ " / "))
+					;                ((eq P '~) (princ "~"))
+					;                ((atom P)
+					;                  (let ((P* (explode (string P))))
+					;                     (cond ((eq (car P*) "~") (princ "~") (dolist (x (cdr P*)) (princ (coerce x 'string))))
+					;                                 (t (dolist (x P*) (princ (coerce x 'string)))))))
+					;                ((listp P) (princ "(") (dolist (x P) (print-probability x)) (princ ")"))))
 
 (defun print-probability (P)
   (cond ((eq P '&) (princ " & "))
@@ -22321,74 +22322,74 @@ above. The latter expands to the two constraints (X subset Y) and (Y subset X). 
 	  (when d (list '- d))))))))
 
 (defun factor-numbers (p)
+  (cond
+   ((atom p) p)
+   ((eq (car p) '*)
+    (let* ((p* (flatten-product+ (cons '* (mapcar #'factor-numbers (cdr p)))))
+	   (numbers (subset #'integerp (cdr p*))))
+      (cond
+       (numbers (as-product
+		 (cons (eval (cons '* numbers)) (set-difference (cdr p*) numbers))))
+       (t p))))
+   ((eq (car p) '+)
+    (let ((s1 (factor-numbers (mem2 p))))
+      (cond
+       ((and (productp s1) (integerp (mem2 s1)))
+	(let ((n (mem2 s1))
+	      (s p)
+	      (coefficient nil))
+	  (loop
+	   (let* ((numbers (cdr (nseq n)))
+		  (k (find-if
+		      #'(lambda (x)
+			  (and (integerp (/ n x))
+			       (let ((s* (divide-by-number s x)))
+				 (and s* (setf s s*))))) numbers)))
+	     (cond (k (push k coefficient) (setf n (/ n k)))
+		   (t (return (as-product (list (eval (as-product coefficient)) s)))))))))
+       (t p))))
+   ((eq (car p) '-)
     (cond
-      ((atom p) p)
-      ((eq (car p) '*)
-        (let* ((p* (flatten-product+ (cons '* (mapcar #'factor-numbers (cdr p)))))
-                  (numbers (subset #'integerp (cdr p*))))
-           (cond
-             (numbers (as-product
-                                  (cons (eval (cons '* numbers)) (set-difference (cdr p*) numbers))))
-             (t p))))
-      ((eq (car p) '+)
-        (let ((s1 (factor-numbers (mem2 p))))
-           (cond
-             ((and (productp s1) (integerp (mem2 s1)))
-               (let ((n (mem2 s1))
-                       (s p)
-                       (coefficient nil))
-                  (loop
-                     (let* ((numbers (cdr (nseq n)))
-                               (k (find-if
-                                     #'(lambda (x)
-                                           (and (integerp (/ n x))
-                                                     (let ((s* (divide-by-number s x)))
-                                                        (and s* (setf s s*))))) numbers)))
-                        (cond (k (push k coefficient) (setf n (/ n k)))
-                                    (t (return (as-product (list (eval (as-product coefficient)) s)))))))))
-             (t p))))
-      ((eq (car p) '-)
-        (cond
-          ((mem3 p)
-            (let ((p1 (factor-numbers (mem2 p)))
-                    (p2 (factor-numbers (mem3 p))))
-           (cond
-             ((and (productp p1) (integerp (mem2 p1))
-                        (productp p2) (integerp (mem2 p2)))
-               (let ((n (mem2 p1)) (m (mem2 p2))
-                       (coefficient nil))
-                  (loop
-                     (let* ((numbers (cdr (nseq n)))
-                               (k (find-if
-                                     #'(lambda (x)
-                                           (and (integerp (/ n x)) (integerp (/ m x)))) numbers)))
-                        (cond (k (push k coefficient) (setf n (/ n k)) (setf m (/ m k)))
-                                    (t (return
-                                         (as-product
-                                           (list (eval (as-product coefficient))
-                                                       (list '- (as-product (cons n (cddr p1)))
-                                                               (as-product (cons m (cddr p2)))))))))))))
-             (t p))))
-          (t (let ((p* (factor-numbers (mem2 p))))
-                (cond ((and (productp p*) (integerp (mem2 p*)))
-                             (list '* (mem2 p*) (list '- (as-product (cddr p*)))))
-                            (t p))))))
-      ((eq (car p) '/)
-        (let ((den (factor-numbers (mem3 p))))
-            (cond
-              ((and (productp den) (integerp (mem2 den)))
-                 (let ((n (mem2 den))
-                         (num (mem2 p)))
-                    (loop
-                       (let* ((numbers (cdr (nseq n)))
-                                 (k (find-if
-                                       #'(lambda (x)
-                                             (and (integerp (/ n x))
-                                                       (let ((num* (divide-by-number num x)))
-                                                          (and num* (setf num num*))))) numbers)))
-                          (cond (k (setf n k))
-                                      (t (return (list '/ num (as-product (cons n (cddr den)))))))))))
-              (t p))))))
+     ((mem3 p)
+      (let ((p1 (factor-numbers (mem2 p)))
+	    (p2 (factor-numbers (mem3 p))))
+	(cond
+	 ((and (productp p1) (integerp (mem2 p1))
+	       (productp p2) (integerp (mem2 p2)))
+	  (let ((n (mem2 p1)) (m (mem2 p2))
+		(coefficient nil))
+	    (loop
+	     (let* ((numbers (cdr (nseq n)))
+		    (k (find-if
+			#'(lambda (x)
+			    (and (integerp (/ n x)) (integerp (/ m x)))) numbers)))
+	       (cond (k (push k coefficient) (setf n (/ n k)) (setf m (/ m k)))
+		     (t (return
+			 (as-product
+			  (list (eval (as-product coefficient))
+				(list '- (as-product (cons n (cddr p1)))
+				      (as-product (cons m (cddr p2)))))))))))))
+	 (t p))))
+     (t (let ((p* (factor-numbers (mem2 p))))
+	  (cond ((and (productp p*) (integerp (mem2 p*)))
+		 (list '* (mem2 p*) (list '- (as-product (cddr p*)))))
+		(t p))))))
+   ((eq (car p) '/)
+    (let ((den (factor-numbers (mem3 p))))
+      (cond
+       ((and (productp den) (integerp (mem2 den)))
+	(let ((n (mem2 den))
+	      (num (mem2 p)))
+	  (loop
+	   (let* ((numbers (cdr (nseq n)))
+		  (k (find-if
+		      #'(lambda (x)
+			  (and (integerp (/ n x))
+			       (let ((num* (divide-by-number num x)))
+				 (and num* (setf num num*))))) numbers)))
+	     (cond (k (setf n k))
+		   (t (return (list '/ num (as-product (cons n (cddr den)))))))))))
+       (t p))))))
 
 (defun simplify-arithmetically (x)
   (let ((val (ignore-errors (eval x))))
@@ -22544,9 +22545,9 @@ above. The latter expands to the two constraints (X subset Y) and (Y subset X). 
 	 (variables (ps-atoms ps))
 	 (results (mapcar #'(lambda (x)
 			      (multiple-value-bind
-			       (independent ratios)
-			       (statistically-independent x constraints partition)
-			       (list x independent ratios)))
+				  (independent ratios)
+				  (statistically-independent x constraints partition)
+				(list x independent ratios)))
 			  queries)))
     (dolist (x results)
       (when (mem2 x)
@@ -22685,45 +22686,45 @@ above. The latter expands to the two constraints (X subset Y) and (Y subset X). 
   (order-quotient (f-simplify-quotient (list '/ (negate a1) a2))))
 
 (defun solve-quadratic-equation (a b c)
-    (let* ((s1(list '/ (list '- (list '+ b (list 'expt (list '- (list 'expt b 2) (as-product (list 4 a c))) (list '/ 1 2))))
-                          (simplify (as-product  (list 2 a)))))
-              (val (default-term-value s1)))
-       (cond ((and (realp s1) (<= 0 val) (<= val 1)) s1)
-                   (t (list '/ (list '- (list 'expt (list '- (list 'expt b 2) (as-product (list 4 a c))) (list '/ 1 2)) b)
-                              (simplify (as-product (list 2 a))))))))
+  (let* ((s1(list '/ (list '- (list '+ b (list 'expt (list '- (list 'expt b 2) (as-product (list 4 a c))) (list '/ 1 2))))
+		  (simplify (as-product  (list 2 a)))))
+	 (val (default-term-value s1)))
+    (cond ((and (realp s1) (<= 0 val) (<= val 1)) s1)
+	  (t (list '/ (list '- (list 'expt (list '- (list 'expt b 2) (as-product (list 4 a c))) (list '/ 1 2)) b)
+		   (simplify (as-product (list 2 a))))))))
 
 #|
 (defun solve-quadratic-equation (a b c)
-    (list '/ (list '+/- (list '- b) (list 'expt (list '- (list 'expt b 2) (as-product (list 4 a c))) (list '/ 1 2)))
-            (simplify (as-product  (list 2 a)))))
+  (list '/ (list '+/- (list '- b) (list 'expt (list '- (list 'expt b 2) (as-product (list 4 a c))) (list '/ 1 2)))
+	(simplify (as-product  (list 2 a)))))
 |#
 
 (defun solve-cubic-equation (a b c d)
-    `(-
-       (+ (/ (* (expt 2 1/3) (- (* 3 ,a ,c) (expt ,b 2)))
-               (* 3 ,a
-                   (expt (- (+ (* 9 ,a ,b ,c)
-                                     (expt (+ (* 4 (expt (- (* 3 ,a ,c) (expt ,b 2)) 3))
-                                                    (expt (- (* 9 ,a ,b ,c) (+ (* 2 (expt ,b 3)) (* 27 (expt ,a 2) ,d))) 2)
-                                                    ) 1/2))
-                                 (* 27 (expt ,a 2) ,d)
-                                 (* 2 (expt ,b 3))
-                                 ) 1/3)))
-            (/ (expt
-                 (- (+ (* 9 ,a ,b ,c)
-                          (expt
-                            (+ (* 4 (expt
-                                          (- (* 3 ,a ,c) (expt ,b 2))
-                                          3))
-                                 (expt
-                                   (- (* 9 ,a ,b ,c) (+ (* 2 (expt ,b 3)) (* 27 (expt ,a 2) ,d)))
-                                   2))
-                            1/2)
-                          )
-                     (+ (* 2 (expt ,b 3)) (* 27 ,d (expt ,a 2))))
-                 1/3)
-                (* 3 ,a (expt 2 1/3))))
-       (/ ,b (* 3 ,a))))
+  `(-
+    (+ (/ (* (expt 2 1/3) (- (* 3 ,a ,c) (expt ,b 2)))
+	  (* 3 ,a
+	     (expt (- (+ (* 9 ,a ,b ,c)
+			 (expt (+ (* 4 (expt (- (* 3 ,a ,c) (expt ,b 2)) 3))
+				  (expt (- (* 9 ,a ,b ,c) (+ (* 2 (expt ,b 3)) (* 27 (expt ,a 2) ,d))) 2)
+				  ) 1/2))
+		      (* 27 (expt ,a 2) ,d)
+		      (* 2 (expt ,b 3))
+		      ) 1/3)))
+       (/ (expt
+	   (- (+ (* 9 ,a ,b ,c)
+		 (expt
+		  (+ (* 4 (expt
+			   (- (* 3 ,a ,c) (expt ,b 2))
+			   3))
+		     (expt
+		      (- (* 9 ,a ,b ,c) (+ (* 2 (expt ,b 3)) (* 27 (expt ,a 2) ,d)))
+		      2))
+		  1/2)
+		 )
+	      (+ (* 2 (expt ,b 3)) (* 27 ,d (expt ,a 2))))
+	   1/3)
+	  (* 3 ,a (expt 2 1/3))))
+    (/ ,b (* 3 ,a))))
 
 ;; equation is a term, and the equation we are solving is (equation = 0).
 (defun solve-equation-for-term (term equation higher-order)
@@ -22784,20 +22785,20 @@ above. The latter expands to the two constraints (X subset Y) and (Y subset X). 
     (let ((equation (recover-equation term def)))
       (when equation
 	(multiple-value-bind
-	 (solution higher-order-soln)
-	 (solve-equation-for-term term equation higher-order)
-	 (when display-details
-	   (cond
-	    (solution
-	     (terpri) (indent depth) (princ "The preceding term-characterization for ") (princ term) (princ " simplifies to:")
-	     (terpri) (indent (+ depth 2)) (print-tree (list equation '= 0) (+ depth 5) *default-line-length* nil display-infix)
-	     (terpri) (indent depth) (princ "Solving for ") (princ term) (princ ":")
-	     (terpri) (indent (+ depth 2)) (princ term) (princ " = ")
-	     (print-tree solution (+ depth 7 (round (/ (length (explode (string term))) 1.5)))
-			 *default-line-length* nil display-infix))
-	    (t (terpri) (indent depth)
-	       (princ "No solution was found for ") (princ term) (princ " in the preceding equation."))))
-	 (values solution higher-order-soln))))))
+	    (solution higher-order-soln)
+	    (solve-equation-for-term term equation higher-order)
+	  (when display-details
+	    (cond
+	     (solution
+	      (terpri) (indent depth) (princ "The preceding term-characterization for ") (princ term) (princ " simplifies to:")
+	      (terpri) (indent (+ depth 2)) (print-tree (list equation '= 0) (+ depth 5) *default-line-length* nil display-infix)
+	      (terpri) (indent depth) (princ "Solving for ") (princ term) (princ ":")
+	      (terpri) (indent (+ depth 2)) (princ term) (princ " = ")
+	      (print-tree solution (+ depth 7 (round (/ (length (explode (string term))) 1.5)))
+			  *default-line-length* nil display-infix))
+	     (t (terpri) (indent depth)
+		(princ "No solution was found for ") (princ term) (princ " in the preceding equation."))))
+	  (values solution higher-order-soln))))))
 
 #|
 (defun solve-for-term (term def &optional higher-order display-details depth display-infix)
@@ -22825,20 +22826,20 @@ above. The latter expands to the two constraints (X subset Y) and (Y subset X). 
     (let ((equation (recover-equation term def)))
       (when equation
 	(multiple-value-bind
-	 (solution higher-order-soln)
-	 (solve-equation-for-term term equation higher-order)
-	 (when display-details
-	   (cond
-	    (solution
-	     (terpri) (indent depth) (princ "The preceding term-characterization for ") (princ term) (princ " simplifies to:")
-	     (terpri) (indent (+ depth 2)) (print-tree (list equation '= 0) (+ depth 5) *default-line-length* nil display-infix)
-	     (terpri) (indent depth) (princ "Solving for ") (princ term) (princ ":")
-	     (terpri) (indent (+ depth 2)) (princ term) (princ " = ")
-	     (print-tree solution (+ depth 7 (round (/ (length (explode (string term))) 1.5)))
-			 *default-line-length* nil display-infix))
-	    (t (terpri) (indent depth)
-	       (princ "No solution was found for ") (princ term) (princ " in the preceding equation."))))
-	 (values solution higher-order-soln))))))
+	    (solution higher-order-soln)
+	    (solve-equation-for-term term equation higher-order)
+	  (when display-details
+	    (cond
+	     (solution
+	      (terpri) (indent depth) (princ "The preceding term-characterization for ") (princ term) (princ " simplifies to:")
+	      (terpri) (indent (+ depth 2)) (print-tree (list equation '= 0) (+ depth 5) *default-line-length* nil display-infix)
+	      (terpri) (indent depth) (princ "Solving for ") (princ term) (princ ":")
+	      (terpri) (indent (+ depth 2)) (princ term) (princ " = ")
+	      (print-tree solution (+ depth 7 (round (/ (length (explode (string term))) 1.5)))
+			  *default-line-length* nil display-infix))
+	     (t (terpri) (indent depth)
+		(princ "No solution was found for ") (princ term) (princ " in the preceding equation."))))
+	  (values solution higher-order-soln))))))
 
 (defun product-length (x)
   (when (and (listp x) (eq (car x) '*)) (setf x (cdr x)))
@@ -23099,28 +23100,6 @@ denominator must then be multiplied by the numerator, and the result simplified.
 	  (new-nums new-nums)
 	  (t 1))))
 
-;; We have two lists. For each member y of the first list, we consider each member z of the second list and try
-;; to divide y by z. If that yields a non-nil d, replace y by d in the first list and delete z from the second list.
-;; Then go to the next member of the first list and repeat, until we have exhausted the first list.
-(defun divide-nums-by-dens (nums dens)
-  (let ((new-nums nil))
-    (loop
-     (let ((y (car nums))
-	   (new-dens dens)
-	   (d nil))
-       (loop
-	(let ((z (car new-dens)))
-	  (cond ((term-equal y z) (setf dens (remove z dens :count 1 :test 'equal)) (return))
-		((setf d (divide-difference y z)) (setf y d) (setf dens (remove z dens :count 1 :test 'equal))))
-	  (setf new-dens (cdr new-dens))
-	  (when (null new-dens) (push y new-nums) (return))))
-       (setf nums (cdr nums))
-       (when (null nums) (return))))
-    (when new-nums (setf new-nums (simplify (format-difference (expand-product new-nums)))))
-    (cond (dens (as-quotient new-nums (as-product dens)))
-	  (new-nums new-nums)
-	  (t 1))))
-
 (defun expand-quotients-simply (x)
   (cond ((quotientp x)
 	 (let ((nums nil) (dens nil)
@@ -23200,60 +23179,60 @@ denominator must then be multiplied by the numerator, and the result simplified.
 
 ;; a prod1-function has the form (expt base ex)
 (defun simplify-prod1-function (base ex)
-    (setf base (factor base))
-    (cond ((eq ex 1) base)
-                ((eq ex 0) 1)
-                ((eq ex -1)
-                  (cond ((and (listp base) (eq (car base) '*))
-                               (cons '* (mapcar #'(lambda (b) (list '/ 1 b)) (cdr base))))
-                              (t (list '/ 1 base))))
-                ((and (listp base) (eq (car base) '*))
-                  (cons '* (mapcar #'(lambda (b) (list 'expt b ex)) (cdr base))))
-                (t (list 'expt base ex))))
+  (setf base (factor base))
+  (cond ((eq ex 1) base)
+	((eq ex 0) 1)
+	((eq ex -1)
+	 (cond ((and (listp base) (eq (car base) '*))
+		(cons '* (mapcar #'(lambda (b) (list '/ 1 b)) (cdr base))))
+	       (t (list '/ 1 base))))
+	((and (listp base) (eq (car base) '*))
+	 (cons '* (mapcar #'(lambda (b) (list 'expt b ex)) (cdr base))))
+	(t (list 'expt base ex))))
 
 ;; prod-functions have the form (expt x n) where x can
 ;; be a quotient.
 (defun simplify-prod-function (x)
-    (cond
-      ((and (listp x) (eq (car x) 'expt))
-        (let ((ex (mem3 x)) ;; we have already expanded quotients and simplified
-                (base (mem2 x)))
-           (cond
-             ((and (listp base) (eq (car base) '/))
-               (let ((prod1 (simplify-prod1-function (mem2 base) ex))
-                       (prod2 (simplify-prod1-function (mem3 base) ex)))
-                  (cond
-                    ((eq (car prod1) '*)
-                      (cond
-                        ((eq (car prod2) '*)
-                          (cons
-                            '* (append
-                                 (cdr prod1)
-                                 (mapcar
-                                   #'(lambda (y)
-                                         (cond
-                                           ((listp y) (if (and (eq (car y) '/) (eq (mem2 y) 1))
-                                                             (mem3 y)
-                                                             (list '/ 1 y)))
-                                           (t (list '/ 1 y))))
-                                   (cdr prod2)))))
-                        (t (cons '/ (cons prod2 (cdr prod1))))))
-                    ((eq (car prod2) '*)
-                      (cons
-                        '* (cons
-                             prod1
-                             (mapcar
-                               #'(lambda (y)
-                                     (cond
-                                       ((listp y)
-                                         (if (and (eq (car y) '/) (eq (mem2 y) 1))
-                                            (mem3 y)
-                                            (list '/ 1 y)))
-                                       (t (list '/ 1 y))))
-                               (cdr prod2)))))
-                    (t (list '/ prod1 prod2)))))
-             (t (simplify-prod1-function base ex)))))
-      (t x)))
+  (cond
+   ((and (listp x) (eq (car x) 'expt))
+    (let ((ex (mem3 x)) ;; we have already expanded quotients and simplified
+	  (base (mem2 x)))
+      (cond
+       ((and (listp base) (eq (car base) '/))
+	(let ((prod1 (simplify-prod1-function (mem2 base) ex))
+	      (prod2 (simplify-prod1-function (mem3 base) ex)))
+	  (cond
+	   ((eq (car prod1) '*)
+	    (cond
+	     ((eq (car prod2) '*)
+	      (cons
+	       '* (append
+		   (cdr prod1)
+		   (mapcar
+		    #'(lambda (y)
+			(cond
+			 ((listp y) (if (and (eq (car y) '/) (eq (mem2 y) 1))
+					(mem3 y)
+				      (list '/ 1 y)))
+			 (t (list '/ 1 y))))
+		    (cdr prod2)))))
+	     (t (cons '/ (cons prod2 (cdr prod1))))))
+	   ((eq (car prod2) '*)
+	    (cons
+	     '* (cons
+		 prod1
+		 (mapcar
+		  #'(lambda (y)
+		      (cond
+		       ((listp y)
+			(if (and (eq (car y) '/) (eq (mem2 y) 1))
+			    (mem3 y)
+			  (list '/ 1 y)))
+		       (t (list '/ 1 y))))
+		  (cdr prod2)))))
+	   (t (list '/ prod1 prod2)))))
+       (t (simplify-prod1-function base ex)))))
+   (t x)))
 
 (defun invert (x)
   (cond ((and (listp x) (eq (car x) 'expt)) (list 'expt (mem2 x) (negate (mem3 x))))
@@ -23396,38 +23375,38 @@ denominator must then be multiplied by the numerator, and the result simplified.
     (dolist (x variables)
       (let ((term-characterization (term-characterization x terms display-details depth display-infix)))
 	(multiple-value-bind
-	 (def higher-order-soln)
-	 (solve-for-term x term-characterization higher-order display-details depth display-infix)
-	 (push (list x term-characterization) term-characterizations)
-	 (when def
-	   (when (and display (not display-details))
-	     (terpri) (indent depth) (princ x) (princ " = ")
-	     (print-tree def  (+ depth 4 (round (/ (length (explode (string x))) 1.5))) *default-line-length* nil display-infix))
-	   (when higher-order-soln
-	     (setf variables (remove x variables))
-	     (push (list x def) defs)
-	     (pushnew (list x def) *definitions*
-		      :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y))))))
-	   (when (null higher-order-soln)
-	     (setf more-defs-found t)
-	     (let* ((variables* (remove x variables))
-		    (new-terms (subst def x terms))
-		    (terms* (mapcar #'(lambda (y) (simplify (factor-atoms (expand-quotients y))))
-				    new-terms)))
-	       (when (and variables* display-details)
-		 (terpri) (indent depth)
-		 (princ "Substituting the preceding definition into the previous term-set produces the new term-set:")
-		 (terpri) (indent (+ depth 5)) (print-tree new-terms (+ depth 2) *default-line-length* nil display-infix)
-		 (terpri) (indent depth) (princ "This term-set simplifies to produce the following term-set:")
-		 (terpri) (indent (+ depth 5)) (print-tree terms* (+ depth 2) *default-line-length* nil display-infix))
-	       (when (and variables* (not display-details) display-terms display)
-		 (terpri) (indent depth)
-		 (princ "Substituting the preceding definition into the previous term-set produces the new term-set:")
-		 (terpri) (indent (+ depth 5)) (print-tree terms* (+ depth 2) *default-line-length* nil display-infix))
-	       (find-defs variables* terms* :display-infix display-infix :depth (1+ depth) :higher-order higher-order
-			  :defs (cons (list x def) defs) :display-terms display-terms :display display
-			  :display-details display-details))
-	     )))))
+	    (def higher-order-soln)
+	    (solve-for-term x term-characterization higher-order display-details depth display-infix)
+	  (push (list x term-characterization) term-characterizations)
+	  (when def
+	    (when (and display (not display-details))
+	      (terpri) (indent depth) (princ x) (princ " = ")
+	      (print-tree def  (+ depth 4 (round (/ (length (explode (string x))) 1.5))) *default-line-length* nil display-infix))
+	    (when higher-order-soln
+	      (setf variables (remove x variables))
+	      (push (list x def) defs)
+	      (pushnew (list x def) *definitions*
+		       :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y))))))
+	    (when (null higher-order-soln)
+	      (setf more-defs-found t)
+	      (let* ((variables* (remove x variables))
+		     (new-terms (subst def x terms))
+		     (terms* (mapcar #'(lambda (y) (simplify (factor-atoms (expand-quotients y))))
+				     new-terms)))
+		(when (and variables* display-details)
+		  (terpri) (indent depth)
+		  (princ "Substituting the preceding definition into the previous term-set produces the new term-set:")
+		  (terpri) (indent (+ depth 5)) (print-tree new-terms (+ depth 2) *default-line-length* nil display-infix)
+		  (terpri) (indent depth) (princ "This term-set simplifies to produce the following term-set:")
+		  (terpri) (indent (+ depth 5)) (print-tree terms* (+ depth 2) *default-line-length* nil display-infix))
+		(when (and variables* (not display-details) display-terms display)
+		  (terpri) (indent depth)
+		  (princ "Substituting the preceding definition into the previous term-set produces the new term-set:")
+		  (terpri) (indent (+ depth 5)) (print-tree terms* (+ depth 2) *default-line-length* nil display-infix))
+		(find-defs variables* terms* :display-infix display-infix :depth (1+ depth) :higher-order higher-order
+			   :defs (cons (list x def) defs) :display-terms display-terms :display display
+			   :display-details display-details))
+	      )))))
     (when (null more-defs-found)
       (when defs (pushnew (list (caar defs)
 				(factor-numbers (simplify-arithmetically (factor (mem2 (car defs)))))) *definitions*
@@ -23454,60 +23433,57 @@ denominator must then be multiplied by the numerator, and the result simplified.
 (defun find-defs-from-term-characterizations
     (variables variables0 term-characterizations &key display-infix (depth 0) defs display-terms
 	       display display-details higher-order expand-defs)
-					; (when (equal variables '(bc)) (setf vv variables tt term-characterizations dd defs) (break))
-					;(setf vv variables tt term-characterizations dd defs)
-  ;; (stepper (find-defs-from-term-characterizations vv tt :defs dd))
   (let ((more-defs-found nil))
     (dolist (x variables)
       (let ((term-characterization (cadr (assoc x term-characterizations))))
 					;(terpri )(princ (assoc x term-characterizations)) (break)
 	(multiple-value-bind
-	 (def higher-order-soln)
-	 (solve-for-term x term-characterization higher-order display-details depth display-infix)
-	 (when def
-	   (when (and display (not display-details))
-	     (terpri) (indent depth) (princ x) (princ " = ")
-	     (print-tree def  (+ depth 4 (round (/ (length (explode (string x))) 1.5))) *default-line-length* nil display-infix))
-	   (when higher-order-soln
-	     (setf variables (remove x variables))
-	     (push (list x def) defs)
-	     (pushnew (list x def) *definitions*
-		      :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y))))))
-	   (when (null higher-order-soln)
-	     (setf more-defs-found t)
-	     (let ((variables* (remove x variables)))
-	       (when (and variables* display-details)
-		 (terpri) (indent depth)
-		 (princ "Substituting the preceding definition for ") (princ x)
-		 (princ " into the previous term-characterizations")
-		 (terpri) (indent depth) (princ "produces the new term-characterizations:")
-		 (dolist (tc term-characterizations)
-		   (when (not (eq (car tc) x))
-		     (terpri) (indent (+ depth 5)) (princ (car tc)) (princ ": 1 = ")
-		     (print-tree (subst def x (cadr tc)) (+ depth 10) *default-line-length* nil display-infix)))
-		 (terpri) (indent depth)
-		 (princ "These term-characterizations simplify to yield the following term-characterizations:"))
-	       (let ((new-term-characterizations
-		      (mapcar
-		       #'(lambda (tc)
-			   (let ((z (simplify (factor-atoms (expand-quotients (subst def x (cadr tc)))))))
-			     (when display-details
-			       (terpri) (indent (+ depth 5)) (princ (car tc)) (princ ": 1 = ")
-			       (print-tree z (+ depth 10) *default-line-length* nil display-infix))
-			     (list (car tc) z)))
-		       (remove (assoc x term-characterizations) term-characterizations))))
-		 (when (and variables* (not display-details) display-terms display)
-		   (terpri) (indent depth)
-		   (princ "Substituting the preceding definition for ") (princ x)
-		   (princ " into the previous term-characterizations produces the new term-characterizations:")
-		   (dolist (tc new-term-characterizations)
-		     (terpri) (indent (+ depth 5)) (princ (car tc)) (princ ": ")
-		     (print-tree (subst def x (cadr tc)) (+ depth 10) *default-line-length* nil display-infix)))
-		 (find-defs-from-term-characterizations variables* variables0 new-term-characterizations :display-infix display-infix
-							:depth (1+ depth) :higher-order higher-order :expand-defs expand-defs
-							:defs (cons (list x def) defs) :display-terms display-terms
-							:display display :display-details display-details))
-	       ))))))
+	    (def higher-order-soln)
+	    (solve-for-term x term-characterization higher-order display-details depth display-infix)
+	  (when def
+	    (when (and display (not display-details))
+	      (terpri) (indent depth) (princ x) (princ " = ")
+	      (print-tree def  (+ depth 4 (round (/ (length (explode (string x))) 1.5))) *default-line-length* nil display-infix))
+	    (when higher-order-soln
+	      (setf variables (remove x variables))
+	      (push (list x def) defs)
+	      (pushnew (list x def) *definitions*
+		       :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y))))))
+	    (when (null higher-order-soln)
+	      (setf more-defs-found t)
+	      (let ((variables* (remove x variables)))
+		(when (and variables* display-details)
+		  (terpri) (indent depth)
+		  (princ "Substituting the preceding definition for ") (princ x)
+		  (princ " into the previous term-characterizations")
+		  (terpri) (indent depth) (princ "produces the new term-characterizations:")
+		  (dolist (tc term-characterizations)
+		    (when (not (eq (car tc) x))
+		      (terpri) (indent (+ depth 5)) (princ (car tc)) (princ ": 1 = ")
+		      (print-tree (subst def x (cadr tc)) (+ depth 10) *default-line-length* nil display-infix)))
+		  (terpri) (indent depth)
+		  (princ "These term-characterizations simplify to yield the following term-characterizations:"))
+		(let ((new-term-characterizations
+		       (mapcar
+			#'(lambda (tc)
+			    (let ((z (simplify (factor-atoms (expand-quotients (subst def x (cadr tc)))))))
+			      (when display-details
+				(terpri) (indent (+ depth 5)) (princ (car tc)) (princ ": 1 = ")
+				(print-tree z (+ depth 10) *default-line-length* nil display-infix))
+			      (list (car tc) z)))
+			(remove (assoc x term-characterizations) term-characterizations))))
+		  (when (and variables* (not display-details) display-terms display)
+		    (terpri) (indent depth)
+		    (princ "Substituting the preceding definition for ") (princ x)
+		    (princ " into the previous term-characterizations produces the new term-characterizations:")
+		    (dolist (tc new-term-characterizations)
+		      (terpri) (indent (+ depth 5)) (princ (car tc)) (princ ": ")
+		      (print-tree (subst def x (cadr tc)) (+ depth 10) *default-line-length* nil display-infix)))
+		  (find-defs-from-term-characterizations variables* variables0 new-term-characterizations :display-infix display-infix
+							 :depth (1+ depth) :higher-order higher-order :expand-defs expand-defs
+							 :defs (cons (list x def) defs) :display-terms display-terms
+							 :display display :display-details display-details))
+		))))))
     (when (null more-defs-found)
 					; (break)
 					; (when defs (pushnew (factor (car defs)) *definitions*
@@ -23688,14 +23664,14 @@ denominator must then be multiplied by the numerator, and the result simplified.
     nil))
 
 (defun analyze-probability-structure
-#|
-display-details: give full details of mathematical proof
-display-terms: display term-sets as they are produced (mainly for debugging)
-remove-u: replace the variable u with 1 (on by default)
-higher-order: try to solve quadratic and cubic equations
-parallel-term-characterizations: solve the term-characterizations in parallel rather than substituting solutions into
-        the term-set and finding new term-characterizations from that. This makes the logic clearer, but it is slower.
-|#
+    #|
+    display-details: give full details of mathematical proof
+    display-terms: display term-sets as they are produced (mainly for debugging)
+    remove-u: replace the variable u with 1 (on by default)
+    higher-order: try to solve quadratic and cubic equations
+    parallel-term-characterizations: solve the term-characterizations in parallel rather than substituting solutions into
+    the term-set and finding new term-characterizations from that. This makes the logic clearer, but it is slower.
+    |#
     (&key subsets name constraints probability-constraints constants subset-constraints display-infix display display-details
 	  (display-results t) display-terms (remove-u t) higher-order probability-queries independence-queries
 	  (parallel-term-characterizations t) (expand-defs t))
@@ -23900,214 +23876,214 @@ parallel-term-characterizations: solve the term-characterizations in parallel ra
 
 ;; This prints a list that can be pasted into Mathematica and evaluated
 (defun print-defs-for-Mathematica (&optional (defs *definitions*))
-    (terpri) (terpri)
-    (princ "Clear[") (dolist (d defs) (princ (car d)) (princ ",")) (princ "u") (princ "];")
-    (terpri)
-    (dolist (d defs)
-        (terpri) (princ (car d)) (princ " = ") (prin1 (convert-to-infix (mem2 d))) (princ ";"))
-    (terpri) (princ "u = 1;")
-    (terpri)
-    (dolist (d defs)
-        (terpri) (princ (car d)) (princ " = ") (princ "Simplify[") (princ (car d)) (princ "];"))
-    (terpri) (terpri))
+  (terpri) (terpri)
+  (princ "Clear[") (dolist (d defs) (princ (car d)) (princ ",")) (princ "u") (princ "];")
+  (terpri)
+  (dolist (d defs)
+    (terpri) (princ (car d)) (princ " = ") (prin1 (convert-to-infix (mem2 d))) (princ ";"))
+  (terpri) (princ "u = 1;")
+  (terpri)
+  (dolist (d defs)
+    (terpri) (princ (car d)) (princ " = ") (princ "Simplify[") (princ (car d)) (princ "];"))
+  (terpri) (terpri))
 
 #|
 (defun expand-defs (defs depth display-infix display display-details)
-    ; (when (occur nil defs) (setf dd defs dp depth di display-infix) (break))
-    ; (setf *defs* defs) (break)
-    ;; (stepper (expand-defs dd dp di t t))
-    (when (cdr defs)
-         (let* ((def (car defs))
-                   (atom (car def))
-                   (def1 (mem2 defs))
-                   (new-def0 (when (occur* atom (mem2 def1)) (subst* (cadr def) atom (mem2 def1))))
-                   (new-def1 (when new-def0
-                                           (cond ((quotientp new-def0)
-                                                        (f-simplify-quotient (expand-quotients new-def0)))
-                                                       ((productp new-def0) (flatten-product new-def0))
-                                                       (t (simplify new-def0))))))
-            (cond (new-def1
-                         (pushnew (list (car def1) (factor-numbers (simplify-arithmetically (factor new-def1)))) *definitions*
-                                             :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y))))))
-                        (t
-                          (pushnew def1 *definitions*
-                                              :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y)))))))
-            (when new-def1
-                 (when display-details
-                      (terpri) (indent depth) (princ "Substituting the new definition for ") (princ atom)
-                      (princ " into the previous definition for ") (princ (car def1)) (princ " produces:")
-                      (terpri) (indent depth) (princ (car def1)) (princ " = ")
-                      (print-tree (remove-u new-def0) (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
-                                         *default-line-length* nil display-infix)
-                      (when (not (term-equal new-def0 new-def1))
-                           (terpri) (indent depth) (princ "which simplifies to:")
-                           (terpri) (indent depth) (princ (car def1)) (princ " = ")
-                           (print-tree (remove-u new-def1) (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
-                                              *default-line-length* nil display-infix)))
-                 (when (and display (not display-details))
-                      (terpri) (indent depth) (princ (car def1)) (princ " = ")
-                      (print-tree new-def1 (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
-                                         *default-line-length* nil display-infix)))
-            (let ((new-defs
-                      (cons
-                        (list (car def1) (or new-def1 (mem2 def1)))
-                        (mapcar
-                          #'(lambda (x)
-                                (let ((new-def0 (subst (cadr def) atom (mem2 x))))
-                                   (list (car x) (cond ((quotientp new-def0)
-                                                                    (f-simplify-quotient (expand-quotients new-def0)))
-                                                                  ((productp new-def0) (flatten-product new-def0))
-                                                                  (t (simplify new-def0))))))
-                          (cddr defs)))))
-               (when display-details
-                    (let ((changed
-                              (remove nil (mapcar #'(lambda (x y)
-                                                                         (when (not (term-equal (mem2 x) (mem2 y))) (list x y)))
-                                                                    (cddr defs) (cdr new-defs)))))
-                       (when changed
-                            (terpri) (indent depth)
-                            (if (> (length changed) 1) (princ "The preceding definitions for ") (princ "The preceding definition for "))
-                            (princ-list (mapcar #'caar changed))
-                            (if (> (length changed) 1) (princ " then expand as follows:"))
-                            (dolist (x changed)
-                                (terpri) (indent depth) (princ (caar x)) (princ " = ")
-                                (print-tree (remove-u (subst (cadr def) atom (mem2 (car x))))
-                                                   (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
-                                                   *default-line-length* nil display-infix))
-                            (terpri) (indent depth)
-                            (if (> (length changed) 1) (princ "and these simplify to:") (princ "and this simplifies to:"))
-                            (dolist (x changed)
-                                (terpri) (indent depth) (princ (car (mem2 x))) (princ " = ")
-                                (print-tree (remove-u (mem2 (mem2 x)))
-                                                   (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
-                                                   *default-line-length* nil display-infix)))))
-               (expand-defs new-defs depth display-infix display display-details)))))
+    ; (when (occur nil defs) (setf dd defs dp depth di display-infix) (break)) ; ; ;
+    ; (setf *defs* defs) (break)	; ; ;
+  ;; (stepper (expand-defs dd dp di t t))
+  (when (cdr defs)
+    (let* ((def (car defs))
+	   (atom (car def))
+	   (def1 (mem2 defs))
+	   (new-def0 (when (occur* atom (mem2 def1)) (subst* (cadr def) atom (mem2 def1))))
+	   (new-def1 (when new-def0
+		       (cond ((quotientp new-def0)
+			      (f-simplify-quotient (expand-quotients new-def0)))
+			     ((productp new-def0) (flatten-product new-def0))
+			     (t (simplify new-def0))))))
+      (cond (new-def1
+	     (pushnew (list (car def1) (factor-numbers (simplify-arithmetically (factor new-def1)))) *definitions*
+		      :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y))))))
+	    (t
+	     (pushnew def1 *definitions*
+		      :test #'(lambda (x y) (and (eq (car x) (car y)) (term-equal (mem2 x) (mem2 y)))))))
+      (when new-def1
+	(when display-details
+	  (terpri) (indent depth) (princ "Substituting the new definition for ") (princ atom)
+	  (princ " into the previous definition for ") (princ (car def1)) (princ " produces:")
+	  (terpri) (indent depth) (princ (car def1)) (princ " = ")
+	  (print-tree (remove-u new-def0) (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
+		      *default-line-length* nil display-infix)
+	  (when (not (term-equal new-def0 new-def1))
+	    (terpri) (indent depth) (princ "which simplifies to:")
+	    (terpri) (indent depth) (princ (car def1)) (princ " = ")
+	    (print-tree (remove-u new-def1) (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
+			*default-line-length* nil display-infix)))
+	(when (and display (not display-details))
+	  (terpri) (indent depth) (princ (car def1)) (princ " = ")
+	  (print-tree new-def1 (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
+		      *default-line-length* nil display-infix)))
+      (let ((new-defs
+	     (cons
+	      (list (car def1) (or new-def1 (mem2 def1)))
+	      (mapcar
+	       #'(lambda (x)
+		   (let ((new-def0 (subst (cadr def) atom (mem2 x))))
+		     (list (car x) (cond ((quotientp new-def0)
+					  (f-simplify-quotient (expand-quotients new-def0)))
+					 ((productp new-def0) (flatten-product new-def0))
+					 (t (simplify new-def0))))))
+	       (cddr defs)))))
+	(when display-details
+	  (let ((changed
+		 (remove nil (mapcar #'(lambda (x y)
+					 (when (not (term-equal (mem2 x) (mem2 y))) (list x y)))
+				     (cddr defs) (cdr new-defs)))))
+	    (when changed
+	      (terpri) (indent depth)
+	      (if (> (length changed) 1) (princ "The preceding definitions for ") (princ "The preceding definition for "))
+	      (princ-list (mapcar #'caar changed))
+	      (if (> (length changed) 1) (princ " then expand as follows:"))
+	      (dolist (x changed)
+		(terpri) (indent depth) (princ (caar x)) (princ " = ")
+		(print-tree (remove-u (subst (cadr def) atom (mem2 (car x))))
+			    (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
+			    *default-line-length* nil display-infix))
+	      (terpri) (indent depth)
+	      (if (> (length changed) 1) (princ "and these simplify to:") (princ "and this simplifies to:"))
+	      (dolist (x changed)
+		(terpri) (indent depth) (princ (car (mem2 x))) (princ " = ")
+		(print-tree (remove-u (mem2 (mem2 x)))
+			    (+ depth 4 (round (/ (length (explode (string atom))) 1.5)))
+			    *default-line-length* nil display-infix)))))
+	(expand-defs new-defs depth display-infix display display-details)))))
 |#
 
 (defun collect-denominators (x)
-    (cond ((productp x) (quotient-denominators (expand-quotients-in-product-simply x)))
-                ((sump x)
-                  (let ((x* (mapcar #'(lambda (y) (quotient-denominators (expand-quotients-in-product-simply y))) (cdr x)))
-                          (dens nil))
-                     (dolist (y x*)
-                         (when y (setf dens (append dens (list-difference y dens)))))
-                     dens))
-                ((differencep x)
-                  (let ((den1 (collect-denominators (mem2 x)))
-                          (den2 (collect-denominators (mem3 x))))
-                  (append (list-difference den1 den2) den2)))))
+  (cond ((productp x) (quotient-denominators (expand-quotients-in-product-simply x)))
+	((sump x)
+	 (let ((x* (mapcar #'(lambda (y) (quotient-denominators (expand-quotients-in-product-simply y))) (cdr x)))
+	       (dens nil))
+	   (dolist (y x*)
+	     (when y (setf dens (append dens (list-difference y dens)))))
+	   dens))
+	((differencep x)
+	 (let ((den1 (collect-denominators (mem2 x)))
+	       (den2 (collect-denominators (mem3 x))))
+	   (append (list-difference den1 den2) den2)))))
 
 (defun affected-defs (x defs)
-    (let ((affected (subset #'(lambda (df) (occur* x (mem2 df))) defs)))
-       (dolist (y affected)
-           (setf affected (union affected (affected-defs (car y) defs))))
-       affected))
+  (let ((affected (subset #'(lambda (df) (occur* x (mem2 df))) defs)))
+    (dolist (y affected)
+      (setf affected (union affected (affected-defs (car y) defs))))
+    affected))
 
 (defun tree-length (tree)
-    (let ((length
-              (cond ((numberp tree) 1)
-                          ((atom tree) (length (explode (string tree))))
-                          ((listp tree) (+ 2 (apply '+ (mapcar #'tree-length tree)))))))
-       (round (* 1.5 length))))
+  (let ((length
+	 (cond ((numberp tree) 1)
+	       ((atom tree) (length (explode (string tree))))
+	       ((listp tree) (+ 2 (apply '+ (mapcar #'tree-length tree)))))))
+    (round (* 1.5 length))))
 
 #| Maple is much better at solving systems of equations than is my LISP code. This writes an instruction
 to be pasted into Maple for the purpose of solving for term-definitions. |#
 (defun analyze-probability-structure-in-Maple (&key subsets constants constraints probability-constraints subset-constraints)
-    (setf constraints
-             (mapcar #'(lambda (x) (cond ((and (listp x) (eq (mem2 x) '=)) (cons (mem1 x) (mem3 x))) (t x)))
-                              constraints))
-    (let* ((partition (partition subsets))
-              (terms (mapcar #'simplify (sublis constraints (mapcar #'card partition))))
-              (variables0 (set-difference (term-atoms terms) (cons 'u constants)))
-              (p-constraints
-                (mapcar #'(lambda (x) (compute-probability-constraint x constraints partition)) probability-constraints))
-              (derivative-p-constraints (derivative-probability-constraints p-constraints variables0))
-              (constraints0 constraints)
-              (constraints00 (append constraints derivative-p-constraints))
-              (variables00 (subset  #'(lambda (x) (not (assoc x constraints00))) variables0))
-              (derivative-constraints
-                (derivative-constraints
-                  (derivative-subset-constraints (interpret-subset-constraints subset-constraints) partition)
-                  variables00 constraints00)))
-       (setf constraints (append constraints0 derivative-p-constraints derivative-constraints))
-       (setf terms (remove 0 (mapcar #'simplify (sublis derivative-constraints (sublis derivative-p-constraints terms)))))
-       (let* ((atoms (term-atoms terms))
-                 (F (set-difference atoms (mapcar #'partition-intersection (remove nil (powerset subsets)))))
-                 (variables (set-difference atoms (cons 'u constants))))
-          (setf *default-atom-values* (default-atom-values subsets F derivative-constraints))
-          (setf *definitions* nil)
-          (setf *term-characterizations* (mapcar #'(lambda (x) (list x (remove-u (term-characterization x terms nil 0 t)))) variables))
-          (progn
-              (terpri) (princ "Analyze probability structure in Maple:")
-              (terpri) (princ "   :subsets ") (princ (mapcar #'string subsets))
-              (terpri) (princ "   :constants ") (princ constants)
-              (when constraints
-                   (terpri) (princ "   :constraints ")
-                   (dolist (x constraints) (terpri) (princ "        ") (princ (car x)) (princ " = ") (princ (cdr x))))
-              (when subset-constraints
-                   (terpri) (princ "   :subset-constraints ")
-                   (dolist (x subset-constraints) (terpri) (princ "        ") (princ x)))
-              (when probability-constraints
-                   (terpri) (princ "   :probability-constraints ")
-                   (dolist (x probability-constraints) (terpri) (princ "        ")
-                                (print-complete-probability (mem2 x)) (princ " = ") (princ (mem4 x))))
-              (terpri) (princ "The resulting term-characterizations are:")
-              (dolist (x *term-characterizations*)
-                  (terpri) (princ "     ") (princ (car x)) (princ ":  ")
-                  (print-tree (mem2 x) (round (/ (length (explode (string (car x)))) 1.5)) *default-line-length* nil t)))
-          (terpri) (princ "To find the term-definitions, execute the following instruction in Maple:")
-          (terpri) (terpri)
-          (princ "solve({")
-          (princ (convert-to-infix (mem2 (mem1 *term-characterizations*)))) (princ " = 1")
-          (dolist (x (cdr *term-characterizations*))
-              (princ ", ") (terpri) (princ (convert-to-infix (mem2 x))) (princ " = 1"))
-          (princ "},") (terpri) (princ "[")
-          (princ-list (domain *term-characterizations*))
-          (princ "])")
-          (terpri) (terpri) nil)))
+  (setf constraints
+	(mapcar #'(lambda (x) (cond ((and (listp x) (eq (mem2 x) '=)) (cons (mem1 x) (mem3 x))) (t x)))
+		constraints))
+  (let* ((partition (partition subsets))
+	 (terms (mapcar #'simplify (sublis constraints (mapcar #'card partition))))
+	 (variables0 (set-difference (term-atoms terms) (cons 'u constants)))
+	 (p-constraints
+	  (mapcar #'(lambda (x) (compute-probability-constraint x constraints partition)) probability-constraints))
+	 (derivative-p-constraints (derivative-probability-constraints p-constraints variables0))
+	 (constraints0 constraints)
+	 (constraints00 (append constraints derivative-p-constraints))
+	 (variables00 (subset  #'(lambda (x) (not (assoc x constraints00))) variables0))
+	 (derivative-constraints
+	  (derivative-constraints
+	   (derivative-subset-constraints (interpret-subset-constraints subset-constraints) partition)
+	   variables00 constraints00)))
+    (setf constraints (append constraints0 derivative-p-constraints derivative-constraints))
+    (setf terms (remove 0 (mapcar #'simplify (sublis derivative-constraints (sublis derivative-p-constraints terms)))))
+    (let* ((atoms (term-atoms terms))
+	   (F (set-difference atoms (mapcar #'partition-intersection (remove nil (powerset subsets)))))
+	   (variables (set-difference atoms (cons 'u constants))))
+      (setf *default-atom-values* (default-atom-values subsets F derivative-constraints))
+      (setf *definitions* nil)
+      (setf *term-characterizations* (mapcar #'(lambda (x) (list x (remove-u (term-characterization x terms nil 0 t)))) variables))
+      (progn
+	(terpri) (princ "Analyze probability structure in Maple:")
+	(terpri) (princ "   :subsets ") (princ (mapcar #'string subsets))
+	(terpri) (princ "   :constants ") (princ constants)
+	(when constraints
+	  (terpri) (princ "   :constraints ")
+	  (dolist (x constraints) (terpri) (princ "        ") (princ (car x)) (princ " = ") (princ (cdr x))))
+	(when subset-constraints
+	  (terpri) (princ "   :subset-constraints ")
+	  (dolist (x subset-constraints) (terpri) (princ "        ") (princ x)))
+	(when probability-constraints
+	  (terpri) (princ "   :probability-constraints ")
+	  (dolist (x probability-constraints) (terpri) (princ "        ")
+		  (print-complete-probability (mem2 x)) (princ " = ") (princ (mem4 x))))
+	(terpri) (princ "The resulting term-characterizations are:")
+	(dolist (x *term-characterizations*)
+	  (terpri) (princ "     ") (princ (car x)) (princ ":  ")
+	  (print-tree (mem2 x) (round (/ (length (explode (string (car x)))) 1.5)) *default-line-length* nil t)))
+      (terpri) (princ "To find the term-definitions, execute the following instruction in Maple:")
+      (terpri) (terpri)
+      (princ "solve({")
+      (princ (convert-to-infix (mem2 (mem1 *term-characterizations*)))) (princ " = 1")
+      (dolist (x (cdr *term-characterizations*))
+	(princ ", ") (terpri) (princ (convert-to-infix (mem2 x))) (princ " = 1"))
+      (princ "},") (terpri) (princ "[")
+      (princ-list (domain *term-characterizations*))
+      (princ "])")
+      (terpri) (terpri) nil)))
 
 ;; partition is the partition produced by a list of atoms, and constraints is in dnf.
 ;; This returns a partition with any elements containing a constraint removed.
 (defun impose-subset-constraints (constraints partition)
-    (subset #'(lambda (x) (not (some #'(lambda (y) (subsetp y x :test 'equal)) constraints))) partition))
+  (subset #'(lambda (x) (not (some #'(lambda (y) (subsetp y x :test 'equal)) constraints))) partition))
 
 (defun list-definitions (variable &optional (infix nil))
-    (let ((defs nil))
-       (dolist (x *definitions*)
-           (when (eq variable (car x))
-                (if infix (push (convert-to-infix (mem2 x)) defs) (push x defs))))
-       (when infix ;; this produces an instruction to be pasted into Mathematica
-            (setf *print-pretty* nil)
-            (setf *print-right-margin* nil)
-            (unwind-protect
-                (progn (terpri) (princ "(Simplify[{") (princ (car defs))
-                             (dolist (x (cdr defs)) (princ ",") (princ x)) (princ "}])") (terpri))
-                (setf *print-right-margin* 250)
-                (setf *print-pretty* t)))
-       (when (null infix) defs)))
+  (let ((defs nil))
+    (dolist (x *definitions*)
+      (when (eq variable (car x))
+	(if infix (push (convert-to-infix (mem2 x)) defs) (push x defs))))
+    (when infix ;; this produces an instruction to be pasted into Mathematica
+      (setf *print-pretty* nil)
+      (setf *print-right-margin* nil)
+      (unwind-protect
+	  (progn (terpri) (princ "(Simplify[{") (princ (car defs))
+		 (dolist (x (cdr defs)) (princ ",") (princ x)) (princ "}])") (terpri))
+	(setf *print-right-margin* 250)
+	(setf *print-pretty* t)))
+    (when (null infix) defs)))
 
 (defun list-term-characterizations (variable &optional (infix nil))
-    (let ((defs nil))
-       (dolist (x *term-characterizations*)
-           (when (eq variable (car x))
-                (if infix (push (convert-to-infix (mem2 x)) defs) (push x defs))))
-       (when infix ;; this produces an instruction to be pasted into Mathematica
-            (setf *print-pretty* nil)
-            (setf *print-right-margin* nil)
-            (unwind-protect
-                (progn (terpri) (princ "(Simplify[{") (princ (car defs))
-                             (dolist (x (cdr defs)) (princ ",") (princ x)) (princ "}])") (terpri))
-                (setf *print-right-margin* 250)
-                (setf *print-pretty* t)))
-       (when (null infix) defs)))
+  (let ((defs nil))
+    (dolist (x *term-characterizations*)
+      (when (eq variable (car x))
+	(if infix (push (convert-to-infix (mem2 x)) defs) (push x defs))))
+    (when infix ;; this produces an instruction to be pasted into Mathematica
+      (setf *print-pretty* nil)
+      (setf *print-right-margin* nil)
+      (unwind-protect
+	  (progn (terpri) (princ "(Simplify[{") (princ (car defs))
+		 (dolist (x (cdr defs)) (princ ",") (princ x)) (princ "}])") (terpri))
+	(setf *print-right-margin* 250)
+	(setf *print-pretty* t)))
+    (when (null infix) defs)))
 
 (defun print-compactly (x)
-    (setf *print-pretty* nil)
-    (setf *print-right-margin* nil)
-    (unwind-protect
-        (progn (terpri) (princ x) (terpri))
-        (setf *print-right-margin* 250)
-        (setf *print-pretty* t)))
+  (setf *print-pretty* nil)
+  (setf *print-right-margin* nil)
+  (unwind-protect
+      (progn (terpri) (princ x) (terpri))
+    (setf *print-right-margin* 250)
+    (setf *print-pretty* t)))
 
 ;; Where X is a list of atoms:
 (defun prod-terms (X)
@@ -24122,60 +24098,62 @@ to be pasted into Maple for the purpose of solving for term-definitions. |#
 	  vars vars2))
 
 (defun princ-prob (r)
-    (if (>= r .1)
+  (if (>= r .1)
       (princ (float (/ (round (* 10000 r)) 10000)))
-      (princ (float (/ (round (* 100000 r)) 100000)))))
+    (princ (float (/ (round (* 100000 r)) 100000)))))
 
 (defun Y (r s a) (/ (* r s (- 1 a)) (+ (* r s) (* a (- 1 r s)))))
 
 (defun display-probability-structure (ps)
-    (terpri) (princ "(") (princ "probability-structure ")
-    (princ (ps-name ps))
-    (terpri) (princ "	:subsets ") (princ (ps-subsets ps))
-    (terpri) (princ "	:constants ") (princ (ps-constants ps))
-    (terpri) (princ "	:constraints ") (p-print (ps-constraints ps) 10)
-    (terpri) (princ "	:subset-constraints ") (p-print (ps-subset-constraints ps) 10)
-    (terpri) (princ "	:probability-constraints ") (p-print (ps-probability-constraints ps) 10)
-    (terpri) (princ "	:atoms ") (princ (ps-atoms ps))
-    (terpri) (princ "	:terms ") (p-print (ps-terms ps) 10)
-    (terpri) (princ "	:log-term-characterizations ") (p-print (ps-log-term-characterizations ps) 10)
-    (terpri) (princ "	:term-definitions ") (p-print (ps-term-definitions ps) 10)
-    (terpri) (princ "	:sample-args ") (princ (ps-sample-args ps))
-    (princ ")") nil)
+  (terpri) (princ "(") (princ "probability-structure ")
+  (princ (ps-name ps))
+  (terpri) (princ "	:subsets ") (princ (ps-subsets ps))
+  (terpri) (princ "	:constants ") (princ (ps-constants ps))
+  (terpri) (princ "	:constraints ") (p-print (ps-constraints ps) 10)
+  (terpri) (princ "	:subset-constraints ") (p-print (ps-subset-constraints ps) 10)
+  (terpri) (princ "	:probability-constraints ") (p-print (ps-probability-constraints ps) 10)
+  (terpri) (princ "	:atoms ") (princ (ps-atoms ps))
+  (terpri) (princ "	:terms ") (p-print (ps-terms ps) 10)
+  (terpri) (princ "	:log-term-characterizations ") (p-print (ps-log-term-characterizations ps) 10)
+  (terpri) (princ "	:term-definitions ") (p-print (ps-term-definitions ps) 10)
+  (terpri) (princ "	:sample-args ") (princ (ps-sample-args ps))
+  (princ ")") nil)
 
 ;; term-definitions is a list.
 (defun build-probability-structure (&key name subsets constraints probability-constraints subset-constraints
-                                                                                   constants term-characterizations term-definitions sample-args)
-    (let* ((partition (partition subsets))
-              (terms (mapcar #'simplify (subst 1 'u (sublis term-definitions (sublis constraints (mapcar #'card partition))))))
-              ; (atoms (remove 'u (set-difference (term-atoms terms) constants)))
-              (atoms (remove 'u (set-difference (term-atoms terms) constants)))
-              (p-constraints
-                (mapcar #'(lambda (x) (compute-probability-constraint x constraints partition)) probability-constraints))
-              (derivative-p-constraints (derivative-probability-constraints p-constraints atoms))
-              (constraints00 (append constraints derivative-p-constraints)))
-       (dolist (td term-definitions) (setf atoms (remove (car td) atoms)))
-       (let ((ps (make-probability-structure
-                        :name name
-                        :subsets subsets
-                        :constants constants
-                        :constraints constraints00
-                        :subset-constraints subset-constraints
-                        :probability-constraints probability-constraints
-                        :terms terms
-                        :atoms atoms
-                        :term-characterizations term-characterizations
-                        :log-term-characterizations
-                        (mapcar #'(lambda (x) (list (car x) (simple-log (mem2 x)))) (subst 1 'u term-characterizations))
-                        :term-definitions (mapcar #'(lambda (x) (cons (car x) (cadr x))) (subst 1 'u term-definitions))
-                        :partition partition
-                        :sample-args sample-args
-                        ))
-               (simple-name (read-from-string name)))
-          (eval `(setf ,simple-name ,ps))
-          (eval `(proclaim '(special ,simple-name))))))
+					 constants term-characterizations term-definitions sample-args)
+  (let* ((partition (partition subsets))
+	 (terms (mapcar #'simplify (subst 1 'u (sublis term-definitions (sublis constraints (mapcar #'card partition))))))
+					; (atoms (remove 'u (set-difference (term-atoms terms) constants)))
+	 (atoms (remove 'u (set-difference (term-atoms terms) constants)))
+	 (p-constraints
+	  (mapcar #'(lambda (x) (compute-probability-constraint x constraints partition)) probability-constraints))
+	 (derivative-p-constraints (derivative-probability-constraints p-constraints atoms))
+	 (constraints00 (append constraints derivative-p-constraints)))
+    (dolist (td term-definitions) (setf atoms (remove (car td) atoms)))
+    (let ((ps (make-probability-structure
+	       :name name
+	       :subsets subsets
+	       :constants constants
+	       :constraints constraints00
+	       :subset-constraints subset-constraints
+	       :probability-constraints probability-constraints
+	       :terms terms
+	       :atoms atoms
+	       :term-characterizations term-characterizations
+	       :log-term-characterizations
+	       (mapcar #'(lambda (x) (list (car x) (simple-log (mem2 x)))) (subst 1 'u term-characterizations))
+	       :term-definitions (mapcar #'(lambda (x) (cons (car x) (cadr x))) (subst 1 'u term-definitions))
+	       :partition partition
+	       :sample-args sample-args
+	       ))
+	  (simple-name (read-from-string name)))
+      (eval `(setf ,simple-name ,ps))
+      (eval `(proclaim '(special ,simple-name))))))
 
 (proclaim '(special *tc*))
+
+;;SECTION expectation
 
 #|						FIND-EXPECTABLE-VALUES
 
@@ -24189,254 +24167,254 @@ the pathnames (above) to indicate where the files are on your computer.
 Here is an example of the use of FIND-EXPECTABLE-VALUES:
 
 (find-expectable-values
-  :args '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9))
-  :subsets '(A B C D)
-  :probability-constraints '((prob(A / B) = r)
-                                               (prob(A / (B & C)) = s)
-                                               (prob(A / (B & D)) = v))
-  :probability-queries '(prob(A / C)
-                                        prob(A / (B & (C & D))))
-  :independence-queries '(((B & C) (B & D) (A & B)) ((B & C) (B & D) (~A & B)))
-  )
+ :args '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9))
+ :subsets '(A B C D)
+ :probability-constraints '((prob(A / B) = r)
+			    (prob(A / (B & C)) = s)
+			    (prob(A / (B & D)) = v))
+ :probability-queries '(prob(A / C)
+			    prob(A / (B & (C & D))))
+ :independence-queries '(((B & C) (B & D) (A & B)) ((B & C) (B & D) (~A & B)))
+ )
 
 The general form of a function call is:
 
 (FIND-EXPECTABLE-VALUES
-  :args a list of assignments of values to variables
-  :ps a probability structure
-  :constraints a list of linear equations in prefix notation
-  :probability-constraints a list of probability specifications
-  :subset-constraints a list of subset relations
-  :probability-queries a list of probability formulas
-  :independence-queries a list of triples of formulas
-  :sample-args a list of assignments to variables used as the starting point for the search
-  :display-results? t or nil (t by default)
-  :display t or nil (nil by default)
-  :shallow-display t or nil (nil by default)
-  ;; the following arguments are usually left unspecified by the user:
-  :ps a probability structure (usually left blank, to be computed by the function)
-  :name a string naming the probability structure constructed
-  :iterations an integer (default value 2)
-  :dif a number less than 1
-  :dif2 a number less than 1
-  :split-dif a number less than 1
-  :truncate an integer (default value is 4)
-  :depth an integer set by the program
-  :top-level t or nil (set by the program)
+ :args a list of assignments of values to variables
+ :ps a probability structure
+ :constraints a list of linear equations in prefix notation
+ :probability-constraints a list of probability specifications
+ :subset-constraints a list of subset relations
+ :probability-queries a list of probability formulas
+ :independence-queries a list of triples of formulas
+ :sample-args a list of assignments to variables used as the starting point for the search
+ :display-results? t or nil (t by default)
+ :display t or nil (nil by default)
+ :shallow-display t or nil (nil by default)
+ ;; the following arguments are usually left unspecified by the user:
+ :ps a probability structure (usually left blank, to be computed by the function)
+ :name a string naming the probability structure constructed
+ :iterations an integer (default value 2)
+ :dif a number less than 1
+ :dif2 a number less than 1
+ :split-dif a number less than 1
+ :truncate an integer (default value is 4)
+ :depth an integer set by the program
+ :top-level t or nil (set by the program)
 
-Note that all the displays work best if you set your LISP to display S-expressions in lower case.
+ Note that all the displays work best if you set your LISP to display S-expressions in lower case.
 
-The first six arguments are analogous to the fist six arguments used by ANALYZE-PROBABILITY-STRUCTURE:
+ The first six arguments are analogous to the fist six arguments used by ANALYZE-PROBABILITY-STRUCTURE:
 
-subsets is a list of atoms (best typed in upper case) which symbolize the subsets of U that
-are under considerations. Throughout, if for example, the atoms are A, B, C, D, then a is the cardinality
-of A, b is the cardinality of B, ab is the cardinality of the intersection of A and B, abc is the cardinality
-of A interesection B intersection C, and so forth. These lower-case expressions make up the list of
-variables. FIND-EXPECTABLE-VALUES attempts to characterize the expectable values for
-all the variables. The constraints (below) may add variables like r, s, and v used in the constraints.
+ subsets is a list of atoms (best typed in upper case) which symbolize the subsets of U that
+ are under considerations. Throughout, if for example, the atoms are A, B, C, D, then a is the cardinality
+ of A, b is the cardinality of B, ab is the cardinality of the intersection of A and B, abc is the cardinality
+ of A interesection B intersection C, and so forth. These lower-case expressions make up the list of
+ variables. FIND-EXPECTABLE-VALUES attempts to characterize the expectable values for
+ all the variables. The constraints (below) may add variables like r, s, and v used in the constraints.
 
-args is a list variables that are held constant and their constant values. An example
-is '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9)).
+ args is a list variables that are held constant and their constant values. An example
+ is '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9)).
 
-ps is an optional argument. If supplied, FIND-EXPECTABLE-VALUES uses ps. Specifically, it only looks for
-the expectable values of the terms that do not have definitions in ps. Those that do have definitions are
-evaluated using those definitions. If ps is not supplied, a new probability structure is constructed just
-as it would be constructed by ANALYZE-PROBABILITY-STRUCTURE except that it has no term-definitions.
-*ps* is bound to the probability-structure, whether it is supplied or newly constructed.
+ ps is an optional argument. If supplied, FIND-EXPECTABLE-VALUES uses ps. Specifically, it only looks for
+ the expectable values of the terms that do not have definitions in ps. Those that do have definitions are
+ evaluated using those definitions. If ps is not supplied, a new probability structure is constructed just
+ as it would be constructed by ANALYZE-PROBABILITY-STRUCTURE except that it has no term-definitions.
+ *ps* is bound to the probability-structure, whether it is supplied or newly constructed.
 
-constraints is a list of linear equations (in prefix form) like '((ab = (* r b)) (abc = (* s bc))).
-FIND-EXPECTABLE-VALUES is trying to find the expectable values relative to the set
-of constraints.
+ constraints is a list of linear equations (in prefix form) like '((ab = (* r b)) (abc = (* s bc))).
+ FIND-EXPECTABLE-VALUES is trying to find the expectable values relative to the set
+ of constraints.
 
-subset-constraints is a list of constraints like '((D subset C) (A = (B union C)) (E = (U - A))), and so forth.
-"union", "intersection", and "-" (in the form "(- P)") can be used in these constraints. A preprocessor translates
-these into normal constraints which are hten used in finding the expectable values.
+ subset-constraints is a list of constraints like '((D subset C) (A = (B union C)) (E = (U - A))), and so forth.
+ "union", "intersection", and "-" (in the form "(- P)") can be used in these constraints. A preprocessor translates
+ these into normal constraints which are hten used in finding the expectable values.
 
-probability-constraints is a list of specifications of probabilities like '((prob((F & H) / (G v ~H)) = r) (prob(A / B) = s)).
-Note that there must be white space around "/" and the logical connectives other than "~".A preprocessor translates these into
-normal constraints which are hten used in finding the expectable values.
+ probability-constraints is a list of specifications of probabilities like '((prob((F & H) / (G v ~H)) = r) (prob(A / B) = s)).
+ Note that there must be white space around "/" and the logical connectives other than "~".A preprocessor translates these into
+ normal constraints which are hten used in finding the expectable values.
 
-Note that if the subset-constraints and probability-constraints create simultaneous equations regarding some of
-the variables, the preprocessor may not correctly translate them into ordinary constraints. In that case it is best
-to do the translation by hand and enter all the constraints as ordinary constraints.
+ Note that if the subset-constraints and probability-constraints create simultaneous equations regarding some of
+ the variables, the preprocessor may not correctly translate them into ordinary constraints. In that case it is best
+ to do the translation by hand and enter all the constraints as ordinary constraints.
 
-probability-queries is a list of probability formulas like '(prob(A / (B & C)) prob(A / B) prob(A / (B & (C & D)))) for which
-FIND-EXPECTABLE-VALUES will attempt to find analytic characterizations.
+ probability-queries is a list of probability formulas like '(prob(A / (B & C)) prob(A / B) prob(A / (B & (C & D)))) for which
+ FIND-EXPECTABLE-VALUES will attempt to find analytic characterizations.
 
-independence-queries is a list of triples of formulas like '((A B C) (A C B) (A C U) (A D (B & C))). For each triple,
-FIND-EXPECTABLE-VALUES will attempt to determine whether the first two formulas are statistically
-independent relative to the third.
+ independence-queries is a list of triples of formulas like '((A B C) (A C B) (A C U) (A D (B & C))). For each triple,
+ FIND-EXPECTABLE-VALUES will attempt to determine whether the first two formulas are statistically
+ independent relative to the third.
 
-sample-args is a list of assignment of values to the variables that are not held constant. The function works by
-employing a hill-climbing algorithm, and this tells it where to start the search. If no value is specified, a default
-value is used, and that usually works. However, the search will be faster if you can use a starting point that is closer
-to the final result. One way to do this is to solve related problems with stipulated values only a little different from
-the current problem, and use the values found in that problem as the starting point for the new search. This is
-fascillitated by the fact that the constant *args* is bound to the list of values found when FIND-EXPECTABLE-VALUES
-is run. For the next problem, you can then list *args* as the value of sample-args.
-    The numerical problems being solved here are difficult. Generally, neither Mathematica nor Maple can solve them.
-The difficulty is that if the values are perturbed very much, the functions we are using for hill-climbing may return
-complex values. FIND-EXPECTABLE-VALUES does a pretty good job of solving these problems, but sometimes it
-fails. When it fails, one can often solve another problem with values closer to the stipulated values, and then use *args*
-as the starting point for a new search.
+ sample-args is a list of assignment of values to the variables that are not held constant. The function works by
+ employing a hill-climbing algorithm, and this tells it where to start the search. If no value is specified, a default
+ value is used, and that usually works. However, the search will be faster if you can use a starting point that is closer
+ to the final result. One way to do this is to solve related problems with stipulated values only a little different from
+ the current problem, and use the values found in that problem as the starting point for the new search. This is
+ fascillitated by the fact that the constant *args* is bound to the list of values found when FIND-EXPECTABLE-VALUES
+ is run. For the next problem, you can then list *args* as the value of sample-args.
+ The numerical problems being solved here are difficult. Generally, neither Mathematica nor Maple can solve them.
+ The difficulty is that if the values are perturbed very much, the functions we are using for hill-climbing may return
+ complex values. FIND-EXPECTABLE-VALUES does a pretty good job of solving these problems, but sometimes it
+ fails. When it fails, one can often solve another problem with values closer to the stipulated values, and then use *args*
+ as the starting point for a new search.
 
-display-results? is t or nil (the default value is t). If it is t then FIND-EXPECTABLE-VALUES prints out its results in a readable form. If
-it is nil, FIND-EXPECTABLE-VALUES merely returns the results in a list like:
-   ((a = 0.5) (b = 0.5) (c = 0.5) (d = 0.5) (bc = 0.25) (bd = 0.25) (r = 0.9) (s = 0.9) (v = 0.9) (ac 0.2500000209315223)
-     (abcd 0.11250195271056596) (cd 0.2500021760119019) (acd 0.12500195635419192) (bcd 0.12500197828431903)
-     (ad 0.2499999544567576))
+ display-results? is t or nil (the default value is t). If it is t then FIND-EXPECTABLE-VALUES prints out its results in a readable form. If
+ it is nil, FIND-EXPECTABLE-VALUES merely returns the results in a list like:
+ ((a = 0.5) (b = 0.5) (c = 0.5) (d = 0.5) (bc = 0.25) (bd = 0.25) (r = 0.9) (s = 0.9) (v = 0.9) (ac 0.2500000209315223)
+  (abcd 0.11250195271056596) (cd 0.2500021760119019) (acd 0.12500195635419192) (bcd 0.12500197828431903)
+  (ad 0.2499999544567576))
 
-display is t or nil (the default value is nil). If it is t, FIND-EXPECTABLE-VALUES displays the progress of the search.
+ display is t or nil (the default value is nil). If it is t, FIND-EXPECTABLE-VALUES displays the progress of the search.
 
-shallow-display is to or nil (the default value is nil). If it is t, FIND-EXPECTABLE-VALUES displays the approximations
-found during the search.
+ shallow-display is to or nil (the default value is nil). If it is t, FIND-EXPECTABLE-VALUES displays the approximations
+ found during the search.
 
-ps The first six arguments are used to compute the system of simultaneous equations to be solved. These define
-a probability structure. If the same probability structure is to be used repeatedly, one can use BUILD-PROBABILITY-
-STRUCTURE to define it, naming it with name, and then call that in FIND-EXPECTABLE-VALUES. This will sometimes
-save a little time, but not a lot.
+ ps The first six arguments are used to compute the system of simultaneous equations to be solved. These define
+ a probability structure. If the same probability structure is to be used repeatedly, one can use BUILD-PROBABILITY-
+ STRUCTURE to define it, naming it with name, and then call that in FIND-EXPECTABLE-VALUES. This will sometimes
+ save a little time, but not a lot.
 
-name is a string naming ps. The default value is "*ps*". If one is using the same probability structure repeatedly, one
-can let FIND-EXPECTABLE-VALUES define it the first time, naming it *ps*, and then call it subsequently by that name.
-Or one can stipulate a different name, if that is convenient.
+ name is a string naming ps. The default value is "*ps*". If one is using the same probability structure repeatedly, one
+ can let FIND-EXPECTABLE-VALUES define it the first time, naming it *ps*, and then call it subsequently by that name.
+ Or one can stipulate a different name, if that is convenient.
 
-dif  is a number less than 1 (the default value is .0000001) that specifies the desired accuracy of the search.
-FIND-EXPECTABLE-VALUES is solving a set of equations each having the form "x = 1". dif determines how close
-to 1 we must get before the search terminates. If display-results? is t, FIND-EXPECTABLE-VALUES displays the
-accuracy of the results at the end by printing something like:
-The accuracy of the results is:(0.9999950420010103 0.9999991703500247 0.9999974817445123
-      1.0000061718480118 1.00006684644602 1.0000009508648084)
+ dif  is a number less than 1 (the default value is .0000001) that specifies the desired accuracy of the search.
+ FIND-EXPECTABLE-VALUES is solving a set of equations each having the form "x = 1". dif determines how close
+ to 1 we must get before the search terminates. If display-results? is t, FIND-EXPECTABLE-VALUES displays the
+ accuracy of the results at the end by printing something like:
+ The accuracy of the results is:(0.9999950420010103 0.9999991703500247 0.9999974817445123
+						    1.0000061718480118 1.00006684644602 1.0000009508648084)
 
-dif2 is another number less than 1 (the default value is .0001). This determines the accuracy of intermediate calculations
-used during the hilll-climbing. There is rarely any reason to change the default value.
+ dif2 is another number less than 1 (the default value is .0001). This determines the accuracy of intermediate calculations
+ used during the hilll-climbing. There is rarely any reason to change the default value.
 
-split-dif is a number less than 1 (the default value is .00001). This determines when an approximation is so close
-to the given values that FIND-EXPECTABLE-VALUES aborts the search for closer approximations.
+ split-dif is a number less than 1 (the default value is .00001). This determines when an approximation is so close
+ to the given values that FIND-EXPECTABLE-VALUES aborts the search for closer approximations.
 
-iterations is an integer (the default value is 2). The search is accelerated significantly by first solving the problem
-setting dif to 1/100 of the specified value of dif, using that result as the start of a new search with dif set at 1/10
-the specified value, and finally using that result as the start of a new search with dif given its specified value. If one
-increases the value of dif, it may be desirable to increase iterations.
+ iterations is an integer (the default value is 2). The search is accelerated significantly by first solving the problem
+ setting dif to 1/100 of the specified value of dif, using that result as the start of a new search with dif set at 1/10
+ the specified value, and finally using that result as the start of a new search with dif given its specified value. If one
+ increases the value of dif, it may be desirable to increase iterations.
 
-truncate is an integer (default value is 4) specifying how many decimal places are used ti displaying the results.
+ truncate is an integer (default value is 4) specifying how many decimal places are used ti displaying the results.
 
-Here is an example of FIND-EXPECTABLE-VALUES:
+ Here is an example of FIND-EXPECTABLE-VALUES:
 
-(find-expectable-values
+ (find-expectable-values
   :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
   :subsets '(A B C D)
   :constants '(a b c d ab r1 s1 r2 s2)
   :probability-constraints '((prob(A / C) = r1)
-                                               (prob(A / D) = s1)
-                                               (prob(B / C) = r2)
-                                               (prob(B / D) = s2))
+			     (prob(A / D) = s1)
+			     (prob(B / C) = r2)
+			     (prob(B / D) = s2))
   :probability-queries '(prob(A / (C & D))
-                                        prob(B / (C & D)))
+			     prob(B / (C & D)))
   :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B)))
   )
 
-Find expectable values:
-   :args ((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
-   :probability-structure *ps*
-   :subsets (A B C D)
-   :constants (s2 s1 r2 r1 d c ab b a)
-   :constraints
-        bd = (* s2 d)
-        bc = (* r2 c)
-        ad = (* s1 d)
-        ac = (* r1 c)
-   :probability-constraints
-        prob(A / C) = r1
-        prob(A / D) = s1
-        prob(B / C) = r2
-        prob(B / D) = s2
-----------
-The following expectable values were found:
-     prob(A / (C & D)) = 0.662
-     prob(B / (C & D)) = 0.5874
+ Find expectable values:
+ :args ((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
+ :probability-structure *ps*
+ :subsets (A B C D)
+ :constants (s2 s1 r2 r1 d c ab b a)
+ :constraints
+ bd = (* s2 d)
+ bc = (* r2 c)
+ ad = (* s1 d)
+ ac = (* r1 c)
+ :probability-constraints
+ prob(A / C) = r1
+ prob(A / D) = s1
+ prob(B / C) = r2
+ prob(B / D) = s2
  ----------
-C and D are INDEPENDENT relative to A within 0.01
-C and D are not independent relative to (U & ~A) within 0.01
-C and D are not independent relative to B within 0.01
-C and D are not independent relative to (U & ~B) within 0.01
-========================================================
-The accuracy of the results is:(0.9999932626119115 0.9999245324699282 0.9999850997494993 0.9999942224298255 1.0000060784819058 1.0001144424566626)
-Starting from
-   :sample-args ((s2 = 0.5) (s1 = 0.5) (r2 = 0.5) (r1 = 0.5) (d = 0.5) (c = 0.5) (ab = 0.25) (b = 0.5) (a = 0.5) (abcd 0.0625) (cd 0.25) (abc 0.125)
-                 (acd 0.125) (bcd 0.125) (abd 0.125))
-the computation took 8.368 sec
+ The following expectable values were found:
+ prob(A / (C & D)) = 0.662
+ prob(B / (C & D)) = 0.5874
+ ----------
+ C and D are INDEPENDENT relative to A within 0.01
+ C and D are not independent relative to (U & ~A) within 0.01
+ C and D are not independent relative to B within 0.01
+ C and D are not independent relative to (U & ~B) within 0.01
+ ========================================================
+ The accuracy of the results is:(0.9999932626119115 0.9999245324699282 0.9999850997494993 0.9999942224298255 1.0000060784819058 1.0001144424566626)
+ Starting from
+ :sample-args ((s2 = 0.5) (s1 = 0.5) (r2 = 0.5) (r1 = 0.5) (d = 0.5) (c = 0.5) (ab = 0.25) (b = 0.5) (a = 0.5) (abcd 0.0625) (cd 0.25) (abc 0.125)
+	       (acd 0.125) (bcd 0.125) (abd 0.125))
+ the computation took 8.368 sec
 
-((s2 = 0.48) (s1 = 0.45) (r2 = 0.55) (r1 = 0.6) (d = 0.53) (c = 0.55) (ab = 0.16) (b = 0.42) (a = 0.37) (abcd 0.11004629743878928)
- (cd 0.3234535975519361) (abc 0.15446231039854152) (acd 0.21412211626960684) (bcd 0.18999149561164613) (abd 0.11399149766412064))
+ ((s2 = 0.48) (s1 = 0.45) (r2 = 0.55) (r1 = 0.6) (d = 0.53) (c = 0.55) (ab = 0.16) (b = 0.42) (a = 0.37) (abcd 0.11004629743878928)
+  (cd 0.3234535975519361) (abc 0.15446231039854152) (acd 0.21412211626960684) (bcd 0.18999149561164613) (abd 0.11399149766412064))
 
-The computation can be accelerated by first running:
+ The computation can be accelerated by first running:
 
-(analyze-probability-structure
+ (analyze-probability-structure
   :name "my-ps"
   :subsets '(A B C D)
   :constants '(a b c d ab r1 s1 r2 s2)
   :probability-constraints '((prob(A / C) = r1)
-                                               (prob(A / D) = s1)
-                                               (prob(B / C) = r2)
-                                               (prob(B / D) = s2))
+			     (prob(A / D) = s1)
+			     (prob(B / C) = r2)
+			     (prob(B / D) = s2))
   :probability-queries '(prob(A / (C & D))
-                                        prob(B / (C & D)))
+			     prob(B / (C & D)))
   :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B)))
   )
 
-This finds definitions for the expectable values of all but abc and abd, and records them in the probability structure my-ps.
-We can then execute:
+ This finds definitions for the expectable values of all but abc and abd, and records them in the probability structure my-ps.
+ We can then execute:
 
-(find-expectable-values
+ (find-expectable-values
   :ps my-ps
   :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
   :subsets '(A B C D)
   :constants '(a b c d ab r1 s1 r2 s2)
   :probability-constraints '((prob(A / C) = r1)
-                                               (prob(A / D) = s1)
-                                               (prob(B / C) = r2)
-                                               (prob(B / D) = s2))
+			     (prob(A / D) = s1)
+			     (prob(B / C) = r2)
+			     (prob(B / D) = s2))
   :probability-queries '(prob(A / (C & D))
-                                        prob(B / (C & D)))
+			     prob(B / (C & D)))
   :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B)))
   )
 
-which returns values for just abc and abd, and evaluates the queried probabilities more quickly:
+ which returns values for just abc and abd, and evaluates the queried probabilities more quickly:
 
-Find expectable values:
-   :args ((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
-   :probability-structure ps7565
-   :subsets (A B C D)
-   :constants (a b c d ab r1 s1 r2 s2)
-   :constraints
-        bd = (* s2 d)
-        bc = (* r2 c)
-        ad = (* s1 d)
-        ac = (* r1 c)
-   :probability-constraints
-        prob(A / C) = r1
-        prob(A / D) = s1
-        prob(B / C) = r2
-        prob(B / D) = s2
-----------
-The following expectable values were found:
-     prob(A / (C & D)) = 0.662
-     prob(B / (C & D)) = 0.5874
+ Find expectable values:
+ :args ((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
+ :probability-structure ps7565
+ :subsets (A B C D)
+ :constants (a b c d ab r1 s1 r2 s2)
+ :constraints
+ bd = (* s2 d)
+ bc = (* r2 c)
+ ad = (* s1 d)
+ ac = (* r1 c)
+ :probability-constraints
+ prob(A / C) = r1
+ prob(A / D) = s1
+ prob(B / C) = r2
+ prob(B / D) = s2
  ----------
-C and D are INDEPENDENT relative to A within 0.01
-C and D are not independent relative to (U & ~A) within 0.01
-C and D are not independent relative to B within 0.01
-C and D are not independent relative to (U & ~B) within 0.01
-========================================================
-The accuracy of the results is:(1.0000000341589592 1.000001245009345)
-Starting from
-   :sample-args ((a = 0.5) (b = 0.5) (c = 0.5) (d = 0.5) (ab = 0.25) (r1 = 0.5) (s1 = 0.5) (r2 = 0.5) (s2 = 0.5) (abc 0.125) (abd 0.125))
-the computation took 1.974 sec
+ The following expectable values were found:
+ prob(A / (C & D)) = 0.662
+ prob(B / (C & D)) = 0.5874
+ ----------
+ C and D are INDEPENDENT relative to A within 0.01
+ C and D are not independent relative to (U & ~A) within 0.01
+ C and D are not independent relative to B within 0.01
+ C and D are not independent relative to (U & ~B) within 0.01
+ ========================================================
+ The accuracy of the results is:(1.0000000341589592 1.000001245009345)
+ Starting from
+ :sample-args ((a = 0.5) (b = 0.5) (c = 0.5) (d = 0.5) (ab = 0.25) (r1 = 0.5) (s1 = 0.5) (r2 = 0.5) (s2 = 0.5) (abc 0.125) (abd 0.125))
+ the computation took 1.974 sec
 
-((a = 0.37) (b = 0.42) (c = 0.55) (d = 0.53) (ab = 0.16) (r1 = 0.6) (s1 = 0.45) (r2 = 0.55) (s2 = 0.48) (abc 0.15446230269559796)
- (abd 0.11399022346424961))
+ ((a = 0.37) (b = 0.42) (c = 0.55) (d = 0.53) (ab = 0.16) (r1 = 0.6) (s1 = 0.45) (r2 = 0.55) (s2 = 0.48) (abc 0.15446230269559796)
+  (abd 0.11399022346424961))
 
-|#
+ |#
 
 ;; This tests the consistency (feasibility) of an assignment of values to the arguments
 (defun coherent-probability-assignment (args &optional (terms (ps-terms *ps*)))
@@ -24511,7 +24489,7 @@ the computation took 1.974 sec
 
 #|
 (defun  split-arg-difference (args args2 dif)
-    ;(setf aa args aa2 args2 dd dif)	; ;
+    ;(setf aa args aa2 args2 dd dif)	; ; ; ; ;
   (let ((split nil))
     (dolist (x args)
       (let* ((y (assoc (car x) args2))
@@ -24695,192 +24673,192 @@ the computation took 1.974 sec
      )))
 
 (labels
- ()
+    ()
 
- (defun solve-for-expectable-values (TCS args dif)
+  (defun solve-for-expectable-values (TCS args dif)
 					; (setf tc tcs aa args dd dif)
-   (dolist (x args) (set (car x) (or (mem3 x) (mem2 x))))
-   (let ((variables (mapcar #'car (subset #'(lambda (x) (not (mem3 x))) args))))
-     (catch 'min
-       (loop
-	(let ((changed nil))
-	  (dolist (arg variables)
-	    (let* ((tc (collapse-numerically (mem2 (assoc arg TCS)) (list arg)))
-		   (arg* (find-expectable-value arg tc args dif  nil )))
-	      (when (>= (abs (- (cadr (assoc arg args)) arg*)) dif) (setf changed t))
-	      (setf args (subst (list arg arg*) (assoc arg args) args :test 'equal))
-	      (setf *args* args)))
-	  (when (null changed) (return args)))))))
+    (dolist (x args) (set (car x) (or (mem3 x) (mem2 x))))
+    (let ((variables (mapcar #'car (subset #'(lambda (x) (not (mem3 x))) args))))
+      (catch 'min
+	(loop
+	 (let ((changed nil))
+	   (dolist (arg variables)
+	     (let* ((tc (collapse-numerically (mem2 (assoc arg TCS)) (list arg)))
+		    (arg* (find-expectable-value arg tc args dif  nil )))
+	       (when (>= (abs (- (cadr (assoc arg args)) arg*)) dif) (setf changed t))
+	       (setf args (subst (list arg arg*) (assoc arg args) args :test 'equal))
+	       (setf *args* args)))
+	   (when (null changed) (return args)))))))
 
- (defun find-expectable-values (&key args ps  (dif .0000001) (display nil) (display-results? t) (depth 0) (iterations 2)
-				     probability-queries (top-level t) (dif2 .0001) (name "*ps*") subsets constraints
-				     probability-constraints (shallow-display nil) (split-dif .00001)
-				     subset-constraints constants sample-args independence-queries (truncate 4))
-   (when top-level (setf *args* nil *ps* ps))
-   (when (> depth 1000) (terpri) (princ "Exceeded depth of 1000.") (break))
-   (when top-level
-     (setf constants nil)
-     (dolist (x args) (when (mem3 x) (push (car x) constants))))
-   (cond (ps
-	  (when top-level
-	    (when (not (== constants (ps-constants ps)))
-	      (terpri) (princ "The list of assigned values does not agree with the list of constants for ")
-	      (princ (ps-name ps)) (return-from find-expectable-values))))
-	 (t
-	  (setf ps (build-probability-structure-automatically
-		    :name name :constraints constraints :constants constants :subsets subsets
-		    :probability-constraints probability-constraints :sample-args sample-args :subset-constraints subset-constraints))))
-   (dolist (x (ps-atoms ps)) (makunbound x))
-   (when (null sample-args)
-     (cond ((ps-sample-args ps) (setf sample-args (ps-sample-args ps)))
-	   (t
-	    (setf sample-args
-		  (append
-		   (mapcar #'(lambda (x) (default-constant-value x (ps-constraints ps))) (ps-constants ps))
-		   (mapcar
-		    #'(lambda (x)
-			(list x (expt .5 (length (remove-if #'numberp (mapcar #'read-from-string (explode (string x))))))))
-		    (ps-atoms ps)))))))
-   (when (null args) (setf args sample-args))
-   (when display
-     (progn (terpri) (bar-indent depth) (princ "(") (terpri) (bar-indent depth)
-	    (princ "Finding expectable values for probability structure ")
-	    (princ (ps-name ps)) (princ " with") (terpri) (bar-indent depth) (princ "args = ") (princ args)
-	    (terpri) (bar-indent depth) (princ "and sample-args = ") (princ sample-args)
-	    ))
-   (when (and display-results? (not display))
-     (terpri) (princ "Find expectable values:")
-     (terpri) (princ "   :args ") (princ args)
-     (terpri) (princ "   :probability-structure ") (princ (ps-name ps))
-     (terpri) (princ "   :subsets ") (princ (mapcar #'string (ps-subsets ps)))
-     (terpri) (princ "   :constants ") (princ (ps-constants ps))
-     (when (ps-constraints ps)
-       (terpri) (princ "   :constraints ")
-       (dolist (x (ps-constraints ps)) (terpri) (princ "        ") (princ (car x)) (princ " = ") (princ (cdr x))))
-     (when (ps-subset-constraints ps)
-       (terpri) (princ "   :subset-constraints ")
-       (dolist (x (ps-subset-constraints ps)) (terpri) (princ "        ") (princ x)))
-     (when (ps-probability-constraints ps)
-       (terpri) (princ "   :probability-constraints ")
-       (dolist (x (ps-probability-constraints ps)) (terpri) (princ "        ")
-	       (print-complete-probability (mem2 x)) (princ " = ") (princ (mem4 x)))))
-   (let ((terms (ps-terms ps))
-	 (TCS (ps-log-term-characterizations ps))
-	 (time (when top-level (get-internal-run-time)))
-	 (args0 args)
-	 (sa0 sample-args))
-     (when (and top-level (< (length args) (length sample-args)))
-       (setf args (mapcar #'(lambda (v) (or (assoc (car v) args) v)) sample-args)))
-     (when (and top-level (not (coherent-probability-assignment sample-args)) (not (coherent-probability-assignment args)))
-       (terpri) (princ "Neither the assigned values nor the sample-args constitute a coherent probability assignment,")
-       (terpri) (princ "so the search cannot proceed.") (return-from find-expectable-values nil))
-     (cond ((coherent-probability-assignment args terms)
-	    (let* ((n iterations) (print-iteration (> iterations 0)))
-	      (loop
-	       (setf args (solve-for-expectable-values TCS args (* dif (expt 10 n))))
-	       (when (and display print-iteration) (terpri) (princ "dif = ") (princ (* dif (expt 10 n))) (princ ":  ") (princ args))
+  (defun find-expectable-values (&key args ps  (dif .0000001) (display nil) (display-results? t) (depth 0) (iterations 2)
+				      probability-queries (top-level t) (dif2 .0001) (name "*ps*") subsets constraints
+				      probability-constraints (shallow-display nil) (split-dif .00001)
+				      subset-constraints constants sample-args independence-queries (truncate 4))
+    (when top-level (setf *args* nil *ps* ps))
+    (when (> depth 1000) (terpri) (princ "Exceeded depth of 1000.") (break))
+    (when top-level
+      (setf constants nil)
+      (dolist (x args) (when (mem3 x) (push (car x) constants))))
+    (cond (ps
+	   (when top-level
+	     (when (not (== constants (ps-constants ps)))
+	       (terpri) (princ "The list of assigned values does not agree with the list of constants for ")
+	       (princ (ps-name ps)) (return-from find-expectable-values))))
+	  (t
+	   (setf ps (build-probability-structure-automatically
+		     :name name :constraints constraints :constants constants :subsets subsets
+		     :probability-constraints probability-constraints :sample-args sample-args :subset-constraints subset-constraints))))
+    (dolist (x (ps-atoms ps)) (makunbound x))
+    (when (null sample-args)
+      (cond ((ps-sample-args ps) (setf sample-args (ps-sample-args ps)))
+	    (t
+	     (setf sample-args
+		   (append
+		    (mapcar #'(lambda (x) (default-constant-value x (ps-constraints ps))) (ps-constants ps))
+		    (mapcar
+		     #'(lambda (x)
+			 (list x (expt .5 (length (remove-if #'numberp (mapcar #'read-from-string (explode (string x))))))))
+		     (ps-atoms ps)))))))
+    (when (null args) (setf args sample-args))
+    (when display
+      (progn (terpri) (bar-indent depth) (princ "(") (terpri) (bar-indent depth)
+	     (princ "Finding expectable values for probability structure ")
+	     (princ (ps-name ps)) (princ " with") (terpri) (bar-indent depth) (princ "args = ") (princ args)
+	     (terpri) (bar-indent depth) (princ "and sample-args = ") (princ sample-args)
+	     ))
+    (when (and display-results? (not display))
+      (terpri) (princ "Find expectable values:")
+      (terpri) (princ "   :args ") (princ args)
+      (terpri) (princ "   :probability-structure ") (princ (ps-name ps))
+      (terpri) (princ "   :subsets ") (princ (mapcar #'string (ps-subsets ps)))
+      (terpri) (princ "   :constants ") (princ (ps-constants ps))
+      (when (ps-constraints ps)
+	(terpri) (princ "   :constraints ")
+	(dolist (x (ps-constraints ps)) (terpri) (princ "        ") (princ (car x)) (princ " = ") (princ (cdr x))))
+      (when (ps-subset-constraints ps)
+	(terpri) (princ "   :subset-constraints ")
+	(dolist (x (ps-subset-constraints ps)) (terpri) (princ "        ") (princ x)))
+      (when (ps-probability-constraints ps)
+	(terpri) (princ "   :probability-constraints ")
+	(dolist (x (ps-probability-constraints ps)) (terpri) (princ "        ")
+		(print-complete-probability (mem2 x)) (princ " = ") (princ (mem4 x)))))
+    (let ((terms (ps-terms ps))
+	  (TCS (ps-log-term-characterizations ps))
+	  (time (when top-level (get-internal-run-time)))
+	  (args0 args)
+	  (sa0 sample-args))
+      (when (and top-level (< (length args) (length sample-args)))
+	(setf args (mapcar #'(lambda (v) (or (assoc (car v) args) v)) sample-args)))
+      (when (and top-level (not (coherent-probability-assignment sample-args)) (not (coherent-probability-assignment args)))
+	(terpri) (princ "Neither the assigned values nor the sample-args constitute a coherent probability assignment,")
+	(terpri) (princ "so the search cannot proceed.") (return-from find-expectable-values nil))
+      (cond ((coherent-probability-assignment args terms)
+	     (let* ((n iterations) (print-iteration (> iterations 0)))
+	       (loop
+		(setf args (solve-for-expectable-values TCS args (* dif (expt 10 n))))
+		(when (and display print-iteration) (terpri) (princ "dif = ") (princ (* dif (expt 10 n))) (princ ":  ") (princ args))
 					; (when (null args) (break))
-	       (when (eq n 0) (return))
-	       (decf n)))
-	    (when shallow-display (terpri) (princ " approximation: ") (princ args))
-	    args)
-	   (t
-	    (when display (terpri) (bar-indent depth) (princ "Finding new guesses using sample args ") (princ sample-args))
-	    (let ((args2 (split-arg-difference args sample-args split-dif)))
-	      (cond
-	       ((not (eq args2 args))
-		(let* ((new-args
-			(find-expectable-values
-			 :args args2 :ps ps :display display :top-level nil :depth (+ 4 depth)  :iterations 0 :split-dif split-dif
-			 :display-results? nil :sample-args sample-args :dif dif2 :dif2 dif2 :shallow-display shallow-display)))
-		  (cond
-		   (new-args
-		    (let ((predicted-args (merge-guesses-predictively args new-args sample-args)))
-		      (when display
-			(terpri) (bar-indent depth) (princ "args = ") (princ args)
-			(terpri) (bar-indent depth) (princ "new-args = ") (princ new-args)
-			(terpri) (bar-indent depth) (princ "sample-args = ") (princ sample-args)
-			(terpri) (bar-indent depth) (princ "predicted-args = ") (princ predicted-args)
-			(when (not (coherent-probability-assignment predicted-args (ps-terms ps)))
-			  (terpri) (bar-indent depth) (princ "The predicted-args are not coherent.")))
-		      (setf args
-			    (find-expectable-values
-			     :args predicted-args :ps ps :display display :display-results? nil :top-level nil
-			     :depth depth :split-dif split-dif :probability-queries probability-queries
-			     :sample-args new-args :iterations (if (eq depth 0) iterations 0) :dif dif :dif2 dif2
-			     :independence-queries independence-queries :shallow-display shallow-display))))
-		   (t (setf args nil)))))
-	       (t (setf args nil))))))
-     (when top-level (setf time (- (get-internal-run-time) time)))
-     (cond
-      ((and (null args) top-level)
-       (when display-results?
-	 (terpri) (terpri) (princ "No value found. The statement of the problem may be incoherent (inconsistent with the probability")
-	 (terpri) (princ "calculus), or it may lie at the edge of the set of coherent probability assignments.")
-	 (when (and (null shallow-display) (null display))
-	   (terpri) (princ "For more information on the search, add \":shallow-display t\" or \":display t\" to the instruction."))
-	 (when *args*
-	   (terpri) (princ "The closest coherent approximation found was the following:")
-	   (terpri) (terpri) (princ *args*)
-	   (let ((d (find-if
-		     #'(lambda (d) (every #'(lambda (x) (< (abs (- (mem3 x) (mem3 (assoc (mem1 x) *args*)))) d)) args0))
-		     '(.0000001 .000001 .00001 .001 .01))))
-	     (when d
-	       (terpri) (terpri) (princ "This is within ") (princ d)
-	       (princ " of the queried variable values, which may be close enough. It might also be possible to improve the")
-	       (terpri) (princ "approximation by decreasing the value of split-dif from its default value of .00001")
+		(when (eq n 0) (return))
+		(decf n)))
+	     (when shallow-display (terpri) (princ " approximation: ") (princ args))
+	     args)
+	    (t
+	     (when display (terpri) (bar-indent depth) (princ "Finding new guesses using sample args ") (princ sample-args))
+	     (let ((args2 (split-arg-difference args sample-args split-dif)))
+	       (cond
+		((not (eq args2 args))
+		 (let* ((new-args
+			 (find-expectable-values
+			  :args args2 :ps ps :display display :top-level nil :depth (+ 4 depth)  :iterations 0 :split-dif split-dif
+			  :display-results? nil :sample-args sample-args :dif dif2 :dif2 dif2 :shallow-display shallow-display)))
+		   (cond
+		    (new-args
+		     (let ((predicted-args (merge-guesses-predictively args new-args sample-args)))
+		       (when display
+			 (terpri) (bar-indent depth) (princ "args = ") (princ args)
+			 (terpri) (bar-indent depth) (princ "new-args = ") (princ new-args)
+			 (terpri) (bar-indent depth) (princ "sample-args = ") (princ sample-args)
+			 (terpri) (bar-indent depth) (princ "predicted-args = ") (princ predicted-args)
+			 (when (not (coherent-probability-assignment predicted-args (ps-terms ps)))
+			   (terpri) (bar-indent depth) (princ "The predicted-args are not coherent.")))
+		       (setf args
+			     (find-expectable-values
+			      :args predicted-args :ps ps :display display :display-results? nil :top-level nil
+			      :depth depth :split-dif split-dif :probability-queries probability-queries
+			      :sample-args new-args :iterations (if (eq depth 0) iterations 0) :dif dif :dif2 dif2
+			      :independence-queries independence-queries :shallow-display shallow-display))))
+		    (t (setf args nil)))))
+		(t (setf args nil))))))
+      (when top-level (setf time (- (get-internal-run-time) time)))
+      (cond
+       ((and (null args) top-level)
+	(when display-results?
+	  (terpri) (terpri) (princ "No value found. The statement of the problem may be incoherent (inconsistent with the probability")
+	  (terpri) (princ "calculus), or it may lie at the edge of the set of coherent probability assignments.")
+	  (when (and (null shallow-display) (null display))
+	    (terpri) (princ "For more information on the search, add \":shallow-display t\" or \":display t\" to the instruction."))
+	  (when *args*
+	    (terpri) (princ "The closest coherent approximation found was the following:")
+	    (terpri) (terpri) (princ *args*)
+	    (let ((d (find-if
+		      #'(lambda (d) (every #'(lambda (x) (< (abs (- (mem3 x) (mem3 (assoc (mem1 x) *args*)))) d)) args0))
+		      '(.0000001 .000001 .00001 .001 .01))))
+	      (when d
+		(terpri) (terpri) (princ "This is within ") (princ d)
+		(princ " of the queried variable values, which may be close enough. It might also be possible to improve the")
+		(terpri) (princ "approximation by decreasing the value of split-dif from its default value of .00001")
 					;(terpri) (princ "However, setting split-dif too low may prevent the search from terminating.")
-	       (terpri) (princ "For this approximation, the expectable values are as follows:")
-	       (let ((o-args
-		      (find-expectable-values
-		       :args (subset #'(lambda (x) (mem3 x)) *args*)
-		       :ps *ps*
-		       :dif dif
-		       :display nil
-		       :display-results? nil
-		       :iterations iterations
-		       :dif2 dif2
-		       :subsets subsets
-		       :constraints constraints
-		       :probability-constraints probability-constraints
-		       :split-dif split-dif
-		       :subset-constraints subset-constraints
-		       :sample-args sample-args
-		       :independence-queries independence-queries
-		       :truncate truncate
-		       :probability-queries probability-queries)))
-		 (terpri) (terpri) (princ o-args)
-		 (when probability-queries
-		   (terpri) (princ "----------") (terpri)
-		   (princ "For this approximation, the following expectable values were found for the queried probabilities:")
-		   (dolist (p (remove 'prob probability-queries))
-		     (display-probability-value p o-args ps truncate))
-		   (when independence-queries (display-independence independence-queries o-args ps .01))
-		   (terpri) (princ "========================================================"))
-		 (when display-results?
-		   (terpri)  (princ "The accuracy of the results is:")
-		   (princ (mapcar #'(lambda (x) (eval (mem2 x))) (ps-term-characterizations ps)))
-		   (terpri) (princ "the computation took ") (display-run-time-in-seconds time) (terpri) (terpri))
-		 (when display (princ "  )"))))))
-	 (terpri) (terpri))
-       nil)
-      (t
-       (when (and display-results? probability-queries)
-	 (terpri) (princ "----------")
-	 (terpri) (princ "The following expectable values were found:")
-	 (dolist (p (remove 'prob probability-queries))
-	   (display-probability-value p args ps truncate))
-	 (when independence-queries (display-independence independence-queries args ps .01))
-	 (terpri) (princ "========================================================"))
-       (when display (terpri) (bar-indent depth) (princ args))
-       (when display-results?
-	 (terpri)  (princ "The accuracy of the results is:")
-	 (princ (mapcar #'(lambda (x) (eval (mem2 x))) (ps-term-characterizations ps)))
-	 (terpri) (princ "Starting from")
-	 (terpri) (princ "   :sample-args ") (princ sa0)
-	 (terpri) (princ "the computation took ") (display-run-time-in-seconds time) (terpri) (terpri))
-       (when display (princ "  )"))
-       args)))))
+		(terpri) (princ "For this approximation, the expectable values are as follows:")
+		(let ((o-args
+		       (find-expectable-values
+			:args (subset #'(lambda (x) (mem3 x)) *args*)
+			:ps *ps*
+			:dif dif
+			:display nil
+			:display-results? nil
+			:iterations iterations
+			:dif2 dif2
+			:subsets subsets
+			:constraints constraints
+			:probability-constraints probability-constraints
+			:split-dif split-dif
+			:subset-constraints subset-constraints
+			:sample-args sample-args
+			:independence-queries independence-queries
+			:truncate truncate
+			:probability-queries probability-queries)))
+		  (terpri) (terpri) (princ o-args)
+		  (when probability-queries
+		    (terpri) (princ "----------") (terpri)
+		    (princ "For this approximation, the following expectable values were found for the queried probabilities:")
+		    (dolist (p (remove 'prob probability-queries))
+		      (display-probability-value p o-args ps truncate))
+		    (when independence-queries (display-independence independence-queries o-args ps .01))
+		    (terpri) (princ "========================================================"))
+		  (when display-results?
+		    (terpri)  (princ "The accuracy of the results is:")
+		    (princ (mapcar #'(lambda (x) (eval (mem2 x))) (ps-term-characterizations ps)))
+		    (terpri) (princ "the computation took ") (display-run-time-in-seconds time) (terpri) (terpri))
+		  (when display (princ "  )"))))))
+	  (terpri) (terpri))
+	nil)
+       (t
+	(when (and display-results? probability-queries)
+	  (terpri) (princ "----------")
+	  (terpri) (princ "The following expectable values were found:")
+	  (dolist (p (remove 'prob probability-queries))
+	    (display-probability-value p args ps truncate))
+	  (when independence-queries (display-independence independence-queries args ps .01))
+	  (terpri) (princ "========================================================"))
+	(when display (terpri) (bar-indent depth) (princ args))
+	(when display-results?
+	  (terpri)  (princ "The accuracy of the results is:")
+	  (princ (mapcar #'(lambda (x) (eval (mem2 x))) (ps-term-characterizations ps)))
+	  (terpri) (princ "Starting from")
+	  (terpri) (princ "   :sample-args ") (princ sa0)
+	  (terpri) (princ "the computation took ") (display-run-time-in-seconds time) (terpri) (terpri))
+	(when display (princ "  )"))
+	args)))))
 
 (defun apply-term-characterization (tc v arg args)
   (setf tc (subst arg v tc))
@@ -24906,68 +24884,70 @@ the computation took 1.974 sec
 (proclaim '(special Y-ps autoY-ps))
 
 (build-probability-structure
-  :name "Y-ps"
-  :subsets '(A B P)
-  :constants '(r s)
-  :probability-constraints '((prob(P / A) = r)
-                                               (prob(P / B) = s))
-  :term-definitions '((abp / (* r a s b) p)
-                                   (ab / (* (- (+ p (* r s)) (+ (* s p) (* r p))) a b) (* p (- 1 p)))
-                                   (ap * r a)
-                                   (bp * s b))
-  :term-characterizations '((a (* (expt (- 1 r) (- 1 r)) (expt r r) a
-                                                        (expt (- (+ (* r a) 1) (+ a p)) (- r 1)) (expt (- p (* r a)) (- r))))
-                                               (b (* (expt (- 1 s) (- 1 s)) (expt s s) b
-                                                        (expt (- (+ (* s b) 1) (+ b p)) (- s 1)) (expt (- p (* s b)) (- s))))
-                                               (p (/ (* (- p (* s b)) (- p (* r a)) (- 1 p))
-                                                       (* (- (+ 1 (* r a)) (+ a p)) (- (+ 1 (* s b)) (+ b p)) p))))
-  :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5)))
+ :name "Y-ps"
+ :subsets '(A B P)
+ :constants '(r s)
+ :probability-constraints '((prob(P / A) = r)
+			    (prob(P / B) = s))
+ :term-definitions '((abp / (* r a s b) p)
+		     (ab / (* (- (+ p (* r s)) (+ (* s p) (* r p))) a b) (* p (- 1 p)))
+		     (ap * r a)
+		     (bp * s b))
+ :term-characterizations '((a (* (expt (- 1 r) (- 1 r)) (expt r r) a
+				 (expt (- (+ (* r a) 1) (+ a p)) (- r 1)) (expt (- p (* r a)) (- r))))
+			   (b (* (expt (- 1 s) (- 1 s)) (expt s s) b
+				 (expt (- (+ (* s b) 1) (+ b p)) (- s 1)) (expt (- p (* s b)) (- s))))
+			   (p (/ (* (- p (* s b)) (- p (* r a)) (- 1 p))
+				 (* (- (+ 1 (* r a)) (+ a p)) (- (+ 1 (* s b)) (+ b p)) p))))
+ :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5)))
 
 (find-expectable-values
-  :args '((r = .95) (s = .85) (a .250) (b .250) (p .9))
-  :ps Y-ps
-  :probability-queries '(prob(P / (A & B))
-                                        prob(P / U)
-                                        prob(A / U)
-                                        prob(B / U)
-                                        prob(B / P)
-                                        prob(A / P)
-                                        prob((A & B) / P)
-                                        prob(A / (U & ~P))
-                                        prob(B / (U & ~P))
-                                        prob((A & B) / (U & ~P)))
-  :display t)
+ :args '((r = .95) (s = .85) (a .250) (b .250) (p .9))
+ :ps Y-ps
+ :probability-queries '(prob(P / (A & B))
+			    prob(P / U)
+			    prob(A / U)
+			    prob(B / U)
+			    prob(B / P)
+			    prob(A / P)
+			    prob((A & B) / P)
+			    prob(A / (U & ~P))
+			    prob(B / (U & ~P))
+			    prob((A & B) / (U & ~P)))
+ :display t)
 
 (time
-(tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) Y-ps 'r 's)
-)
+ (tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) Y-ps 'r 's)
+ )
 
 (build-probability-structure-automatically
-  :name "autoY-ps"
-  :subsets '(A B P)
-  :constants '(r s)
-  :probability-constraints '((prob(P / A) = r)
-                                               (prob(P / B) = s))
-  :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125)))
+ :name "autoY-ps"
+ :subsets '(A B P)
+ :constants '(r s)
+ :probability-constraints '((prob(P / A) = r)
+			    (prob(P / B) = s))
+ :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125)))
 
 (find-expectable-values
-  :args '((r = .95) (s = .85) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125))
-  :ps autoY-ps
-  :probability-queries '(prob(P / (A & B))
-                                        prob(P / U)
-                                        prob(A / U)
-                                        prob(B / U)
-                                        prob(B / P)
-                                        prob(A / P)
-                                        prob((A & B) / P)
-                                        prob(A / (U & ~P))
-                                        prob(B / (U & ~P))
-                                        prob((A & B) / (U & ~P)))
-  :display nil)
+ :args '((r = .95) (s = .85) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125))
+ :ps autoY-ps
+ :probability-queries '(prob(P / (A & B))
+			    prob(P / U)
+			    prob(A / U)
+			    prob(B / U)
+			    prob(B / P)
+			    prob(A / P)
+			    prob((A & B) / P)
+			    prob(A / (U & ~P))
+			    prob(B / (U & ~P))
+			    prob((A & B) / (U & ~P)))
+ :display nil)
 
 (time
-(tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) autoY-ps 'r 's)
-)
+ (tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) autoY-ps 'r 's)
+ )
+
+;;SECTION reason
 
 |#
 
@@ -25899,12 +25879,12 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
   (:condition (member new-node possible-nodes))
   "(define new-order
 (multiple-value-bind
- (before* not-between*)
- (catch 'merge-plans
-   (add-befores (if node1 (list (cons node1 new-node) (cons new-node node2))
-		  (list (cons new-node node2)))
-		before not-between plan+))
- (list before* not-between*)))"
+    (before* not-between*)
+    (catch 'merge-plans
+      (add-befores (if node1 (list (cons node1 new-node) (cons new-node node2))
+		     (list (cons new-node node2)))
+		   before not-between plan+))
+  (list before* not-between*)))"
                       (:condition (car new-order))
                       "(define new-before (mem1 new-order))"
                       "(define new-between (mem2 new-order))"
@@ -25955,19 +25935,19 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
 					;    "(plan-undermines-causal-links plan links)"
 					;    :variables plan subplan links)
 
-;TODO
-;(def-backwards-reason PLAN-NODE-RESULT
-;  :conclusions  "(node-result node R Q)"
-;  :condition	(interest-variable node)
-;  :reason-conclusions-function
-;  (let ((conclusions nil))
-;    (let ((m (match+ action (plan-node-action node*))))
-;      (when m (push (cons `(node-result ,node* ,(match-sublis m R) ,Q) nil) conclusions)))
-;    conclusions)
-;  :reason-backwards-premises
-;  "(=> (& R action) Q)"
-;  "(plan-node node*)"
-;  :variables	action node node* R Q)
+					;TODO
+					;(def-backwards-reason PLAN-NODE-RESULT
+					;  :conclusions  "(node-result node R Q)"
+					;  :condition	(interest-variable node)
+					;  :reason-conclusions-function
+					;  (let ((conclusions nil))
+					;    (let ((m (match+ action (plan-node-action node*))))
+					;      (when m (push (cons `(node-result ,node* ,(match-sublis m R) ,Q) nil) conclusions)))
+					;    conclusions)
+					;  :reason-backwards-premises
+					;  "(=> (& R action) Q)"
+					;  "(plan-node node*)"
+					;  :variables	action node node* R Q)
 
 (def-backwards-reason  =>-neg1
   :conclusions  "(P => ~(Q & R))"
@@ -26183,6 +26163,8 @@ possible, i.e., before all possibly-succeeding-nodes of new-node. |#
   (:condition (not (null plan)))
   :variables  plan plan+ goal node1 node2 before not-between R node link subplan precondition
   new-node new-before new-not-between -R node1* node2* repair-plan  e-plan)
+
+;;SECTION simulation
 
 ;; This runs on OSCAR_3.31
 #| To run these problems, first load Perception-Causes_3.31a.lisp.
@@ -27307,7 +27289,7 @@ be alive.  Should I conclude that Jones becomes dead?"
   null-plan
   goal-regression
   split-conjunctive-goal
-  ;TODO type-instantiation
+					;TODO type-instantiation
   REUSE-NODES
   REUSE-NODE
   protoplan-for-goal
@@ -27325,7 +27307,7 @@ be alive.  Should I conclude that Jones becomes dead?"
   embellished-protoplan
   embedded-null-plan
   split-embedded-conjunctive-goal
-  ;TODO embedded-type-instantiation
+					;TODO embedded-type-instantiation
   embedded-goal-regression
   add-ordering-constraints
   add-embedded-ordering-constraints
@@ -27472,7 +27454,7 @@ be alive.  Should I conclude that Jones becomes dead?"
   split-conjunctive-goal
   REUSE-NODES
   REUSE-NODE
-  ;plan-node-result TODO: try to get plan-node-result to work and add back in
+					;plan-node-result TODO: try to get plan-node-result to work and add back in
   simplify-=>
   =>-adjunction
   =>-neg1
@@ -27592,146 +27574,152 @@ be alive.  Should I conclude that Jones becomes dead?"
 
 (setf *problems* (eval-when (:compile-toplevel :execute) (default-problem-list)))
 
-;;TODO FAILING when turning all of these on
-;(trace-on)
-;(display-on)
-;(proof-on)
-;(logic-on)
-;(reductio-on)
-;(log-on)
-;(IQ-on)
-;(graph-log-on)
-;(test 757)
-
-(test)
-
-(so 1)
-(so 2)
-(so 3)
-(so 4)
-(so 5)
-(so 6)
-(so 7)
-(so 8)
-(so 9)
-(so 10)
-(so 11)
-(so 12)
-(so 13)
-(so 14)
-
-(p-test)
-
-(find-expectable-values
- :args '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9))
- :subsets '(A B C D)
- :probability-constraints '((prob(A / B) = r)
-			    (prob(A / (B & C)) = s)
-			    (prob(A / (B & D)) = v))
- :probability-queries '(prob(A / C)
-			    prob(A / (B & (C & D))))
- :independence-queries '(((B & C) (B & D) (A & B)) ((B & C) (B & D) (~A & B))))
-
-(find-expectable-values
- :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
- :subsets '(A B C D)
- :constants '(a b c d ab r1 s1 r2 s2)
- :probability-constraints '((prob(A / C) = r1)
-			    (prob(A / D) = s1)
-			    (prob(B / C) = r2)
-			    (prob(B / D) = s2))
- :probability-queries '(prob(A / (C & D))
-			    prob(B / (C & D)))
- :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
-
-(analyze-probability-structure
- :name "my-ps"
- :subsets '(A B C D)
- :constants '(a b c d ab r1 s1 r2 s2)
- :probability-constraints '((prob(A / C) = r1)
-			    (prob(A / D) = s1)
-			    (prob(B / C) = r2)
-			    (prob(B / D) = s2))
- :probability-queries '(prob(A / (C & D))
-			    prob(B / (C & D)))
- :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
-
-;;TODO FAILING (does not halt)
-#|
-(find-expectable-values
- :ps my-ps
- :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
- :subsets '(A B C D)
- :constants '(a b c d ab r1 s1 r2 s2)
- :probability-constraints '((prob(A / C) = r1)
-			    (prob(A / D) = s1)
-			    (prob(B / C) = r2)
-			    (prob(B / D) = s2))
- :probability-queries '(prob(A / (C & D))
-			    prob(B / (C & D)))
- :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
-|#
-
-(proclaim '(special Y-ps autoY-ps))
-
-(build-probability-structure
- :name "Y-ps"
- :subsets '(A B P)
- :constants '(r s)
- :probability-constraints '((prob(P / A) = r)
-			    (prob(P / B) = s))
- :term-definitions '((abp / (* r a s b) p)
-		     (ab / (* (- (+ p (* r s)) (+ (* s p) (* r p))) a b) (* p (- 1 p)))
-		     (ap * r a)
-		     (bp * s b))
- :term-characterizations '((a (* (expt (- 1 r) (- 1 r)) (expt r r) a
-				 (expt (- (+ (* r a) 1) (+ a p)) (- r 1)) (expt (- p (* r a)) (- r))))
-			   (b (* (expt (- 1 s) (- 1 s)) (expt s s) b
-				 (expt (- (+ (* s b) 1) (+ b p)) (- s 1)) (expt (- p (* s b)) (- s))))
-			   (p (/ (* (- p (* s b)) (- p (* r a)) (- 1 p))
-				 (* (- (+ 1 (* r a)) (+ a p)) (- (+ 1 (* s b)) (+ b p)) p))))
- :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5)))
-
-;;TODO FAILING (does not halt)
-#|
-(find-expectable-values
- :args '((r = .95) (s = .85) (a .250) (b .250) (p .9))
- :ps Y-ps
- :probability-queries '(prob(P / (A & B))
-			    prob(P / U)
-			    prob(A / U)
-			    prob(B / U)
-			    prob(B / P)
-			    prob(A / P)
-			    prob((A & B) / P)
-			    prob(A / (U & ~P))
-			    prob(B / (U & ~P))
-			    prob((A & B) / (U & ~P)))
- :display t)
-|#
-
-(build-probability-structure-automatically
- :name "autoY-ps"
- :subsets '(A B P)
- :constants '(r s)
- :probability-constraints '((prob(P / A) = r)
-			    (prob(P / B) = s))
- :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125)))
-
-;;TODO FAILING (ABS NIL)
-#|
-(find-expectable-values
- :args '((r = .95) (s = .85) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125))
- :ps autoY-ps
- :probability-queries '(prob(P / (A & B))
-			    prob(P / U)
-			    prob(A / U)
-			    prob(B / U)
-			    prob(B / P)
-			    prob(A / P)
-			    prob((A & B) / P)
-			    prob(A / (U & ~P))
-			    prob(B / (U & ~P))
-			    prob((A & B) / (U & ~P)))
- :display nil)
-|#
+;;SECTION test
+;;
+;;(print (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))"))
+;;(print (formula-code (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))")))
+;;(print (reason-code (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))") '(H)))
+;;
+;;;TODO FAILING when turning all of these on
+;; ;;(trace-on)
+;; ;;(display-on)
+;; ;;(proof-on)
+;; ;;(logic-on)
+;; ;;(reductio-on)
+;; ;;(log-on)
+;; ;;(IQ-on)
+;; ;;(graph-log-on)
+;; ;;(test 757)
+;;
+;;(test)
+;;
+;;(so 1)
+;;(so 2)
+;;(so 3)
+;;(so 4)
+;;(so 5)
+;;(so 6)
+;;(so 7)
+;;(so 8)
+;;(so 9)
+;;(so 10)
+;;(so 11)
+;;(so 12)
+;;(so 13)
+;;(so 14)
+;;
+;;(p-test)
+;;
+;;(find-expectable-values
+;; :args '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9))
+;; :subsets '(A B C D)
+;; :probability-constraints '((prob(A / B) = r)
+;; 			    (prob(A / (B & C)) = s)
+;; 			    (prob(A / (B & D)) = v))
+;; :probability-queries '(prob(A / C)
+;; 			    prob(A / (B & (C & D))))
+;; :independence-queries '(((B & C) (B & D) (A & B)) ((B & C) (B & D) (~A & B))))
+;;
+;;(find-expectable-values
+;; :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
+;; :subsets '(A B C D)
+;; :constants '(a b c d ab r1 s1 r2 s2)
+;; :probability-constraints '((prob(A / C) = r1)
+;; 			    (prob(A / D) = s1)
+;; 			    (prob(B / C) = r2)
+;; 			    (prob(B / D) = s2))
+;; :probability-queries '(prob(A / (C & D))
+;; 			    prob(B / (C & D)))
+;; :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
+;;
+;;(analyze-probability-structure
+;; :name "my-ps"
+;; :subsets '(A B C D)
+;; :constants '(a b c d ab r1 s1 r2 s2)
+;; :probability-constraints '((prob(A / C) = r1)
+;; 			    (prob(A / D) = s1)
+;; 			    (prob(B / C) = r2)
+;; 			    (prob(B / D) = s2))
+;; :probability-queries '(prob(A / (C & D))
+;; 			    prob(B / (C & D)))
+;; :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
+;;
+;;;TODO FAILING (does not halt)
+;;#|
+;;(find-expectable-values
+;; :ps my-ps
+;; :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
+;; :subsets '(A B C D)
+;; :constants '(a b c d ab r1 s1 r2 s2)
+;; :probability-constraints '((prob(A / C) = r1)
+;; 			    (prob(A / D) = s1)
+;; 			    (prob(B / C) = r2)
+;; 			    (prob(B / D) = s2))
+;; :probability-queries '(prob(A / (C & D))
+;; 			    prob(B / (C & D)))
+;; :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
+;;|#
+;;
+;;(proclaim '(special Y-ps autoY-ps))
+;;
+;;(build-probability-structure
+;; :name "Y-ps"
+;; :subsets '(A B P)
+;; :constants '(r s)
+;; :probability-constraints '((prob(P / A) = r)
+;; 			    (prob(P / B) = s))
+;; :term-definitions '((abp / (* r a s b) p)
+;; 		     (ab / (* (- (+ p (* r s)) (+ (* s p) (* r p))) a b) (* p (- 1 p)))
+;; 		     (ap * r a)
+;; 		     (bp * s b))
+;; :term-characterizations '((a (* (expt (- 1 r) (- 1 r)) (expt r r) a
+;; 				 (expt (- (+ (* r a) 1) (+ a p)) (- r 1)) (expt (- p (* r a)) (- r))))
+;; 			   (b (* (expt (- 1 s) (- 1 s)) (expt s s) b
+;; 				 (expt (- (+ (* s b) 1) (+ b p)) (- s 1)) (expt (- p (* s b)) (- s))))
+;; 			   (p (/ (* (- p (* s b)) (- p (* r a)) (- 1 p))
+;; 				 (* (- (+ 1 (* r a)) (+ a p)) (- (+ 1 (* s b)) (+ b p)) p))))
+;; :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5)))
+;;
+;;;TODO FAILING (does not halt)
+;;#|
+;;(find-expectable-values
+;; :args '((r = .95) (s = .85) (a .250) (b .250) (p .9))
+;; :ps Y-ps
+;; :probability-queries '(prob(P / (A & B))
+;; 			    prob(P / U)
+;; 			    prob(A / U)
+;; 			    prob(B / U)
+;; 			    prob(B / P)
+;; 			    prob(A / P)
+;; 			    prob((A & B) / P)
+;; 			    prob(A / (U & ~P))
+;; 			    prob(B / (U & ~P))
+;; 			    prob((A & B) / (U & ~P)))
+;; :display t)
+;;|#
+;;
+;;(build-probability-structure-automatically
+;; :name "autoY-ps"
+;; :subsets '(A B P)
+;; :constants '(r s)
+;; :probability-constraints '((prob(P / A) = r)
+;; 			    (prob(P / B) = s))
+;; :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125)))
+;;
+;;;TODO FAILING (ABS NIL)
+;;#|
+;;(find-expectable-values
+;; :args '((r = .95) (s = .85) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125))
+;; :ps autoY-ps
+;; :probability-queries '(prob(P / (A & B))
+;; 			    prob(P / U)
+;; 			    prob(A / U)
+;; 			    prob(B / U)
+;; 			    prob(B / P)
+;; 			    prob(A / P)
+;; 			    prob((A & B) / P)
+;; 			    prob(A / (U & ~P))
+;; 			    prob(B / (U & ~P))
+;; 			    prob((A & B) / (U & ~P)))
+;; :display nil)
+;;|#

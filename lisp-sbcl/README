@@ -485,6 +485,8 @@ set-match pats@(_ ∷ _) dats@(_ ∷ _) vars@(_ ∷ _) =
 
 --
 
+stuff that uses eval
+
 conclusion-instantiator
  define-forwards-reason
   find-forwards-con-reasons
@@ -497,8 +499,43 @@ rectify-formula-condition
  formula-condition
   rectify-forwards-premises
    def-forwards-reason
+    *open code
     define-forwards-reason
+     find-forwards-con-reasons
+      make-problem-from-string
+       make-problem-list
+        default-problem-list
+	 *open code
+     find-forwards-pf-reasons
+      make-problem-from-string
+       ...
+   def-backwards-reason
+    *open code
+   def-forwards-undercutter
+    *open code
+   def-backwards-undercutter
+    *open code
   rectify-backwards-premises
  rectify-strength
  simple-backwards-formula-condition
  rectify-reason-condition
+
+reason-instantiator
+ construct-forwards-premise
+
+def-instantiator
+ reason-instantiator
+  ...
+find-backwards-con-reasons
+find-backwards-pf-reasons
+find-forwards-con-reasons
+find-forwards-pf-reasons
+rectify-forwards-premises*
+define-backwards-reason
+make-simulation-problem
+make-planning-problem
+P-TEST
+term-count
+default-term-value
+factor-difference
+combine-exponents0

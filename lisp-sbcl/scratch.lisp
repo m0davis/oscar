@@ -1,3 +1,26 @@
+(defun foo ()
+  (multiple-value-bind
+   (x y z)
+   (f y e)
+   (progn
+     3)))
+
+(proclaim '(optimize (debug 3)))
+
+(defun has-eval (value)
+  (eval
+   `#'(lambda (arg)
+	,value)))
+
+(funcall (has-eval '(print arg)) 1) (terpri)
+
+(defmacro not-has-eval (value)
+  `#'(lambda (arg)
+       ,value))
+
+(funcall (not-has-eval (print arg)) 2) (terpri)
+
+#|
 (print "1")
 
 (defun formula-instantiator (P variables)
@@ -162,3 +185,4 @@
 (print (funcall 'formula-instantiator-7 '(& p q) '(p q)))
 (print (funcall (conclusion-instantiator-7-outer '(& p q) '(p q) nil) '((p . 1) (q . 2))))
 (terpri)
+|#
