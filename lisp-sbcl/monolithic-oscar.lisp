@@ -24598,7 +24598,7 @@ Ultimate epistemic interests:
   :reason-forwards-premises
   "(define -p (neg p))"
   "-p"
-  :variables  p q -p)
+  :variables p q -p)
 
                                         ; Suppositional rules
 
@@ -24612,7 +24612,7 @@ Ultimate epistemic interests:
                       (or (negationp p) (negationp q))))
   :reason-backwards-premises "~p"
   :discharge "~q"
-  :variables  p q)
+  :variables p q)
 
 (def-backwards-reason conditionalization
   :conclusions "(p -> q)"
@@ -24622,7 +24622,7 @@ Ultimate epistemic interests:
                  (not (e-genp q)))
   :reason-backwards-premises "q"
   :discharge "p"
-  :variables  p q)
+  :variables p q)
 
 (setf *backwards-logical-reasons*
       (list adjunction neg-intro i-neg-disj i-neg-condit i-neg-bicondit
@@ -24663,7 +24663,7 @@ Ultimate epistemic interests:
   :reason-backwards-premises "(R at time)"
   :conclusions "(p at time)"
   :variables p time R time0 s
-  :strength  (2 * (s - 0.5))
+  :strength (2 * (s - 0.5))
   :defeasible? t
   :description "When information is input, it is defeasibly reasonable to believe it.")
 
@@ -24734,31 +24734,31 @@ Ultimate epistemic interests:
   :reason-forwards-premises
   "((the probability of (p at (t + 1)) given (p at t)) = s)"
   (:condition (s < *temporal-decay*))
-  :variables  p s time0 time)
+  :variables p s time0 time)
 
 (def-backwards-reason *INCOMPATIBLE-COLORS*
   :conclusions "~((the color of x is y) at time)"
   :reason-forwards-premises
   "((the color of x is z) at time)"
   (:condition (not (eq z y)))
-  :variables  x y z time)
+  :variables x y z time)
 
 (def-backwards-reason *INDEXICAL-INCOMPATIBLE-COLORS*
   :conclusions "~(the color of x is y)"
   :reason-forwards-premises
   "(the color of x is z)"
   (:condition (not (eq z y)))
-  :variables  x y z time)
+  :variables x y z time)
 
 (def-forwards-reason *INDEXICAL-PERCEPTION*
   :reason-forwards-premises "(p at time)"
   (:kind :percept)
   :conclusions "p"
   :variables p time
-  :strength  (min .98 (expt *temporal-reason-decay* (- *cycle* time)))
+  :strength (min .98 (expt *temporal-reason-decay* (- *cycle* time)))
   :defeasible? t
   :reason-temporal? t
-  :description  "When information is input, it is defeasibly reasonable to believe it.")
+  :description "When information is input, it is defeasibly reasonable to believe it.")
 
 (def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-INDEXICAL-PERCEPTION*
   :defeatee  *indexical-perception*
