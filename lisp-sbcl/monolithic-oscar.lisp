@@ -24686,7 +24686,7 @@ Ultimate epistemic interests:
   (:condition (time0 < time))
   :variables p time0 time* time op
   :defeasible? T
-  :strength  (expt *temporal-reason-decay* (- time time0))
+  :strength (expt *temporal-reason-decay* (- time time0))
   :description
   "It is defeasibly reasonable to expect temporally projectible truths to remain unchanged.")
 ;; The condition does not work, because there could be a later argument proving such a support-link, and the inference would not then be redone.
