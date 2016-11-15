@@ -27182,18 +27182,18 @@ be alive.  Should I conclude that Jones becomes dead?"
 (print (reason-code (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))") '(H)))
 
 ;;TODO FAILING when turning all of these on
-(trace-on)
-(display-on)
-(proof-on)
-(logic-on)
-(reductio-on)
-(log-on)
-(IQ-on)
-(graph-log-on)
+;;(trace-on)
+;;(display-on)
+;;(proof-on)
+;;(logic-on)
+;;(reductio-on)
+;;(log-on)
+;;(IQ-on)
+;;(graph-log-on)
 ;; (setf *j-trace* t)
 ;; (setf *s-trace* t)
 ;; (setf *safe-trace* t)
-(test 757)
+;;(test 757)
 
 (test)
 
@@ -27249,18 +27249,18 @@ be alive.  Should I conclude that Jones becomes dead?"
  :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
 
 ;;TODO FAILING (does not halt)
-(find-expectable-values
- :ps my-ps
- :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
- :subsets '(A B C D)
- :constants '(a b c d ab r1 s1 r2 s2)
- :probability-constraints '((prob(A / C) = r1)
-                            (prob(A / D) = s1)
-                            (prob(B / C) = r2)
-                            (prob(B / D) = s2))
- :probability-queries '(prob(A / (C & D))
-                        prob(B / (C & D)))
- :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
+;;(find-expectable-values
+;; :ps my-ps
+;; :args '((a = 0.37) (b = 0.42) (ab = 0.16) (c = 0.55) (d = 0.53) (r1 = 0.6) (r2 = 0.55) (s1 = 0.45) (s2 = 0.48))
+;; :subsets '(A B C D)
+;; :constants '(a b c d ab r1 s1 r2 s2)
+;; :probability-constraints '((prob(A / C) = r1)
+;;                            (prob(A / D) = s1)
+;;                            (prob(B / C) = r2)
+;;                            (prob(B / D) = s2))
+;; :probability-queries '(prob(A / (C & D))
+;;                        prob(B / (C & D)))
+;; :independence-queries '((C D A) (C D (U & ~A)) (C D B) (C D (U & ~B))))
 
 (proclaim '(special Y-ps autoY-ps))
 
@@ -27283,20 +27283,20 @@ be alive.  Should I conclude that Jones becomes dead?"
  :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5)))
 
 ;;TODO FAILING (does not halt)
-(find-expectable-values
- :args '((r = .95) (s = .85) (a .250) (b .250) (p .9))
- :ps Y-ps
- :probability-queries '(prob(P / (A & B))
-                        prob(P / U)
-                        prob(A / U)
-                        prob(B / U)
-                        prob(B / P)
-                        prob(A / P)
-                        prob((A & B) / P)
-                        prob(A / (U & ~P))
-                        prob(B / (U & ~P))
-                        prob((A & B) / (U & ~P)))
- :display t)
+;;(find-expectable-values
+;; :args '((r = .95) (s = .85) (a .250) (b .250) (p .9))
+;; :ps Y-ps
+;; :probability-queries '(prob(P / (A & B))
+;;                        prob(P / U)
+;;                        prob(A / U)
+;;                        prob(B / U)
+;;                        prob(B / P)
+;;                        prob(A / P)
+;;                        prob((A & B) / P)
+;;                        prob(A / (U & ~P))
+;;                        prob(B / (U & ~P))
+;;                        prob((A & B) / (U & ~P)))
+;; :display t)
 
 (build-probability-structure-automatically
  :name "autoY-ps"
@@ -27307,20 +27307,20 @@ be alive.  Should I conclude that Jones becomes dead?"
  :sample-args '((r = .5) (s = .5) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125)))
 
 ;;TODO FAILING (ABS NIL)
-(find-expectable-values
- :args '((r = .95) (s = .85) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125))
- :ps autoY-ps
- :probability-queries '(prob(P / (A & B))
-                        prob(P / U)
-                        prob(A / U)
-                        prob(B / U)
-                        prob(B / P)
-                        prob(A / P)
-                        prob((A & B) / P)
-                        prob(A / (U & ~P))
-                        prob(B / (U & ~P))
-                        prob((A & B) / (U & ~P)))
- :display nil)
+;;(find-expectable-values
+;; :args '((r = .95) (s = .85) (a .5) (b .5) (p .5) (ab .25) (ap .25) (bp .25) (abp .125))
+;; :ps autoY-ps
+;; :probability-queries '(prob(P / (A & B))
+;;                        prob(P / U)
+;;                        prob(A / U)
+;;                        prob(B / U)
+;;                        prob(B / P)
+;;                        prob(A / P)
+;;                        prob((A & B) / P)
+;;                        prob(A / (U & ~P))
+;;                        prob(B / (U & ~P))
+;;                        prob((A & B) / (U & ~P)))
+;; :display nil)
 
 ;;TODO
 ;;(tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) Y-ps 'r 's)
