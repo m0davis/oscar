@@ -4,6 +4,10 @@
 
 (proclaim '(optimize (debug 3) (safety 3) (space 0) (speed 0) (compilation-speed 0)))
 
+(defparameter *version* "OSCAR_4.02")
+
+(princ "Loading ") (princ *version*) (terpri)
+
 (proclaim
  '(special
    *act-executors*
@@ -170,7 +174,6 @@
    *used-interests*
    *used-nodes*
    *verbose-eval-selection*
-   *version*
    *warn-if-redefine*
    adjunction
    ei
@@ -181,20 +184,85 @@
    pause-flag
    reductio
    ug
+   *operators*
+   *plan-trace*
+   *initial-state*
+   *goal-state*
+   **premises**
+   *start-time*
+   *inputs* ;; *inputs* is a list of conses (cycle . input) where input is a list of pairs (formula clarity).
+   *empty-inference-queue*
+   *msg*
+   *plans*
+   *plan-node-number*
+   *finish*
+   *plan-nodes*
+   *start*
+   *display-time*
+   *causal-links*
+   *causal-link-number*
+   *planner*
+   *planning-problems*
+   *plan-comparison-log*
+   *display-plans*
+   protoplan
+   *plans-decided*
+   *solutions*
+   *defeater-priority*
+   *logical-constants*
+   *pretty-list*
+   *string-symbols*
+   *constant-transformation*
+   *bracket-transformation*
+   *reform-list*
+   *j-trace*
+   *s-trace*
+   *safe-trace*
+   *new-beliefs*
+   *new-retractions*
    ))
 
-(proclaim '(special *operators* *plan-trace* *initial-state* *goal-state* **premises** *start-time* *inputs*
-            *empty-inference-queue* *msg* *plans* *plan-node-number* *finish*
-            *plan-nodes* *start* *display-time* *causal-links* *causal-link-number* *planner*
-            *planning-problems* *plan-comparison-log* *display-plans* protoplan *plans-decided*
-            *solutions* *defeater-priority*))
+(proclaim '(special *cycle* *inputs* *substantive-interests* *empty-inference-queue* *msg* **percepts**
+            *start-time* **premises** *temporal-reason-decay* *simulation-problems*))
+
+(proclaim '(special *binary-predicates*))
+
+(proclaim '(special *answered-priority*))
+
+(proclaim '(special *arguments* *nodes-done* *arg-number* *nodes-used*))
+
+(proclaim '(special simp neg-elim neg-disj neg-condit  neg-bicondit-simp
+            DM bicondit-simp modus-ponens1 modus-ponens2 modus-tollens1
+            modus-tollens2 disj-syl11 disj-syl12 disj-syl21 disj-syl22
+            exportation E-removal A-removal E2-removal A2-removal
+            adjunction neg-intro i-neg-disj i-neg-condit i-neg-bicondit
+            bicondit-intro disj-cond  i-DM conditionalization reductio
+            neg-ug neg-eg i-neg-ug i-neg-eg ui ei ug eg
+            disj-cond-2 disj-antecedent-simp negation-in
+            disj-simp contraposition i-contraposition conditional-modus-tollens
+            undercutter-permutation cond-antecedent-simp
+            cond-simp1 cond-simp2
+            ))
+
+(proclaim '(special *comparison-graphs*))
+
+(proclaim
+ '(special
+   add-ordering-constraints
+   EMBEDDED-NULL-PLAN
+   NULL-PLAN
+   REUSE-NODES
+   ))
+
+(proclaim '(special *default-atom-values*))
+
+(proclaim '(special *repeated-exponents*))
+
+(proclaim '(special *default-line-length* *definitions* *term-characterizations* *TC* *loaded* *args* *ps*))
+
+(proclaim '(special *tc*))
 
 (defvar *plans-decided* nil)
-
-(setf *version* "OSCAR_4.02")
-
-(princ "Loading ") (princ *version*) (terpri)
-
 (defvar *discards* nil)
 (defvar *creations* nil)
 (defvar *package-name* (package-name *package*))
@@ -259,10 +327,61 @@
 (defvar *nodes-displayed* nil)
 (defvar *og* nil)
 (defvar *old-definitions* nil)
+(defvar *string-symbols* nil)
+(defvar *operators* nil)
+(defvar *reform-list* nil)
+(defvar *j-trace* nil "setting *j-trace* to T traces the justification calculation.")
+(defvar *s-trace* nil " setting *s-trace* to T traces splitting of the hypergraph.")
+(defvar *safe-trace* nil "setting *safe-trace* to T traces the computation of minimal-safe-partial-arguments")
+(defvar **percepts** nil)
+(defvar *display?* nil)
+(defvar *proofs?* nil)
+(defvar *forwards-logical-reasons* nil)
+(defvar *backwards-logical-reasons* nil)
+(defvar *substantive-interests* nil "a list of pairs (formula degree-of-interest)")
+(defvar *plan-comparison-log* nil)
 
 (setq *print-level* nil)
 
 (setf oscar-pathname "./")
+
+(setf *constant-transformation*
+      '( ("all" . 'all) ("some" . 'some) ("&" . '&) ("v" . 'v)
+        ("->" . '->) ("<->" . '<->) ("@" . '@)))
+
+(setf *bracket-transformation*
+      '( ("[" . "(") ("]" . ")") ))
+
+;; This is the syntax of a first-order language with function symbols.  It uses '@ for undercutting defeaters.
+(setq *logical-constants* (list '~ '& 'v '-> '<-> '@ 'all 'some '=))
+
+
+(setf *pretty-list* nil *string-symbols* nil)
+
+;; *temporal-reason-decay* is the reason-strength and *temporal-decay* is the corresponding probability.
+(setf *temporal-reason-decay* (1- (* *temporal-decay* 2)))
+
+(setf *binary-predicates* '(alive))
+
+(setf *planner* "Non-Linear-Planner-44")
+
+(setf *test-log* nil)
+
+(setf *time-limit* nil)
+
+(setf *display-plans* nil)
+
+(setf *defeater-priority* 1.0)
+
+(setf *answered-priority* .005)
+
+(setf *default-atom-values* nil)
+
+(setf *repeated-exponents* nil)
+
+(setf *default-line-length* 500)
+
+(setf *simulation-problems* nil)
 
                                         ;                                                           *MACROS*
 
@@ -537,7 +656,6 @@
         ((stringp x) 1)
         ((atom x) 1)
         ((listp x) (apply #'+ (mapcar #'list-complexity x)))))
-
 
 ;;                        * LIST FUNCTIONS *
 
@@ -970,34 +1088,29 @@
                                (cond ((eq m* t) m)
                                      (m* (union= m m*))))))))))))
     (match* pat exp var nil)))
-
-                                        ;this returns the association list of a match of variables to elements
-                                        ;of s which, when substituted in l yields s.  So l is the pattern and s
-                                        ;is the target.  If X is given, the match must be to members of X.
-                                        ; This assumes that members of var do not occur in s.
-                                        ;(defun match (pattern expression var &optional X)
-                                        ;   (catch 'match (pattern-match pattern expression var X)))
-                                        ;
-                                        ;(defun pattern-match (l s var &optional X)
-                                        ;   (cond ((equal l s) t)
-                                        ;             ((atom l)
-                                        ;              (cond ((and (mem l var)
-                                        ;                                 (if X (mem s X) t))
-                                        ;                         (list (cons l s)))
-                                        ;                        (t (throw 'match nil))))
-                                        ;             ((listp l)
-                                        ;              (cond ((not (listp s)) (throw 'match nil))
-                                        ;                        ((not (eq (length l) (length s))) (throw 'match nil))
-                                        ;                        ((eql (length l) 1) (pattern-match (car l) (car s) var X))
-                                        ;                        (t (let ((m (pattern-match (car l) (car s) var X)))
-                                        ;                             (cond ((null m) (throw 'match nil)))
-                                        ;                             (let ((l* (cond ((eq m t) (cdr l))
-                                        ;                                                   (t (sublis= m (cdr l))))))
-                                        ;                                 (cond ((eq m t) (pattern-match l* (cdr s) var X))
-                                        ;                                           (t (let ((m* (pattern-match l* (cdr s)
-                                        ;                                                      (setdifference var (domain m)) X)))
-                                        ;                                                (cond ((eq m* t) m)
-                                        ;                                                          (t (append m m*)))))))))))))
+;;(defun pattern-match (l s var &optional X)
+;;   (cond ((equal l s) t)
+;;             ((atom l)
+;;              (cond ((and (mem l var)
+;;                                 (if X (mem s X) t))
+;;                         (list (cons l s)))
+;;                        (t (throw 'match nil))))
+;;             ((listp l)
+;;              (cond ((not (listp s)) (throw 'match nil))
+;;                        ((not (eq (length l) (length s))) (throw 'match nil))
+;;                        ((eql (length l) 1) (pattern-match (car l) (car s) var X))
+;;                        (t (let ((m (pattern-match (car l) (car s) var X)))
+;;                             (cond ((null m) (throw 'match nil)))
+;;                             (let ((l* (cond ((eq m t) (cdr l))
+;;                                                   (t (sublis= m (cdr l))))))
+;;                                 (cond ((eq m t) (pattern-match l* (cdr s) var X))
+;;                                           (t (let ((m* (pattern-match l* (cdr s)
+;;                                                      (setdifference var (domain m)) X)))
+;;                                                (cond ((eq m* t) m)
+;;                                                          (t (append m m*)))))))))))))
+;;this returns the association list of a match of variables to elements of s which, when substituted in l yields s.  So l is the pattern and s is the target.  If X is given, the match must be to members of X. This assumes that members of var do not occur in s.
+;;(defun match (pattern expression var &optional X)
+;;   (catch 'match (pattern-match pattern expression var X)))
 
 (defun merge-matches (m m*)
   (cond ((equal m t) m*)
@@ -1055,17 +1168,7 @@
 
 (defun pause-flag-off () (setq pause-flag nil))
 
-(proclaim '(special *logical-constants* *pretty-list* *string-symbols* *constant-transformation*
-            *bracket-transformation* *reform-list*))
-
-(defvar *string-symbols* nil)
-(defvar *operators* nil)
-(defvar *reform-list* nil)
-
                                         ;                 **********************   FORMULAS  ************************
-
-;; This is the syntax of a first-order language with function symbols.  It uses '@ for undercutting defeaters.
-(setq *logical-constants* (list '~ '& 'v '-> '<-> '@ 'all 'some '=))
 
 (defun negationp (p)
   (and (listp p) (eq (mem1 p) '~)))
@@ -1604,13 +1707,6 @@
                    (resolve-variable-conflicts (bicond2 p) variables nil)))
         (t p)))
 
-(setf *constant-transformation*
-      '( ("all" . 'all) ("some" . 'some) ("&" . '&) ("v" . 'v)
-        ("->" . '->) ("<->" . '<->) ("@" . '@)))
-
-(setf *bracket-transformation*
-      '( ("[" . "(") ("]" . ")") ))
-
 (defun reform- (s variables)
   (let ((form
           (fix-nest (parse (sublis= *bracket-transformation* (explode s)) variables))))
@@ -2061,6 +2157,10 @@
             (:conc-name nil))
   (plan-node-number 0)
   (plan-node-action nil))
+
+(defparameter *start* (make-plan-node))
+
+(defparameter *finish* (make-plan-node :plan-node-number -1))
 
 (defun variable-correspondence (P Q P-vars Q-vars terms)
   "This returns the list (terms1 terms quantifier-variables) where terms1 and terms are the lists of corresponding terms to be unified and quantifier-variables is the list of pairs (x . y) of corresponding quantifier-variables used for testing for notational variants."
@@ -3956,9 +4056,6 @@
   (queue-degree-of-preference 0))
 
 ;;============================ interest priorities ====================================
-(proclaim '(special *answered-priority*))
-
-(setf *answered-priority* .005)
 
 (defun i-preferred (node1 node2)
   "*inference-queue* is ordered by i-preference"
@@ -11114,24 +11211,6 @@
 ;; Definitions for inference hypergraphs.  This is based on OSCAR_3-33.lisp.
 ;; It implements the theory in the paper of 5/28/02
 
-(proclaim '(special *j-trace* *s-trace* *safe-trace* *new-beliefs* *new-retractions*))
-
-(defvar *j-trace* nil)
-;; setting *j-trace* to T traces the justification calculation.
-
-;; (setf *j-trace* t)
-
-(defvar *s-trace* nil)
-;; setting *s-trace* to T traces splitting of the hypergraph.
-
-;; (setf *s-trace* t)
-
-(defvar *safe-trace* nil)
-;; setting *safe-trace* to T traces the computation of minimal-safe-partial-arguments
-
-;; (setf *safe-trace* t)
-;; (setf *safe-trace* nil)
-
 ;; ================ defeat-loops and critical-links ==================
 
 (defun ultimate-target (link)
@@ -12936,18 +13015,6 @@
 (defun update-environmental-input ()
   T)
 
-(proclaim '(special *cycle* *inputs* *substantive-interests* *empty-inference-queue* *msg* **percepts**
-            *start-time* **premises** *temporal-reason-decay* *simulation-problems*))
-
-(setf *pretty-list* nil *string-symbols* nil)
-
-;; *temporal-reason-decay* is the reason-strength and *temporal-decay* is the corresponding probability.
-(setf *temporal-reason-decay* (1- (* *temporal-decay* 2)))
-
-(defvar **percepts** nil)
-
-;; *inputs* is a list of conses (cycle . input) where input is a list of pairs (formula clarity).
-
 (defun form-percept (P clarity &optional source)
   (let* ((percept (make-percept
                    :percept-content P
@@ -13803,8 +13870,6 @@
          (princ "============================================================")
          (terpri) (terpri))))))
 
-(proclaim '(special *arguments* *nodes-done* *arg-number* *nodes-used*))
-
 (defstruct (argument
             (:print-function
              (lambda (x stream depth)
@@ -14138,9 +14203,6 @@
     (princ " were unused suppositions.") (terpri)
     (princ (truncate (* argument-length 100) graph-size))
     (princ "% of the inference-graph was used in the argument.") (terpri)))
-
-(defvar *display?* nil)
-(defvar *proofs?* nil)
 
 ;; A problem is a list of the following:
 ;; 1.  problem-number
@@ -14499,10 +14561,6 @@
   (terpri))
 
                                         ;===================== MAKING PROBLEM LISTS =========================
-
-(defvar *forwards-logical-reasons* nil)
-
-(defvar *backwards-logical-reasons* nil)
 
 (defun collapse-strings (strings)
   "This recombines logical formulas containing whitespace that were taken apart by string-list."
@@ -16206,19 +16264,6 @@ Ultimate epistemic interests:
                                         ;                      INFERENCE-RULES FOR THE PROPOSITIONAL
                                         ;                                                 AND PREDICATE CALCULI
 
-(proclaim '(special simp neg-elim neg-disj neg-condit  neg-bicondit-simp
-            DM bicondit-simp modus-ponens1 modus-ponens2 modus-tollens1
-            modus-tollens2 disj-syl11 disj-syl12 disj-syl21 disj-syl22
-            exportation E-removal A-removal E2-removal A2-removal
-            adjunction neg-intro i-neg-disj i-neg-condit i-neg-bicondit
-            bicondit-intro disj-cond  i-DM conditionalization reductio
-            neg-ug neg-eg i-neg-ug i-neg-eg ui ei ug eg
-            disj-cond-2 disj-antecedent-simp negation-in
-            disj-simp contraposition i-contraposition conditional-modus-tollens
-            undercutter-permutation cond-antecedent-simp
-            cond-simp1 cond-simp2
-            ))
-
                                         ; Forwards inference rules:
 
 (setf simp
@@ -17195,8 +17240,6 @@ Ultimate epistemic interests:
   (princ *test-log*)
   (terpri) (princ ")") (terpri))
 
-(proclaim '(special *comparison-graphs*))
-
 (defun COGITATE0 ()
   (initialize-reasoner)
   (dolist (query *ultimate-epistemic-interests*)
@@ -17857,8 +17900,6 @@ Ultimate epistemic interests:
   (princ "======================================================================")
   (terpri) (terpri))
 
-(defvar *substantive-interests* nil "a list of pairs (formula degree-of-interest)")
-
 (defun inference-number (x)
   (cond ((plan-node-p x) (plan-node-number x))
         ((hypernode-p x) (hypernode-number x))
@@ -18107,8 +18148,6 @@ Ultimate epistemic interests:
   (or (literal p)
       (and (conjunctionp p) (every #'literal (conjuncts p)))))
 
-(proclaim '(special *binary-predicates*))
-
 (defun temporally-projectible (p)
   (or (atomic-formula p)
       (and (negationp p)
@@ -18121,28 +18160,10 @@ Ultimate epistemic interests:
 ;;  (or (literal p)
 ;;      (and (conjunctionp p) (every #'literal (conjuncts p)))))
 
-(setf *binary-predicates* '(alive))
-
                                         ;(defun readopt-interest (interest defeated-links)
                                         ;    (declare (ignore interest defeated-links)))
 
-(defvar *plan-comparison-log* nil)
-
-(setf *planner* "Non-Linear-Planner-44")
-
-(setf *test-log* nil)
-
-(setf *time-limit* nil)
-
-(setf *display-plans* nil)
-
-(setf *defeater-priority* 1.0)
-
 (defun show-plans () (setf *display-plans* (not *display-plans*)))
-
-(defparameter *start* (make-plan-node))
-
-(defparameter *finish* (make-plan-node :plan-node-number -1))
 
 (defun before-< (x y)
   "This lexically-orders before-nodes"
@@ -19242,14 +19263,6 @@ Ultimate epistemic interests:
 
 ;;============================ plan histories ================================
 
-(proclaim
- '(special
-   add-ordering-constraints
-   EMBEDDED-NULL-PLAN
-   NULL-PLAN
-   REUSE-NODES
-   ))
-
 (defun plan-parents (plan)
   (when (numberp plan) (setf plan (plan plan)))
   (let ((nodes (supporting-inference-nodes plan))
@@ -20092,10 +20105,6 @@ Ultimate epistemic interests:
           (right (setf right (decrement-term-count x right)))))
   (list left right))
 
-(proclaim '(special *default-atom-values*))
-
-(setf *default-atom-values* nil)
-
 (defun default-term-value (term)
   (or (ignore-errors (eval (sublis *default-atom-values* term)))
       1))
@@ -20254,10 +20263,6 @@ Ultimate epistemic interests:
                  (t
                   (let ((d1 (divide-by-integer (mem2 dif) n)))
                     (when d1 (list '- d1)))))))))
-
-(proclaim '(special *repeated-exponents*))
-
-(setf *repeated-exponents* nil)
 
 (labels
     ()
@@ -21822,8 +21827,6 @@ Ultimate epistemic interests:
   (term-definitions nil)   ;; this is an a-list
   (partition nil)
   (sample-args nil))
-
-(proclaim '(special *default-line-length* *definitions* *term-characterizations* *TC* *loaded* *args* *ps*))
 
                                         ;(defun print-probability (P)
                                         ;    (cond ((eq P '&) (princ " & "))
@@ -23664,8 +23667,6 @@ Ultimate epistemic interests:
            (variable-value var* vars)))
         (t (mem2 var))))
 
-(setf *default-line-length* 500)
-
 ;; This prints a list that can be pasted into Mathematica and evaluated
 (defun print-defs-for-Mathematica (&optional (defs *definitions*))
   (terpri) (terpri)
@@ -23868,8 +23869,6 @@ Ultimate epistemic interests:
           (simple-name (read-from-string name)))
       (eval `(setf ,simple-name ,ps))
       (eval `(proclaim '(special ,simple-name))))))
-
-(proclaim '(special *tc*))
 
 ;;SECTION expectation
 
@@ -25774,8 +25773,6 @@ Ultimate epistemic interests:
 
 ;;SECTION simulation
 
-(setf *simulation-problems* nil)
-
 ;;======================================================================
 (make-simulation-problem
  :number  1
@@ -27193,6 +27190,9 @@ be alive.  Should I conclude that Jones becomes dead?"
 (log-on)
 (IQ-on)
 (graph-log-on)
+;; (setf *j-trace* t)
+;; (setf *s-trace* t)
+;; (setf *safe-trace* t)
 (test 757)
 
 (test)
