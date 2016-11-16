@@ -3277,6 +3277,7 @@
          (temporal? (cadr (find-if #'(lambda (x) (eq (car x) :reason-temporal?)) newbody)))
          (discount (cadr (find-if #'(lambda (x) (eq (car x) :reason-discount-factor)) newbody)))
          (defeatee (find-if #'(lambda (x) (eq (car x) :defeatee)) newbody))
+         (c-vars (reason-variables (eval (cadr defeatee))))
          (discharge (find-if #'(lambda (x) (eq (car x) :discharge)) newbody))
          (forwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-forwards-premises)) newbody)))
          (backwards-premises (cdr (find-if #'(lambda (x) (eq (car x) :reason-backwards-premises)) newbody)))
@@ -3285,6 +3286,7 @@
     (when description (setf description (mem2 description)))
     (when defeasible? (setf defeasible? (mem2 defeasible?)))
     (when variables (setf variables (list 'quote (cdr variables))))
+    (when c-vars (setf c-vars (list 'quote c-vars)))
     (when condition
       (setf condition
             `#'(lambda (binding) ,(rectify-reason-condition (mem2 condition) (eval variables)))))
@@ -3294,10 +3296,10 @@
     (setf defeatee (cons 'list (cdr defeatee)))
     (when forwards-premises
       (setf forwards-premises
-            (cons 'list (rectify-forwards-premises forwards-premises (eval variables) variables))))
+            (cons 'list (rectify-forwards-premises forwards-premises (eval variables) (eval c-vars)))))
     (when backwards-premises
       (setf backwards-premises
-            (cons 'list (rectify-backwards-premises backwards-premises (eval variables) variables))))
+            (cons 'list (rectify-backwards-premises backwards-premises (eval variables) (eval c-vars)))))
     (when (stringp name) (setf name (read-from-string name)))
     `(progn
        (proclaim (list 'special ',name))
@@ -24994,9 +24996,8 @@ Ultimate epistemic interests:
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER*
   :defeatee *temporal-projection*
   :reason-forwards-premises
-                                        ;"(define -p (neg p))" TODO?
-                                        ;"(A when Q is causally sufficient for -p after an interval interval)"
-  "(A when Q is causally sufficient for (neg p) after an interval interval)"
+  "(define -p (neg p))" TODO?
+  "(A when Q is causally sufficient for -p after an interval interval)"
   "(A at time1)"
   (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
   :reason-backwards-premises
@@ -25021,9 +25022,8 @@ Ultimate epistemic interests:
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER*
   :defeatee *indexical-temporal-projection*
   :reason-forwards-premises
-                                        ;"(define -p (neg p))"
-                                        ;"(A when Q is causally sufficient for -p after an interval interval)"
-  "(A when Q is causally sufficient for (neg p) after an interval interval)"
+  "(define -p (neg p))"
+  "(A when Q is causally sufficient for -p after an interval interval)"
   "(A at time1)"
   (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
   :reason-backwards-premises
@@ -25049,9 +25049,8 @@ Ultimate epistemic interests:
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
   :defeatee *causal-implication*
   :reason-forwards-premises
-                                        ;"(define -q (neg q))"
-                                        ;"(A* when R is causally sufficient for -q after an interval interval*)"
-  "(A* when R is causally sufficient for (neg q) after an interval interval*)"
+  "(define -q (neg q))"
+  "(A* when R is causally sufficient for -q after an interval interval*)"
   "(A* at time1)"
   (:condition (and ((time + interval) <= (time1 + interval*)) ((time1 + interval*) < time**)))
   :reason-backwards-premises
@@ -25063,9 +25062,8 @@ Ultimate epistemic interests:
 (def-backwards-undercutter *INDEXICAL-CAUSAL-UNDERCUTTER-FOR-CAUSAL-IMPLICATION*
   :defeatee *indexical-causal-implication*
   :reason-forwards-premises
-                                        ;"(define -q (neg q))"
-                                        ;"(A* when R is causally sufficient for -q after an interval interval*)"
-  "(A* when R is causally sufficient for (neg q) after an interval interval*)"
+  "(define -q (neg q))"
+  "(A* when R is causally sufficient for -q after an interval interval*)"
   "(A* at time1)"
   (:condition (and ((time + interval) <= (time1 + interval*)) ((time1 + interval*) < now)))
   :reason-backwards-premises
