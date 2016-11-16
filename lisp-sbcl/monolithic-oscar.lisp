@@ -24996,7 +24996,7 @@ Ultimate epistemic interests:
 (def-backwards-undercutter *CAUSAL-UNDERCUTTER*
   :defeatee *temporal-projection*
   :reason-forwards-premises
-  "(define -p (neg p))" TODO?
+  "(define -p (neg p))"
   "(A when Q is causally sufficient for -p after an interval interval)"
   "(A at time1)"
   (:condition (and (time0 <= (time1 + interval)) ((time1 + interval) < time)))
