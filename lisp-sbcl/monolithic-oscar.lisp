@@ -27188,10 +27188,11 @@ be alive.  Should I conclude that Jones becomes dead?"
 ;;(log-on)
 ;;(IQ-on)
 ;;(graph-log-on)
-;; (setf *j-trace* t)
-;; (setf *s-trace* t)
-;; (setf *safe-trace* t)
-;;(test 757)
+;;(setf *j-trace* t)
+;;(setf *s-trace* t)
+;;(setf *safe-trace* t)
+
+;;(test 757) ; the buggy problem
 
 (test)
 
