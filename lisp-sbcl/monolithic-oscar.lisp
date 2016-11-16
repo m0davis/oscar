@@ -2697,8 +2697,6 @@
                `#'(lambda (node unifier binding) ,formula*))))))
 
 (defun rectify-backwards-premises (premise-list variables &optional c-vars)
-                                        ; (setf p premise-list v variables) (break)
-  ;; (step (rectify-backwards-premises p v))
   (let ((premises nil))
     (loop
        (let* ((premise? (stringp (car premise-list)))
@@ -25543,19 +25541,36 @@ Ultimate epistemic interests:
                                         ;    "(plan-undermines-causal-links plan links)"
                                         ;    :variables plan subplan links)
 
-                                        ;TODO
-                                        ;(def-backwards-reason PLAN-NODE-RESULT
-                                        ;  :conclusions  "(node-result node R Q)"
-                                        ;  :condition   (interest-variable node)
-                                        ;  :reason-conclusions-function
-                                        ;  (let ((conclusions nil))
-                                        ;    (let ((m (match+ action (plan-node-action node*))))
-                                        ;      (when m (push (cons `(node-result ,node* ,(match-sublis m R) ,Q) nil) conclusions)))
-                                        ;    conclusions)
-                                        ;  :reason-backwards-premises
-                                        ;  "(=> (& R action) Q)"
-                                        ;  "(plan-node node*)"
-                                        ;  :variables   action node node* R Q)
+;;TODO
+;;(def-backwards-reason PLAN-NODE-RESULT
+;;  :conclusions  "(node-result node R Q)"
+;;  :condition   (interest-variable node)
+;;  :reason-conclusions-function
+;;  (let ((conclusions nil))
+;;    (let ((m (match+ action (plan-node-action node*))))
+;;      (when m (push (cons `(node-result ,node* ,(match-sublis m R) ,Q) nil) conclusions)))
+;;    conclusions)
+;;  :reason-backwards-premises
+;;  "(=> (& R action) Q)"
+;;  "(plan-node node*)"
+;;  :variables   action node node* R Q)
+;;; in: DEF-BACKWARDS-REASON PLAN-NODE-RESULT
+;;;     `(NODE-RESULT ,NODE* ,(MATCH-SUBLIS M R) ,Q)
+;;; ==>
+;;;   (SB-IMPL::|List| 'NODE-RESULT NODE* (MATCH-SUBLIS M R) Q)
+;;;
+;;; caught WARNING:
+;;;   undefined variable: Q
+;;
+;;;     (MATCH-SUBLIS M R)
+;;;
+;;; caught WARNING:
+;;;   undefined variable: R
+;;;
+;;; compilation unit finished
+;;;   Undefined variables:
+;;;     Q R
+;;;   caught 2 WARNING conditions
 
 (def-backwards-reason  =>-neg1
   :conclusions  "(P => ~(Q & R))"
