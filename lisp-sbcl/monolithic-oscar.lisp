@@ -3637,6 +3637,30 @@
         (t (and (not (listp q))
                 (or (eql p q)
                     (mem (cons p q) vars))))))
+;;;;TODO
+;;;;this should be functionally-equivalent (but simpler)
+;;;;(defun notational-variant (p q &optional vars)
+;;;;  (cond ((null p) (null q))
+;;;;        ((listp p)
+;;;;         (and (listp q)
+;;;;              (cond ((and (or (eq (car p) 'some)
+;;;;                              (eq (car p) 'all))
+;;;;                          (eq (car p)
+;;;;                              (car q)))
+;;;;                     (notational-variant (cdr p)
+;;;;                                         (cdr q)
+;;;;                                         (cons (cons (cadr p)
+;;;;                                                     (cadr q))
+;;;;                                               vars)))
+;;;;                    ((listp (car q))
+;;;;                     (and (notational-variant (car p) (car q) vars)
+;;;;                          (notational-variant (cdr p) (cdr q) vars)))
+;;;;                    ((or (eql (car p) (car q))
+;;;;                         (mem (cons (car p) (car q)) vars))
+;;;;                     (notational-variant (cdr p) (cdr q) vars)))))
+;;;;        (t (and (not (listp q))
+;;;;                (or (eql p q)
+;;;;                    (mem (cons p q) vars))))))
 
 (defun processed-c-list-for (formula)
   (cdr (find-if #'(lambda (cl) (notational-variant formula (car cl))) *processed-conclusions*)))
@@ -13312,7 +13336,9 @@
   (prinp (hypernode-formula n))
   (when (hypernode-supposition n)
     (princ "    supposition: ") (set-prinp (hypernode-supposition n)))
-  (if (zerop (hypernode-degree-of-justification n)) (princ "                  DEFEATED"))
+  (if (null (hypernode-degree-of-justification n))
+      (princ "                  NULL JUSTIFICATION (TODO?)")
+      (if (zerop (hypernode-degree-of-justification n)) (princ "                  DEFEATED")))
   (when (and (member n nodes-used)
              (not (member n proof-nodes)))
     (princ "   --  NOT USED IN PROOF"))
@@ -13332,7 +13358,9 @@
                (princ "  defeaters: ")
                (princ-set (mapcar #'hypernode-number
                                   (mapcar #'hyper-defeat-link-root (hyperlink-defeaters L*)))))
-             (when (= (hyperlink-degree-of-justification L*) 0.0) (princ "   DEFEATED"))
+             (if (null (hyperlink-degree-of-justification L*))
+                 (princ "   NULL JUSTIFICATION (TODO?)")
+                 (when (= (hyperlink-degree-of-justification L*) 0.0) (princ "   DEFEATED")))
              (terpri)))))
   (when (hypernode-supported-hyper-defeat-links n)
     (princ "  defeatees: ")
@@ -27204,21 +27232,23 @@ be alive.  Should I conclude that Jones becomes dead?"
 (print (reason-code (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))") '(H)))
 
 ;;TODO FAILING when turning all of these on
-;;;;(trace-on)
-;;;;(display-on)
-;;;;(proof-on)
-;;;;(logic-on)
-;;;;(reductio-on)
-;;;;(log-on)
-;;;;(IQ-on)
-;;;;(graph-log-on)
-;;;;(setf *j-trace* t)
-;;;;(setf *s-trace* t)
-;;;;(setf *safe-trace* t)
-;;;;
-;;;;;;(test 757) ; the buggy problem
+;;(trace-on)
+;;(display-on)
+;;(proof-on)
+;;(logic-on)
+;;(reductio-on)
+;;(log-on)
+;;(IQ-on)
+;;(graph-log-on)
+;;(setf *j-trace* t)
+;;(setf *s-trace* t)
+;;(setf *safe-trace* t)
 
-;;;;(test)
+;;;;(test 757) ; the buggy problem
+
+;;(test)
+
+;;(p-test)
 
 ;;TODO FAILING running (so 1) causes (test 757) to give different results
 ;;;;(so 1)
@@ -27236,7 +27266,6 @@ be alive.  Should I conclude that Jones becomes dead?"
 ;;;;(so 13)
 ;;;;(so 14)
 ;;;;
-;;;;(p-test)
 
 ;;;;(find-expectable-values
 ;;;; :args '((a = .5) (b = .5) (c = .5) (d = .5) (bc = .25) (bd = .25) (r = .9) (v = .9) (s = .9))
