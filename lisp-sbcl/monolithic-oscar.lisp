@@ -385,6 +385,8 @@
 
 (defvar *test-assertions-p* t)
 
+(defvar *suppress-volatile-display-p* t)
+
                                         ;                                                           *MACROS*
 
 (defmacro find-if! (&rest args)
@@ -10169,17 +10171,18 @@
 (defun pause-off () (setf *pause* nil))
 
 (defun display-run-time-in-seconds (time)
-  (let* ((sec (truncate (/ time internal-time-units-per-second)))
-         (thousandths
-           (round (/ (* 1000 (- time (* internal-time-units-per-second sec)))
-                     internal-time-units-per-second))))
-    (when (eql thousandths 1000)
-      (incf sec)
-      (setf thousandths 0))
-    (princ sec) (princ ".")
-    (cond ((< thousandths 10) (princ "00"))
-          ((< thousandths 100) (princ "0")))
-    (princ thousandths) (princ " sec")))
+  (if *suppress-volatile-display-p* (princ "SUPPRESSED")
+      (let* ((sec (truncate (/ time internal-time-units-per-second)))
+             (thousandths
+               (round (/ (* 1000 (- time (* internal-time-units-per-second sec)))
+                         internal-time-units-per-second))))
+        (when (eql thousandths 1000)
+          (incf sec)
+          (setf thousandths 0))
+        (princ sec) (princ ".")
+        (cond ((< thousandths 10) (princ "00"))
+              ((< thousandths 100) (princ "0")))
+        (princ thousandths) (princ " sec"))))
 
 (defun display-test-log ()
   (princ "=========================== TEST RESULTS ===========================")
@@ -14505,7 +14508,7 @@
         (when *display?*
           (princ "The following nodes were used in the arguments:") (terpri)
           (print-list (order (mapcar #'hypernode-number *relevant-nodes*) #'<) 40))
-        (push (list *problem-number* time argument-length
+        (push (list *problem-number* (unless *suppress-volatile-display-p* time) argument-length
                     (- *hypernode-number* *unused-suppositions*)) *test-log*)
         (when *log-on* (terpri) (display-reasoning))
         ))))
@@ -14529,12 +14532,14 @@
 (defun test (&rest rest)
   "The following runs individual problems or lists of problems from the list *problems*. (test) runs the entire set.  (test n) runs just problem n.  (test n t) starts with problem n and runs the rest of the set.  (test n m) runs problems n through m.  (test n :skip '(i j k)) starts with problem n and runs the rest of the set except for i, j, and k.  (test n m :skip '(i j k)) runs problems n through m, skipping i, j, and k.  (test :skip i j k) runs all the problems except i, j, k."
   (terpri) (princ "(") (princ "                                 ") (princ *version*) (princ "          ")
-  (let ((time (multiple-value-list (get-decoded-time))))
-    (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-    (princ (mem6 time)) (princ "          ") (princ (mem3 time))
-    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
-    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
-    (terpri) (terpri))
+  (unless *suppress-volatile-display-p*
+    (let ((time (multiple-value-list (get-decoded-time))))
+      (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
+      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
+      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
+      (terpri)))
+  (terpri)
   (princ "*reductio-discount* = ") (princ *reductio-discount*) (terpri)
   (princ "*reductio-interest* = ") (princ *reductio-interest*) (terpri)
   (princ "*skolem-multiplier* = ") (princ *skolem-multiplier*) (terpri)
@@ -17157,12 +17162,14 @@ Ultimate epistemic interests:
 (defun rerun (&rest args)
   (progn
     (terpri) (princ "(") (princ "                                 ") (princ *version*) (princ "          ")
-    (let ((time (multiple-value-list (get-decoded-time))))
-      (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
-      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
-      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
-      (terpri) (terpri))
+    (unless *suppress-volatile-display-p*
+      (let ((time (multiple-value-list (get-decoded-time))))
+        (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
+        (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+        (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
+        (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
+        (terpri)))
+    (terpri)
     (princ "*reductio-discount* = ") (princ *reductio-discount*) (terpri)
     (princ "*reductio-interest* = ") (princ *reductio-interest*) (terpri)
     (princ "*skolem-multiplier* = ") (princ *skolem-multiplier*) (terpri)
@@ -17216,12 +17223,14 @@ Ultimate epistemic interests:
 (defun run (&rest args)
   (progn
     (terpri) (princ "(") (princ "                                 ") (princ *version*) (princ "          ")
-    (let ((time (multiple-value-list (get-decoded-time))))
-      (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
-      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
-      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
-      (terpri) (terpri))
+    (unless *suppress-volatile-display-p*
+      (let ((time (multiple-value-list (get-decoded-time))))
+        (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
+        (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+        (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
+        (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
+        (terpri)))
+    (terpri)
     (princ "*reductio-discount* = ") (princ *reductio-discount*) (terpri)
     (princ "*reductio-interest* = ") (princ *reductio-interest*) (terpri)
     (princ "*skolem-multiplier* = ") (princ *skolem-multiplier*) (terpri)
@@ -17835,12 +17844,14 @@ Ultimate epistemic interests:
   (princ "======================================================================")
   (terpri) (terpri)
   (princ "                                 ") (princ *version*) (princ "          ")
-  (let ((time (multiple-value-list (get-decoded-time))))
-    (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-    (princ (mem6 time)) (princ "          ") (princ (mem3 time))
-    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
-    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
-    (terpri) (terpri))
+  (unless *suppress-volatile-display-p*
+    (let ((time (multiple-value-list (get-decoded-time))))
+      (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
+      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
+      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
+      (terpri)))
+  (terpri)
   (when *msg* (princ *msg*) (terpri) (terpri))
   (princ "Forwards-substantive-reasons:") (terpri)
   (dolist (R *forwards-substantive-reasons*)
@@ -18272,12 +18283,13 @@ Ultimate epistemic interests:
   (princ "======================================================================")
   (terpri) (terpri)
   (princ "                                 ") (princ *version*) (princ "          ")
-  (let ((time (multiple-value-list (get-decoded-time))))
-    (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
-    (princ (mem6 time)) (princ "          ") (princ (mem3 time))
-    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
-    (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))
-    (terpri))
+  (unless *suppress-volatile-display-p*
+    (let ((time (multiple-value-list (get-decoded-time))))
+      (princ (mem5 time)) (princ "/") (princ (mem4 time)) (princ "/")
+      (princ (mem6 time)) (princ "          ") (princ (mem3 time))
+      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem2 time))
+      (princ ":") (if (< (mem2 time) 10) (princ "0")) (princ (mem1 time))))
+  (terpri)
   (princ "                                           ") (princ *planner*) (terpri) (terpri)
   (let ((message
           (if *problem-number*
@@ -18473,7 +18485,7 @@ Ultimate epistemic interests:
                    (princ "The following nodes were used in the arguments:") (terpri)
                    (print-list (order (mapcar #'inference-number *strictly-relevant-nodes*) #'<) 40))
                  (terpri)
-                 (push (list *problem-number* time argument-length
+                 (push (list *problem-number* (unless *suppress-volatile-display-p* time) argument-length
                              (- *hypernode-number* *unused-suppositions*) (length *plans*)
                              (query-answered? (mem1 *ultimate-epistemic-interests*))) *test-log*)))
              (when *log-on* (terpri) (display-reasoning) (display-queries))
