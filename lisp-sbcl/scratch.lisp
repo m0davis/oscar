@@ -1,3 +1,17 @@
+(defparameter *special* t)
+
+(defun print-special ()
+  (print *special*)
+  (setf *special* 2))
+
+(let ((*special* nil))
+  (print-special)
+  (print-special))
+(print-special)
+(print-special)
+
+
+#|
 (defun foo ()
   (multiple-value-bind
    (x y z)
@@ -19,6 +33,7 @@
        ,value))
 
 (funcall (not-has-eval (print arg)) 2) (terpri)
+|#
 
 #|
 (print "1")
