@@ -3822,7 +3822,7 @@
                    (:conc-name nil))
   (i-list-formula nil)
   (i-list-corresponding-c-lists nil)
-  (i-list-interests nil)
+  (i-list-interests nil) ; a list of "interest"s
   (i-list-queries nil)
   (i-list-reductio-trigger nil) ; either t or nil; initially equal to (appropriate-for-reductio-supposition i-list-formula)
   (i-list-reductio-supposition nil)
