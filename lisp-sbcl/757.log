@@ -1,0 +1,322 @@
+(                                 OSCAR_4.02
+*reductio-discount* = 0.23
+*reductio-interest* = 0.23
+*skolem-multiplier* = 10
+*quantifier-discount* = 0.95
+
+******************************************************************************************
+******************************************************************************************
+Problem #757
+
+Given premises:
+     (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))    justification = 1.0
+     (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))    justification = 1.0
+     (all A)(all B)((maps F A B) <-> ((all x)((mem x A) -> (some y)((mem y B) & (F x y))) & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))    justification = 1.0
+     (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))    justification = 1.0
+     (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))    justification = 1.0
+     (all B)(all A)(all B1)(all x)((mem x (inv F B1 A)) <-> ((mem x A) & (some y)((mem y B1) & (F x y))))    justification = 1.0
+Ultimate epistemic interests:
+     (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))    interest = 1.0
+
+
+
+================== ULTIMATE EPISTEMIC INTERESTS ===================
+  Interest in (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))
+  is answered affirmatively by node 3618
+---------------------------------------------------
+
+Elapsed time = SUPPRESSED
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))
+ which is of ultimate interest.
+
+ 1.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 8.  (all B)((subset x2 B) <-> (all x)((mem x x2) -> (mem x B)))     UI from { 1 }
+ 11.  ((subset x2 x5) <-> (all x)((mem x x2) -> (mem x x5)))     UI from { 8 }
+ 15.  ((all x)((mem x x2) -> (mem x x5)) -> (subset x2 x5))     bicondit-simp from { 11 }
+ 16.  (some z8)(((mem z8 x2) -> (mem z8 x5)) -> (subset x2 x5))     A-removal from { 15 }
+ 17.  (((mem (s9 x2 x5) x2) -> (mem (s9 x2 x5) x5)) -> (subset x2 x5))     EI from { 16 }
+ 34.  (~(mem (s9 x2 x5) x2) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+ 14.  ((subset x2 x5) -> (all x)((mem x x2) -> (mem x x5)))     bicondit-simp from { 11 }
+ 35.  ((mem (s9 x2 x5) x5) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+ 5.  (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))     GIVEN
+ 10.  (all B)((equal x4 B) <-> ((subset x4 B) & (subset B x4)))     UI from { 5 }
+ 12.  ((equal x4 x6) <-> ((subset x4 x6) & (subset x6 x4)))     UI from { 10 }
+ 19.  (((subset x4 x6) & (subset x6 x4)) -> (equal x4 x6))     bicondit-simp from { 12 }
+ 18.  ((equal x4 x6) -> ((subset x4 x6) & (subset x6 x4)))     bicondit-simp from { 12 }
+ 20.  ((subset x4 x6) -> ((subset x6 x4) -> (equal x4 x6)))     exportation from { 19 }
+        |----------------------------------------------------------
+        | Suppose:  { ((maps F c0 c17) & ((subset c19 c17) & (subset c25 c17))) }
+        |----------------------------------------------------------
+        | 48.  ((maps F c0 c17) & ((subset c19 c17) & (subset c25 c17)))     SUPPOSITION
+        | 50.  ((subset c19 c17) & (subset c25 c17))     simp from { 48 }
+        | 52.  (subset c19 c17)     simp from { 50 }
+        | 55.  (all x)((mem x c19) -> (mem x c17))     modus-ponens2 from { 14 , 52 }
+        | 56.  ((mem x26 c19) -> (mem x26 c17))     UI from { 55 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x88 x87) }
+        |----------------------------------------------------------
+        | 75.  (subset x88 x87)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (subset x2 x5) }
+        |----------------------------------------------------------
+        | 79.  (all x)((mem x x2) -> (mem x x5))     modus-ponens2 from { 14 , 75 }
+        | 80.  ((mem x93 x2) -> (mem x93 x5))     UI from { 79 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x4 x6) }
+        |----------------------------------------------------------
+        | 78.  ((subset x6 x4) -> (equal x4 x6))     modus-ponens2 from { 20 , 75 }
+                |----------------------------------------------------------
+                | Suppose:  { (subset x4 x6) , (subset x6 x4) }
+                |----------------------------------------------------------
+                | 81.  (equal x4 x6)     modus-ponens1 from { 78 , 75 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal x4324 x4323) }
+        |----------------------------------------------------------
+        | 3150.  ~(equal x4324 x4323)     REDUCTIO-SUPPOSITION
+                |----------------------------------------------------------
+                | Suppose:  { (subset ^@y69 ^@y70) , ~(equal ^@y69 ^@y70) }
+                |----------------------------------------------------------
+                | 3173.  ~(subset ^@y70 ^@y69)     REDUCTIO from { 81 , 3150 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y70) }
+        |----------------------------------------------------------
+        | 3177.  ((subset ^@y70 ^@y69) -> ~(subset ^@y69 ^@y70))     CONTRA-CONDITIONALIZATION from { 3173 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y69) }
+        |----------------------------------------------------------
+        | 3301.  ~(subset ^@y69 ^@y69)     cond-simp1 from { 3177 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal x2 x2) }
+        |----------------------------------------------------------
+        | 3362.  ~(mem (s9 x2 x2) x2)     modus-tollens2 from { 35 , 3301 }
+        | 3335.  (mem (s9 x2 x2) x2)     modus-tollens2 from { 34 , 3301 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y74 ^@y74) }
+        |----------------------------------------------------------
+        | 3363.  ~((mem (s9 ^@y74 ^@y74) ^@y74) -> (mem (s9 ^@y74 ^@y74) ^@y74))     i-neg-condit from { 3362 , 3335 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset ^@y73 ^@y74) }
+        |----------------------------------------------------------
+        | 3370.  (equal ^@y73 ^@y73)     REDUCTIO from { 3363 , 80 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x4 ^@y74) }
+        |----------------------------------------------------------
+        | 3402.  ((subset x4 x4) & (subset x4 x4))     modus-ponens2 from { 18 , 3370 }
+        | 3514.  (subset x4 x4)     simp from { 3402 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x2 ^@y74) }
+        |----------------------------------------------------------
+        | 3520.  (all x)((mem x x2) -> (mem x x2))     modus-ponens2 from { 14 , 3514 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x6 ^@y74) }
+        |----------------------------------------------------------
+        | 3456.  (equal x4 x6)     modus-ponens2 from { 19 , 3402 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y70) }
+        |----------------------------------------------------------
+        | 3506.  ~(subset ^@y70 ^@y74)     REDUCTIO from { 3456 , 3150 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x5 ^@y74) }
+        |----------------------------------------------------------
+        | 3551.  (subset x2 x5)     modus-ponens2 from { 15 , 3520 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y73) }
+        |----------------------------------------------------------
+        | 3556.  ~(subset ^@y74 ^@y74)     REDUCTIO from { 3551 , 3506 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset ^@y5125 ^@y74) }
+        |----------------------------------------------------------
+        | 3576.  (equal ^@y69 ^@y73)     REDUCTIO from { 3556 , 3514 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y70) }
+        |----------------------------------------------------------
+        | 3579.  ~(subset ^@y5125 ^@y74)     REDUCTIO from { 3576 , 3150 }
+        | 3604.  ~(mem (s9 x2 x5) x5)     modus-tollens2 from { 35 , 3579 }
+        | 3600.  (mem (s9 x2 x5) x2)     modus-tollens2 from { 34 , 3579 }
+        | 3605.  ~((mem (s9 x2 ^@y74) ^@y73) -> (mem (s9 x2 ^@y74) ^@y74))     i-neg-condit from { 3604 , 3600 }
+        |----------------------------------------------------------
+        | Suppose:  { ((maps F c0 c17) & ((subset c19 c17) & (subset c25 c17))) }
+        |----------------------------------------------------------
+        | 3613.  (equal ^@y69 ^@y70)     REDUCTIO from { 3605 , 56 }
+ 3614.  (((maps F c0 c17) & ((subset c19 c17) & (subset c25 c17))) -> (equal (inv F (int c19 c25) c0) (int (inv F c19 c0) (inv F c25 c0))))     CONDITIONALIZATION from { 3613 }
+ 3615.  (all Y)(((maps F c0 c17) & ((subset c19 c17) & (subset Y c17))) -> (equal (inv F (int c19 Y) c0) (int (inv F c19 c0) (inv F Y c0))))     UG from { 3614 }
+ 3616.  (all X)(all Y)(((maps F c0 c17) & ((subset X c17) & (subset Y c17))) -> (equal (inv F (int X Y) c0) (int (inv F X c0) (inv F Y c0))))     UG from { 3615 }
+ 3617.  (all B)(all X)(all Y)(((maps F c0 B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) c0) (int (inv F X c0) (inv F Y c0))))     UG from { 3616 }
+ 3618.  (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))     UG from { 3617 }
+
+===========================================================================
+
+
+Cumulative size of arguments = 51
+Size of inference-graph = 3618 of which 7 were unused suppositions.
+1% of the inference-graph was used in the argument.
+252 interests were adopted.
+9 suppositions were made.
+
+=========================== TEST RESULTS ===========================
+
+                                                                                OSCAR_4.02
+          *reductio-discount*:                                 0.23
+          *reductio-interest*:                                   0.23
+          *skolem-multiplier*:                                   10
+          *quantifier-discount*:                                   0.95
+
+#757                                                                          SUPPRESSED
+           cumulative  argument length:                 51
+           total number of inferences:                     3611
+
+
+
+(OSCAR_4.02 0.23 0.23 10 0.95 ((757 NIL 51 3611)))
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+==========================================================
+==========================================================
+==========================================================
+
+ 1.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 8.  (all B)((subset x2 B) <-> (all x)((mem x x2) -> (mem x B)))     UI from { 1 }
+ 11.  ((subset x2 x5) <-> (all x)((mem x x2) -> (mem x x5)))     UI from { 8 }
+ 15.  ((all x)((mem x x2) -> (mem x x5)) -> (subset x2 x5))     bicondit-simp from { 11 }
+ 16.  (some z8)(((mem z8 x2) -> (mem z8 x5)) -> (subset x2 x5))     A-removal from { 15 }
+ 17.  (((mem (s9 x2 x5) x2) -> (mem (s9 x2 x5) x5)) -> (subset x2 x5))     EI from { 16 }
+ 34.  (~(mem (s9 x2 x5) x2) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+ 14.  ((subset x2 x5) -> (all x)((mem x x2) -> (mem x x5)))     bicondit-simp from { 11 }
+ 35.  ((mem (s9 x2 x5) x5) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+ 5.  (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))     GIVEN
+ 10.  (all B)((equal x4 B) <-> ((subset x4 B) & (subset B x4)))     UI from { 5 }
+ 12.  ((equal x4 x6) <-> ((subset x4 x6) & (subset x6 x4)))     UI from { 10 }
+ 19.  (((subset x4 x6) & (subset x6 x4)) -> (equal x4 x6))     bicondit-simp from { 12 }
+ 18.  ((equal x4 x6) -> ((subset x4 x6) & (subset x6 x4)))     bicondit-simp from { 12 }
+ 20.  ((subset x4 x6) -> ((subset x6 x4) -> (equal x4 x6)))     exportation from { 19 }
+        |----------------------------------------------------------
+        | Suppose:  { ((maps F c0 c17) & ((subset c19 c17) & (subset c25 c17))) }
+        |----------------------------------------------------------
+        | 48.  ((maps F c0 c17) & ((subset c19 c17) & (subset c25 c17)))     SUPPOSITION
+        | 50.  ((subset c19 c17) & (subset c25 c17))     simp from { 48 }
+        | 52.  (subset c19 c17)     simp from { 50 }
+        | 55.  (all x)((mem x c19) -> (mem x c17))     modus-ponens2 from { 14 , 52 }
+        | 56.  ((mem x26 c19) -> (mem x26 c17))     UI from { 55 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x88 x87) }
+        |----------------------------------------------------------
+        | 75.  (subset x88 x87)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (subset x2 x5) }
+        |----------------------------------------------------------
+        | 79.  (all x)((mem x x2) -> (mem x x5))     modus-ponens2 from { 14 , 75 }
+        | 80.  ((mem x93 x2) -> (mem x93 x5))     UI from { 79 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x4 x6) }
+        |----------------------------------------------------------
+        | 78.  ((subset x6 x4) -> (equal x4 x6))     modus-ponens2 from { 20 , 75 }
+                |----------------------------------------------------------
+                | Suppose:  { (subset x4 x6) , (subset x6 x4) }
+                |----------------------------------------------------------
+                | 81.  (equal x4 x6)     modus-ponens1 from { 78 , 75 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal x4324 x4323) }
+        |----------------------------------------------------------
+        | 3150.  ~(equal x4324 x4323)     REDUCTIO-SUPPOSITION
+                |----------------------------------------------------------
+                | Suppose:  { (subset ^@y69 ^@y70) , ~(equal ^@y69 ^@y70) }
+                |----------------------------------------------------------
+                | 3173.  ~(subset ^@y70 ^@y69)     REDUCTIO from { 81 , 3150 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y70) }
+        |----------------------------------------------------------
+        | 3177.  ((subset ^@y70 ^@y69) -> ~(subset ^@y69 ^@y70))     CONTRA-CONDITIONALIZATION from { 3173 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y69) }
+        |----------------------------------------------------------
+        | 3301.  ~(subset ^@y69 ^@y69)     cond-simp1 from { 3177 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal x2 x2) }
+        |----------------------------------------------------------
+        | 3362.  ~(mem (s9 x2 x2) x2)     modus-tollens2 from { 35 , 3301 }
+        | 3335.  (mem (s9 x2 x2) x2)     modus-tollens2 from { 34 , 3301 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y74 ^@y74) }
+        |----------------------------------------------------------
+        | 3363.  ~((mem (s9 ^@y74 ^@y74) ^@y74) -> (mem (s9 ^@y74 ^@y74) ^@y74))     i-neg-condit from { 3362 , 3335 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset ^@y73 ^@y74) }
+        |----------------------------------------------------------
+        | 3370.  (equal ^@y73 ^@y73)     REDUCTIO from { 3363 , 80 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x4 ^@y74) }
+        |----------------------------------------------------------
+        | 3402.  ((subset x4 x4) & (subset x4 x4))     modus-ponens2 from { 18 , 3370 }
+        | 3514.  (subset x4 x4)     simp from { 3402 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x2 ^@y74) }
+        |----------------------------------------------------------
+        | 3520.  (all x)((mem x x2) -> (mem x x2))     modus-ponens2 from { 14 , 3514 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x6 ^@y74) }
+        |----------------------------------------------------------
+        | 3456.  (equal x4 x6)     modus-ponens2 from { 19 , 3402 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y70) }
+        |----------------------------------------------------------
+        | 3506.  ~(subset ^@y70 ^@y74)     REDUCTIO from { 3456 , 3150 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x5 ^@y74) }
+        |----------------------------------------------------------
+        | 3551.  (subset x2 x5)     modus-ponens2 from { 15 , 3520 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y73) }
+        |----------------------------------------------------------
+        | 3556.  ~(subset ^@y74 ^@y74)     REDUCTIO from { 3551 , 3506 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset ^@y5125 ^@y74) }
+        |----------------------------------------------------------
+        | 3576.  (equal ^@y69 ^@y73)     REDUCTIO from { 3556 , 3514 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y69 ^@y70) }
+        |----------------------------------------------------------
+        | 3579.  ~(subset ^@y5125 ^@y74)     REDUCTIO from { 3576 , 3150 }
+        | 3604.  ~(mem (s9 x2 x5) x5)     modus-tollens2 from { 35 , 3579 }
+#<Hypernode 3604: ~(mem (s9 x2 x5) x5)/{ ~(equal ^@y69 ^@y70) }>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #3595 for hypernode 3604> from (#<Hypernode 35: ((mem (s9 x2 x5) x5) -> (subset x2 x5))>
+                                                      #<Hypernode 3579: ~(subset ^@y5125 ^@y74)/{ ~(equal ^@y69 ^@y70) }>)
+     CONSEQUENT-LINKS:
+          #<hyperlink #3596 for hypernode 3605>
+
+        | 3605.  ~((mem (s9 x2 ^@y74) ^@y73) -> (mem (s9 x2 ^@y74) ^@y74))     i-neg-condit from { 3604 , 3600 }
