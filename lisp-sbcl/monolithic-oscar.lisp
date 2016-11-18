@@ -27402,3 +27402,18 @@ be alive.  Should I conclude that Jones becomes dead?"
   ;;TODO
   ;;(tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) autoY-ps 'r 's)
   )
+
+(defun run-test-757 ()
+  (trace-on)
+  (display-on)
+  (proof-on)
+  (logic-on)
+  (reductio-on)
+  (log-on)
+  (IQ-on)
+  (graph-log-on)
+  (setf *j-trace* t)
+  (setf *s-trace* t)
+  (setf *safe-trace* t)
+
+  (test 757))
