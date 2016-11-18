@@ -27403,7 +27403,7 @@ be alive.  Should I conclude that Jones becomes dead?"
   ;;(tabulate-expectable-values #'(lambda (x) (let ((y (assoc 'p x))) (or (mem3 y) (mem2 y)))) autoY-ps 'r 's)
   )
 
-(defun run-test-757 ()
+(defun run-test-757-debug ()
   (trace-on)
   (display-on)
   (proof-on)
@@ -27415,5 +27415,20 @@ be alive.  Should I conclude that Jones becomes dead?"
   (setf *j-trace* t)
   (setf *s-trace* t)
   (setf *safe-trace* t)
+
+  (test 757))
+
+(defun run-test-757-no-debug ()
+  (trace-off)
+  (display-off)
+  (proof-on)
+  (logic-on)
+  (reductio-on)
+  (log-off)
+  (IQ-off)
+  (graph-log-off)
+  (setf *j-trace* nil)
+  (setf *s-trace* nil)
+  (setf *safe-trace* nil)
 
   (test 757))
