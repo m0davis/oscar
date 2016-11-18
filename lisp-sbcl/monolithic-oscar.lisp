@@ -399,6 +399,16 @@
                (assert (eq 1 (count-if ,@args)))))
          ,element))))
 
+(defmacro some! (predicate sequence)
+  "some, asserting that at most one item in the sequence satisfies the predicate; currently only works with one sequence (NB some works with multiple such sequences)"
+  (let ((result (gensym)))
+    `(progn
+       (let ((,result (some ,predicate ,sequence)))
+         ,(when *test-assertions-p*
+            `(when ,result
+               (assert (eq 1 (count-if ,predicate ,sequence)))))
+         ,result))))
+
 (defmacro mem1 (x) `(car ,x))
 (defmacro mem2 (x) `(cadr ,x))
 (defmacro mem3 (x) `(nth 2 ,x))
@@ -4267,7 +4277,7 @@
   (multiple-value-bind (profile term-list) (formula-code formula)
     (let ((d-node (pursue-d-node-for profile *top-d-node*)))
       (when d-node
-        (some
+        (some!
          #'(lambda (il)
              (multiple-value-bind
                    (match match*)
