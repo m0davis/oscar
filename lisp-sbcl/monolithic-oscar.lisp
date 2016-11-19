@@ -410,6 +410,16 @@
            (format *standard-output* "MAKING HYPERNODE #~A (~A)~%" *hypernode-number* ,hypernode))
          ,hypernode))))
 
+(defmacro make-hyperlink* (&rest args)
+  "make-hyperlink, not needing a hyperlink-number argument, and possibly logging"
+  (let ((hyperlink (gensym)))
+    `(progn
+       (let ((,hyperlink (make-hyperlink :hyperlink-number (incf *hyperlink-number*) ,@args)))
+         (when *log-p*
+           ;(when (eq 3353 *hyperlink-number*) (break))
+           (format *standard-output* "MAKING HYPERLINK #~A (~A)~%" *hyperlink-number* ,hyperlink))
+         ,hyperlink))))
+
 (defmacro find-if! (&rest args)
   "find-if, asserting that the item is unique if found"
   (let ((element (gensym)))
