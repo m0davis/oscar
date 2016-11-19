@@ -3954,6 +3954,12 @@
         ((and (listp p) p)
          (union (formula-hypernode-variables (car p)) (formula-hypernode-variables (cdr p))))))
 
+(defun c-formula-hypernode-variables (p)
+  "TODO MSD added; same as formula-hypernode-variables but excludes i-vars"
+  (cond ((and (symbolp p) (eq (get p 'var-kind) :variable) (not (get p 'i-var))) (list p))
+        ((and (listp p) p)
+         (union (c-formula-hypernode-variables (car p)) (c-formula-hypernode-variables (cdr p))))))
+
 (defun make-skolem-e-function ()
   (let ((fun (gensym "s")))
     (setf (get fun 'var-kind) :skolem-function)
