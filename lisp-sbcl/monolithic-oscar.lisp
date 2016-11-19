@@ -11039,8 +11039,6 @@
         (cancel-interest-in (query-interest query) 0))))
 
 (defun reason-backwards-from-?-query (query priority depth)
-                                        ; (when (equal query (query 3)) (setf q query p priority d depth) (break))
-  ;; (step (reason-backwards-from-?-query q p d))
   (when *trace* (indent depth) (princ "REASON-BACKWARDS-FROM-QUERY") (terpri))
   (let ((p (query-formula query)))
     (multiple-value-bind
@@ -11141,8 +11139,6 @@
           (t (reason-substantively-from-non-initial-instantiated-premise nil depth ip node)))))))
 
 (defun reason-from-dominant-premise-nodes (node d-node depth)
-                                        ; (when (and (eq node (node 252)) (eq d-node (d-node 68))) (setf n node dn d-node d depth) (break))
-  ;; (step (reason-from-dominant-premise-nodes n dn d))
   (reason-from-instantiated-premises node d-node depth)
   (let ((pn (d-node-parent d-node)))
     (when pn (reason-from-dominant-premise-nodes node pn depth))))
