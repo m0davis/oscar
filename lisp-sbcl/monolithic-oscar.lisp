@@ -3895,10 +3895,10 @@
 (defun var-kind (var) (get var 'var-kind))
 
 (defun interest-variable (x)
-  (and (symbolp x) (eq (var-kind x) :variable)))
+  (and (symbolp x) (eq (var-kind x) :variable) (get x 'i-var))) ; TODO MSD added get 'i-var
 
 (defun conclusion-variable (x)
-  (and (symbolp x) (eq (var-kind x) :variable)))
+  (and (symbolp x) (eq (var-kind x) :variable) (not (get x 'i-var)))) ; TODO MSD added get 'i-var
 
 (defun make-interest-variable ()
   (let ((var (gensym "^@y")))
