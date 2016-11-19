@@ -387,7 +387,7 @@
 
 (defvar *suppress-volatile-display-p* t)
 
-(defvar *log-p* nil)
+(defparameter *log-p* nil)
 
                                         ;                                                           *MACROS*
 
