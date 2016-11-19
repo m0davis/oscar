@@ -7913,8 +7913,7 @@
                      ((numberp (reason-strength rule)) (reason-strength rule))
                      (t (let ((r (funcall (reason-strength rule) binding basis)))
                           (if (>= r 0) r 0)))))
-             (link (make-hyperlink
-                    :hyperlink-number *hyperlink-number*
+             (link (make-hyperlink*
                     :hyperlink-basis basis
                     :hyperlink-clues clues
                     :hyperlink-rule rule
@@ -9954,8 +9953,7 @@
             :queue-item-kind :conclusion
             :queue-discounted-strength (mem2 premise)
             :queue-item-complexity (complexity sequent)))
-         (link (make-hyperlink
-                :hyperlink-number (incf *hyperlink-number*)
+         (link (make-hyperlink*
                 :hyperlink-basis nil
                 :hyperlink-rule :given
                 :hyperlink-target node
