@@ -392,8 +392,8 @@
                                         ;                                                           *MACROS*
 
 (defmacro trace-node (trace-message node depth)
-  (when *trace*
-    `(progn
+  `(when *trace*
+     (progn
        (indent ,depth)
        (princ ,trace-message)
        (princ ": ")
