@@ -4635,8 +4635,6 @@
     (pursue-i-lists-for formula profile term-list variables *top-d-node*)))
 
 (defun store-interest-with-c-lists (interest c-lists)
-                                        ;  (when (eq (interest-number interest) 25) (setf i interest cl c-lists) (break))
-  ;; (step (store-interest-with-c-lists i cl))
   (multiple-value-bind (profile term-list) (formula-code (interest-formula interest))
     (declare (ignore profile))
     (cond
@@ -4805,8 +4803,6 @@
             node term-list d-node (car profile))))))
 
 (defun store-hypernode (node formula)
-                                        ; (when (eql (hypernode-number node) 14) (setf n node f formula) (break))
-  ;; (step (store-hypernode n f))
   (multiple-value-bind (profile term-list) (formula-code formula)
     (index-hypernode node profile term-list *top-d-node*)))
 
@@ -5869,8 +5865,6 @@
     ()
 
   (defun compute-interest-dependencies (interest indent msg)
-                                        ; (when (eq interest (interest 105)) (setf i interest n indent m msg) (break))
-    ;; (step (compute-interest-dependencies i n m))
     (when *d-trace*
       (bar-indent indent) (princ msg) (princ interest)
       (when (interest-cancelled interest) (princ " cancelled")) (terpri))
@@ -5927,8 +5921,6 @@
            in (1+ indent) "*direct-reductio-interest*: "))))))
 
 (defun compute-dependencies (interest)
-                                        ; (when (eq interest (interest 105)) (setf i interest) (break))
-  ;; (step (compute-dependencies i))
   (setf *dependent-interests* (list interest) *dependent-nodes* nil
         *independent-reductio-suppositions* *reductio-supposition-nodes*)
   (compute-interest-dependencies
@@ -6164,9 +6156,7 @@
   (when (and *display?* (zerop depth))
     (princ
      "..........................................................................................................................................")
-    (terpri))
-                                        ; (when (equal interest (interest 2)) (setf *d-trace* nil) (break))
-  )
+    (terpri)))
 
 (labels
     ()
@@ -6233,7 +6223,6 @@
 
 (defun compute-dependencies-from-node (node)
   "This computation is exhibited by setting *d-trace* to t"
-                                        ; (when (eq node (node 703)) (break))
   (setf *dependent-interests* nil *dependent-nodes* (list node)
         *independent-reductio-suppositions* *reductio-supposition-nodes*)
   (compute-hypernode-dependencies
@@ -6321,8 +6310,6 @@
       (anchor-interest-relative-to-node in node 0 "Directly-anchored interest: "))))
 
 (defun cancel-node (node depth)
-                                        ; (when (eq node (node 21)) (setf n node d depth) (break))
-  ;; (step (cancel-node n d))
   (compute-dependencies-from-node node)
   (let ((draw-lines?
           (and *display?* (zerop depth)
@@ -6692,8 +6679,6 @@
 
 (defun potent-suppositions (NRS RA)
   "RA does not contain two different base-reductio-suppositions, and if RA contains a base-reductio-supposition then for some generating-interest of the base-reductio-supposition, every member of NRS is an interest-supposition-node of that interest."
-                                        ; (setf nr nrs r ra); (break)
-  ;; (step (potent-suppositions nr r))
   (every
    #'(lambda (R)
        (or (hypernode-non-reductio-supposition? (cdr R))
@@ -6715,8 +6700,6 @@
    RA))
 
 (defun conclusion-data (basis instantiations discharge supposition)
-                                        ; (setf b basis i instantiations d discharge s supposition)
-                                        ;  (princ sequent) (terpri) (break)
   (let* ((RA nil)
          (NR nil)
          (sup nil)
@@ -7129,8 +7112,6 @@
 
 (defun queue-interest (interest priority)
   "When a priority-interest is encountered, it is placed at the front of the inference-queue"
-                                        ; (when (eq interest (interest 7)) (setf i interest p priority) (break))
-  ;; (step (queue-interest i p))
   (let* ((complexity (sequent-complexity (interest-sequent interest)))
          (queue-node
            (make-inference-queue-node
@@ -7167,8 +7148,6 @@
       interest-priority))
 
 (defun re-queue-interest (link interest-priority interest degree)
-                                        ; (when (eq interest (interest 7)) (setf l link p interest-priority i interest d degree) (break))
-  ;;  (step (re-queue-interest l p i d))
   (let ((Q (interest-queue-node interest)))
     (cond (Q
            (let ((preference
@@ -7392,9 +7371,6 @@
     (t (store-interest-scheme-at-d-node interest-scheme d-node))))
 
 (defun subsumed (node basis sequent NDA non-reductio-supposition rule binding d-node)
-                                        ; (when (equal *hypernode-number* 9)
-                                        ;      (setf n node b basis s sequent nd nda nr non-reductio-supposition r rule bi binding dn d-node)  (break))
-  ;; (step (subsumed n b s nd nr r bi dn))
   (let ((defeasible? (and (not (keywordp rule)) (reason-defeasible-rule rule))))
     (when defeasible? (setf NDA (list (list node))))
     (cond
@@ -7590,8 +7566,6 @@
               nil))))))
 
   (defun cancel-subsumed-links (link depth)
-                                        ; (when (equal link (hyperlink 14)) (break))
-    ;; (step (cancel-subsumed-links (hyperlink 14) 0))
     (when (not (hyperlink-defeasible? link))
       (let* ((node (hyperlink-target link))
              (formula (hypernode-formula node))
@@ -7929,9 +7903,6 @@
 
   (defun build-hyperlink (basis clues rule discount node NDA binding link instantiations depth defeasible?)
     "This must recompute the set of hypernode-arguments for the hyperlink-target and its inference-descendants.  Node arguments are stored as triples (arg,strength,discounted-strength)"
-                                        ; (setf b basis r rule d discount n node nd nda bi binding de depth)
-    ;; (princ "Building link ") (princ *hyperlink-number*) (terpri) (break)
-    (incf *hyperlink-number*)
     (when (not (some #'(lambda (L)
                          (and (equal (hyperlink-basis L) basis)
                               (eq (hyperlink-rule L) rule)))
@@ -10556,9 +10527,6 @@
       (change-to-reductio-interest (link-interest L) depth d-interests))))
 
 (defun generate-reductio-interests (node depth d-interests)
-                                        ; (setf n node d depth di d-interests)
-                                        ; (when (eq node (node 54)) (setf n node d depth di d-interests) (break))
-  ;; (step (generate-reductio-interests n d di))
   (multiple-value-bind
         (sequent vars substitution)
       (convert-conclusion-variables
@@ -11143,8 +11111,6 @@
       (generate-reductio-interests node depth d-interests))))
 
 (defun reason-from-instantiated-premises (node d-node depth)
-                                        ; (when (and (eq node (node 252)) (eq d-node (d-node 10))) (setf n node dn d-node d depth) (break))
-  ;; (step (reason-from-instantiated-premises n dn d))
   (dolist (ip (d-node-forwards-reasons d-node))
     (let* ((reason (ip-reason ip))
            (reason-function (reason-function reason)))
@@ -16519,8 +16485,6 @@ Ultimate epistemic interests:
 
 (defun cond-simp1 (c depth ip)
   (declare (ignore ip))
-                                        ; (when (eq c (node 248)) (setf n c d depth i ip) (break))
-  ;; (step (cond-simp1 n d i))
   (when (is-inference c)
     (let* ((p (hypernode-formula c))
            (q (consequent p)))
@@ -17581,8 +17545,6 @@ Ultimate epistemic interests:
     node))
 
 (defun construct-new-interest-for-sequent (S degree maximum-degree)
-                                        ; (when (equal link (link 2))
-                                        ;      (setf b* b l link d degree m* maximum-degree d* depth) (break))
   (let ((interest
           (make-interest
            :interest-number (incf *interest-number*)
