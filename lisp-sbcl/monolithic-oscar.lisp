@@ -4791,8 +4791,6 @@
           (t (fetch-c-list-for formula dn)))))))
 
 (defun store-hypernode-with-c-list (node formula c-list)
-                                        ; (when (equal *hypernode-number* 31) (setf c node f formula cl c-list) (break))
-  ;; (step (store-hypernode-with-c-list c f cl))
   (cond (c-list
          (push node (c-list-nodes c-list))
          (setf (hypernode-c-list node) c-list))
