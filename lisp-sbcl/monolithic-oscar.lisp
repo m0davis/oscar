@@ -391,6 +391,15 @@
 
                                         ;                                                           *MACROS*
 
+(defmacro trace-node (trace-message node depth)
+  (when *trace*
+    `(progn
+       (indent depth)
+       (princ ,trace-message)
+       (princ ": ")
+       (princ node)
+       (terpri))))
+
 (defmacro make-hypernode* (&rest args)
   "make-hypernode, not needing a hypernode-number argument, and possibly logging"
   `(progn
