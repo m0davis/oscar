@@ -6979,8 +6979,7 @@
          (sup (sequent-supposition sequent))
          (i-vars (supposition-variables sup))
          (node
-           (make-hypernode
-            :hypernode-number (incf *hypernode-number*)
+           (make-hypernode*
             :hypernode-sequent sequent
             :hypernode-formula (sequent-formula sequent)
             :hypernode-supposition sup
@@ -8055,8 +8054,7 @@
            (complexity
              (max 1 (* 2 (formula-complexity supposition))))
            (node
-             (make-hypernode
-              :hypernode-number (incf *hypernode-number*)
+             (make-hypernode*
               :hypernode-sequent sequent
               :hypernode-formula supposition
               :hypernode-supposition (list supposition)
@@ -8098,8 +8096,7 @@
                (max 1 (* 2 (formula-complexity supposition))))
              (priority (* discount-factor (interest-priority interest)))
              (node
-               (make-hypernode
-                :hypernode-number (incf *hypernode-number*)
+               (make-hypernode*
                 :hypernode-sequent sequent
                 :hypernode-formula supposition
                 :hypernode-supposition instance-supposition
@@ -9957,8 +9954,7 @@
   (let* ((formula (mem1 premise))
          (sequent (list nil formula))
          (node
-           (make-hypernode
-            :hypernode-number (incf *hypernode-number*)
+           (make-hypernode*
             :hypernode-sequent sequent
             :hypernode-formula formula
             :hypernode-variables (formula-hypernode-variables formula)
@@ -10129,8 +10125,7 @@
                                               #'i-preferred))))))))
           (t
            (let* ((node
-                    (make-hypernode
-                     :hypernode-number (incf *hypernode-number*)
+                    (make-hypernode*
                      :hypernode-sequent sequent
                      :hypernode-formula formula
                      :hypernode-supposition nil
@@ -10159,8 +10154,7 @@
                         (list 'closed (percept-date percept) (percept-date percept))))
          (sequent (list nil formula))
          (node
-           (make-hypernode
-            :hypernode-number (incf *hypernode-number*)
+           (make-hypernode*
             :hypernode-sequent sequent
             :hypernode-formula formula
             :hypernode-supposition nil
@@ -10683,8 +10677,7 @@
        (augment-inherited-non-reductio-suppositions interest)
        (let* ((new-sup (list P))
               (sequent (list new-sup P))
-              (N (make-hypernode
-                  :hypernode-number (incf *hypernode-number*)
+              (N (make-hypernode*
                   :hypernode-sequent sequent
                   :hypernode-formula P
                   :hypernode-supposition new-sup
