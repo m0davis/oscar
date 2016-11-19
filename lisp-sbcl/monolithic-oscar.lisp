@@ -8468,8 +8468,6 @@
                                  d-interests))))))))))))))))
 
   (defun reason-from-current-interest-scheme (node d-node old-degree depth)
-                                        ; (when (eq node (node 28)) (setf n node dn d-node od old-degree d depth) (break))
-    ;; (step (reason-from-current-interest-scheme n dn od d))
     (when *trace* (indent depth) (princ "REASON-FROM-CURRENT-INTEREST-SCHEME: ")
           (princ node) (princ " and ") (princ d-node) (terpri))
     (dolist (is (d-node-interest-schemes d-node))
@@ -8487,9 +8485,6 @@
                     node (interest-priority (is-target-interest is)) (1+ depth) is)))))))))
 
   (defun reason-from-dominant-interest-schemes (node d-node old-degree depth)
-                                        ; (when (and (eq node (node 6)) (eq d-node (d-node 19)))
-                                        ;      (setf n node dn d-node od old-degree d depth) (break))
-    ;; (step (reason-from-dominant-interest-schemes n dn od d))
     (reason-from-current-interest-scheme node d-node old-degree depth)
     (let ((pn (d-node-parent d-node)))
       (when pn (reason-from-dominant-interest-schemes node pn old-degree depth))))
@@ -8557,8 +8552,6 @@
           (cons node cancellations) cancellations)))
 
   (defun discharge-appropriately-related-link (link u* degree new? old-degree N node depth interests)
-                                        ; (when (eq link  (link 885)) (setf l link u u* d degree nw new? od old-degree n* n nd node dp depth in interests) (break))
-    ;; (step (discharge-appropriately-related-link l u d nw od n* nd dp in))
     (when *trace* (indent depth) (princ "DISCHARGE-APPROPRIATELY-RELATED-LINK: ") (princ link) (terpri))
     (let* ((degree* (degree-of-interest* (link-resultant-interest link)))
            (spec (premise-hypernode-specifier (link-premise link)))
@@ -8845,9 +8838,6 @@
 
   (defun discharge-immediate-reductios
       (node old-degree new? depth d-interests d-interest)
-                                        ; (when (eq node (node 6)) (setf c node o old-degree n new? d depth di d-interests di* d-interest) (break))
-                                        ;(setf c node o old-degree n new? d depth di d-interests di* d-interest)
-    ;; (step (discharge-immediate-reductios c o n d di di*))
     (when *trace* (indent depth) (princ "DISCHARGE-IMMEDIATE-REDUCTIOS-FROM ")
           (princ node) (terpri))
     (when
@@ -8924,8 +8914,6 @@
                                  (cons d-interest d-interests)))))))))))))))))
 
   (defun adjust-support-for-consequences (node old-degree depth)
-                                        ; (setf n node o old-degree d depth)
-    ;; (step (adjust-support-for-consequences n o d))
     (when *trace* (indent depth) (princ "ADJUST-SUPPORT-FOR-CONSEQUENCES for ")
           (princ node) (terpri))
     (dolist (L (hypernode-consequent-links node))
@@ -8988,9 +8976,6 @@
                    (adjust-support-for-consequences n old-degree depth))))))))
 
   (defun add-hyperlink (link node depth)
-                                        ; (setf l link n node d depth)
-                                        ; (when (eq link (hyperlink 21)) (setf l link n node d depth) (break))
-    ;; (step (add-hyperlink l n d))
     (push link (hypernode-hyperlinks node))
     (let ((degree-of-justification
             (minimum (cons (hyperlink-reason-strength link)
@@ -9625,8 +9610,6 @@
                interest-scheme)))))))
 
   (defun reason-from-interest-scheme (node priority depth is)
-                                        ; (when (and (eq node (node 56)) (eq is (interest-scheme 20))) (setf n node p priority d depth i is) (break))
-    ;; (step (reason-from-interest-scheme n p d i))
     (when *trace* (indent depth) (princ "REASON-FROM-INTEREST-SCHEME ")
           (princ (is-number is)) (terpri))
     (cond
@@ -11156,8 +11139,6 @@
     (when pn (reason-from-dominant-premise-nodes node pn depth))))
 
 (defun apply-forwards-reasons (node depth)
-                                        ; (when (equal node (node 10)) (setf n node) (break))
-  ;; (step (apply-forwards-reasons n 0))
   (catch 'apply-forwards-reasons
     (let* ((c-list (hypernode-c-list node))
            (d-node (c-list-d-node c-list)))
@@ -11166,8 +11147,6 @@
 (defun discharge-delayed-reductios (node depth d-interests)
   (when *trace* (indent depth) (princ "DISCHARGE-DELAYED-REDUCTIOS-FROM ")
         (princ node) (terpri))
-                                        ; (when (eq node (node 3)) (setf n node d depth di d-interests) (break))
-  ;; (step (discharge-delayed-reductios n d di))
   (when
       (not (hypernode-reductios-discharged node))
     (setf (hypernode-reductios-discharged node) t)
@@ -11241,7 +11220,6 @@
 (defun reason-forwards-from (node depth)
   (when *trace* (indent depth) (princ "REASON-FORWARDS-FROM: ")
         (princ node) (terpri))
-                                        ; (when (equal node (node 21)) (break))
   (when (eq (hypernode-justification node) :reductio-supposition) (decf *unused-suppositions*))
   (discharge-interest-schemes node 0 (1+ depth))
   (when (not (hypernode-cancelled-node node)) (apply-forwards-reasons node depth))
