@@ -402,11 +402,13 @@
 
 (defmacro make-hypernode* (&rest args)
   "make-hypernode, not needing a hypernode-number argument, and possibly logging"
-  `(progn
-     (let ((hypernode (make-hypernode :hypernode-number (incf *hypernode-number*) ,@args)))
-       ,(when *log-p*
-          `(format *standard-output* "MAKING HYPERNODE #~A (~A)~%" *hypernode-number* hypernode))
-       hypernode)))
+  (let ((hypernode (gensym)))
+    `(progn
+       (let ((,hypernode (make-hypernode :hypernode-number (incf *hypernode-number*) ,@args)))
+         (when *log-p*
+           ;(when (eq 3173 *hypernode-number*) (break))
+           (format *standard-output* "MAKING HYPERNODE #~A (~A)~%" *hypernode-number* ,hypernode))
+         ,hypernode))))
 
 (defmacro find-if! (&rest args)
   "find-if, asserting that the item is unique if found"
