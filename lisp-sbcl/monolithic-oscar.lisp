@@ -394,10 +394,10 @@
 (defmacro trace-node (trace-message node depth)
   (when *trace*
     `(progn
-       (indent depth)
+       (indent ,depth)
        (princ ,trace-message)
        (princ ": ")
-       (princ node)
+       (princ ,node)
        (terpri))))
 
 (defmacro make-hypernode* (&rest args)
