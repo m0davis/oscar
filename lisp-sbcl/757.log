@@ -269,6 +269,19 @@ Size of inference-graph = 3618 of which 7 were unused suppositions.
         | Suppose:  { ~(equal x2 x2) }
         |----------------------------------------------------------
         | 3362.  ~(mem (s9 x2 x2) x2)     modus-tollens2 from { 35 , 3301 }
+this seems wrong; we should only conclude ~(mem (s9 ^@y69 ^@y69) ^@y69)
+hypernode 3362 is from hyperlink 3353
+
+(load "monolithic-oscar")
+(proofs-on)
+(test 757)
+(describe (hypernode 3362))
+(describe (hyperlink 3353))
+(describe (hyperlink-basis (hyperlink 3353)))
+
+
+
+
         | 3335.  (mem (s9 x2 x2) x2)     modus-tollens2 from { 34 , 3301 }
         |----------------------------------------------------------
         | Suppose:  { ~(equal ^@y74 ^@y74) }
@@ -312,6 +325,29 @@ Size of inference-graph = 3618 of which 7 were unused suppositions.
         |----------------------------------------------------------
         | 3579.  ~(subset ^@y5125 ^@y74)     REDUCTIO from { 3576 , 3150 }
         | 3604.  ~(mem (s9 x2 x5) x5)     modus-tollens2 from { 35 , 3579 }
+
+REASON-FORWARDS-FROM: #<Hypernode 3579: ~(subset ^@y5125 ^@y74)/{ ~(equal ^@y69 ^@y70) }>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 3579: ~(subset ^@y5125 ^@y74)/{ ~(equal ^@y69 ^@y70) }> and #<d-node: 144>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 3579: ~(subset ^@y5125 ^@y74)/{ ~(equal ^@y69 ^@y70) }> and #<d-node: 11>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 3579: ~(subset ^@y5125 ^@y74)/{ ~(equal ^@y69 ^@y70) }> and #<d-node: 1>
+  0: (DRAW-CONCLUSION (MEM (#:|s9| #:|x2| #:|x5|) #:|x2|)
+                      (#<Hypernode 3579: ~(subset ^@y5125 ^@y74)/{ ~(equal ^@y69 ^@y70) }>
+                       #<Hypernode 34: (~(mem (s9 x2 x5) x2) -> (subset x2 x5))>)
+                      modus-tollens2
+                      (((#:|^@y5125| . #:|x2|) (#:|^@y74| . #:|x5|)) T) 1.0 0
+                      NIL NIL)
+ADJUST-SUPPORT-FOR-CONSEQUENCES for #<Hypernode 3600: (mem (s9 x2 x5) x2)/{ ~(equal ^@y69 ^@y70) }>
+DRAW CONCLUSION: #<Hypernode 3600: (mem (s9 x2 x5) x2)/{ ~(equal ^@y69 ^@y70) }>
+  # 3600   (mem (s9 x2 x5) x2)    supposition: { ~(equal ^@y69 ^@y70) }
+  Inferred by hyperlink #3591 from { 34 , 3579 } by modus-tollens2
+
+  Node 3600 discharges interest 241
+
+. DISCHARGE-INTEREST-IN: #<Interest 241> from #<Hypernode 3600: (mem (s9 x2 x5) x2)/{ ~(equal ^@y69 ^@y70) }>
+. DISCHARGE-APPROPRIATELY-RELATED-LINK: #<Link 1073: for  interest #37 by i-neg-condit>
+  Node 3600 discharges interest 241
+
+
 #<Hypernode 3604: ~(mem (s9 x2 x5) x5)/{ ~(equal ^@y69 ^@y70) }>  --  justification = 1.0
      hyperlinkS:
           #<hyperlink #3595 for hypernode 3604> from (#<Hypernode 35: ((mem (s9 x2 x5) x5) -> (subset x2 x5))>
