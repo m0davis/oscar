@@ -6985,9 +6985,9 @@
 
 (defun make-new-conclusion
     (sequent deductive-only reductio-ancestors non-reductio-supposition)
-  (let* ((c-vars (formula-hypernode-variables (sequent-formula sequent)))
+  (let* ((c-vars (c-formula-hypernode-variables (sequent-formula sequent))) ; TODO MSD changed formula to c-formula
          (sup (sequent-supposition sequent))
-         (i-vars (supposition-variables sup))
+         (i-vars (c-formula-hypernode-variables (supposition-variables sup))) ; TODO MSD added c-formula
          (node
            (make-hypernode*
             :hypernode-sequent sequent
