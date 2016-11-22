@@ -10,13 +10,6 @@
 
 (proclaim
  '(special
-   *assignment-tree-dialog*
-   *assignment-tree-subview*
-   *assignment-tree-window*
-   *assignment-tree-window-size*
-   *auxiliary-backwards-rules*
-   *auxiliary-forwards-rules*
-   *backwards-logical-reasons*
    *backwards-reasons*
    *backwards-rules*
    *backwards-substantive-reasons*
@@ -311,8 +304,6 @@
 (defvar *environmental-input* nil)
 (defvar *executable-operations* nil)
 (defvar *deductive-only* nil)
-(defvar *assignment-tree-dialog* nil)
-(defvar *assignment-tree-subview* nil)
 (defvar *monitor-assignment-tree* nil)
 (defvar *deductive-only* nil)
 (defvar *affected-nodes* nil)
@@ -384,7 +375,7 @@
 
 (defvar *suppress-volatile-display-p* t)
 
-(defparameter *log-p* nil)
+(defparameter *log-p* t)
 
                                         ;                                                           *MACROS*
 
@@ -404,7 +395,7 @@
        (let ((,hypernode (make-hypernode :hypernode-number (incf *hypernode-number*) ,@args)))
          ;(when (eq 101844 *hypernode-number*) (break))
          (when *log-p*
-           (when (zerop (mod *hypernode-number* 1))
+           (when (zerop (mod *hypernode-number* 100))
              (format *standard-output* "MAKING HYPERNODE #~A (~A)~%" *hypernode-number* ,hypernode)))
          ,hypernode))))
 
@@ -415,7 +406,7 @@
        (let ((,hyperlink (make-hyperlink :hyperlink-number (incf *hyperlink-number*) ,@args)))
          (when *log-p*
                                         ;(when (eq 3353 *hyperlink-number*) (break))
-           (when (zerop (mod *hyperlink-number* 1))
+           (when (zerop (mod *hyperlink-number* 1000))
              (format *standard-output* "MAKING HYPERLINK #~A (~A)~%" *hyperlink-number* ,hyperlink)))
          ,hyperlink))))
 
@@ -2216,10 +2207,14 @@
 
 (defparameter *finish* (make-plan-node :plan-node-number -1))
 
+;; TODO modified by MSD
 (defun variable-correspondence (P Q P-vars Q-vars terms)
   "This returns the list (terms1 terms quantifier-variables) where terms1 and terms are the lists of corresponding terms to be unified and quantifier-variables is the list of pairs (x . y) of corresponding quantifier-variables used for testing for notational variants."
   (cond
-    ((equal P Q) terms)
+    ((null P)
+     (cond ((null Q) terms)
+           (t (throw 'unifier nil))))
+    ((null Q) (throw 'unifier nil))
     ((member P P-vars)
      (let ((quantifier-variables (mem3 terms)))
        (cond ((rassoc Q quantifier-variables) (throw 'unifier nil))
@@ -2227,26 +2222,9 @@
     ((member Q Q-vars)
      (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
            (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
-    ((null P)
-     (cond ((null Q) terms)
-           (t (throw 'unifier nil))))
-    ((null Q) (throw 'unifier nil))
-    ((plan-p P)
-     (cond ((plan-p Q) (throw 'unifier nil))
-           ((member Q Q-vars)
-            (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
-                  (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
-           (t (throw 'unifier nil))))
-    ((plan-node-p P)
-     (cond ((member Q Q-vars)
-            (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
-                  (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
-           (t (throw 'unifier nil))))
     ((not (listp P))
      (cond ((not (listp Q))
-            (cond ((member Q Q-vars)
-                   (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))
-                  ((eql P Q) terms)
+            (cond ((eql P Q) terms)
                   ((eql (cdr (assoc P (mem3 terms))) Q) terms)
                   (t (throw 'unifier nil))))
            (t (throw 'unifier nil))))
@@ -2258,10 +2236,58 @@
              (list (mem1 terms) (mem2 terms)
                    (cons (cons (mem2 P) (mem2 Q)) (mem3 terms)))))
            (t (throw 'unifier nil))))
+    ;((equal P Q) terms)
     (t
      (variable-correspondence
       (cdr P) (cdr Q) P-vars Q-vars
       (variable-correspondence (car P) (car Q) P-vars Q-vars terms)))))
+;; John's original, buggy
+;;(defun variable-correspondence (P Q P-vars Q-vars terms)
+;;  "This returns the list (terms1 terms quantifier-variables) where terms1 and terms are the lists of corresponding terms to be unified and quantifier-variables is the list of pairs (x . y) of corresponding quantifier-variables used for testing for notational variants."
+;;  (cond
+;;    ((equal P Q) terms)
+;;    ((member P P-vars)
+;;     (let ((quantifier-variables (mem3 terms)))
+;;       (cond ((rassoc Q quantifier-variables) (throw 'unifier nil))
+;;             (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) quantifier-variables)))))
+;;    ((member Q Q-vars)
+;;     (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
+;;           (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
+;;    ((null P)
+;;     (cond ((null Q) terms)
+;;           (t (throw 'unifier nil))))
+;;    ((null Q) (throw 'unifier nil))
+;;    ((plan-p P)
+;;     (cond ((plan-p Q) (throw 'unifier nil))
+;;           ((member Q Q-vars)
+;;            (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
+;;                  (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
+;;           (t (throw 'unifier nil))))
+;;    ((plan-node-p P)
+;;     (cond ((member Q Q-vars)
+;;            (cond ((assoc P (mem3 terms)) (throw 'unifier nil))
+;;                  (t (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))))
+;;           (t (throw 'unifier nil))))
+;;    ((not (listp P))
+;;     (cond ((not (listp Q))
+;;            (cond ((member Q Q-vars)
+;;                   (list (cons P (mem1 terms)) (cons Q (mem2 terms)) (mem3 terms)))
+;;                  ((eql P Q) terms)
+;;                  ((eql (cdr (assoc P (mem3 terms))) Q) terms)
+;;                  (t (throw 'unifier nil))))
+;;           (t (throw 'unifier nil))))
+;;    ((not (listp Q)) (throw 'unifier nil))
+;;    ((or (eq (car P) 'all) (eq (car P) 'some))
+;;     (cond ((eql (car P) (car Q))
+;;            (variable-correspondence
+;;             (mem3 P) (mem3 Q) P-vars Q-vars
+;;             (list (mem1 terms) (mem2 terms)
+;;                   (cons (cons (mem2 P) (mem2 Q)) (mem3 terms)))))
+;;           (t (throw 'unifier nil))))
+;;    (t
+;;     (variable-correspondence
+;;      (cdr P) (cdr Q) P-vars Q-vars
+;;      (variable-correspondence (car P) (car Q) P-vars Q-vars terms)))))
 ;;(defun variable-correspondence (P Q P-vars Q-vars terms)
 ;;  (cond
 ;;    ((member P P-vars)
@@ -4391,6 +4417,7 @@
                 (parallelize-match mgu p-vars)
                 (parallelize-match mgu q-vars)))))))
 
+;; TODO MSD augmented to assert soundness
 (defun unifier (p q p-vars q-vars)
   "If p and q have free variables in common, they must be rewritten before we can apply the unification algorithm.  The following produces a pair of substitutions (m1 m2) such that applying m1 to p and m2 to q unifies them.  m1 and m2 are parallel matches to be applied by match-sublis.  The p-vars and q-vars are the hypernode-variables."
   (cond ((and (null p-vars) (null q-vars))
@@ -4398,7 +4425,21 @@
          (if (or (equal p q) (notational-variant p q)) (list t t)))
         (t (catch 'unifier
              (let ((terms (variable-correspondence p q p-vars q-vars (list nil nil nil))))
-               (unifier* (mem1 terms) (mem2 terms) p-vars q-vars))))))
+               (let ((result (unifier* (mem1 terms) (mem2 terms) p-vars q-vars)))
+                 (when result
+                   (let ((p1 (match-sublis (mem1 result) p))
+                         (q1 (match-sublis (mem2 result) q)))
+                     (assert (or (equal p1 q1)
+                                 (notational-variant p1 q1)))))
+                 result))))))
+;;(defun unifier (p q p-vars q-vars)
+;;  "If p and q have free variables in common, they must be rewritten before we can apply the unification algorithm.  The following produces a pair of substitutions (m1 m2) such that applying m1 to p and m2 to q unifies them.  m1 and m2 are parallel matches to be applied by match-sublis.  The p-vars and q-vars are the hypernode-variables."
+;;  (cond ((and (null p-vars) (null q-vars))
+;;                                        ;  (if (equal p q) (list t t)))
+;;         (if (or (equal p q) (notational-variant p q)) (list t t)))
+;;        (t (catch 'unifier
+;;             (let ((terms (variable-correspondence p q p-vars q-vars (list nil nil nil))))
+;;               (unifier* (mem1 terms) (mem2 terms) p-vars q-vars))))))
 
 (defun interest (n)
   "This finds the interest with interest-number n"
@@ -5940,6 +5981,17 @@
           (compute-interest-dependencies
            in (1+ indent) "*direct-reductio-interest*: "))))))
 
+(defun interest-or-query-number (interest-or-query)
+  (declare (type (or interest query) interest-or-query))
+  (funcall
+   (cond ((interest-p interest-or-query)
+          #'interest-number)
+         ((query-p interest-or-query)
+          #'query-number)
+         (t
+          (error "TODO: unexpected; should have been an interest or query")))
+   interest-or-query))
+
 (defun compute-dependencies (interest)
   (setf *dependent-interests* (list interest) *dependent-nodes* nil
         *independent-reductio-suppositions* *reductio-supposition-nodes*)
@@ -6069,7 +6121,8 @@
                               (when *d-trace*
                                 (princ "Interest ") (princ (interest-number in))
                                 (princ " is directly anchored by a right-link to interest ")
-                                (princ (interest-number (link-resultant-interest L))) (terpri)) t)))
+                                (princ (interest-or-query-number (link-resultant-interest L))) (terpri))
+                              t)))
                        (interest-right-links in)))))
            *dependent-interests*)))
     (dolist (n anchored-nodes)
@@ -7536,6 +7589,12 @@
       (formula basis rule instantiations discount depth interests defeasible?
        &key interest motivators binding link (supposition t) clues)
     "Rule is either a member of *forwards-reasons* or *backwards-reasons*, or keyword describing an inference (:given, :Q&I, or :supposition).  basis is a list of conclusions.  If supposition is not T, it is added to the supposition."
+    ;(when *display?*
+    ;  (princ "STARTING DRAW-CONCLUSION on: ") (princ `(,formula ,basis ,rule ,instantiations ,discount ,depth ,interests ,defeasible? ,interest ,motivators ,binding ,link ,supposition ,clues)) (terpri))
+    ;(when (and (eq 2 (length basis))
+    ;           (eq 3402 (hypernode-number (car basis)))
+    ;           (eq 19 (hypernode-number (cadr basis))))
+    ;  (break))
     (when (and formula
                (not (some #'hypernode-cancelled-node basis))
                (not (inconsistent-supposition basis)))
@@ -7680,12 +7739,12 @@
       (push link *deleted-arguments*)
       ; (princ "**** Deleting ") (princ link) (terpri) ; TODO MSD uncommented
       ;(when (eq 101844 (hypernode-number node)) (break))
-      (pull link (hypernode-hyperlinks node))
+      (pull link (hypernode-hyperlinks node)) ; TODO we're forgetting the basis for the inference and not recording the inference elsewhere; this might affect other inferences already made from this node
       (cond ((null (hypernode-hyperlinks node)) (cancel-node node (if *trace* depth 0)))
             (t
              (dolist (L (hypernode-hyperlinks node))
                (let ((NDA
-                       (cond ((hyperlink-defeasible? node)
+                       (cond ((hyperlink-defeasible? L) ; TODO MSD changed "node" to "L"
                               (mapcar #'genunion
                                       (gencrossproduct
                                        (mapcar #'hypernode-nearest-defeasible-ancestors
@@ -14119,6 +14178,10 @@
     ))
 
 (defun hypernode-arguments (node &optional used-sequents)
+  (when (and *display?* (not (hypernode-p node)))
+    (princ "TODO: hypernode-arguments called with a non-hypernode ")
+    (princ node)
+    (terpri))
   (when (hypernode-p node)
     (if (hypernode-hyperlinks node)
         (let ((S (hypernode-sequent node)))
@@ -15093,7 +15156,8 @@ Given premises:
                                                                                                              justification = 1.0
         (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
         (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
-        (all B)(all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))    justification = 1.0
+; TODO MSD removed the extra (all B)       (all B)(all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))    justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))    justification = 1.0
 
 Ultimate epistemic interests:
         (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
@@ -16852,7 +16916,7 @@ Ultimate epistemic interests:
       (when
           (and
            (not (some #'(lambda (L) (eq (hyperlink-rule L) EG))
-                      (hypernode-hyperlinks c)))
+                      (hypernode-hyperlinks c))) ; TODO we should never need this, right? because EG is a backwards reason
            (or (null dn)
                (not
                 (some
@@ -17454,8 +17518,6 @@ Ultimate epistemic interests:
           (t (push (list in record) *interest-record*)))))
 
                                         ;(defun generating-right-link (in used-interests used-nodes)
-                                        ;   ; (when (eq in (interest 19)) (setf i in u used-interests un used-nodes) (break))
-                                        ;   ;; (step (generating-right-link i u un))
                                         ;    (let ((L (find-if
                                         ;                  #'(lambda (L)
                                         ;                        (and
@@ -18523,7 +18585,6 @@ Ultimate epistemic interests:
             (interest-left-links N))))
 
 (defun null-plan (goal)
-                                        ; (when (equal goal '(on c table)) (break))
   (or
    (find-if
     #'(lambda (p)
@@ -27557,6 +27618,13 @@ be alive.  Should I conclude that Jones becomes dead?"
   (setf *j-trace* t)
   (setf *s-trace* t)
   (setf *safe-trace* t)
+  (setf *d-trace* t)
+  (trace construct-new-interest-for ; link
+         generate-reductio-interests
+         construct-new-interest-for-sequent
+         DRAW-CONCLUSION
+         make-new-conclusion
+         )
   (trace test
          run-reasoning-problem
          display-problem
@@ -27566,7 +27634,6 @@ be alive.  Should I conclude that Jones becomes dead?"
          reason-backwards-from-query
          think-or-die
          queue-premise
-
          )
   #|
   (trace reason-forwards-from)
@@ -27619,6 +27686,22 @@ be alive.  Should I conclude that Jones becomes dead?"
 
 ;;(major-trace 103) ; finding UNEXPECTED TODO here
 ;;;;look for #<hyperlink #112 for hypernode 134> subsumes #<hyperlink #48 for hypernode 70>
+
+;;HYPERLINK-NUMBER: 112
+;;HYPERLINK-TARGET: #<Hypernode 134: ~(~(P d b) -> (Q d b))/{ ~(Q d ^@y6) , ~(Q d b) }>
+;;HYPERLINK-BASIS: (#<Hypernode 59: ~(Q d x43)/{ ~(Q d x43) }> #<Hypernode 125: ~(P d b)/{ ~(Q d b) }>)
+;;HYPERNODE-NUMBER: 134
+;;HYPERNODE-SEQUENT: (((~ (Q #:|d1| #:|^@y6|)) (~ (Q #:|d1| #:|b1|))) (~ (-> (~ (P #:|d1| #:|b1|)) (Q #:|d1| #:|b1|))))
+
+;;HYPERLINK-NUMBER: 48
+;;HYPERLINK-TARGET: #<Hypernode 70: ~(~(P d b) -> (Q d b))/{ ~(Q d b) , ~(P d b) }>
+;;HYPERLINK-BASIS: (#<Hypernode 58: ~(Q d b)/{ ~(Q d b) }> #<Hypernode 69: ~(P x55 b)/{ ~(P x55 b) }>)
+;;HYPERNODE-NUMBER: 70
+;;HYPERNODE-SEQUENT: (((~ (Q #:|d1| #:|b1|)) (~ (P #:|d1| #:|b1|))) (~ (-> (~ (P #:|d1| #:|b1|)) (Q #:|d1| #:|b1|))))
+
+
+
+
 ;;(display-link (link 112))
 ;;(describe (hyperlink 112))
 ;;(describe (hyperlink 48))
@@ -27629,3 +27712,90 @@ be alive.  Should I conclude that Jones becomes dead?"
 ;;(display-conclusions-by-supposition) ; experimental
 ;;(display-c-lists) ; experimental
 ;;(display-processed-c-lists)
+
+#|
+#<hyperlink #104 for hypernode 126> subsumes #<hyperlink #93 for hypernode 115>
+#<hyperlink #104 for hypernode 126> subsumes #<hyperlink #83 for hypernode 105>
+#<hyperlink #104 for hypernode 126> subsumes #<hyperlink #70 for hypernode 92>
+#<hyperlink #112 for hypernode 134> subsumes #<hyperlink #48 for hypernode 70>
+#<hyperlink #125 for hypernode 147> subsumes #<hyperlink #114 for hypernode 136>
+#<hyperlink #126 for hypernode 148> subsumes #<hyperlink #115 for hypernode 137>
+#<hyperlink #127 for hypernode 149> subsumes #<hyperlink #116 for hypernode 138>
+#<hyperlink #124 for hypernode 146> subsumes #<hyperlink #113 for hypernode 135>
+#<hyperlink #154 for hypernode 176> subsumes #<hyperlink #99 for hypernode 121>
+#<hyperlink #153 for hypernode 175> subsumes #<hyperlink #98 for hypernode 120>
+#<hyperlink #162 for hypernode 184> subsumes #<hyperlink #78 for hypernode 100>
+#<hyperlink #163 for hypernode 185> subsumes #<hyperlink #79 for hypernode 101>
+#<hyperlink #161 for hypernode 183> subsumes #<hyperlink #77 for hypernode 99>
+#<hyperlink #172 for hypernode 194> subsumes #<hyperlink #119 for hypernode 141>
+#<hyperlink #173 for hypernode 195> subsumes #<hyperlink #120 for hypernode 142>
+#<hyperlink #174 for hypernode 196> subsumes #<hyperlink #121 for hypernode 143>
+#<hyperlink #175 for hypernode 197> subsumes #<hyperlink #122 for hypernode 144>
+#<hyperlink #171 for hypernode 193> subsumes #<hyperlink #118 for hypernode 140>
+#<hyperlink #251 for hypernode 273> subsumes #<hyperlink #246 for hypernode 268>
+#<hyperlink #251 for hypernode 273> subsumes #<hyperlink #215 for hypernode 237>
+#<hyperlink #251 for hypernode 273> subsumes #<hyperlink #106 for hypernode 128>
+#<hyperlink #251 for hypernode 273> subsumes #<hyperlink #102 for hypernode 124>
+#<hyperlink #251 for hypernode 273> subsumes #<hyperlink #67 for hypernode 89>
+#<hyperlink #251 for hypernode 273> subsumes #<hyperlink #44 for hypernode 55>
+#<hyperlink #250 for hypernode 272> subsumes #<hyperlink #101 for hypernode 123>
+#<hyperlink #266 for hypernode 288> subsumes #<hyperlink #232 for hypernode 254>
+#<hyperlink #266 for hypernode 288> subsumes #<hyperlink #81 for hypernode 103>
+#<hyperlink #266 for hypernode 288> subsumes #<hyperlink #46 for hypernode 61>
+#<hyperlink #267 for hypernode 289> subsumes #<hyperlink #233 for hypernode 255>
+#<hyperlink #267 for hypernode 289> subsumes #<hyperlink #58 for hypernode 80>
+#<hyperlink #265 for hypernode 287> subsumes #<hyperlink #80 for hypernode 102>
+#<hyperlink #282 for hypernode 304> subsumes #<hyperlink #76 for hypernode 98>
+#<hyperlink #282 for hypernode 304> subsumes #<hyperlink #55 for hypernode 77>
+#<hyperlink #282 for hypernode 304> subsumes #<hyperlink #47 for hypernode 62>
+#<hyperlink #281 for hypernode 303> subsumes #<hyperlink #75 for hypernode 97>
+#<hyperlink #283 for hypernode 305> subsumes #<hyperlink #244 for hypernode 266>
+#<hyperlink #287 for hypernode 309> subsumes #<hyperlink #237 for hypernode 259>
+#<hyperlink #289 for hypernode 311> subsumes #<hyperlink #239 for hypernode 261>
+#<hyperlink #289 for hypernode 311> subsumes #<hyperlink #90 for hypernode 112>
+#<hyperlink #289 for hypernode 311> subsumes #<hyperlink #45 for hypernode 56>
+
+(59,125)-112=31>i4
+-48=30>i4
+i44-30-i4
+-112>134 subsumes -48>70
+>70-64>86
+
+interest link 30
+ result: i4
+ interest: i44
+ formula: ~(P d1 b1)
+ binding: P = ~(P d1 b1) , Q = (Q d1 b1)
+ support: n58 (suppose: ~(Q d b))
+ generating: interest link 25
+
+interest link 25
+ result: i4
+ interest: i31
+ formula: ~(Q ^@y7 ^y6)
+ binding: P = ~(P ^@y7 ^@y6) , Q = (Q ^@y7 ^@y6)
+ support: nil
+ generating: nil
+
+interest 4 ~(~P y7 y6 -> Q y7 y6) is generated by reductio from hypernode 10 (~P x4 x5 -> Q x4 x5)
+
+
+  # 134   ~(~(P d b) -> (Q d b))    supposition: { ~(Q d ^@y6) , ~(Q d b) }
+  Inferred by hyperlink #112 from { 59 , 125 } by i-neg-condit
+
+  # 59   ~(Q d x43)    supposition: { ~(Q d x43) }
+  # 125   ~(P d b)    supposition: { ~(Q d b) }
+  Inferred by hyperlink #103 from { 123 , 58 } by REDUCTIO
+
+
+(unifier '(P a a) '(P a b) '(a) '(a b))   = (((A . B)) T)
+(unifier '(P a b) '(P a a) '(a b) '(a))   = (((B . A)) T)
+(unifier '(P c c) '(P a b) '(c) '(a b))   = (((C . A)) ((B . A)))
+(unifier '(P a b) '(P c d) '(a b) '(c d))
+
+(variable-correspondence '(P a a) '(P a b) '(a) '(a b) (list nil nil nil)) = ((a) (b) nil)
+(variable-correspondence '(P c c) '(P a b) '(c) '(b) (list nil nil nil)) = ((C C) (B A) NIL)
+(unifier* '(a a) '(b a) '(a) '(a b)) = (T ((B . A)))
+(unifier* '(c c) '(b a) '(c) '(a b)) = (T ((B . A)))
+
+|#
