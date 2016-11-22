@@ -1,0 +1,118 @@
+. . . DISCHARGE-INTEREST-IN: #<Interest 28> from #<Hypernode 125: ~(P d b)/{ ~(Q d b) }>
+. . . DISCHARGE-APPROPRIATELY-RELATED-LINK: #<Link 31: for  interest #4 by i-neg-condit>
+MAKING HYPERNODE #134 (#<Hypernode 134: ~(~(P d b) -> (Q d b))/{ ~(Q d ^@y6) , ~(Q d b) }>)
+MAKING HYPERLINK #112 (#<hyperlink #112 for hypernode 134>)
+. . . ADJUST-SUPPORT-FOR-CONSEQUENCES for #<Hypernode 134: ~(~(P d b) -> (Q d b))/{ ~(Q d ^@y6) , ~(Q d b) }>
+. . . DRAW CONCLUSION: #<Hypernode 134: ~(~(P d b) -> (Q d b))/{ ~(Q d ^@y6) , ~(Q d b) }>
+  # 134   ~(~(P d b) -> (Q d b))    supposition: { ~(Q d ^@y6) , ~(Q d b) }
+  Inferred by hyperlink #112 from { 59 , 125 } by i-neg-condit
+
+. . . . DISCHARGE-IMMEDIATE-REDUCTIOS-FROM #<Hypernode 134: ~(~(P d b) -> (Q d b))/{ ~(Q d ^@y6) , ~(Q d b) }>
+. . . . Cancelling  #<Hypernode 70: ~(~(P d b) -> (Q d b))/{ ~(Q d b) , ~(P d b) }>
+#<hyperlink #112 for hypernode 134> subsumes #<hyperlink #48 for hypernode 70>
+
+--
+
+CL-USER> (describe (hypernode 134))
+#<Hypernode 134: ~(~(P d b) -> (Q d b))/{ ~(Q d ^@y6) , ~(Q d b) }>
+  [structure-object]
+
+Slots with :INSTANCE allocation:
+  HYPERNODE-NUMBER             = 134
+  HYPERNODE-SEQUENT            = (((~ (Q #1=#:|d1| #:|^@y6|)) (~ (Q #1# #2=#:|b1|)))..
+  HYPERNODE-FORMULA            = (~ (-> (~ (P #1=#:|d1| #2=#:|b1|)) (Q #1# #2#)))
+  HYPERNODE-SUPPOSITION        = ((~ (Q #1=#:|d1| #:|^@y6|)) (~ (Q #1# #:|b1|)))
+  HYPERNODE-KIND               = :INFERENCE
+  HYPERNODE-HYPERLINKS         = (#<hyperlink #112 for hypernode 134>)
+  HYPERNODE-JUSTIFICATION      = NIL
+  HYPERNODE-CONSEQUENT-LINKS   = NIL
+  HYPERNODE-OLD-DEGREE-OF-JUSTIFICATION  = NIL
+  HYPERNODE-REDUCTIO-ANCESTORS  = (((~ (Q #1=#:|d1| #:|^@y6|))..
+  HYPERNODE-NON-REDUCTIO-SUPPOSITION  = NIL
+  HYPERNODE-SUPPORTED-HYPER-DEFEAT-LINKS  = NIL
+  HYPERNODE-DEGREE-OF-JUSTIFICATION  = 1.0
+  HYPERNODE-MAXIMAL-DEGREE-OF-JUSTIFICATION  = 1.0
+  HYPERNODE-ANCESTORS          = (#1=#<#2=Hypernode 125#3=: ~(P d b)#4=/#5={ ~(Q d b)#6= }#7=>..
+  HYPERNODE-NEAREST-DEFEASIBLE-ANCESTORS  = (NIL)
+  HYPERNODE-ANSWERED-QUERIES   = NIL
+  HYPERNODE-DEDUCTIVE-ONLY     = T
+  HYPERNODE-GENERATED-INTERESTS  = NIL
+  HYPERNODE-GENERATING-INTERESTS  = NIL
+  HYPERNODE-CANCELLED-NODE     = T
+  HYPERNODE-DISCOUNTED-NODE-STRENGTH  = 1.0
+  HYPERNODE-PROCESSED?         = NIL
+  HYPERNODE-VARIABLES          = NIL
+  HYPERNODE-DISCHARGED-INTERESTS  = ((#<Interest 4> (T ((#:|^@y6| . #:|b1|) (#:|^@y7| . #:|d1|))) ((T T))))
+  HYPERNODE-SUPPOSITION-VARIABLES  = (#:|^@y6|)
+  HYPERNODE-INTERESTS-DISCHARGED?  = T
+  HYPERNODE-REDUCTIOS-DISCHARGED  = NIL
+  HYPERNODE-READOPTED-SUPPOSITION  = 0
+  HYPERNODE-DISCOUNT-FACTOR    = 1.0
+  HYPERNODE-C-LIST             = #<c-list for ~(~(P d b) -> (Q d b))>
+  HYPERNODE-QUEUE-NODE         = #<Item 175>
+  HYPERNODE-ENABLING-INTERESTS  = (#<Interest 4>)
+  HYPERNODE-MOTIVATING-NODES   = NIL
+  HYPERNODE-GENERATED-DIRECT-REDUCTIO-INTERESTS  = NIL
+  HYPERNODE-GENERATED-DEFEAT-INTERESTS  = NIL
+  HYPERNODE-GENERATING-DEFEAT-INTERESTS  = NIL
+  HYPERNODE-TEMPORAL-NODE      = NIL
+  HYPERNODE-BACKGROUND-KNOWLEDGE  = NIL
+  HYPERNODE-NON-REDUCTIO-SUPPOSITION?  = NIL
+  HYPERNODE-ANCHORING-INTERESTS  = NIL
+  HYPERNODE-JUSTIFICATIONS     = NIL
+  HYPERNODE-IN                 = (NIL)
+  HYPERNODE-DEPENDENCIES       = NIL
+; No value
+CL-USER> (describe (hypernode 70))
+#<Hypernode 70: ~(~(P d b) -> (Q d b))/{ ~(Q d b) , ~(P d b) }>
+  [structure-object]
+
+Slots with :INSTANCE allocation:
+  HYPERNODE-NUMBER             = 70
+  HYPERNODE-SEQUENT            = (((~ (Q #1=#:|d1| #2=#:|b1|)) (~ (P #1# #2#)))..
+  HYPERNODE-FORMULA            = (~ (-> (~ (P #1=#:|d1| #2=#:|b1|)) (Q #1# #2#)))
+  HYPERNODE-SUPPOSITION        = ((~ (Q #1=#:|d1| #2=#:|b1|)) (~ (P #1# #2#)))
+  HYPERNODE-KIND               = :INFERENCE
+  HYPERNODE-HYPERLINKS         = NIL
+  HYPERNODE-JUSTIFICATION      = NIL
+  HYPERNODE-CONSEQUENT-LINKS   = (#<hyperlink #64 for hypernode 86>)
+  HYPERNODE-OLD-DEGREE-OF-JUSTIFICATION  = NIL
+  HYPERNODE-REDUCTIO-ANCESTORS  = (((~ (Q #1=#:|d1| #2=#:|b1|))..
+  HYPERNODE-NON-REDUCTIO-SUPPOSITION  = NIL
+  HYPERNODE-SUPPORTED-HYPER-DEFEAT-LINKS  = NIL
+  HYPERNODE-DEGREE-OF-JUSTIFICATION  = 1.0
+  HYPERNODE-MAXIMAL-DEGREE-OF-JUSTIFICATION  = 1.0
+  HYPERNODE-ANCESTORS          = (#1=#<#2=Hypernode 58#3=: ~(Q d b)#4=/#5={ ~(Q d b)#6= }#7=>..
+  HYPERNODE-NEAREST-DEFEASIBLE-ANCESTORS  = (NIL)
+  HYPERNODE-ANSWERED-QUERIES   = NIL
+  HYPERNODE-DEDUCTIVE-ONLY     = T
+  HYPERNODE-GENERATED-INTERESTS  = NIL
+  HYPERNODE-GENERATING-INTERESTS  = NIL
+  HYPERNODE-CANCELLED-NODE     = T
+  HYPERNODE-DISCOUNTED-NODE-STRENGTH  = 1.0
+  HYPERNODE-PROCESSED?         = NIL
+  HYPERNODE-VARIABLES          = NIL
+  HYPERNODE-DISCHARGED-INTERESTS  = ((#<Interest 4> (T ((#:|^@y6| . #:|b1|) (#:|^@y7| . #:|d1|))) ((T T))))
+  HYPERNODE-SUPPOSITION-VARIABLES  = NIL
+  HYPERNODE-INTERESTS-DISCHARGED?  = T
+  HYPERNODE-REDUCTIOS-DISCHARGED  = NIL
+  HYPERNODE-READOPTED-SUPPOSITION  = 0
+  HYPERNODE-DISCOUNT-FACTOR    = 1.0
+  HYPERNODE-C-LIST             = #<c-list for ~(~(P d b) -> (Q d b))>
+  HYPERNODE-QUEUE-NODE         = #<Item 136>
+  HYPERNODE-ENABLING-INTERESTS  = (#<Interest 4>)
+  HYPERNODE-MOTIVATING-NODES   = NIL
+  HYPERNODE-GENERATED-DIRECT-REDUCTIO-INTERESTS  = NIL
+  HYPERNODE-GENERATED-DEFEAT-INTERESTS  = NIL
+  HYPERNODE-GENERATING-DEFEAT-INTERESTS  = NIL
+  HYPERNODE-TEMPORAL-NODE      = NIL
+  HYPERNODE-BACKGROUND-KNOWLEDGE  = NIL
+  HYPERNODE-NON-REDUCTIO-SUPPOSITION?  = NIL
+  HYPERNODE-ANCHORING-INTERESTS  = NIL
+  HYPERNODE-JUSTIFICATIONS     = NIL
+  HYPERNODE-IN                 = (NIL)
+  HYPERNODE-DEPENDENCIES       = NIL
+; No value
+CL-USER>
+
+--

@@ -551,3 +551,24 @@ display-links
 which all are unused in oscar
 
 --
+
+sketching (test 757)
+reason-backwards-from-query
+reason-backwards-from-simple-query
+apply-degenerate-backwards-reasons
+
+reason-backwards-from
+
+--
+
+make-hypernode*
+ make-new-conclusion
+ queue-non-reductio-defeater-supposition
+  why no hypernode-variables?
+ queue-non-reductio-supposition
+  e-vars?
+ queue-premise
+ queue-desire
+ queue-percept
+ make-new-reductio-supposition
+  c-vars?

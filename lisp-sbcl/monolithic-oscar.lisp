@@ -10,9 +10,6 @@
 
 (proclaim
  '(special
-   *act-executors*
-   *altered-nodes*
-   *answered-discount*
    *assignment-tree-dialog*
    *assignment-tree-subview*
    *assignment-tree-window*
@@ -301,7 +298,7 @@
 (defvar *log-on* nil)
 (defvar *priority-interests* nil)
 (defvar *blocked-conclusions* nil)
-(defvar *answered-discount* .5)
+(defparameter *query-answered-discount* .5 "only used when a query is query-answered? and not in *permanent-ultimate-epistemic-interests*; affects queue-degree-of-preference and interest-priority")
 (defvar *base-priority* .1)
 (defvar *reductio-interest* .23)
 (defvar *reductio-discount* .23)
@@ -4193,7 +4190,7 @@
           (cond ((member query *permanent-ultimate-epistemic-interests*)
                  (query-strength query))
                 ((query-answered? query)
-                 (* (query-strength query) *answered-discount*))
+                 (* (query-strength query) *query-answered-discount*))
                 (t (query-strength query)))))
     (/ strength complexity)))
 
@@ -10098,7 +10095,6 @@
   (setf *hyper-defeat-links* nil)
   (setf *reductio-supposition-nodes* nil)
   (setf *non-reductio-supposition-nodes* nil)
-  (setf *altered-nodes* nil)
   (setf *reasoning-log* nil)
   (setf *direct-reductio-interests* nil)
   (setf *Q&I-modules* nil)
@@ -12449,7 +12445,7 @@
         (pull interest affected-interests)
         (cond ((and (query-answered? query)
                     (not (member query *permanent-ultimate-epistemic-interests*)))
-               (setf (interest-priority interest) (* (interest-degree-of-interest interest) *answered-discount*)))
+               (setf (interest-priority interest) (* (interest-degree-of-interest interest) *query-answered-discount*)))
               (t (setf (interest-priority interest) (interest-degree-of-interest interest))))))
     (dolist (node affected-nodes)
       (cond ((zerop (hypernode-degree-of-justification node))
@@ -13097,26 +13093,6 @@
     (update-beliefs)
     (setf *new-links* nil)))
 
-(defun try-to-perform (act)
-  (let ((executor (e-assoc (mem1 act) *act-executors*)))
-    (when executor (apply executor (cdr act)))))
-
-(defun initiate-actions ()
-  (let ((act (find-if
-              #'(lambda (x)
-                  (every #'(lambda (y) (>= (cdr x) (cdr y))) *executable-operations*))
-              *executable-operations*)))
-    (pull act *executable-operations*)
-    (try-to-perform act)
-    (let ((query
-            (make-query
-             :query-number (incf *query-number*)
-             :query-formula (list "was-not-performed-when-tried" (mem1 act))
-             :query-strength (mem2 act)
-             :query-positive-instructions (list #'(lambda (x) (push x *executable-operations*)))
-             :query-negative-instructions (list #'(lambda (x) (pull x *executable-operations*))))))
-      (adopt-ultimate-interest query))))
-
 (defun update-environmental-input ()
   T)
 
@@ -13153,28 +13129,6 @@
 (defun update-percepts ()
   (dolist (input *inputs*)
     (when (eq (car input) *cycle*) (apply #'form-percept (cdr input)))))
-
-(defun OSCAR ()
-  "The following does not perform the operations in parallel as it should, because this program is designed to run in serial LISP.  The functions update-environmental- input and update-percepts are extrinsic to the reasoner, and are supplied by the operating environment of the reasoner. Optative dispositions are functions from inputs to desires.  This code allows us to have premises supplied artificially rather than by perception. Premises are triples (formula, supposition, degree-of-justification). Premises can be defeated by rebutting defeaters, but there is no way to have an undercutting defeater."
-  (initialize-reasoner)
-  (dolist (query *ultimate-epistemic-interests*)
-    (reason-backwards-from-query query (query-strength query) 0))
-  (loop
-     (update-environmental-input)
-     (update-percepts)
-     (dolist (input *environmental-input*)
-       (dolist (disposition *optative-dispositions*)
-         (pull input *environmental-input*)
-         (queue-desire (funcall disposition input))))
-     (dolist (percept *percepts*)
-       (pull percept *percepts*)
-       (queue-percept percept))
-     (dolist (premise *premises*)
-       (when (eql (mem3 premise) *cycle*)
-         (pull premise *premises*)
-         (queue-premise (list (mem1 premise) nil (mem2 premise)))))
-     (think)
-     (initiate-actions)))
 
 (defun add-relevant-nodes (node)
   (when (not (member node *relevant-nodes*))
@@ -27304,6 +27258,50 @@ be alive.  Should I conclude that Jones becomes dead?"
 
 (defun link (n)
   (find-if #'(lambda (node) (equal (link-number node) n)) *interest-links*))
+
+(proclaim '(special *act-executors*))
+
+(defun try-to-perform (act)
+  (let ((executor (e-assoc (mem1 act) *act-executors*)))
+    (when executor (apply executor (cdr act)))))
+
+(defun initiate-actions ()
+  (let ((act (find-if
+              #'(lambda (x)
+                  (every #'(lambda (y) (>= (cdr x) (cdr y))) *executable-operations*))
+              *executable-operations*)))
+    (pull act *executable-operations*)
+    (try-to-perform act)
+    (let ((query
+            (make-query
+             :query-number (incf *query-number*)
+             :query-formula (list "was-not-performed-when-tried" (mem1 act))
+             :query-strength (mem2 act)
+             :query-positive-instructions (list #'(lambda (x) (push x *executable-operations*)))
+             :query-negative-instructions (list #'(lambda (x) (pull x *executable-operations*))))))
+      (adopt-ultimate-interest query))))
+
+(defun OSCAR ()
+  "The following does not perform the operations in parallel as it should, because this program is designed to run in serial LISP.  The functions update-environmental- input and update-percepts are extrinsic to the reasoner, and are supplied by the operating environment of the reasoner. Optative dispositions are functions from inputs to desires.  This code allows us to have premises supplied artificially rather than by perception. Premises are triples (formula, supposition, degree-of-justification). Premises can be defeated by rebutting defeaters, but there is no way to have an undercutting defeater."
+  (initialize-reasoner)
+  (dolist (query *ultimate-epistemic-interests*)
+    (reason-backwards-from-query query (query-strength query) 0))
+  (loop
+     (update-environmental-input)
+     (update-percepts)
+     (dolist (input *environmental-input*)
+       (dolist (disposition *optative-dispositions*)
+         (pull input *environmental-input*)
+         (queue-desire (funcall disposition input))))
+     (dolist (percept *percepts*)
+       (pull percept *percepts*)
+       (queue-percept percept))
+     (dolist (premise *premises*)
+       (when (eql (mem3 premise) *cycle*)
+         (pull premise *premises*)
+         (queue-premise (list (mem1 premise) nil (mem2 premise)))))
+     (think)
+     (initiate-actions)))
 
 ;;SECTION test
 
