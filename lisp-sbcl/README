@@ -572,3 +572,281 @@ make-hypernode*
  queue-percept
  make-new-reductio-supposition
   c-vars?
+
+
+--
+
+DISCHARGE-APPROPRIATELY-RELATED-LINK (illicitly?) tries to conclude ~(subset y182 y182 -> equal y182 y182) {supposing ((~ (EQUAL #:|^@y182| #:|^@y183|)))} from link 1154 on the basis of #<Hypernode 5818: (subset x8 x8)> and LINK-SUPPORTING-NODES: (#<Hypernode 5671: ~(equal x8 x10)/{ ~(equal x10 x8) }>), seemingly due to binding = ((P SUBSET #:|^@y182| #:|^@y182|) (Q EQUAL #:|^@y182| #:|^@y182|))
+
+so how does binding get this way?
+
+binding is based on the weird-looking u2, based on U* = (((#:|x8| . #:|^@y182|)) ((#:|^@y183| . #:|^@y182|))), which is originally having the value (given, as called from DISCHARGE-INTEREST-IN) U*#1 = (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|))). This U* is based on UNIFIER = (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|))), which is a member of the CORRESPONDING-I-LISTS = ((#<i-list for (subset (s5 c41 c0) (s5 c41 c0))> ((#) T)) (#<i-list for (subset ^@y108 (s5 c41 c0))> ((#) (#))) (#<i-list for (subset (s5 c41 c0) ^@y109)> ((#) (#))) ..), namely CORRESPONDING-I-LIST = (#<i-list for (subset ^@y108 ^@y109)> (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|)))). The corresponding-i-lists are fed from DRAW-CONCLUSION under the name i-lists, which is bound by (i-lists (c-list-corresponding-i-lists (hypernode-c-list node), where NODE = #<Hypernode 5818: (subset x8 x8)>
+
+DISCHARGE-INTEREST-IN reports that NODE = #<Hypernode 5818: (subset x8 x8)> discharges interest 113, INTEREST-SEQUENT: (NIL (SUBSET #:|^@y108| #:|^@y109|)), noting that LINK#1 = #<Link 1154: for  interest #90 by i-neg-condit>, and then calls discharge-appropriately-related-link with LINK#1 = #<Link 1154: for  interest #90 by i-neg-condit> and N = #<Interest 113> and NODE = #<Hypernode 5818: (subset x8 x8)>.
+
+Let's get clear that there's a problem here.
+
+We have, from node 5818, (all x)(subset x x). We are interested in, by interest 113, (all y1)(all y2)(subset y1 y2). We cannot conclude the interest from the node, yet DISCHARGE-INTEREST-IN reports it as such.
+
+Let's trace how DISCHARGE-INTEREST-IN comes to do this. Node 5818 comes from the argument list to DISCHARGE-INTEREST-IN. Interest 113 is one of the interest-candidates, a list which happens to contain the sole interest, 113. There are two possible routes for a fix: either we should never have had 113 as an interest-candidate, or we should rule it out afterwards.
+
+To rule it out afterwards, we would note that subset x x does not subsume subset y1 y2. Let's see if there is any comparison between the candidate 113 and the node 5818. Indeed, there is a binding of unifiers to (appropriately-related-non-reductio-suppositions node N unifier), and a binding of reductio-unifiers to (appropriately-related-reductio-suppositions node N unifier), the computation only proceeding if there is at least some match.
+
+Before we investigate the (appropriately-related-*) calls, let's check on the binding of unifier. UNIFIER = (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|))) is given by the second member of the CORRESPONDING-I-LIST = (#<i-list for (subset ^@y108 ^@y109)> (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|)))), which suggests(?) that it is merely a way of getting the two formulas to agree and that appropriately-related-* should rule it out. However, appropriately-related-* only concerns itself with the suppositions, and in this case, there are none. So, let's try the other route to the fix: perhaps we should never have had such an interest-candidate.
+
+...
+
+I have changed the assignment of corresponding-i-lists in (store-hypernode-at-d-node) to only include those i-lists with formulas subsumed by the c-list's formula. Prior to this, it was possible to have a c-list with formula P x x with a corresponding-i-list for P x y. See (subsumed-i-lists-for).
+
+--
+
+(mem (s15 x8 (s6 x16 x17)) x17)
+((mem x28 (s6 x16 x17)) -> ((mem x28 x16) & (mem x28 x17)))
+==========================================
+((mem (s15 x8 (s6 x16 (s6 x16 x17))) x16) & (mem (s15 x8 (s6 x16 (s6 x16 x17))) x17))
+
+while valid, it seems like this should not be allowed in forwards reasoning
+
+HYPERLINK-NUMBER: 1334
+HYPERLINK-TARGET: @0=#<Hypernode 1352: ((mem (s15 x8 (s6 x16 (s6 x16 x17))) x16) & (mem (s15 x8 (s6 x16 (s6 x16 x17))) x17))/{ ~(equal ^@y188 ^@y189) }>
+HYPERLINK-BASIS: @3=(#<Hypernode 46: ((mem x28 (s6 x16 x17)) -> ((mem x28 x16) & (mem x28 x17)))> #<Hypernode 1332: (mem (s15 x8 (s6 x16 x17)) x17)/{ ~(equal ^@y188 ^@y189) }>)
+
+I have updated all reason-functions associated with make-forwards-reason to also check for subsumption
+--
+
+This seems like it similarly might be bad in reductio reasoning:
+
+  # 1985   ~(mem ^@y212 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))    supposition: { ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+  Inferred by hyperlink #1966 from { 1845 , 183 } by REDUCTIO
+
+  # 1845   (mem ^@y212 ^@y102)    supposition: { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 ^@y103 ^@y102)) }
+  # 183   ~(mem x28 (s6 x16 x17))    supposition: { ~((mem x28 x16) & (mem x28 x17)) }
+
+rewritten:
+
+~(mem x y & mem x z) |- ~(mem x (int y z))
+~(mem x y & mem x z) , mem x (int w v) |- mem x v
+================================================= REDUCTIO
+~(mem x y & mem x z) |- ~(mem x (int w (int y z)))
+
+this is like?
+0 |- R x y z -> ~(P x (s y z))
+P x (s w v) |- R x y z -> P x v
+================
+0 |- R x y z -> ~(P x (s w (s y z)))
+
+<OOPS>this is valid and actually seems okay. maybe the trouble is in backwards reasoning. how did we come to be interested in the reductio conclusion? or is this reductio actually of a forwards nature? in which case, it is probably bad to do...</OOPS>
+
+this is valid but tells us nothing we could not have inferred from the first premise
+
+--
+
+consider instead
+
+  # 2268   ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))    supposition: { (mem ^@y212 (s6 ^@y103 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))) , ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+  Inferred by hyperlink #2249 from { 1846 , 1985 } by modus-tollens1
+
+with basis
+
+0: #<Hypernode 1846: (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))/{ (mem ^@y212 (s6 ^@y103 ^@y104)) }>
+1: #<Hypernode 1985: ~(mem ^@y212 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))/{ ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }>
+
+  # 1846   (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))    supposition: { (mem ^@y212 (s6 ^@y103 ^@y104)) }
+  Inferred by hyperlink #1827 from { 1845 } by CONDITIONALIZATION
+
+  # 1845   (mem ^@y212 ^@y102)    supposition: { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 ^@y103 ^@y102)) }
+  Inferred by hyperlink #1826 from { 1842 } by simp
+
+  # 1842   ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))    supposition: { (mem ^@y212 (s6 ^@y103 ^@y102)) , ~((mem ^@y212 x16) & (mem ^@y212 x17)) }
+  Inferred by hyperlink #1823 from { 1771 , 183 } by modus-tollens1
+
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) supposing { (mem ^@y212 (s6 ^@y103 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))) , ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+
+ 2.  (all A)(all B)(some intAB)(IsInt A B intAB)     GIVEN
+ 10.  (all B)(some intAB)(IsInt x2 B intAB)     UI from { 2 }
+ 11.  (some intAB)(IsInt x2 x3 intAB)     UI from { 10 }
+ 14.  (IsInt x2 x3 (s6 x2 x3))     EI from { 11 }
+ 3.  (all A)(all B)(all intAB)((IsInt A B intAB) <-> (all x)((mem x intAB) <-> ((mem x A) & (mem x B))))     GIVEN
+ 29.  (all B)(all intAB)((IsInt x16 B intAB) <-> (all x)((mem x intAB) <-> ((mem x x16) & (mem x B))))     UI from { 3 }
+ 30.  (all intAB)((IsInt x16 x17 intAB) <-> (all x)((mem x intAB) <-> ((mem x x16) & (mem x x17))))     UI from { 29 }
+ 31.  ((IsInt x16 x17 x18) <-> (all x)((mem x x18) <-> ((mem x x16) & (mem x x17))))     UI from { 30 }
+ 32.  ((IsInt x16 x17 x18) -> (all x)((mem x x18) <-> ((mem x x16) & (mem x x17))))     bicondit-simp from { 31 }
+ 34.  (all x)((mem x (s6 x16 x17)) <-> ((mem x x16) & (mem x x17)))     modus-ponens1 from { 32 , 14 }
+ 45.  ((mem x28 (s6 x16 x17)) <-> ((mem x28 x16) & (mem x28 x17)))     UI from { 34 }
+ 46.  ((mem x28 (s6 x16 x17)) -> ((mem x28 x16) & (mem x28 x17)))     bicondit-simp from { 45 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem x173 x172) }
+        |----------------------------------------------------------
+        | 162.  (mem x173 x172)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) }
+        |----------------------------------------------------------
+        | 181.  ~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (mem ^@y212 ^@y104) }
+        |----------------------------------------------------------
+        | 182.  (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))     CONDITIONALIZATION from { 162 }
+        |----------------------------------------------------------
+        | Suppose:  { ~((mem x28 x16) & (mem x28 x17)) }
+        |----------------------------------------------------------
+        | 183.  ~(mem x28 (s6 x16 x17))     modus-tollens2 from { 46 , 181 }
+                |----------------------------------------------------------
+                | Suppose:  { (mem ^@y212 (s6 x16 x17)) , ~((mem ^@y212 x16) & (mem ^@y212 x17)) }
+                |----------------------------------------------------------
+                | 407.  ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     modus-tollens2 from { 182 , 183 }
+                |----------------------------------------------------------
+                | Suppose:  { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 x16 x17)) }
+                |----------------------------------------------------------
+                | 1770.  (mem ^@y212 ^@y103)     simp from { 407 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem ^@y212 (s6 ^@y103 ^@y102)) }
+        |----------------------------------------------------------
+        | 1771.  (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))     CONDITIONALIZATION from { 1770 }
+                |----------------------------------------------------------
+                | Suppose:  { (mem ^@y212 (s6 ^@y103 ^@y102)) , ~((mem ^@y212 x16) & (mem ^@y212 x17)) }
+                |----------------------------------------------------------
+                | 1842.  ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     modus-tollens1 from { 1771 , 183 }
+                |----------------------------------------------------------
+                | Suppose:  { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 ^@y103 ^@y102)) }
+                |----------------------------------------------------------
+                | 1845.  (mem ^@y212 ^@y102)     simp from { 1842 }
+        |----------------------------------------------------------
+        | Suppose:  { ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+        |----------------------------------------------------------
+        | 1985.  ~(mem ^@y212 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))     REDUCTIO from { 1845 , 183 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem ^@y212 (s6 ^@y103 ^@y104)) }
+        |----------------------------------------------------------
+        | 1846.  (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))     CONDITIONALIZATION from { 1845 }
+                |----------------------------------------------------------
+                | Suppose:  { (mem ^@y212 (s6 ^@y103 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))) , ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+                |----------------------------------------------------------
+                | 2268.  ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     modus-tollens1 from { 1846 , 1985 }
+
+
+
+--
+
+Problem #87
+Pelletier's problem 35
+Given premises:
+Ultimate epistemic interests:
+     (some u)(some v1)((P u v1) -> (all x)(all y)(P x y))    interest = 1.0
+
+MAKING HYPERNODE #100 (#<Hypernode 100: (some x)~(all y)(P x y)/{ ~(P c84 c85) }>)
+
+doesn't work if using subsumed-i-lists-for instead of matching-i-lists-for
+
+--
+
+
+  # 844   ~(subset (s7 c0 (s7 c0 (s7 c0 c0))) (s6 c61 c0))    supposition: { ~(IsInvF c61 c0 (s6 c61 c0)) }
+  Inferred by hyperlink #824 from { 838 , 204 } by REDUCTIO
+
+  Node 844 discharges interest 97
+
+                                        # 260  reductio interest:
+                                           (all x)((mem x (s7 c0 (s7 c0 (s7 c0 c0)))) -> (mem x (s6 c61 c0)))
+                                        For reductio interest 42 by i-neg-condit using node 844
+
+                                        Hypernode #414 discharges interest #260
+
+
+This is an undefeated argument of strength 1.0 for:
+      ~(subset (s7 c0 (s7 c0 (s7 c0 c0))) (s6 c61 c0)) supposing { ~(IsInvF c61 c0 (s6 c61 c0)) }
+
+ 1.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 27.  (all B)((subset x18 B) <-> (all x)((mem x x18) -> (mem x B)))     UI from { 1 }
+ 31.  ((subset x18 x22) <-> (all x)((mem x x18) -> (mem x x22)))     UI from { 27 }
+ 35.  ((subset x18 x22) -> (all x)((mem x x18) -> (mem x x22)))     bicondit-simp from { 31 }
+ 11.  (all A)(all B)(all invFBA)((IsInvF B A invFBA) <-> (all x)((mem x invFBA) <-> ((mem x A) & (some y)((mem y B) & (F x y)))))     GIVEN
+ 53.  (all B)(all invFBA)((IsInvF B x33 invFBA) <-> (all x)((mem x invFBA) <-> ((mem x x33) & (some y)((mem y B) & (F x y)))))     UI from { 11 }
+ 54.  (all invFBA)((IsInvF x34 x33 invFBA) <-> (all x)((mem x invFBA) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))))     UI from { 53 }
+ 55.  ((IsInvF x34 x33 x35) <-> (all x)((mem x x35) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))))     UI from { 54 }
+ 57.  ((all x)((mem x x35) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))) -> (IsInvF x34 x33 x35))     bicondit-simp from { 55 }
+ 10.  (all A)(all B)(some invFBA)(IsInvF B A invFBA)     GIVEN
+ 13.  (all B)(some invFBA)(IsInvF B x2 invFBA)     UI from { 10 }
+ 16.  (some invFBA)(IsInvF x5 x2 invFBA)     UI from { 13 }
+ 56.  ((IsInvF x34 x33 x35) -> (all x)((mem x x35) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))))     bicondit-simp from { 55 }
+ 17.  (IsInvF x5 x2 (s6 x5 x2))     EI from { 16 }
+ 58.  (all x)((mem x (s6 x34 x33)) <-> ((mem x x33) & (some y)((mem y x34) & (F x y))))     modus-ponens1 from { 56 , 17 }
+ 65.  ((mem x43 (s6 x34 x33)) <-> ((mem x43 x33) & (some y)((mem y x34) & (F x43 y))))     UI from { 58 }
+ 66.  ((mem x43 (s6 x34 x33)) -> ((mem x43 x33) & (some y)((mem y x34) & (F x43 y))))     bicondit-simp from { 65 }
+ 67.  (((mem x43 x33) & (some y)((mem y x34) & (F x43 y))) -> (mem x43 (s6 x34 x33)))     bicondit-simp from { 65 }
+ 3.  (all A)(all B)(all intAB)((IsInt A B intAB) <-> (all x)((mem x intAB) <-> ((mem x A) & (mem x B))))     GIVEN
+ 45.  (all B)(all intAB)((IsInt x28 B intAB) <-> (all x)((mem x intAB) <-> ((mem x x28) & (mem x B))))     UI from { 3 }
+ 46.  (all intAB)((IsInt x28 x29 intAB) <-> (all x)((mem x intAB) <-> ((mem x x28) & (mem x x29))))     UI from { 45 }
+ 47.  ((IsInt x28 x29 x30) <-> (all x)((mem x x30) <-> ((mem x x28) & (mem x x29))))     UI from { 46 }
+ 2.  (all A)(all B)(some intAB)(IsInt A B intAB)     GIVEN
+ 14.  (all B)(some intAB)(IsInt x3 B intAB)     UI from { 2 }
+ 15.  (some intAB)(IsInt x3 x4 intAB)     UI from { 14 }
+ 48.  ((IsInt x28 x29 x30) -> (all x)((mem x x30) <-> ((mem x x28) & (mem x x29))))     bicondit-simp from { 47 }
+ 18.  (IsInt x3 x4 (s7 x3 x4))     EI from { 15 }
+ 50.  (all x)((mem x (s7 x28 x29)) <-> ((mem x x28) & (mem x x29)))     modus-ponens1 from { 48 , 18 }
+ 61.  ((mem x40 (s7 x28 x29)) <-> ((mem x40 x28) & (mem x40 x29)))     UI from { 50 }
+ 63.  (((mem x40 x28) & (mem x40 x29)) -> (mem x40 (s7 x28 x29)))     bicondit-simp from { 61 }
+ 5.  (all A)(all x)(all y)((same x y) -> ((mem x A) -> (mem y A)))     GIVEN
+ 26.  (all x)(all y)((same x y) -> ((mem x x17) -> (mem y x17)))     UI from { 5 }
+ 28.  (all y)((same x19 y) -> ((mem x19 x17) -> (mem y x17)))     UI from { 26 }
+ 6.  (all x)(same x x)     GIVEN
+ 12.  (same x1 x1)     UI from { 6 }
+ 7.  (all x)(all y)((same x y) <-> (same y z))     GIVEN
+ 19.  (all y)((same x8 y) <-> (same y z))     UI from { 7 }
+ 20.  ((same x8 x9) <-> (same x9 z))     UI from { 19 }
+ 22.  ((same x9 z) -> (same x8 x9))     bicondit-simp from { 20 }
+ 21.  ((same x8 x9) -> (same x9 z))     bicondit-simp from { 20 }
+ 23.  (same x8 z)     modus-ponens1 from { 21 , 12 }
+ 34.  ((same x19 x25) -> ((mem x19 x17) -> (mem x25 x17)))     UI from { 28 }
+ 24.  (same x8 x9)     modus-ponens1 from { 22 , 23 }
+ 39.  ((mem x19 x17) -> (mem x25 x17))     modus-ponens1 from { 34 , 24 }
+ 64.  ((mem x40 x28) -> ((mem x40 x29) -> (mem x40 (s7 x28 x29))))     exportation from { 63 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 x196) }
+        |----------------------------------------------------------
+        | 153.  ~(IsInvF c61 c0 x196)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 x35) }
+        |----------------------------------------------------------
+        | 155.  ~(all x)((mem x x35) <-> ((mem x c0) & (some y)((mem y c61) & (F x y))))     modus-tollens2 from { 57 , 153 }
+        | 156.  (some x)~((mem x x35) <-> ((mem x c0) & (some y)((mem y c61) & (F x y))))     neg-ug from { 155 }
+        | 157.  ~((mem (s199 x35) x35) <-> ((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))))     EI from { 156 }
+        | 158.  (~(mem (s199 x35) x35) <-> ((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))))     neg-bicondit-simp from { 157 }
+        | 160.  (((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))) -> ~(mem (s199 x35) x35))     bicondit-simp from { 158 }
+        | 159.  (~(mem (s199 x35) x35) -> ((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))))     bicondit-simp from { 158 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 (s6 c61 c0)) }
+        |----------------------------------------------------------
+        | 162.  ~((mem (s199 (s6 c61 c0)) c0) & (some y)((mem y c61) & (F (s199 (s6 c61 c0)) y)))     conditional-modus-tollens from { 67 , 160 }
+        | 215.  ~(mem (s199 (s6 c61 c0)) (s6 c61 c0))     modus-tollens2 from { 66 , 162 }
+        | 214.  (mem (s199 (s6 c61 c0)) (s6 c61 c0))     modus-tollens2 from { 159 , 162 }
+        | 260.  (mem x25 (s6 c61 c0))     modus-ponens2 from { 39 , 214 }
+        | 281.  ((mem x43 c0) & (some y)((mem y c61) & (F x43 y)))     modus-ponens2 from { 66 , 260 }
+        | 329.  (mem x43 c0)     simp from { 281 }
+        | 403.  ((mem x40 x29) -> (mem x40 (s7 c0 x29)))     modus-ponens2 from { 64 , 329 }
+        | 622.  (mem x40 (s7 c0 c0))     modus-ponens1 from { 403 , 329 }
+        | 748.  (mem x40 (s7 c0 (s7 c0 c0)))     modus-ponens2 from { 403 , 622 }
+        | 837.  (mem x40 (s7 c0 (s7 c0 (s7 c0 c0))))     modus-ponens2 from { 403 , 748 }
+        | 838.  ~((mem (s199 (s6 c61 c0)) (s7 c0 (s7 c0 (s7 c0 c0)))) -> (mem (s199 (s6 c61 c0)) (s6 c61 c0)))     i-neg-condit from { 215 , 837 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x226 x225) }
+        |----------------------------------------------------------
+        | 199.  (subset x226 x225)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (subset x18 x22) }
+        |----------------------------------------------------------
+        | 203.  (all x)((mem x x18) -> (mem x x22))     modus-ponens2 from { 35 , 199 }
+        | 204.  ((mem x231 x18) -> (mem x231 x22))     UI from { 203 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 (s6 c61 c0)) }
+        |----------------------------------------------------------
+        | 844.  ~(subset (s7 c0 (s7 c0 (s7 c0 c0))) (s6 c61 c0))     REDUCTIO from { 838 , 204 }
+
+
+                                        # 1834  reductio interest:
+                                           (subset ^@y22970 ^@y22970)
+
+                                        using node 11944
