@@ -296,7 +296,7 @@
 (defvar *reductio-interest* .23)
 (defvar *reductio-discount* .23)
 (defvar *quantifier-discount* .95)
-(defvar *EI-adjustment* 2.5)
+(defvar *EI-adjustment* 2.5) ; TODO 2.5
 (defvar *skolem-multiplier* 10)
 (defvar *concluded-interest-priority* .001)
 (defvar *forwards-substantive-reasons* nil)
@@ -377,7 +377,7 @@
 
 (defparameter *log-p* nil)
 
-(defvar *log-retrievals-p* t)
+(defvar *log-retrievals-p* nil)
                                         ;                                                           *MACROS*
 
 (defmacro trace-node (trace-message node depth)
@@ -15212,6 +15212,56 @@
 (defun default-problem-list ()
   (make-problem-list
    "
+Problem #759
+same as problem 758 but without set, which might have been unnecessary
+Given premises:
+        ; elemental equality
+        (all x)(same x x)                                                                                    justification = 1.0
+        (all x)(all y)((same x y) <-> (same y x))                                                            justification = 1.0
+        (all x)(all y)(all z)(((same x y) & (same y z)) -> (same x z))                                       justification = 1.0
+
+        ; membership
+        (all A)(all x)(all y)((same x y) -> ((mem x A) <-> (mem y A)))                                       justification = 1.0
+
+        ; subsetting
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+
+        ; intersection
+        (all A)(all B)(some intAB)(IsInt A B intAB)                                                          justification = 1.0
+        (all A)(all B)(all intAB)((IsInt A B intAB) <-> (all x)((mem x intAB) <-> ((mem x A) & (mem x B))))
+                                                                                                             justification = 1.0
+
+        ; mapping
+        (all A)(all B)((mapsF A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                         &
+                         (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (same y z)))))
+                                                                                                             justification = 1.0
+        (all x)(all y)(all z)((same y z) -> ((F x y) <-> (F x z)))                                           justification = 1.0
+
+        ; subset equality
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+
+        ; inversion
+        (all A)(all B)(some invFBA)(IsInvF B A invFBA)                                                       justification = 1.0
+        (all A)(all B)(all invFBA)((IsInvF B A invFBA) <-> (all x)((mem x invFBA) <-> ((mem x A) & (some y)((mem y B) & (F x y)))))
+                                                                                                             justification = 1.0
+
+Ultimate epistemic interests:
+        (all A)(all B)(all X)(all Y)
+          (
+            ((mapsF A B) & ((subset X B) & (subset Y B)))
+            ->
+            (some intXY)((IsInt X Y intXY) &
+            (some invFIntXYA)((IsInvF intXY A invFIntXYA) &
+            (some invFXA)((IsInvF X A invFXA) &
+            (some invFYA)((IsInvF Y A invFYA) &
+            (some intInvFXAInvFYA)((IsInt invFXA invFYA intInvFXAInvFYA) &
+              (equal invFIntXYA intInvFXAInvFYA)
+            )))))
+          )
+        interest = 1.0
+
 Problem #758
 same as problem 757 but rewritten with only expressions of first-order logic TODO may be incorrect, may contain unnecessary premises, this runs and runs making no discernable progress
 Given premises:
@@ -17125,7 +17175,7 @@ Ultimate epistemic interests:
            (fun (if u=vars (make-skolem-e-function) (make-skolem-e-constant)))
            (substitution (if u=vars (cons fun u=vars) fun))
            (level (1+ (maximum0 (mapcar #'ei-level s-funs))))
-           (discount (expt .4 (- level 1)))
+           (discount (expt (/ 1 *EI-ADJUSTMENT*) (- level 1)))
            (p* (subst substitution q-var (q-matrix p)))
            (conjuncts (conjuncts p*))
            (dn (d-node-for p*)))
