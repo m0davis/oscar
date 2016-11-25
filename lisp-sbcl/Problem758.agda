@@ -32,7 +32,7 @@ postulate
   equal : set → set → Bool
   invF : set → set → set
   subsetMembershipLaw : ∀ {A} {B} → [ subset A B ] ↔ (∀ {M : Set} {x : M} → [ mem x A ] → [ mem x B ])
-  mapsFLaw : ∀ {A} {B} → [ mapsF A B ] ↔ ((∀ {M : Set} {x : M} → [ mem x A ] → ∃ λ (y : M) → mem y B & F x y)
+--  mapsFLaw : ∀ {A} {B} → [ mapsF A B ] ↔ ((∀ {M : Set} {x : M} → [ mem x A ] → ∃ λ (y : M) → mem y B & F x y)
 
 {-
 Problem #758
