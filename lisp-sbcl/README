@@ -850,3 +850,38 @@ This is an undefeated argument of strength 1.0 for:
                                            (subset ^@y22970 ^@y22970)
 
                                         using node 11944
+
+--
+
+In problem 759
+
+                | 853.  ((mem (s196 c0) x26) -> (mem (s196 c0) (s7 c0 x26)))     modus-ponens2 from { 68 , 843 }
+                | 847.  ((mem (s196 c0) c0) & (some y)((mem y c58) & (F (s196 c0) y)))     modus-ponens2 from { 569 , 843 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(mem (s34 c0 c0 c58) c0) , ~(IsInvF c58 c0 c0) }
+                |----------------------------------------------------------
+                | 874.  (mem (s196 c0) (s6 c58 c0))     modus-ponens2 from { 71 , 847 }
+                | 974.  (mem (s196 c0) (s7 c0 (s6 c58 c0)))     modus-ponens1 from { 853 , 874 }
+                | 976.  (mem (s196 c0) (s7 c0 (s7 c0 (s6 c58 c0))))     modus-ponens2 from { 853 , 974 }
+                | 981.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0)))))     modus-ponens2 from { 853 , 976 }
+                | 986.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0))))))     modus-ponens2 from { 853 , 981 }
+                | 991.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0)))))))     modus-ponens2 from { 853 , 986 }
+                | 996.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0))))))))     modus-ponens2 from { 853 , 991 }
+                | 1001.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0)))))))))     modus-ponens2 from { 853 , 996 }
+
+We should block modus-ponens from making such non-productive inferences
+
+other examples might include:
+
+P x → P x
+P x → P x ∨ Q
+P x → ∃ y (P x)
+P x → ∃ y (P x ∨ Q)
+P x → P (s x)
+P x → ∃ y (P y)
+P x → (Q → P x)
+P x → ¬ (¬ P x → Q)
+P x → ¬ (¬ P x ∧ Q)
+P x → ∀ y (⊥ → Q)
+
+another way to go: block any inference by forwards reasoning to something that is already concluded.
