@@ -2729,6 +2729,7 @@
   (interest-text-discharge-condition nil)  ;; a text statement of the discharge condition
   (interest-enabled-nodes nil)  ;; the nodes for which this is an enabling-interest
   (interest-decision-plans nil)  ;; the nodes this interest is relevant to deciding on
+  (interest-cost 0)
   )
 
 (defun backwards-formula-condition (formula)
@@ -3470,6 +3471,7 @@
   (hypernode-justifications nil)  ;; list of pairs (sigma.val) used by justification
   (hypernode-in (list nil))  ;; list of  lists of links
   (hypernode-dependencies nil)   ;; list of sigmas
+  (hypernode-cost 0)
   )
 
                                         ;---------------------------------  hyperlinkS ----------------------------------
@@ -4139,6 +4141,9 @@
 ;;        ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
 ;;        (t 1)))
 ;;TODO modified by MSD
+;;(defun complexity (x)
+;;  (tree-complexity x))
+;;original by john, but with one modification to prevent incompleteness on problem #759
 (defun complexity (x)
   (cond ((null X) 0)
         ((stringp x) 1)
@@ -4149,7 +4154,9 @@
          (cond ((skolem-function (car x))
                 (cond ((null (cdr x)) 1)
                       ((and (not (listp (cadr x))) (not (eq (cadr x) '=))) ; TODO what's '= doing here?
-                       *skolem-multiplier*)
+                       ;*skolem-multiplier* ; TODO MSD modified this
+                       (+ *skolem-multiplier* (complexity (cdr x)))
+                       )
                       ((and (listp (cadr x)) (skolem-function (caar (cdr x))))
                        (* *skolem-multiplier* (1+ (complexity (cdr x)))))
                       (t (apply #'+ (mapcar #'complexity x)))))
@@ -4241,10 +4248,16 @@
   (queue-item-kind nil)   ;; this will be :conclusion, :interest, or :query
   (queue-item-complexity 0)
   (queue-discounted-strength 0)
-  (queue-degree-of-preference 0))
+  (queue-degree-of-preference 0)
+  (queue-cost 0)) ;; a number suggestive of the amount of work done so far to produce this node
 
 ;;============================ interest priorities ====================================
 
+
+;;(defun i-preferred (node1 node2)
+;;  "*inference-queue* is ordered by i-preference"
+;;  (< (queue-cost node1) (queue-cost node2)))
+;;TODO modified by MSD
 (defun i-preferred (node1 node2)
   "*inference-queue* is ordered by i-preference"
   (or (and (eq (queue-item-kind node2) :interest)
@@ -5784,6 +5797,7 @@
 (defun construct-new-interest-for
     (link vars condition degree maximum-degree depth i-list text-condition)
   (let* ((gn (link-generating-node link))
+         (gn-cost (if gn (hypernode-cost gn) 0))
          (interest
            (make-interest
             :interest-number (incf *interest-number*)
@@ -5800,7 +5814,8 @@
             :interest-maximum-degree-of-interest maximum-degree
             :interest-deductive (interest-deductive (link-resultant-interest link))
             :interest-defeat-status (link-defeat-status link)
-            :interest-reductio (interest-reductio (link-resultant-interest link)))))
+            :interest-reductio (interest-reductio (link-resultant-interest link))
+            :interest-cost (1+ (max gn-cost (interest-cost (link-resultant-interest link)))))))
     (funcall* condition interest)
     (if gn (push interest (hypernode-generated-interests gn)))
     (compute-interest-supposition-nodes interest)
@@ -7120,7 +7135,7 @@
   (show-plan plan " has been constructed" supporting-nodes))
 
 (defun make-new-conclusion
-    (sequent deductive-only reductio-ancestors non-reductio-supposition)
+    (sequent sequent-cost deductive-only reductio-ancestors non-reductio-supposition)
   (let* ((c-vars (formula-hypernode-variables (sequent-formula sequent)))
          (sup (sequent-supposition sequent))
          (i-vars (supposition-variables sup))
@@ -7135,6 +7150,7 @@
             :hypernode-supposition-variables i-vars
             :hypernode-non-reductio-supposition non-reductio-supposition
             :hypernode-reductio-ancestors reductio-ancestors
+            :hypernode-cost (1+ sequent-cost)
             )))
     (when (and (listp (sequent-formula sequent))
                (or (equal (car (sequent-formula sequent)) 'plan-for)
@@ -7282,7 +7298,8 @@
             :queue-item-kind :interest
             :queue-item-complexity complexity
             :queue-discounted-strength priority
-            :queue-degree-of-preference (interest-preference priority complexity))))
+            :queue-degree-of-preference (interest-preference priority complexity)
+            :queue-cost (interest-cost interest))))
     (setf (interest-queue-node interest) queue-node)
     (let ((n (interest-number interest)))
       (cond ((member n *priority-interests*)
@@ -7690,7 +7707,7 @@
                 (when (and node (hypernode-deductive-only node) (not deductive-only))
                   (setf (hypernode-deductive-only node) nil))
                 (when (null node)
-                  (setf node (make-new-conclusion sequent deductive-only RA NR)))
+                  (setf node (make-new-conclusion sequent (apply #'max (mapcar #'hypernode-cost basis)) deductive-only RA NR)))
                 (let ((old-degree (current-maximal-degree-of-justification node))
                       (hyperlink
                         (build-hyperlink
@@ -7733,8 +7750,70 @@
                                   (discharge-immediate-reductios
                                    node old-degree new-node? (1+ depth) interests interest))))
                          (when new-node? (invert-contradictions node instantiations (1+ depth)))
-                         (cancel-subsumed-links hyperlink depth)))))))
+                         (cancel-subsumed-links hyperlink depth)
+                         ;(cancel-link-if-subsumed hyperlink depth)
+                         ))))))
               nil))))))
+
+  ;; TODO MSD this is like cancel-subsumed-links, but cancels the given link if subsumed by some other link
+  (defun cancel-link-if-subsumed (link depth)
+    (when (eq (hyperlink-number link) 953) (break))
+    (when (and (not (hypernode-cancelled-node (hyperlink-target link)))
+               (not (hyperlink-defeasible? link)))
+      (let* ((node (hyperlink-target link))
+             (formula (hypernode-formula node))
+             (f-sup (hypernode-supposition node)))
+        (dolist (cl (d-node-c-lists (c-list-d-node (hypernode-c-list node))))
+          (let* ((P (c-list-formula cl))
+                 (P-vars (c-list-variables cl))
+                 (m (match P formula P-vars)))
+            (when (and m (equal formula (match-sublis m P)))
+              (dolist (MM (c-list-nodes cl))
+                (let* ((sup (match-sublis m (hypernode-supposition MM)))
+                       (vars (setdifference (unionmapcar #'formula-hypernode-variables sup) P-vars))
+                       (NR (hypernode-non-reductio-supposition MM)))
+                  (cond
+                    ((eq MM node)
+                     (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
+                       (dolist (L (hypernode-hyperlinks MM))
+                         (when
+                             (and (not (eq L link))
+                                  (not (hyperlink-defeasible? L)))
+                           (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
+                             (when (every
+                                    #'(lambda (Y)
+                                        (some #'(lambda (X) (subsetp X Y)) NDA*))
+                                    NDA)
+                               (delete-arguments link M L depth)
+                               (when *display?*
+                                 (princ L) (princ " subsumesTODO ") (princ link) (terpri))
+                                        ; (pull L (hypernode-hyperlinks M))
+                               ))))))
+                    ((<= (length (hypernode-supposition MM)) (length f-sup))
+                     (let* ((SM (set-match sup f-sup vars)))
+                       (when
+                           (and SM
+                                (some
+                                 #'(lambda (s)
+                                     (subsetp=
+                                      NR
+                                      (match-sublis (mem2 s) (hypernode-non-reductio-supposition node))
+                                      ))
+                                 SM))
+                         (let ((NDA (hyperlink-nearest-defeasible-ancestors link)))
+                           (dolist (L (hypernode-hyperlinks MM))
+                             (when
+                                 (and
+                                      (not (link-ancestor link L))
+                                      (let ((NDA* (hyperlink-nearest-defeasible-ancestors L)))
+                                        (every
+                                         #'(lambda (Y)
+                                             (some #'(lambda (X) (subsetp X Y)) NDA*))
+                                         NDA)))
+                               (delete-arguments L MM link depth)
+                               (when *display?*
+                                 (princ link) (princ " subsumes ") (princ L) (terpri))
+                               )))))))))))))))
 
   (defun cancel-subsumed-links (link depth)
     (when (not (hyperlink-defeasible? link))
@@ -8030,7 +8109,7 @@
               (when (null N-conclusion)
                 (setf N-conclusion
                       (make-new-conclusion
-                       sequent reductio-ancestors reductio-ancestors non-reductio-supposition)))
+                       sequent (max (hypernode-cost node) (hypernode-cost node*)) reductio-ancestors reductio-ancestors non-reductio-supposition)))
               (let ((old-degree (current-maximal-degree-of-justification N-conclusion))
                     (hyperlink
                       (build-hyperlink
@@ -8073,6 +8152,7 @@
                           (1+ depth) d-interests interest)))
                      (when new-node? (invert-contradictions node unifier (1+ depth)))
                      (cancel-subsumed-links hyperlink depth)
+                     ;(cancel-link-if-subsumed hyperlink depth)
                      ))))))))))
 
   (defun build-hyperlink (basis clues rule discount node NDA binding link instantiations depth defeasible?)
@@ -8278,7 +8358,7 @@
                     (convert-reductio-supposition sup discount-factor)
                     (values sup t)))))))
 
-  (defun queue-non-reductio-defeater-supposition (supposition)
+  (defun queue-non-reductio-defeater-supposition (supposition supposition-cost)
     (when (skolem-free supposition) (push supposition *skolem-free-suppositions*))
     (let* ((sequent (list (list supposition) supposition))
            (complexity
@@ -8294,7 +8374,8 @@
               :hypernode-maximal-degree-of-justification 1.0
               :hypernode-degree-of-justification 1.0
               :hypernode-discounted-node-strength 1.0
-              :hypernode-non-reductio-supposition? t))
+              :hypernode-non-reductio-supposition? t
+              :hypernode-cost (1+ supposition-cost)))
            (queue-node
              (make-inference-queue-node
               :queue-number (incf *queue-number*)
@@ -8302,7 +8383,8 @@
               :queue-item-kind :conclusion
               :queue-item-complexity complexity
               :queue-discounted-strength 1.0
-              :queue-degree-of-preference (/ 1.0 complexity))))
+              :queue-degree-of-preference (/ 1.0 complexity)
+              :queue-cost (hypernode-cost node))))
       (setf (hypernode-non-reductio-supposition node) (list (cons supposition node)))
       (setf (hypernode-queue-node node) queue-node)
       (store-hypernode node supposition)
@@ -8341,7 +8423,8 @@
                 :hypernode-supposition-variables e-vars
                 :hypernode-discount-factor discount-factor
                 :hypernode-generating-interests (list interest)
-                :hypernode-non-reductio-supposition? t))
+                :hypernode-non-reductio-supposition? t
+                :hypernode-cost (1+ (interest-cost interest))))
              (queue-node
                (make-inference-queue-node
                 :queue-number (incf *queue-number*)
@@ -8349,7 +8432,8 @@
                 :queue-item-kind :conclusion
                 :queue-discounted-strength priority
                 :queue-item-complexity complexity
-                :queue-degree-of-preference (/ discount-factor complexity))))
+                :queue-degree-of-preference (/ discount-factor complexity)
+                :queue-cost (hypernode-cost node))))
         (setf (hypernode-non-reductio-supposition node) (list (cons (mem1 instance-supposition) node)))
         (setf (hypernode-queue-node node) queue-node)
         (store-hypernode node (sequent-formula sequent))
@@ -8512,7 +8596,7 @@
              (d-node (c-list-d-node c-list)))
         (reason-defeasibly-from-dominant-premise-nodes node d-node))))
 
-  (defun queue-defeater-supposition (sup)
+  (defun queue-defeater-supposition (sup sup-cost)
     (let ((sup-node (find-if #'(lambda (N) (equal (hypernode-formula N) sup))
                              *non-reductio-supposition-nodes*)))
       (cond (sup-node
@@ -8525,7 +8609,7 @@
              (setf sup-node (subsuming-supposition sup))  ;; an hypernode
              (cond ((null sup-node)
                     (setf sup-node
-                          (queue-non-reductio-defeater-supposition sup)))
+                          (queue-non-reductio-defeater-supposition sup sup-cost)))
                    ((reductio-supposition sup-node)
                     (incf (hypernode-readopted-supposition sup-node))
                     (convert-reductio-supposition sup-node 1.0)))))))
@@ -8585,7 +8669,8 @@
                       :interest-defeatees (list link)
                       :interest-priority *base-priority*
                       :interest-defeater-binding (hyperlink-binding link)
-                      :interest-generating-defeat-nodes (list (hyperlink-target link))))
+                      :interest-generating-defeat-nodes (list (hyperlink-target link))
+                      :interest-cost (1+ (hypernode-cost (hyperlink-target link)))))
                (store-interest undercutting-interest i-list)
                (pushnew undercutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
                (when *display?*
@@ -9149,7 +9234,7 @@
                       (adjusted-old-degree (adjust-for-decay old-degree decay)))
                  (when (>< adjusted-old-degree (hypernode-maximal-degree-of-justification n))
                    (let* ((temp
-                            (or (eq (hyperlink-rule L) *temporal-projection*)
+                           (or (eq (hyperlink-rule L) *temporal-projection*)
                                 (eq (hyperlink-rule L) *causal-implication*)
                                 (and (not (keywordp (hyperlink-rule L)))
                                      (reason-temporal? (hyperlink-rule L)))))
@@ -9240,7 +9325,8 @@
                       :interest-supposition-variables (supposition-variables supposition)
                       :interest-defeatees (list link)
                       :interest-priority *base-priority*
-                      :interest-generating-defeat-nodes (list (hyperlink-target link))))
+                      :interest-generating-defeat-nodes (list (hyperlink-target link))
+                      :interest-cost (1+ (hypernode-cost (hyperlink-target link)))))
                (store-interest rebutting-interest i-list)
                (pushnew rebutting-interest (hypernode-generated-defeat-interests (hyperlink-target link)))
                (when *display?*
@@ -9323,7 +9409,7 @@
                                  (t (match-sublis reverse-binding*
                                                   (match-sublis m (hypernode-formula c)) :test 'equal))))
                        B instantiations)))
-               (when sup (queue-defeater-supposition sup))
+               (when sup (queue-defeater-supposition sup (hypernode-cost (hyperlink-target link))))
                (when base
                  (make-undercutting-defeater base formula new-sup antecedent* link reverse-binding*))
                (make-rebutting-defeater variables base formula new-sup antecedent* link))))
@@ -10143,7 +10229,8 @@
                   :interest-formula (neg formula)
                   :interest-supposition supposition
                   :interest-priority *base-priority*
-                  :interest-defeatees (hypernode-hyperlinks node)))
+                  :interest-defeatees (hypernode-hyperlinks node)
+                  :interest-cost (1+ (hypernode-cost node))))
            (store-interest rebutting-interest)
            (when *display?*
              (display-interest rebutting-interest)
@@ -10781,6 +10868,7 @@
                         :interest-reductio t
                         :interest-direct-reductio (list (cons node substitution))
                         :interest-non-reductio? nil
+                        :interest-cost (1+ (hypernode-cost node))
                         ))
                  (push interest (hypernode-generated-direct-reductio-interests node))
                  (if i-list
@@ -10860,7 +10948,8 @@
                      :queue-item-kind :conclusion
                      :queue-item-complexity complexity
                      :queue-discounted-strength (hypernode-discounted-node-strength node)
-                     :queue-degree-of-preference degree)))
+                     :queue-degree-of-preference degree
+                     :queue-cost (hypernode-cost node))))
              (setf (hypernode-queue-node node) queue-node)
              (when degree
                (setf *inference-queue*
@@ -10894,6 +10983,7 @@
                   :hypernode-generating-interests (list interest)
                   :hypernode-variables c-vars
                   :hypernode-supposition-variables c-vars
+                  :hypernode-cost (1+ (interest-cost interest))
                   )))
          (when *trace* (indent depth)
                (princ "DRAW CONCLUSION: ")
@@ -17920,7 +18010,7 @@ Ultimate epistemic interests:
      (i-list-corresponding-c-lists (interest-i-list interest)))
     node))
 
-(defun construct-new-interest-for-sequent (S degree maximum-degree)
+(defun construct-new-interest-for-sequent (S S-cost degree maximum-degree)
   (let ((interest
           (make-interest
            :interest-number (incf *interest-number*)
@@ -17930,14 +18020,15 @@ Ultimate epistemic interests:
            :interest-supposition-variables
            (unionmapcar= #'formula-hypernode-variables (sequent-supposition S))
            :interest-degree-of-interest degree
-           :interest-maximum-degree-of-interest maximum-degree)))
+           :interest-maximum-degree-of-interest maximum-degree
+           :interest-cost (1+ S-cost))))
     (compute-interest-supposition-nodes interest)
     (store-interest interest)
     (when *display?* (display-interest interest))
     (if *log-on* (push interest *reasoning-log*))
     interest))
 
-(defun adopt-interest (S degree defeasible? binding)
+(defun adopt-interest (S S-cost degree defeasible? binding)
   "This code is modified from DISCHARGE-LINK."
   ;; the following assumes there are no i-variables in formula
   (let ((deductive-node (validating-deductive-node S (not defeasible?))))
@@ -17957,7 +18048,7 @@ Ultimate epistemic interests:
                     (max (interest-maximum-degree-of-interest interest) degree))
               (setf (interest-priority interest) (max (interest-priority interest) degree)))
              (t
-              (setf interest (construct-new-interest-for-sequent S degree degree))
+              (setf interest (construct-new-interest-for-sequent S S-cost degree degree))
               (setf (interest-priority interest) degree)
               (let ((conclusion (validating-node interest degree binding)))
                 (when conclusion
