@@ -7719,7 +7719,7 @@
                      (when new-node? (decf *hypernode-number*))
                      )
                     (t
-                     ;(when (eq 1352 (hypernode-number node)) (break))
+                     ;(when (or (eq 96 (hypernode-number node)) (eq 122 (hypernode-number node))) (break)) ; TODO BREAK
                      (setf (hypernode-motivating-nodes node) (union clues motivators))
                      (when new-node?
                        (push node *hypergraph*)
@@ -8917,11 +8917,13 @@
                                         ; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
                (let
                    (;(match (link-interest-match link))
-                    (match* (link-interest-reverse-match link)))
-                 (setf u* (match-sublis match* u*))
-                 (let* ((u1 (mem1 u*))
-                        (u2 (mem2 u*))
-                        (binding
+                    (match* (link-interest-reverse-match link))
+                    )
+                 (let* ((u** (match-sublis match* u*)) ; TODO MSD modified hack
+                        ;(u** (match-sublis match u*))
+                        (u1 (mem1 u**))
+                        (u2 (mem2 u**))
+                        (binding*
                           (mapcar
                            #'(lambda (assoc)
                                (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding))
@@ -8929,14 +8931,17 @@
                           (cons u1
                                 (mapcar
                                  #'(lambda (in)
-                                     (cond ((eq in t) u2)
-                                           (t (cons (car in) (match-sublis u2 (cdr in))))))
+                                     ; TODO MSD modified this to fix a problem in 760 - this respects that link-instantiations is a list of list of assocs (a list of matches, one for each instantiated premise, not merely a list of assocs - this makes it more in line with what is done by discharge-link, for example
+                                     ;(cond ((eq in t) u2)
+                                        ;      (t (cons (car in) (match-sublis u2 (cdr in)))))
+                                     (merge-matches* in u2)
+                                     )
                                  (link-instantiations link))))
                         (supposition (match-sublis u2 (link-supposition link))))
                    (cond
                      ((link-remaining-premises link)
                       (construct-interest-link
-                       link node instantiations binding (link-remaining-premises link) supposition
+                       link node instantiations binding* (link-remaining-premises link) supposition
                        (interest-degree-of-interest N) (interest-maximum-degree-of-interest N) (1+ depth)
                        (interest-priority (link-resultant-interest link)) interests))
                      ((or (null (interest-right-links (link-resultant-interest link)))
@@ -8948,16 +8953,16 @@
                                 (interest-right-links (link-resultant-interest link))))
                       (cond
                         ((reason-conclusions-function (link-rule link))
-                         (dolist (P (funcall (reason-conclusions-function (link-rule link)) binding))
+                         (dolist (P (funcall (reason-conclusions-function (link-rule link)) binding*)) ; TODO MSD changed binding* to binding* ; and then undid it
                            (draw-conclusion
                             (car P) (cons node (link-supporting-nodes link)) (link-rule link) instantiations
-                            (reason-discount-factor (link-rule link)) depth nil (cdr P) :binding binding :interest
+                            (reason-discount-factor (link-rule link)) depth nil (cdr P) :binding binding* :interest
                             (link-resultant-interest link) :link link :clues (link-clues link))))
                         (t
                          (draw-conclusion
                           (interest-formula (link-resultant-interest link)) (cons node (link-supporting-nodes link))
                           (link-rule link) instantiations (reason-discount-factor (link-rule link)) depth nil
-                          (reason-defeasible-rule (link-rule link)) :binding binding :interest (link-resultant-interest link)
+                          (reason-defeasible-rule (link-rule link)) :binding binding* :interest (link-resultant-interest link)
                                                                     :link link :clues (link-clues link)))
                         ))))))))))
 
@@ -13256,7 +13261,8 @@
          *plans-decided*)
     (throw 'die nil))
                                         ; (when (read-char-no-hang) (clear-input) (throw 'die nil))
-  (when (and *display-inference-queue* *display?*) (display-inference-queue))
+  ;(when (and *display-inference-queue* *display?*) (display-inference-queue)) ; TODO modified by MSD
+  (when *display-inference-queue* (display-inference-queue))
   (when (eq *cycle* *start-trace*)
     (trace-on)
     (when (equal (lisp-implementation-type) "Macintosh Common Lisp")
@@ -14659,7 +14665,7 @@
       (menu-item-enable (oscar-menu-item "Display off"))
       (menu-item-enable (oscar-menu-item "Display from"))))
                                         ; (display-assignment-tree)
-  (when (and *display-inference-queue* *display?*) (display-inference-queue))
+  (when *display-inference-queue* (display-inference-queue))  ; TODO MSD removed need for display
   (let ((Q (mem1 *inference-queue*)))
     (when (or *display?* *log-retrievals-p*) ; TODO MSD modded
       (princ "---------------------------------------------------------------------------") (terpri)
@@ -15302,6 +15308,15 @@
 (defun default-problem-list ()
   (make-problem-list
    "
+Problem #760
+designed to show a simple version of the bug shown by hypernode 800 in problem 757
+Given premises:
+  (all A)(all B)((~(equal A B) & (subset A B)) -> ~(subset B A)) justification = 1.0
+  (all A)(all B)((all x) ((mem x A) -> (mem x B)) -> (subset A B)) justification = 1.0
+
+Ultimate epistemic interests:
+  (all A)(all B)((~(equal A B) & (subset A B)) -> ~(all x)(((mem x A) -> (mem x A)) -> (subset A A))) interest = 1.0
+
 Problem #759
 same as problem 758 but without set, which might have been unnecessary
 Given premises:
