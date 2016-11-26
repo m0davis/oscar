@@ -4095,6 +4095,20 @@
         (instance-of formula query-formula)
         (equal formula query-formula))))
 
+;;TODO MSD this version treats logical constants differently from predicates differently from ...whatever we call those other things ... and also differently from variables TODO does not handle plans
+;;(defun complexity (x)
+;;  (cond ((null X) 0)
+;;        ((stringp x) 1)
+;;        ((atom x) 1)
+;;        ((listp x)
+;;         (cond ((or (u-genp x) (e-genp x)) (* *quantifier-discount* (complexity (q-matrix x))))
+;;               ((member (mem1 x) *logical-constants*)
+;;                (apply #'+ (mapcar #'complexity (cdr x))))
+;;               (t
+;;                (* *skolem-multiplier* (exp (apply #'+ (mapcar #'log (mapcar #'complexity (cdr x)))))))
+;;               (t (+ (complexity (car x)) (complexity (cdr x))))))
+;;        ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
+;;        (t 1)))
 ;;(defun complexity (x)
 ;;  (cond ((null X) 0)
 ;;        ((stringp x) 1)
@@ -4149,16 +4163,16 @@
         ((stringp x) 1)
                                         ; ((plan-p x) (length (plan-steps x)))
         ((plan-p x) (length (plan-steps x)))
-        ((atom x) 1)
+        ((atom x) (* 1 (exp (/ 1 (+ 10 (random 10))))))
         ((listp x)
          (cond ((skolem-function (car x))
                 (cond ((null (cdr x)) 1)
                       ((and (not (listp (cadr x))) (not (eq (cadr x) '=))) ; TODO what's '= doing here?
                        ;*skolem-multiplier* ; TODO MSD modified this
-                       (+ *skolem-multiplier* (complexity (cdr x)))
+                       (+ (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (complexity (cdr x)))
                        )
                       ((and (listp (cadr x)) (skolem-function (caar (cdr x))))
-                       (* *skolem-multiplier* (1+ (complexity (cdr x)))))
+                       (* (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (1+ (complexity (cdr x)))))
                       (t (apply #'+ (mapcar #'complexity x)))))
                ((or (u-genp x) (e-genp x)) (* *quantifier-discount* (complexity (q-matrix x))))
                                         ;   ((eq (car x) 'protoplan-for)
@@ -14672,7 +14686,7 @@
       (princ *cycle*) (princ ":    ")
       (princ "Retrieving ") (princ (queue-item Q))
       (princ " from the inference-queue.  Preference = ")
-      (princ (float (/ (truncate (* 10000 (queue-degree-of-preference Q))) 10000)))
+      (princ (float (/ (truncate (* 1000000 (queue-degree-of-preference Q))) 1000000)))
       (terpri) (terpri))
     (pause)
     (setf *inference-queue* (cdr *inference-queue*))
@@ -15308,6 +15322,51 @@
 (defun default-problem-list ()
   (make-problem-list
    "
+Problem #761
+natural number reasoning in first-order logic
+
+Given premises:
+  (all x)(x = x)
+   justification = 1.0
+  (all x)(all y)((x = y) -> (y = x))
+   justification = 1.0
+  (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))
+   justification = 1.0
+  (all x)(~(zero = (suc x)))
+   justification = 1.0
+  (all x)(all y)(((suc x) = (suc y)) <-> (x = y))
+   justification = 1.0
+  (all x)((+ x zero) = x)
+   justification = 1.0
+  (all x)(all y)((+ x (suc y)) = (suc (+ x y)))
+   justification = 1.0
+  (all x)((* x zero) = zero)
+   justification = 1.0
+  (all x)(all y)((* x (suc y)) = (+ (* x y) x))
+   justification = 1.0
+
+Ultimate epistemic interests:
+  (+ (suc zero) (suc zero)) = (suc (suc zero))
+   interest = 1.0
+
+
+
+
+;  (all n0)((zero n0) &
+;  (all n1)((suc n1 n0)
+;   (some n2)(suc n1 n0) & (suc n2 n1) ->
+;
+;
+;  (all x)(equal x x)
+;  (all x)(all y)((equal x y) -> (equal y x))
+;  (all x)(all y)(all z)(((equal x y) & (equal y z)) -> (equal x z))
+;
+;  (some x)(zero x)
+;  (all x)(some y)(suc y x)
+;
+;  (additionally-equal x y z) <->
+;  (all x)((zero x) &
+
 Problem #760
 designed to show a simple version of the bug shown by hypernode 800 in problem 757
 Given premises:
