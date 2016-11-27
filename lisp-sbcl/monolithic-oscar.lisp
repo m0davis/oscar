@@ -293,8 +293,8 @@
 (defvar *blocked-conclusions* nil)
 (defparameter *query-answered-discount* .5 "only used when a query is query-answered? and not in *permanent-ultimate-epistemic-interests*; affects queue-degree-of-preference and interest-priority")
 (defvar *base-priority* .1)
-(defvar *reductio-interest* .23)
-(defvar *reductio-discount* .23)
+(defvar *reductio-interest* .23) ; .23
+(defvar *reductio-discount* .23) ; .23
 (defvar *quantifier-discount* .95)
 (defvar *EI-adjustment* 2.5) ; TODO 2.5
 (defvar *skolem-multiplier* 10)
@@ -378,6 +378,9 @@
 (defparameter *log-p* nil)
 
 (defvar *log-retrievals-p* nil)
+
+(defvar *break-node* -1)
+
                                         ;                                                           *MACROS*
 
 (defmacro trace-node (trace-message node depth)
@@ -4164,15 +4167,18 @@
                                         ; ((plan-p x) (length (plan-steps x)))
         ((plan-p x) (length (plan-steps x)))
         ((atom x) (* 1 (exp (/ 1 (+ 10 (random 10))))))
+        ;((atom x) 1)
         ((listp x)
          (cond ((skolem-function (car x))
                 (cond ((null (cdr x)) 1)
                       ((and (not (listp (cadr x))) (not (eq (cadr x) '=))) ; TODO what's '= doing here?
                        ;*skolem-multiplier* ; TODO MSD modified this
                        (+ (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (complexity (cdr x)))
+                       ;(+ 1.5 *skolem-multiplier* (complexity (cdr x)))
                        )
                       ((and (listp (cadr x)) (skolem-function (caar (cdr x))))
                        (* (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (1+ (complexity (cdr x)))))
+                       ;(* 1.5 *skolem-multiplier* (1+ (complexity (cdr x)))))
                       (t (apply #'+ (mapcar #'complexity x)))))
                ((or (u-genp x) (e-genp x)) (* *quantifier-discount* (complexity (q-matrix x))))
                                         ;   ((eq (car x) 'protoplan-for)
@@ -4205,7 +4211,11 @@
                                         ; (1+ (complexity (list (mem2 x) (mem3 x) (mem4 x) (mem5 x)))))
                                         ; (+ 4 (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1))
                ((eq (car x) 'plan-node) .1)
-               (t (+ (complexity (car x)) (complexity (cdr x))))))
+               ;(t (+ (complexity (car x)) (complexity (cdr x)))))) ; TODO MSD is modifying this again!
+               ((member (car x) *logical-constants*)
+                (+ (complexity (car x)) (complexity (cdr x))))
+               (t
+                * 2 (apply #'+ (mapcar #'complexity x)))))
         ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
         (t 1)))
 ;; (defun complexity (x)
@@ -4556,6 +4566,39 @@
                 (domain (domain m1*))
                 (m2* (subset #'(lambda (x) (not (member (car x) domain))) m2)))
            (append m1* m2*)))))
+
+(defun match-keys (key-assignments alist)
+  "translates the given alist using the given key-assignments, which should be of the form (alist-key . new-key), resulting in an alist which uses the new keys"
+  (cond ((or (eq key-assignments t) (eq alist t))
+         t)
+        ((null key-assignments)
+         alist)
+        (t
+         (mapcar
+          #'(lambda (a)
+              (cons (cdr (assoc (car a) key-assignments)) (cdr a)))
+          alist))))
+
+(defun match-values (value-assignments alist)
+  "translates the given alist using the given value-assignments, which should be of the form (key . value), resulting in an alist whose values have been match-sublis ed"
+  (cond ((or (eq value-assignments t) (eq alist t))
+         t)
+        ((null value-assignments)
+         alist)
+        (t
+         (mapcar
+          #'(lambda (a)
+              (cons (car a) (match-sublis value-assignments (cdr a))))
+          alist))))
+
+(defun merge-matches-on-domain* (m1 m2)
+  "might better be called merge-match-with-unifier. m1 is taken to be one half of a unifier and m2 a match; the key values of m2 are modified by m1"
+  (cond ((null m1) m2)
+        ((null m2) m1)
+        ((eq m1 t) m2)
+        ((eq m2 t) m1)
+        (t
+         (mapcar #'(lambda (x) (cons (car x) (match-sublis m2 (cdr x)))) m1))))
 
 (defun set-mgu (X Y vars)
   (cond (X
@@ -7733,7 +7776,7 @@
                      (when new-node? (decf *hypernode-number*))
                      )
                     (t
-                     ;(when (or (eq 96 (hypernode-number node)) (eq 122 (hypernode-number node))) (break)) ; TODO BREAK
+                     (when (eq *break-node* (hypernode-number node)) (break)) ; TODO BREAK
                      (setf (hypernode-motivating-nodes node) (union clues motivators))
                      (when new-node?
                        (push node *hypergraph*)
@@ -8930,17 +8973,27 @@
                               (match-sublis (link-interest-match link) binding)))
                                         ; (setf u* (convert-unifier-variables u* (hypernode-variables node)))
                (let
-                   (;(match (link-interest-match link))
+                   (;(match (link-interest-match link)) ; MSD uncommented to fix a problem in an ad-hoc test
                     (match* (link-interest-reverse-match link))
+                    ;(match** (list match* match))
                     )
-                 (let* ((u** (match-sublis match* u*)) ; TODO MSD modified hack
+                 (let* (;(u** (match-sublis match* u*)) ; ORIGINAL
+                        ;(u** (merge-unifiers* u* match**))  ; TODO MSD modified hack
                         ;(u** (match-sublis match u*))
+                        ;(u** (merge-unifiers* match** u*)) ; tried this doesn't work
+                        (u*1 (mem1 u*))
+                        (u*2 (mem2 u*))
+                        (u** (list (match-values match* u*1)
+                                   (match-keys match* u*2)))
                         (u1 (mem1 u**))
+                                        ;(u2-for-binding (mem2 (merge-unifiers* u* match**))) ; TODO MSD modified
                         (u2 (mem2 u**))
                         (binding*
                           (mapcar
                            #'(lambda (assoc)
-                               (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding))
+                                        ;(cons (car assoc) (match-sublis u2 (cdr assoc)))) binding) TODO there's a problem here in an ad-hoc test
+                               (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding)
+                          )
                         (instantiations
                           (cons u1
                                 (mapcar
@@ -8952,6 +9005,7 @@
                                      )
                                  (link-instantiations link))))
                         (supposition (match-sublis u2 (link-supposition link))))
+                   ;(when (mem1 match**) (break))
                    (cond
                      ((link-remaining-premises link)
                       (construct-interest-link
@@ -15322,6 +15376,87 @@
 (defun default-problem-list ()
   (make-problem-list
    "
+Problem #763
+simplified 762
+Given premises:
+        ; = is an equality relation
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+
+        ; substitution rules
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+
+        ;(all A)(all B)(all x)((equal A B) -> ((mem x A) -> (mem x B)))                                       justification = 1.0
+
+        ; NOT NEEDED
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+
+Ultimate epistemic interests:
+        (all A)(equal A A)                                                                                   interest = 1.0
+        (all A)(all B)((equal A B) -> (equal B A))                                                           interest = 1.0
+        (all A)(all B)(all C)((equal A B) -> ((equal B C) -> (equal A C)))                                   interest = 1.0
+        (all A)(all B)(all C)(all x)((equal A (int B C)) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+        (all A)(all B)(all C)(all x)((equal (int B C) A) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+
+        ;(all A)(all B)(all C)((equal A B) -> ((subset A C) -> (subset B C)))                                 interest = 1.0
+        ;(all A)(all B)(all C)((equal A B) -> ((subset C A) -> (subset C B)))                                 interest = 1.0
+        ;(all A)(all B)(all x)((equal A B) -> ((mem x A) -> (mem x B)))                                       interest = 1.0
+        ;(all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+        ;(all A)(all B)(all C)(all D)((equal A (int B C)) -> ((subset D (int B C)) -> (subset D A)))          interest = 1.0
+        ;(all A)(all B)(all C)(all x)((equal A (int B C)) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+        ;(all A)(equal A A)                                                                                   interest = 1.0
+        ;(all A)(all B)((equal A B) -> (equal B A))                                                           interest = 1.0
+        ;(all A)(all B)(all C)((equal A B) -> ((equal B C) -> (equal A C)))                                   interest = 1.0
+        ;Q interest = 1.0
+
+Problem #762
+same as 757 but with some needed rules for equality
+Given premises:
+        ; = is an equality relation
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+
+        ; substitution rules
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+
+        (all A)(all B)(all x)((equal A B) -> ((mem x A) -> (mem x B)))                                       justification = 1.0
+
+Ultimate epistemic interests:
+;        (all A)(all B)(all C)((equal A B) -> ((subset A C) -> (subset B C)))                                 interest = 1.0
+;        (all A)(all B)(all C)((equal A B) -> ((subset C A) -> (subset C B)))                                 interest = 1.0
+;        (all A)(all B)(all x)((equal A B) -> ((mem x A) -> (mem x B)))                                       interest = 1.0
+;        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+;        (all A)(all B)(all C)(all D)((equal A (int B C)) -> ((subset D (int B C)) -> (subset D A)))          interest = 1.0
+;        (all A)(all B)(all C)(all x)((equal A (int B C)) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+        (all A)(equal A A)                                                                                   interest = 1.0
+        (all A)(all B)((equal A B) -> (equal B A))                                                           interest = 1.0
+        (all A)(all B)(all C)((equal A B) -> ((equal B C) -> (equal A C)))                                   interest = 1.0
+
 Problem #761
 natural number reasoning in first-order logic
 
@@ -28229,4 +28364,109 @@ interest 4 ~(~P y7 y6 -> Q y7 y6) is generated by reductio from hypernode 10 (~P
 (unifier* '(a a) '(b a) '(a) '(a b)) = (T ((B . A)))
 (unifier* '(c c) '(b a) '(c) '(a b)) = (T ((B . A)))
 
+|#
+
+#|
+       "
+Problem #763
+bug on node 8211
+Given premises:
+        ; = is an equality relation
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        ; substitution rules
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        ; NOT NEEDED
+        ;(all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        ;(all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        ;(all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        ;(all A)(all B)((maps F A B) <->
+        ;                ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+        ;                & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))
+        ;                                                                                                     justification = 1.0
+        ;(all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+        ;(all A)(all B)(all x)((equal A B) -> ((mem x A) -> (mem x B)))                                       justification = 1.0
+Ultimate epistemic interests:
+        ;(all A)(equal A A)                                                                                   interest = 1.0
+        ;(all A)(all B)((equal A B) -> (equal B A))                                                           interest = 1.0
+        ;(all A)(all B)(all C)((equal A B) -> ((equal B C) -> (equal A C)))                                   interest = 1.0
+        ;(all A)(all B)(all x)((equal A B) -> ((mem x A) -> (mem x B)))                                       interest = 1.0
+        ;(all A)(all B)(all C)(all x)((equal A (int B C)) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+        ;(all A)(all B)(all C)(all x)((equal (int B C) A) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+        ;(all A)(all B)(all C)((equal A B) -> ((subset A C) -> (subset B C)))                                 interest = 1.0
+        ;(all A)(all B)(all C)((equal A B) -> ((subset C A) -> (subset C B)))                                 interest = 1.0
+        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+        ;(all A)(all B)(all C)(all D)((equal A (int B C)) -> ((subset D (int B C)) -> (subset D A)))          interest = 1.0
+        ;(all A)(all B)(all C)(all x)((equal A (int B C)) -> ((mem x (int B C)) -> (mem x A)))                interest = 1.0
+        ;(all A)(equal A A)                                                                                   interest = 1.0
+        ;(all A)(all B)((equal A B) -> (equal B A))                                                           interest = 1.0
+        ;(all A)(all B)(all C)((equal A B) -> ((equal B C) -> (equal A C)))                                   interest = 1.0
+        ;Q interest = 1.0
+"
+|#
+
+(setf *random-state* (seed-random-state 0))
+(setf *break-node* 3645)
+(setf *break-node* 35)
+(setf *break-node* 3244)
+(setf *break-node* -1)
+(setf *problems*
+      (make-problem-list
+       "
+Problem #763
+bug on node 3645
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+
+
+Ultimate epistemic interests:
+        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+;        (all A)(all B)(all C)(all x)((equal A B) -> (((mem x A) & (mem x C)) -> ((mem x B) & (mem x C))))                interest = 1.0
+
+Problem #764
+same as 757 but with some needed rules for equality
+Given premises:
+        ; = is an equality relation
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+
+        ; substitution rules
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+
+Ultimate epistemic interests:
+        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+;        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
+;                                                                 ->
+;        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
+"
+       ))
+
+(setf *problems* (default-problem-list))
+
+#|
+        | 3640.  ((subset c19 ^@y41) -> ~(subset ^@y41 c19))     CONTRA-CONDITIONALIZATION from { 3638 }
+        | 3645.  (~(subset c19 ^@y42) v ~(subset ^@y42 c19))     disj-cond from { 3640 }
 |#
