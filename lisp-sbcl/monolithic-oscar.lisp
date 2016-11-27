@@ -4284,6 +4284,8 @@
 ;;TODO modified by MSD
 (defun i-preferred (node1 node2)
   "*inference-queue* is ordered by i-preference"
+  (assert (numberp (queue-degree-of-preference node1)))
+  (assert (numberp (queue-degree-of-preference node2)))
   (or (and (eq (queue-item-kind node2) :interest)
            (eql (interest-priority (queue-item node2)) *answered-priority*))
       (> (queue-degree-of-preference node1) (queue-degree-of-preference node2))
@@ -7355,7 +7357,7 @@
             :queue-item-kind :interest
             :queue-item-complexity complexity
             :queue-discounted-strength priority
-            :queue-degree-of-preference (interest-preference priority complexity)
+            :queue-degree-of-preference (/ (interest-preference priority complexity) (log (1+ (interest-number interest))))
             :queue-cost (interest-cost interest))))
     (setf (interest-queue-node interest) queue-node)
     (let ((n (interest-number interest)))
@@ -8440,7 +8442,7 @@
               :queue-item-kind :conclusion
               :queue-item-complexity complexity
               :queue-discounted-strength 1.0
-              :queue-degree-of-preference (/ 1.0 complexity)
+              :queue-degree-of-preference (/ (/ 1.0 complexity) (log (1+ (hypernode-number node))))
               :queue-cost (hypernode-cost node))))
       (setf (hypernode-non-reductio-supposition node) (list (cons supposition node)))
       (setf (hypernode-queue-node node) queue-node)
@@ -8489,7 +8491,7 @@
                 :queue-item-kind :conclusion
                 :queue-discounted-strength priority
                 :queue-item-complexity complexity
-                :queue-degree-of-preference (/ discount-factor complexity)
+                :queue-degree-of-preference (/ (/ discount-factor complexity) (log (1+ (hypernode-number node))))
                 :queue-cost (hypernode-cost node))))
         (setf (hypernode-non-reductio-supposition node) (list (cons (mem1 instance-supposition) node)))
         (setf (hypernode-queue-node node) queue-node)
@@ -9005,7 +9007,7 @@
                                      )
                                  (link-instantiations link))))
                         (supposition (match-sublis u2 (link-supposition link))))
-                   ;(when (mem1 match**) (break))
+                   (break) ;(when (not (member match* '(nil t))) (break))
                    (cond
                      ((link-remaining-premises link)
                       (construct-interest-link
@@ -11021,7 +11023,7 @@
                      :queue-item-kind :conclusion
                      :queue-item-complexity complexity
                      :queue-discounted-strength (hypernode-discounted-node-strength node)
-                     :queue-degree-of-preference degree
+                     :queue-degree-of-preference (/ degree (log (1+ (hypernode-number node))))
                      :queue-cost (hypernode-cost node))))
              (setf (hypernode-queue-node node) queue-node)
              (when degree
@@ -28457,10 +28459,10 @@ Given premises:
         (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
 
 Ultimate epistemic interests:
-        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
-;        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
-;                                                                 ->
-;        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
+;        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
+                                                                 ->
+        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
 "
        ))
 
