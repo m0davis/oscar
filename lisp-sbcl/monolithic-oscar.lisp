@@ -379,6 +379,13 @@
 
 (defvar *log-retrievals-p* nil)
 
+(defun ret-on ()
+  (setf *log-retrievals-p* t))
+
+(defun ret-off ()
+  (setf *log-retrievals-p* nil))
+
+
 (defvar *break-node* -1)
 
                                         ;                                                           *MACROS*
@@ -4160,6 +4167,7 @@
 ;;TODO modified by MSD
 ;;(defun complexity (x)
 ;;  (tree-complexity x))
+
 ;;original by john, but with one modification to prevent incompleteness on problem #759
 (defun complexity (x)
   (cond ((null X) 0)
@@ -4212,12 +4220,21 @@
                                         ; (+ 4 (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1))
                ((eq (car x) 'plan-node) .1)
                ;(t (+ (complexity (car x)) (complexity (cdr x)))))) ; TODO MSD is modifying this again!
+               ;;this code makes problem #99 fast
                ((member (car x) *logical-constants*)
                 (+ (complexity (car x)) (complexity (cdr x))))
                (t
-                * 2 (apply #'+ (mapcar #'complexity x)))))
+                (* 1.2 (apply #'+ (mapcar #'complexity x))))
+
+               ;;this seems to make more sense but 99 runs slow
+               ;((member (car x) *logical-constants*)
+               ; (* 1.1 (apply #'max (mapcar #'complexity x))))
+               ;(t
+               ; (* 5 (apply #'max (mapcar #'complexity x))))
+               ))
         ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
         (t 1)))
+
 ;; (defun complexity (x)
 ;;   (cond ((null X) 0)
 ;;         ((stringp x) 1)
@@ -4265,7 +4282,12 @@
              (lambda (x stream depth)
                (declare (ignore depth))
                (princ "#<" stream) (princ "Item " stream)
-               (princ (queue-number x) stream) (princ ">" stream)))
+               (princ (queue-number x) stream)
+               (princ ":" stream)
+               (princ (queue-item x) stream)
+               (princ " preference=" stream)
+               (princ (queue-degree-of-preference x) stream)
+               (princ ">" stream)))
             (:conc-name nil))
   (queue-number 0)
   (queue-item nil)  ;; either an interest or a conclusion or a query
@@ -4316,6 +4338,7 @@
            :queue-discounted-strength (query-strength query)
            :queue-degree-of-preference (query-preference query))))
     (setf (query-queue-node query) node)
+    ;(princ node)(terpri)
     (setf *inference-queue* (ordered-insert node *inference-queue* #'i-preferred))))
 
                                         ; -------------------------------------- INTERESTS --------------------------------------
@@ -7363,9 +7386,11 @@
     (let ((n (interest-number interest)))
       (cond ((member n *priority-interests*)
              (when *display?* (princ "Giving priority to interest ") (princ n) (terpri))
+             ;(princ queue-node)(terpri)
              (setf *inference-queue* (cons queue-node *inference-queue*))
              (when *display?* (display-inference-queue)))
-            (t (setf *inference-queue*
+            (t ;(princ queue-node)(terpri)
+               (setf *inference-queue*
                      (ordered-insert queue-node *inference-queue* #'i-preferred)))))
                                         ; (when *display?* (princ "                                        Preference = ")
                                         ;               (princ (float (/ (truncate (* 10000 (queue-degree-of-preference queue-node))) 10000)))
@@ -8452,6 +8477,7 @@
       (if *log-on* (push node *reasoning-log*))
       (when *display?* (display-unsupported-hypernode node))
       (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+      ;(princ queue-node)(terpri)
       (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
       (when (and *display?* *graphics-on*)
         (when *graphics-pause* (pause-graphics))
@@ -8502,6 +8528,7 @@
         (if *log-on* (push node *reasoning-log*))
         (when *display?* (display-unsupported-hypernode node))
         (discharge-interest-in node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+        ;(princ queue-node)(terpri)
         (setf *inference-queue* (ordered-insert queue-node *inference-queue* #'i-preferred))
         (when (and *display?* *graphics-on*)
           (when *graphics-pause* (pause-graphics))
@@ -9007,7 +9034,7 @@
                                      )
                                  (link-instantiations link))))
                         (supposition (match-sublis u2 (link-supposition link))))
-                   (break) ;(when (not (member match* '(nil t))) (break))
+                   ;(break) ;(when (not (member match* '(nil t))) (break))
                    (cond
                      ((link-remaining-premises link)
                       (construct-interest-link
@@ -10364,6 +10391,7 @@
     (store-hypernode node formula)
     (discharge-interest-in
      node (c-list-corresponding-i-lists (hypernode-c-list node)) nil t 1 nil)
+    ;(princ queue-node)(terpri)
     (setf *inference-queue*
           (ordered-insert queue-node *inference-queue* #'i-preferred))
     ))
@@ -10514,6 +10542,7 @@
              (push node *hypergraph*)
              (when *display?* (display-unsupported-hypernode node))
              (push node *desires*)
+             ;(princ queue-node)(terpri)
              (setf *inference-queue*
                    (ordered-insert queue-node *inference-queue* #'i-preferred)))))))
 
@@ -10547,6 +10576,7 @@
     (push node *hypergraph*)
     (store-hypernode node (hypernode-formula node))
     (when *display?* (display-unsupported-hypernode node))
+    ;(princ queue-node)(terpri)
     (setf *inference-queue*
           (ordered-insert queue-node *inference-queue* #'i-preferred))))
 
@@ -11027,6 +11057,7 @@
                      :queue-cost (hypernode-cost node))))
              (setf (hypernode-queue-node node) queue-node)
              (when degree
+               ;(princ queue-node)(terpri)
                (setf *inference-queue*
                      (ordered-insert queue-node *inference-queue* #'i-preferred)))
                                         ; (when *display?* (princ "  Preference = ")
@@ -13957,9 +13988,9 @@
     (when generating-interests (terpri)))
   (let ((interests (remove-duplicates (hypernode-discharged-interests n))))
     (cond ((> (length interests) 1)
-           (princ "||  This discharges interests ") (print-list (mapcar #'interest-number interests) 40))
+           (princ "||  This discharges interests ") (print-list (mapcar #'interest-number (mapcar #'car interests)) 40))
           ((equal (length interests) 1)
-           (princ "||  This discharges interest ") (princ (interest-number (mem1 interests)))))
+           (princ "||  This discharges interest ") (princ (interest-number (mem1 (car interests))))))
     (when interests (terpri))))
 
 (defun full-display-used-interest (interest)
@@ -13988,10 +14019,10 @@
   (let ((direct-reductio-interest (interest-direct-reductio interest)))
     (cond ((> (length direct-reductio-interest) 1)
            (princ "                                        || Reductio interest generated by nodes ")
-           (print-list (mapcar #'hypernode-number direct-reductio-interest) 40) (terpri))
+           (print-list (mapcar #'hypernode-number (mapcar #'car direct-reductio-interest)) 40) (terpri))
           ((= (length direct-reductio-interest) 1)
            (princ "                                        || Reductio interest generated by node ")
-           (princ (hypernode-number (mem1 direct-reductio-interest))) (terpri)))))
+           (princ (hypernode-number (mem1 (car direct-reductio-interest)))) (terpri)))))
 
 (defun link-interests (link)
   (cond
@@ -28411,11 +28442,10 @@ Ultimate epistemic interests:
 "
 |#
 
-(setf *random-state* (seed-random-state 0))
-(setf *break-node* 3645)
-(setf *break-node* 35)
-(setf *break-node* 3244)
-(setf *break-node* -1)
+(ret-off)(display-off)(iq-off)(trace-off)(log-off)(proof-off)
+(setf *problems* (default-problem-list))
+(test :skip 757 758 759 760 761 762 763)
+
 (setf *problems*
       (make-problem-list
        "
@@ -28430,12 +28460,9 @@ Given premises:
         (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
         (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
         (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
-
-
 Ultimate epistemic interests:
         (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
 ;        (all A)(all B)(all C)(all x)((equal A B) -> (((mem x A) & (mem x C)) -> ((mem x B) & (mem x C))))                interest = 1.0
-
 Problem #764
 same as 757 but with some needed rules for equality
 Given premises:
@@ -28443,32 +28470,102 @@ Given premises:
         (all x)(x = x)                                                                                       justification = 1.0
         (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
         (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
-
         ; substitution rules
         (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
         (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
         (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
-
+        ;
         (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
         (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
         (all A)(all B)((maps F A B) <->
                         ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
-                        & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
                                                                                                              justification = 1.0
         (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
         (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
-
 Ultimate epistemic interests:
 ;        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
-        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
-                                                                 ->
-        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
+;        (all A)(all B)((maps F A B) -> (equal (inv F (int B B) A) (int (inv F B A) (inv F B A))))            interest = 1.0
+;*        (all A)((maps F A A) -> (subset (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
+;        (all A)((maps F A A) -> (subset (inv F (int A A) A) (int (inv F A A) (inv F A A))))            interest = 1.0
+;         (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0 ; slow
+         (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0 ; fast
+;fast        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0
+;slow        (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
+;        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
+;                                                                 ->
+;        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
+;        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
+;                                                                 ->
+;        (equal (int (inv F X A) (inv F Y A)) (inv F (int X Y) A)))                                           interest = 1.0
+Problem #1
+fast
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0
+        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0 ; fast
+Problem #2
+slow
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
 "
        ))
 
-(setf *problems* (default-problem-list))
+(defun reload () (load "/home/martin/Desktop/OSCAR/lisp-sbcl/monolithic-oscar.lisp"))
 
+(setf *break-node* -1)
+(setf *reductio-interest* .01) ; .23
+(setf *reductio-discount* .01) ; .23
+(setf *random-state* (seed-random-state 4))
+(ret-on)(log-on)
+(test 1)
+(show-arguments)
+(display-reasoning-fully)
+
+;(setf *random-state* (seed-random-state 0))(test 1)
+
+                                        ;(setf *random-state* (seed-random-state 0))(test 1)
 #|
-        | 3640.  ((subset c19 ^@y41) -> ~(subset ^@y41 c19))     CONTRA-CONDITIONALIZATION from { 3638 }
-        | 3645.  (~(subset c19 ^@y42) v ~(subset ^@y42 c19))     disj-cond from { 3640 }
+(sequent-complexity (hypernode-sequent (hypernode 613)))
+93.24618
+CL-USER> (sequent-complexity (hypernode-sequent (hypernode 255)))
+72.69728
+CL-USER> (hypernode 255)
+#<Hypernode 255: (mem c101 (int c0 (int c0 c0)))/{ (mem (s49 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) c0) , ~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) , (maps F c0 c0) }>
+CL-USER> (hypernode 613)
+#<Hypernode 613: ((mem c99 x25) -> (mem c99 (int (int (int c0 (int c0 c0)) c0) x25)))/{ (mem (s49 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) c0) , ~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) , (maps F c0 c0) }>
+CL-USER> (tree-complexity (hypernode-sequent (hypernode 255)))
+42
+CL-USER> (tree-complexity (hypernode-sequent (hypernode 613)))
+50
+CL-USER>
 |#
