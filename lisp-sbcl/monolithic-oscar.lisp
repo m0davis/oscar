@@ -4168,72 +4168,98 @@
 ;;(defun complexity (x)
 ;;  (tree-complexity x))
 
-;;original by john, but with one modification to prevent incompleteness on problem #759
+
+;;real original from oscar 3.31
+
 (defun complexity (x)
   (cond ((null X) 0)
         ((stringp x) 1)
-                                        ; ((plan-p x) (length (plan-steps x)))
-        ((plan-p x) (length (plan-steps x)))
-        ((atom x) (* 1 (exp (/ 1 (+ 10 (random 10))))))
-        ;((atom x) 1)
+        ((atom x) 1)
         ((listp x)
          (cond ((skolem-function (car x))
                 (cond ((null (cdr x)) 1)
-                      ((and (not (listp (cadr x))) (not (eq (cadr x) '=))) ; TODO what's '= doing here?
-                       ;*skolem-multiplier* ; TODO MSD modified this
-                       (+ (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (complexity (cdr x)))
-                       ;(+ 1.5 *skolem-multiplier* (complexity (cdr x)))
-                       )
+                      ((and (not (listp (cadr x))) (not (eq (cadr x) '=)))
+                       *skolem-multiplier*)
                       ((and (listp (cadr x)) (skolem-function (caar (cdr x))))
-                       (* (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (1+ (complexity (cdr x)))))
-                       ;(* 1.5 *skolem-multiplier* (1+ (complexity (cdr x)))))
+                       (* *skolem-multiplier* (1+ (complexity (cdr x)))))
                       (t (apply #'+ (mapcar #'complexity x)))))
+               ;; the following handles functions that occur within their own scopes
+               ((and (not (null (cdr x)))
+                     (symbolp (car x))
+                     (not (member (mem1 x) *logical-constants*))
+                     (occur (car x) (cdr x)))
+                (* *skolem-multiplier* (1+ (complexity (cdr x)))))
                ((or (u-genp x) (e-genp x)) (* *quantifier-discount* (complexity (q-matrix x))))
-                                        ;   ((eq (car x) 'protoplan-for)
-                                        ;    (+ 1
-                                        ;        (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
-                                        ;        (complexity (mem3 x))))
-                                        ;  ((eq (car x) 'plan-for)
-                                        ;    (+ 1
-                                        ;        (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
-                                        ;        (complexity (mem3 x))))
-               ((eq (car x) '=>) 1)
-               ((eq (car x) 'protoplan-for)
-                                        ; (-
-                (+ 1
-                   (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
-                                        ; (complexity (mem3 x))
-                   (length (mem4 x))))
-                                        ; (+ (length (mem5 x)) (length (mem6 x)))))
-               ((eq (car x) 'plan-for)
-                (+ 1
-                   (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
-                   ))
-                                        ; (complexity (mem3 x))))
-               ((eq (car x) 'embellished-plan-for)
-                (+ 2 (length (plan-steps (mem3 x)))))
-               ((eq (car x) 'embellished-protoplan-for)
-                (+ 2 (length (plan-steps (mem3 x)))))
-               ((eq (car x) 'plan-undermines-causal-link) 1)
-               ((eq (car x) 'plan-undermines-causal-links) 2)
-                                        ; (1+ (complexity (list (mem2 x) (mem3 x) (mem4 x) (mem5 x)))))
-                                        ; (+ 4 (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1))
-               ((eq (car x) 'plan-node) .1)
-               ;(t (+ (complexity (car x)) (complexity (cdr x)))))) ; TODO MSD is modifying this again!
-               ;;this code makes problem #99 fast
-               ((member (car x) *logical-constants*)
-                (+ (complexity (car x)) (complexity (cdr x))))
-               (t
-                (* 1.2 (apply #'+ (mapcar #'complexity x))))
+               ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
+               (t (+ (complexity (car x)) (complexity (cdr x))))))))
 
-               ;;this seems to make more sense but 99 runs slow
-               ;((member (car x) *logical-constants*)
-               ; (* 1.1 (apply #'max (mapcar #'complexity x))))
-               ;(t
-               ; (* 5 (apply #'max (mapcar #'complexity x))))
-               ))
-        ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
-        (t 1)))
+
+;;original by john, but with one modification to prevent incompleteness on problem #759
+;;(defun complexity (x)
+;;  (cond ((null X) 0)
+;;        ((stringp x) 1)
+;;                                        ; ((plan-p x) (length (plan-steps x)))
+;;        ((plan-p x) (length (plan-steps x)))
+;;        ((atom x) (* 1 (exp (/ 1 (+ 10 (random 10))))))
+;;        ;((atom x) 1)
+;;        ((listp x)
+;;         (cond ((skolem-function (car x))
+;;                (cond ((null (cdr x)) 1)
+;;                      ((and (not (listp (cadr x))) (not (eq (cadr x) '=))) ; TODO what's '= doing here?
+;;                       *skolem-multiplier* ; TODO MSD modified this
+;;                       ;(+ (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (complexity (cdr x)))
+;;                       ;(+ 1.5 *skolem-multiplier* (complexity (cdr x)))
+;;                       )
+;;                      ((and (listp (cadr x)) (skolem-function (caar (cdr x))))
+;;                       (* (exp (/ 1 (+ 10 (random 10)))) *skolem-multiplier* (1+ (complexity (cdr x)))))
+;;                       ;(* 1.5 *skolem-multiplier* (1+ (complexity (cdr x)))))
+;;                      (t (apply #'+ (mapcar #'complexity x)))))
+;;               ((or (u-genp x) (e-genp x)) (* *quantifier-discount* (complexity (q-matrix x))))
+;;                                        ;   ((eq (car x) 'protoplan-for)
+;;                                        ;    (+ 1
+;;                                        ;        (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
+;;                                        ;        (complexity (mem3 x))))
+;;                                        ;  ((eq (car x) 'plan-for)
+;;                                        ;    (+ 1
+;;                                        ;        (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
+;;                                        ;        (complexity (mem3 x))))
+;;               ((eq (car x) '=>) 1)
+;;               ((eq (car x) 'protoplan-for)
+;;                                        ; (-
+;;                (+ 1
+;;                   (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
+;;                                        ; (complexity (mem3 x))
+;;                   (length (mem4 x))))
+;;                                        ; (+ (length (mem5 x)) (length (mem6 x)))))
+;;               ((eq (car x) 'plan-for)
+;;                (+ 1
+;;                   (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1)
+;;                   ))
+;;                                        ; (complexity (mem3 x))))
+;;               ((eq (car x) 'embellished-plan-for)
+;;                (+ 2 (length (plan-steps (mem3 x)))))
+;;               ((eq (car x) 'embellished-protoplan-for)
+;;                (+ 2 (length (plan-steps (mem3 x)))))
+;;               ((eq (car x) 'plan-undermines-causal-link) 1)
+;;               ((eq (car x) 'plan-undermines-causal-links) 2)
+;;                                        ; (1+ (complexity (list (mem2 x) (mem3 x) (mem4 x) (mem5 x)))))
+;;                                        ; (+ 4 (if (plan-p (mem2 x)) (length (plan-steps (mem2 x))) 1))
+;;               ((eq (car x) 'plan-node) .1)
+;;               ;(t (+ (complexity (car x)) (complexity (cdr x)))))) ; TODO MSD is modifying this again!
+;;               ;;this code makes problem #99 fast
+;;               ((member (car x) *logical-constants*)
+;;                (+ (complexity (car x)) (complexity (cdr x))))
+;;               (t
+;;                (* 1.2 (apply #'+ (mapcar #'complexity x))))
+;;
+;;               ;;this seems to make more sense but 99 runs slow
+;;               ;((member (car x) *logical-constants*)
+;;               ; (* 1.1 (apply #'max (mapcar #'complexity x))))
+;;               ;(t
+;;               ; (* 5 (apply #'max (mapcar #'complexity x))))
+;;               ))
+;;        ((consp (cdr x)) (apply #'+ (mapcar #'complexity x)))
+;;        (t 1)))
 
 ;; (defun complexity (x)
 ;;   (cond ((null X) 0)
@@ -28449,8 +28475,46 @@ Ultimate epistemic interests:
 (setf *problems*
       (make-problem-list
        "
-Problem #763
-bug on node 3645
+Problem #1
+simplified from 757
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0
+Problem #2
+simplified from 757
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
+Problem #3
+simplified from 757
 Given premises:
         (all x)(x = x)                                                                                       justification = 1.0
         (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
@@ -28462,9 +28526,89 @@ Given premises:
         (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
 Ultimate epistemic interests:
         (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
-;        (all A)(all B)(all C)(all x)((equal A B) -> (((mem x A) & (mem x C)) -> ((mem x B) & (mem x C))))                interest = 1.0
-Problem #764
-same as 757 but with some needed rules for equality
+Problem #4
+slow compared to 2
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)((maps F A A) -> (equal (inv F (int A A) A) (int (inv F A A) (inv F A A))))            interest = 1.0
+Problem #5
+completes inefficiently
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)(all B)((equal A B) -> (equal (int A (int B B)) (int A B)))                   interest = 1.0
+Problem #6
+does not seem to complete, compare to 5
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
+        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((maps F A B) <->
+                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
+                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
+                                                                                                             justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
+Ultimate epistemic interests:
+        (all A)(all B)((equal A B) -> (equal (int (int A A) (int B B)) (int A B)))                   interest = 1.0
+Problem #7
+like 6 but with extraneous premises removed -- this completes after a long time
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+Ultimate epistemic interests:
+        (all A)(all B)((equal A B) -> (equal (int (int A A) (int B B)) (int A B)))                   interest = 1.0
+Problem #8
+like 7 but stronger conclusion; runs fast compared to 7
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+Ultimate epistemic interests:
+        (all A)(all B)(equal (int (int A A) (int B B)) (int A B))                   interest = 1.0
+Problem #757
+corrected from original
 Given premises:
         ; = is an equality relation
         (all x)(x = x)                                                                                       justification = 1.0
@@ -28484,67 +28628,17 @@ Given premises:
         (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
         (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
 Ultimate epistemic interests:
-;        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
-;        (all A)(all B)((maps F A B) -> (equal (inv F (int B B) A) (int (inv F B A) (inv F B A))))            interest = 1.0
-;*        (all A)((maps F A A) -> (subset (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
-;        (all A)((maps F A A) -> (subset (inv F (int A A) A) (int (inv F A A) (inv F A A))))            interest = 1.0
-;         (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0 ; slow
-         (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0 ; fast
-;fast        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0
-;slow        (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
-;        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
-;                                                                 ->
-;        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
-;        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
-;                                                                 ->
-;        (equal (int (inv F X A) (inv F Y A)) (inv F (int X Y) A)))                                           interest = 1.0
-Problem #1
-fast
-Given premises:
-        (all x)(x = x)                                                                                       justification = 1.0
-        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
-        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
-        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
-        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
-        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
-        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
-        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
-        (all A)(all B)((maps F A B) <->
-                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
-                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
-                                                                                                             justification = 1.0
-        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
-        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
-Ultimate epistemic interests:
-        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0
-        (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))            interest = 1.0 ; fast
-Problem #2
-slow
-Given premises:
-        (all x)(x = x)                                                                                       justification = 1.0
-        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
-        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
-        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
-        (all x)(all y)(all z)((x = y) -> ((F x z) -> (F y z)))                                               justification = 1.0
-        (all x)(all y)(all z)((x = y) -> ((F z x) -> (F z y)))                                               justification = 1.0
-        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
-        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
-        (all A)(all B)((maps F A B) <->
-                        ((all x)((mem x A) -> (some y)((mem y B) & (F x y)))
-                        & (all x)(all y)(all z)(((mem x A) & ((mem y B) & (mem z B))) -> (((F x y) & (F x z)) -> (y = z)))))
-                                                                                                             justification = 1.0
-        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
-        (all A)(all B)(all x)((mem x (inv F B A)) <-> ((mem x A) & (some y)((mem y B) & (F x y))))           justification = 1.0
-Ultimate epistemic interests:
-        (all A)((maps F A A) -> (equal (inv F A A) (int (inv F A A) (inv F A A))))            interest = 1.0
+        (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B)))
+                                                                 ->
+        (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))                                           interest = 1.0
 "
        ))
 
 (defun reload () (load "/home/martin/Desktop/OSCAR/lisp-sbcl/monolithic-oscar.lisp"))
 
 (setf *break-node* -1)
-(setf *reductio-interest* .01) ; .23
-(setf *reductio-discount* .01) ; .23
+(setf *reductio-interest* .23) ; .23
+(setf *reductio-discount* .23) ; .23
 (setf *random-state* (seed-random-state 4))
 (ret-on)(log-on)
 (test 1)
