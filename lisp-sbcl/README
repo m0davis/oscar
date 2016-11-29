@@ -1448,3 +1448,94 @@ U* = (T
         (list binding*
               instantiations
               supposition))
+
+
+--
+
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))
+ which is of ultimate interest.
+
+ 10.  (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))     GIVEN
+ 19.  (all B)((equal x8 B) <-> ((subset x8 B) & (subset B x8)))     UI from { 10 }
+ 30.  ((equal x8 x20) <-> ((subset x8 x20) & (subset x20 x8)))     UI from { 19 }
+ 40.  (((subset x8 x20) & (subset x20 x8)) -> (equal x8 x20))     bicondit-simp from { 30 }
+ 7.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 18.  (all B)((subset x7 B) <-> (all x)((mem x x7) -> (mem x B)))     UI from { 7 }
+ 29.  ((subset x7 x19) <-> (all x)((mem x x7) -> (mem x x19)))     UI from { 18 }
+ 38.  ((all x)((mem x x7) -> (mem x x19)) -> (subset x7 x19))     bicondit-simp from { 29 }
+ 42.  (some z35)(((mem z35 x7) -> (mem z35 x19)) -> (subset x7 x19))     A-removal from { 38 }
+ 45.  (((mem (s45 x7 x19) x7) -> (mem (s45 x7 x19) x19)) -> (subset x7 x19))     EI from { 42 }
+ 59.  ((mem (s45 x7 x19) x19) -> (subset x7 x19))     cond-antecedent-simp from { 45 }
+ 8.  (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))     GIVEN
+ 20.  (all B)(all x)((mem x (int x9 B)) <-> ((mem x x9) & (mem x B)))     UI from { 8 }
+ 36.  (all x)((mem x (int x9 x26)) <-> ((mem x x9) & (mem x x26)))     UI from { 20 }
+ 48.  ((mem x55 (int x9 x26)) <-> ((mem x55 x9) & (mem x55 x26)))     UI from { 36 }
+ 51.  (((mem x55 x9) & (mem x55 x26)) -> (mem x55 (int x9 x26)))     bicondit-simp from { 48 }
+ 4.  (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))     GIVEN
+ 16.  (all y)(all A)((x5 = y) -> ((mem x5 A) -> (mem y A)))     UI from { 4 }
+ 27.  (all A)((x5 = x17) -> ((mem x5 A) -> (mem x17 A)))     UI from { 16 }
+ 1.  (all x)(x = x)     GIVEN
+ 34.  ((x5 = x17) -> ((mem x5 x24) -> (mem x17 x24)))     UI from { 27 }
+ 12.  (x1 = x1)     UI from { 1 }
+ 43.  ((mem x5 x24) -> (mem x5 x24))     modus-ponens1 from { 34 , 12 }
+ 58.  (~(mem (s45 x7 x19) x7) -> (subset x7 x19))     cond-antecedent-simp from { 45 }
+ 50.  ((mem x55 (int x9 x26)) -> ((mem x55 x9) & (mem x55 x26)))     bicondit-simp from { 48 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x127 x126) }
+        |----------------------------------------------------------
+        | 98.  (subset x127 x126)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) }
+        |----------------------------------------------------------
+        | 100.  ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0)))     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (mem x131 x130) }
+        |----------------------------------------------------------
+        | 99.  (mem x131 x130)     REDUCTIO-SUPPOSITION
+                |----------------------------------------------------------
+                | Suppose:  { ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) , (mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (int (inv F c0 c0) (inv F c0 c0))) }
+                |----------------------------------------------------------
+                | 105.  ~((mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (int (inv F c0 c0) (inv F c0 c0))) -> (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     i-neg-condit from { 100 , 99 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) }
+        |----------------------------------------------------------
+        | 106.  ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (int (inv F c0 c0) (inv F c0 c0)))     REDUCTIO from { 105 , 59 }
+        | 114.  ~((mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)) & (mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)))     modus-tollens2 from { 51 , 106 }
+        | 130.  (~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)) v ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)))     DM from { 114 }
+        | 134.  ((mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)) -> ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)))     disj-simp from { 130 }
+        | 135.  ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0))     conditional-modus-tollens from { 43 , 134 }
+        | 143.  (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0)))     modus-ponens2 from { 58 , 135 }
+ 144.  (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0)))     REDUCTIO from { 143 , 100 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) }
+        |----------------------------------------------------------
+        | 25.  ~(equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0))     REDUCTIO-SUPPOSITION
+        | 93.  ~((subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) & (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     modus-tollens2 from { 40 , 25 }
+        | 94.  (~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) v ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     DM from { 93 }
+        | 95.  ((subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) -> ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     disj-simp from { 94 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) }
+        |----------------------------------------------------------
+        | 145.  ~((subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) -> ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     i-neg-condit from { 144 , 98 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) }
+        |----------------------------------------------------------
+        | 146.  ~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0))     REDUCTIO from { 145 , 95 }
+        | 156.  (mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (int (inv F c0 c0) (inv F c0 c0)))     modus-tollens2 from { 58 , 146 }
+        | 172.  ((mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0)) & (mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0)))     modus-ponens2 from { 50 , 156 }
+        | 201.  (mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0))     simp from { 172 }
+        | 202.  ~((mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0)) -> (subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)))     i-neg-condit from { 146 , 201 }
+ 203.  (equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0))     REDUCTIO from { 202 , 59 }
+ 205.  ((maps F c0 c0) -> (equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)))     CONDITIONALIZATION from { 203 }
+ 206.  (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))     UG from { 205 }
+
+===========================================================================
+
+
+Cumulative size of arguments = 49
+Size of inference-graph = 206 of which 10 were unused suppositions.
+23% of the inference-graph was used in the argument.

@@ -28607,6 +28607,19 @@ Given premises:
         (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
 Ultimate epistemic interests:
         (all A)(all B)(equal (int (int A A) (int B B)) (int A B))                   interest = 1.0
+Problem #9
+like 7 but change the premise of the interest (antecedent of the ->?) into a premise
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))                                 justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+        (equal A B) justification = 1.0
+Ultimate epistemic interests:
+        (equal (int (int A A) (int B B)) (int A B))                   interest = 1.0
 Problem #757
 corrected from original
 Given premises:
@@ -28639,27 +28652,17 @@ Ultimate epistemic interests:
 (setf *break-node* -1)
 (setf *reductio-interest* .23) ; .23
 (setf *reductio-discount* .23) ; .23
-(setf *random-state* (seed-random-state 4))
+(setf *random-state* (seed-random-state 0))
 (ret-on)(log-on)
 (test 1)
 (show-arguments)
-(display-reasoning-fully)
+                                        ;(display-reasoning-fully)
 
-;(setf *random-state* (seed-random-state 0))(test 1)
-
-                                        ;(setf *random-state* (seed-random-state 0))(test 1)
-#|
-(sequent-complexity (hypernode-sequent (hypernode 613)))
-93.24618
-CL-USER> (sequent-complexity (hypernode-sequent (hypernode 255)))
-72.69728
-CL-USER> (hypernode 255)
-#<Hypernode 255: (mem c101 (int c0 (int c0 c0)))/{ (mem (s49 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) c0) , ~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) , (maps F c0 c0) }>
-CL-USER> (hypernode 613)
-#<Hypernode 613: ((mem c99 x25) -> (mem c99 (int (int (int c0 (int c0 c0)) c0) x25)))/{ (mem (s49 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) c0) , ~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) , (maps F c0 c0) }>
-CL-USER> (tree-complexity (hypernode-sequent (hypernode 255)))
-42
-CL-USER> (tree-complexity (hypernode-sequent (hypernode 613)))
-50
-CL-USER>
-|#
+(defun display-sequent-complexity (n)
+  (list
+   n
+   (sequent-complexity
+    (cond ((hypernode-p n)
+           (hypernode-sequent n))
+          ((interest-p n)
+           (interest-sequent n))))))
