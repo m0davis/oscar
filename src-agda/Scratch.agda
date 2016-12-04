@@ -30,6 +30,36 @@ data Formula : Set where
             Formula
   quantified : Nat → Formula → Formula
 
+infix 40 _⊗_
+_⊗_ : Formula → Formula → Formula
+_⊗_ a b = logical a b
+
+~ : Formula → Formula
+~ a = logical a a
+
+infix 50 _⊃_
+_⊃_ : Formula → Formula → Formula
+_⊃_ p q = ~ (~ p ⊗ q)
+
+data Literal : Formula → Set where
+  Latomic : (arity name : Nat) → (terms : Vec Term arity) → Literal (atomic arity name terms)
+  Llogical : (arity name : Nat) → (terms : Vec Term arity) → Literal (logical (atomic arity name terms) (atomic arity name terms))
+
+record Sequent : Set where
+  constructor _⊢_
+  field
+    premises : List Formula
+    conclusion : Formula
+
+data _∈_ {A : Set} (a : A) : List A → Set where
+  here : (as : List A) → a ∈ (a ∷ as)
+  there : (x : A) (as : List A) → a ∈ (x ∷ as)
+
+record SimpleNDProblem (s : Sequent) : Set where
+  field
+    simpleConclusion : Literal (Sequent.conclusion s)
+    simplePremises : ∀ p → p ∈ Sequent.premises s → Literal p
+
 record _≞_/_ (I : Interpretation) (I₀ : Interpretation) (v₀ : Nat) : Set where
   field
     lawV : (v : Nat) → (v ≡ v₀ → ⊥) → Interpretation.V I v ≡ Interpretation.V I₀ v
@@ -39,6 +69,8 @@ record _≞_/_ (I : Interpretation) (I₀ : Interpretation) (v₀ : Nat) : Set w
 record Satisfaction (A : Set) : Set₁ where
   field
     _⊨_ : Interpretation → A → Set
+
+  postulate _⊨?_ : (I : Interpretation) → (φ : A) → Dec (I ⊨ φ)
 
   _⊭_ : Interpretation → A → Set
   I ⊭ x = I ⊨ x → ⊥
@@ -52,7 +84,7 @@ instance
     _⊨ᴹ_ I₀ (quantified v₀ φ) = (I : Interpretation) → I ≞ I₀ / v₀ → I ⊨ᴹ φ
     _⊨ᴹ_ I₀ (atomic arity name domA) = Interpretation.P I₀ arity name (interpretTerm I₀ <$> domA) ≡ true
     _⊨ᴹ_ I₀ (logical φ₁ φ₂) = (I₀ ⊨ᴹ φ₁ → ⊥) × (I₀ ⊨ᴹ φ₂ → ⊥)
-
+    {-# DISPLAY _⊨ᴹ_ I f = I ⊨ f #-}
 
 record Validity (A : Set) : Set₁ where
   field
@@ -61,20 +93,121 @@ record Validity (A : Set) : Set₁ where
   ⊭_ : A → Set
   ⊭ x = ⊨ x → ⊥
 
+open Validity ⦃ … ⦄
+
 instance
   ValidityFormula : Validity Formula
   Validity.⊨_ ValidityFormula φ = (I : Interpretation) → I ⊨ φ
 
-record Sequent : Set where
-  constructor _⊢_
-  field
-    premises : List Formula
-    conclusion : Formula
 
 instance
   SatisfactionSequent : Satisfaction Sequent
-  Satisfaction._⊨_ SatisfactionSequent I (premises ⊢ conclusion) = (I : Interpretation) → (_ : (premise : Formula) → premise ∈ premises → I ⊨ premise) →  I ⊨ conclusion where
+  Satisfaction._⊨_ SatisfactionSequent I (premises ⊢ conclusion) = (_ : (premise : Formula) → premise ∈ premises → I ⊨ premise) →  I ⊨ conclusion
 
+  ValiditySequent : Validity Sequent
+  Validity.⊨_ ValiditySequent sequent = (I : Interpretation) → I ⊨ sequent
+
+negationEliminationRule : (I : Interpretation) (φ : Formula) → I ⊨ φ → I ⊨ logical (logical φ φ) (logical φ φ)
+negationEliminationRule I φ I⊨φ = (λ {(¬φ¹ , ¬φ²) → ¬φ¹ I⊨φ}) , ((λ {(¬φ¹ , ¬φ²) → ¬φ¹ I⊨φ}))
+
+-- justifieds simplification and
+simplificationRule₁ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ logical φ₁ φ₂ → I ⊨ logical φ₁ φ₁
+simplificationRule₁ I φ₁ φ₂ x = (fst x) , (fst x)
+
+simplificationRule₂ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ logical φ₁ φ₂ → I ⊨ logical φ₂ φ₂
+simplificationRule₂ I φ₁ φ₂ x = snd x , snd x
+
+negationElimination : (I : Interpretation) (φ : Formula) → I ⊨ logical (logical φ φ) (logical φ φ) → I ⊨ φ
+negationElimination I φ (x , y) with I ⊨? φ
+negationElimination I φ (x₁ , y) | yes x = x
+negationElimination I φ (x₁ , y) | no x = ⊥-elim (x₁ (x , x))
+
+neg-negationIntro : (I : Interpretation) (φ : Formula) → I ⊨ logical φ φ → I ⊭ φ
+neg-negationIntro I φ x = λ x₁ → fst x x₁
+
+negationIntroduction : (I : Interpretation) (φ : Formula) → I ⊨ φ → I ⊨ logical (logical φ φ) (logical φ φ)
+negationIntroduction I φ x = {!!}
+
+-- logical (logical (logical p p) q) (logical (logical p p) q)
+conditionalization : (I : Interpretation) (p q : Formula) → I ⊨ q → I ⊨ ((p ∷ []) ⊢ p ⊃ q)
+conditionalization I p q ⊨q -⊨p = let ⊨p = -⊨p p (here []) in (λ { (x , ~q) → ~q ⊨q}) , (λ { (x , y) → y ⊨q})
+
+modusPonens : (I : Interpretation) (p q : Formula) → I ⊨ p → I ⊨ ((p ⊗ p) ⊗ q) ⊗ ((p ⊗ p) ⊗ q) → I ⊨ q
+modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) with I ⊨? q
+modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | yes x = x
+modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | no x = ⊥-elim (~[~p&~p&~q] ((λ { (x₁ , y) → y P}) , (λ x₁ → x x₁)))
+
+theorem1a : (s : Sequent) → SimpleNDProblem s → ⊨ s → Either (Sequent.conclusion s ∈ Sequent.premises s) (Σ _ λ q → q ∈ Sequent.premises s × ~ q ∈ Sequent.premises s)
+theorem1a ([] ⊢ atomic arity name x) record { simpleConclusion = (Latomic .arity .name .x) ; simplePremises = simplePremises } x₂ = {!!}
+theorem1a ((x₁ ∷ premises) ⊢ atomic arity name x) record { simpleConclusion = (Latomic .arity .name .x) ; simplePremises = simplePremises } x₂ = {!!}
+theorem1a (premises ⊢ logical .(atomic arity name terms) .(atomic arity name terms)) record { simpleConclusion = (Llogical arity name terms) ; simplePremises = simplePremises } x₁ = {!!}
+theorem1a (premises ⊢ quantified x conclusion) record { simpleConclusion = () ; simplePremises = simplePremises } x₂
+
+theorem1b : (s : Sequent) → SimpleNDProblem s → Either (Sequent.conclusion s ∈ Sequent.premises s) (Σ _ λ q → q ∈ Sequent.premises s × ~ q ∈ Sequent.premises s) → ⊨ s
+theorem1b s x (left x₁) I x₂ = x₂ (Sequent.conclusion s) x₁
+theorem1b s x (right (x₁ , x₂ , y)) I x₃ = let ~q = x₃ (~ x₁) y in let q = x₃ x₁ x₂ in ⊥-elim (fst ~q q)
+
+{-
+p ≡ q
+p -> q & q -> p
+(~p v q) & (~q v p)
+~(p & ~q) & ~(q & ~p)
+~(~~p & ~q) & ~(~~q & ~p)
+
+bicondit elim is just simplification
+
+modus ponens
+p , (p ⊗ (q ⊗ q)) ⊗ (p ⊗ (q ⊗ q)) --> q
+
+~(~p & q)
+p or ~q
+
+
+p -> q
+~p v q
+~(p & ~q)
+~(p & ~q) & ~(p & ~q)
+~(~~p & ~q) & ~(~~p & ~q)
+(~~p & ~q) ⊗ (~~p & ~q)
+(~p ⊗ q) ⊗ (~p ⊗ q)
+((p ⊗ p) ⊗ q) ⊗ ((p ⊗ p) ⊗ q)
+-}
+
+
+{-
+conditionalization p -> q from q, with discharge p
+(p ∷ [] ⊢ q) ⊨ (∅ ⊢ q)
+-}
+
+
+
+--data ReasonerState : List Sequent → List Sequent → Set
+
+{-
+p <-> q
+p -> q and q -> p
+~p v q  and  ~q or p
+~(p and ~q) and ~(q and ~p)
+(p and ~q) ⊗ (q and ~p)
+((p ⊗ p) ⊗ q) ⊗ ((q ⊗ q) ⊗ p)
+
+p -> q
+~p v q
+~(p and ~q)
+~(p and ~q) and ~(p and ~q)
+((p ⊗ p) ⊗ q) ⊗ ((p ⊗ p) ⊗ q)
+but this is just simplification
+
+
+p , p -> q ⊢ q
+p , ((p ⊗ p) ⊗ q) ⊗ ((p ⊗ p) ⊗ q) ⊢ q
+
+p , q <-- p & q
+
+
+p <-- ~~p
+p <-- (p ⊗ p) ⊗ (p ⊗ p)
+-}
 
 -- PorNotP : (I : Interpretation) (P : Formula) → I ⊨ (logical (logical P (logical P P)) (logical P (logical P P)))
 -- PorNotP I P = (λ { (x , y) → y (x , x)}) , (λ { (x , y) → y (x , x)})
@@ -100,12 +233,8 @@ instance
 -- NotPAndNotNotP : (I : Interpretation) (P : Formula) → I ⊨ (logical P (logical P P))
 -- NotPAndNotNotP = {!!}
 
-
-
 -- -- Valid : Formula → Set₁
 -- -- Valid φ = (I : Interpretation) → I Satisfies φ
-
-
 
 -- -- -- data SkolemFormula {ι : Size} (α : Alphabet) : Set where
 -- -- --   atomic : Predication α → SkolemFormula α
@@ -144,9 +273,6 @@ instance
 
 -- -- --   maybe Φ₋₁ = ∀y∃x(G x (s₀͍₂ x v₀) v₀)
 -- -- --    and  Φ₋₂ = ∀z∀y∃x(G x (s₀͍₂ x z) z), finally having no free variables, but nevertheless having skolem functions! these are user-defined functions, so this notion of Alphabet is somehow wrong. we have also left out constants (i.e. user-defined skolem-functions of arity 0)
-
-
-
 
 -- -- --   Instead, take the alphabet as defining
 -- -- --     a stack of free variables
