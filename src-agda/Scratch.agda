@@ -43,7 +43,7 @@ _⊃_ p q = ~ (~ p ⊗ q)
 
 data Literal : Formula → Set where
   Latomic : (arity name : Nat) → (terms : Vec Term arity) → Literal (atomic arity name terms)
-  Llogical : (arity name : Nat) → (terms : Vec Term arity) → Literal (logical (atomic arity name terms) (atomic arity name terms))
+  logical : (arity name : Nat) → (terms : Vec Term arity) → Literal (logical (atomic arity name terms) (atomic arity name terms))
 
 record Sequent : Set where
   constructor _⊢_
@@ -107,26 +107,10 @@ instance
   ValiditySequent : Validity Sequent
   Validity.⊨_ ValiditySequent sequent = (I : Interpretation) → I ⊨ sequent
 
-negationEliminationRule : (I : Interpretation) (φ : Formula) → I ⊨ φ → I ⊨ logical (logical φ φ) (logical φ φ)
-negationEliminationRule I φ I⊨φ = (λ {(¬φ¹ , ¬φ²) → ¬φ¹ I⊨φ}) , ((λ {(¬φ¹ , ¬φ²) → ¬φ¹ I⊨φ}))
-
--- justifieds simplification and
-simplificationRule₁ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ logical φ₁ φ₂ → I ⊨ logical φ₁ φ₁
-simplificationRule₁ I φ₁ φ₂ x = (fst x) , (fst x)
-
-simplificationRule₂ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ logical φ₁ φ₂ → I ⊨ logical φ₂ φ₂
-simplificationRule₂ I φ₁ φ₂ x = snd x , snd x
-
-negationElimination : (I : Interpretation) (φ : Formula) → I ⊨ logical (logical φ φ) (logical φ φ) → I ⊨ φ
+negationElimination : (I : Interpretation) (φ : Formula) → I ⊨ (φ ⊗ φ) ⊗ (φ ⊗ φ) → I ⊨ φ
 negationElimination I φ (x , y) with I ⊨? φ
 negationElimination I φ (x₁ , y) | yes x = x
 negationElimination I φ (x₁ , y) | no x = ⊥-elim (x₁ (x , x))
-
-neg-negationIntro : (I : Interpretation) (φ : Formula) → I ⊨ logical φ φ → I ⊭ φ
-neg-negationIntro I φ x = λ x₁ → fst x x₁
-
-negationIntroduction : (I : Interpretation) (φ : Formula) → I ⊨ φ → I ⊨ logical (logical φ φ) (logical φ φ)
-negationIntroduction I φ x = {!!}
 
 -- logical (logical (logical p p) q) (logical (logical p p) q)
 conditionalization : (I : Interpretation) (p q : Formula) → I ⊨ q → I ⊨ ((p ∷ []) ⊢ p ⊃ q)
@@ -140,7 +124,7 @@ modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | no x = ⊥-elim (~[~p&~p&~q]
 theorem1a : (s : Sequent) → SimpleNDProblem s → ⊨ s → Either (Sequent.conclusion s ∈ Sequent.premises s) (Σ _ λ q → q ∈ Sequent.premises s × ~ q ∈ Sequent.premises s)
 theorem1a ([] ⊢ atomic arity name x) record { simpleConclusion = (Latomic .arity .name .x) ; simplePremises = simplePremises } x₂ = {!!}
 theorem1a ((x₁ ∷ premises) ⊢ atomic arity name x) record { simpleConclusion = (Latomic .arity .name .x) ; simplePremises = simplePremises } x₂ = {!!}
-theorem1a (premises ⊢ logical .(atomic arity name terms) .(atomic arity name terms)) record { simpleConclusion = (Llogical arity name terms) ; simplePremises = simplePremises } x₁ = {!!}
+theorem1a (premises ⊢ logical .(atomic arity name terms) .(atomic arity name terms)) record { simpleConclusion = (logical arity name terms) ; simplePremises = simplePremises } x₁ = {!!}
 theorem1a (premises ⊢ quantified x conclusion) record { simpleConclusion = () ; simplePremises = simplePremises } x₂
 
 theorem1b : (s : Sequent) → SimpleNDProblem s → Either (Sequent.conclusion s ∈ Sequent.premises s) (Σ _ λ q → q ∈ Sequent.premises s × ~ q ∈ Sequent.premises s) → ⊨ s
