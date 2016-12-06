@@ -28658,6 +28658,36 @@ Ultimate epistemic interests:
 (show-arguments)
                                         ;(display-reasoning-fully)
 
+(setf *problems*
+      (make-problem-list
+       "
+Problem #1
+testing my understanding of NaturalDeduction ... oscar should solve this but doesn't
+Given premises:
+Ultimate epistemic interests:
+        ~P -> (P -> Q) interest = 1.0
+Problem #2
+with a little help it works
+Given premises:
+        ~P justification = 1.0
+Ultimate epistemic interests:
+        ~P -> (P -> Q) interest = 1.0
+Problem #3
+notice that making either 'supposition' (P or not P) allows oscar to find a solution
+Given premises:
+        P justification = 1.0
+Ultimate epistemic interests:
+        ~P -> (P -> Q) interest = 1.0
+Problem #4
+but no such luck here
+Given premises:
+        P v ~P justification = 1.0
+Ultimate epistemic interests:
+        ~P -> (P -> Q) interest = 1.0
+"
+       ))
+(ret-off)(log-off)(test)
+
 (defun display-sequent-complexity (n)
   (list
    n
