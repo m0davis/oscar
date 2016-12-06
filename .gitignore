@@ -12,3 +12,5 @@ cabal.sandbox.config
 .liquid/
 *.agdai
 *~
+**/#*#
+#*#
