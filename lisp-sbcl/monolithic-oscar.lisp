@@ -28684,9 +28684,15 @@ Given premises:
         P v ~P justification = 1.0
 Ultimate epistemic interests:
         ~P -> (P -> Q) interest = 1.0
+Problem #5
+try an even simpler problem
+Given premises:
+Ultimate epistemic interests:
+        P -> P interest = 1.0
 "
        ))
-(ret-off)(log-off)(test)
+(trace-off)(ret-off)(log-off)(test)
+(log-on)(test 5)(display-reasoning-fully) ; TODO fails with TYPE-ERROR
 
 (defun display-sequent-complexity (n)
   (list
