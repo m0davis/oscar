@@ -35,6 +35,9 @@ module _ where
 
   open import Agda.Builtin.Size public
 
+  open import Control.Monad.State public
+  open import Control.Monad.Identity public
+
   {-
   open import Tactic.Nat
   open import Tactic.Deriving.Eq
@@ -367,25 +370,89 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
     -- To construct the interpretation, consider a unique list, τ₀, τ₁, …, τₙ, of terms in ι ∷ χs. For each term, τ, we find <TODO> interpretations, 𝓘, such that for any I ∈ 𝓘, and any i ∈ 0, …, n, τ⟦ I ⟧ τᵢ = i. For each formula φ ∈ ι ∷ χs, we find <TODO> an interpretation I ∈ 𝓘 such that 𝑃⟦ I ⟧ φ = true when φ ∈ χs and 𝑃⟦ I ⟧ φ = false when φ = ι.
     -- For all terms in ι ∷ χs, find a coding into Nat that uniquely determines each term. To do this, compute the maximum functional depth of terms, D, the maximal arity of terms, A, the maximal function name, F, and the maximal variable name, V. Each term can then be coded into Fin V + (D₀ = F + F * V + F * V ^ 2 + ... + F * V ^ A) + (D₀ ...
     -- Encode each term in a discrimination network. Each new term stored is assigned a unique id
-
-    data EMP : Set where
-      End : EMP
-      More : EMP
-      Push : EMP
-
-    data TermCode : Nat → Set
-      variable : (v : VariableName) →
-
-
-
     Lemma1a = {!!}
      where
-      uniqueListOfTerms : List Term
-      uniqueListOfTerms = {!!}
 
-      TermCode : (τ : Term) → Nat
-      TermCode = {!!}
+      data TermCode : Set
+       where
+        variable : VariableName → TermCode
+        function : FunctionName → Arity → TermCode
 
+      mutual
+        encodeTerm : Term → List TermCode
+        encodeTerm (variable 𝑥) = variable 𝑥 ∷ []
+        encodeTerm (function 𝑓 (⟨_⟩ {arity} τs)) = function 𝑓 arity ∷ encodeTerms τs
+
+        encodeTerms : {arity : Arity} → Vector Term arity → List TermCode
+        encodeTerms [] = []
+        encodeTerms (τ ∷ τs) = encodeTerm τ ++ encodeTerms τs
+
+      mutual
+
+        decodeTerm : Nat → StateT (List TermCode) Maybe Term
+        decodeTerm zero = lift nothing
+        decodeTerm (suc n) = do
+          caseM get of λ
+          { [] → lift nothing
+          ; (variable 𝑥 ∷ _) →
+            modify (drop 1) ~|
+            return (variable 𝑥)
+          ; (function 𝑓 arity ∷ _) →
+            modify (drop 1) ~|
+            decodeFunction n 𝑓 arity }
+
+        decodeFunction : Nat → FunctionName → Arity → StateT (List TermCode) Maybe Term
+        decodeFunction n 𝑓 arity = do
+          τs ← decodeTerms n arity -|
+          return (function 𝑓 ⟨ τs ⟩)
+
+        decodeTerms : Nat → (arity : Arity) → StateT (List TermCode) Maybe (Vector Term arity)
+        decodeTerms n ⟨ zero ⟩ = return []
+        decodeTerms n ⟨ suc arity ⟩ = do
+          τ ← decodeTerm n -|
+          τs ← decodeTerms n ⟨ arity ⟩ -|
+          return (τ ∷ τs)
+
+      example-Term : Term
+      example-Term =
+        (function ⟨ 2 ⟩
+                  ⟨ variable ⟨ 0 ⟩
+                  ∷ function ⟨ 3 ⟩
+                             ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+                  ∷ variable ⟨ 5 ⟩
+                  ∷ []
+                  ⟩
+        )
+
+      -- function ⟨ 2 ⟩ ⟨ 2 ⟩ ∷ variable ⟨ 0 ⟩ ∷ function ⟨ 3 ⟩ ⟨ 1 ⟩ ∷ variable ⟨ 2 ⟩ ∷ variable ⟨ 5 ⟩ ∷ []
+      example-TermCodes : List TermCode
+      example-TermCodes = encodeTerm example-Term
+
+      example-TermDecode : Maybe (Term × List TermCode)
+      example-TermDecode = runStateT (decodeTerm (length example-TermCodes)) example-TermCodes
+
+      example-verified : example-TermDecode ≡ (just $ example-Term , [])
+      example-verified = refl
+
+      decode-is-inverse-of-encode : ∀ (τ : Term {ω}) → runStateT (decodeTerm ∘ length $ encodeTerm τ) (encodeTerm τ) ≡ (just $ τ , [])
+      decode-is-inverse-of-encode (variable 𝑥) = refl
+      decode-is-inverse-of-encode (function 𝑓 ⟨ [] ⟩) = {!!}
+      decode-is-inverse-of-encode (function 𝑓 ⟨ variable 𝑥 ∷ τs ⟩) = {!!}
+      decode-is-inverse-of-encode (function 𝑓 ⟨ function 𝑓' τs' ∷ τs ⟩) = {!!}
+
+      record TermNode : Set
+       where
+        inductive
+        field
+          parent : TermNode
+          tests : TermCode → Maybe TermNode
+          code : TermCode
+          number : Nat
+
+      mutual
+
+        storeTerm : Term → StateT TermNode Identity ⊤
+        storeTerm τ = {!!}
 
   Theorem1b : ▷ Φ → ⊨ Φ
   Theorem1b = {!!}
