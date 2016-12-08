@@ -466,374 +466,171 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
           τs ← decodeTerms n ⟨ arity ⟩ -|
           return (τ ∷ τs)
 
-      example-Term : Term
-      example-Term =
-        (function ⟨ 2 ⟩
-                  ⟨ variable ⟨ 0 ⟩
-                  ∷ function ⟨ 3 ⟩
-                             ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
-                  ∷ variable ⟨ 5 ⟩
-                  ∷ []
-                  ⟩
-        )
-
-      -- function ⟨ 2 ⟩ ⟨ 3 ⟩ ∷ variable ⟨ 0 ⟩ ∷ function ⟨ 3 ⟩ ⟨ 1 ⟩ ∷ variable ⟨ 2 ⟩ ∷ variable ⟨ 5 ⟩ ∷ []
-      example-TermCodes : List TermCode
-      example-TermCodes = encodeTerm example-Term
-
-      example-TermDecode : Maybe (Term × List TermCode)
-      example-TermDecode = runStateT (decodeTerm (length example-TermCodes)) example-TermCodes
-
-      example-verified : example-TermDecode ≡ (just $ example-Term , [])
-      example-verified = refl
-
-      example-bad : runStateT (decodeTerm 2) (function ⟨ 2 ⟩ ⟨ 2 ⟩ ∷ variable ⟨ 0 ⟩ ∷ []) ≡ nothing
-      example-bad = refl
-
-      decode-is-inverse-of-encode : ∀ τ → runStateT (decodeTerm ∘ length $ encodeTerm τ) (encodeTerm τ) ≡ (just $ τ , [])
+      .decode-is-inverse-of-encode : ∀ τ → runStateT (decodeTerm ∘ length $ encodeTerm τ) (encodeTerm τ) ≡ (just $ τ , [])
       decode-is-inverse-of-encode (variable 𝑥) = refl
       decode-is-inverse-of-encode (function 𝑓 ⟨ [] ⟩) = {!!}
       decode-is-inverse-of-encode (function 𝑓 ⟨ variable 𝑥 ∷ τs ⟩) = {!!}
       decode-is-inverse-of-encode (function 𝑓 ⟨ function 𝑓' τs' ∷ τs ⟩) = {!!}
 
-      -- or maybe not
-      module UsingContainerList where
+      module ExampleEncodeDecode where
+        example-Term : Term
+        example-Term =
+          (function ⟨ 2 ⟩
+                    ⟨ variable ⟨ 0 ⟩
+                    ∷ function ⟨ 3 ⟩
+                               ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+                    ∷ variable ⟨ 5 ⟩
+                    ∷ []
+                    ⟩
+          )
 
-        record TermNode : Set
-         where
-          inductive
-          field
-            children : List (TermCode × TermNode)
-            number : Nat
+        -- function ⟨ 2 ⟩ ⟨ 3 ⟩ ∷ variable ⟨ 0 ⟩ ∷ function ⟨ 3 ⟩ ⟨ 1 ⟩ ∷ variable ⟨ 2 ⟩ ∷ variable ⟨ 5 ⟩ ∷ []
+        example-TermCodes : List TermCode
+        example-TermCodes = encodeTerm example-Term
 
-        open TermNode
+        example-TermDecode : Maybe (Term × List TermCode)
+        example-TermDecode = runStateT (decodeTerm (length example-TermCodes)) example-TermCodes
 
-        _child∈_ : TermCode → TermNode → Set
-        _child∈_ 𝔠 𝔫 = Any ((𝔠 ≡_) ∘ fst) (children 𝔫)
+        example-verified : example-TermDecode ≡ (just $ example-Term , [])
+        example-verified = refl
 
-      -- it might be easier to do this with Container.List
-      module ExplicitMap where
+        example-bad : runStateT (decodeTerm 2) (function ⟨ 2 ⟩ ⟨ 2 ⟩ ∷ variable ⟨ 0 ⟩ ∷ []) ≡ nothing
+        example-bad = refl
 
-        record TermNode : Set
-         where
-          inductive
-          field
-            children : List (TermCode × TermNode)
-            number : Nat
+      record TermNode : Set
+       where
+        inductive
+        field
+          children : List (TermCode × TermNode)
+          number : Nat
 
-        open TermNode
+      open TermNode
 
-        _child∈_ : TermCode → TermNode → Set
-        _child∈_ 𝔠 𝔫 = 𝔠 ∈ (fst <$> children 𝔫)
+      _child∈_ : TermCode → TermNode → Set
+      _child∈_ 𝔠 𝔫 = 𝔠 ∈ (fst <$> children 𝔫)
 
-        _child∉_ : TermCode → TermNode → Set
-        𝔠 child∉ 𝔫 = ¬ (𝔠 child∈ 𝔫)
+      _child∉_ : TermCode → TermNode → Set
+      𝔠 child∉ 𝔫 = ¬ (𝔠 child∈ 𝔫)
 
-        _child∈?_ : (𝔠 : TermCode) → (𝔫 : TermNode) → Dec $ 𝔠 child∈ 𝔫
-        c child∈? record { children = cs } = c ∈? (fst <$> cs)
+      _child∈?_ : (𝔠 : TermCode) → (𝔫 : TermNode) → Dec $ 𝔠 child∈ 𝔫
+      c child∈? record { children = cs } = c ∈? (fst <$> cs)
 
-        getChild : {𝔠 : TermCode} → (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode
-        getChild {𝔠} (record { children = [] ; number = number₁ }) ()
-        getChild {._} (record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }) (here .(map fst children₁)) = snd₁
-        getChild {𝔠} (𝔫@record { children = x ∷ children₁ ; number = number₁ }) (there .(fst x) x₁) = getChild record 𝔫 { children = children₁ } x₁
+      getChild : {𝔠 : TermCode} → (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode
+      getChild {𝔠} (record { children = [] ; number = number₁ }) ()
+      getChild {._} (record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }) (here .(map fst children₁)) = snd₁
+      getChild {𝔠} (𝔫@record { children = x ∷ children₁ ; number = number₁ }) (there .(fst x) x₁) = getChild record 𝔫 { children = children₁ } x₁
 
-        addChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∉ 𝔫 → TermNode → TermNode
-        addChild {𝔠} 𝔫 𝔠∉𝔫 𝔫' =
-          record 𝔫 { children = (𝔠 , 𝔫') ∷ children 𝔫 }
+      addChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∉ 𝔫 → TermNode → TermNode
+      addChild {𝔠} 𝔫 𝔠∉𝔫 𝔫' =
+        record 𝔫 { children = (𝔠 , 𝔫') ∷ children 𝔫 }
 
-        setChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode → TermNode
-        setChild {𝔠} record { children = [] ; number = number₁ } () 𝔫'
-        setChild 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) 𝔫' =
-          record 𝔫 { children = ((fst₁ , 𝔫') ∷ children₁) }
-        setChild {𝔠} 𝔫@record { children = (x ∷ children₁) ; number = number₁ } (there .(fst x) 𝔠∈𝔫) 𝔫' =
-          record 𝔫 { children = (x ∷ children (setChild (record 𝔫 { children = children₁ }) 𝔠∈𝔫 𝔫')) }
+      setChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode → TermNode
+      setChild {𝔠} record { children = [] ; number = number₁ } () 𝔫'
+      setChild 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) 𝔫' =
+        record 𝔫 { children = ((fst₁ , 𝔫') ∷ children₁) }
+      setChild {𝔠} 𝔫@record { children = (x ∷ children₁) ; number = number₁ } (there .(fst x) 𝔠∈𝔫) 𝔫' =
+        record 𝔫 { children = (x ∷ children (setChild (record 𝔫 { children = children₁ }) 𝔠∈𝔫 𝔫')) }
 
-        storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
-        storeTermCodes [] 𝔑 = return 𝔑
-        storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
-          𝔫 ← get -|
-          case 𝔠 child∈? 𝔫 of λ
-          { (no 𝔠∉tests) →
-            let 𝔑' , 𝔫' = runIdentity $
-                          runStateT
-                            (storeTermCodes 𝔠s $ suc 𝔑)
-                            (record
-                              { children = []
-                              ; number = suc 𝔑 }) in
-            put ((addChild 𝔫 𝔠∉tests 𝔫')) ~|
-            return 𝔑'
-          ; (yes 𝔠∈tests) →
-            let 𝔑' , 𝔫' = runIdentity $
-                          runStateT
-                            (storeTermCodes 𝔠s $ suc 𝔑)
-                            ((getChild 𝔫 𝔠∈tests)) in
-            put ((setChild 𝔫 𝔠∈tests 𝔫')) ~|
-            return 𝔑' }
+      storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
+      storeTermCodes [] 𝔑 = return 𝔑
+      storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
+        𝔫 ← get -|
+        case 𝔠 child∈? 𝔫 of λ
+        { (no 𝔠∉tests) →
+          let 𝔑' , 𝔫' = runIdentity $
+                        runStateT
+                          (storeTermCodes 𝔠s $ suc 𝔑)
+                          (record
+                            { children = []
+                            ; number = suc 𝔑 }) in
+          put ((addChild 𝔫 𝔠∉tests 𝔫')) ~|
+          return 𝔑'
+        ; (yes 𝔠∈tests) →
+          let 𝔑' , 𝔫' = runIdentity $
+                        runStateT
+                          (storeTermCodes 𝔠s $ suc 𝔑)
+                          ((getChild 𝔫 𝔠∈tests)) in
+          put ((setChild 𝔫 𝔠∈tests 𝔫')) ~|
+          return 𝔑' }
+
+      storeTermCodes' : List TermCode → StateT Nat (StateT TermNode Identity) ⊤
+      storeTermCodes' 𝔠s =
+        𝔑 ← get -|
+        tn ← lift get -|
+        (let 𝔑' , tn' = runIdentity $ runStateT (storeTermCodes 𝔠s 𝔑) tn in
+         put 𝔑' ~| lift (put tn') ~| return tt)
+
+      mutual
+
+        storeTerm : Term → StateT Nat (StateT TermNode Identity) ⊤
+        storeTerm τ@(variable _) = storeTermCodes' (encodeTerm τ)
+        storeTerm τ@(function _ τs) = storeTermCodes' (encodeTerm τ) ~| storeTerms τs
+
+        storeTerms : Terms → StateT Nat (StateT TermNode Identity) ⊤
+        storeTerms ⟨ [] ⟩ = return tt
+        storeTerms ⟨ τ ∷ τs ⟩ = storeTerm τ ~| storeTerms ⟨ τs ⟩ ~| return tt
+
+      module ExampleStoreTerm where
+        example-Term₁ : Term
+        example-Term₁ =
+          (function ⟨ 2 ⟩
+                    ⟨ variable ⟨ 0 ⟩
+                    ∷ function ⟨ 3 ⟩
+                               ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+                    ∷ variable ⟨ 5 ⟩
+                    ∷ []
+                    ⟩
+          )
+
+        example-Term₂ : Term
+        example-Term₂ =
+          (function ⟨ 2 ⟩
+                    ⟨ variable ⟨ 0 ⟩
+                    ∷ variable ⟨ 2 ⟩
+                    ∷ function ⟨ 3 ⟩
+                               ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+                    ∷ variable ⟨ 5 ⟩
+                    ∷ []
+                    ⟩
+          )
 
         topNode : TermNode
         topNode = record { children = [] ; number = 0 }
 
-        example-store : TermNode
-        example-store = snd ∘ runIdentity $ runStateT (storeTermCodes example-TermCodes 0) topNode
+        example-storeTerm : (⊤ × Nat) × TermNode
+        example-storeTerm = {!runIdentity $ runStateT (runStateT (storeTerm example-Term₁ >> storeTerm example-Term₂) 0) topNode!}
 
-        foo : TermNode × TermNode × {!!}
-        foo =
-          {!example-store!} ,
-          {!snd ∘ runIdentity $ runStateT (storeTermCodes example-TermCodes 10) example-store!} ,
-          {!runIdentity $ runStateT (storeTermCodes example-TermCodes 0) topNode!}
+      storeLiteralFormulaTerms : LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤
+      storeLiteralFormulaTerms ⟨ atomic 𝑃 τs ⟩ = storeTerms τs
+      storeLiteralFormulaTerms ⟨ logical 𝑃 τs ⟩ = storeTerms τs
 
-      -- this still has a lambda problem, albeit weirder
-      module RememberChildren where
+      sequence : ∀ {a b} {A : Set a} {F : Set a → Set b} ⦃ _ : Applicative F ⦄ → List (F A) → F ⊤′
+      sequence [] = pure tt
+      sequence (x ∷ xs) = x *> sequence xs
 
-        record TermNode : Set
-         where
-          inductive
-          field
-            tests : List TermCode
-            children : ∀ {𝔠} → 𝔠 ∈ tests → TermNode
-            number : Nat
-        open TermNode
+      storeSequentLiteralFormulaTerms : Sequent LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤′
+      storeSequentLiteralFormulaTerms (φᵗ ╱ φˢs) = sequence $ storeLiteralFormulaTerms <$> (φᵗ ∷ φˢs)
 
-        addChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 ∉ tests 𝔫 → TermNode → TermNode
-        addChild {𝔠} 𝔫 𝔠∉tests𝔫 𝔫' =
-          record 𝔫
-          { tests = 𝔠 ∷ tests 𝔫
-          ; children = λ
-            { (here _) → 𝔫'
-            ; (there _ 𝔠'∈tests) → children 𝔫 𝔠'∈tests }}
+      record FindTermNode (A : Set) : Set
+       where
+        field
+          findTermNode : A → TermNode → Maybe TermNode
 
-        setChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 ∈ tests 𝔫 → TermNode → TermNode
-        setChild {𝔠} 𝔫 𝔠∈tests𝔫 𝔫' =
-          record 𝔫
-          { children = λ {𝔠'} 𝔠'∈tests𝔫' → ifYes 𝔠' ≟ 𝔠 then 𝔫' else children 𝔫 𝔠'∈tests𝔫' }
+      open FindTermNode ⦃ … ⦄
 
-        storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
-        storeTermCodes [] 𝔑 = return 𝔑
-        storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
-          𝔫 ← get -|
-          case 𝔠 ∈? tests 𝔫 of λ
-          { (no 𝔠∉tests) →
-            let 𝔑' , 𝔫' = runIdentity $
-                          runStateT
-                            (storeTermCodes 𝔠s $ suc 𝔑)
-                            (record
-                              { tests = []
-                              ; children = λ ()
-                              ; number = suc 𝔑 }) in
-            put (addChild 𝔫 𝔠∉tests 𝔫') ~|
-            return 𝔑'
-          ; (yes 𝔠∈tests) →
-            let 𝔑' , 𝔫' = runIdentity $
-                          runStateT
-                            (storeTermCodes 𝔠s $ suc 𝔑)
-                            (children 𝔫 𝔠∈tests) in
-            put (setChild 𝔫 𝔠∈tests 𝔫') ~|
-            return 𝔑' }
+      instance
+        FindTermNodeTermCode : FindTermNode TermCode
+        FindTermNode.findTermNode FindTermNodeTermCode termCode record { children = children₁ ; number = number₁ } = {!!}
 
-        topNode : TermNode
-        topNode = record { tests = [] ; children = λ () ; number = 0 }
+        FindTermNodeTermCodes : FindTermNode (List TermCode)
+        FindTermNode.findTermNode FindTermNodeTermCodes termCodes node = {!!}
 
-        example-store : TermNode
-        example-store = snd ∘ runIdentity $ runStateT (storeTermCodes example-TermCodes 0) topNode
+      -- This is starting to get difficult. We need Agda to know that the Term is encoded in the TermNode. Then we can drop the Maybe
+      getInterpretationOfTerm : Term → TermNode → Maybe Element
+      getInterpretationOfTerm τ node = number <$> findTermNode (encodeTerm τ) node
 
-        foo : TermNode × TermNode
-        foo =
-          {!example-store!} ,
-          {!snd ∘ runIdentity $ runStateT (storeTermCodes example-TermCodes 10) example-store!}
-
-      -- using a lambda for the children results in extra unnecessary structure when adding to an existing node; perhaps using an explicit mapping? or use another field to state what codes are present in the mapping?
-      module NoParents where
-
-        mutual
-
-          record TermNode : Set
-           where
-            inductive
-            field
-              children : TermCode → Maybe TermNode -- Map TermCode TermNode
-              self : TermCode
-              number : Nat
-
-          record TopTermNode : Set
-           where
-            inductive
-            field
-              children : TermCode → Maybe TermNode
-
-        open TermNode
-        open TopTermNode
-
-        storeTermCodes : List TermCode → Nat → StateT TermNode Identity ⊤
-        storeTermCodes [] _ = return tt
-        storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
-          𝔫 ← get -|
-          case children 𝔫 𝔠 of λ
-          { nothing →
-            put
-              (record 𝔫
-                { children =
-                  λ 𝔠' →
-                  ifYes 𝔠' ≟ 𝔠 then
-                    just ∘ snd ∘ runIdentity $
-                    (runStateT
-                      (storeTermCodes 𝔠s (suc 𝔑))
-                        (record
-                          { self = 𝔠
-                          ; children = const nothing
-                          ; number = suc 𝔑 }))
-                  else
-                    children 𝔫 𝔠' } ) ~|
-            return tt
-          ; (just 𝔫') →
-            put (record 𝔫
-                  { children =
-                    λ 𝔠' →
-                    ifYes 𝔠' ≟ 𝔠 then
-                      just ∘ snd ∘ runIdentity $
-                      runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
-                    else
-                      children 𝔫 𝔠' }) ~|
-            return tt }
-
-        storeTermCodesAtTop : List TermCode → Nat → StateT TopTermNode Identity ⊤
-        storeTermCodesAtTop [] _ = return tt
-        storeTermCodesAtTop (𝔠 ∷ 𝔠s) 𝔑 =
-          𝔫 ← get -|
-          case children 𝔫 𝔠 of λ
-          { nothing →
-            put
-              (record 𝔫
-                { children =
-                  λ 𝔠' →
-                  ifYes 𝔠' ≟ 𝔠 then
-                    just ∘ snd ∘ runIdentity $
-                    (runStateT
-                      (storeTermCodes 𝔠s (suc 𝔑))
-                        (record
-                          { self = 𝔠
-                          ; children = const nothing
-                          ; number = suc 𝔑 }))
-                  else
-                    children 𝔫 𝔠' } ) ~|
-            return tt
-          ; (just 𝔫') →
-            put (record 𝔫
-                  { children =
-                    λ 𝔠' →
-                    ifYes 𝔠' ≟ 𝔠 then
-                      just ∘ snd ∘ runIdentity $
-                      runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
-                    else
-                      children 𝔫 𝔠' }) ~|
-            return tt }
-
-        initialTopNode : TopTermNode
-        initialTopNode = record { children = const nothing }
-
-        example-store : TopTermNode
-        example-store = snd ∘ runIdentity $ runStateT (storeTermCodesAtTop example-TermCodes 0) initialTopNode
-
-        foo : TopTermNode × TopTermNode
-        foo =
-          {!example-store!} ,
-          {!snd ∘ runIdentity $ runStateT (storeTermCodesAtTop example-TermCodes 10) example-store!}
-
-      -- it's tricky to keep the parents up to date when the children change (viz adolescence)
-      module FirstTryWithParent where
-        mutual
-
-          record TermNode : Set
-           where
-            inductive
-            field
-              parent : TopTermNode ⊎ TermNode
-              self : TermCode
-              children : TermCode → Maybe TermNode -- Map TermCode TermNode
-              number : Nat
-
-          record TopTermNode : Set
-           where
-            inductive
-            field
-              children : TermCode → Maybe TermNode
-
-        open TermNode
-        open TopTermNode
-
-        storeTermCodes : List TermCode → Nat → StateT TermNode Identity ⊤
-        storeTermCodes [] _ = return tt
-        storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
-          𝔫 ← get -|
-          case children 𝔫 𝔠 of λ
-          { nothing →
-            put
-              (record 𝔫
-                { children =
-                  λ 𝔠' →
-                  ifYes 𝔠' ≟ 𝔠 then
-                    just ∘ snd ∘ runIdentity $
-                    (runStateT
-                      (storeTermCodes 𝔠s (suc 𝔑))
-                        (record
-                          { parent = right 𝔫
-                          ; self = 𝔠
-                          ; children = const nothing
-                          ; number = suc 𝔑 }))
-                  else
-                    children 𝔫 𝔠' } ) ~|
-            return tt
-          ; (just 𝔫') →
-            put (record 𝔫
-                  { children =
-                    λ 𝔠' →
-                    ifYes 𝔠' ≟ 𝔠 then
-                      just ∘ snd ∘ runIdentity $
-                      runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
-                    else
-                      children 𝔫 𝔠' }) ~|
-            return tt }
-
-        storeTermCodesAtTop : List TermCode → Nat → StateT TopTermNode Identity ⊤
-        storeTermCodesAtTop [] _ = return tt
-        storeTermCodesAtTop (𝔠 ∷ 𝔠s) 𝔑 =
-          𝔫 ← get -|
-          case children 𝔫 𝔠 of λ
-          { nothing →
-            put
-              (record 𝔫
-                { children =
-                  λ 𝔠' →
-                  ifYes 𝔠' ≟ 𝔠 then
-                    just ∘ snd ∘ runIdentity $
-                    (runStateT
-                      (storeTermCodes 𝔠s (suc 𝔑))
-                        (record
-                          { parent = left 𝔫
-                          ; self = 𝔠
-                          ; children = const nothing
-                          ; number = suc 𝔑 }))
-                  else
-                    children 𝔫 𝔠' } ) ~|
-            return tt
-          ; (just 𝔫') →
-            put (record 𝔫
-                  { children =
-                    λ 𝔠' →
-                    ifYes 𝔠' ≟ 𝔠 then
-                      just ∘ snd ∘ runIdentity $
-                      runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
-                    else
-                      children 𝔫 𝔠' }) ~|
-            return tt }
-
-        initialTopNode : TopTermNode
-        initialTopNode = record { children = const nothing }
-
-        example-store : TopTermNode
-        example-store = snd ∘ runIdentity $ runStateT (storeTermCodesAtTop example-TermCodes 0) initialTopNode
-
-        foo : TopTermNode
-        foo = {!example-store!}
+      foo : {!!}
+      foo = {!sequence (storeSequentLiteralFormulaTerms <$> (ι ∷ χs)) !}
 
   Theorem1b : ▷ Φ → ⊨ Φ
   Theorem1b = {!!}
@@ -1320,3 +1117,274 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
 -- -- -- -- --     terms : Vec (Term alphabet) arity
 -- -- -- -- -- open Predication
 -- -- -- -- -- -}
+
+
+-- module NotUsed where
+
+--   -- thought it might be easier to use this
+--   module UsingContainerList where
+
+--     record TermNode : Set
+--      where
+--       inductive
+--       field
+--         children : List (TermCode × TermNode)
+--         number : Nat
+
+--     open TermNode
+
+--     _child∈_ : TermCode → TermNode → Set
+--     _child∈_ 𝔠 𝔫 = Any ((𝔠 ≡_) ∘ fst) (children 𝔫)
+
+--   -- this still has a lambda problem, albeit weirder
+--   module RememberChildren where
+
+--     record TermNode : Set
+--      where
+--       inductive
+--       field
+--         tests : List TermCode
+--         children : ∀ {𝔠} → 𝔠 ∈ tests → TermNode
+--         number : Nat
+--     open TermNode
+
+--     addChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 ∉ tests 𝔫 → TermNode → TermNode
+--     addChild {𝔠} 𝔫 𝔠∉tests𝔫 𝔫' =
+--       record 𝔫
+--       { tests = 𝔠 ∷ tests 𝔫
+--       ; children = λ
+--         { (here _) → 𝔫'
+--         ; (there _ 𝔠'∈tests) → children 𝔫 𝔠'∈tests }}
+
+--     setChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 ∈ tests 𝔫 → TermNode → TermNode
+--     setChild {𝔠} 𝔫 𝔠∈tests𝔫 𝔫' =
+--       record 𝔫
+--       { children = λ {𝔠'} 𝔠'∈tests𝔫' → ifYes 𝔠' ≟ 𝔠 then 𝔫' else children 𝔫 𝔠'∈tests𝔫' }
+
+--     storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
+--     storeTermCodes [] 𝔑 = return 𝔑
+--     storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
+--       𝔫 ← get -|
+--       case 𝔠 ∈? tests 𝔫 of λ
+--       { (no 𝔠∉tests) →
+--         let 𝔑' , 𝔫' = runIdentity $
+--                       runStateT
+--                         (storeTermCodes 𝔠s $ suc 𝔑)
+--                         (record
+--                           { tests = []
+--                           ; children = λ ()
+--                           ; number = suc 𝔑 }) in
+--         put (addChild 𝔫 𝔠∉tests 𝔫') ~|
+--         return 𝔑'
+--       ; (yes 𝔠∈tests) →
+--         let 𝔑' , 𝔫' = runIdentity $
+--                       runStateT
+--                         (storeTermCodes 𝔠s $ suc 𝔑)
+--                         (children 𝔫 𝔠∈tests) in
+--         put (setChild 𝔫 𝔠∈tests 𝔫') ~|
+--         return 𝔑' }
+
+--     topNode : TermNode
+--     topNode = record { tests = [] ; children = λ () ; number = 0 }
+
+--     example-store : TermNode
+--     example-store = snd ∘ runIdentity $ runStateT (storeTermCodes example-TermCodes 0) topNode
+
+--     foo : TermNode × TermNode
+--     foo =
+--       {!example-store!} ,
+--       {!snd ∘ runIdentity $ runStateT (storeTermCodes example-TermCodes 10) example-store!}
+
+--   -- using a lambda for the children results in extra unnecessary structure when adding to an existing node; perhaps using an explicit mapping? or use another field to state what codes are present in the mapping?
+--   module NoParents where
+
+--     mutual
+
+--       record TermNode : Set
+--        where
+--         inductive
+--         field
+--           children : TermCode → Maybe TermNode -- Map TermCode TermNode
+--           self : TermCode
+--           number : Nat
+
+--       record TopTermNode : Set
+--        where
+--         inductive
+--         field
+--           children : TermCode → Maybe TermNode
+
+--     open TermNode
+--     open TopTermNode
+
+--     storeTermCodes : List TermCode → Nat → StateT TermNode Identity ⊤
+--     storeTermCodes [] _ = return tt
+--     storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
+--       𝔫 ← get -|
+--       case children 𝔫 𝔠 of λ
+--       { nothing →
+--         put
+--           (record 𝔫
+--             { children =
+--               λ 𝔠' →
+--               ifYes 𝔠' ≟ 𝔠 then
+--                 just ∘ snd ∘ runIdentity $
+--                 (runStateT
+--                   (storeTermCodes 𝔠s (suc 𝔑))
+--                     (record
+--                       { self = 𝔠
+--                       ; children = const nothing
+--                       ; number = suc 𝔑 }))
+--               else
+--                 children 𝔫 𝔠' } ) ~|
+--         return tt
+--       ; (just 𝔫') →
+--         put (record 𝔫
+--               { children =
+--                 λ 𝔠' →
+--                 ifYes 𝔠' ≟ 𝔠 then
+--                   just ∘ snd ∘ runIdentity $
+--                   runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
+--                 else
+--                   children 𝔫 𝔠' }) ~|
+--         return tt }
+
+--     storeTermCodesAtTop : List TermCode → Nat → StateT TopTermNode Identity ⊤
+--     storeTermCodesAtTop [] _ = return tt
+--     storeTermCodesAtTop (𝔠 ∷ 𝔠s) 𝔑 =
+--       𝔫 ← get -|
+--       case children 𝔫 𝔠 of λ
+--       { nothing →
+--         put
+--           (record 𝔫
+--             { children =
+--               λ 𝔠' →
+--               ifYes 𝔠' ≟ 𝔠 then
+--                 just ∘ snd ∘ runIdentity $
+--                 (runStateT
+--                   (storeTermCodes 𝔠s (suc 𝔑))
+--                     (record
+--                       { self = 𝔠
+--                       ; children = const nothing
+--                       ; number = suc 𝔑 }))
+--               else
+--                 children 𝔫 𝔠' } ) ~|
+--         return tt
+--       ; (just 𝔫') →
+--         put (record 𝔫
+--               { children =
+--                 λ 𝔠' →
+--                 ifYes 𝔠' ≟ 𝔠 then
+--                   just ∘ snd ∘ runIdentity $
+--                   runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
+--                 else
+--                   children 𝔫 𝔠' }) ~|
+--         return tt }
+
+--     initialTopNode : TopTermNode
+--     initialTopNode = record { children = const nothing }
+
+--     example-store : TopTermNode
+--     example-store = snd ∘ runIdentity $ runStateT (storeTermCodesAtTop example-TermCodes 0) initialTopNode
+
+--     foo : TopTermNode × TopTermNode
+--     foo =
+--       {!example-store!} ,
+--       {!snd ∘ runIdentity $ runStateT (storeTermCodesAtTop example-TermCodes 10) example-store!}
+
+--   -- it's tricky to keep the parents up to date when the children change (viz adolescence)
+--   module FirstTryWithParent where
+--     mutual
+
+--       record TermNode : Set
+--        where
+--         inductive
+--         field
+--           parent : TopTermNode ⊎ TermNode
+--           self : TermCode
+--           children : TermCode → Maybe TermNode -- Map TermCode TermNode
+--           number : Nat
+
+--       record TopTermNode : Set
+--        where
+--         inductive
+--         field
+--           children : TermCode → Maybe TermNode
+
+--     open TermNode
+--     open TopTermNode
+
+--     storeTermCodes : List TermCode → Nat → StateT TermNode Identity ⊤
+--     storeTermCodes [] _ = return tt
+--     storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
+--       𝔫 ← get -|
+--       case children 𝔫 𝔠 of λ
+--       { nothing →
+--         put
+--           (record 𝔫
+--             { children =
+--               λ 𝔠' →
+--               ifYes 𝔠' ≟ 𝔠 then
+--                 just ∘ snd ∘ runIdentity $
+--                 (runStateT
+--                   (storeTermCodes 𝔠s (suc 𝔑))
+--                     (record
+--                       { parent = right 𝔫
+--                       ; self = 𝔠
+--                       ; children = const nothing
+--                       ; number = suc 𝔑 }))
+--               else
+--                 children 𝔫 𝔠' } ) ~|
+--         return tt
+--       ; (just 𝔫') →
+--         put (record 𝔫
+--               { children =
+--                 λ 𝔠' →
+--                 ifYes 𝔠' ≟ 𝔠 then
+--                   just ∘ snd ∘ runIdentity $
+--                   runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
+--                 else
+--                   children 𝔫 𝔠' }) ~|
+--         return tt }
+
+--     storeTermCodesAtTop : List TermCode → Nat → StateT TopTermNode Identity ⊤
+--     storeTermCodesAtTop [] _ = return tt
+--     storeTermCodesAtTop (𝔠 ∷ 𝔠s) 𝔑 =
+--       𝔫 ← get -|
+--       case children 𝔫 𝔠 of λ
+--       { nothing →
+--         put
+--           (record 𝔫
+--             { children =
+--               λ 𝔠' →
+--               ifYes 𝔠' ≟ 𝔠 then
+--                 just ∘ snd ∘ runIdentity $
+--                 (runStateT
+--                   (storeTermCodes 𝔠s (suc 𝔑))
+--                     (record
+--                       { parent = left 𝔫
+--                       ; self = 𝔠
+--                       ; children = const nothing
+--                       ; number = suc 𝔑 }))
+--               else
+--                 children 𝔫 𝔠' } ) ~|
+--         return tt
+--       ; (just 𝔫') →
+--         put (record 𝔫
+--               { children =
+--                 λ 𝔠' →
+--                 ifYes 𝔠' ≟ 𝔠 then
+--                   just ∘ snd ∘ runIdentity $
+--                   runStateT (storeTermCodes 𝔠s 𝔑) 𝔫'
+--                 else
+--                   children 𝔫 𝔠' }) ~|
+--         return tt }
+
+--     initialTopNode : TopTermNode
+--     initialTopNode = record { children = const nothing }
+
+--     example-store : TopTermNode
+--     example-store = snd ∘ runIdentity $ runStateT (storeTermCodesAtTop example-TermCodes 0) initialTopNode
+
+--     foo : TopTermNode
+--     foo = {!example-store!}
