@@ -600,6 +600,9 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
         example-storeTerm : (⊤ × Nat) × TermNode
         example-storeTerm = {!runIdentity $ runStateT (runStateT (storeTerm example-Term₁ >> storeTerm example-Term₂) 0) topNode!}
 
+      NodeStateT = StateT TermNode
+      TopNodeState = StateT Nat (NodeStateT Identity)
+
       storeLiteralFormulaTerms : LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤
       storeLiteralFormulaTerms ⟨ atomic 𝑃 τs ⟩ = storeTerms τs
       storeLiteralFormulaTerms ⟨ logical 𝑃 τs ⟩ = storeTerms τs
@@ -620,14 +623,35 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
 
       instance
         FindTermNodeTermCode : FindTermNode TermCode
-        FindTermNode.findTermNode FindTermNodeTermCode termCode record { children = children₁ ; number = number₁ } = {!!}
+        FindTermNode.findTermNode FindTermNodeTermCode termCode record { children = [] ; number = number₁ } = nothing
+        FindTermNode.findTermNode FindTermNodeTermCode termCode 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } = ifYes fst₁ ≟ termCode then just snd₁ else findTermNode termCode record 𝔫 { children = children₁ }
 
         FindTermNodeTermCodes : FindTermNode (List TermCode)
-        FindTermNode.findTermNode FindTermNodeTermCodes termCodes node = {!!}
+        FindTermNode.findTermNode FindTermNodeTermCodes [] node = just node
+        FindTermNode.findTermNode FindTermNodeTermCodes (x ∷ termCodes) node = join $ findTermNode termCodes <$> findTermNode x node
+
+        FindTermNodeTerm : FindTermNode Term
+        FindTermNode.findTermNode FindTermNodeTerm term node = findTermNode (encodeTerm term) node
 
       -- This is starting to get difficult. We need Agda to know that the Term is encoded in the TermNode. Then we can drop the Maybe
       getInterpretationOfTerm : Term → TermNode → Maybe Element
       getInterpretationOfTerm τ node = number <$> findTermNode (encodeTerm τ) node
+
+      mutual
+
+        storeTermVerifiably' : (τ : Term) → StateT Nat (StateT (Σ TermNode λ n → IsJust (findTermNode τ n)) Identity) ⊤
+        storeTermVerifiably' (variable x) = {!!}
+        storeTermVerifiably' (function x x₁) = {!!}
+
+        storeTermVerifiably : Term → StateT Nat (StateT TermNode Identity) ⊤
+        storeTermVerifiably τ@(variable _) = storeTermCodes' (encodeTerm τ)
+        storeTermVerifiably τ@(function _ τs) = storeTermCodes' (encodeTerm τ) ~| storeTermsVerifiably τs
+
+        storeTermsVerifiably : Terms → StateT Nat (StateT TermNode Identity) ⊤
+        storeTermsVerifiably ⟨ [] ⟩ = return tt
+        storeTermsVerifiably ⟨ τ ∷ τs ⟩ = storeTermVerifiably τ ~| storeTermsVerifiably ⟨ τs ⟩ ~| return tt
+
+
 
       foo : {!!}
       foo = {!sequence (storeSequentLiteralFormulaTerms <$> (ι ∷ χs)) !}
