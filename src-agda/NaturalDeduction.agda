@@ -1,3 +1,4 @@
+{-# OPTIONS --rewriting #-}
 module NaturalDeduction
  where
 
@@ -6,6 +7,8 @@ module _ where
 
   open import Prelude public
     renaming (_==_ to _≟_) -- TODO ask Agda to rename Eq._==_ to Eq._≟_
+
+  {-# BUILTIN REWRITE _≡_ #-}
 
   --{-# DISPLAY Eq._==_ _ = _≟_ #-}
 
@@ -394,6 +397,314 @@ instance
   HasDecidableSalvationProblem : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasVacuousDischarge ∘ List $ Sequent A ⦄ → HasDecidableSalvation $ Problem A
   HasDecidableSalvationProblem = {!!}
 
+
+
+
+
+
+
+data TermCode : Set
+ where
+  variable : VariableName → TermCode
+  function : FunctionName → Arity → TermCode
+
+termCode-function-inj₁ : ∀ {𝑓₁ 𝑓₂ arity₁ arity₂} → TermCode.function 𝑓₁ arity₁ ≡ function 𝑓₂ arity₂ → 𝑓₁ ≡ 𝑓₂
+termCode-function-inj₁ refl = refl
+
+termCode-function-inj₂ : ∀ {𝑓₁ 𝑓₂ arity₁ arity₂} → TermCode.function 𝑓₁ arity₁ ≡ function 𝑓₂ arity₂ → arity₁ ≡ arity₂
+termCode-function-inj₂ refl = refl
+
+instance
+  EqTermCode : Eq TermCode
+  Eq._==_ EqTermCode (variable 𝑥₁) (variable 𝑥₂) with 𝑥₁ ≟ 𝑥₂
+  … | yes 𝑥₁≡𝑥₂ rewrite 𝑥₁≡𝑥₂ = yes refl
+  … | no 𝑥₁≢𝑥₂ = no (λ { refl → 𝑥₁≢𝑥₂ refl})
+  Eq._==_ EqTermCode (variable x) (function x₁ x₂) = no (λ ())
+  Eq._==_ EqTermCode (function x x₁) (variable x₂) = no (λ ())
+  Eq._==_ EqTermCode (function 𝑓₁ 𝑎₁) (function 𝑓₂ 𝑎₂) = decEq₂ termCode-function-inj₁ termCode-function-inj₂ (𝑓₁ ≟ 𝑓₂) (𝑎₁ ≟ 𝑎₂)
+
+mutual
+  encodeTerm : Term → List TermCode
+  encodeTerm (variable 𝑥) = variable 𝑥 ∷ []
+  encodeTerm (function 𝑓 (⟨_⟩ {arity} τs)) = function 𝑓 arity ∷ encodeTerms τs
+
+  encodeTerms : {arity : Arity} → Vector Term arity → List TermCode
+  encodeTerms [] = []
+  encodeTerms (τ ∷ τs) = encodeTerm τ ++ encodeTerms τs
+
+mutual
+
+  decodeTerm : Nat → StateT (List TermCode) Maybe Term
+  decodeTerm zero = lift nothing
+  decodeTerm (suc n) = do
+    caseM get of λ
+    { [] → lift nothing
+    ; (variable 𝑥 ∷ _) →
+      modify (drop 1) ~|
+      return (variable 𝑥)
+    ; (function 𝑓 arity ∷ _) →
+      modify (drop 1) ~|
+      decodeFunction n 𝑓 arity }
+
+  decodeFunction : Nat → FunctionName → Arity → StateT (List TermCode) Maybe Term
+  decodeFunction n 𝑓 arity = do
+    τs ← decodeTerms n arity -|
+    return (function 𝑓 ⟨ τs ⟩)
+
+  decodeTerms : Nat → (arity : Arity) → StateT (List TermCode) Maybe (Vector Term arity)
+  decodeTerms n ⟨ zero ⟩ = return []
+  decodeTerms n ⟨ suc arity ⟩ = do
+    τ ← decodeTerm n -|
+    τs ← decodeTerms n ⟨ arity ⟩ -|
+    return (τ ∷ τs)
+
+.decode-is-inverse-of-encode : ∀ τ → runStateT (decodeTerm ∘ length $ encodeTerm τ) (encodeTerm τ) ≡ (just $ τ , [])
+decode-is-inverse-of-encode (variable 𝑥) = refl
+decode-is-inverse-of-encode (function 𝑓 ⟨ [] ⟩) = {!!}
+decode-is-inverse-of-encode (function 𝑓 ⟨ variable 𝑥 ∷ τs ⟩) = {!!}
+decode-is-inverse-of-encode (function 𝑓 ⟨ function 𝑓' τs' ∷ τs ⟩) = {!!}
+
+module ExampleEncodeDecode where
+  example-Term : Term
+  example-Term =
+    (function ⟨ 2 ⟩
+              ⟨ variable ⟨ 0 ⟩
+              ∷ function ⟨ 3 ⟩
+                         ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+              ∷ variable ⟨ 5 ⟩
+              ∷ []
+              ⟩
+    )
+
+  -- function ⟨ 2 ⟩ ⟨ 3 ⟩ ∷ variable ⟨ 0 ⟩ ∷ function ⟨ 3 ⟩ ⟨ 1 ⟩ ∷ variable ⟨ 2 ⟩ ∷ variable ⟨ 5 ⟩ ∷ []
+  example-TermCodes : List TermCode
+  example-TermCodes = encodeTerm example-Term
+
+  example-TermDecode : Maybe (Term × List TermCode)
+  example-TermDecode = runStateT (decodeTerm (length example-TermCodes)) example-TermCodes
+
+  example-verified : example-TermDecode ≡ (just $ example-Term , [])
+  example-verified = refl
+
+  example-bad : runStateT (decodeTerm 2) (function ⟨ 2 ⟩ ⟨ 2 ⟩ ∷ variable ⟨ 0 ⟩ ∷ []) ≡ nothing
+  example-bad = refl
+
+record TermNode : Set
+ where
+  inductive
+  field
+    children : List (TermCode × TermNode)
+    number : Nat
+
+open TermNode
+
+_child∈_ : TermCode → TermNode → Set
+_child∈_ 𝔠 𝔫 = 𝔠 ∈ (fst <$> children 𝔫)
+
+_child∉_ : TermCode → TermNode → Set
+𝔠 child∉ 𝔫 = ¬ (𝔠 child∈ 𝔫)
+
+_child∈?_ : (𝔠 : TermCode) → (𝔫 : TermNode) → Dec $ 𝔠 child∈ 𝔫
+c child∈? record { children = cs } = c ∈? (fst <$> cs)
+
+getChild : {𝔠 : TermCode} → (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode
+getChild {𝔠} (record { children = [] ; number = number₁ }) ()
+getChild {._} (record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }) (here .(map fst children₁)) = snd₁
+getChild {𝔠} (𝔫@record { children = x ∷ children₁ ; number = number₁ }) (there .(fst x) x₁) = getChild record 𝔫 { children = children₁ } x₁
+
+addChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∉ 𝔫 → TermNode → TermNode
+addChild {𝔠} 𝔫 𝔠∉𝔫 𝔫' =
+  record 𝔫 { children = (𝔠 , 𝔫') ∷ children 𝔫 }
+
+setChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode → TermNode
+setChild {𝔠} record { children = [] ; number = number₁ } () 𝔫'
+setChild 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) 𝔫' =
+  record 𝔫 { children = ((fst₁ , 𝔫') ∷ children₁) }
+setChild {𝔠} 𝔫@record { children = (x ∷ children₁) ; number = number₁ } (there .(fst x) 𝔠∈𝔫) 𝔫' =
+  record 𝔫 { children = (x ∷ children (setChild (record 𝔫 { children = children₁ }) 𝔠∈𝔫 𝔫')) }
+
+setGet-ok : ∀ {𝔠} 𝔫 → (𝔠∈𝔫 : 𝔠 child∈ 𝔫) → setChild 𝔫 𝔠∈𝔫 (getChild 𝔫 𝔠∈𝔫) ≡ 𝔫
+setGet-ok record { children = [] ; number = number₁ } ()
+setGet-ok record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) = refl
+setGet-ok record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (there ._ 𝔠∈𝔫) rewrite setGet-ok (record { children = children₁ ; number = number₁ }) 𝔠∈𝔫 = refl
+
+storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
+storeTermCodes [] 𝔑 = return 𝔑
+storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
+  𝔫 ← get -|
+  case 𝔠 child∈? 𝔫 of λ
+  { (no 𝔠∉tests) →
+    let 𝔑' , 𝔫' = runIdentity $
+                  runStateT
+                    (storeTermCodes 𝔠s $ suc 𝔑)
+                    (record
+                      { children = []
+                      ; number = suc 𝔑 }) in
+    put ((addChild 𝔫 𝔠∉tests 𝔫')) ~|
+    return 𝔑'
+  ; (yes 𝔠∈tests) →
+    let 𝔑' , 𝔫' = runIdentity $
+                  runStateT
+                    (storeTermCodes 𝔠s $ suc 𝔑)
+                    ((getChild 𝔫 𝔠∈tests)) in
+    put ((setChild 𝔫 𝔠∈tests 𝔫')) ~|
+    return 𝔑' }
+
+storeTermCodes[] : (𝔫 : TermNode) (𝔑 : Nat) → (runIdentity $ runStateT (storeTermCodes [] 𝔑) 𝔫) ≡ (𝔑 , 𝔫)
+storeTermCodes[] 𝔫 𝔑 = refl
+
+--{-# REWRITE storeTermCodes[] #-}
+
+storeTermCodes' : List TermCode → StateT Nat (StateT TermNode Identity) ⊤
+storeTermCodes' 𝔠s =
+  𝔑 ← get -|
+  tn ← lift get -|
+  (let 𝔑' , tn' = runIdentity $ runStateT (storeTermCodes 𝔠s 𝔑) tn in
+   put 𝔑' ~| lift (put tn') ~| return tt)
+
+mutual
+
+  storeTerm : Term → StateT Nat (StateT TermNode Identity) ⊤
+  storeTerm τ@(variable _) = storeTermCodes' (encodeTerm τ)
+  storeTerm τ@(function _ τs) = storeTermCodes' (encodeTerm τ) ~| storeTerms τs
+
+  storeTerms : Terms → StateT Nat (StateT TermNode Identity) ⊤
+  storeTerms ⟨ [] ⟩ = return tt
+  storeTerms ⟨ τ ∷ τs ⟩ = storeTerm τ ~| storeTerms ⟨ τs ⟩ ~| return tt
+
+module ExampleStoreTerm where
+  example-Term₁ : Term
+  example-Term₁ =
+    (function ⟨ 2 ⟩
+              ⟨ variable ⟨ 0 ⟩
+              ∷ function ⟨ 3 ⟩
+                         ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+              ∷ variable ⟨ 5 ⟩
+              ∷ []
+              ⟩
+    )
+
+  example-Term₂ : Term
+  example-Term₂ =
+    (function ⟨ 2 ⟩
+              ⟨ variable ⟨ 0 ⟩
+              ∷ variable ⟨ 2 ⟩
+              ∷ function ⟨ 3 ⟩
+                         ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
+              ∷ variable ⟨ 5 ⟩
+              ∷ []
+              ⟩
+    )
+
+  topNode : TermNode
+  topNode = record { children = [] ; number = 0 }
+
+  example-storeTerm : (⊤ × Nat) × TermNode
+  example-storeTerm = {!runIdentity $ runStateT (runStateT (storeTerm example-Term₁ >> storeTerm example-Term₂) 0) topNode!}
+
+NodeStateT = StateT TermNode
+TopNodeState = StateT Nat (NodeStateT Identity)
+
+storeLiteralFormulaTerms : LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤
+storeLiteralFormulaTerms ⟨ atomic 𝑃 τs ⟩ = storeTerms τs
+storeLiteralFormulaTerms ⟨ logical 𝑃 τs ⟩ = storeTerms τs
+
+sequence : ∀ {a b} {A : Set a} {F : Set a → Set b} ⦃ _ : Applicative F ⦄ → List (F A) → F ⊤′
+sequence [] = pure tt
+sequence (x ∷ xs) = x *> sequence xs
+
+storeSequentLiteralFormulaTerms : Sequent LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤′
+storeSequentLiteralFormulaTerms (φᵗ ╱ φˢs) = sequence $ storeLiteralFormulaTerms <$> (φᵗ ∷ φˢs)
+
+record FindTermNode (A : Set) : Set
+ where
+  field
+    findTermNode : A → TermNode → Maybe TermNode
+
+open FindTermNode ⦃ … ⦄
+
+instance
+  FindTermNodeTermCode : FindTermNode TermCode
+  FindTermNode.findTermNode FindTermNodeTermCode termCode record { children = [] ; number = number₁ } = nothing
+  FindTermNode.findTermNode FindTermNodeTermCode termCode 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } = ifYes fst₁ ≟ termCode then just snd₁ else findTermNode termCode record 𝔫 { children = children₁ }
+
+  FindTermNodeTermCodes : FindTermNode (List TermCode)
+  FindTermNode.findTermNode FindTermNodeTermCodes [] node = just node
+  FindTermNode.findTermNode FindTermNodeTermCodes (x ∷ termCodes) node = join $ findTermNode termCodes <$> findTermNode x node
+
+  FindTermNodeTerm : FindTermNode Term
+  FindTermNode.findTermNode FindTermNodeTerm term node = findTermNode (encodeTerm term) node
+
+-- This is starting to get difficult. We need Agda to know that the Term is encoded in the TermNode. Then we can drop the Maybe
+getInterpretationOfTerm : Term → TermNode → Maybe Element
+getInterpretationOfTerm τ node = number <$> findTermNode (encodeTerm τ) node
+
+FindTermNodeTermCode-ok : ∀ {𝔠 𝔫} → 𝔠 child∈ 𝔫 → IsJust (findTermNode 𝔠 𝔫)
+FindTermNodeTermCode-ok {𝔠} {record { children = [] ; number = number₁ }} ()
+--FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ = case (fst₁ ≟_) 𝔠 , graphAt {B = λ 𝑐 → Dec (fst₁ ≡ 𝑐)} (fst₁ ≟_) 𝔠 of λ { (yes x , snd₂) → {!!} ; (no x , snd₂) → {!!}} --λ { ((yes ===) , (inspect s1)) → {!!} ; ((no =n=) , inspect s2) → {!!} }
+--FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ = case fst₁ ≟ 𝔠 of λ { (yes refl) → {!!} ; (no x) → {!!}}
+FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ with fst₁ ≟ 𝔠
+FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ | yes eq2 = tt
+FindTermNodeTermCode-ok {.fst₁} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} (here .(map fst children₁)) | no neq = ⊥-elim (neq refl)
+FindTermNodeTermCode-ok {𝔠} {𝔫@record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} (there .fst₁ x₁) | no neq = FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} x₁
+
+Justified : ∀ {a} {A : Set a} → (m : Maybe A) → IsJust m → ∃ λ x → m ≡ just x
+Justified nothing ()
+Justified (just x) x₁ = _ , refl
+
+storeTerm-ok : ∀ τ 𝔫 𝔑 → IsJust (findTermNode τ (snd (runIdentity (runStateT (runStateT (storeTerm τ) 𝔑) 𝔫))))
+storeTerm-ok (variable 𝑥) 𝔫 𝔑 with variable 𝑥 child∈? 𝔫
+storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x with TermCode.variable 𝑥 ≟ variable 𝑥
+storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x | yes _ = tt
+storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x | no variable𝑥≢variable𝑥 = ⊥-elim (variable𝑥≢variable𝑥 refl)
+--storeTerm-ok (variable 𝑥) 𝔫 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 = {!𝔫!}
+storeTerm-ok (variable 𝑥) record { children = [] ; number = number₁ } 𝔑 | yes ()
+--storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 = {!!}
+storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 with fst₁ ≟ variable 𝑥
+storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | yes eq = tt
+--… | no neq = case vx∈𝔫 of λ { (here .(map fst children₁)) → ⊥-elim (neq refl)  ; (there .fst₁ asdf) → case graphAt FindTermNodeTermCode-ok asdf of λ { (ingraph sss) → {!!} } } -- storeTerm-ok x {!record 𝔫 { children = children₁ }!} 𝔑 -- x record 𝔫 { children = children₁ } 𝔑
+--… | no neq = case vx∈𝔫 of λ { (here .(map fst children₁)) → ⊥-elim (neq refl)  ; (there .fst₁ asdf) → case inspect $ FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} asdf of λ { (.(FindTermNodeTermCode-ok asdf) , ingraph refl) → {!!}} } -- storeTerm-ok x {!record 𝔫 { children = children₁ }!} 𝔑 -- x record 𝔫 { children = children₁ } 𝔑
+storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq with vx∈𝔫
+storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | here fdsdfs = ⊥-elim (neq refl)
+--storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | there dfdsf fdsdfs with FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs | graphAt (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }}) fdsdfs
+--… | frfrrf | ingraph tttttt = transport _ (snd $ Justified (FindTermNode.findTermNode FindTermNodeTermCode (variable 𝑥) (record { children = children₁ ; number = number₁ })) (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs)) _
+storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | there dfdsf fdsdfs rewrite (snd $ Justified (FindTermNode.findTermNode FindTermNodeTermCode (variable 𝑥) (record { children = children₁ ; number = number₁ })) (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs)) = tt
+storeTerm-ok (function 𝑥 𝑎) 𝔫 𝔑 with (function 𝑥 (arity 𝑎)) child∈? 𝔫
+storeTerm-ok (function 𝑥 ⟨ [] ⟩) 𝔫 𝔑 | no x with Eq._==_ EqFunctionName ⟨ name 𝑥 ⟩ ⟨ name 𝑥 ⟩
+storeTerm-ok (function 𝑥 ⟨ [] ⟩) 𝔫 𝔑 | no x | (yes refl) = tt
+… | no neq = ⊥-elim (neq refl)
+--storeTerm-ok τ₀@(function 𝑓 ⟨ τ₁ ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!τ₁!}
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥 ∷ [] ⟩) 𝔫 𝔑        | no 𝔠₁∉𝔫 with variable 𝑥 child∈? 𝔫
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥 ∷ [] ⟩) 𝔫 𝔑        | no 𝔠₀∉𝔫 | (yes 𝔠₁∈𝔫) with 𝑓₀ ≟ 𝑓₀
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥 ∷ [] ⟩) 𝔫 𝔑        | no 𝔠₀∉𝔫 | (yes 𝔠₁∈𝔫) | yes refl with TermCode.variable 𝑥 ≟ variable 𝑥
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥 ∷ [] ⟩) 𝔫 𝔑        | no 𝔠₀∉𝔫 | (yes 𝔠₁∈𝔫) | yes refl | yes eq = tt
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥 ∷ [] ⟩) 𝔫 𝔑        | no 𝔠₀∉𝔫 | (yes 𝔠₁∈𝔫) | yes refl | no neq = ⊥-elim (neq refl)
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥 ∷ [] ⟩) 𝔫 𝔑        | no 𝔠₀∉𝔫 | (yes 𝔠₁∈𝔫) | no neq = ⊥-elim (neq refl)
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑       | no 𝔠₀∉𝔫 | (no 𝔠₁∉𝔫) with 𝑓₀ ≟ 𝑓₀
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑       | no 𝔠₀∉𝔫 | (no 𝔠₁∉𝔫) | yes refl with TermCode.variable 𝑥₁ ≟ variable 𝑥₁
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑       | no 𝔠₀∉𝔫 | (no 𝔠₁∉𝔫) | yes refl | yes 𝔠₁≡𝔠₁ = tt
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑       | no 𝔠₀∉𝔫 | (no 𝔠₁∉𝔫) | yes refl | no 𝔠₁≢𝔠₁ = ⊥-elim (𝔠₁≢𝔠₁ refl)
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑       | no 𝔠₀∉𝔫 | (no 𝔠₁∉𝔫) | no 𝑓₀≢𝑓₀ = ⊥-elim (𝑓₀≢𝑓₀ refl) -- rewrite setGet-ok 𝔫 𝔠₁∈𝔫
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ τ₂ ∷ τ₃s ⟩) 𝔫 𝔑 | no 𝔠₀∉𝔫 with variable 𝑥₁ child∈? 𝔫
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ τ₂ ∷ τ₃s ⟩) 𝔫 𝔑 | no 𝔠₀∉𝔫 | yes 𝔠₁∈𝔫 = {!!}
+storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ τ₂ ∷ τ₃s ⟩) 𝔫 𝔑 | no 𝔠₀∉𝔫 | no 𝔠₁∉𝔫 = {!!}
+storeTerm-ok τ₀@(function 𝑓₀ ⟨ function 𝑓₁ τ₁s ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!!}
+storeTerm-ok (function 𝑥 x₁) 𝔫 𝔑 | yes x = {!!}
+
+mutual
+
+  storeTermVerifiably' : (τ : Term) → StateT Nat (StateT (Σ TermNode λ n → IsJust (findTermNode τ n)) Identity) ⊤
+  storeTermVerifiably' (variable x) = {!!}
+  storeTermVerifiably' (function x x₁) = {!!}
+
+  storeTermVerifiably : Term → StateT Nat (StateT TermNode Identity) ⊤
+  storeTermVerifiably τ@(variable _) = storeTermCodes' (encodeTerm τ)
+  storeTermVerifiably τ@(function _ τs) = storeTermCodes' (encodeTerm τ) ~| storeTermsVerifiably τs
+
+  storeTermsVerifiably : Terms → StateT Nat (StateT TermNode Identity) ⊤
+  storeTermsVerifiably ⟨ [] ⟩ = return tt
+  storeTermsVerifiably ⟨ τ ∷ τs ⟩ = storeTermVerifiably τ ~| storeTermsVerifiably ⟨ τs ⟩ ~| return tt
+
 Theorem1 : {Φ : Problem LiteralFormula} → ⊨ Φ ↔ ▷ Φ
 Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
  where
@@ -410,301 +721,6 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
     -- Encode each term in a discrimination network. Each new term stored is assigned a unique id
     Lemma1a = {!!}
      where
-
-      data TermCode : Set
-       where
-        variable : VariableName → TermCode
-        function : FunctionName → Arity → TermCode
-
-      termCode-function-inj₁ : ∀ {𝑓₁ 𝑓₂ arity₁ arity₂} → TermCode.function 𝑓₁ arity₁ ≡ function 𝑓₂ arity₂ → 𝑓₁ ≡ 𝑓₂
-      termCode-function-inj₁ refl = refl
-
-      termCode-function-inj₂ : ∀ {𝑓₁ 𝑓₂ arity₁ arity₂} → TermCode.function 𝑓₁ arity₁ ≡ function 𝑓₂ arity₂ → arity₁ ≡ arity₂
-      termCode-function-inj₂ refl = refl
-
-      instance
-        EqTermCode : Eq TermCode
-        Eq._==_ EqTermCode (variable 𝑥₁) (variable 𝑥₂) with 𝑥₁ ≟ 𝑥₂
-        … | yes 𝑥₁≡𝑥₂ rewrite 𝑥₁≡𝑥₂ = yes refl
-        … | no 𝑥₁≢𝑥₂ = no (λ { refl → 𝑥₁≢𝑥₂ refl})
-        Eq._==_ EqTermCode (variable x) (function x₁ x₂) = no (λ ())
-        Eq._==_ EqTermCode (function x x₁) (variable x₂) = no (λ ())
-        Eq._==_ EqTermCode (function 𝑓₁ 𝑎₁) (function 𝑓₂ 𝑎₂) = decEq₂ termCode-function-inj₁ termCode-function-inj₂ (𝑓₁ ≟ 𝑓₂) (𝑎₁ ≟ 𝑎₂)
-
-      mutual
-        encodeTerm : Term → List TermCode
-        encodeTerm (variable 𝑥) = variable 𝑥 ∷ []
-        encodeTerm (function 𝑓 (⟨_⟩ {arity} τs)) = function 𝑓 arity ∷ encodeTerms τs
-
-        encodeTerms : {arity : Arity} → Vector Term arity → List TermCode
-        encodeTerms [] = []
-        encodeTerms (τ ∷ τs) = encodeTerm τ ++ encodeTerms τs
-
-      mutual
-
-        decodeTerm : Nat → StateT (List TermCode) Maybe Term
-        decodeTerm zero = lift nothing
-        decodeTerm (suc n) = do
-          caseM get of λ
-          { [] → lift nothing
-          ; (variable 𝑥 ∷ _) →
-            modify (drop 1) ~|
-            return (variable 𝑥)
-          ; (function 𝑓 arity ∷ _) →
-            modify (drop 1) ~|
-            decodeFunction n 𝑓 arity }
-
-        decodeFunction : Nat → FunctionName → Arity → StateT (List TermCode) Maybe Term
-        decodeFunction n 𝑓 arity = do
-          τs ← decodeTerms n arity -|
-          return (function 𝑓 ⟨ τs ⟩)
-
-        decodeTerms : Nat → (arity : Arity) → StateT (List TermCode) Maybe (Vector Term arity)
-        decodeTerms n ⟨ zero ⟩ = return []
-        decodeTerms n ⟨ suc arity ⟩ = do
-          τ ← decodeTerm n -|
-          τs ← decodeTerms n ⟨ arity ⟩ -|
-          return (τ ∷ τs)
-
-      .decode-is-inverse-of-encode : ∀ τ → runStateT (decodeTerm ∘ length $ encodeTerm τ) (encodeTerm τ) ≡ (just $ τ , [])
-      decode-is-inverse-of-encode (variable 𝑥) = refl
-      decode-is-inverse-of-encode (function 𝑓 ⟨ [] ⟩) = {!!}
-      decode-is-inverse-of-encode (function 𝑓 ⟨ variable 𝑥 ∷ τs ⟩) = {!!}
-      decode-is-inverse-of-encode (function 𝑓 ⟨ function 𝑓' τs' ∷ τs ⟩) = {!!}
-
-      module ExampleEncodeDecode where
-        example-Term : Term
-        example-Term =
-          (function ⟨ 2 ⟩
-                    ⟨ variable ⟨ 0 ⟩
-                    ∷ function ⟨ 3 ⟩
-                               ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
-                    ∷ variable ⟨ 5 ⟩
-                    ∷ []
-                    ⟩
-          )
-
-        -- function ⟨ 2 ⟩ ⟨ 3 ⟩ ∷ variable ⟨ 0 ⟩ ∷ function ⟨ 3 ⟩ ⟨ 1 ⟩ ∷ variable ⟨ 2 ⟩ ∷ variable ⟨ 5 ⟩ ∷ []
-        example-TermCodes : List TermCode
-        example-TermCodes = encodeTerm example-Term
-
-        example-TermDecode : Maybe (Term × List TermCode)
-        example-TermDecode = runStateT (decodeTerm (length example-TermCodes)) example-TermCodes
-
-        example-verified : example-TermDecode ≡ (just $ example-Term , [])
-        example-verified = refl
-
-        example-bad : runStateT (decodeTerm 2) (function ⟨ 2 ⟩ ⟨ 2 ⟩ ∷ variable ⟨ 0 ⟩ ∷ []) ≡ nothing
-        example-bad = refl
-
-      record TermNode : Set
-       where
-        inductive
-        field
-          children : List (TermCode × TermNode)
-          number : Nat
-
-      open TermNode
-
-      _child∈_ : TermCode → TermNode → Set
-      _child∈_ 𝔠 𝔫 = 𝔠 ∈ (fst <$> children 𝔫)
-
-      _child∉_ : TermCode → TermNode → Set
-      𝔠 child∉ 𝔫 = ¬ (𝔠 child∈ 𝔫)
-
-      _child∈?_ : (𝔠 : TermCode) → (𝔫 : TermNode) → Dec $ 𝔠 child∈ 𝔫
-      c child∈? record { children = cs } = c ∈? (fst <$> cs)
-
-      getChild : {𝔠 : TermCode} → (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode
-      getChild {𝔠} (record { children = [] ; number = number₁ }) ()
-      getChild {._} (record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }) (here .(map fst children₁)) = snd₁
-      getChild {𝔠} (𝔫@record { children = x ∷ children₁ ; number = number₁ }) (there .(fst x) x₁) = getChild record 𝔫 { children = children₁ } x₁
-
-      addChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∉ 𝔫 → TermNode → TermNode
-      addChild {𝔠} 𝔫 𝔠∉𝔫 𝔫' =
-        record 𝔫 { children = (𝔠 , 𝔫') ∷ children 𝔫 }
-
-      setChild : {𝔠 : TermCode} (𝔫 : TermNode) → 𝔠 child∈ 𝔫 → TermNode → TermNode
-      setChild {𝔠} record { children = [] ; number = number₁ } () 𝔫'
-      setChild 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) 𝔫' =
-        record 𝔫 { children = ((fst₁ , 𝔫') ∷ children₁) }
-      setChild {𝔠} 𝔫@record { children = (x ∷ children₁) ; number = number₁ } (there .(fst x) 𝔠∈𝔫) 𝔫' =
-        record 𝔫 { children = (x ∷ children (setChild (record 𝔫 { children = children₁ }) 𝔠∈𝔫 𝔫')) }
-
-      setGet-ok : ∀ {𝔠} 𝔫 → (𝔠∈𝔫 : 𝔠 child∈ 𝔫) → setChild 𝔫 𝔠∈𝔫 (getChild 𝔫 𝔠∈𝔫) ≡ 𝔫
-      setGet-ok record { children = [] ; number = number₁ } ()
-      setGet-ok record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) = refl
-      setGet-ok record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (there ._ 𝔠∈𝔫) rewrite setGet-ok (record { children = children₁ ; number = number₁ }) 𝔠∈𝔫 = refl
-
-
-      storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
-      storeTermCodes [] 𝔑 = return 𝔑
-      storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
-        𝔫 ← get -|
-        case 𝔠 child∈? 𝔫 of λ
-        { (no 𝔠∉tests) →
-          let 𝔑' , 𝔫' = runIdentity $
-                        runStateT
-                          (storeTermCodes 𝔠s $ suc 𝔑)
-                          (record
-                            { children = []
-                            ; number = suc 𝔑 }) in
-          put ((addChild 𝔫 𝔠∉tests 𝔫')) ~|
-          return 𝔑'
-        ; (yes 𝔠∈tests) →
-          let 𝔑' , 𝔫' = runIdentity $
-                        runStateT
-                          (storeTermCodes 𝔠s $ suc 𝔑)
-                          ((getChild 𝔫 𝔠∈tests)) in
-          put ((setChild 𝔫 𝔠∈tests 𝔫')) ~|
-          return 𝔑' }
-
-      storeTermCodes' : List TermCode → StateT Nat (StateT TermNode Identity) ⊤
-      storeTermCodes' 𝔠s =
-        𝔑 ← get -|
-        tn ← lift get -|
-        (let 𝔑' , tn' = runIdentity $ runStateT (storeTermCodes 𝔠s 𝔑) tn in
-         put 𝔑' ~| lift (put tn') ~| return tt)
-
-      mutual
-
-        storeTerm : Term → StateT Nat (StateT TermNode Identity) ⊤
-        storeTerm τ@(variable _) = storeTermCodes' (encodeTerm τ)
-        storeTerm τ@(function _ τs) = storeTermCodes' (encodeTerm τ) ~| storeTerms τs
-
-        storeTerms : Terms → StateT Nat (StateT TermNode Identity) ⊤
-        storeTerms ⟨ [] ⟩ = return tt
-        storeTerms ⟨ τ ∷ τs ⟩ = storeTerm τ ~| storeTerms ⟨ τs ⟩ ~| return tt
-
-      module ExampleStoreTerm where
-        example-Term₁ : Term
-        example-Term₁ =
-          (function ⟨ 2 ⟩
-                    ⟨ variable ⟨ 0 ⟩
-                    ∷ function ⟨ 3 ⟩
-                               ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
-                    ∷ variable ⟨ 5 ⟩
-                    ∷ []
-                    ⟩
-          )
-
-        example-Term₂ : Term
-        example-Term₂ =
-          (function ⟨ 2 ⟩
-                    ⟨ variable ⟨ 0 ⟩
-                    ∷ variable ⟨ 2 ⟩
-                    ∷ function ⟨ 3 ⟩
-                               ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
-                    ∷ variable ⟨ 5 ⟩
-                    ∷ []
-                    ⟩
-          )
-
-        topNode : TermNode
-        topNode = record { children = [] ; number = 0 }
-
-        example-storeTerm : (⊤ × Nat) × TermNode
-        example-storeTerm = {!runIdentity $ runStateT (runStateT (storeTerm example-Term₁ >> storeTerm example-Term₂) 0) topNode!}
-
-      NodeStateT = StateT TermNode
-      TopNodeState = StateT Nat (NodeStateT Identity)
-
-      storeLiteralFormulaTerms : LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤
-      storeLiteralFormulaTerms ⟨ atomic 𝑃 τs ⟩ = storeTerms τs
-      storeLiteralFormulaTerms ⟨ logical 𝑃 τs ⟩ = storeTerms τs
-
-      sequence : ∀ {a b} {A : Set a} {F : Set a → Set b} ⦃ _ : Applicative F ⦄ → List (F A) → F ⊤′
-      sequence [] = pure tt
-      sequence (x ∷ xs) = x *> sequence xs
-
-      storeSequentLiteralFormulaTerms : Sequent LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤′
-      storeSequentLiteralFormulaTerms (φᵗ ╱ φˢs) = sequence $ storeLiteralFormulaTerms <$> (φᵗ ∷ φˢs)
-
-      record FindTermNode (A : Set) : Set
-       where
-        field
-          findTermNode : A → TermNode → Maybe TermNode
-
-      open FindTermNode ⦃ … ⦄
-
-      instance
-        FindTermNodeTermCode : FindTermNode TermCode
-        FindTermNode.findTermNode FindTermNodeTermCode termCode record { children = [] ; number = number₁ } = nothing
-        FindTermNode.findTermNode FindTermNodeTermCode termCode 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } = ifYes fst₁ ≟ termCode then just snd₁ else findTermNode termCode record 𝔫 { children = children₁ }
-
-        FindTermNodeTermCodes : FindTermNode (List TermCode)
-        FindTermNode.findTermNode FindTermNodeTermCodes [] node = just node
-        FindTermNode.findTermNode FindTermNodeTermCodes (x ∷ termCodes) node = join $ findTermNode termCodes <$> findTermNode x node
-
-        FindTermNodeTerm : FindTermNode Term
-        FindTermNode.findTermNode FindTermNodeTerm term node = findTermNode (encodeTerm term) node
-
-      -- This is starting to get difficult. We need Agda to know that the Term is encoded in the TermNode. Then we can drop the Maybe
-      getInterpretationOfTerm : Term → TermNode → Maybe Element
-      getInterpretationOfTerm τ node = number <$> findTermNode (encodeTerm τ) node
-
-      FindTermNodeTermCode-ok : ∀ {𝔠 𝔫} → 𝔠 child∈ 𝔫 → IsJust (findTermNode 𝔠 𝔫)
-      FindTermNodeTermCode-ok {𝔠} {record { children = [] ; number = number₁ }} ()
-      --FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ = case (fst₁ ≟_) 𝔠 , graphAt {B = λ 𝑐 → Dec (fst₁ ≡ 𝑐)} (fst₁ ≟_) 𝔠 of λ { (yes x , snd₂) → {!!} ; (no x , snd₂) → {!!}} --λ { ((yes ===) , (inspect s1)) → {!!} ; ((no =n=) , inspect s2) → {!!} }
-      --FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ = case fst₁ ≟ 𝔠 of λ { (yes refl) → {!!} ; (no x) → {!!}}
-      FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ with fst₁ ≟ 𝔠
-      FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ | yes eq2 = tt
-      FindTermNodeTermCode-ok {.fst₁} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} (here .(map fst children₁)) | no neq = ⊥-elim (neq refl)
-      FindTermNodeTermCode-ok {𝔠} {𝔫@record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} (there .fst₁ x₁) | no neq = FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} x₁
-
-      Justified : ∀ {a} {A : Set a} → (m : Maybe A) → IsJust m → ∃ λ x → m ≡ just x
-      Justified nothing ()
-      Justified (just x) x₁ = _ , refl
-
-      storeTerm-ok : ∀ τ 𝔫 𝔑 → IsJust (findTermNode τ (snd (runIdentity (runStateT (runStateT (storeTerm τ) 𝔑) 𝔫))))
-      storeTerm-ok (variable 𝑥) 𝔫 𝔑 with variable 𝑥 child∈? 𝔫
-      storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x with TermCode.variable 𝑥 ≟ variable 𝑥
-      storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x | yes _ = tt
-      storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x | no variable𝑥≢variable𝑥 = ⊥-elim (variable𝑥≢variable𝑥 refl)
-      --storeTerm-ok (variable 𝑥) 𝔫 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 = {!𝔫!}
-      storeTerm-ok (variable 𝑥) record { children = [] ; number = number₁ } 𝔑 | yes ()
-      --storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 = {!!}
-      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 with fst₁ ≟ variable 𝑥
-      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | yes eq = tt
-      --… | no neq = case vx∈𝔫 of λ { (here .(map fst children₁)) → ⊥-elim (neq refl)  ; (there .fst₁ asdf) → case graphAt FindTermNodeTermCode-ok asdf of λ { (ingraph sss) → {!!} } } -- storeTerm-ok x {!record 𝔫 { children = children₁ }!} 𝔑 -- x record 𝔫 { children = children₁ } 𝔑
-      --… | no neq = case vx∈𝔫 of λ { (here .(map fst children₁)) → ⊥-elim (neq refl)  ; (there .fst₁ asdf) → case inspect $ FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} asdf of λ { (.(FindTermNodeTermCode-ok asdf) , ingraph refl) → {!!}} } -- storeTerm-ok x {!record 𝔫 { children = children₁ }!} 𝔑 -- x record 𝔫 { children = children₁ } 𝔑
-      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq with vx∈𝔫
-      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | here fdsdfs = ⊥-elim (neq refl)
-      --storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | there dfdsf fdsdfs with FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs | graphAt (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }}) fdsdfs
-      --… | frfrrf | ingraph tttttt = transport _ (snd $ Justified (FindTermNode.findTermNode FindTermNodeTermCode (variable 𝑥) (record { children = children₁ ; number = number₁ })) (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs)) _
-      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | there dfdsf fdsdfs rewrite (snd $ Justified (FindTermNode.findTermNode FindTermNodeTermCode (variable 𝑥) (record { children = children₁ ; number = number₁ })) (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs)) = tt
-      storeTerm-ok (function 𝑥 x₁) 𝔫 𝔑 with (function 𝑥 (arity x₁)) child∈? 𝔫
-      storeTerm-ok (function 𝑥 ⟨ [] ⟩) 𝔫 𝔑 | no x with Eq._==_ EqFunctionName ⟨ name 𝑥 ⟩ ⟨ name 𝑥 ⟩
-      storeTerm-ok (function 𝑥 ⟨ [] ⟩) 𝔫 𝔑 | no x | (yes refl) = tt
-      … | no neq = ⊥-elim (neq refl)
-      --storeTerm-ok τ₀@(function 𝑓 ⟨ τ₁ ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!τ₁!}
-      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 with variable 𝑥₁ ∈? map fst (children 𝔫)
-      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 | (yes x) = {!!}
-      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 | (no x) = {!!}
-      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ x ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!!}
-      storeTerm-ok τ₀@(function 𝑓₀ ⟨ function 𝑓₁ τ₁s ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!!}
-      storeTerm-ok (function 𝑥 x₁) 𝔫 𝔑 | yes x = {!!}
-
-      mutual
-
-        storeTermVerifiably' : (τ : Term) → StateT Nat (StateT (Σ TermNode λ n → IsJust (findTermNode τ n)) Identity) ⊤
-        storeTermVerifiably' (variable x) = {!!}
-        storeTermVerifiably' (function x x₁) = {!!}
-
-        storeTermVerifiably : Term → StateT Nat (StateT TermNode Identity) ⊤
-        storeTermVerifiably τ@(variable _) = storeTermCodes' (encodeTerm τ)
-        storeTermVerifiably τ@(function _ τs) = storeTermCodes' (encodeTerm τ) ~| storeTermsVerifiably τs
-
-        storeTermsVerifiably : Terms → StateT Nat (StateT TermNode Identity) ⊤
-        storeTermsVerifiably ⟨ [] ⟩ = return tt
-        storeTermsVerifiably ⟨ τ ∷ τs ⟩ = storeTermVerifiably τ ~| storeTermsVerifiably ⟨ τs ⟩ ~| return tt
-
-
-
-
-
-      foo : {!!}
-      foo = {!sequence (storeSequentLiteralFormulaTerms <$> (ι ∷ χs)) !}
 
   Theorem1b : ▷ Φ → ⊨ Φ
   Theorem1b = {!!}
