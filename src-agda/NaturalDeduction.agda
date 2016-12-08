@@ -7,7 +7,7 @@ module _ where
   open import Prelude public
     renaming (_==_ to _≟_) -- TODO ask Agda to rename Eq._==_ to Eq._≟_
 
-  {-# DISPLAY Eq._==_ _ = _≟_ #-}
+  --{-# DISPLAY Eq._==_ _ = _≟_ #-}
 
   open import Container.List renaming (_∈_ to _∈C_; lookup∈ to lookup∈C) public
 
@@ -531,6 +531,12 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
       setChild {𝔠} 𝔫@record { children = (x ∷ children₁) ; number = number₁ } (there .(fst x) 𝔠∈𝔫) 𝔫' =
         record 𝔫 { children = (x ∷ children (setChild (record 𝔫 { children = children₁ }) 𝔠∈𝔫 𝔫')) }
 
+      setGet-ok : ∀ {𝔠} 𝔫 → (𝔠∈𝔫 : 𝔠 child∈ 𝔫) → setChild 𝔫 𝔠∈𝔫 (getChild 𝔫 𝔠∈𝔫) ≡ 𝔫
+      setGet-ok record { children = [] ; number = number₁ } ()
+      setGet-ok record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (here .(map fst children₁)) = refl
+      setGet-ok record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } (there ._ 𝔠∈𝔫) rewrite setGet-ok (record { children = children₁ ; number = number₁ }) 𝔠∈𝔫 = refl
+
+
       storeTermCodes : List TermCode → Nat → StateT TermNode Identity Nat
       storeTermCodes [] 𝔑 = return 𝔑
       storeTermCodes (𝔠 ∷ 𝔠s) 𝔑 =
@@ -637,6 +643,48 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
       getInterpretationOfTerm : Term → TermNode → Maybe Element
       getInterpretationOfTerm τ node = number <$> findTermNode (encodeTerm τ) node
 
+      FindTermNodeTermCode-ok : ∀ {𝔠 𝔫} → 𝔠 child∈ 𝔫 → IsJust (findTermNode 𝔠 𝔫)
+      FindTermNodeTermCode-ok {𝔠} {record { children = [] ; number = number₁ }} ()
+      --FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ = case (fst₁ ≟_) 𝔠 , graphAt {B = λ 𝑐 → Dec (fst₁ ≡ 𝑐)} (fst₁ ≟_) 𝔠 of λ { (yes x , snd₂) → {!!} ; (no x , snd₂) → {!!}} --λ { ((yes ===) , (inspect s1)) → {!!} ; ((no =n=) , inspect s2) → {!!} }
+      --FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ = case fst₁ ≟ 𝔠 of λ { (yes refl) → {!!} ; (no x) → {!!}}
+      FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ with fst₁ ≟ 𝔠
+      FindTermNodeTermCode-ok {𝔠} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} x₁ | yes eq2 = tt
+      FindTermNodeTermCode-ok {.fst₁} {record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} (here .(map fst children₁)) | no neq = ⊥-elim (neq refl)
+      FindTermNodeTermCode-ok {𝔠} {𝔫@record { children = (fst₁ , snd₁) ∷ children₁ ; number = number₁ }} (there .fst₁ x₁) | no neq = FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} x₁
+
+      Justified : ∀ {a} {A : Set a} → (m : Maybe A) → IsJust m → ∃ λ x → m ≡ just x
+      Justified nothing ()
+      Justified (just x) x₁ = _ , refl
+
+      storeTerm-ok : ∀ τ 𝔫 𝔑 → IsJust (findTermNode τ (snd (runIdentity (runStateT (runStateT (storeTerm τ) 𝔑) 𝔫))))
+      storeTerm-ok (variable 𝑥) 𝔫 𝔑 with variable 𝑥 child∈? 𝔫
+      storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x with TermCode.variable 𝑥 ≟ variable 𝑥
+      storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x | yes _ = tt
+      storeTerm-ok (variable 𝑥) 𝔫 𝔑 | no x | no variable𝑥≢variable𝑥 = ⊥-elim (variable𝑥≢variable𝑥 refl)
+      --storeTerm-ok (variable 𝑥) 𝔫 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 = {!𝔫!}
+      storeTerm-ok (variable 𝑥) record { children = [] ; number = number₁ } 𝔑 | yes ()
+      --storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 = {!!}
+      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 rewrite setGet-ok 𝔫 vx∈𝔫 with fst₁ ≟ variable 𝑥
+      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | yes eq = tt
+      --… | no neq = case vx∈𝔫 of λ { (here .(map fst children₁)) → ⊥-elim (neq refl)  ; (there .fst₁ asdf) → case graphAt FindTermNodeTermCode-ok asdf of λ { (ingraph sss) → {!!} } } -- storeTerm-ok x {!record 𝔫 { children = children₁ }!} 𝔑 -- x record 𝔫 { children = children₁ } 𝔑
+      --… | no neq = case vx∈𝔫 of λ { (here .(map fst children₁)) → ⊥-elim (neq refl)  ; (there .fst₁ asdf) → case inspect $ FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} asdf of λ { (.(FindTermNodeTermCode-ok asdf) , ingraph refl) → {!!}} } -- storeTerm-ok x {!record 𝔫 { children = children₁ }!} 𝔑 -- x record 𝔫 { children = children₁ } 𝔑
+      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq with vx∈𝔫
+      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | here fdsdfs = ⊥-elim (neq refl)
+      --storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | there dfdsf fdsdfs with FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs | graphAt (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }}) fdsdfs
+      --… | frfrrf | ingraph tttttt = transport _ (snd $ Justified (FindTermNode.findTermNode FindTermNodeTermCode (variable 𝑥) (record { children = children₁ ; number = number₁ })) (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs)) _
+      storeTerm-ok x@(variable 𝑥) 𝔫@record { children = ((fst₁ , snd₁) ∷ children₁) ; number = number₁ } 𝔑 | yes vx∈𝔫 | no neq | there dfdsf fdsdfs rewrite (snd $ Justified (FindTermNode.findTermNode FindTermNodeTermCode (variable 𝑥) (record { children = children₁ ; number = number₁ })) (FindTermNodeTermCode-ok {𝔫 = record 𝔫 { children = children₁ }} fdsdfs)) = tt
+      storeTerm-ok (function 𝑥 x₁) 𝔫 𝔑 with (function 𝑥 (arity x₁)) child∈? 𝔫
+      storeTerm-ok (function 𝑥 ⟨ [] ⟩) 𝔫 𝔑 | no x with Eq._==_ EqFunctionName ⟨ name 𝑥 ⟩ ⟨ name 𝑥 ⟩
+      storeTerm-ok (function 𝑥 ⟨ [] ⟩) 𝔫 𝔑 | no x | (yes refl) = tt
+      … | no neq = ⊥-elim (neq refl)
+      --storeTerm-ok τ₀@(function 𝑓 ⟨ τ₁ ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!τ₁!}
+      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 with variable 𝑥₁ ∈? map fst (children 𝔫)
+      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 | (yes x) = {!!}
+      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ [] ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 | (no x) = {!!}
+      storeTerm-ok (function 𝑓₀ ⟨ variable 𝑥₁ ∷ x ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!!}
+      storeTerm-ok τ₀@(function 𝑓₀ ⟨ function 𝑓₁ τ₁s ∷ τ₂s ⟩) 𝔫 𝔑 | no 𝔠₁∉𝔫 = {!!}
+      storeTerm-ok (function 𝑥 x₁) 𝔫 𝔑 | yes x = {!!}
+
       mutual
 
         storeTermVerifiably' : (τ : Term) → StateT Nat (StateT (Σ TermNode λ n → IsJust (findTermNode τ n)) Identity) ⊤
@@ -650,6 +698,8 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
         storeTermsVerifiably : Terms → StateT Nat (StateT TermNode Identity) ⊤
         storeTermsVerifiably ⟨ [] ⟩ = return tt
         storeTermsVerifiably ⟨ τ ∷ τs ⟩ = storeTermVerifiably τ ~| storeTermsVerifiably ⟨ τs ⟩ ~| return tt
+
+
 
 
 
