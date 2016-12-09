@@ -366,20 +366,20 @@ instance
   EqPredicateName : Eq PredicateName
   Eq._==_ EqPredicateName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
 
-  EqArity : Eq Arity
-  Eq._==_ EqArity _ = decEq₁ (cong arity) ∘ (_≟_ on arity $ _)
+
+instance EqArity : Eq Arity
+Eq._==_ EqArity _ = decEq₁ (cong arity) ∘ (_≟_ on arity $ _)
 
 mutual
-  instance
 
-    EqTerm : ∀ {i} → Eq (Term {i})
-    Eq._==_ EqTerm (variable _) (variable _) = decEq₁ termVariable-inj $ _≟_ _ _
-    Eq._==_ (EqTerm {i}) (function 𝑓₁ {j₁} τ₁s) (function 𝑓₂ {j₂} τ₂s) = {!decEq₂ {!termFunction-inj₁!} {!!} (𝑓₁ ≟ 𝑓₂) {!_≟_ {{i}} τ₁s τ₂s!}!} -- decEq₂ termFunction-inj₁ termFunction-inj₂ (_≟_ _ _) (_≟_ _ _)
-    Eq._==_ EqTerm (variable _) (function _ _) = no λ ()
-    Eq._==_ EqTerm (function _ _) (variable _) = no λ ()
+  instance EqTerm : ∀ {i} → Eq (Term {i})
+  Eq._==_ EqTerm (variable _) (variable _) = decEq₁ termVariable-inj $ _≟_ _ _
+  Eq._==_ (EqTerm {i}) (function 𝑓₁ {j₁} τ₁s) (function 𝑓₂ {j₂} τ₂s) = {!decEq₂ {!termFunction-inj₁!} {!!} (𝑓₁ ≟ 𝑓₂) {!_≟_ {{i}} τ₁s τ₂s!}!} -- decEq₂ termFunction-inj₁ termFunction-inj₂ (_≟_ _ _) (_≟_ _ _)
+  Eq._==_ EqTerm (variable _) (function _ _) = no λ ()
+  Eq._==_ EqTerm (function _ _) (variable _) = no λ ()
 
-    EqTerms : ∀ {i} {j : Size< i} → Eq (Terms {j})
-    Eq._==_ EqTerms x y = {!!}
+  instance EqTerms : ∀ {i} {j : Size< i} → Eq (Terms {j})
+  Eq._==_ EqTerms x y = {!!}
 
 instance
 
@@ -425,6 +425,10 @@ instance
 
   HasSatisfactionSequent : {A : Set} ⦃ _ : BeFormula A ⦄ → HasSatisfaction $ Sequent A
   HasSatisfaction._⊨_ HasSatisfactionSequent I (φᵗ ╱ φˢs) = I ⊨ φˢs → I ⊨ φᵗ
+
+instance
+  postulate
+    HasDecidableSatisfactionFormula : HasDecidableSatisfaction Formula
 
 instance
 
@@ -793,26 +797,27 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
   Theorem1b : ▷ Φ → ⊨ Φ
   Theorem1b = {!!}
 
--- -- -- -- negationEliminationRule : (I : Interpretation) (φ : Formula) → I ⊨ ~ (~ φ) → I ⊨ φ
--- -- -- -- negationEliminationRule I φ (¬[I⊭φ×I⊭φ] , _) with I ⊨? φ
--- -- -- -- … | yes I⊨φ = I⊨φ
--- -- -- -- … | no I⊭φ = ⊥-elim $ ¬[I⊭φ×I⊭φ] $ I⊭φ , I⊭φ
+negationEliminationRule : (I : Interpretation) (φ : Formula) → I ⊨ ~ (~ φ) → I ⊨ φ
+negationEliminationRule I φ (¬[I⊭φ×I⊭φ] , _) with I ⊨? φ
+… | yes I⊨φ = I⊨φ
+… | no I⊭φ = ⊥-elim $ ¬[I⊭φ×I⊭φ] $ I⊭φ , I⊭φ
 
--- -- -- -- -- -- justifieds simplification and
--- -- -- -- -- simplificationRule₁ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ logical φ₁ φ₂ → I ⊨ logical φ₁ φ₁
--- -- -- -- -- simplificationRule₁ I φ₁ φ₂ x = (fst x) , (fst x)
+-- justifieds simplification and ... more?
+simplificationRule₁ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ Formula.logical φ₁ φ₂ → I ⊨ Formula.logical φ₁ φ₁
+simplificationRule₁ I φ₁ φ₂ x = (fst x) , (fst x)
 
--- -- -- -- -- simplificationRule₂ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ logical φ₁ φ₂ → I ⊨ logical φ₂ φ₂
--- -- -- -- -- simplificationRule₂ I φ₁ φ₂ x = snd x , snd x
+simplificationRule₂ : (I : Interpretation) (φ₁ φ₂ : Formula) → I ⊨ Formula.logical φ₁ φ₂ → I ⊨ Formula.logical φ₂ φ₂
+simplificationRule₂ I φ₁ φ₂ x = snd x , snd x
 
--- -- -- -- -- -- logical (logical (logical p p) q) (logical (logical p p) q)
--- -- -- -- -- conditionalization : (I : Interpretation) (p q : Formula) → I ⊨ q → I ⊨ ((p ∷ []) ⊢ p ⊃ q)
--- -- -- -- -- conditionalization I p q ⊨q -⊨p = let ⊨p = -⊨p p (here []) in (λ { (x , ~q) → ~q ⊨q}) , (λ { (x , y) → y ⊨q})
+-- logical (logical (logical p p) q) (logical (logical p p) q)
+conditionalizationRule : (I : Interpretation) (p q : Formula) → I ⊨ q → I ⊨ (p ⊃ q ╱ (p ∷ []) )
+conditionalizationRule I p q ⊨q (_ , _) = let prf = λ { (_ , ⊭q) → ⊭q ⊨q} in prf , prf
+--let ⊨p = {!-⊨p p (here [])!} in (λ { (x , ~q) → ~q ⊨q}) , (λ { (x , y) → y ⊨q})
 
--- -- -- -- -- modusPonens : (I : Interpretation) (p q : Formula) → I ⊨ p → I ⊨ ((p ⊗ p) ⊗ q) ⊗ ((p ⊗ p) ⊗ q) → I ⊨ q
--- -- -- -- -- modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) with I ⊨? q
--- -- -- -- -- modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | yes x = x
--- -- -- -- -- modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | no x = ⊥-elim (~[~p&~p&~q] ((λ { (x₁ , y) → y P}) , (λ x₁ → x x₁)))
+modusPonens : (I : Interpretation) (p q : Formula) → I ⊨ p → I ⊨ (p ⊃ q) → I ⊨ q
+modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) with I ⊨? q
+modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | yes x = x
+modusPonens I p q P (~[~p&~p&~q] , ~[~p&~p&~q]²) | no x = ⊥-elim (~[~p&~p&~q] ((λ { (x₁ , y) → y P}) , (λ x₁ → x x₁)))
 
 -- -- -- -- -- data SkolemFormula {ι : Size} (α : Alphabet) : Set where
 -- -- -- -- --   atomic : Predication α → SkolemFormula α
