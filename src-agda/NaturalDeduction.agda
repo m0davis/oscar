@@ -64,10 +64,14 @@ module _ where
   open import Control.Monad.State public
   open import Control.Monad.Identity public
 
+  sequence : ∀ {a b} {A : Set a} {F : Set a → Set b} ⦃ _ : Applicative F ⦄ → List (F A) → F ⊤′
+  sequence [] = pure tt
+  sequence (x ∷ xs) = x *> sequence xs
+
   {-
   open import Tactic.Nat
-  open import Tactic.Deriving.Eq
   -}
+  open import Tactic.Deriving.Eq public
 
 TruthValue = Bool
 
@@ -79,6 +83,7 @@ record VariableName : Set
   constructor ⟨_⟩
   field
     name : Nat
+
 open VariableName
 
 record FunctionName : Set
@@ -86,6 +91,7 @@ record FunctionName : Set
   constructor ⟨_⟩
   field
     name : Nat
+
 open FunctionName
 
 record PredicateName : Set
@@ -93,6 +99,7 @@ record PredicateName : Set
   constructor ⟨_⟩
   field
     name : Nat
+
 open PredicateName
 
 record Arity : Set
@@ -100,6 +107,7 @@ record Arity : Set
   constructor ⟨_⟩
   field
     arity : Nat
+
 open Arity
 
 Vector : Set → Arity → Set
@@ -111,6 +119,7 @@ record Elements : Set
   field
     {arity} : Arity
     elements : Vector Element arity
+
 open Elements
 
 record Interpretation : Set
@@ -119,13 +128,16 @@ record Interpretation : Set
     μ⟦_⟧ : VariableName → Element
     𝑓⟦_⟧ : FunctionName → Elements → Element
     𝑃⟦_⟧ : PredicateName → Elements → TruthValue
+
 open Interpretation
 
 mutual
+
   data Term {i : Size} : Set
    where
     variable : VariableName → Term
     function : FunctionName → {j : Size< i} → Terms {j} → Term
+
   record Terms {i : Size} : Set
    where
     constructor ⟨_⟩
@@ -133,7 +145,17 @@ mutual
     field
       {arity} : Arity
       terms : Vector (Term {i}) arity
+
 open Terms
+
+termVariable-inj : ∀ {i 𝑥₁ 𝑥₂} → Term.variable {i} 𝑥₁ ≡ variable {i} 𝑥₂ → 𝑥₁ ≡ 𝑥₂
+termVariable-inj refl = refl
+
+termFunction-inj₁ : ∀ {𝑓₁ 𝑓₂ τ₁s τ₂s} → Term.function 𝑓₁ τ₁s ≡ function 𝑓₂ τ₂s → 𝑓₁ ≡ 𝑓₂
+termFunction-inj₁ refl = refl
+
+termFunction-inj₂ : ∀ {𝑓₁ 𝑓₂ τ₁s τ₂s} → Term.function 𝑓₁ τ₁s ≡ function 𝑓₂ τ₂s → τ₁s ≡ τ₂s
+termFunction-inj₂ refl = refl
 
 data Formula : Set
  where
@@ -147,22 +169,29 @@ record HasNegation (A : Set) : Set
  where
   field
     ~ : A → A
+
 open HasNegation ⦃ … ⦄
+
 {-# DISPLAY HasNegation.~ _ = ~ #-}
 
-record BeFormula (A : Set) : Set where
+record BeFormula (A : Set) : Set
+ where
   constructor ⟨_⟩
   field
     formula : A → Formula
+
 open BeFormula ⦃ … ⦄
 
 record HasSatisfaction (A : Set) : Set₁
  where
   field
     _⊨_ : Interpretation → A → Set
+
   _⊭_ : Interpretation → A → Set
   _⊭_ I = ¬_ ∘ I ⊨_
+
 open HasSatisfaction ⦃ … ⦄
+
 {-# DISPLAY HasSatisfaction._⊨_ _ = _⊨_ #-}
 {-# DISPLAY HasSatisfaction._⊭_ _ = _⊭_ #-}
 
@@ -170,7 +199,9 @@ record HasDecidableSatisfaction (A : Set) ⦃ _ : HasSatisfaction A ⦄ : Set₁
  where
   field
     _⊨?_ : (I : Interpretation) → (x : A) → Dec (I ⊨ x)
+
 open HasDecidableSatisfaction ⦃ … ⦄
+
 {-# DISPLAY HasDecidableSatisfaction._⊨?_ _ = _⊨?_ #-}
 
 infix 15 _╱_
@@ -180,24 +211,31 @@ record Sequent (A : Set) ⦃ _ : BeFormula A ⦄ : Set
   field
     statement : A
     suppositions : List A
+
+
 open Sequent
 
 record HasValidation (A : Set) : Set₁
  where
   field
     ⊨_ : A → Set
+
   ⊭_ : A → Set
   ⊭_ = ¬_ ∘ ⊨_
+
 open HasValidation ⦃ … ⦄
+
 {-# DISPLAY HasValidation.⊨_ _ = ⊨_ #-}
 {-# DISPLAY HasValidation.⊭_ _ = ⊭_ #-}
 
 𝑃[_♭_] : PredicateName → Terms → Formula
 𝑃[_♭_] = atomic
+
 {-# DISPLAY atomic = 𝑃[_♭_] #-}
 
 _⊗_ : Formula → Formula → Formula
 _⊗_ = logical
+
 {-# DISPLAY logical = _⊗_ #-}
 
 instance
@@ -216,6 +254,7 @@ record LiteralFormula : Set
   field
     {formula} : Formula
     isLiteral : IsLiteral formula
+
 open LiteralFormula
 
 infix 13 _¶_
@@ -225,34 +264,43 @@ record Problem (A : Set) ⦃ _ : BeFormula A ⦄ : Set
   field
     inferences : List (Sequent A)
     interest : Sequent A
+
 open Problem
 
 record HasSubstantiveDischarge (+ : Set) (- : Set) : Set₁
  where
   field
     _≽_ : + → - → Set
+
 open HasSubstantiveDischarge ⦃ … ⦄
+
 {-# DISPLAY HasSubstantiveDischarge._≽_ _ = _≽_ #-}
 
 record HasVacuousDischarge (+ : Set) : Set₁
  where
   field
     ◁_ : + → Set
+
 open HasVacuousDischarge ⦃ … ⦄
+
 {-# DISPLAY HasVacuousDischarge.◁_ _ = ◁_ #-}
 
 record HasSalvation (A : Set) : Set₁
  where
   field
     ▷_ : A → Set
+
 open HasSalvation ⦃ … ⦄
+
 {-# DISPLAY HasSalvation.▷_ _ = ▷_ #-}
 
 record HasDecidableSalvation (A : Set) ⦃ _ : HasSalvation A ⦄ : Set
  where
   field
     ▷?_ : (x : A) → Dec $ ▷_ x
+
 open HasDecidableSalvation ⦃ … ⦄
+
 {-# DISPLAY HasDecidableSalvation.▷?_ _ = ▷?_ #-}
 
 τ⟦_⟧ : Interpretation → {i : Size} → Term {i} → Element
@@ -261,6 +309,7 @@ open HasDecidableSalvation ⦃ … ⦄
 
 ∀[_♭_] : VariableName → Formula → Formula
 ∀[_♭_] = quantified
+
 {-# DISPLAY quantified = ∀[_♭_] #-}
 
 _∧_ : Formula → Formula → Formula
@@ -282,30 +331,62 @@ record _≞_/_ (𝓘 : Interpretation) (I : Interpretation) (𝑥 : VariableName
     𝑓Equality : (𝑓 : FunctionName) (μs : Elements) → 𝑓⟦ 𝓘 ⟧ 𝑓 μs ≡ 𝑓⟦ I ⟧ 𝑓 μs
     𝑃Equality : (𝑃 : PredicateName) → (μs : Elements) → 𝑃⟦ 𝓘 ⟧ 𝑃 μs ≡ 𝑃⟦ I ⟧ 𝑃 μs
 
+_⟪_⟫_ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c} →
+        A → (A → B → C) → B → C
+x ⟪ f ⟫ y = f x y
+{-
+infixr 9 _∘₂′_
+_∘₂′_ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d} →
+         (C → D) → (A → B → C) → (A → B → D)
+_∘₂′_ = _∘′_ ∘ _∘′_
+{-# INLINE _∘₂′_ #-}
+
+infixr 9 _∘₂′_
+_∘₂′_ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d} →
+         (C → D) → (A → B → C) → (A → B → D)
+_∘₂′_ = _∘′_ ∘ _∘′_
+{-# INLINE _∘₂′_ #-}
+-}
+{-
+infixr 9 _∘₂_
+_∘₂_ : ∀ {a b c d} {A : Set a} {B : A → Set b} {C : ∀ x → B x → Set c} {D : ∀ x → B x → C x
+         (f : ∀ {x} (y : B x) → C x y) (g : ∀ x → B x) →
+         ∀ x → C x (g x)
+_∘₂_ = _∘′_ ∘ _∘′_
+{-# INLINE _∘₂′_ #-}
+-}
 instance
 
   EqVariableName : Eq VariableName
-  Eq._==_ EqVariableName ⟨ x ⟩ ⟨ y ⟩ with x ≟ y
-  … | yes x≡y rewrite x≡y = yes refl
-  … | no x≢y = no λ { refl → x≢y refl }
+  Eq._==_ EqVariableName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
 
   EqFunctionName : Eq FunctionName
-  Eq._==_ EqFunctionName ⟨ x ⟩ ⟨ y ⟩ with x ≟ y
-  … | yes x≡y rewrite x≡y = yes refl
-  … | no x≢y = no λ { refl → x≢y refl }
+  Eq._==_ EqFunctionName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
 
   EqPredicateName : Eq PredicateName
-  Eq._==_ EqPredicateName ⟨ x ⟩ ⟨ y ⟩ with x ≟ y
-  … | yes x≡y rewrite x≡y = yes refl
-  … | no x≢y = no λ { refl → x≢y refl }
+  Eq._==_ EqPredicateName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
 
   EqArity : Eq Arity
-  Eq._==_ EqArity ⟨ x ⟩ ⟨ y ⟩ with x ≟ y
-  … | yes x≡y rewrite x≡y = yes refl
-  … | no x≢y = no λ { refl → x≢y refl }
+  Eq._==_ EqArity _ = decEq₁ (cong arity) ∘ (_≟_ on arity $ _)
 
+mutual
+  instance
+
+    EqTerm : ∀ {i} → Eq (Term {i})
+    Eq._==_ EqTerm (variable _) (variable _) = decEq₁ termVariable-inj $ _≟_ _ _
+    Eq._==_ (EqTerm {i}) (function 𝑓₁ {j₁} τ₁s) (function 𝑓₂ {j₂} τ₂s) = {!decEq₂ {!termFunction-inj₁!} {!!} (𝑓₁ ≟ 𝑓₂) {!_≟_ {{i}} τ₁s τ₂s!}!} -- decEq₂ termFunction-inj₁ termFunction-inj₂ (_≟_ _ _) (_≟_ _ _)
+    Eq._==_ EqTerm (variable _) (function _ _) = no λ ()
+    Eq._==_ EqTerm (function _ _) (variable _) = no λ ()
+
+    EqTerms : ∀ {i} {j : Size< i} → Eq (Terms {j})
+    Eq._==_ EqTerms x y = {!!}
+
+instance
+
+  --EqFormula : deriveEqType Formula
+  --unquoteDef EqFormula = deriveEqDef EqFormula (quote Formula)
   EqFormula : Eq Formula
-  EqFormula = {!!}
+  Eq._==_ EqFormula = {!!}
 
   EqLiteralFormula : Eq LiteralFormula
   Eq._==_ EqLiteralFormula φ₁ φ₂ = {!!}
@@ -397,12 +478,6 @@ instance
   HasDecidableSalvationProblem : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasVacuousDischarge ∘ List $ Sequent A ⦄ → HasDecidableSalvation $ Problem A
   HasDecidableSalvationProblem = {!!}
 
-
-
-
-
-
-
 data TermCode : Set
  where
   variable : VariableName → TermCode
@@ -468,12 +543,9 @@ module ExampleEncodeDecode where
   example-Term : Term
   example-Term =
     (function ⟨ 2 ⟩
-              ⟨ variable ⟨ 0 ⟩
-              ∷ function ⟨ 3 ⟩
-                         ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩
-              ∷ variable ⟨ 5 ⟩
-              ∷ []
-              ⟩
+              ⟨ variable ⟨ 0 ⟩ ∷
+                function ⟨ 3 ⟩ ⟨ variable ⟨ 2 ⟩ ∷ [] ⟩ ∷
+                variable ⟨ 5 ⟩ ∷ [] ⟩
     )
 
   -- function ⟨ 2 ⟩ ⟨ 3 ⟩ ∷ variable ⟨ 0 ⟩ ∷ function ⟨ 3 ⟩ ⟨ 1 ⟩ ∷ variable ⟨ 2 ⟩ ∷ variable ⟨ 5 ⟩ ∷ []
@@ -609,10 +681,6 @@ storeLiteralFormulaTerms : LiteralFormula → StateT Nat (StateT TermNode Identi
 storeLiteralFormulaTerms ⟨ atomic 𝑃 τs ⟩ = storeTerms τs
 storeLiteralFormulaTerms ⟨ logical 𝑃 τs ⟩ = storeTerms τs
 
-sequence : ∀ {a b} {A : Set a} {F : Set a → Set b} ⦃ _ : Applicative F ⦄ → List (F A) → F ⊤′
-sequence [] = pure tt
-sequence (x ∷ xs) = x *> sequence xs
-
 storeSequentLiteralFormulaTerms : Sequent LiteralFormula → StateT Nat (StateT TermNode Identity) ⊤′
 storeSequentLiteralFormulaTerms (φᵗ ╱ φˢs) = sequence $ storeLiteralFormulaTerms <$> (φᵗ ∷ φˢs)
 
@@ -710,8 +778,8 @@ Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b
  where
   Theorem1a : ⊨ Φ → ▷ Φ
   Theorem1a with ▷? Φ
-  … | yes ⊫Φ = const ⊫Φ
-  … | no ⊯Φ =
+  … | yes ▷Φ = const ▷Φ
+  … | no ⋫Φ =
     let I , I⊨χs , I⊭ι = Lemma1a in
     λ I→I⊨cs→I⊨i → ⊥-elim $ I⊭ι $ I→I⊨cs→I⊨i I I⊨χs
    where
