@@ -86,6 +86,9 @@ record VariableName : Set
 
 open VariableName
 
+instance EqVariableName : Eq VariableName
+Eq._==_ EqVariableName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
+
 record FunctionName : Set
  where
   constructor ⟨_⟩
@@ -93,6 +96,9 @@ record FunctionName : Set
     name : Nat
 
 open FunctionName
+
+instance EqFunctionName : Eq FunctionName
+Eq._==_ EqFunctionName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
 
 record PredicateName : Set
  where
@@ -102,6 +108,9 @@ record PredicateName : Set
 
 open PredicateName
 
+instance EqPredicateName : Eq PredicateName
+Eq._==_ EqPredicateName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
+
 record Arity : Set
  where
   constructor ⟨_⟩
@@ -110,8 +119,11 @@ record Arity : Set
 
 open Arity
 
+instance EqArity : Eq Arity
+Eq._==_ EqArity _ = decEq₁ (cong arity) ∘ (_≟_ on arity $ _)
+
 Vector : Set → Arity → Set
-Vector A a = Vec A (arity a)
+Vector A = Vec A ∘ arity
 
 record Elements : Set
  where
@@ -121,6 +133,15 @@ record Elements : Set
     elements : Vector Element arity
 
 open Elements
+
+instance EqElements : Eq Elements
+Eq._==_ EqElements (⟨_⟩ {𝑎₁} εs₁) (⟨_⟩ {𝑎₂} εs₂)
+ with 𝑎₁ ≟ 𝑎₂
+… | no 𝑎₁≢𝑎₂ = no λ {refl → 𝑎₁≢𝑎₂ refl}
+… | yes refl
+ with εs₁ ≟ εs₂
+… | yes refl = yes refl
+… | no εs₁≢εs₂ = no λ {refl → εs₁≢εs₂ refl}
 
 record Interpretation : Set
  where
@@ -156,6 +177,25 @@ termFunction-inj₁ refl = refl
 
 termFunction-inj₂ : ∀ {𝑓₁ 𝑓₂ τ₁s τ₂s} → Term.function 𝑓₁ τ₁s ≡ function 𝑓₂ τ₂s → τ₁s ≡ τ₂s
 termFunction-inj₂ refl = refl
+{-
+mutual
+
+  instance EqTerm : ∀ {i} → Eq (Term {i})
+  Eq._==_ EqTerm (variable _) (variable _) = decEq₁ termVariable-inj $ _≟_ _ _
+  Eq._==_ (EqTerm {i}) (function 𝑓₁ {j₁} τ₁s) (function 𝑓₂ {j₂} τ₂s) = {!decEq₂ {!termFunction-inj₁!} {!!} (𝑓₁ ≟ 𝑓₂) {!_≟_ {{i}} τ₁s τ₂s!}!} -- decEq₂ termFunction-inj₁ termFunction-inj₂ (_≟_ _ _) (_≟_ _ _)
+  Eq._==_ EqTerm (variable _) (function _ _) = no λ ()
+  Eq._==_ EqTerm (function _ _) (variable _) = no λ ()
+
+  instance EqTerms : ∀ {i} {j : Size< i} → Eq (Terms {j})
+  Eq._==_ EqTerms x y = {!!}
+-}
+mutual
+
+  instance EqTerm : Eq Term
+  EqTerm = {!!}
+
+  instance EqTerms : Eq Terms
+  EqTerms = {!!}
 
 data Formula : Set
  where
@@ -164,6 +204,12 @@ data Formula : Set
             Formula →
             Formula
   quantified : VariableName → Formula → Formula
+
+--instance EqFormula : deriveEqType Formula
+--unquoteDef EqFormula = deriveEqDef EqFormula (quote Formula)
+
+instance EqFormula : Eq Formula
+Eq._==_ EqFormula = {!!}
 
 record HasNegation (A : Set) : Set
  where
@@ -355,38 +401,8 @@ _∘₂_ : ∀ {a b c d} {A : Set a} {B : A → Set b} {C : ∀ x → B x → Se
 _∘₂_ = _∘′_ ∘ _∘′_
 {-# INLINE _∘₂′_ #-}
 -}
-instance
-
-  EqVariableName : Eq VariableName
-  Eq._==_ EqVariableName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
-
-  EqFunctionName : Eq FunctionName
-  Eq._==_ EqFunctionName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
-
-  EqPredicateName : Eq PredicateName
-  Eq._==_ EqPredicateName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
-
-
-instance EqArity : Eq Arity
-Eq._==_ EqArity _ = decEq₁ (cong arity) ∘ (_≟_ on arity $ _)
-
-mutual
-
-  instance EqTerm : ∀ {i} → Eq (Term {i})
-  Eq._==_ EqTerm (variable _) (variable _) = decEq₁ termVariable-inj $ _≟_ _ _
-  Eq._==_ (EqTerm {i}) (function 𝑓₁ {j₁} τ₁s) (function 𝑓₂ {j₂} τ₂s) = {!decEq₂ {!termFunction-inj₁!} {!!} (𝑓₁ ≟ 𝑓₂) {!_≟_ {{i}} τ₁s τ₂s!}!} -- decEq₂ termFunction-inj₁ termFunction-inj₂ (_≟_ _ _) (_≟_ _ _)
-  Eq._==_ EqTerm (variable _) (function _ _) = no λ ()
-  Eq._==_ EqTerm (function _ _) (variable _) = no λ ()
-
-  instance EqTerms : ∀ {i} {j : Size< i} → Eq (Terms {j})
-  Eq._==_ EqTerms x y = {!!}
 
 instance
-
-  --EqFormula : deriveEqType Formula
-  --unquoteDef EqFormula = deriveEqDef EqFormula (quote Formula)
-  EqFormula : Eq Formula
-  Eq._==_ EqFormula = {!!}
 
   EqLiteralFormula : Eq LiteralFormula
   Eq._==_ EqLiteralFormula φ₁ φ₂ = {!!}
