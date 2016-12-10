@@ -510,6 +510,89 @@ module _
   Monad._>>=_ MonadDelay = bindDelay
   Monad.super MonadDelay = ApplicativeDelay
 
+mutual
+
+  data _∼_ {i : Size} {A : Set} : (a? b? : Delay ∞ A) → Set where
+    ∼now    :  ∀ a                              →  now a     ∼ now a
+    ∼later  :  ∀ {a∞ b∞} (eq : a∞ ∞∼⟨ i ⟩∼ b∞)  →  later a∞  ∼ later b∞
+
+  _∼⟨_⟩∼_ = λ {A} a? i b? → _∼_ {i}{A} a? b?
+
+  record _∞∼⟨_⟩∼_ {A} (a∞ : ∞Delay ∞ A) i (b∞ : ∞Delay ∞ A) : Set where
+    coinductive
+    field
+      ∼force : {j : Size< i} → force a∞ ∼⟨ j ⟩∼ force b∞
+
+open _∞∼⟨_⟩∼_ public
+
+_∞∼_ = λ {i} {A} a∞ b∞ → _∞∼⟨_⟩∼_ {A} a∞ i b∞
+
+mutual
+
+  ∼refl    :  ∀{i A} (a?  : Delay ∞ A)   →  a? ∼⟨ i ⟩∼ a?
+  ∼refl (now a)    = ∼now a
+  ∼refl (later a∞) = ∼later (∞∼refl a∞)
+
+  ∞∼refl   :  ∀{i A} (a∞  : ∞Delay ∞ A)  →  a∞ ∞∼⟨ i ⟩∼ a∞
+  ∼force (∞∼refl a∞) = ∼refl (force a∞)
+
+mutual
+
+  ∼sym     :  ∀{i A}{a?  b?  : Delay ∞ A }  →  a? ∼⟨ i ⟩∼ b?   →  b? ∼⟨ i ⟩∼ a?
+  ∼sym (∼now a)    = ∼now a
+  ∼sym (∼later eq) = ∼later (∞∼sym eq)
+
+  ∞∼sym    :  ∀{i A}{a∞  b∞  : ∞Delay ∞ A}  →  a∞ ∞∼⟨ i ⟩∼ b∞  →  b∞ ∞∼⟨ i ⟩∼ a∞
+  ∼force (∞∼sym eq) = ∼sym (∼force eq)
+
+mutual
+
+  ∼trans   :  ∀{i A}{a? b? c? : Delay ∞ A} →
+              a? ∼⟨ i ⟩∼ b? →  b? ∼⟨ i ⟩∼ c? → a? ∼⟨ i ⟩∼ c?
+  ∼trans (∼now a)    (∼now .a)    = ∼now a
+  ∼trans (∼later eq) (∼later eq′) = ∼later (∞∼trans eq eq′)
+
+  ∞∼trans  :  ∀{i A}{a∞ b∞ c∞ : ∞Delay ∞ A} →
+              a∞ ∞∼⟨ i ⟩∼ b∞ →  b∞ ∞∼⟨ i ⟩∼ c∞ → a∞ ∞∼⟨ i ⟩∼ c∞
+  ∼force (∞∼trans eq eq′) = ∼trans (∼force eq) (∼force eq′)
+
+--∼setoid : (i : Size) (A : Set) → Setoid lzero lzero
+--∞∼setoid : (i : Size) (A : Set) → Setoid lzero lzero
+
+mutual
+  bind-assoc               :  ∀{i A B C} (m : Delay ∞ A)
+                              {k : A → Delay ∞ B} {l : B → Delay ∞ C} →
+                              ((m >>= k) >>= l) ∼⟨ i ⟩∼ (m >>= λ a → (k a >>= l))
+  bind-assoc (now a)       =  ∼refl _
+  bind-assoc (later a∞)    =  ∼later (∞bind-assoc a∞)
+
+  ∞bind-assoc              :  ∀{i A B C} (a∞ : ∞Delay ∞ A)
+                              {k : A → Delay ∞ B} {l : B → Delay ∞ C} →
+                              ((a∞ ∞>>= k) ∞>>= l) ∞∼⟨ i ⟩∼ (a∞ ∞>>= λ a → (k a >>= l))
+  ∼force (∞bind-assoc a∞)  =  bind-assoc (force a∞)
+
+mutual
+  bind-cong-l   :  ∀{i A B}{a? b? : Delay ∞ A} →  a? ∼⟨ i ⟩∼ b? →
+                   (k : A → Delay ∞ B) → (a? >>= k) ∼⟨ i ⟩∼ (b? >>= k)
+  bind-cong-l (∼now a)    k = ∼refl _
+  bind-cong-l (∼later eq) k = ∼later (∞bind-cong-l eq k)
+
+  ∞bind-cong-l  :  ∀{i A B}{a∞ b∞ : ∞Delay ∞ A} → a∞ ∞∼⟨ i ⟩∼ b∞ →
+                   (k : A → Delay ∞ B) → (a∞ ∞>>= k) ∞∼⟨ i ⟩∼ (b∞ ∞>>= k)
+  ∼force (∞bind-cong-l eq k) = bind-cong-l (∼force eq) k
+
+bind-cong-r   :  ∀{i A B}(a? : Delay ∞ A){k l : A → Delay ∞ B} →
+                 (∀ a → (k a) ∼⟨ i ⟩∼ (l a)) → (a? >>= k) ∼⟨ i ⟩∼ (a? >>= l)
+
+∞bind-cong-r  :  ∀{i A B}(a∞ : ∞Delay ∞ A){k l : A → Delay ∞ B} →
+                 (∀ a → (k a) ∼⟨ i ⟩∼ (l a)) → (a∞ ∞>>= k) ∞∼⟨ i ⟩∼ (a∞ ∞>>= l)
+
+
+
+bind-cong-r (now a)    h = h a
+bind-cong-r (later a∞) h = ∼later (∞bind-cong-r a∞ h)
+
+∼force (∞bind-cong-r a∞ h) = bind-cong-r (force a∞) h
 
 
 data _⇓_ {A : Set} : (a? : Delay ∞ A) (a : A) → Set where
