@@ -510,6 +510,7 @@ module _
   Monad._>>=_ MonadDelay = bindDelay
   Monad.super MonadDelay = ApplicativeDelay
 
+  {-# DISPLAY BindDelay.bindDelay x f = x >>= f #-}
 mutual
 
   data _∼_ {i : Size} {A : Set} : (a? b? : Delay ∞ A) → Set where
@@ -560,6 +561,7 @@ mutual
 --∞∼setoid : (i : Size) (A : Set) → Setoid lzero lzero
 
 mutual
+
   bind-assoc               :  ∀{i A B C} (m : Delay ∞ A)
                               {k : A → Delay ∞ B} {l : B → Delay ∞ C} →
                               ((m >>= k) >>= l) ∼⟨ i ⟩∼ (m >>= λ a → (k a >>= l))
@@ -572,6 +574,7 @@ mutual
   ∼force (∞bind-assoc a∞)  =  bind-assoc (force a∞)
 
 mutual
+
   bind-cong-l   :  ∀{i A B}{a? b? : Delay ∞ A} →  a? ∼⟨ i ⟩∼ b? →
                    (k : A → Delay ∞ B) → (a? >>= k) ∼⟨ i ⟩∼ (b? >>= k)
   bind-cong-l (∼now a)    k = ∼refl _
@@ -581,19 +584,23 @@ mutual
                    (k : A → Delay ∞ B) → (a∞ ∞>>= k) ∞∼⟨ i ⟩∼ (b∞ ∞>>= k)
   ∼force (∞bind-cong-l eq k) = bind-cong-l (∼force eq) k
 
-bind-cong-r   :  ∀{i A B}(a? : Delay ∞ A){k l : A → Delay ∞ B} →
-                 (∀ a → (k a) ∼⟨ i ⟩∼ (l a)) → (a? >>= k) ∼⟨ i ⟩∼ (a? >>= l)
+mutual
+  bind-cong-r   :  ∀{i A B}(a? : Delay ∞ A){k l : A → Delay ∞ B} →
+                   (∀ a → (k a) ∼⟨ i ⟩∼ (l a)) → (a? >>= k) ∼⟨ i ⟩∼ (a? >>= l)
+  bind-cong-r (now a)    h = h a
+  bind-cong-r (later a∞) h = ∼later (∞bind-cong-r a∞ h)
 
-∞bind-cong-r  :  ∀{i A B}(a∞ : ∞Delay ∞ A){k l : A → Delay ∞ B} →
-                 (∀ a → (k a) ∼⟨ i ⟩∼ (l a)) → (a∞ ∞>>= k) ∞∼⟨ i ⟩∼ (a∞ ∞>>= l)
+  ∞bind-cong-r  :  ∀{i A B}(a∞ : ∞Delay ∞ A){k l : A → Delay ∞ B} →
+                   (∀ a → (k a) ∼⟨ i ⟩∼ (l a)) → (a∞ ∞>>= k) ∞∼⟨ i ⟩∼ (a∞ ∞>>= l)
+  ∼force (∞bind-cong-r a∞ h) = bind-cong-r (force a∞) h
 
+map-compose     :  ∀{i A B C} (a? : Delay ∞ A) {f : A → B} {g : B → C} →
+                   (g <$> (f <$> a?)) ∼⟨ i ⟩∼ ((g ∘ f) <$> a?)
+map-compose a?  =  bind-assoc a?
 
-
-bind-cong-r (now a)    h = h a
-bind-cong-r (later a∞) h = ∼later (∞bind-cong-r a∞ h)
-
-∼force (∞bind-cong-r a∞ h) = bind-cong-r (force a∞) h
-
+map-cong        :  ∀{i A B}{a? b? : Delay ∞ A} (f : A → B) →
+                   a? ∼⟨ i ⟩∼ b? → (f <$> a?) ∼⟨ i ⟩∼ (f <$> b?)
+map-cong f eq   =  bind-cong-l eq (now ∘ f)
 
 data _⇓_ {A : Set} : (a? : Delay ∞ A) (a : A) → Set where
   now⇓    :  ∀{a}                                   → now a ⇓ a
@@ -602,13 +609,212 @@ data _⇓_ {A : Set} : (a? : Delay ∞ A) (a : A) → Set where
 _⇓   :  {A : Set} (x : Delay ∞ A) → Set
 x ⇓  =  ∃ λ a → x ⇓ a
 
+map⇓     :  ∀{A B}{a : A}{a? : Delay ∞ A}(f : A → B) → a? ⇓ a → (f <$> a?) ⇓ f a
+map⇓ f now⇓        = now⇓
+map⇓ f (later⇓ a⇓) = later⇓ (map⇓ f a⇓)
+
+bind⇓    :  ∀{A B}(f : A → Delay ∞ B){?a : Delay ∞ A}{a : A}{b : B} →
+            ?a ⇓ a → f a ⇓ b → (?a >>= f) ⇓ b
+bind⇓ f now⇓ q = q
+bind⇓ f (later⇓ p) q = later⇓ (bind⇓ f p q)
+
+subst∼⇓  :  ∀{A}{a? a?′ : Delay ∞ A}{a : A} → a? ⇓ a → a? ∼ a?′ → a?′ ⇓ a
+subst∼⇓ now⇓ (∼now a) = now⇓
+subst∼⇓ (later⇓ p) (∼later eq) = later⇓ (subst∼⇓ p (∼force eq))
+
+traverse⇓ : ∀{A}{B}{f? : A → Delay ∞ B}{T : Set → Set}⦃ _ : Traversable T ⦄{X : T A} → (∀ x → f? x ⇓) → ∀ (x : T A) → traverse f? x ⇓
+traverse⇓ x₁ x₂ = {!!} , {!!}
+
+app⇓ : ∀{A}{B}{f? : Delay ∞ (A → B)}{f : A → B}{x? : Delay ∞ A}{x : A} → f? ⇓ f → x? ⇓ x → (f? <*> x?) ⇓ f x
+app⇓ now⇓ now⇓ = now⇓
+app⇓ now⇓ (later⇓ x?) = later⇓ $ map⇓ _ x?
+app⇓ (later⇓ f?) now⇓ = later⇓ $ bind⇓ _ f? now⇓
+app⇓ (later⇓ ⇓f) (later⇓ ⇓x) = later⇓ $ bind⇓ _ ⇓f $ later⇓ $ bind⇓ _ ⇓x now⇓
+{-
+Goal: (force f∞ >>= (λ y → later (x∞ ∞>>= (λ x → now (y x))))) ⇓ f .x
+-- bind⇓ : {A B : Set}
+           (f₁ : A → Delay ∞ B) {?a : Delay ∞ A} {a : A} {b : B}
+           → ?a ⇓ a
+           → f₁ a ⇓ b
+           → (?a >>= f₁) ⇓ b
+-- map⇓ : {A B : Set} {a : A} {a? : Delay ∞ A}
+          (f₁ : A → B)
+          → a? ⇓ a
+          → (a? >>= (λ x → now (f₁ x))) ⇓ f₁ a
+-- app⇓ : {A B : Set} {f? : Delay ∞ (A → B)} {f = f₁ : A → B} {x? : Delay ∞ A} {x : A}
+          → f? ⇓ f₁
+          → x? ⇓ x
+          → (f? <*> x?) ⇓ f₁ x
+-- app⇓ ⇓f ⇓x later⇓ {!(app⇓ ⇓f ⇓x)!} -- (bind⇓ (later ∘ _) f? (later⇓ (app⇓ {!!} x?)))
+-}
+traverse-vec⇓ : ∀{A}{B}{f? : A → Delay ∞ B}{n} → (∀ x → f? x ⇓) → ∀ (x : Vec A n) → traverse f? x ⇓
+traverse-vec⇓ _ [] = [] , now⇓
+traverse-vec⇓ {f? = f?} f?⇓ (x ∷ xs)
+ with f?⇓ x | traverse-vec⇓ f?⇓ xs
+… | fx , fx⇓ | fxs , fxs⇓ = (fx ∷ fxs) , app⇓ (app⇓ {!now⇓ {Vec._∷_}!} fx⇓) fxs⇓
+{-
+Goal: _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ ⇓ (λ v v₁ → _f_2028 fx fxs v v₁)
+_2029 := λ ..{.n} {.A} {.B} {f?} f?⇓ x xs fx fx⇓ fxs fxs⇓ →
+  app⇓ (app⇓ (?4 f?⇓ x xs fx fx⇓ fxs fxs⇓) fx⇓) fxs⇓ [blocked by problem 3544]
+[3544,3546] (_f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ <*> f? x <*> traverse f? xs) = ((f? x >>= (λ x₁ → now (_∷_ x₁))) <*> traverse f? xs) : Delay ∞ (Vec .B (suc .n))
+[3544,3547] (_f_2028 fx fxs fx fxs) = (fx ∷ fxs) : Vec .B (suc .n)
+
+_f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ ⇓ (λ v v₁ → _f_2028 fx fxs v v₁)
+
+_f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ <*> f? x = (f? x >>= (λ x₁ → now (_∷_ x₁)))
+Goal: _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ ⇓ (λ v v₁ → _f_2028 fx fxs v v₁)
+_f_2028 fx fxs fx fxs = fx ∷ fxs
+Two possibilities?
+P1:
+  Goal: _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ ⇓ (λ v v₁ → v ∷ v₁)
+  by similar logic to P2,
+  Goal: now _∷_ ⇓ (λ v v₁ → v ∷ v₁)
+  Goal: now _∷_ ⇓ _∷_
+
+P2:
+  Goal: _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ ⇓ (λ v v₁ → fx ∷ fxs)
+  _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ <*> f? x = (f? x >>= (λ x₁ → now (_∷_ x₁)))
+  case _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ = now ...
+    ... <*> f? x = bindDelay (f? x) $ now ∘ ... = f? x >>= (now ∘ ...) = (f? x >>= (λ x₁ → now (_∷_ x₁)))
+    (now ∘ ...) = (λ x₁ → now (_∷_ x₁)) = now ∘ _∷_
+    so ... = _∷_
+    so _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ = now _∷_
+    Goal: now _∷_ ⇓ (λ v v₁ → fx ∷ fxs)
+  case _f?_2023 f?⇓ x xs fx fx⇓ fxs fxs⇓ = later ...
+    ... <*> f? x = later ∘ bind∞Delay ... $ flip fmap (f? x) =
+
+
+-}
+-- (now (_∷ fxs)) <*> f? x
+
+{-
+[3536,3538] (_f?_2017 f?⇓ x xs fx fx⇓ fxs fxs⇓ <*> traverse f? xs) = ((f? x >>= (λ x₁ → now (_∷_ x₁))) <*> traverse f? xs) : Delay ∞ (Vec .B (suc .n))
+[3536,3539] (_f_2022 fx fxs fxs) = (fx ∷ fxs) : Vec .B (suc .n)
+
+_f?_2017 f?⇓ x xs fx fx⇓ fxs fxs⇓ ⇓ (λ v → _f_2022 fx fxs v)
+(f? x >>= (λ x₁ → now (_∷_ x₁))) ⇓ (λ v → _f_2022 fx fxs v)
+(f? x >>= (λ x₁ → now (_∷_ x₁))) ⇓ (λ v → (fx ∷ v))
+(f? x >>= (λ x₁ → now (_∷_ x₁))) ⇓ fx ∷_
+(f? x >>= (now ∘ _∷_)) ⇓ fx ∷_
+
+fx⇓  : f? x ⇓ fx
+
+
+_2023 := λ ..{.n} {.A} {.B} {f?} f?⇓ x xs fx fx⇓ fxs fxs⇓ →
+           app⇓ (?4 f?⇓ x xs fx fx⇓ fxs fxs⇓) fxs⇓ [blocked by problem 3536]
+
+
+
+
+traverse-vec⇓ {f? = f?} f?⇓ (x ∷ xs) =
+  let fx , fx⇓ = f?⇓ x
+      fxs , fxs⇓ = traverse-vec⇓ f?⇓ xs
+  in
+    fx ∷ fxs , app⇓ {f? = {!!}} {f = fx ∷_} {!!} {!!}
+-}
+-- app⇓ {A = Vec _ _} {B = Vec _ (suc _)} {f? = {!?!}} {f = {!!}} {x? = traverse (λ z → f? z) xs} {x = fst (traverse-vec⇓ f?⇓ xs)} {!!} fxs⇓
+
+{-
+_2022 := λ ..{.n} {.A} {.B} {f?} f?⇓ x xs → app⇓ (?4 f?⇓ x xs) (snd (traverse-vec⇓ f?⇓ xs)) [blocked by problem 3529]
+[3529,3532] (_f_2018 f?⇓ x xs (fst (traverse-vec⇓ f?⇓ xs))) = (fst (f?⇓ x) ∷ fst (traverse-vec⇓ f?⇓ xs)) : Vec .B (suc .n)
+[3529,3531] (_f?_2017 f?⇓ x xs <*> traverse f? xs) = ((f? x >>= (λ {.x} → now) ∘ _∷_) <*> traverse f? xs) : Delay ∞ (Vec .B (suc .n))
+
+
+_f?_2017 : Delay ∞ (Vec .B .n → Vec .B (suc .n))
+_f_2018 : Vec .B .n → Vec .B (suc .n)
+_2022 : (_∷_ <$> f? x <*> traverse f? xs) ⇓ (fst (f?⇓ x) ∷ fst (traverse-vec⇓ f?⇓ xs))
+_2023 : (_∷_ <$> f? x <*> traverse f? xs) ⇓ (fst (f?⇓ x) ∷ fst (traverse-vec⇓ f?⇓ xs))
+
+———— Errors ————————————————————————————————————————————————
+Failed to solve the following constraints:
+  _2022 :=
+    (λ ..{.n} {.A} {.B} {f?} f?⇓ x xs → app⇓ (?4 f?⇓ x xs) (snd (traverse-vec⇓ f?⇓ xs)))
+    [blocked on problem 3529]
+  [3529, 3532] _f_2018 f?⇓ x xs (fst (traverse-vec⇓ f?⇓ xs))
+               = fst (f?⇓ x) ∷ fst (traverse-vec⇓ f?⇓ xs)
+                 : Vec .B (suc .n)
+  [3529, 3531] _f?_2017 f?⇓ x xs <*> traverse f? xs
+               = (f? x >>= (λ {.x} → now) ∘ _∷_) <*> traverse f? xs
+                 : Delay ∞ (Vec .B (suc .n))
+-}
+
+{-
+Goal:     (
+            (.f? x >>= (λ x₁ → now (_∷_ x₁)))
+              <*>
+            traverse .f? xs
+          )
+      ⇓
+          (
+            fst (f?⇓ x) ∷ fst (traverse-vec⇓ f?⇓ xs)
+          )
+-}
+
 mutual
-  τ⟦_⟧ : {i : Size} → Interpretation → Term → Delay i Element
+
+  τ⟦_⟧ : Interpretation → {i : Size} → Term → Delay i Element
   τ⟦ I ⟧ (variable 𝑥) = now $ μ⟦ I ⟧ 𝑥
   τ⟦ I ⟧ (function 𝑓 τs) = 𝑓⟦ I ⟧ 𝑓 ∘ (⟨_⟩ {arity τs}) <$> (later $ τs⟦ I ⟧ τs)
 
-  τs⟦_⟧ : {i : Size} → Interpretation → (τs : Terms) → ∞Delay i (Vector Element (arity τs))
+  τs⟦_⟧ : Interpretation → {i : Size} → (τs : Terms) → ∞Delay i (Vector Element (arity τs))
   force (τs⟦ I ⟧ τs) = traverse id $ τ⟦ I ⟧ <$> terms τs
+
+mutual
+
+  term-τs : (I : Interpretation) → (τs : Terms) → (later $ τs⟦ I ⟧ τs) ⇓
+  term-τs I ⟨ [] ⟩ = [] , later⇓ now⇓
+  term-τs I ⟨ τ ∷ τs ⟩ = let t = term-τ I τ
+                             ts = term-τs I ⟨ τs ⟩ in
+                             (fst t ∷ fst ts) , later⇓ (let t' = snd t
+                                                            ts' = snd ts in
+                                                            {!
+                                                            !})
+{-
+---------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
+let .Prelude.Vec.vmap = _<$>_
+    T : {i : Size} → Term → Delay i Nat
+    T = τ⟦ I ⟧ in
+    Ts : {i : Size} (τs : Terms) → ∞Delay i (Vec Nat (arity (arity τs)))
+    Ts = τs⟦ I ⟧
+    v : Nat
+    v = fst (term-τ I τ)
+    *vs : {n : Nat} → (τs : Vec Term n) → Vec Nat n
+    *vs = λ (τs : Vec Term _) → fst (term-τs I ⟨ τs ⟩)
+in
+Goal: ((τ⟦ I ⟧ τ >>= (λ x → now (_∷_ x))) <*>
+       traverse (λ x → x) (.Prelude.Vec.vmap τ⟦ I ⟧ τs))
+      ⇓ (fst (term-τ I τ) ∷ fst (term-τs I ⟨ τs ⟩))
+————————————————————————————————————————————————————————————
+ts' : later (τs⟦ I ⟧ ⟨ τs ⟩) ⇓ fst (term-τs I ⟨ τs ⟩)
+t'  : τ⟦ I ⟧ τ ⇓ fst (term-τ I τ)
+ts  : Σ (Vec Nat .n) (_⇓_ (later (τs⟦ I ⟧ ⟨ τs ⟩)))
+t   : Σ Nat (_⇓_ (τ⟦ I ⟧ τ))
+τs  : Vec Term .n
+τ   : Term
+I   : Interpretation
+.n  : Nat
+
+Want: (T τ >>= (λ x → now (_∷_ x))) ⇓ _∷_ v          map⇓ _∷_ t'
+Goal: ((T τ >>= (λ x → now (_∷_ x))) <*>
+       traverse (λ x → x) (T <$> τs))
+      ⇓ (v ∷ *vs τs))
+————————————————————————————————————————————————————————————
+ts' : later (Ts ⟨ τs ⟩) ⇓ *vs τs)
+t'  : T τ ⇓ v
+ts  : Σ (Vec Nat .n) (_⇓_ (later (Ts ⟨ τs ⟩)))
+t   : Σ Nat (_⇓_ (T τ))
+τs  : Vec Term .n
+τ   : Term
+I   : Interpretation
+.n  : Nat
+
+-}
+
+
+  term-τ : (I : Interpretation) → (τ : Term) → τ⟦ I ⟧ τ ⇓
+  term-τ I (variable 𝑥) = μ⟦ I ⟧ 𝑥 , now⇓
+  term-τ I (function 𝑓 τs) = {!!}
 
 
 
