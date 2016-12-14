@@ -534,6 +534,7 @@ record HasNegation (A : Set) : Set
  where
   field
     ~ : A → A
+--    ~~-law : ∀ {x} → ~ (~ x) ≡ x
 
 open HasNegation ⦃ … ⦄
 
@@ -664,6 +665,26 @@ open HasVacuousDischarge ⦃ … ⦄
 
 {-# DISPLAY HasVacuousDischarge.◁_ _ = ◁_ #-}
 
+record HasDecidableVacuousDischarge (+ : Set) {-⦃ hasVacuousDischarge : HasVacuousDischarge + ⦄-} : Set₁
+ where
+  field
+    {SubstantivePremises} : Set
+    {SubstantiveConclusion} : Set
+    ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge SubstantivePremises SubstantiveConclusion
+    ⦃ hasVacuousDischarge ⦄ : HasVacuousDischarge +
+    ◁?_ : (x : +) → Dec $ ◁ x
+{-
+record HasDecidableVacuousDischarge (+ : Set) {-⦃ hasVacuousDischarge : HasVacuousDischarge + ⦄-} : Set₁
+ where
+  field
+    ⦃ hasVacuousDischarge ⦄ : HasVacuousDischarge +
+    ◁?_ : (x : +) → Dec $ ◁ x
+-}
+
+open HasDecidableVacuousDischarge ⦃ … ⦄
+
+{-# DISPLAY HasDecidableVacuousDischarge.◁?_ _ = ◁?_ #-}
+
 record HasSalvation (A : Set) : Set₁
  where
   field
@@ -785,14 +806,26 @@ instance
 
 instance
 
+  HasDecidableVacuousDischargeList : {A : Set} ⦃ _ : BeFormula A ⦄ {-⦃ _ : HasSubstantiveDischarge (List A) A ⦄-} ⦃ _ : HasNegation A ⦄ {-⦃ _ : HasVacuousDischarge (List A) ⦄-} → HasDecidableVacuousDischarge (List A)
+  HasDecidableVacuousDischarge.SubstantivePremises (HasDecidableVacuousDischargeList {A}) = List A
+  HasDecidableVacuousDischarge.SubstantiveConclusion (HasDecidableVacuousDischargeList {A}) = A
+  --HasDecidableVacuousDischarge.hasSubstantiveDischarge HasDecidableVacuousDischargeList = it
+  --HasDecidableVacuousDischarge.hasVacuousDischarge HasDecidableVacuousDischargeList = it
+  HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeList [] = no {!!}
+  HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeList (x ∷ xs) = {!!}
+
+instance
+
   HasSalvationSequent : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasNegation A ⦄ {-⦃ _ : HasVacuousDischarge $ List A ⦄-} → HasSalvation $ Sequent A
   HasSalvation.isVacuouslyDischargable (HasSalvationSequent {A}) = List A
   HasSalvation.hasVacuousDischarge HasSalvationSequent = HasVacuousDischargeList
   HasSalvation.▷_ HasSalvationSequent (φᵗ ╱ φᵖs) = (◁ φᵖs) ⊎ (φᵖs ≽ φᵗ)
-{-
-  HasSalvationProblem : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasVacuousDischarge ∘ List $ Sequent A ⦄ → HasSalvation $ Problem A
+
+  HasSalvationProblem : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasNegation A ⦄ {-⦃ _ : HasVacuousDischarge ∘ List $ Sequent A ⦄-} → HasSalvation $ Problem A
+  HasSalvation.isVacuouslyDischargable (HasSalvationProblem {A}) = List (Sequent A)
+  HasSalvation.hasVacuousDischarge HasSalvationProblem = HasVacuousDischargeList
   HasSalvation.▷_ HasSalvationProblem (χs ¶ ι) = ◁ χs ⊎ χs ≽ ι
--}
+
 
 instance
 
@@ -806,10 +839,10 @@ instance
     let instance EqA : Eq A
         EqA = {!!} in
     case formula_ statement₁ ∈? (formula_ <$> ps) of (λ { (yes x₁∈suppositions) → yes (right x₁∈suppositions) ; (no x∉sps) → {!!}})
-{-
-  HasDecidableSalvationProblem : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasVacuousDischarge ∘ List $ Sequent A ⦄ → HasDecidableSalvation $ Problem A
+
+  HasDecidableSalvationProblem : {A : Set} ⦃ _ : BeFormula A ⦄ ⦃ _ : HasNegation A ⦄ {-⦃ _ : HasVacuousDischarge ∘ List $ Sequent A ⦄-} → HasDecidableSalvation $ Problem A
   HasDecidableSalvationProblem = {!!}
--}
+
 -- data TermCode : Set
 --  where
 --   variable : VariableName → TermCode
