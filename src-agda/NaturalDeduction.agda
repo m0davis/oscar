@@ -641,17 +641,30 @@ instance
   HasSubstantiveDischargeListSequentSequent : ∀ {A : Set} → HasSubstantiveDischarge (List $ Sequent A) (Sequent A)
   HasSubstantiveDischarge._≽_ HasSubstantiveDischargeListSequentSequent χs ι = ∃ λ c → (c ∈ χs) × c ≽ ι
 
-record HasVacuousDischarge (+ : Set) : Set₁
+record HasDecidableSubstantiveDischarge (+ : Set) (- : Set) : Set₁
  where
   field
-    {SubstantiveDomain} : Set
-    {SubstantiveRange} : Set
-    ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge SubstantiveDomain SubstantiveRange
-    ⦃ hasNegation ⦄ : HasNegation SubstantiveRange
-    substantiveDomain : + → SubstantiveDomain
+    overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge (+) (-)
+    {SubstantiveRange1} : Set
+    ⦃ eqSubstantiveRange ⦄ : Eq SubstantiveRange1
+    substantiveRange : + → SubstantiveRange1
+
+  _≽?_ : (+ : +) → (- : -) → Dec $ + ≽ -
+  _≽?_ = {!!}
+
+open HasDecidableSubstantiveDischarge ⦃ … ⦄
+
+{-# DISPLAY HasDecidableSubstantiveDischarge._≽?_ _ = _≽?_ #-}
+
+record HasVacuousDischarge (+ : Set) (D : Set) (R : Set) : Set₁
+ where
+  field
+    overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge D R
+    ⦃ hasNegation ⦄ : HasNegation R
+    substantiveDomain : + → D
 
   ◁_ : + → Set
-  ◁ +s = ∃ λ (s : SubstantiveRange) → (substantiveDomain +s ≽ s) × (substantiveDomain +s ≽ ~ s)
+  ◁ +s = ∃ λ (s : R) → (substantiveDomain +s ≽ s) × (substantiveDomain +s ≽ ~ s)
 
   ⋪_ : + → Set
   ⋪_ = ¬_ ∘ ◁_
@@ -660,24 +673,20 @@ open HasVacuousDischarge ⦃ … ⦄
 
 {-# DISPLAY HasVacuousDischarge.◁_ _ = ◁_ #-}
 
-instance HasVacuousDischargeList : {A : Set} ⦃ _ : HasNegation A ⦄ ⦃ _ : BeFormula A ⦄ → HasVacuousDischarge (List A)
-HasVacuousDischarge.SubstantiveDomain (HasVacuousDischargeList {A}) = List A
-HasVacuousDischarge.SubstantiveRange (HasVacuousDischargeList {A}) = A
+instance HasVacuousDischargeList : {A : Set} ⦃ _ : HasNegation A ⦄ ⦃ _ : BeFormula A ⦄ → HasVacuousDischarge (List A) (List A) A
 HasVacuousDischarge.substantiveDomain HasVacuousDischargeList = id
 
-instance HasVacuousDischargeSequent : {A : Set} ⦃ _ : HasNegation A ⦄ ⦃ _ : BeFormula A ⦄ ⦃ _ : HasNegation (Sequent A) ⦄ → HasVacuousDischarge (Sequent A)
-HasVacuousDischarge.SubstantiveDomain (HasVacuousDischargeSequent {A}) = List A
-HasVacuousDischarge.SubstantiveRange (HasVacuousDischargeSequent {A}) = A
+instance HasVacuousDischargeSequent : {A : Set} ⦃ _ : HasNegation A ⦄ ⦃ _ : BeFormula A ⦄ ⦃ _ : HasNegation (Sequent A) ⦄ → HasVacuousDischarge (Sequent A) (List A) A
 HasVacuousDischarge.substantiveDomain HasVacuousDischargeSequent (_ ╱ φˢs) = φˢs
 
-record HasDecidableVacuousDischarge (+ : Set) : Set₁
+record HasDecidableVacuousDischarge (+ : Set) (SubstantivePremises : Set) (SubstantiveConclusion : Set)
+                    -- ⦃ hasVacuousDischarge : HasVacuousDischarge (+) SubstantivePremises SubstantiveConclusion ⦄
+                    : Set₁
  where
   field
-    {SubstantivePremises} : Set
-    {SubstantiveConclusion} : Set
-    ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge SubstantivePremises SubstantiveConclusion
-    ⦃ hasVacuousDischarge ⦄ : HasVacuousDischarge +
-    ◁?_ : (x : +) → Dec $ ◁ x
+   --overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge SubstantivePremises SubstantiveConclusion
+   --overlap ⦃ hasVacuousDischarge ⦄ : HasVacuousDischarge (+) SubstantivePremises SubstantiveConclusion
+   ◁?_ : (x : +) → Dec $ ◁ x
 
 open HasDecidableVacuousDischarge ⦃ … ⦄
 
