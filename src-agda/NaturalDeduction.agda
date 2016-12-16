@@ -11,7 +11,7 @@ module CustomPrelude where
 
   {-# BUILTIN REWRITE _≡_ #-}
 
-  --{-# DISPLAY Eq._==_ _ = _≟_ #-}
+  {-# DISPLAY Eq._==_ _ = _≟_ #-}
 
   open import Container.List renaming (_∈_ to _∈C_; lookup∈ to lookup∈C) public
 
@@ -507,10 +507,10 @@ Eq._==_ EqFormula (logical φ₁₁ φ₁₂)
 Eq._==_ EqFormula (quantified 𝑥₁ φ₁) (quantified 𝑥₂ φ₂) = decEq₂ formulaQuantified-inj₁ formulaQuantified-inj₂ (𝑥₁ ≟ 𝑥₂) (φ₁ ≟ φ₂)
 Eq._==_ EqFormula (atomic _ _) (logical _ _) = no λ ()
 Eq._==_ EqFormula (atomic _ _) (quantified _ _) = no λ ()
-Eq._==_ EqFormula (logical _ _) (atomic _ _)  = no λ ()
-Eq._==_ EqFormula (logical _ _) (quantified _ _)  = no λ ()
-Eq._==_ EqFormula (quantified _ _) (atomic _ _)  = no λ ()
-Eq._==_ EqFormula (quantified _ _) (logical _ _)  = no λ ()
+Eq._==_ EqFormula (logical _ _) (atomic _ _) = no λ ()
+Eq._==_ EqFormula (logical _ _) (quantified _ _) = no λ ()
+Eq._==_ EqFormula (quantified _ _) (atomic _ _) = no λ ()
+Eq._==_ EqFormula (quantified _ _) (logical _ _) = no λ ()
 
 𝑃[_♭_] : PredicateName → Terms → Formula
 𝑃[_♭_] = atomic
