@@ -561,6 +561,25 @@ data IsPropositionalFormula : Formula → Set
   atomic : (𝑃 : PredicateName) → (τs : Terms) → IsPropositionalFormula $ 𝑃[ 𝑃 ♭ τs ]
   logical : {φ₁ : Formula} → IsPropositionalFormula φ₁ → {φ₂ : Formula} → IsPropositionalFormula φ₂ → IsPropositionalFormula (φ₁ ⊗ φ₂)
 
+instance EqIsPropositionalFormula : ∀ {φ} → Eq (IsPropositionalFormula φ)
+Eq._==_ EqIsPropositionalFormula (atomic _ _) (atomic _ _ ) = yes refl
+Eq._==_ EqIsPropositionalFormula (logical φ₁₁ φ₁₂) (logical φ₂₁ φ₂₂) with φ₁₁ ≟ φ₂₁ | φ₁₂ ≟ φ₂₂
+Eq._==_ EqIsPropositionalFormula (logical φ₁₁ φ₁₂) (logical φ₂₁ φ₂₂) | yes refl | yes refl = yes refl
+Eq._==_ EqIsPropositionalFormula (logical φ₁₁ φ₁₂) (logical φ₂₁ φ₂₂) | yes refl | no φ₁₂≢φ₂₂ = no λ {refl → φ₁₂≢φ₂₂ refl}
+Eq._==_ EqIsPropositionalFormula (logical φ₁₁ φ₁₂) (logical φ₂₁ φ₂₂) | no φ₁₁≢φ₂₁ | _ = no λ {refl → φ₁₁≢φ₂₁ refl}
+
+record PropositionalFormula : Set
+ where
+  constructor ⟨_⟩
+  field
+    {formula} : Formula
+    isPropositionalFormula : IsPropositionalFormula formula
+
+open PropositionalFormula
+
+instance HasNegationPropositionalFormula : HasNegation PropositionalFormula
+HasNegation.~ HasNegationPropositionalFormula ⟨ φ ⟩ = ⟨ logical φ φ ⟩ -- ⟨ logical 𝑃 τs ⟩
+
 infix 15 _╱_
 
 record Sequent : Set
