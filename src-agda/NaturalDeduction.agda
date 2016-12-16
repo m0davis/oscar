@@ -11,7 +11,7 @@ module CustomPrelude where
 
   {-# BUILTIN REWRITE _≡_ #-}
 
-  ----{-# DISPLAY Eq._==_ _ = _≟_ #-}
+  --{-# DISPLAY Eq._==_ _ = _≟_ #-}
 
   open import Container.List renaming (_∈_ to _∈C_; lookup∈ to lookup∈C) public
 
@@ -58,7 +58,7 @@ module CustomPrelude where
   infixl 4 _⊎_
   _⊎_ = Either
 
-  --{-# DISPLAY Either = _⊎_ #-}
+  {-# DISPLAY Either = _⊎_ #-}
 
   --open import Agda.Builtin.Size public
   open import Size public
@@ -120,7 +120,7 @@ module CustomPrelude where
     Monad._>>=_ MonadDelay = bindDelay
     Monad.super MonadDelay = ApplicativeDelay
 
-    --{-# DISPLAY BindDelay.bindDelay x f = x >>= f #-}
+    {-# DISPLAY BindDelay.bindDelay x f = x >>= f #-}
   mutual
 
     data _∼_ {i : Size} {A : Set} : (a? b? : Delay ∞ A) → Set where
@@ -466,7 +466,7 @@ record HasNegation (A : Set) : Set
 
 open HasNegation ⦃ … ⦄
 
---{-# DISPLAY HasNegation.~ _ = ~ #-}
+{-# DISPLAY HasNegation.~ _ = ~ #-}
 
 data Formula : Set
  where
@@ -515,12 +515,12 @@ Eq._==_ EqFormula (quantified _ _) (logical _ _)  = no λ ()
 𝑃[_♭_] : PredicateName → Terms → Formula
 𝑃[_♭_] = atomic
 
---{-# DISPLAY atomic = 𝑃[_♭_] #-}
+{-# DISPLAY atomic = 𝑃[_♭_] #-}
 
 _⊗_ : Formula → Formula → Formula
 _⊗_ = logical
 
---{-# DISPLAY logical = _⊗_ #-}
+{-# DISPLAY logical = _⊗_ #-}
 
 instance HasNegationFormula : HasNegation Formula
 HasNegation.~ HasNegationFormula φ = φ ⊗ φ
@@ -724,8 +724,8 @@ record HasSatisfaction (A : Set) : Set₁
 
 open HasSatisfaction ⦃ … ⦄
 
---{-# DISPLAY HasSatisfaction._⊨_ _ = _⊨_ #-}
---{-# DISPLAY HasSatisfaction._⊭_ _ = _⊭_ #-}
+{-# DISPLAY HasSatisfaction._⊨_ _ = _⊨_ #-}
+{-# DISPLAY HasSatisfaction._⊭_ _ = _⊭_ #-}
 
 record _≞_/_ (𝓘 : Interpretation) (I : Interpretation) (𝑥 : VariableName) : Set
  where
@@ -767,7 +767,7 @@ record HasDecidableSatisfaction (A : Set) : Set₁
 
 open HasDecidableSatisfaction ⦃ … ⦄
 
---{-# DISPLAY HasDecidableSatisfaction._⊨?_ _ = _⊨?_ #-}
+{-# DISPLAY HasDecidableSatisfaction._⊨?_ _ = _⊨?_ #-}
 
 instance HasDecidableSatisfactionFormula : HasDecidableSatisfaction Formula
 HasDecidableSatisfaction.hasSatisfaction HasDecidableSatisfactionFormula = it
@@ -834,7 +834,7 @@ record HasSubstantiveDischarge (+ : Set) (- : Set) : Set₁
 
 open HasSubstantiveDischarge ⦃ … ⦄
 
---{-# DISPLAY HasSubstantiveDischarge._≽_ _ = _≽_ #-}
+{-# DISPLAY HasSubstantiveDischarge._≽_ _ = _≽_ #-}
 
 instance HasSubstantiveDischargeList : ∀ {A} ⦃ _ : HasSubstantiveDischarge A A ⦄ → HasSubstantiveDischarge (List A) A
 HasSubstantiveDischarge._≽_ HasSubstantiveDischargeList +s - = ∃ λ c → (c ∈ +s) × c ≽ -
@@ -851,52 +851,43 @@ HasSubstantiveDischarge._≽_ HasSubstantiveDischargeSequentSequent (+ᵗ ╱ +�
 instance HasSubstantiveDischargeProblemProblem : HasSubstantiveDischarge Problem Problem
 HasSubstantiveDischarge._≽_ HasSubstantiveDischargeProblemProblem (+s ¶ +) (-s ¶ -) = + ≽ - × +s ≽ -s
 
-record HasDecidableSubstantiveDischarge (+ : Set) (- : Set) : Set₁
+record HasDecidableSubstantiveDischarge (+ : Set) (- : Set) ⦃ _ : HasSubstantiveDischarge (+) (-) ⦄ : Set₁
  where
   field
-    overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge (+) (-)
     _≽?_ : (+ : +) → (- : -) → Dec $ + ≽ -
 
 open HasDecidableSubstantiveDischarge ⦃ … ⦄
 
---{-# DISPLAY HasDecidableSubstantiveDischarge._≽?_ _ = _≽?_ #-}
+{-# DISPLAY HasDecidableSubstantiveDischarge._≽?_ _ = _≽?_ #-}
 
-instance HasDecidableSubstantiveDischargeList : ∀ {A} ⦃ _ : HasDecidableSubstantiveDischarge A A ⦄ ⦃ _ : Eq A ⦄ → HasDecidableSubstantiveDischarge (List A) A
-HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeList = it
+instance HasDecidableSubstantiveDischargeList : ∀ {A} ⦃ _ : HasSubstantiveDischarge A A ⦄ ⦃ _ : HasDecidableSubstantiveDischarge A A ⦄ ⦃ _ : Eq A ⦄ → HasDecidableSubstantiveDischarge (List A) A
 HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeList +s - = {!!}
 
-instance HasDecidableSubstantiveDischargeListList : ∀ {A} ⦃ _ : HasDecidableSubstantiveDischarge A A ⦄ ⦃ _ : Eq A ⦄ → HasDecidableSubstantiveDischarge (List A) (List A)
-HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeListList = it
+instance HasDecidableSubstantiveDischargeListList : ∀ {A} ⦃ _ : HasSubstantiveDischarge A A ⦄ ⦃ _ : HasDecidableSubstantiveDischarge A A ⦄ ⦃ _ : Eq A ⦄ → HasDecidableSubstantiveDischarge (List A) (List A)
 HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeListList +s -s = {!!}
 
 instance HasDecidableSubstantiveDischargeFormulaFormula : HasDecidableSubstantiveDischarge Formula Formula
-HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeFormulaFormula = it
 HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeFormulaFormula = _≟_
 
 instance HasDecidableSubstantiveDischargeSequentSequent : HasDecidableSubstantiveDischarge Sequent Sequent
-HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeSequentSequent = it
 HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeSequentSequent = {!!}
 
 instance HasDecidableSubstantiveDischargeProblemProblem : HasDecidableSubstantiveDischarge Problem Problem
-HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeProblemProblem = it
 HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeProblemProblem = {!!}
 
-record SubstantiveDischargeIsConsistent (+ : Set) (- : Set) : Set₁
+record SubstantiveDischargeIsConsistent (+ : Set) (- : Set) ⦃ _ : HasNegation (-) ⦄ ⦃ _ : HasSubstantiveDischarge (+) (-) ⦄ : Set₁
  where
   field
-    overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge (+) (-)
-    overlap ⦃ hasNegation ⦄ : HasNegation -
     ≽-consistent : {+ : +} → { - : - } → + ≽ - → + ⋡ ~ -
 
 open SubstantiveDischargeIsConsistent ⦃ … ⦄
 
---{-# DISPLAY SubstantiveDischargeIsConsistent.≽-consistent _ = ≽-consistent #-}
+{-# DISPLAY SubstantiveDischargeIsConsistent.≽-consistent _ = ≽-consistent #-}
 
-record SubstantiveDischargeIsReflexive (A : Set) : Set₁
+record SubstantiveDischargeIsReflexive (A : Set) ⦃ _ : HasSubstantiveDischarge A A ⦄ : Set₁
  where
   field
-    overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge A A
-    ≽-reflexive : {x : A} → x ≽ x
+    ≽-reflexive : (x : A) → x ≽ x
 
 open SubstantiveDischargeIsReflexive ⦃ … ⦄
 {-
@@ -907,14 +898,11 @@ record SubstantiveDischargeIsReflexive (A : Set) ⦃ _ : HasSubstantiveDischarge
 
 open SubstantiveDischargeIsReflexive ⦃ … ⦄
 -}
---{-# DISPLAY SubstantiveDischargeIsReflexive.≽-reflexive _ = ≽-reflexive #-}
+{-# DISPLAY SubstantiveDischargeIsReflexive.≽-reflexive _ = ≽-reflexive #-}
 
-record HasVacuousDischarge (A : Set) : Set₁
+record HasVacuousDischarge (A : Set) ⦃ _ : HasNegation A ⦄ ⦃ _ : HasSubstantiveDischarge A A ⦄ : Set₁
  where
-  field
-    overlap ⦃ hasNegation ⦄ : HasNegation A
-    overlap ⦃ hasSubstantiveDischarge ⦄ : HasSubstantiveDischarge A A
-
+ 
   ◁_ : List A → Set
   ◁ +s = ∃ λ (s : A) → (+s ≽ s) × (+s ≽ ~ s)
 
@@ -923,31 +911,46 @@ record HasVacuousDischarge (A : Set) : Set₁
 
 open HasVacuousDischarge ⦃ … ⦄
 
---{-# DISPLAY HasVacuousDischarge.◁_ _ = ◁_ #-}
---{-# DISPLAY HasVacuousDischarge.⋪_ _ = ⋪_ #-}
+{-# DISPLAY HasVacuousDischarge.◁_ _ = ◁_ #-}
+{-# DISPLAY HasVacuousDischarge.⋪_ _ = ⋪_ #-}
 
-record HasDecidableVacuousDischarge (A : Set) : Set₁
+infixr 1 ,_
+pattern  ,_ p = _ , p
+
+pattern ◁pattern c₁∈xs c₁≽s c₂∈xs c₂≽~s = , (((, (c₁∈xs , c₁≽s)) , (, (c₂∈xs , c₂≽~s))))
+
+record HasDecidableVacuousDischarge (A : Set)
+                                    ⦃ _ : HasNegation A ⦄
+                                    ⦃ _ : HasSubstantiveDischarge A A ⦄
+                                    ⦃ _ : HasVacuousDischarge A ⦄
+                                    --⦃ _ : HasDecidableSubstantiveDischarge A A ⦄
+                                    --⦃ _ : SubstantiveDischargeIsConsistent A A ⦄
+                                    --⦃ _ : SubstantiveDischargeIsReflexive A ⦄
+                                    ⦃ _ : Eq A ⦄
+                                    : Set₁
  where
-  field
-    overlap ⦃ hasVacuousDischarge ⦄ : HasVacuousDischarge A
-    overlap ⦃ hasDecidableSubstantiveDischargeList ⦄ : HasDecidableSubstantiveDischarge (List A) A
-    overlap ⦃ hasDecidableSubstantiveDischarge ⦄ : HasDecidableSubstantiveDischarge A A
-    overlap ⦃ substantiveDischargeIsConsistent ⦄ : SubstantiveDischargeIsConsistent A A
-    overlap ⦃ substantiveDischargeIsReflexive ⦄ : SubstantiveDischargeIsReflexive A
-
-  ◁?_ : (x : List A) → Dec $ ◁ x
+  field 
+    ◁?_ : (x : List A) → Dec $ ◁ x
+{-
+instance
   ◁? [] = no (λ { (_ , (_ , () , _) , _)})
   ◁? (x ∷ xs) with xs ≽? ~ x
-  ◁? (x ∷ xs) | yes xs≽~x = yes (x , ((x , (here xs , ≽-reflexive)) , ({!!} , ({!!} , {!xs≽~x!})))) --
+  ◁? (x ∷ xs) | yes (, ~x!∈xs , ~x!≽~x) = yes $ , (((, (here xs , ≽-reflexive x)) , (, (there _ ~x!∈xs , ~x!≽~x))))
   ◁? (x ∷ xs) | no xs⋡~x with ◁? xs
-  ◁? (x ∷ xs) | no xs⋡~x | yes ◁xs = yes {!!}
-  ◁? (x ∷ xs) | no xs⋡~x | no ⋪xs = no {!!}
-
+  ◁? (x ∷ xs) | no xs⋡~x | yes (◁pattern c₁∈xs c₁≽s c₂∈xs c₂≽~s) = yes (◁pattern (there _ c₁∈xs) c₁≽s (there _ c₂∈xs) c₂≽~s)
+  ◁? (x ∷ xs) | no xs⋡~x | no ⋪xs = no λ
+    { (◁pattern (here .xs) x≽s (here .xs) c₂≽~s) → {!xs⋡~x!}
+    ; (◁pattern (here .xs) x≽s (there _ c₂∈xs) c₂≽~s) → {!xs⋡~x!}
+    ; (◁pattern (there _ c₁∈xs) c₁≽s c₂∈xxs c₂≽~s) → {!xs⋡~x!} }
+-}
+--{-⋪xs (◁pattern {!!} c₁≽s {!!} c₂≽~s)-}
 open HasDecidableVacuousDischarge ⦃ … ⦄
 
---{-# DISPLAY HasDecidableVacuousDischarge.◁?_ _ = ◁?_ #-}
+{-# DISPLAY HasDecidableVacuousDischarge.◁?_ _ = ◁?_ #-}
 
-
+instance HasDecidableVacuousDischargeFormula : HasDecidableVacuousDischarge Formula
+HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeFormula [] = {!!}
+HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeFormula (φ ∷ φs) = {!!}
 
 -- record HasDecidableVacuousDischarge (+ : Set) (SubstantivePremises : Set) (SubstantiveConclusion : Set)
 --                     -- ⦃ hasVacuousDischarge : HasVacuousDischarge (+) SubstantivePremises SubstantiveConclusion ⦄
@@ -959,7 +962,7 @@ open HasDecidableVacuousDischarge ⦃ … ⦄
 
 -- open HasDecidableVacuousDischarge ⦃ … ⦄
 
--- --{-# DISPLAY HasDecidableVacuousDischarge.◁?_ _ = ◁?_ #-}
+-- {-# DISPLAY HasDecidableVacuousDischarge.◁?_ _ = ◁?_ #-}
 
 -- -- instance
 
@@ -984,7 +987,7 @@ open HasDecidableVacuousDischarge ⦃ … ⦄
 
 -- -- -- open HasSalvation ⦃ … ⦄
 
--- -- -- --{-# DISPLAY HasSalvation.▷_ _ = ▷_ #-}
+-- -- -- {-# DISPLAY HasSalvation.▷_ _ = ▷_ #-}
 
 -- -- -- record HasDecidableSalvation (A : Set) {-⦃ _ : HasSalvation A ⦄-} : Set₁
 -- -- --  where
@@ -994,12 +997,12 @@ open HasDecidableVacuousDischarge ⦃ … ⦄
 
 -- -- -- open HasDecidableSalvation ⦃ … ⦄
 
--- -- -- --{-# DISPLAY HasDecidableSalvation.▷?_ _ = ▷?_ #-}
+-- -- -- {-# DISPLAY HasDecidableSalvation.▷?_ _ = ▷?_ #-}
 
 -- -- -- ∀[_♭_] : VariableName → Formula → Formula
 -- -- -- ∀[_♭_] = quantified
 
--- -- -- --{-# DISPLAY quantified = ∀[_♭_] #-}
+-- -- -- {-# DISPLAY quantified = ∀[_♭_] #-}
 
 -- -- -- _∧_ : Formula → Formula → Formula
 -- -- -- φ₁ ∧ φ₂ = ~ φ₁ ⊗ ~ φ₂
@@ -1026,7 +1029,7 @@ open HasDecidableVacuousDischarge ⦃ … ⦄
 -- -- --     I ⊨φ (atomic 𝑃 τs) = 𝑃⟦ I ⟧ 𝑃 ⟨ τ⟦ I ⟧ <$> terms τs ⟩ ≡ true
 -- -- --     I ⊨φ (logical φ₁ φ₂) = ¬ I ⊨φ φ₁ × ¬ I ⊨φ φ₂
 -- -- --     I ⊨φ (quantified 𝑥 φ) = (𝓘 : Interpretation) → 𝓘 ≞ I / 𝑥 → 𝓘 ⊨φ φ
--- -- --     --{-# DISPLAY _⊨φ_ = _⊨_ #-}
+-- -- --     {-# DISPLAY _⊨φ_ = _⊨_ #-}
 
 -- -- --   HasSatisfactionSequent : {A : Set} ⦃ _ : BeFormula A ⦄ → HasSatisfaction $ Sequent A
 -- -- --   HasSatisfaction._⊨_ HasSatisfactionSequent I (φᵗ ╱ φˢs) = I ⊨ φˢs → I ⊨ φᵗ
