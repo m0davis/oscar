@@ -556,6 +556,11 @@ instance HasNegationLiteralFormula : HasNegation LiteralFormula
 HasNegation.~ HasNegationLiteralFormula ⟨ atomic 𝑃 τs ⟩ = ⟨ logical 𝑃 τs ⟩
 HasNegation.~ HasNegationLiteralFormula ⟨ logical 𝑃 τs ⟩ = ⟨ atomic 𝑃 τs ⟩
 
+data IsPropositionalFormula : Formula → Set
+ where
+  atomic : (𝑃 : PredicateName) → (τs : Terms) → IsPropositionalFormula $ 𝑃[ 𝑃 ♭ τs ]
+  logical : {φ₁ : Formula} → IsPropositionalFormula φ₁ → {φ₂ : Formula} → IsPropositionalFormula φ₂ → IsPropositionalFormula (φ₁ ⊗ φ₂)
+
 infix 15 _╱_
 
 record Sequent : Set
