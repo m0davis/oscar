@@ -517,8 +517,15 @@ Eq._==_ EqFormula (quantified _ _) (logical _ _) = no λ ()
 
 {-# DISPLAY atomic = 𝑃[_♭_] #-}
 
-_⊗_ : Formula → Formula → Formula
-_⊗_ = logical
+record HasNeitherNor (A : Set) : Set
+ where
+  field
+    _⊗_ : A → A → A
+
+open HasNeitherNor ⦃ … ⦄
+
+instance HasNeitherNorFormula : HasNeitherNor Formula
+HasNeitherNor._⊗_ HasNeitherNorFormula = logical
 
 {-# DISPLAY logical = _⊗_ #-}
 
@@ -578,7 +585,12 @@ record PropositionalFormula : Set
 open PropositionalFormula
 
 instance HasNegationPropositionalFormula : HasNegation PropositionalFormula
-HasNegation.~ HasNegationPropositionalFormula ⟨ φ ⟩ = ⟨ logical φ φ ⟩ -- ⟨ logical 𝑃 τs ⟩
+HasNegation.~ HasNegationPropositionalFormula ⟨ φ ⟩ = ⟨ logical φ φ ⟩
+
+instance HasNeitherNorPropositionalFormula : HasNeitherNor PropositionalFormula
+HasNeitherNor._⊗_ HasNeitherNorPropositionalFormula ⟨ φ₁ ⟩ ⟨ φ₂ ⟩ = ⟨ logical φ₁ φ₂ ⟩
+
+{-# DISPLAY IsPropositionalFormula.logical = _⊗_ #-}
 
 infix 15 _╱_
 
