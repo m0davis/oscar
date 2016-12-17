@@ -941,19 +941,19 @@ open HasSubstantiveDischarge ⦃ … ⦄
 {-# DISPLAY HasSubstantiveDischarge._≽_ _ = _≽_ #-}
 
 instance HasSubstantiveDischargeList : ∀ {A} ⦃ _ : HasSubstantiveDischarge A A ⦄ → HasSubstantiveDischarge (List A) A
-HasSubstantiveDischarge._≽_ HasSubstantiveDischargeList +s - = ∃ λ c → (c ∈ +s) × c ≽ -
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeList +s - = ? -- ∃ λ c → (c ∈ +s) × c ≽ -
 
 instance HasSubstantiveDischargeListList : ∀ {A} ⦃ _ : HasSubstantiveDischarge A A ⦄ → HasSubstantiveDischarge (List A) (List A)
-HasSubstantiveDischarge._≽_ HasSubstantiveDischargeListList +s -s = ∀ i → i ∈ -s → +s ≽ i
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeListList +s -s = ? -- ∀ i → i ∈ -s → +s ≽ i
 
 instance HasSubstantiveDischargeFormulaFormula : HasSubstantiveDischarge Formula Formula
-HasSubstantiveDischarge._≽_ HasSubstantiveDischargeFormulaFormula = _≡_
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeFormulaFormula = ? -- _≡_
 
 instance HasSubstantiveDischargeSequentSequent : HasSubstantiveDischarge Sequent Sequent
-HasSubstantiveDischarge._≽_ HasSubstantiveDischargeSequentSequent (+ᵗ ╱ +ᵖs) (-ᵗ ╱ -ᵖs) = +ᵗ ≽ -ᵗ × +ᵖs ≽ -ᵖs
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeSequentSequent (+ᵗ ╱ +ᵖs) (-ᵗ ╱ -ᵖs) = ? -- +ᵗ ≽ -ᵗ × +ᵖs ≽ -ᵖs
 
 instance HasSubstantiveDischargeProblemProblem : HasSubstantiveDischarge Problem Problem
-HasSubstantiveDischarge._≽_ HasSubstantiveDischargeProblemProblem (+s ¶ +) (-s ¶ -) = + ≽ - × +s ≽ -s
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeProblemProblem (+s ¶ +) (-s ¶ -) = ? -- + ≽ - × +s ≽ -s
 
 record HasDecidableSubstantiveDischarge (+ : Set) (- : Set) ⦃ _ : HasSubstantiveDischarge (+) (-) ⦄ : Set₁
  where
