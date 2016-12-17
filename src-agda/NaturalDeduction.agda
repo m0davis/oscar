@@ -621,8 +621,14 @@ record 𝓐ssertion (A : Set) : Set
  where
   no-eta-equality
 
+instance 𝓐ssertionList : {A : Set} ⦃ _ : 𝓐ssertion A ⦄ → 𝓐ssertion (List A)
+𝓐ssertionList = record {}
+
 instance 𝓐ssertionFormula : 𝓐ssertion Formula
 𝓐ssertionFormula = record {}
+
+instance 𝓐ssertionLiteralFormula : 𝓐ssertion LiteralFormula
+𝓐ssertionLiteralFormula = record {}
 
 infix 15 _⊢_
 
@@ -802,7 +808,7 @@ mutual
 τ⟦_⟧ : (I : Interpretation) → {i : Size} → (τ : Term) → Element
 τ⟦ I ⟧ τ = fst (τ⇓⟦ I ⟧ τ)
 
-record HasSatisfaction (A : Set) : Set₁
+record HasSatisfaction (A : Set) ⦃ _ : 𝓐ssertion A ⦄ : Set₁
  where
   field
     _⊨_ : Interpretation → A → Set
@@ -834,9 +840,21 @@ instance HasSatisfactionLiteralFormula : HasSatisfaction LiteralFormula
 HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
 HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ logical 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ false ⟩
 
-instance HasSatisfactionList : {A : Set} ⦃ _ : HasSatisfaction A ⦄ → HasSatisfaction $ List A
+instance HasSatisfactionList : {A : Set} ⦃ _ : 𝓐ssertion A ⦄ ⦃ _ : HasSatisfaction A ⦄ → HasSatisfaction $ List A
 HasSatisfaction._⊨_ HasSatisfactionList I [] = ⊤
 HasSatisfaction._⊨_ HasSatisfactionList I (x ∷ xs) = I ⊨ x × I ⊨ xs
+
+instance 𝓐ssertionSequent : 𝓐ssertion Sequent
+𝓐ssertionSequent = record {}
+
+instance 𝓐ssertionLiteralSequent : 𝓐ssertion LiteralSequent
+𝓐ssertionLiteralSequent = record {}
+
+instance 𝓐ssertionProblem : 𝓐ssertion Problem
+𝓐ssertionProblem = record {}
+
+instance 𝓐ssertionLiteralProblem : 𝓐ssertion LiteralProblem
+𝓐ssertionLiteralProblem = record {}
 
 instance HasSatisfactionSequent : HasSatisfaction Sequent
 HasSatisfaction._⊨_ HasSatisfactionSequent I (φᵗ ╱ φˢs) = I ⊨ φˢs → I ⊨ φᵗ
@@ -850,10 +868,9 @@ HasSatisfaction._⊨_ HasSatisfactionProblem I (Φ⁺s ¶ Φ⁻) = I ⊨ Φ⁺s 
 instance HasSatisfactionLiteralProblem : HasSatisfaction LiteralProblem
 HasSatisfaction._⊨_ HasSatisfactionLiteralProblem I 𝔓 = I ⊨ problem 𝔓
 
-record HasDecidableSatisfaction (A : Set) : Set₁
+record HasDecidableSatisfaction (A : Set) ⦃ _ : 𝓐ssertion A ⦄ ⦃ _ : HasSatisfaction A ⦄ : Set₁
  where
   field
-    ⦃ hasSatisfaction ⦄ : HasSatisfaction A
     _⊨?_ : (I : Interpretation) → (x : A) → Dec (I ⊨ x)
 
 open HasDecidableSatisfaction ⦃ … ⦄
@@ -861,13 +878,11 @@ open HasDecidableSatisfaction ⦃ … ⦄
 {-# DISPLAY HasDecidableSatisfaction._⊨?_ _ = _⊨?_ #-}
 
 instance HasDecidableSatisfactionFormula : HasDecidableSatisfaction Formula
-HasDecidableSatisfaction.hasSatisfaction HasDecidableSatisfactionFormula = it
 HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionFormula I (atomic 𝑃 τs) = {!!}
 HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionFormula I (logical φ₁ φ₂) = {!!}
 HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionFormula I (quantified 𝑥 φ) = {!!}
 
 instance HasDecidableSatisfactionLiteralFormula : HasDecidableSatisfaction LiteralFormula
-HasDecidableSatisfaction.hasSatisfaction HasDecidableSatisfactionLiteralFormula = it
 HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
   I ⟨ atomic 𝑃 τs ⟩
  with 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩
@@ -879,7 +894,7 @@ HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
 … | ⟨ true ⟩ = no λ ()
 … | ⟨ false ⟩ = yes refl
 
-module _ {A} ⦃ _ : HasSatisfaction A ⦄
+module _ {A} ⦃ _ : 𝓐ssertion A ⦄ ⦃ _ : HasSatisfaction A ⦄
  where
 
    ⊨_ : A → Set
@@ -888,14 +903,12 @@ module _ {A} ⦃ _ : HasSatisfaction A ⦄
    ⊭_ : A → Set
    ⊭_ = ¬_ ∘ ⊨_
 
-record HasDecidableValidation (A : Set) : Set₁
+record HasDecidableValidation (A : Set) ⦃ _ : 𝓐ssertion A ⦄ ⦃ _ : HasSatisfaction A ⦄ : Set₁
  where
   field
-    ⦃ hasSatisfaction ⦄ : HasSatisfaction A
     ⊨?_ : (x : A) → Dec $ ⊨ x
 
 instance HasDecidableValidationFormula : HasDecidableValidation Formula
-HasDecidableValidation.hasSatisfaction HasDecidableValidationFormula = it
 HasDecidableValidation.⊨?_ HasDecidableValidationFormula (atomic 𝑃 τs) = {!!}
 HasDecidableValidation.⊨?_ HasDecidableValidationFormula (logical φ₁ φ₂) = {!!}
 HasDecidableValidation.⊨?_ HasDecidableValidationFormula (quantified 𝑥 φ) = {!!}
