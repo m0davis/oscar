@@ -635,6 +635,9 @@ record 𝓢equent (A : Set) ⦃ _ : 𝓐ssertion A ⦄ : Set
 
 open 𝓢equent ⦃ … ⦄
 
+instance Eq𝓢equent : {A : Set} ⦃ _ : Eq A ⦄ ⦃ _ : 𝓐ssertion A ⦄ → Eq (𝓢equent A)
+Eq._==_ Eq𝓢equent (antecedents₁ ⊢ consequents₁) (antecedents₂ ⊢ consequents₂) = {!antecedents₁ ≟ antecedents₂!}
+
 instance 𝓐ssertion𝓢equent : {A : Set} ⦃ _ : 𝓐ssertion A ⦄ → 𝓐ssertion (𝓢equent A)
 𝓐ssertion𝓢equent = record {}
 
@@ -823,6 +826,9 @@ instance HasSatisfactionFormula : HasSatisfaction Formula
 HasSatisfaction._⊨_ HasSatisfactionFormula I (atomic 𝑃 τs) = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
 HasSatisfaction._⊨_ HasSatisfactionFormula I (logical φ₁ φ₂) = ¬ I ⊨ φ₁ × ¬ I ⊨ φ₂
 HasSatisfaction._⊨_ HasSatisfactionFormula I (quantified 𝑥 φ) = (𝓘 : Interpretation) → 𝓘 ≞ I / 𝑥 → 𝓘 ⊨ φ
+
+instance HasSatisfaction𝓕ormula : {Is𝓕ormula : Formula → Set} → HasSatisfaction (𝓕ormula Is𝓕ormula)
+HasSatisfaction._⊨_ HasSatisfaction𝓕ormula I ⟪ φ ⟫ = I ⊨ φ
 
 instance HasSatisfactionLiteralFormula : HasSatisfaction LiteralFormula
 HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
