@@ -617,6 +617,30 @@ HasNeitherNor._⊗_ HasNeitherNorPropositionalFormula ⟨ φ₁ ⟩ ⟨ φ₂ �
 
 {-# DISPLAY IsPropositionalFormula.logical = _⊗_ #-}
 
+record 𝓐ssertion (A : Set) : Set
+ where
+  no-eta-equality
+
+instance 𝓐ssertionFormula : 𝓐ssertion Formula
+𝓐ssertionFormula = record {}
+
+infix 15 _⊢_
+
+record 𝓢equent (A : Set) ⦃ _ : 𝓐ssertion A ⦄ : Set
+ where
+  constructor _⊢_
+  field
+    antecedents : List A
+    consequents : List A
+
+open 𝓢equent ⦃ … ⦄
+
+instance 𝓐ssertion𝓢equent : {A : Set} ⦃ _ : 𝓐ssertion A ⦄ → 𝓐ssertion (𝓢equent A)
+𝓐ssertion𝓢equent = record {}
+
+instance 𝓐ssertion𝓕ormula : {Is𝓕ormula : Formula → Set} → 𝓐ssertion (𝓕ormula Is𝓕ormula)
+𝓐ssertion𝓕ormula = record {}
+
 infix 15 _╱_
 
 record Sequent : Set
