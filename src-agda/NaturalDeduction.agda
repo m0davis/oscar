@@ -290,16 +290,10 @@ module CustomPrelude where
 
 open CustomPrelude
 
-record VariableName : Set
- where
-  constructor ⟨_⟩
-  field
-    name : Nat
+data VariableName : Set where
+  ⟨_⟩ : Nat → VariableName
 
-open VariableName
-
-instance EqVariableName : Eq VariableName
-Eq._==_ EqVariableName _ = decEq₁ (cong name) ∘ (_≟_ on name $ _)
+unquoteDecl EqVariableName = deriveEq EqVariableName (quote VariableName)
 
 record FunctionName : Set
  where
