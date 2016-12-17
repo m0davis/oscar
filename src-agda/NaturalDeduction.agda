@@ -512,6 +512,19 @@ Eq._==_ EqFormula (logical _ _) (quantified _ _) = no λ ()
 Eq._==_ EqFormula (quantified _ _) (atomic _ _) = no λ ()
 Eq._==_ EqFormula (quantified _ _) (logical _ _) = no λ ()
 
+data IsFormula : Formula → Set
+ where
+  ⟨_⟩ : (φ : Formula) → IsFormula φ
+
+record 𝓕ormula (Is𝓕ormula : Formula → Set) : Set
+ where
+  constructor ⟨_⟩
+  field
+    {formula} : Formula
+    is𝓕ormula : Is𝓕ormula formula
+
+open 𝓕ormula
+
 𝑃[_♭_] : PredicateName → Terms → Formula
 𝑃[_♭_] = atomic
 
