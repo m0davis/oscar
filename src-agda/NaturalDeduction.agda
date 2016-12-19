@@ -459,6 +459,56 @@ EqTerm = record { _==_ = λ x y → fst (EqTerm⇓ x y) }
 instance EqTerms : Eq Terms
 Eq._==_ EqTerms x y = fst (EqTerms⇓ x y)
 
+{- notes on unification
+f(g(x),x) = f(x,g(x))
+
+f(g(x₁),x₁) = f(x₂,g(x₂))
+
+
+f(g(x),y) = f(x,y)
+write vars apart
+f(g(x₁),y₁) = f(x₂,y₂)
+find mgu
+x₂→g(x₁) , y₁→y₂
+rewrite with vars together
+| x→g(x)
+
+f(g(x),y) = f(x,z)
+f(g(x₁),y₁) = f(x₂,z₂)
+x₂→g(x₁) , y₁→z₂
+y→z | x→g(x)
+
+τₗ =? τᵣ
+write vars apart s₁ = x->x₁, y->y₁, for example
+τ₁ = s₁τₗ , τ₂ = s₂τᵣ
+τ₁ =? τ₂
+find mgu
+στ₁ = στ₂
+so,
+σs₁τₗ = σs₂τᵣ
+we have a unifier* = σ ∘ s₁ , σ ∘ s₂
+
+e.g.
+f(g(x),y) = f(x,y)
+s₁ = x → x₁ , y → y₁
+s₂ = x → x₂ , y → y₂
+σ = x₂ → g(x₁) , y₁ → y₂
+σ ∘ s₁ = x → x₁    , y → y₂ , x₂ → g(x₁) , y₁ → y₂
+σ ∘ s₂ = x → g(x₁) , y → y₂ , x₂ → g(x₁) , y₁ → y₂
+
+restricting σ ∘ sᵢ to the vars of i (
+r₁ = x → x₁ , y → y₂
+r₂ = x → g(x₁) , y → y₂
+
+magically (substitute range of rᵢ with originating variable) (so unifier uses no variables outside of τₗ and τᵣ
+m₁ = x → x , y → y
+m₂ = x → g(x) , y → y
+
+drop identicals (to make minimal)
+d₁ = []
+d₂ = x → g(x)
+-}
+
 record HasNegation (A : Set) : Set
  where
   field
@@ -1006,7 +1056,7 @@ HasDecidableValidationLiteralProblem = {!!}
 
 -- -- record HasVacuousDischarge (A : Set) ⦃ _ : HasNegation A ⦄ ⦃ _ : HasSubstantiveDischarge A A ⦄ : Set₁
 -- --  where
- 
+
 -- --   ◁_ : List A → Set
 -- --   ◁ +s = ∃ λ (s : A) → (+s ≽ s) × (+s ≽ ~ s)
 
@@ -1033,7 +1083,7 @@ HasDecidableValidationLiteralProblem = {!!}
 -- --                                     ⦃ _ : Eq A ⦄
 -- --                                     : Set₁
 -- --  where
--- --   field 
+-- --   field
 -- --     ◁?_ : (x : List A) → Dec $ ◁ x
 
 -- -- -- instance HasDecidableVacuousDischarge𝓢equent : {A : Set} ⦃ _ : 𝓐ssertion A ⦄ ⦃ _ : HasNegation (𝓢equent A) ⦄ ⦃ _ : HasSubstantiveDischarge (𝓢equent A) (𝓢equent A) ⦄ ⦃ _ : HasVacuousDischarge (𝓢equent A) ⦄ → HasDecidableVacuousDischarge (𝓢equent A)
