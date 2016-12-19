@@ -13,4 +13,6 @@ cabal.sandbox.config
 *.agdai
 *~
 **/#*#
+**/.#*
 #*#
+
