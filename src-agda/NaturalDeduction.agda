@@ -468,6 +468,28 @@ substitute : VariableName → Term → Term → Term
 substitute 𝑥ₛ τₛ τ@(variable 𝑥)  = ifYes 𝑥ₛ ≟ 𝑥 then τₛ else τ
 substitute 𝑥ₛ τₛ (function 𝑓 ⟨ ⟨ τs ⟩ ⟩) = function 𝑓 ⟨ ⟨ substitute 𝑥ₛ τₛ <$> τs ⟩ ⟩
 
+mutual
+
+  data SizedTerm {i : Size} : Set
+   where
+    variable : VariableName → SizedTerm
+    function : FunctionName → SizedTerms {i} → SizedTerm
+
+  record SizedTerms {i : Size} : Set
+   where
+    constructor ⟨_⟩
+    inductive
+    field
+      {arity} : Arity
+      {j} : Size< i
+      terms : Vector (SizedTerm {j}) arity
+
+open SizedTerms
+
+sizedSubstitute : VariableName → ∀ {i : Size} {j : Size< i} → SizedTerm {j} → SizedTerm {i} → SizedTerm {i}
+sizedSubstitute 𝑥ₛ τₛ τ@(variable 𝑥)  = ifYes 𝑥ₛ ≟ 𝑥 then τₛ else {!τ!}
+sizedSubstitute 𝑥ₛ τₛ (function 𝑓 ⟨ ⟨ τs ⟩ ⟩) = function 𝑓 ⟨ ⟨ sizedSubstitute 𝑥ₛ τₛ <$> {!τs!} ⟩ ⟩
+
 {- notes on unification
 f(g(x),x) = f(x,g(x))
 
