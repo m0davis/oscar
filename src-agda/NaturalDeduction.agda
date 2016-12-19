@@ -273,24 +273,56 @@ module CustomPrelude where
 -}
 open CustomPrelude
 
-data _∈_ {ℓ} {A : Set ℓ} (a : A) : List A → Set ℓ
+record Successor {ℓᴬ} (A : Set ℓᴬ) {ℓᴮ} (B : Set ℓᴮ) : Set (ℓᴬ ⊔ ℓᴮ)
  where
-  here : (as : List A) → a ∈ (a ∷ as)
-  there : (x : A) {as : List A} → a ∈ as → a ∈ (x ∷ as)
+  field
+    ⊹ : A → B
 
-_∉_ : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ (a : A) → (xs : List A) → Set ℓ
-a ∉ xs = ¬ (a ∈ xs)
+open Successor ⦃ … ⦄
 
-_∈?_ : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ (a : A) → (xs : List A) → Dec (a ∈ xs)
-a ∈? [] = no λ ()
-a ∈? (x ∷ xs) with a ≟ x
-… | yes a≡x rewrite a≡x = yes (here xs)
-… | no a≢x with a ∈? xs
-… | yes a∈xs = yes (there x a∈xs)
-… | no a∉xs = no (λ {(here _) → a≢x refl ; (there _ a∈xs) → a∉xs a∈xs})
+instance SuccessorNat : Successor Nat Nat
+Successor.⊹ SuccessorNat = suc
+
+instance SuccessorLevel : Successor Level Level
+Successor.⊹ SuccessorLevel = lsuc
+
+record Membership {ℓ} (m : Set ℓ) (M : Set ℓ) : Set (⊹ ℓ)
+ where
+  field _∈_ : m → M → Set ℓ
+
+  _∉_ : m → M → Set ℓ
+  x ∉ X = ¬ x ∈ X
+
+open Membership ⦃ … ⦄
+
+data _∈L_ {ℓ} {A : Set ℓ} (a : A) : List A → Set ℓ
+ where
+  zero : {as : List A} → a ∈L (a ∷ as)
+  suc : {x : A} {as : List A} → a ∈L as → a ∈L (x ∷ as)
+
+instance Successor∈L : ∀ {ℓ} {A : Set ℓ} {a : A} {x : A} {as : List A} → Successor (a ∈L as) $ a ∈L (x ∷ as)
+Successor.⊹ Successor∈L = suc
+
+instance MembershipList : ∀ {ℓ} {A : Set ℓ} → Membership A $ List A
+Membership._∈_ MembershipList = _∈L_
+
+record DecidableMembership {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ : Set (⊹ ℓ)
+ where
+  field _∈?_ : (x : m) → (X : M) → Dec $ x ∈ X
+
+instance DecidableMembershipList : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ → DecidableMembership A $ List A
+DecidableMembership._∈?_ (DecidableMembershipList {ℓ} {A}) = _∈L?_
+ where
+  _∈L?_ : (a : A) → (xs : List A) → Dec (a ∈ xs)
+  a ∈L? [] = no λ ()
+  a ∈L? (x ∷ xs) with a ≟ x
+  … | yes a≡x rewrite a≡x = yes zero
+  … | no a≢x with a ∈L? xs
+  … | yes a∈xs = yes (⊹ a∈xs)
+  … | no a∉xs = no (λ {zero → a≢x refl ; (suc a∈xs) → a∉xs a∈xs})
 
 _⊆_ : ∀ {ℓ} {A : Set ℓ} → List A → List A → Set ℓ
-R ⊆ S = ∀ {x} → x ∈ R → x ∈ S
+_⊆_ {A = A} R S = ∀ {x : A} → x ∈ R → x ∈ S
 
 record VariableName : Set
  where
