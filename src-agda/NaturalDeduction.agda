@@ -23,25 +23,6 @@ module CustomPrelude where
   … | yes a∈xs = yes (suc a∈xs)
   … | no a∉xs = no (λ {(zero a≡x) → a≢x a≡x ; (suc a∈xs) → a∉xs a∈xs})
 
-  data _∈_ {ℓ} {A : Set ℓ} (a : A) : List A → Set ℓ
-   where
-    here : (as : List A) → a ∈ (a ∷ as)
-    there : (x : A) {as : List A} → a ∈ as → a ∈ (x ∷ as)
-
-  _∉_ : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ (a : A) → (xs : List A) → Set ℓ
-  a ∉ xs = ¬ (a ∈ xs)
-
-  _∈?_ : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ (a : A) → (xs : List A) → Dec (a ∈ xs)
-  a ∈? [] = no λ ()
-  a ∈? (x ∷ xs) with a ≟ x
-  … | yes a≡x rewrite a≡x = yes (here xs)
-  … | no a≢x with a ∈? xs
-  … | yes a∈xs = yes (there x a∈xs)
-  … | no a∉xs = no (λ {(here _) → a≢x refl ; (there _ a∈xs) → a∉xs a∈xs})
-
-  _⊆_ : ∀ {ℓ} {A : Set ℓ} → List A → List A → Set ℓ
-  R ⊆ S = ∀ {x} → x ∈ R → x ∈ S
-
   _≢_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
   x ≢ y = ¬ (x ≡ y)
 
@@ -291,6 +272,25 @@ module CustomPrelude where
   traverse-vec⇓ : ∀{A}{B}{𝑎} (f? : A → Delay ∞ B) → (∀ x → f? x ⇓) → (xs : Vec A 𝑎) → traverse {!f!} xs ⇓
 -}
 open CustomPrelude
+
+data _∈_ {ℓ} {A : Set ℓ} (a : A) : List A → Set ℓ
+ where
+  here : (as : List A) → a ∈ (a ∷ as)
+  there : (x : A) {as : List A} → a ∈ as → a ∈ (x ∷ as)
+
+_∉_ : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ (a : A) → (xs : List A) → Set ℓ
+a ∉ xs = ¬ (a ∈ xs)
+
+_∈?_ : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ (a : A) → (xs : List A) → Dec (a ∈ xs)
+a ∈? [] = no λ ()
+a ∈? (x ∷ xs) with a ≟ x
+… | yes a≡x rewrite a≡x = yes (here xs)
+… | no a≢x with a ∈? xs
+… | yes a∈xs = yes (there x a∈xs)
+… | no a∉xs = no (λ {(here _) → a≢x refl ; (there _ a∈xs) → a∉xs a∈xs})
+
+_⊆_ : ∀ {ℓ} {A : Set ℓ} → List A → List A → Set ℓ
+R ⊆ S = ∀ {x} → x ∈ R → x ∈ S
 
 record VariableName : Set
  where
