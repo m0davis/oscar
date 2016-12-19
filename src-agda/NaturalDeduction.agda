@@ -459,6 +459,15 @@ EqTerm = record { _==_ = λ x y → fst (EqTerm⇓ x y) }
 instance EqTerms : Eq Terms
 Eq._==_ EqTerms x y = fst (EqTerms⇓ x y)
 
+UnificationEquation = Term × Term
+UnificationProblem = List UnificationEquation
+
+{-# TERMINATING #-}
+-- substitute 𝑥ₛ τₛ τ = τ, where all occurrences of 𝑥ₛ are replaced by τₛ
+substitute : VariableName → Term → Term → Term
+substitute 𝑥ₛ τₛ τ@(variable 𝑥)  = ifYes 𝑥ₛ ≟ 𝑥 then τₛ else τ
+substitute 𝑥ₛ τₛ (function 𝑓 ⟨ ⟨ τs ⟩ ⟩) = function 𝑓 ⟨ ⟨ substitute 𝑥ₛ τₛ <$> τs ⟩ ⟩
+
 {- notes on unification
 f(g(x),x) = f(x,g(x))
 
