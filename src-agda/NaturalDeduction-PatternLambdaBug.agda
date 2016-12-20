@@ -1,5 +1,5 @@
 {-# OPTIONS --rewriting #-}
---{-# OPTIONS --show-implicit #-}
+{-# OPTIONS --show-implicit #-}
 module NaturalDeduction-PatternLambdaBug
  where
 
