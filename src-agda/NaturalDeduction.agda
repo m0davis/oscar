@@ -317,6 +317,8 @@ record DecidableMembership {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership 
   field _∈?_ : (x : m) → (X : M) → Dec $ x ∈ X
   field _∉?_ : (x : m) → (X : M) → Dec $ x ∉ X
 
+open DecidableMembership ⦃ … ⦄
+
 instance DecidableMembershipList : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ → DecidableMembership A $ List A
 DecidableMembership._∈?_ (DecidableMembershipList {ℓ} {A}) = _∈L?_
  where
@@ -574,7 +576,10 @@ pattern tail= x₁s = ✓ {x₁s = x₁s} _
 pattern 𝕃⟦_⟧ x₀ = ✓ {x₀ = x₀} ∅
 pattern _₀∷₁_∷⟦_⟧ x₀ x₁ x₂s = ✓ {x₀ = x₀} (● {x₁} _ {x₂s} _ _)
 
+--{-# DISPLAY ✓ {x₀ = x₀} (● {x₁} _ {x₂s} _ _) = _₀∷₁_∷⟦_⟧ x₀ x₁ x₂s #-}
+
 pattern _↶_↷_ x₀∉x₂s x₀≢x₁ x₁∉x₂s = ● x₀≢x₁ x₀∉x₂s x₁∉x₂s
+pattern _₀∷₁⟦_⟧ x₀ x₁s = ● {x₀} _ {x₁s} _ _
 
 instance Membership𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} → Membership 𝐴 (𝕃 𝐴)
 Membership._∉_ Membership𝕃 x xs = x ∉𝕃 xs
@@ -582,33 +587,67 @@ Membership._∈_ Membership𝕃 x xs = ¬ x ∉𝕃 xs
 fst (Membership.xor-membership Membership𝕃) x₁ x₂ = x₁ x₂
 snd (Membership.xor-membership Membership𝕃) x₁ x₂ = x₂ x₁
 
+{-# DISPLAY _∉𝕃_ = _∉_ #-}
+
 --{-# DISPLAY #-}
+_∉𝕃?_ : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → (x : 𝐴) (xs : 𝕃 𝐴) → Dec (x ∉𝕃 xs)
+_∉𝕃?_ x ∅ = yes ∅
+_∉𝕃?_ x 𝕃⟦ x₀ ⟧ with x ≟ x₀
+… | yes refl = no λ {(● x₂ _ .∅) → x₂ refl}
+… | no x≢x₀ = yes (● x≢x₀ ∅ ∅)
+_∉𝕃?_ x (✓ {x₀ = x₀} (● {x₁} x₀≢x₁ {x₂s} x₀∉x₂s x₁∉x₂s)) with x ≟ x₀
+… | yes refl = no λ { (● x₃ _ _) → x₃ refl}
+… | no x≢x₀ with x ≟ x₁
+… | yes refl = no λ { ((_ ↶ x≢x ↷ _) ↶ _ ↷ _) → x≢x refl }
+… | no x≢x₁ with x ∉𝕃? x₂s
+_∉𝕃?_ x₁ (✓ {x₂} (● {x₀} x₃ {.∅} x₄ x₀∉x₁s)) | no x≢x₀ | (no x≢x₁) | (yes ∅) = yes (● x≢x₀ (● x≢x₁ ∅ x₀∉x₁s) (● _ _ x₀∉x₁s))
+_∉𝕃?_ x₁ (✓ {x₄} (● {x₃} x₅ {.(✓ asdf)} x₆ x₀∉x₁s)) | no x≢x₀ | (no x≢x₁) | (yes (● x₂ asdf₁ asdf)) = yes (● x≢x₀ (● x≢x₁ (● x₂ asdf₁ asdf) x₀∉x₁s) (● x₅ x₆ x₀∉x₁s))
+… | no x∈x₂s = no λ { (● {_} x₃ {.(✓ x₁∉x₂s)} (● x₄ x∉x₀s .x₁∉x₂s) .(● x₀≢x₁ x₀∉x₂s x₁∉x₂s)) → x∈x₂s x∉x₀s}
 
 instance DecidableMembership𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → DecidableMembership 𝐴 (𝕃 𝐴)
-DecidableMembership._∉?_ DecidableMembership𝕃 x ∅ = yes ∅
-DecidableMembership._∉?_ DecidableMembership𝕃 x 𝕃⟦ x₀ ⟧ with x ≟ x₀
-… | yes refl = no (λ {x → {!x!}}) -- (λ {∅ → {!!} ; (x₀∉∅ ↶ x₀≢x₁ ↷ x₁∉∅) → ?})
-… | no x≢x₀ = {!!}
-DecidableMembership._∉?_ DecidableMembership𝕃 x (x₀ ₀∷₁ x₁ ∷⟦ x₂s ⟧) = {!!}
-DecidableMembership._∈?_ DecidableMembership𝕃 x X = {!!}
+DecidableMembership._∉?_ DecidableMembership𝕃 = _∉𝕃?_
+DecidableMembership._∈?_ DecidableMembership𝕃 x X with _∉𝕃?_ x X
+… | yes x∉X = no (λ x₁ → x₁ x∉X)
+… | no x∈X = yes x∈X
 
 record TotalUnion {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ : Set ℓ
  where
   field
     union : M → M → M
-    unionLaw1 : ∀ {x₁ : m} {X₁ X₂ : M} → x₁ ∈ X₁ → x₁ ∈ union X₁ X₂
-    unionLaw2 : ∀ {x : m} {X₁ X₂ : M} → x ∈ union X₁ X₂ → x ∈ X₁ ⊎ x ∈ X₂
+    unionLaw1 : ∀ {x : m} {X₁ X₂ : M} → x ∈ X₁ → x ∈ union X₁ X₂
+    unionLaw2 : ∀ {x : m} {X₁ X₂ : M} → x ∈ X₂ → x ∈ union X₁ X₂
+    unionLaw3 : ∀ {x : m} {X₁ X₂ : M} → x ∈ union X₁ X₂ → x ∈ X₁ ⊎ x ∈ X₂
 
 open TotalUnion ⦃ … ⦄
 
-instance TotalUnion𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} → TotalUnion 𝐴 (𝕃 𝐴)
+{-# DISPLAY TotalUnion.union _ = union #-}
+
+{-
+module ModuleTotalUnion𝕃 {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ where
+  totalUnion : M → M → M
+  totalUnion = ?
+
+  totalUnionLaw1 : ∀ {x : m} {X₁ X₂ : M} → x ∈ X₁ → x ∈ totalUnion X₁ X₂
+  totalUnionLaw1 = ?
+-}
+{-
+instance TotalUnion𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → TotalUnion 𝐴 (𝕃 𝐴)
 TotalUnion.union TotalUnion𝕃 ∅ ∅ = ∅
 TotalUnion.union TotalUnion𝕃 ∅ (✓ x) = ✓ x
 TotalUnion.union TotalUnion𝕃 (✓ x₁) ∅ = ✓ x₁
-TotalUnion.union (TotalUnion𝕃 {𝑨} {𝐴}) (✓ {x₀ = x} {x₁s = xs} x∉xs) (✓ {x₀ = y} {x₁s = ys} y∉ys) = {!!}
-TotalUnion.unionLaw1 TotalUnion𝕃 x x₂ = {!x₂!}
+TotalUnion.union (TotalUnion𝕃 {𝑨} {𝐴}) x₀s@(✓ {x₀ = x₀} {x₁s = x₁s} x₀∉x₁s) y₀s@(✓ {x₀ = y₀} {x₁s = y₁s} y₀∉y₁s) with x₀ ∉? y₀s
+… | yes x₀∉y₀s = let x₀y₀s = ✓ x₀∉y₀s in union {m = 𝐴} x₁s x₀y₀s
+… | no x₀∈y₀s = union {m = 𝐴} x₁s y₀s
+TotalUnion.unionLaw1 TotalUnion𝕃 {X₁ = ∅} {∅} x₂ x₃ = x₂ x₃
+TotalUnion.unionLaw1 TotalUnion𝕃 {X₁ = ∅} {✓ x₂} x₃ x₄ = x₃ ∅
+TotalUnion.unionLaw1 TotalUnion𝕃 {X₁ = ✓ x₂} {∅} x₃ x₄ = x₃ x₄
+TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {x₁s}                 x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s with x₀ ∉? y₀s
+TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {x₁s}                 x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s | yes x₀∉y₀s = x∈x₀s {!!}
+--TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {∅}                   x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s | yes x₀∉y₀s = {!!}
+--TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {✓ {x₁} {x₂s} x₁∉x₂s} x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s | yes x₀∉y₀s = {!!}
+… | no x₀∈y₀s = {!!}
 TotalUnion.unionLaw2 TotalUnion𝕃 = {!!}
-
+-}
 --union : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → 𝕃 𝐴 → 𝕃 𝐴 → 𝕃 𝐴
 
 mutual
