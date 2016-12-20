@@ -30,6 +30,10 @@ module CustomPrelude where
   _↔_ : {ℓ¹ : Level} → Set ℓ¹ → {ℓ² : Level} → Set ℓ² → Set (ℓ¹ ⊔ ℓ²)
   P ↔ Q = (P → Q) × (Q → P)
 
+  infix 0 _←⊗→_
+  _←⊗→_ : {ℓ¹ : Level} → Set ℓ¹ → {ℓ² : Level} → Set ℓ² → Set (ℓ¹ ⊔ ℓ²)
+  P ←⊗→ Q = (P → ¬ Q) × (Q → ¬ P)
+
   ∃ : ∀ {ℓᴬ ℓᴮ} {A : Set ℓᴬ} (B : A → Set ℓᴮ) → Set (ℓᴬ ⊔ ℓᴮ)
   ∃ = Σ _
 
@@ -288,10 +292,10 @@ Successor.⊹ SuccessorLevel = lsuc
 
 record Membership {ℓ} (m : Set ℓ) (M : Set ℓ) : Set (⊹ ℓ)
  where
-  field _∈_ : m → M → Set ℓ
-
-  _∉_ : m → M → Set ℓ
-  x ∉ X = ¬ x ∈ X
+  field
+    _∈_ : m → M → Set ℓ
+    _∉_ : m → M → Set ℓ
+    xor-membership : ∀ {x : m} {X : M} → x ∈ X ←⊗→ x ∉ X
 
 open Membership ⦃ … ⦄
 
@@ -305,10 +309,13 @@ Successor.⊹ Successor∈L = suc
 
 instance MembershipList : ∀ {ℓ} {A : Set ℓ} → Membership A $ List A
 Membership._∈_ MembershipList = _∈L_
+Membership._∉_ MembershipList x X = ¬ x ∈ X
+Membership.xor-membership MembershipList = (λ x x₁ → x₁ x) , (λ x x₁ → x x₁)
 
 record DecidableMembership {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ : Set (⊹ ℓ)
  where
   field _∈?_ : (x : m) → (X : M) → Dec $ x ∈ X
+  field _∉?_ : (x : m) → (X : M) → Dec $ x ∉ X
 
 instance DecidableMembershipList : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ → DecidableMembership A $ List A
 DecidableMembership._∈?_ (DecidableMembershipList {ℓ} {A}) = _∈L?_
@@ -320,6 +327,7 @@ DecidableMembership._∈?_ (DecidableMembershipList {ℓ} {A}) = _∈L?_
   … | no a≢x with a ∈L? xs
   … | yes a∈xs = yes (⊹ a∈xs)
   … | no a∉xs = no (λ {zero → a≢x refl ; (suc a∈xs) → a∉xs a∈xs})
+DecidableMembership._∉?_ (DecidableMembershipList {ℓ} {A}) = {!!}
 
 _⊆_ : ∀ {ℓ} {A : Set ℓ} → List A → List A → Set ℓ
 _⊆_ {A = A} R S = ∀ {x : A} → x ∈ R → x ∈ S
@@ -534,6 +542,9 @@ Membership._∈_ MembershipTermTerms = _ᵗ∈ᵗˢ_ where
    where
     zero : τ ᵗ∈ᵗˢ ⟨ ⟨ τ ∷ [] ⟩ ⟩
     suc : ∀ {τs} → τ ᵗ∈ᵗˢ τs → τ ᵗ∈ᵗˢ ⟨ ⟨ τ ∷ vector (terms τs) ⟩ ⟩
+Membership._∉_ MembershipTermTerms x X = ¬ x ∈ X
+fst (Membership.xor-membership MembershipTermTerms) x₁ x₂ = x₂ x₁
+snd (Membership.xor-membership MembershipTermTerms) x₁ x₂ = x₁ x₂
 
 instance MembershipVariableNameTerm : Membership VariableName Term
 Membership._∈_ MembershipVariableNameTerm = _ᵛ∈ᵗ_ where
@@ -541,7 +552,84 @@ Membership._∈_ MembershipVariableNameTerm = _ᵛ∈ᵗ_ where
    where
     variable : 𝑥 ᵛ∈ᵗ variable 𝑥
     function : ∀ 𝑓 {τ : Term} {τs} → {_ : 𝑥 ∈ τ} → τ ∈ τs → 𝑥 ᵛ∈ᵗ function 𝑓 τs
+Membership._∉_ MembershipVariableNameTerm x X = ¬ x ∈ X
+fst (Membership.xor-membership MembershipVariableNameTerm) x₁ x₂ = x₂ x₁
+snd (Membership.xor-membership MembershipVariableNameTerm) x₁ x₂ = x₁ x₂
 
+data 𝕃 {𝑨} (𝐴 : Set 𝑨) : Set 𝑨
+data _∉𝕃_ {𝑨} {𝐴 : Set 𝑨} (x : 𝐴) : 𝕃 𝐴 → Set 𝑨
+
+data 𝕃 {𝑨} (𝐴 : Set 𝑨) where
+  ∅ : 𝕃 𝐴
+  ✓ : {x₀ : 𝐴} → {x₁s : 𝕃 𝐴} → x₀ ∉𝕃 x₁s → 𝕃 𝐴
+
+instance Successor𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} → {x₀ : 𝐴} → {x₁s : 𝕃 𝐴} → Successor (x₀ ∉𝕃 x₁s) (𝕃 𝐴)
+Successor.⊹ Successor𝕃 = ✓
+
+data _∉𝕃_ {𝑨} {𝐴 : Set 𝑨} (𝔞 : 𝐴) where
+  ∅ : 𝔞 ∉𝕃 ∅
+  ● : ∀ {x₀} → 𝔞 ≢ x₀ → ∀ {x₁s} → 𝔞 ∉𝕃 x₁s → (x₀∉x₁s : x₀ ∉𝕃 x₁s) → 𝔞 ∉𝕃 ✓ x₀∉x₁s
+
+pattern tail= x₁s = ✓ {x₁s = x₁s} _
+pattern 𝕃⟦_⟧ x₀ = ✓ {x₀ = x₀} ∅
+pattern _₀∷₁_∷⟦_⟧ x₀ x₁ x₂s = ✓ {x₀ = x₀} (● {x₁} _ {x₂s} _ _)
+
+pattern _↶_↷_ x₀∉x₂s x₀≢x₁ x₁∉x₂s = ● x₀≢x₁ x₀∉x₂s x₁∉x₂s
+
+instance Membership𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} → Membership 𝐴 (𝕃 𝐴)
+Membership._∉_ Membership𝕃 x xs = x ∉𝕃 xs
+Membership._∈_ Membership𝕃 x xs = ¬ x ∉𝕃 xs
+fst (Membership.xor-membership Membership𝕃) x₁ x₂ = x₁ x₂
+snd (Membership.xor-membership Membership𝕃) x₁ x₂ = x₂ x₁
+
+--{-# DISPLAY #-}
+
+instance DecidableMembership𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → DecidableMembership 𝐴 (𝕃 𝐴)
+DecidableMembership._∉?_ DecidableMembership𝕃 x ∅ = yes ∅
+DecidableMembership._∉?_ DecidableMembership𝕃 x 𝕃⟦ x₀ ⟧ with x ≟ x₀
+… | yes refl = no (λ {x → {!x!}}) -- (λ {∅ → {!!} ; (x₀∉∅ ↶ x₀≢x₁ ↷ x₁∉∅) → ?})
+… | no x≢x₀ = {!!}
+DecidableMembership._∉?_ DecidableMembership𝕃 x (x₀ ₀∷₁ x₁ ∷⟦ x₂s ⟧) = {!!}
+DecidableMembership._∈?_ DecidableMembership𝕃 x X = {!!}
+
+record TotalUnion {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ : Set ℓ
+ where
+  field
+    union : M → M → M
+    unionLaw1 : ∀ {x₁ : m} {X₁ X₂ : M} → x₁ ∈ X₁ → x₁ ∈ union X₁ X₂
+    unionLaw2 : ∀ {x : m} {X₁ X₂ : M} → x ∈ union X₁ X₂ → x ∈ X₁ ⊎ x ∈ X₂
+
+open TotalUnion ⦃ … ⦄
+
+instance TotalUnion𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} → TotalUnion 𝐴 (𝕃 𝐴)
+TotalUnion.union TotalUnion𝕃 ∅ ∅ = ∅
+TotalUnion.union TotalUnion𝕃 ∅ (✓ x) = ✓ x
+TotalUnion.union TotalUnion𝕃 (✓ x₁) ∅ = ✓ x₁
+TotalUnion.union (TotalUnion𝕃 {𝑨} {𝐴}) (✓ {x₀ = x} {x₁s = xs} x∉xs) (✓ {x₀ = y} {x₁s = ys} y∉ys) = {!!}
+TotalUnion.unionLaw1 TotalUnion𝕃 x x₂ = {!x₂!}
+TotalUnion.unionLaw2 TotalUnion𝕃 = {!!}
+
+--union : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → 𝕃 𝐴 → 𝕃 𝐴 → 𝕃 𝐴
+
+mutual
+  data FTerm : 𝕃 VariableName → Set
+   where
+    variable : (𝑥 : VariableName) → FTerm (𝕃⟦ 𝑥 ⟧)
+    function : (𝑓 : FunctionName) → {𝑥s : 𝕃 VariableName} → (τs : FTerms 𝑥s) → FTerm 𝑥s
+
+  data FTerms (𝑥s : 𝕃 VariableName) : Set
+   where
+    [] : FTerms 𝑥s
+--    _∷_ :
+{-
+  record FTerms (𝑥s : 𝕃 VariableName) (τs : Terms) : Set
+   where
+    constructor ⟨_⟩
+    inductive
+    field
+      {arity} : Arity
+      terms : Vector (FTerm
+-}
 --data _ᵛ∈ᵖ_ (𝑥 : VariableName) : UnificationProblem →
 {-
 record FTerm : Set
