@@ -1072,5 +1072,6 @@ instance
   HasDecidableSalvationSequent : {A : Set} ⦃ bf : BeFormula A ⦄ ⦃ hs : HasNegation A ⦄
                                  → HasDecidableSalvation $ Sequent A
   HasDecidableSalvation.hasSalvation HasDecidableSalvationSequent = HasSalvationSequent
-  (HasDecidableSalvation.▷? HasDecidableSalvationSequent) (statement₁ ╱ []) = no ((foo2 statement₁)) -- (foo2 statement₁) -- (λ { (left x₂) → ? ; (right x₂) → ?}) -- no (λ { (left _) → ? ; (right _) → ?}) -- λ x → {!!} -- (λ { (left _) → {!!} ; (right _) → {!!}})
+  --(HasDecidableSalvation.▷? HasDecidableSalvationSequent) (statement₁ ╱ []) = no (foo2 statement₁)
+  (HasDecidableSalvation.▷? HasDecidableSalvationSequent) (statement₁ ╱ []) = no (λ {x → {!x!}})
   (HasDecidableSalvation.▷? HasDecidableSalvationSequent) (statement₁ ╱ (x₂ ∷ suppositions₁)) = {!!}
