@@ -389,6 +389,44 @@ open Vector
 instance EqVector : {A : Set} ⦃ _ : Eq A ⦄ {𝑎 : Arity} → Eq (Vector A 𝑎)
 Eq._==_ EqVector _ = decEq₁ (cong vector) ∘ (_≟_ on vector $ _)
 
+data ITerm : Nat → Set
+ where
+  variable : VariableName → ITerm zero
+  function : FunctionName → {arity : Nat} → (τs : Vec (Σ Nat ITerm) arity) → {n : Nat} → n ≡ sum (vecToList $ (fst <$> τs)) → ITerm (suc n)
+
+mutual
+  eqITerm : ∀ {n} → (x y : ITerm n) → Dec (x ≡ y)
+  eqITerm {.0} (variable x) (variable x₁) = {!!}
+  eqITerm {.(suc n)} (function x {arity = arity₁} τs {n = n} x₁) (function x₂ {arity = arity₂} τs₁ {n = .n} x₃) with x ≟ x₂ | arity₁ ≟ arity₂
+  eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function .x {.arity₁} τs₁ {.n} x₅) | yes refl | (yes refl) with eqITerms τs τs₁
+  eqITerm {.(suc n)} (function x₁ {arity₁} τs {n} x₄) (function .x₁ {.arity₁} .τs {.n} x₅) | yes refl | (yes refl) | (yes refl) rewrite x₄ | x₅ = yes refl
+  eqITerm {.(suc n)} (function x₁ {arity₁} τs {n} x₄) (function .x₁ {.arity₁} τs₁ {.n} x₅) | yes refl | (yes refl) | (no x) = {!!}
+  eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | yes x₁ | (no x₃) = {!!}
+  eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | no x₁ | (yes x₃) = {!!}
+  eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | no x₁ | (no x₃) = {!!}
+
+  eqITerms : ∀ {n} → (x y : Vec (Σ Nat ITerm) n) → Dec (x ≡ y)
+  eqITerms {.0} [] [] = {!!}
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) with fst₁ ≟ fst₂
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) | yes refl with eqITerm snd₁ snd₂
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) | yes refl | yes refl with eqITerms x₁ y
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) | yes refl | yes refl | yes refl = yes refl
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) | yes refl | yes refl | no ref = {!!}
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) | yes refl | no ref = {!!}
+  eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) | no ref = {!!}
+
+instance EqITerm : ∀ {n} → Eq (ITerm n)
+Eq._==_ EqITerm = eqITerm
+{-
+instance EqITerm : ∀ {n} → Eq (ITerm n)
+Eq._==_ EqITerm (variable x) (variable x₁) = {!!}
+Eq._==_ EqITerm (function x {arity = arity₁} τs {n = n} x₁) (function x₂ {arity = arity₂} τs₁ {n = .n} x₃) with x ≟ x₂ | arity₁ ≟ arity₂
+Eq._==_ EqITerm (function x {arity₁} τs {n} x₄) (function .x {.arity₁} τs₁ {.n} x₅) | yes refl | (yes refl) with τs ≟ τs₁
+Eq._==_ EqITerm (function x {arity₁} τs {n} x₄) (function .x {.arity₁} τs₁ {.n} x₅) | yes refl | (yes refl) | τs≡τs₁ = {!!}
+Eq._==_ EqITerm (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | yes x₁ | (no x₃) = {!!}
+Eq._==_ EqITerm (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | no x₁ | (yes x₃) = {!!}
+Eq._==_ EqITerm (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | no x₁ | (no x₃) = {!!}
+-}
 mutual
 
   data Term : Set
@@ -418,6 +456,33 @@ termFunction-inj₂ refl = refl
 terms-inj : ∀ {𝑎} → {τs₁ τs₂ : Vector Term 𝑎} → (τs₁≡τs₂ : (Terms.⟨_⟩ {𝑎} τs₁) ≡ ⟨ τs₂ ⟩) → τs₁ ≡ τs₂
 terms-inj refl = refl
 
+mutual
+  termToITerm : Term → Σ Nat ITerm
+  termToITerm (variable x) = _ , (variable x)
+  termToITerm (function x x₁) = {!!}
+
+  termsToVec : Terms → Σ Nat (λ arity → Σ (Vec (Σ Nat ITerm) arity) λ τs → Σ Nat λ n → n ≡ sum (vecToList $ (fst <$> τs)))
+  termsToVec (⟨_⟩ {arity = arity₁} ⟨ vector₁ ⟩) = {!!}
+
+iTermToTerm : Σ Nat ITerm → Term
+iTermToTerm = {!!}
+
+eq-term-round : ∀ τ → iTermToTerm (termToITerm τ) ≡ τ
+eq-term-round = {!!}
+
+eq-iterm-round : ∀ τ → termToITerm (iTermToTerm τ) ≡ τ
+eq-iterm-round = {!!}
+
+instance EqTerm : Eq Term
+Eq._==_ EqTerm x y with termToITerm x | graphAt termToITerm x | termToITerm y | graphAt termToITerm y
+Eq._==_ EqTerm x y | ix | ingraph eqx | iy | ingraph eqy with ix ≟ iy
+Eq._==_ EqTerm x y | ix | ingraph eqx | .ix | ingraph eqy | yes refl = yes $ ((cong iTermToTerm eqy ⟨≡⟩ʳ cong iTermToTerm eqx) ⟨≡⟩ eq-term-round x) ʳ⟨≡⟩ eq-term-round y
+Eq._==_ EqTerm x y | ix | ingraph eqx | iy | ingraph eqy | no neq = {!!}
+
+instance EqTerms : Eq Terms
+EqTerms = {!!}
+
+{-
 module _ {i : Size}
  where
 
@@ -502,6 +567,12 @@ EqTerm = record { _==_ = λ x y → fst (EqTerm⇓ x y) }
 
 instance EqTerms : Eq Terms
 Eq._==_ EqTerms x y = fst (EqTerms⇓ x y)
+-}
+
+
+
+
+
 
 {-
 {-# TERMINATING #-}
@@ -572,6 +643,61 @@ data _∉𝕃_ {𝑨} {𝐴 : Set 𝑨} (𝔞 : 𝐴) where
   ∅ : 𝔞 ∉𝕃 ∅
   ● : ∀ {x₀} → 𝔞 ≢ x₀ → ∀ {x₁s} → 𝔞 ∉𝕃 x₁s → (x₀∉x₁s : x₀ ∉𝕃 x₁s) → 𝔞 ∉𝕃 ✓ x₀∉x₁s
 
+data _∈𝕃_ {𝑨} {𝐴 : Set 𝑨} : (𝔞 : 𝐴) → 𝕃 𝐴 → Set {-𝑨-} where
+  here : (𝔞 : 𝐴) {xs : 𝕃 𝐴} (𝔞∉xs : 𝔞 ∉𝕃 xs) → 𝔞 ∈𝕃 (✓ 𝔞∉xs)
+  there : {x : 𝐴} {xs : 𝕃 𝐴} (x∉xs : x ∉𝕃 xs) {𝔞 : 𝐴} → 𝔞 ∈𝕃 xs → 𝔞 ∈𝕃 ✓ x∉xs
+
+∈→¬∉ : ∀ {𝑨} {𝐴 : Set 𝑨} {x : 𝐴} {xs : 𝕃 𝐴} → x ∈𝕃 xs → ¬ x ∉𝕃 xs
+∈→¬∉ {𝑨} {𝐴} {.𝔞} {.(✓ {_} {_} {𝔞} {xs} 𝔞∉xs)} (here 𝔞 {xs = xs} 𝔞∉xs) (● {x₀ = .𝔞} x {x₁s = .xs} x₂ .𝔞∉xs) = x refl
+∈→¬∉ {𝑨} {𝐴} {x₁} {.(✓ {_} {_} {x} {∅} ∅)} (there {x = x} {xs = .∅} ∅ {𝔞 = .x₁} ()) (● {x₀ = .x} x₃ {x₁s = .∅} ∅ .∅)
+∈→¬∉ {𝑨} {𝐴} {.𝔞} {.(✓ {_} {_} {x} {✓ {_} {_} {𝔞} {x₁s} x∉xs} (● {_} {_} {_} {𝔞} x₁ {x₁s} x∉xs₁ x∉xs))} (there {x = x} {xs = .(✓ {_} {_} {𝔞} {x₁s} x∉xs)} (● {x₀ = .𝔞} x₁ {x₁s = x₁s} x∉xs₁ x∉xs) {𝔞 = .𝔞} (here 𝔞 {xs = .x₁s} .x∉xs)) (● {x₀ = .x} x₃ {x₁s = .(✓ {_} {_} {𝔞} {x₁s} x∉xs)} (● {x₀ = .𝔞} x₂ {x₁s = .x₁s} x₄ .x∉xs) .(● {_} {_} {_} {𝔞} x₁ {x₁s} x∉xs₁ x∉xs)) = x₂ refl
+∈→¬∉ {𝑨} {𝐴} {x} {.(✓ {_} {_} {x₁} {✓ {_} {_} {x₀} {x₁s} x∉xs} (● {_} {_} {_} {x₀} x₂ {x₁s} x∉xs₁ x∉xs))} (there {x = x₁} {xs = .(✓ {_} {_} {x₀} {x₁s} x∉xs)} (● {x₀ = x₀} x₂ {x₁s = x₁s} x∉xs₁ x∉xs) {𝔞 = .x} (there {x = .x₀} {xs = .x₁s} .x∉xs {𝔞 = .x} x₃)) (● {x₀ = .x₁} x₄ {x₁s = .(✓ {_} {_} {x₀} {x₁s} x∉xs)} (● {x₀ = .x₀} x₅ {x₁s = .x₁s} x₆ .x∉xs) .(● {_} {_} {_} {x₀} x₂ {x₁s} x∉xs₁ x∉xs)) = ∈→¬∉ x₃ x₆
+
+∉→¬∈ : ∀ {𝑨} {𝐴 : Set 𝑨} {x : 𝐴} {xs : 𝕃 𝐴} → x ∉𝕃 xs → ¬ x ∈𝕃 xs
+∉→¬∈ {𝑨} {𝐴} {x} {.∅} ∅ ()
+∉→¬∈ {𝑨} {𝐴} {.𝔞} {.(✓ {_} {_} {𝔞} {x₁s} x₁)} (● {x₀ = .𝔞} x {x₁s = x₁s} x₂ x₁) (here 𝔞 {xs = .x₁s} .x₁) = x refl
+∉→¬∈ {𝑨} {𝐴} {x} {.(✓ {_} {_} {x₀} {x₁s} x₁)} (● {x₀ = x₀} x₂ {x₁s = x₁s} x₃ x₁) (there {x = .x₀} {xs = .x₁s} .x₁ {𝔞 = .x} x₄) = ∉→¬∈ x₃ x₄
+
+foo : ∀ {𝑨} {𝐴 : Set 𝑨} {x x₀ : 𝐴} (x₁ : _≡_ {𝑨} {𝐴} x x₀) (x₂ : _∈𝕃_ {𝑨} {𝐴} x (✓ {_} {_} {x₀} {∅} ∅) → ⊥) → ⊥
+foo {𝑨} {𝐴} {x} {.x} refl x₂ = x₂ (here x ∅)
+
+foo₂ : (𝑨 : Level)
+  (𝐴   : Set 𝑨                   )
+  (x₀  : 𝐴                       )
+  (x₁s : 𝕃 𝐴                     )
+  (x₁  : x₀ ∉𝕃 x₁s                )
+  (x   : 𝐴                       )
+  (x₂  : 𝐴                       )
+  (x₃  : x₂ ≡ x₀ → ⊥             )
+  (x₄  : x₂ ∉𝕃 x₁s                )
+  (x₅  : ¬ (x ∈𝕃 ✓ (● x₃ x₄ x₁)) )
+  (x₆  : x ≡ x₂) → ⊥
+foo₂ 𝑨 𝐴 x₀ x₁s x₁ x .x x₃ x₄ x₅ refl = x₅ (here x (● x₃ x₄ x₁)) -- x₅ (here x (● x₃ x₄ x₁))
+
+foo₃ : (𝑨   : Level)
+     (𝐴   : Set 𝑨                   )
+     (x₀  : 𝐴                       )
+     (x₁s : 𝕃 𝐴                     )
+     (x₁  : x₀ ∉𝕃 x₁s                )
+     (x   : 𝐴                       )
+     (x₂  : 𝐴                       )
+     (x₃  : x₂ ≡ x₀ → ⊥             )
+     (x₄  : x₂ ∉𝕃 x₁s                )
+     (x₅  : ¬ (x ∈𝕃 ✓ (● x₃ x₄ x₁)) )
+     (x₆  : x ≡ x₀)
+     → ⊥
+foo₃ 𝑨 𝐴 x₀ x₁s x₁ .x₀ x₂ x₃ x₄ x₅ refl = x₅ (there (● x₃ x₄ x₁) (here x₀ x₁))
+
+¬∈→∉ : ∀ {𝑨} {𝐴 : Set 𝑨} {x : 𝐴} {xs : 𝕃 𝐴} → ¬ x ∈𝕃 xs → x ∉𝕃 xs
+¬∈→∉ {𝑨} {𝐴} {x} {∅} x₁ = ∅
+¬∈→∉ {𝑨} {𝐴} {x} {✓ {x₀ = x₀} {x₁s = .∅} ∅} x₂ = ● (λ {x₁ → foo x₁ x₂}) ∅ ∅
+¬∈→∉ {𝑨} {𝐴} {x} {✓ {x₀ = x₂} {x₁s = .(✓ {_} {_} {x₀} {x₁s} x₁)} (● {x₀ = x₀} x₃ {x₁s = x₁s} x₄ x₁)} x₅ = ● (λ {x₆ → foo₂ 𝑨 𝐴 x₀ x₁s x₁ x x₂ x₃ x₄ x₅ x₆}) (● (λ {x₆ → foo₃ 𝑨 𝐴 x₀ x₁s x₁ _ x₂ x₃ x₄ x₅ x₆}) (¬∈→∉ (λ z → x₅ (there (● x₃ x₄ x₁) (there x₁ z)))) x₁) (● x₃ x₄ x₁)
+
+¬∉→∈ : ∀ {𝑨} {𝐴 : Set 𝑨} {x : 𝐴} {xs : 𝕃 𝐴} → ¬ x ∉𝕃 xs → x ∈𝕃 xs
+¬∉→∈ {𝑨} {𝐴} {x} {∅} x₁ = ⊥-elim (x₁ ∅)
+¬∉→∈ {𝑨} {𝐴} {x} {✓ {x₀ = x₀} {x₁s = ∅} ∅} x₂ = {!⊥-elim!}
+¬∉→∈ {𝑨} {𝐴} {x₁} {✓ {x₀ = x₂} {x₁s = ✓ {x₀ = x₀} {x₁s = x₁s} x} (● {x₀ = .x₀} x₃ {x₁s = .x₁s} x₄ .x)} x₅ = {!!}
+
 pattern tail= x₁s = ✓ {x₁s = x₁s} _
 pattern 𝕃⟦_⟧ x₀ = ✓ {x₀ = x₀} ∅
 pattern _₀∷₁_∷⟦_⟧ x₀ x₁ x₂s = ✓ {x₀ = x₀} (● {x₁} _ {x₂s} _ _)
@@ -588,6 +714,9 @@ fst (Membership.xor-membership Membership𝕃) x₁ x₂ = x₁ x₂
 snd (Membership.xor-membership Membership𝕃) x₁ x₂ = x₂ x₁
 
 {-# DISPLAY _∉𝕃_ = _∉_ #-}
+
+add-1-preserves-∈𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} {x₀ : 𝐴} {x₁s : 𝕃 𝐴} (x₀∉x₁s : x₀ ∉ x₁s) {x : 𝐴} → x ∈ x₁s → x ∈ ✓ x₀∉x₁s
+add-1-preserves-∈𝕃 x₀∉x₁s x₁ (● x₃ x₄ x₂) = x₁ x₄
 
 --{-# DISPLAY #-}
 _∉𝕃?_ : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → (x : 𝐴) (xs : 𝕃 𝐴) → Dec (x ∉𝕃 xs)
@@ -610,6 +739,34 @@ DecidableMembership._∈?_ DecidableMembership𝕃 x X with _∉𝕃?_ x X
 … | yes x∉X = no (λ x₁ → x₁ x∉X)
 … | no x∈X = yes x∈X
 
+x∈singleton→x=singleton : ∀ {𝑨} {𝐴 : Set 𝑨} {x₀ : 𝐴} ⦃ _ : Eq 𝐴 ⦄ {x₀∉∅ : _∉_ ⦃ Membership𝕃 ⦄ x₀ 𝕃.∅} {x : 𝐴} → x ∈ ✓ x₀∉∅ → x ≡ x₀
+x∈singleton→x=singleton {𝑨} {𝐴} {x₀} {∅} {x} x₁ with x ≟ x₀
+x∈singleton→x=singleton {𝑨} {𝐴} {x₀} {∅} {x} x₁ | yes refl = refl
+x∈singleton→x=singleton {𝑨} {𝐴} {x₀} {∅} {x} x∈x₀ | no x≢x₀ = ⊥-elim (x∈x₀ (● x≢x₀ ∅ ∅))
+
+foo₄ : (𝑨        : Level                                  )
+        (𝐴        : Set 𝑨                                 )
+        (x₁       : 𝐴                                     )
+        (x₂s      : 𝕃 𝐴                                   )
+        (x₁∉x₂s   : x₁ ∉ x₂s                              )
+        (x₀       : 𝐴                                     )
+        (x₀≢x₁    : x₀ ≡ x₁ → ⊥                           )
+        (x₀∉x₂s   : x₀ ∉ x₂s                              )
+        (x        : 𝐴                                     )
+        (x∈x₀∉x₁s : x ∉ ✓ (● x₀≢x₁ x₀∉x₂s x₁∉x₂s) → ⊥     )
+        (x≢x₀     : x ≡ x₀ → ⊥                            )
+        (x≢x₁     : x ≡ x₁ → ⊥                            )
+        (x∉x₂s    : x ∉ x₂s                               )
+        (x₂       : x ≡ x₀                                ) → ⊥
+foo₄ 𝑨 𝐴 x₁ x₂s x₁∉x₂s x₀ x₀≢x₁ x₀∉x₂s .x₀ x∈x₀∉x₁s x≢x₀ x≢x₁ x∉x₂s refl = x≢x₀ refl
+
+if-diff-then-somewhere-else-∈𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ {x₀ : 𝐴} (x₁s : 𝕃 𝐴) {x₀∉x₁s : x₀ ∉ x₁s} {x : 𝐴} → x ∈ ✓ x₀∉x₁s → x ≢ x₀ → x ∈ x₁s
+if-diff-then-somewhere-else-∈𝕃 {𝑨} {𝐴} {x₀} ∅ {∅} {x} x∈x₀∉∅ x≢x₀ ∅ = x≢x₀ (x∈singleton→x=singleton x∈x₀∉∅)
+if-diff-then-somewhere-else-∈𝕃 {𝑨} {𝐴} {x₀} (✓ {x₀ = x₁} {x₁s = x₂s} x₁∉x₂s) {● x₀≢x₁ x₀∉x₂s ._} {x} x∈x₀∉x₁s x≢x₀ (● x≢x₁ x∉x₂s _) = x∈x₀∉x₁s (● (λ {x₂ → foo₄ 𝑨 𝐴 x₁ x₂s x₁∉x₂s x₀ x₀≢x₁ x₀∉x₂s _ x∈x₀∉x₁s x≢x₀ x≢x₁ x∉x₂s x₂}) (● x≢x₁ x∉x₂s x₁∉x₂s) (● x₀≢x₁ x₀∉x₂s x₁∉x₂s))
+
+--if-diff-then-somewhere-else-∈𝕃 {𝑨} {𝐴} {x₀} .∅  {x₀∉x₁s} {x} x∈x₀s x≢x₀ ∅ = {!!}
+--if-diff-then-somewhere-else-∈𝕃 {𝑨} {𝐴} {x₀} ._  {x₀∉x₁s} {x} x∈x₀s x≢x₀ (● {x₀ = x₁} x≢x₁ {x₁s = x₂s} x∉x₂s x₁∉x₂s) = {!!}
+
 record TotalUnion {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ : Set ℓ
  where
   field
@@ -622,78 +779,105 @@ open TotalUnion ⦃ … ⦄
 
 {-# DISPLAY TotalUnion.union _ = union #-}
 
-{-
-module ModuleTotalUnion𝕃 {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ where
-  totalUnion : M → M → M
-  totalUnion = ?
+add1-then-∈𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ {x₀ : 𝐴} (x₁s : 𝕃 𝐴) {x₀∉x₁s : x₀ ∉ x₁s} → x₀ ∈ ✓ {x₀ = x₀} x₀∉x₁s
+add1-then-∈𝕃 {𝑨} {𝐴} {{x}} {x₀} x₁s {.x₁} (● {x₀ = .x₀} x₂ {x₁s = .x₁s} x₃ x₁) = x₂ refl
 
-  totalUnionLaw1 : ∀ {x : m} {X₁ X₂ : M} → x ∈ X₁ → x ∈ totalUnion X₁ X₂
-  totalUnionLaw1 = ?
--}
-{-
+module ModuleTotalUnion𝕃 {ℓ} (A : Set ℓ) ⦃ _ : Eq A ⦄ where
+  -- TODO aribtrarily moves from l₀s to r₀s, so a union of 10 and 2 elements takes longer than a union of 2 and 10 elements
+  totalUnion : 𝕃 A → 𝕃 A → 𝕃 A
+  totalUnion ∅ ∅ = ∅
+  totalUnion ∅ r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s) = r₀s
+  totalUnion l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s) ∅ = l₀s
+  totalUnion l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s) r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s) with l₀ ∉? r₀s
+  totalUnion l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s) r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s) | no l₀∈r₀s = totalUnion l₁s r₀s
+  totalUnion l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s) r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s) | yes l₀∉r₀s = totalUnion l₁s (✓ l₀∉r₀s)
+
+  totalUnionLaw2 : ∀ {x : A} {X₁ X₂ : 𝕃 A} → x ∈ X₂ → x ∈ totalUnion X₁ X₂
+  totalUnionLaw2 {x₁} {∅} {∅} x₂ x₃ = x₂ x₃
+  totalUnionLaw2 {x₁} {∅} {✓ x₂} x₃ x₄ = x₃ x₄
+  totalUnionLaw2 {x₁} {✓ x₂} {∅} x₃ x₄ = x₃ ∅
+  totalUnionLaw2 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈r₀s x∉l₀s∪r₀s with l₀ ∉? r₀s
+  totalUnionLaw2 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈r₀s x∉l₀s∪r₀s | no l₀∈r₀s = totalUnionLaw2 {X₁ = l₁s} x∈r₀s $ x∉l₀s∪r₀s
+  totalUnionLaw2 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈r₀s x∉l₀s∪r₀s | yes l₀∉r₀s = (totalUnionLaw2 {X₁ = l₁s} $ add-1-preserves-∈𝕃 l₀∉r₀s x∈r₀s) $ x∉l₀s∪r₀s
+
+  totalUnionLaw1 : ∀ {x : A} {X₁ X₂ : 𝕃 A} → x ∈ X₁ → x ∈ totalUnion X₁ X₂
+  totalUnionLaw1 {x₁} {∅} {∅} x₂ x₃ = x₂ x₃
+  totalUnionLaw1 {x₁} {∅} {✓ {x₀ = x₀} {x₁s = X₂} x₂} x₃ x₄ = x₃ ∅
+  totalUnionLaw1 {x₁} {✓ {x₀ = x₀} {x₁s = X₁} x₂} {∅} x₃ x₄ = x₃ x₄
+  totalUnionLaw1 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈l₀s x∉l₀s∪r₀s with l₀ ∉? r₀s
+  totalUnionLaw1 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈l₀s x∉l₀s∪r₀s | no l₀∈r₀s with x ≟ l₀
+  totalUnionLaw1 {.l₀} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈l₀s x∉l₀s∪r₀s | no l₀∈r₀s | yes refl = totalUnionLaw2 {X₁ = l₁s} l₀∈r₀s $ x∉l₀s∪r₀s
+  totalUnionLaw1 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈l₀s x∉l₀s∪r₀s | no l₀∈r₀s | no x≢l₀ = let x∈l₁s = if-diff-then-somewhere-else-∈𝕃 l₁s x∈l₀s x≢l₀ in totalUnionLaw1 x∈l₁s $ x∉l₀s∪r₀s
+  -- with x ≟ l₀
+  -- = {!!}
+  totalUnionLaw1 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈l₀s x∉l₀s∪r₀s | yes l₀∉r₀s with x ≟ l₀
+--totalUnionLaw1 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} l₀∈l₀s l₀∉l₀s∪r₀s | yes l₀∉r₀s | yes refl = {!l₀∉r₀s!}
+  totalUnionLaw1 {.l₀}    {✓ {l₀}       {l₁s}       l₀∉l₁s}        {✓ {r₀}           {r₁s} r₀∉r₁s} l₀∈l₀s l₀∉l₁s∪l₀r₀s | yes (● l₀≢r₀ l₀∉r₁s .r₀∉r₁s) | (yes refl) =
+    let l₀∈l₀r₀s : l₀ ∈ (✓ (● l₀≢r₀ l₀∉r₁s r₀∉r₁s))
+        l₀∈l₀r₀s = add1-then-∈𝕃 (✓ r₀∉r₁s)
+         in totalUnionLaw2 {X₁ = l₁s} l₀∈l₀r₀s $ l₀∉l₁s∪l₀r₀s
+  totalUnionLaw1 {x} {l₀s@(✓ {x₀ = l₀} {x₁s = l₁s} l₀∉l₁s)} {r₀s@(✓ {x₀ = r₀} {x₁s = r₁s} r₀∉r₁s)} x∈l₀s x∉l₀s∪r₀s | yes l₀∉r₀s | no x≢l₀ = let x∈l₁s = if-diff-then-somewhere-else-∈𝕃 l₁s x∈l₀s x≢l₀ in totalUnionLaw1 x∈l₁s $ x∉l₀s∪r₀s
+
+  totalUnionLaw3 : ∀ {x : A} {X₁ X₂ : 𝕃 A} → x ∈ totalUnion X₁ X₂ → x ∈ X₁ ⊎ x ∈ X₂
+  totalUnionLaw3 = {!!}
+
 instance TotalUnion𝕃 : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → TotalUnion 𝐴 (𝕃 𝐴)
-TotalUnion.union TotalUnion𝕃 ∅ ∅ = ∅
-TotalUnion.union TotalUnion𝕃 ∅ (✓ x) = ✓ x
-TotalUnion.union TotalUnion𝕃 (✓ x₁) ∅ = ✓ x₁
-TotalUnion.union (TotalUnion𝕃 {𝑨} {𝐴}) x₀s@(✓ {x₀ = x₀} {x₁s = x₁s} x₀∉x₁s) y₀s@(✓ {x₀ = y₀} {x₁s = y₁s} y₀∉y₁s) with x₀ ∉? y₀s
-… | yes x₀∉y₀s = let x₀y₀s = ✓ x₀∉y₀s in union {m = 𝐴} x₁s x₀y₀s
-… | no x₀∈y₀s = union {m = 𝐴} x₁s y₀s
-TotalUnion.unionLaw1 TotalUnion𝕃 {X₁ = ∅} {∅} x₂ x₃ = x₂ x₃
-TotalUnion.unionLaw1 TotalUnion𝕃 {X₁ = ∅} {✓ x₂} x₃ x₄ = x₃ ∅
-TotalUnion.unionLaw1 TotalUnion𝕃 {X₁ = ✓ x₂} {∅} x₃ x₄ = x₃ x₄
-TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {x₁s}                 x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s with x₀ ∉? y₀s
-TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {x₁s}                 x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s | yes x₀∉y₀s = x∈x₀s {!!}
---TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {∅}                   x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s | yes x₀∉y₀s = {!!}
---TotalUnion.unionLaw1 (TotalUnion𝕃 {𝑨} {𝐴}) {X₁ = x₀s@(✓ {x₀} {✓ {x₁} {x₂s} x₁∉x₂s} x₀∉x₁s)} {y₀s@(✓ {y₀} {y₁s} y₀∉y₁s)} x∈x₀s x∉x₁s∪x₀y₀s | yes x₀∉y₀s = {!!}
-… | no x₀∈y₀s = {!!}
-TotalUnion.unionLaw2 TotalUnion𝕃 = {!!}
--}
---union : ∀ {𝑨} {𝐴 : Set 𝑨} ⦃ _ : Eq 𝐴 ⦄ → 𝕃 𝐴 → 𝕃 𝐴 → 𝕃 𝐴
+TotalUnion.union TotalUnion𝕃 = ModuleTotalUnion𝕃.totalUnion _
+TotalUnion.unionLaw1 TotalUnion𝕃 = ModuleTotalUnion𝕃.totalUnionLaw1 _
+TotalUnion.unionLaw2 (TotalUnion𝕃 {𝑨} {𝐴} {{x}}) {x₁} {X₁} {X₂} x₂ x₃ = ModuleTotalUnion𝕃.totalUnionLaw2 𝐴 {X₁ = X₁} {X₂ = X₂} x₂ x₃
+TotalUnion.unionLaw3 TotalUnion𝕃 = ModuleTotalUnion𝕃.totalUnionLaw3 _
 
 mutual
   data FTerm : 𝕃 VariableName → Set
    where
     variable : (𝑥 : VariableName) → FTerm (𝕃⟦ 𝑥 ⟧)
-    function : (𝑓 : FunctionName) → {𝑥s : 𝕃 VariableName} → (τs : FTerms 𝑥s) → FTerm 𝑥s
+    function : (𝑓 : FunctionName) → {𝑥s : 𝕃 VariableName} {arity : Nat} → (τs : FTerms 𝑥s arity) → FTerm 𝑥s
 
-  data FTerms (𝑥s : 𝕃 VariableName) : Set
+  data FTerms : 𝕃 VariableName → Nat → Set
    where
-    [] : FTerms 𝑥s
---    _∷_ :
-{-
-  record FTerms (𝑥s : 𝕃 VariableName) (τs : Terms) : Set
-   where
-    constructor ⟨_⟩
-    inductive
-    field
-      {arity} : Arity
-      terms : Vector (FTerm
--}
---data _ᵛ∈ᵖ_ (𝑥 : VariableName) : UnificationProblem →
-{-
-record FTerm : Set
+    [] : FTerms ∅ zero
+    _∷_ : ∀ {𝑥s' 𝑥s : 𝕃 VariableName} → FTerm 𝑥s' → {n : Nat} → FTerms 𝑥s n → FTerms (union {m = VariableName} 𝑥s' 𝑥s) (⊹ n)
+
+record UnificationTerm : Set
  where
   field
-    term : Term
-    free? : (𝑥 : VariableName) → Dec $ 𝑥 ∈ term
+    {term-free} : 𝕃 VariableName
+    term : FTerm term-free
 
-open FTerm
--}
-{-
+open UnificationTerm
+
 record UnificationEquation : Set
  where
   field
-    lhs : FTerm
-    rhs : FTerm
+    lhs : UnificationTerm
+    rhs : UnificationTerm
 
-  free? : (𝑥 : VariableName) → Dec (𝑥 ᵛ∈ᵗ FTerm.term lhs ⊎ 𝑥 ᵛ∈ᵗ FTerm.term rhs)
-  free? 𝑥 with free? 𝑥 FTerm.lhs
--}
--- record
--- UnificationEquation = Term × Term
+open UnificationEquation
 
--- record
--- UnificationProblem = List UnificationEquation
+data FUnificationProblem : 𝕃 VariableName → Set
+ where
+  [] : FUnificationProblem ∅
+  _∷_ : (eq : UnificationEquation) → {𝑥s : 𝕃 VariableName} → FUnificationProblem 𝑥s → FUnificationProblem (union {m = VariableName} 𝑥s (union {m = VariableName} (term-free $ lhs eq) (term-free $ rhs eq)))
+
+record UnificationProblem : Set
+ where
+  field
+    {problem-free} : 𝕃 VariableName
+    problem : FUnificationProblem problem-free
+
+open UnificationProblem
+
+instance MembershipUnificationEquationUnificationProblem : Membership UnificationEquation UnificationProblem
+MembershipUnificationEquationUnificationProblem = {!!}
+
+deletable : UnificationProblem → Set
+deletable up = ∃ λ eq → eq ∈ up × lhs eq ≡ rhs eq
+
+deletable? : (up : UnificationProblem) → Dec (deletable up)
+deletable? = {!!}
+
+delete : (up : UnificationProblem) → deletable up → UnificationProblem
+delete = {!!}
 
 -- unify : UnificationProblem → Maybe UnificationProblem
 -- unify [] = just []
