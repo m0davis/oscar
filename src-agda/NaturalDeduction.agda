@@ -879,6 +879,71 @@ deletable? = {!!}
 delete : (up : UnificationProblem) → deletable up → UnificationProblem
 delete = {!!}
 
+data DFakeUnificationProblem : Nat → Set where
+  DU[_] : (A : Nat) → DFakeUnificationProblem A
+
+subtract : (m : Nat) → {_ : NonZero m} → ∃ λ n → n < m
+subtract = {!!}
+
+bare : Nat → Set
+bare zero = {!!}
+bare n@(suc n₋₁) with subtract n
+bare (suc n₋₁@.(k + fst₁)) | fst₁ , diff k refl = {!!} -- bare (k + fst₁)
+
+{-
+bard : (A : Nat) → DFakeUnificationProblem (suc A) → Σ Nat DFakeUnificationProblem
+bard zero DU[ .1 ] = zero , DU[ zero ]
+bard (suc A) DU[ .(suc (suc A)) ] with subtract (suc A) _ | bard (fst (subtract (suc A) _)) DU[ suc (fst (subtract (suc A) _)) ]
+bard (suc .(k + fst₁)) DU[ .(suc (suc (k + fst₁))) ] | fst₁ , diff k refl | (fst₂ , snd₂) = {!!}
+-}
+{-
+bard : (A : Nat) → DFakeUnificationProblem (suc A) → Σ Nat DFakeUnificationProblem
+bard zero DU[ .1 ] = zero , DU[ zero ]
+bard (suc A) DU[ .(suc (suc A)) ] with subtract (suc A) _
+bard (suc .fst₁) DU[ .(suc (suc fst₁)) ] | fst₁ , diff zero refl = {!!}
+bard (suc .(suc (k + fst₁))) DU[ .(suc (suc (suc (k + fst₁)))) ] | fst₁ , diff (suc k) refl = bard (k + fst₁) DU[ suc (k + fst₁) ] -- bard fst₁ DU[ suc fst₁ ] -- bard (suc (A - 3)) DU[ ? ]
+-}
+record FakeUnificationProblem (A : Nat) : Set
+ where
+  constructor U[_,_]
+  field
+    a=a : A ≡ A
+    b : Nat
+
+bar : ∀ {A : Nat} → FakeUnificationProblem A → Σ Nat FakeUnificationProblem
+bar {zero}  U[ a=a , b ] = 0 , U[ refl , b ]
+bar {suc A} U[ a=a , b ] with A - 3 | graphAt (A -_) 3
+bar {suc A} U[ a=a , b ] | zero | ingraph eq = {!!}
+bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq) with compare (A - 3) (suc A) | graphAt (compare (A - 3)) (suc A)
+bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | ingraph eq2 with decBool (lessNat (A - 3) (suc A))
+bar {(suc A)} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | (ingraph eq2) | (yes x) rewrite eq₁ with suc-inj eq
+bar {suc .(k + suc A-3)} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | (ingraph eq2) | (yes x) | refl = {!!}
+bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | (ingraph eq2) | (no x) = {!!}
+bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (equal eq) | ingraph eq2 = {!!}
+bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq) | (greater gt) | ingraph eq2 = {!!}
+-- = {!!} -- bar {A-3} U[ refl , b ]
+
+data SizedNat : {i : Size} → Set where
+  zero : ∀ {i} → SizedNat {i}
+  suc : ∀ {i} → {j : Size< i} → SizedNat {j} → SizedNat {i}
+
+record SizedFakeUnificationProblem {i} (A : SizedNat {i}) : Set
+ where
+  constructor U[_,_]
+  field
+    a=a : A ≡ A
+    b : Nat
+
+_-S_ : ∀ {i} → SizedNat {↑ i} → Nat → ∃ λ (j : Size< (↑ i)) → SizedNat {j}
+_-S_ {i} (zero {i = .(↑ i)}) zero = _ , zero
+_-S_ {i} (zero {i = .(↑ i)}) (suc x₁) = _ , zero
+_-S_ {i} (suc {i = .(↑ i)} {j = j} x) zero = _ , zero
+_-S_ {i} (suc {i = .(↑ i)} {j = j} x) (suc x₁) = {!_ , zero!}
+
+bar₂ : ∀ {i} {A : SizedNat {↑ i}} → SizedFakeUnificationProblem A → ∃ λ (j : Size< ↑ i) → (Σ (SizedNat {j}) (SizedFakeUnificationProblem {j}))
+bar₂ {i} {zero {i = .(↑ i)}} U[ a=a , b ] = {!!}
+bar₂ {i} {suc {i = .(↑ i)} {j = j} A} U[ a=a , b ] = {!bar₂ {i = {!!}} {A = snd (_-S_ (suc A) 3)} U[ refl , b ]!}
+
 -- unify : UnificationProblem → Maybe UnificationProblem
 -- unify [] = just []
 -- unify ((τ₁ , τ₂) ∷ υs) with τ₁ ≟ τ₂
