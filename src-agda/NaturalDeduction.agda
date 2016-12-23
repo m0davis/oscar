@@ -845,6 +845,25 @@ mutual
 instance MembershipVariableNameFTerm : ∀ {𝑥s} → Membership VariableName (FTerm 𝑥s)
 MembershipVariableNameFTerm = {!!}
 
+record TotalIntersection {ℓ} (m : Set ℓ) (M : Set ℓ) ⦃ _ : Membership m M ⦄ : Set ℓ
+ where
+  field
+    intersection : M → M → M
+    intersectionLaw1 : ∀ {x : m} {X₁ X₂ : M} → x ∈ intersection X₁ X₂ → x ∈ X₁
+    intersectionLaw2 : ∀ {x : m} {X₁ X₂ : M} → x ∈ intersection X₁ X₂ → x ∈ X₂
+    intersectionLaw3 : ∀ {x : m} {X₁ X₂ : M} → x ∈ X₁ × x ∈ X₂ → x ∈ intersection X₁ X₂
+
+open TotalIntersection ⦃ … ⦄
+
+{-# DISPLAY TotalIntersection.intersection _ = intersection #-}
+
+instance Intersection𝕃 : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ → TotalIntersection A (𝕃 A)
+Intersection𝕃 = {!!}
+
+record JohnUnification {𝑥s₁} (τ₁ : FTerm 𝑥s₁) {𝑥s₂} (τ₂ : FTerm 𝑥s₂) (_ : intersection {m = VariableName} 𝑥s₁ 𝑥s₂ ≡ ∅) : Set where
+  --field
+    -- u₁ u₂ : ∃ λ (alist : List (VariableName × ∃ FTerm)) →
+
 record UnificationEquation (𝑥s : 𝕃 VariableName) : Set
  where
   field
