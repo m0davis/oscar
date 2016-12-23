@@ -1,4 +1,5 @@
 {-# OPTIONS --rewriting #-}
+{-# OPTIONS --exact-split #-}
 --{-# OPTIONS --show-implicit #-}
 module NaturalDeduction
  where
@@ -396,6 +397,9 @@ data ITerm : Nat → Set
 
 mutual
   eqITerm : ∀ {n} → (x y : ITerm n) → Dec (x ≡ y)
+  eqITerm = {!!}
+{-
+  eqITerm : ∀ {n} → (x y : ITerm n) → Dec (x ≡ y)
   eqITerm {.0} (variable x) (variable x₁) = {!!}
   eqITerm {.(suc n)} (function x {arity = arity₁} τs {n = n} x₁) (function x₂ {arity = arity₂} τs₁ {n = .n} x₃) with x ≟ x₂ | arity₁ ≟ arity₂
   eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function .x {.arity₁} τs₁ {.n} x₅) | yes refl | (yes refl) with eqITerms τs τs₁
@@ -404,7 +408,7 @@ mutual
   eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | yes x₁ | (no x₃) = {!!}
   eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | no x₁ | (yes x₃) = {!!}
   eqITerm {.(suc n)} (function x {arity₁} τs {n} x₄) (function x₂ {arity₂} τs₁ {.n} x₅) | no x₁ | (no x₃) = {!!}
-
+-}
   eqITerms : ∀ {n} → (x y : Vec (Σ Nat ITerm) n) → Dec (x ≡ y)
   eqITerms {.0} [] [] = {!!}
   eqITerms (_∷_ {n = n} (fst₁ , snd₁) x₁) (_∷_ {n = .n} (fst₂ , snd₂) y) with fst₁ ≟ fst₂
@@ -838,168 +842,103 @@ mutual
     [] : FTerms ∅ zero
     _∷_ : ∀ {𝑥s' 𝑥s : 𝕃 VariableName} → FTerm 𝑥s' → {n : Nat} → FTerms 𝑥s n → FTerms (union {m = VariableName} 𝑥s' 𝑥s) (⊹ n)
 
-record UnificationTerm : Set
+instance MembershipVariableNameFTerm : ∀ {𝑥s} → Membership VariableName (FTerm 𝑥s)
+MembershipVariableNameFTerm = {!!}
+
+record UnificationEquation (𝑥s : 𝕃 VariableName) : Set
  where
   field
-    {term-free} : 𝕃 VariableName
-    term : FTerm term-free
-
-open UnificationTerm
-
-record UnificationEquation : Set
- where
-  field
-    lhs : UnificationTerm
-    rhs : UnificationTerm
+    {lhs-terms} : 𝕃 VariableName
+    lhs : FTerm lhs-terms
+    {rhs-terms} : 𝕃 VariableName
+    rhs : FTerm rhs-terms
+    lhs∪rhs-terms : 𝑥s ≡ union {m = VariableName} lhs-terms rhs-terms
 
 open UnificationEquation
 
-data FUnificationProblem : 𝕃 VariableName → Set
- where
-  [] : FUnificationProblem ∅
-  _∷_ : (eq : UnificationEquation) → {𝑥s : 𝕃 VariableName} → FUnificationProblem 𝑥s → FUnificationProblem (union {m = VariableName} 𝑥s (union {m = VariableName} (term-free $ lhs eq) (term-free $ rhs eq)))
+number-of-variables-that-occur-more-than-once : ∀ {n-eqn} → Vec (∃ λ 𝑥s → UnificationEquation 𝑥s) n-eqn → Nat
+number-of-variables-that-occur-more-than-once {zero} [] = 0
+number-of-variables-that-occur-more-than-once {suc n-eqn} x = {!!}
 
-record UnificationProblem : Set
+number-of-function-symbols : ∀ {𝑥s} → FTerm 𝑥s → Nat
+number-of-function-symbols = {!!}
+
+record UnificationProblem (n-var n-lhs n-eqn : Nat) : Set
  where
   field
-    {problem-free} : 𝕃 VariableName
-    problem : FUnificationProblem problem-free
+    equations : Vec (∃ λ 𝑥s → UnificationEquation 𝑥s) n-eqn
+    n-var-law : number-of-variables-that-occur-more-than-once equations ≤ n-var
+    n-lhs-law : (sum ∘ vecToList $ number-of-function-symbols ∘ lhs ∘ snd <$> equations) ≤ n-lhs
 
-open UnificationProblem
-
-instance MembershipUnificationEquationUnificationProblem : Membership UnificationEquation UnificationProblem
+instance MembershipUnificationEquationUnificationProblem : ∀ {n-var n-lhs n-eqn 𝑥s} → Membership (UnificationEquation 𝑥s) (UnificationProblem n-var n-lhs n-eqn)
 MembershipUnificationEquationUnificationProblem = {!!}
 
-deletable : UnificationProblem → Set
-deletable up = ∃ λ eq → eq ∈ up × lhs eq ≡ rhs eq
+instance MembershipVariableNameUnificationProblem : ∀ {n-var n-lhs n-eqn} → Membership VariableName (UnificationProblem n-var n-lhs n-eqn)
+MembershipVariableNameUnificationProblem = {!!}
 
-deletable? : (up : UnificationProblem) → Dec (deletable up)
+deletable : ∀ {𝑥s} → UnificationEquation 𝑥s → Set
+deletable = {!!}
+
+deletable? : ∀ {𝑥s} → (eq : UnificationEquation 𝑥s) → Dec (deletable eq)
 deletable? = {!!}
 
-delete : (up : UnificationProblem) → deletable up → UnificationProblem
-delete = {!!}
+u-deletable? : ∀ {n-var n-lhs n-eqn} (up : UnificationProblem n-var n-lhs n-eqn) → Dec (∃ λ 𝑥s → ∃ λ (εq : UnificationEquation 𝑥s) → deletable εq × εq ∈ up)
+u-deletable? {n-var} {n-lhs} {zero} up = no {!!}
+u-deletable? {n-var} {n-lhs} {suc n-eqn} up = {!!}
 
-data DFakeUnificationProblem : Nat → Set where
-  DU[_] : (A : Nat) → DFakeUnificationProblem A
+deleteRule : ∀ {n-var n-lhs n-eqn} {up : UnificationProblem n-var n-lhs (suc n-eqn)} {𝑥s} {εq : UnificationEquation 𝑥s} → deletable εq → εq ∈ up → UnificationProblem n-var n-lhs n-eqn
+deleteRule = {!!}
 
-subtract : (m : Nat) → {_ : NonZero m} → ∃ λ n → n < m
-subtract = {!!}
+decomposable : ∀ {𝑥s} → UnificationEquation 𝑥s → Set
+decomposable = {!!}
 
-bare : Nat → Set
-bare zero = {!!}
-bare n@(suc n₋₁) with subtract n
-bare (suc n₋₁@.(k + fst₁)) | fst₁ , diff k refl = {!!} -- bare (k + fst₁)
+decomposable? : ∀ {𝑥s} → (eq : UnificationEquation 𝑥s) → Dec (decomposable eq)
+decomposable? = {!!}
 
-{-
-bard : (A : Nat) → DFakeUnificationProblem (suc A) → Σ Nat DFakeUnificationProblem
-bard zero DU[ .1 ] = zero , DU[ zero ]
-bard (suc A) DU[ .(suc (suc A)) ] with subtract (suc A) _ | bard (fst (subtract (suc A) _)) DU[ suc (fst (subtract (suc A) _)) ]
-bard (suc .(k + fst₁)) DU[ .(suc (suc (k + fst₁))) ] | fst₁ , diff k refl | (fst₂ , snd₂) = {!!}
--}
-{-
-bard : (A : Nat) → DFakeUnificationProblem (suc A) → Σ Nat DFakeUnificationProblem
-bard zero DU[ .1 ] = zero , DU[ zero ]
-bard (suc A) DU[ .(suc (suc A)) ] with subtract (suc A) _
-bard (suc .fst₁) DU[ .(suc (suc fst₁)) ] | fst₁ , diff zero refl = {!!}
-bard (suc .(suc (k + fst₁))) DU[ .(suc (suc (suc (k + fst₁)))) ] | fst₁ , diff (suc k) refl = bard (k + fst₁) DU[ suc (k + fst₁) ] -- bard fst₁ DU[ suc fst₁ ] -- bard (suc (A - 3)) DU[ ? ]
--}
-record FakeUnificationProblem (A : Nat) : Set
- where
-  constructor U[_,_]
-  field
-    a=a : A ≡ A
-    b : Nat
+u-decomposable? : ∀ {n-var n-lhs n-eqn} (up : UnificationProblem n-var (suc n-lhs) n-eqn) → Dec (∃ λ 𝑥s → ∃ λ (εq : UnificationEquation 𝑥s) → decomposable εq × εq ∈ up)
+u-decomposable? = {!!}
 
-bar : ∀ {A : Nat} → FakeUnificationProblem A → Σ Nat FakeUnificationProblem
-bar {zero}  U[ a=a , b ] = 0 , U[ refl , b ]
-bar {suc A} U[ a=a , b ] with A - 3 | graphAt (A -_) 3
-bar {suc A} U[ a=a , b ] | zero | ingraph eq = {!!}
-bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq) with compare (A - 3) (suc A) | graphAt (compare (A - 3)) (suc A)
-bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | ingraph eq2 with decBool (lessNat (A - 3) (suc A))
-bar {(suc A)} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | (ingraph eq2) | (yes x) rewrite eq₁ with suc-inj eq
-bar {suc .(k + suc A-3)} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | (ingraph eq2) | (yes x) | refl = {!!}
-bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (less (diff k eq)) | (ingraph eq2) | (no x) = {!!}
-bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq₁) | (equal eq) | ingraph eq2 = {!!}
-bar {suc A} U[ a=a , b ] | suc A-3 | (ingraph eq) | (greater gt) | ingraph eq2 = {!!}
--- = {!!} -- bar {A-3} U[ refl , b ]
+decomposeRule : ∀ {n-var n-lhs n-eqn} {up : UnificationProblem n-var (suc n-lhs) n-eqn} {𝑥s} {εq : UnificationEquation 𝑥s} → decomposable εq → εq ∈ up → UnificationProblem n-var n-lhs n-eqn
+decomposeRule = {!!}
 
-data SizedNat : {i : Size} → Set where
-  zero : ∀ {i} → SizedNat {i}
-  suc : ∀ {i} → {j : Size< i} → SizedNat {j} → SizedNat {i}
+swapable : ∀ {𝑥s} → UnificationEquation 𝑥s → Set
+swapable = {!!}
 
-record SizedFakeUnificationProblem {i} (A : SizedNat {i}) : Set
- where
-  constructor U[_,_]
-  field
-    a=a : A ≡ A
-    b : Nat
+swapable? : ∀ {𝑥s} → (eq : UnificationEquation 𝑥s) → Dec (swapable eq)
+swapable? = {!!}
 
-_-S_ : ∀ {i} → SizedNat {↑ i} → Nat → ∃ λ (j : Size< (↑ i)) → SizedNat {j}
-_-S_ {i} (zero {i = .(↑ i)}) zero = _ , zero
-_-S_ {i} (zero {i = .(↑ i)}) (suc x₁) = _ , zero
-_-S_ {i} (suc {i = .(↑ i)} {j = j} x) zero = _ , zero
-_-S_ {i} (suc {i = .(↑ i)} {j = j} x) (suc x₁) = {!_ , zero!}
+u-swapable? : ∀ {n-var n-lhs n-eqn} (up : UnificationProblem n-var (suc n-lhs) n-eqn) → Dec (∃ λ 𝑥s → ∃ λ (εq : UnificationEquation 𝑥s) → swapable εq × εq ∈ up)
+u-swapable? = {!!}
 
-bar₂ : ∀ {i} {A : SizedNat {↑ i}} → SizedFakeUnificationProblem A → ∃ λ (j : Size< ↑ i) → (Σ (SizedNat {j}) (SizedFakeUnificationProblem {j}))
-bar₂ {i} {zero {i = .(↑ i)}} U[ a=a , b ] = {!!}
-bar₂ {i} {suc {i = .(↑ i)} {j = j} A} U[ a=a , b ] = {!bar₂ {i = {!!}} {A = snd (_-S_ (suc A) 3)} U[ refl , b ]!}
+swapRule : ∀ {n-var n-lhs n-eqn} {up : UnificationProblem n-var (suc n-lhs) n-eqn} {𝑥s} {εq : UnificationEquation 𝑥s} → swapable εq → εq ∈ up → UnificationProblem n-var n-lhs n-eqn
+swapRule = {!!}
 
--- unify : UnificationProblem → Maybe UnificationProblem
--- unify [] = just []
--- unify ((τ₁ , τ₂) ∷ υs) with τ₁ ≟ τ₂
--- … | yes _ = {!!} -- unify υs -- delete
--- unify (υ@(variable 𝑥 , τ) ∷ υs) | no _ = {!!} -- υ ∷_ <$> {!!}
--- unify ((function x x₁ , τ₂) ∷ υs) | no _ = {!!}
+eliminatable : ∀ {n-var n-lhs n-eqn} {up : UnificationProblem n-var n-lhs n-eqn} {𝑥s} {εq : UnificationEquation 𝑥s} → (εq∈up : εq ∈ up) → Set
+eliminatable = {!!}
 
-{- notes on unification
-f(g(x),x) = f(x,g(x))
+u-eliminatable? : ∀ {n-var n-lhs n-eqn} (up : UnificationProblem (suc n-var) n-lhs n-eqn) → Dec (∃ λ 𝑥s → ∃ λ (εq : UnificationEquation 𝑥s) → ∃ λ (εq∈up : εq ∈ up) → eliminatable {up = up} {εq = εq} εq∈up)
+u-eliminatable? = {!!}
 
-f(g(x₁),x₁) = f(x₂,g(x₂))
+eliminateRule : ∀ {n-var n-lhs n-eqn} {up : UnificationProblem (suc n-var) n-lhs n-eqn} {𝑥s} {εq : UnificationEquation 𝑥s} → {εq∈up : εq ∈ up} → eliminatable {up = up} {εq = εq} εq∈up → UnificationProblem n-var n-lhs n-eqn
+eliminateRule = {!!}
 
+conflictable : ∀ {𝑥s} → UnificationEquation 𝑥s → Set
+conflictable = {!!}
 
-f(g(x),y) = f(x,y)
-write vars apart
-f(g(x₁),y₁) = f(x₂,y₂)
-find mgu
-x₂→g(x₁) , y₁→y₂
-rewrite with vars together
-| x→g(x)
+conflictable? : ∀ {𝑥s} → (εq : UnificationEquation 𝑥s) → Dec (conflictable εq)
+conflictable? = {!!}
 
-f(g(x),y) = f(x,z)
-f(g(x₁),y₁) = f(x₂,z₂)
-x₂→g(x₁) , y₁→z₂
-y→z | x→g(x)
+u-conflictable? : ∀ {n-var n-lhs n-eqn} (up : UnificationProblem n-var n-lhs n-eqn) → Dec (∃ λ 𝑥s → ∃ λ (εq : UnificationEquation 𝑥s) → conflictable εq × εq ∈ up)
+u-conflictable? = {!!}
 
-τₗ =? τᵣ
-write vars apart s₁ = x->x₁, y->y₁, for example
-τ₁ = s₁τₗ , τ₂ = s₂τᵣ
-τ₁ =? τ₂
-find mgu
-στ₁ = στ₂
-so,
-σs₁τₗ = σs₂τᵣ
-we have a unifier* = σ ∘ s₁ , σ ∘ s₂
+checkable : ∀ {𝑥s} → UnificationEquation 𝑥s → Set
+checkable = {!!}
 
-e.g.
-f(g(x),y) = f(x,y)
-s₁ = x → x₁ , y → y₁
-s₂ = x → x₂ , y → y₂
-σ = x₂ → g(x₁) , y₁ → y₂
-σ ∘ s₁ = x → x₁    , y → y₂ , x₂ → g(x₁) , y₁ → y₂
-σ ∘ s₂ = x → g(x₁) , y → y₂ , x₂ → g(x₁) , y₁ → y₂
+checkable? : ∀ {𝑥s} → (εq : UnificationEquation 𝑥s) → Dec (checkable εq)
+checkable? = {!!}
 
-restricting σ ∘ sᵢ to the vars of i (
-r₁ = x → x₁ , y → y₂
-r₂ = x → g(x₁) , y → y₂
-
-magically (substitute range of rᵢ with originating variable) (so unifier uses no variables outside of τₗ and τᵣ
-m₁ = x → x , y → y
-m₂ = x → g(x) , y → y
-
-drop identicals (to make minimal)
-d₁ = []
-d₂ = x → g(x)
--}
+u-checkable? : ∀ {n-var n-lhs n-eqn} (up : UnificationProblem n-var n-lhs n-eqn) → Dec (∃ λ 𝑥s → ∃ λ (εq : UnificationEquation 𝑥s) → checkable εq × εq ∈ up)
+u-checkable? = {!!}
 
 record HasNegation (A : Set) : Set
  where
