@@ -486,8 +486,6 @@ Eq._==_ EqTerm x y | ix | ingraph eqx | iy | ingraph eqy | no neq = {!!}
 instance EqTerms : Eq Terms
 EqTerms = {!!}
 
-
-
 {-
 module _ {i : Size}
  where
@@ -575,10 +573,11 @@ instance EqTerms : Eq Terms
 Eq._==_ EqTerms x y = fst (EqTerms⇓ x y)
 -}
 
-
-
-
-
+record Unifiable (F : Set) (T : Set) (U₁ U₂ : Set) (σ : (T → F) → F → F) : Set₁ where
+  field
+    _≈u≈_ : (φ₁ φ₂ : F) → Set
+    unifier : (φ₁ φ₂ : F) → φ₁ ≈u≈ φ₂ → (F → F) × (F → F)
+    unifier-law : (φ₁ φ₂ : F) → (=u= : φ₁ ≈u≈ φ₂) → (let u = unifier φ₁ φ₂ =u=) → (fst u) φ₁ ≡ (snd u) φ₂
 
 {-
 {-# TERMINATING #-}
