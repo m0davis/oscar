@@ -34,6 +34,7 @@ open import Size public
 open import Control.Monad.State public
 open import Control.Monad.Identity public
 open import Container.Traversable public
+open import Container.List renaming (_∈_ to _∈Container_) public
 
 sequence : ∀ {a b} {A : Set a} {F : Set a → Set b} ⦃ _ : Applicative F ⦄ → List (F A) → F ⊤′
 sequence [] = pure tt
