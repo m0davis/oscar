@@ -18,73 +18,27 @@ open import Vector
 open import 𝕃ist
 open import TermByFunctionNames
 open import Term
+open import TermUnification
+
+data HasUniqueValues (A : Set) : List A → Set
+ where
+  [] : HasUniqueValues A []
+  _∷_ : {x : A} → {xs : List A} → x ∉ xs → (uxs : HasUniqueValues A xs) → HasUniqueValues A (x ∷ xs)
+
+record AList (A : Set) (B : Set) : Set
+ where
+  field
+    domain : List A
+    uniquedomain : HasUniqueValues A domain
+    range : ∀ {x : A} → x ∈ domain → B
+
+open AList
 
 record Unifiable (F : Set) (T : Set) (U₁ U₂ : Set) (σ : (T → F) → F → F) : Set₁ where
   field
     _≈u≈_ : (φ₁ φ₂ : F) → Set
     unifier : (φ₁ φ₂ : F) → φ₁ ≈u≈ φ₂ → (F → F) × (F → F)
     unifier-law : (φ₁ φ₂ : F) → (=u= : φ₁ ≈u≈ φ₂) → (let u = unifier φ₁ φ₂ =u=) → (fst u) φ₁ ≡ (snd u) φ₂
-
-{-
-{-# TERMINATING #-}
--- substitute 𝑥ₛ τₛ τ = τ, where all occurrences of 𝑥ₛ are replaced by τₛ
-substitute : VariableName → Term → Term → Term
-substitute 𝑥ₛ τₛ τ@(variable 𝑥)  = ifYes 𝑥ₛ ≟ 𝑥 then τₛ else τ
-substitute 𝑥ₛ τₛ (function 𝑓 ⟨ ⟨ τs ⟩ ⟩) = function 𝑓 ⟨ ⟨ substitute 𝑥ₛ τₛ <$> τs ⟩ ⟩
--}
-mutual
-  substituteTerm⇑ : VariableName → Term → ∀ {i} → Term → Delay i Term
-  substituteTerm⇑ 𝑥ₛ τₛ τ@(variable 𝑥)  = now $ ifYes 𝑥ₛ ≟ 𝑥 then τₛ else τ
-  substituteTerm⇑ 𝑥ₛ τₛ (function 𝑓 τs) =
-    substituteTerms⇑ 𝑥ₛ τₛ τs >>= λ τsₛ →
-    now $ function 𝑓 τsₛ
-
-  substituteTerms⇑ : VariableName → Term → ∀ {i} → Terms → Delay i Terms
-  substituteTerms⇑ 𝑥ₛ τₛ ⟨ ⟨ [] ⟩ ⟩ = now ⟨ ⟨ [] ⟩ ⟩
-  substituteTerms⇑ 𝑥ₛ τₛ ⟨ ⟨ τ ∷ τs ⟩ ⟩ =
-    let τs = substituteTerms⇑ 𝑥ₛ τₛ ⟨ ⟨ τs ⟩ ⟩
-        τ = substituteTerm⇑ 𝑥ₛ τₛ τ in
-    τs >>= λ { ⟨ ⟨ τs ⟩ ⟩ →
-    τ >>= λ { τ →
-    now $ ⟨ ⟨ τ ∷ τs ⟩ ⟩ } }
-
-substituteTerms⇓ : (𝑥ₛ : VariableName) → (τₛ : Term) → (τs : Terms) → substituteTerms⇑ 𝑥ₛ τₛ τs ⇓
-substituteTerms⇓ 𝑥ₛ τₛ ⟨ ⟨ [] ⟩ ⟩ = _ , now⇓
-substituteTerms⇓ 𝑥ₛ τₛ ⟨ ⟨ (variable 𝑥) ∷ τs ⟩ ⟩ = _ , substituteTerms⇓ 𝑥ₛ τₛ ⟨ ⟨ τs ⟩ ⟩ ⇓>>=⇓ now⇓
-substituteTerms⇓ 𝑥ₛ τₛ ⟨ ⟨ (function 𝑓 τs₁) ∷ τs ⟩ ⟩ = _ , substituteTerms⇓ 𝑥ₛ τₛ ⟨ ⟨ τs ⟩ ⟩ ⇓>>=⇓ ((substituteTerms⇓ 𝑥ₛ τₛ τs₁ ⇓>>=⇓ now⇓) >>=⇓ now⇓)
-
-substituteTerm⇓ : (𝑥ₛ : VariableName) → (τₛ : Term) → (τ : Term) → substituteTerm⇑ 𝑥ₛ τₛ τ ⇓
-substituteTerm⇓ 𝑥ₛ τₛ (variable 𝑥) = _ , now⇓
-substituteTerm⇓ 𝑥ₛ τₛ (function 𝑓 τs) = _ , substituteTerms⇓ 𝑥ₛ τₛ τs ⇓>>=⇓ now⇓
-
-substitute : VariableName → Term → Term → Term
-substitute 𝑥ₛ τₛ τ = fst $ substituteTerm⇓ 𝑥ₛ τₛ τ
-
-{-
-record StructureSuitableForSubstitution : Set where
-  field
-    (∀ x xs → x ∈ xs → )
-
-    VariableConstructor : VariableName → Term
-    FunctionConstructor : FunctionName → (a : Nat) → (ts : Vec Term a) → Term
-
-    ∀ v' → VariableConstructor v' ≡ τ → τₛ ≡ substitute 𝑥ₛ τₛ τ
-    ∀ f' → FunctionConstructor f' ≡ τ → ∀ τ' → τ' ∈ τ → τₛ ≡ substitute 𝑥ₛ τₛ τ
-
-    constructor-bases : Vec Set #constructors
-    eq : ∀ x → x ∈ constructor-bases → Eq x
-    substitute :  → constructor-base Structure → Structure
-    datatype-constructor₁ : constructor-base₁ → datatype
-
-    MEMBERSHIP : ELEMENT → STRUCTURE → Set
-    ELEMENT → MEMBERSHIP e s → Σ STRUCTURE
-
-    VariableConstructor → Term
-    FunctionConstructor → Term
-    substitute : VariableConstructor → Term → Term → Term
-
-    substitute
--}
 
 mutual
   data FTerm : 𝕃 VariableName → Set
@@ -114,20 +68,6 @@ open TotalIntersection ⦃ … ⦄
 
 instance Intersection𝕃 : ∀ {ℓ} {A : Set ℓ} ⦃ _ : Eq A ⦄ → TotalIntersection A (𝕃 A)
 Intersection𝕃 = {!!}
-
-data HasUniqueValues (A : Set) : List A → Set
- where
-  [] : HasUniqueValues A []
-  _∷_ : {x : A} → {xs : List A} → x ∉ xs → (uxs : HasUniqueValues A xs) → HasUniqueValues A (x ∷ xs)
-
-record AList (A : Set) (B : Set) : Set
- where
-  field
-    domain : List A
-    uniquedomain : HasUniqueValues A domain
-    range : ∀ {x : A} → x ∈ domain → B
-
-open AList
 
 mutual
   subst : AList VariableName (∃ FTerm) → ∃ FTerm → ∃ FTerm
@@ -750,14 +690,14 @@ HasDecidableValidationLiteralProblem = {!!}
 postulate
   substituteFormula : (VariableName → Term) → Formula → Formula
 
-record Unifier : Set
+record Unifier' : Set
  where
   field
     unifier-left unifier-right : VariableName → Term
 
-open Unifier
+open Unifier'
 
-record _Unifies_and_ (υ : Unifier) (φ₁ φ₂ : Formula) : Set
+record _Unifies_and_ (υ : Unifier') (φ₁ φ₂ : Formula) : Set
  where
   field
     unification-law : substituteFormula (unifier-left υ) φ₁ ≡ substituteFormula (unifier-right υ) φ₂
