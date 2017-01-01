@@ -31,8 +31,11 @@ open Σ₁
 Property⋆ : (m : ℕ) -> Set1
 Property⋆ m = ∀ {n} -> (Fin m -> Term n) -> Set
 
+Extensional : {m : ℕ} -> Property⋆ m -> Set
+Extensional P = ∀ {m f g} -> f ≐ g -> P {m} f -> P g
+
 Property : (m : ℕ) -> Set1
-Property m = Σ₁ (Property⋆ m) λ P → ∀ {m f g} -> f ≐ g -> P {m} f -> P g
+Property m = Σ₁ (Property⋆ m) Extensional
 
 prop-id : ∀ {m n} {f : _ ~> n} {P : Property m} -> π₁ P f -> π₁ P (i ◇ f)
 prop-id {_} {_} {f} {P'} Pf = π₂ P' (λ x → sym (Sub.fact1 (f x))) Pf
@@ -88,6 +91,14 @@ module Properties where
   fact1 : ∀ {m} {s t : Term m} -> (Unifies s t) ⇔ (Unifies t s)
   fact1 _ = sym , sym
 
+
+  fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
+         -> Unifies⋆ (s1 fork s2) (t1 fork t2) ⇔⋆ (Unifies⋆ s1 t1 ∧⋆ Unifies⋆ s2 t2)
+  fact1'⋆ f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
+    where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
+                   -> (s1 fork s2) ≡ (t1 fork t2)
+                   -> (s1 ≡ t1) × (s2 ≡ t2)
+          deconstr s1 s2 .s1 .s2 refl = refl , refl
 
   fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
          -> Unifies (s1 fork s2) (t1 fork t2) ⇔ (Unifies s1 t1 ∧ Unifies s2 t2)
@@ -237,6 +248,37 @@ module failure-propagation where
   first : ∀ {m n} (a : _ ~> n) (P Q : Property m) ->
          Nothing (P [-◇ a ]) -> Nothing ((P ∧ Q) [-◇ a ])
   first a P' Q' noP-a f (Pfa , Qfa) = noP-a f Pfa
+{-
+  second⋆ : ∀ {m n o} (a : _ ~> n) (p : _ ~> o)(P Q : Property⋆ m) ->
+             (Max⋆ (P [-◇⋆ a ])) p -> Nothing⋆ (Q [-◇⋆ (p ◇ a)])
+             -> Nothing⋆ ((P ∧⋆ Q) [-◇⋆ a ])
+  second⋆ a p P' Q' (Ppa , pMax) noQ-p◇a f (Pfa , Qfa) = noQ-p◇a g Qgpa
+       where
+         f≤p = pMax f Pfa
+         g = proj₁ f≤p
+         f≐g◇p = proj₂ f≤p
+         Qgpa : Q' (g ◇ (p ◇ a))
+         Qgpa = {!!}
+  {-
+                                                      noQ-p◇a g Qgpa
+       where
+         f≤p = pMax f Pfa
+         g = proj₁ f≤p
+         f≐g◇p = proj₂ f≤p
+         Qgpa : π₁ Q' (g ◇ (p ◇ a))
+         Qgpa = π₂ Q' (◃ext' f≐g◇p ∘ a)  Qfa
+  -}
+-}
+  second⋆ : ∀ {m n o} (a : _ ~> n) (p : _ ~> o)(P : Property⋆ m)(Q : Property m) ->
+             (Max⋆ (P [-◇⋆ a ])) p -> Nothing⋆ (π₁ Q [-◇⋆ (p ◇ a)])
+             -> Nothing⋆ ((P ∧⋆ π₁ Q) [-◇⋆ a ])
+  second⋆ a p P' Q' (Ppa , pMax) noQ-p◇a f (Pfa , Qfa) = noQ-p◇a g Qgpa
+       where
+         f≤p = pMax f Pfa
+         g = proj₁ f≤p
+         f≐g◇p = proj₂ f≤p
+         Qgpa : π₁ Q' (g ◇ (p ◇ a))
+         Qgpa = π₂ Q' (◃ext' f≐g◇p ∘ a)  Qfa
 
   second : ∀ {m n o} (a : _ ~> n) (p : _ ~> o)(P Q : Property m) ->
              π₁ (Max (P [-◇ a ])) p -> Nothing (Q [-◇ (p ◇ a)])

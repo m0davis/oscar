@@ -206,8 +206,23 @@ amgu-c⋆ {m} {s1 fork s2} {t1 fork t2} {l} {ρ} fork-fork | ._
 
 ... | .(just (n , σ ++ ρ)) | inj₁ (n , σ , a , refl)
  with amgu s2 t2 (n , σ ++ ρ) | amgu-c⋆ (view s2 t2 (n , (σ ++ ρ)))
-... | .nothing                | inj₂ (nounify , refl) = inj₂ ( (λ {_} -> No[Q◇ρ]→No[P◇ρ] No[Q◇ρ]) , refl)
+... | .nothing                | inj₂ (nounify , refl) = inj₂ ( (λ {_} -> No[Q◇ρ]→No[P◇ρ]⋆ No[Q◇ρ]⋆) , refl)
     where
+    P⋆ = Unifies⋆ (s1 fork s2) (t1 fork t2)
+    Q⋆ = (Unifies⋆ s1 t1 ∧⋆ Unifies⋆ s2 t2)
+    Q⇔P⋆ : Q⋆ ⇔⋆ P⋆
+    Q⇔P⋆ = switch⋆ P⋆ Q⋆ (Properties.fact1'⋆ {_} {s1} {s2} {t1} {t2})
+    No[Q◇ρ]→No[P◇ρ]⋆ : Nothing⋆ (Q⋆ [-◇⋆ sub ρ ]) -> Nothing⋆ (P⋆ [-◇⋆ sub ρ ])
+    No[Q◇ρ]→No[P◇ρ]⋆ = Properties.fact2⋆ (Q⋆ [-◇⋆ sub ρ ]) (P⋆ [-◇⋆ sub ρ ]) (Properties.fact5⋆ Q⋆ P⋆ (sub ρ) Q⇔P⋆)
+    No[Q◇ρ]⋆ : Nothing⋆ (Q⋆ [-◇⋆ sub ρ ])
+    No[Q◇ρ]⋆ = failure-propagation.second⋆ (sub ρ) (sub σ) (Unifies⋆ s1 t1) (Unifies s2 t2) a
+       (λ f → nounify f ∘ π₂ (Unifies s2 t2) (cong (f ◃) ∘ sym ∘ SubList.fact1 σ ρ))
+{-
+    No[Q◇ρ]⋆ = failure-propagation.second (sub ρ) (sub σ) (Unifies s1 t1) (Unifies s2 t2) a
+--       (λ f Unifs2t2-f◇σ◇ρ → nounify f ((π₂ (Unifies s2 t2) (λ t → cong (f ◃) (sym (SubList.fact1 σ ρ t))) Unifs2t2-f◇σ◇ρ)))
+--       (λ f → nounify f ∘ π₂ (Unifies s2 t2) (λ t → cong (f ◃) (sym (SubList.fact1 σ ρ t))))
+       (λ f → nounify f ∘ π₂ (Unifies s2 t2) (cong (f ◃) ∘ sym ∘ SubList.fact1 σ ρ))
+-}
     P = Unifies (s1 fork s2) (t1 fork t2)
     Q = (Unifies s1 t1 ∧ Unifies s2 t2)
     Q⇔P : Q ⇔ P
