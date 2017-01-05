@@ -721,7 +721,7 @@ instance HasSubstantiveDischargeListList : ∀ {A} ⦃ _ : HasSubstantiveDischar
 HasSubstantiveDischarge._≽_ HasSubstantiveDischargeListList +s -s = {!!} -- ∀ i → i ∈ -s → +s ≽ i
 
 instance HasSubstantiveDischargeFormulaFormula : HasSubstantiveDischarge Formula Formula
-HasSubstantiveDischarge._≽_ HasSubstantiveDischargeFormulaFormula φ₁ φ₂ = ∃ λ υ → υ Unifies φ₁ and φ₂
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeFormulaFormula φ₁ φ₂ = {!!} -- ∃ λ υ → υ Unifies φ₁ and φ₂
 
 instance HasSubstantiveDischargeSequentSequent : HasSubstantiveDischarge Sequent Sequent
 HasSubstantiveDischarge._≽_ HasSubstantiveDischargeSequentSequent (+ᵗ ╱ +ᵖs) (-ᵗ ╱ -ᵖs) = {!!} -- +ᵗ ≽ -ᵗ × +ᵖs ≽ -ᵖs -- use "unification into", from John's "Natural Deduction"
