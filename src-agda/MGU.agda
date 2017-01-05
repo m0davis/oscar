@@ -23,10 +23,24 @@ open import Category.Applicative.Predicate
 
 --record IsTermSubstitution {ℓᵗ} {ℓ⁼ᵗ} {ℓˢ} {ℓ⁼ˢ}
 
-record TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
+record IsSetoid {c} {ℓ} {Carrier : Set c} (_≈_ : Rel Carrier ℓ) : Set (c ⊔ ℓ) where
   field
-    Term : Setoid ℓᵗ ℓ⁼ᵗ
-    Substitution : Monoid ℓˢ ℓ⁼ˢ
+    isEquivalence : IsEquivalence _≈_
+
+  setoid : Setoid c ℓ
+  setoid = record { Carrier = Carrier ; _≈_ = _≈_ ; isEquivalence = isEquivalence }
+
+  open Setoid setoid public
+
+open IsSetoid ⦃ … ⦄
+
+open import Algebra.Structures
+--open IsMonoid ⦃ … ⦄
+
+record IsTermSubstitution {ℓᵗ} {ℓ⁼ᵗ} {ℓˢ} {ℓ⁼ˢ}
+       (Term : Setoid ℓᵗ ℓ⁼ᵗ)
+       (Substitution : Monoid ℓˢ ℓ⁼ˢ)
+  : Set (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ) where
 
   open Setoid Term public using () renaming
     (Carrier to T
@@ -41,9 +55,19 @@ record TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Set (lsuc (ℓᵗ ⊔ 
   infixl 6 _▹_
   field
     _▹_ : T → S → T
-    ▹-=ˢ-to-ᵗ : ∀ {s s′} → s =ˢ s′ → (t : T) → t ▹ s =ᵗ t ▹ s′
+    ▹-=ˢ-to-ᵗ : ∀ {s s′} → s =ˢ s′ → (t : T) → (t ▹ s) =ᵗ (t ▹ s′)
     ▹-=ᵗ-to-=ˢ : ∀ {s s′} → ((t : T) → t ▹ s =ᵗ t ▹ s′) → s =ˢ s′
     ▹-extracts-∙ : (t : T) (s₁ s₂ : S) → t ▹ s₁ ∙ s₂ =ᵗ t ▹ s₁ ▹ s₂
+
+open IsTermSubstitution ⦃ … ⦄
+
+record TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
+  field
+    Term : Setoid ℓᵗ ℓ⁼ᵗ
+    Substitution : Monoid ℓˢ ℓ⁼ˢ
+    isTermSubstitution : IsTermSubstitution Term Substitution
+
+  open IsTermSubstitution isTermSubstitution public
 
 open import Relation.Unary
 import Relation.Binary.Indexed as I
@@ -155,9 +179,9 @@ record L {ℓ} (A : Set ℓ) : Set ℓ where
     list : EITHER Prelude.⊥′ (L A)
 -}
 record FreeVariableoid ℓᵛ∈ᵗ ℓᵛ∈ˢ⁺ ℓᵛ∈ˢ⁻ ℓᵛ ℓ⁼ᵛ ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
-       (termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ)
+       ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄
   : Set (lsuc (ℓᵛ∈ᵗ ⊔ ℓᵛ∈ˢ⁺ ⊔ ℓᵛ∈ˢ⁻ ⊔ ℓᵛ ⊔ ℓ⁼ᵛ ⊔ ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
-  open TermSubstitution termSubstitution
+  -- open TermSubstitution termSubstitution
   field
     Variable : Setoid ℓᵛ ℓ⁼ᵛ
     TermStructure : Set
@@ -192,9 +216,9 @@ record FreeVariableoid ℓᵛ∈ᵗ ℓᵛ∈ˢ⁺ ℓᵛ∈ˢ⁻ ℓᵛ ℓ⁼�
   data D : Set where
 
 record CorrectTermSubstitution ℓᵛ∈ᵗ ℓᵛ∈ˢ⁺ ℓᵛ∈ˢ⁻ ℓᵛ ℓ⁼ᵛ ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
-       (termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ)
+       ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄
   : Set (lsuc (ℓᵛ∈ᵗ ⊔ ℓᵛ∈ˢ⁺ ⊔ ℓᵛ∈ˢ⁻ ⊔ ℓᵛ ⊔ ℓ⁼ᵛ ⊔ ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
-  open TermSubstitution termSubstitution
+  -- open TermSubstitution termSubstitution
   field
     Variable : Setoid ℓᵛ ℓ⁼ᵛ
 
@@ -227,9 +251,9 @@ data IsRight {a b} {A : Set a} {B : Set b} (e : _⊎_ A B) : Set (a ⊔ b) where
 module MostGeneralMGU where
 
   record Unificationoid {ℓᵗ} {ℓ⁼ᵗ} {ℓˢ} {ℓ⁼ˢ}
-         (termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ)
+         ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄
     : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
-    open TermSubstitution termSubstitution
+    -- open TermSubstitution termSubstitution
     Property : ∀ {ℓ} → Set (ℓˢ ⊔ lsuc ℓ)
     Property {ℓ} = S → Set ℓ
 
@@ -251,10 +275,10 @@ module MostGeneralMGU where
     unifier-is-correct = {!!}
 
   record IsMostGeneralUnification ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
-         {termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ}
-         (unificationoid : Unificationoid termSubstitution)
+         ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄
+         (unificationoid : Unificationoid ⦃ termSubstitution ⦄)
     : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
-    open TermSubstitution termSubstitution
+    --open TermSubstitution termSubstitution
     open Unificationoid unificationoid
 
     _≤_ : (s₋ : S) (s₊ : S) → Set (ℓˢ ⊔ ℓ⁼ˢ)
@@ -272,9 +296,9 @@ module MostGeneralMGU where
     mgu = unifier
 
   record MostGeneralUnificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
-         (termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ)
+         ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄
     : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
-    open TermSubstitution termSubstitution
+    -- open TermSubstitution termSubstitution
     Property : ∀ {ℓ} → Set (ℓˢ ⊔ lsuc ℓ)
     Property {ℓ} = S → Set ℓ
 
@@ -298,33 +322,23 @@ module MostGeneralMGU where
     : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
     open TermSubstitution termSubstitution
     Property : ∀ {ℓ} → Set (ℓˢ ⊔ lsuc ℓ)
-    Property {ℓ} = S → S → Set ℓ
+    Property {ℓ} = S × S → Set ℓ
 
     Nothing : ∀ {ℓ} → (P : Property {ℓ}) → Set (ℓ ⊔ ℓˢ)
-    Nothing P = ∀ s₁ s₂ → P s₁ s₂ → ⊥
+    Nothing P = ∀ u → P u → ⊥
 
     IsUnifier : (t₁ t₂ : T) → Property
-    IsUnifier t₁ t₂ s₁ s₂ = t₁ ▹ s₁ =ᵗ t₂ ▹ s₂
+    IsUnifier t₁ t₂ u = let (s₁ , s₂) = u in t₁ ▹ s₁ =ᵗ t₂ ▹ s₂
 
     infix 4 _≤_
-    _≤_ : (s₋ : S) (s₊ : S) → Set (ℓˢ ⊔ ℓ⁼ˢ)
-    _≤_ s₋ s₊ = ∃ λ s → s ∙ s₊ =ˢ s₋
-
-    infix 4 _<!_
-    _<!_ : (s₋ : S) (s₊ : S) → Set (ℓˢ ⊔ ℓ⁼ˢ)
-    _<!_ s₋ s₊ = s₋ ≤ s₊ × (s₋ =ˢ s₊ → ⊥)
-
-    _≤₂_ : (s₋ : S × S) (s₊ : S × S) → Set (ℓˢ ⊔ ℓ⁼ˢ)
-    _≤₂_ s₋ s₊ =
-      let s₋₁ , s₋₂ = s₋
-          s₊₁ , s₊₂ = s₊ in
+    _≤_ : (s₋ : S × S) (s₊ : S × S) → Set (ℓˢ ⊔ ℓ⁼ˢ)
+    _≤_ u₋ u₊ =
+      let s₋₁ , s₋₂ = u₋
+          s₊₁ , s₊₂ = u₊ in
       ∃ λ s → s ∙ s₊₁ =ˢ s₋₁ × s ∙ s₊₂ =ˢ s₋₂
 
     MostGenerally : ∀ {ℓ} (P : Property {ℓ}) → Property
-    MostGenerally P s₊₁ s₊₂ = P s₊₁ s₊₂ × ∀ s₋₁ s₋₂ → P s₋₁ s₋₂ →
-      ((s₋₁ <! s₊₁) ⊎
-       (s₋₂ <! s₊₂)) ⊎
-       (s₋₁ ≤ s₊₁ × s₋₂ ≤ s₊₂)
+    MostGenerally P u₊ = P u₊ × ∀ u₋ → P u₋ → u₋ ≤ u₊
 
 {-
   mgu f(x,y) f(y,x)
@@ -366,7 +380,7 @@ module MostGeneralMGU where
 
     field
       mgu : (t₁ t₂ : T)
-            → Nothing (IsUnifier t₁ t₂) ⊎ (∃ $ ∃ ∘ MostGenerally (IsUnifier t₁ t₂))
+            → Nothing (IsUnifier t₁ t₂) ⊎ ∃ (MostGenerally (IsUnifier t₁ t₂))
 
 
 
