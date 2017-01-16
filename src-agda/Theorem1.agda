@@ -6,10 +6,31 @@ open import 𝑱udgement
 open import LiteralFormula
 open import Validation
 open import HasSalvation
+open import HasDecidableSalvation
 open import HasVacuousDischarge
 
 Theorem1 : {Φ : 𝑱udgement (𝑱udgement LiteralFormula)} → ⊨ Φ ↔ ▷ Φ
-Theorem1 = {!!}
+Theorem1 {Φ@(χs ⊢ ι)} = {!!}
+
+open import Interpretation
+open import HasSatisfaction
+open import HasNegation
+open import Membership
+open import HasSubstantiveDischarge
+open import 𝓐ssertion
+
+Theorem1' : {Φ : 𝑱udgement' (𝑱udgement' LiteralFormula)} → ⊨' Φ ↔ ▷ Φ
+Theorem1' {Φ@(χs ⊢ ι)} = {!!}
+ where
+  Theorem1a : ⊨' Φ → ▷ Φ
+  Theorem1a with ▷'? Φ
+  … | yes ▷Φ = const ▷Φ
+  … | no ⋫Φ =
+    let I , I⊨χs , I⊭ι = Lemma1a in
+    λ I→I⊨cs→I⊨i → ⊥-elim $ I⊭ι $ I→I⊨cs→I⊨i I I⊨χs
+   where
+    Lemma1a : ∃ λ I → I ⊨' χs × I ⊭' ι
+    Lemma1a = {!!}
 
 {-
 Theorem1 {Φ@(χs ¶ ι)} = Theorem1a , Theorem1b

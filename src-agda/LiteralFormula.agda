@@ -41,6 +41,10 @@ instance HasSatisfactionLiteralFormula : HasSatisfaction LiteralFormula
 HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
 HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ logical 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ false ⟩
 
+instance HasSatisfaction'LiteralFormula : HasSatisfaction' LiteralFormula
+HasSatisfaction'._⊨'_ HasSatisfaction'LiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
+HasSatisfaction'._⊨'_ HasSatisfaction'LiteralFormula I ⟨ logical 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ false ⟩
+
 open import HasDecidableSatisfaction
 
 instance HasDecidableSatisfactionLiteralFormula : HasDecidableSatisfaction LiteralFormula
@@ -58,7 +62,7 @@ HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
 open import HasSubstantiveDischarge
 
 instance HasSubstantiveDischargeLiteralFormula : HasSubstantiveDischarge LiteralFormula LiteralFormula
-HasSubstantiveDischargeLiteralFormula = {!!}
+(HasSubstantiveDischargeLiteralFormula HasSubstantiveDischarge.≽ x) x₁ = formula x ≡ formula x₁
 
 open import HasDecidableValidation
 

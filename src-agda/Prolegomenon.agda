@@ -25,8 +25,7 @@ record IsMonoidTransformer {s ℓˢ} {S : Set s} (≈ˢ : Rel S ℓˢ) {m ℓᵐ
   field
     ◃-identity : PowerRightIdentity ≈ˢ ε ◃
     ≈ˢ-over-◃-⟶-≈ᵐ : ≈ˢ over ◃ ⇒ ≈ᵐ
-    ◃-≈ᵐ-to-≈ˢ : ≈ᵐ ⇒ ≈ˢ over ◃
-    ◃-≈ˢ-to-≈ᵐ : ≈ˢ over ◃ ⇒ ≈ᵐ
+    ≈ᵐ-to-≈ˢ-over-◃ : ≈ᵐ ⇒ ≈ˢ over ◃
     ◃-extracts-∙ : PowerAssociative ≈ˢ ◃ ∙
 
 record MonoidTransformer ℓˢ ℓ⁼ˢ ℓᵐ ℓ⁼ᵐ

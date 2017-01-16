@@ -69,7 +69,33 @@ record PairUnificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Set (lsuc (ℓᵗ �
     unify : (t₁ t₂ : T)
           → Nothing (IsUnifier t₁ t₂) ⊎ ∃ (IsUnifier t₁ t₂)
 
+module MakePairUnificationoidFromUnificationoid where
+
+  postulate
+    ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Level
+    unificationoid : Unificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
+
+  open Unificationoid unificationoid
+
+  pairUnificationoid : PairUnificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
+  PairUnificationoid.monoidTransformer pairUnificationoid = monoidTransformer
+  PairUnificationoid.unify pairUnificationoid t₁ t₂ with unify t₁ t₂
+  PairUnificationoid.unify pairUnificationoid t₁ t₂ | left x = left (λ {(s₁ , s₂) x₁ → x {!!} {!!}})
+  PairUnificationoid.unify pairUnificationoid t₁ t₂ | right (s₁ , snd₁) = {!!}
+
+  {-
+    s ◃ swap ◃ t₁ = s ◃ t₂
+    swap ∙ swap = ε
+    want: x , y s.t. x ◃ t₁ = x ◃ t₂
+    easy: x = s ∙ swap, y = s
+
+    harder:
+    s₁ ◃ t₁ = s₂ ◃ t₂
+    want: x s.t. x ◃ t₁ = x ◃ t₂
+  -}
+
 record MostGeneralUnificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Set (lsuc (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
+  infix 4 _≠ᵗ_
   field
     unificationoid : Unificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
 
@@ -77,6 +103,14 @@ record MostGeneralUnificationoid ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ : Set (lsuc (�
 
   _≤_ : (s₋ : S) (s₊ : S) → Set (ℓˢ ⊔ ℓ⁼ˢ)
   _≤_ s₋ s₊ = ∃ λ s → s ∙ s₊ =ˢ s₋
+
+  _≠ᵗ_ : T → T → Set ℓ⁼ᵗ
+  _≠ᵗ_ t₁ t₂ = t₁ =ᵗ t₂ → ⊥
+
+  _<_ : (s₋ : S) (s₊ : S) → Set (ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)
+  _<_ s₋ s₊ = s₋ ≤ s₊ × (∀ t → (s₊ ◃ t) ≠ᵗ t → (s₋ ◃ t) ≠ᵗ t) × ∃ λ t → (s₋ ◃ t) ≠ᵗ t × (s₊ ◃ t) =ᵗ t
+  --the set of T that are changed by a applying substitution is strictly less with s₊ than with s₋. That is, s₋ makes more changes than s₊.
+  --that is, if s₊ makes a change to t then so does s₋, but there is some t s.t. s₋ makes a change but s₊ does not
 
   MostGenerally : ∀ {ℓ} (P : Property {ℓ}) → Property
   MostGenerally P s₊ = P s₊ × ∀ s₋ → P s₋ → s₋ ≤ s₊
