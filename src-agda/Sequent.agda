@@ -36,3 +36,13 @@ open import HasDecidableValidation
 
 instance HasDecidableValidationSequent : HasDecidableValidation Sequent
 HasDecidableValidationSequent = {!!}
+
+open import HasSubstantiveDischarge
+
+instance HasSubstantiveDischargeSequentSequent : HasSubstantiveDischarge Sequent Sequent
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeSequentSequent (+ᵗ ╱ +ᵖs) (-ᵗ ╱ -ᵖs) = {!!} -- +ᵗ ≽ -ᵗ × +ᵖs ≽ -ᵖs -- use "unification into", from John's "Natural Deduction"
+
+open import HasDecidableSubstantiveDischarge
+
+instance HasDecidableSubstantiveDischargeSequentSequent : HasDecidableSubstantiveDischarge Sequent Sequent
+HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeSequentSequent = {!!}

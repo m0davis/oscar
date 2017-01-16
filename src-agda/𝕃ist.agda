@@ -7,7 +7,7 @@ open import Membership
 open import DecidableMembership renaming (DecidableMembership to RDecidableMembership)
 
 data 𝕃 {𝑨} (𝐴 : Set 𝑨) : Set 𝑨
-data _∉𝕃_ {𝑨} {𝐴 : Set 𝑨} (x : 𝐴) : 𝕃 𝐴 → Set 𝑨
+data _∉𝕃_ {𝑨} {𝐴 : Set 𝑨} (𝔞 : 𝐴) : 𝕃 𝐴 → Set 𝑨
 
 data 𝕃 {𝑨} (𝐴 : Set 𝑨) where
   ∅ : 𝕃 𝐴

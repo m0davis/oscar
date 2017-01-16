@@ -31,3 +31,13 @@ open import HasDecidableValidation
 
 instance HasDecidableValidationProblem : HasDecidableValidation Problem
 HasDecidableValidationProblem = {!!}
+
+open import HasSubstantiveDischarge
+
+instance HasSubstantiveDischargeProblemProblem : HasSubstantiveDischarge Problem Problem
+HasSubstantiveDischarge._≽_ HasSubstantiveDischargeProblemProblem (+s ¶ +) (-s ¶ -) = {!!} -- + ≽ - × +s ≽ -s
+
+open import HasDecidableSubstantiveDischarge
+
+instance HasDecidableSubstantiveDischargeProblemProblem : HasDecidableSubstantiveDischarge Problem Problem
+HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeProblemProblem = {!!}

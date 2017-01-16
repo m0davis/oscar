@@ -223,3 +223,52 @@ module _ where
     { refl = {!!} -- λ { {atomic _ _} → refl , {!!} ; {logical x x₁} → {!!} ; {quantified x x₁} → {!!} }
     ; sym = {!!}
     ; trans = {!!} }
+
+module _ where
+
+  open import HasSubstantiveDischarge
+
+  instance HasSubstantiveDischargeFormulaFormula : HasSubstantiveDischarge Formula Formula
+  HasSubstantiveDischarge._≽_ HasSubstantiveDischargeFormulaFormula φ₁ φ₂ = {!!} -- ∃ λ υ → υ Unifies φ₁ and φ₂
+
+module _ where
+
+  open import HasDecidableSubstantiveDischarge
+
+  instance HasDecidableSubstantiveDischargeFormulaFormula : HasDecidableSubstantiveDischarge Formula Formula
+  HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeFormulaFormula = {!!} -- _≟_
+
+module _ where
+
+  open import OscarPrelude
+  open import HasDecidableVacuousDischarge
+
+  instance HasDecidableVacuousDischargeFormula : HasDecidableVacuousDischarge Formula
+  HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeFormula [] = {!!}
+  HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeFormula (φ ∷ φs) = {!!}
+
+module _ where
+
+  open import VariableName
+
+  ∀[_♭_] : VariableName → Formula → Formula
+  ∀[_♭_] = quantified
+
+  {-# DISPLAY Formula.quantified = ∀[_♭_] #-}
+
+module _ where
+
+  open import HasNegation
+  open import HasNeitherNor
+
+  _∧_ : Formula → Formula → Formula
+  φ₁ ∧ φ₂ = ~ φ₁ ⊗ ~ φ₂
+
+  _∨_ : Formula → Formula → Formula
+  φ₁ ∨ φ₂ = ~ (φ₁ ⊗ φ₂)
+
+  _⊃_ : Formula → Formula → Formula
+  φ₁ ⊃ φ₂ = ~ φ₁ ∨ φ₂
+
+  _⟷_ : Formula → Formula → Formula
+  φ₁ ⟷ φ₂ = (φ₁ ⊗ (φ₂ ⊗ φ₂)) ⊗ ((φ₁ ⊗ φ₁) ⊗ φ₂) -- TODO check that this is logically equivalent to the more verbose, (φ₁ ⊃ φ₂) ∧ (φ₂ ⊃ φ₁)

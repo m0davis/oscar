@@ -55,7 +55,17 @@ HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
 … | ⟨ true ⟩ = no λ ()
 … | ⟨ false ⟩ = yes refl
 
+open import HasSubstantiveDischarge
+
+instance HasSubstantiveDischargeLiteralFormula : HasSubstantiveDischarge LiteralFormula LiteralFormula
+HasSubstantiveDischargeLiteralFormula = {!!}
+
 open import HasDecidableValidation
 
 instance HasDecidableValidationLiteralFormula : HasDecidableValidation LiteralFormula
 HasDecidableValidationLiteralFormula = {!!}
+
+open import HasSalvation
+
+HasSalvationLiteralFormula : HasSalvation LiteralFormula
+(HasSalvation.▷ HasSalvationLiteralFormula) x = {!!}
