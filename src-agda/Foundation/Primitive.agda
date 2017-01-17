@@ -14,4 +14,7 @@ infix -65536 ℞₁_
 ℞₁_ : ∀ ℓ → Set _
 ℞₁_ ℓ = ℞ ⟰ ℓ
 
+𝟘 : Level
+𝟘 = lzero
+
 open import Agda.Primitive using (_⊔_) public

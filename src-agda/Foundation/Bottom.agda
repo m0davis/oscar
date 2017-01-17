@@ -3,15 +3,18 @@ module Foundation.Bottom where
 
 open import Foundation.Primitive
 
-record IsBottom {ℓ⊥} (⊥ : Set ℓ⊥) a : ℞ ⟰ a ⊔ ℓ⊥ where
+record IsBottom {ℓ-⊥} (⊥ : Set ℓ-⊥) ℓ-elim : ℞ ⟰ ℓ-elim ⊔ ℓ-⊥ where
   field
-    ⊥-elim : ⊥ → {A : Set a} → A
+    ⊥-elim : ⊥ → {A : Set ℓ-elim} → A
 
 open IsBottom ⦃ … ⦄ public
 
-record Bottom ℓ⊥ a : ℞₁ a ⊔ ℓ⊥ where
+record Bottom ℓ-⊥ ℓ-elim : ℞₁ ℓ-elim ⊔ ℓ-⊥ where
   field
-    ⊥ : Set ℓ⊥
-    ⦃ isBottom ⦄ : IsBottom ⊥ a
+    ⊥ : Set ℓ-⊥
+    instance ⦃ isBottom ⦄ : IsBottom ⊥ ℓ-elim
+
+  ¬_ : ∀ {a} → Set a → ℞ a ⊔ ℓ-⊥
+  ¬_ p = p → ⊥
 
 open Bottom ⦃ … ⦄ public

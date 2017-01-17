@@ -15,25 +15,12 @@ record Equivalence {a} (A : Set a) ℓ : ℞ a ⊔ ⟰ ℓ where
   infix 4 _≈_
   field
     _≈_ : A → A → Set ℓ
-    ⦃ isEquivalence ⦄ : IsEquivalence _≈_
+    instance ⦃ isEquivalence ⦄ : IsEquivalence _≈_
 
 open Equivalence ⦃ … ⦄ public
 
 open import Foundation.Bottom
 
 infix 4 _≉_
-_≉_ : ∀ {a} {A : Set a} {ℓ} ⦃ _ : Equivalence A ℓ ⦄ ⦃ _ : ∀ {x} → Bottom ℓ x  ⦄ → A → A → Set ℓ
-x ≉ y =  x ≈ y → ⊥ {{!!}} {{!!}}
-
--- record EquivalenceWithNegation {a} (A : Set a) ℓ ⦃ _ : ∀ {b} → Bottom b ⦄ : ℞ a ⊔ ⟰ ℓ where
---   field
---     ⦃ equivalence ⦄ : Equivalence A ℓ
-
---   infix 4 _≉_
---   _≉_ : A → A → Set ℓ
---   _≉_ = {!!}
-
--- -- module NegEquiv {ℓ'} (⊥ : Set ℓ') ⦃ _ : ∀ {b} → IsBottom ⊥ b ⦄ where
-
--- --   _≉_ : ∀ {a} {A : Set a} {ℓ} ⦃ _ : Equivalence A ℓ ⦄ → A → A → Set (ℓ ⊔ ℓ')
--- --   x ≉ y = x ≈ y → ⊥
+_≉_ : ∀ {a} {A : Set a} {ℓ} ⦃ _ : Equivalence A ℓ ⦄ {b} ⦃ _ : Bottom b ℓ  ⦄ → A → A → Set (b ⊔ ℓ)
+_≉_ {ℓ = ℓ} x y = ¬ (x ≈ y)
