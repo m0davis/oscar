@@ -9,11 +9,16 @@ open import Relation.Nullary
 open import Data.Product
 open import Data.Empty
 
+data Term (n : ℕ) : Set where
+  i : (x : Fin n) -> Term n
+  leaf : Term n
+  _fork_ : (s t : Term n) -> Term n
+{-
 data Term : ℕ -> Set where
-  i : ∀ {n} -> (x : Fin n) -> Term n
-  leaf : ∀ {n} -> Term n
-  _fork_ : ∀ {n} -> (s t : Term n) -> Term n
-
+  i : ∀ ..{n} -> (x : Fin n) -> Term n
+  leaf : ∀ ..{n} -> Term n
+  _fork_ : ∀ ..{n} -> (s t : Term n) -> Term n
+-}
 _~>_ : (m n : ℕ) -> Set
 m ~> n = Fin m -> Term n
 

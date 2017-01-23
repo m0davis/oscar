@@ -94,7 +94,7 @@ module Properties where
 
   fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          -> Unifies⋆ (s1 fork s2) (t1 fork t2) ⇔⋆ (Unifies⋆ s1 t1 ∧⋆ Unifies⋆ s2 t2)
-  fact1'⋆ f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
+  fact1'⋆ f = {!deconstr _ _ _ _!} , uncurry (cong₂ _fork_)
     where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
                    -> (s1 fork s2) ≡ (t1 fork t2)
                    -> (s1 ≡ t1) × (s2 ≡ t2)
