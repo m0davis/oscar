@@ -1,4 +1,5 @@
 {- https://lists.chalmers.se/pipermail/agda/2013/006033.html http://code.haskell.org/~Saizan/unification/ 18-Nov-2013 Andrea Vezzosi -}
+{-# OPTIONS --allow-unsolved-metas #-}
 module Unify-revised where
 
 -- some equivalences needed to adapt Tactic.Nat to the standard library
@@ -27,7 +28,7 @@ module _ where
 open import Data.Fin using (Fin; suc; zero)
 open import Data.Nat hiding (_≤_)
 --open import Relation.Binary.PropositionalEquality
-open import Relation.Binary.PropositionalEquality hiding ([_])
+open import Relation.Binary.PropositionalEquality renaming ([_] to [[_]])
 open import Function
 open import Relation.Nullary
 --open import Data.Product
@@ -187,12 +188,12 @@ data AList : ℕ -> ℕ -> Set where
   anil : ∀ {n} -> AList n n
   _asnoc_/_ : ∀ {m n} (σ : AList m n) (t' : Term m) (x : Fin (suc m))
                -> AList (suc m) n
-
+{-
 alist≥ : ∀ m n → AList m n → m Data.Nat.≥ n
 alist≥ m .m anil = {!!}
 alist≥ .(suc _) n (x asnoc t' / x₁) with alist≥ _ _ x
 … | r = {!!}
-
+-}
 sub : ∀ {m n} (σ : AList m n) -> Fin m -> Term n
 sub anil = i
 sub (σ asnoc t' / x) = sub σ ◇ (t' for x)
@@ -1006,15 +1007,6 @@ mgu-c⋆ : ∀ {m} (s t : Term m) ->
          ⊎ (Nothing⋆ (Unifies⋆ s t)                         × mgu s t ≡ nothing)
 mgu-c⋆ {m} s t = amgu-c (view s t (m , anil))
 
-data SidedTerm (n : ℕ) : Set where
-  i-left : (x : Fin n) -> 2 * Data.Fin.toℕ x Data.Nat.≤ n → SidedTerm n
-  i-right : (x : Fin n) -> n + Data.Fin.toℕ x Data.Nat.≤ 2 * n → SidedTerm n
-  leaf : SidedTerm n
-  _fork_ : (s t : SidedTerm n) -> SidedTerm n
-
-data dTerm (n : ℕ) : Term (2 * n) → Set where
---  i :
-
 l1 : ∀ m → Data.Fin.toℕ (Data.Fin.fromℕ m) ≡ m
 l1 zero = refl
 l1 (suc m) = cong suc (l1 m)
@@ -1033,12 +1025,6 @@ revise-up : ∀ {m} → Fin m → Fin (2 * m)
 revise-up {m} x = fixup m (Data.Fin.fromℕ m Data.Fin.+ x)
 
 {-
-reduce* : ∀ {m n} (i : Fin (m * 2)) → Fin m
-reduce* {zero}  i       i≥m       = i
-reduce* {suc m} zero    ()
-reduce* {suc m} (suc i) (s≤s i≥m) = reduce≥ i i≥m
--}
-
 downFin : ∀ {m} {x : Fin (2 * m)} → suc (Data.Fin.toℕ x) Data.Nat.≤ m → Fin m
 downFin {zero} {()} p₁
 downFin {suc m} {zero} (s≤s p₁) = zero
@@ -1055,6 +1041,7 @@ combineSubs : ∀ {m a} {A : Set a} → (Fin m → A) → (Fin m → A) → Fin 
 combineSubs {m} fl fr x with suc (Data.Fin.toℕ x) ≤? m
 … | yes p = fl (downFin {x = x} p)
 … | no _ = fr {!!}
+-}
 
 write-variable-down : ∀ {m} → Term m → Term (2 * m)
 write-variable-down {m} (i l) = i $ revise-down l
@@ -1078,25 +1065,6 @@ separate-substitutions-up {m} f x = f $ revise-up x
 separate-substitutions : ∀ {m n} → (Fin (2 * m) → Term n) → (Fin m → Term n) × (Fin m → Term n)
 separate-substitutions {m} x = separate-substitutions-down {m} x , separate-substitutions-up {m} x
 
-Property⋆2 : (m : ℕ) -> Set1
-Property⋆2 m = ∀ {n} -> (Fin m -> Term n) × (Fin m -> Term n) -> Set
-
-Nothing⋆2 : ∀{m} -> (P : Property⋆2 m) -> Set
-Nothing⋆2 P = ∀{n} f -> P {n} f -> ⊥
-
-Unifies⋆2 : ∀ {m} (s t : Term m) -> Property⋆2 m
-Unifies⋆2 s t (f₁ , f₂) = f₁ ◃ s ≡ f₂ ◃ t
-
-_≤2_ : ∀ {m n n'} (f : (Fin m -> Term n) × (Fin m -> Term n)) (g : (Fin m -> Term n') × (Fin m -> Term n')) -> Set
-(f₁ , f₂) ≤2 (g₁ , g₂) = ∃ λ f' -> f₁ ≐ (f' ◇ g₁) × f₂ ≐ (f' ◇ g₂)
-
-Max⋆2 : ∀ {m} (P : Property⋆2 m) -> Property⋆2 m
-Max⋆2 P f = P f × (∀ {n} f' -> P {n} f' -> f' ≤2 f)
-
-pair-mgu : ∀ {m} -> (s t : Term m) -> Maybe (∃ (AList m))
-pair-mgu {m} s t = {!!} -- amgu s t (m , anil)
-
-
 write≡separate : ∀ {m n} (σ : AList (2 * m) n) (t : Term m) → (sub σ ◃) (write-variable-down t) ≡ ((separate-substitutions-down $ sub σ) ◃) t
 write≡separate {zero} {.0} anil (i x) = refl
 write≡separate {suc m} {.(suc (m + suc (m + 0)))} anil (i x) = refl
@@ -1111,76 +1079,68 @@ write≡separate' {suc m} {n} (σ asnoc t' / x) (i x₁) = refl
 write≡separate' σ leaf = refl
 write≡separate' σ (t₁ fork t₂) = cong₂ _fork_ (write≡separate σ t₁) (write≡separate σ t₂)
 
-{-
-(sub σ ◃) (write-variable-down s') ≡ (sub σ ◃) (write-variable-up t') →
-((separate-substitutions-down $ sub σ) ◃) s' ≡ ((separate-substitutions-up $ sub σ) ◃) t'
--}
+Property'2 : (m : ℕ) -> Set1
+Property'2 m = ∀ {n} -> (Fin (2 * m) -> Term n) -> Set
 
-pair-mgu-c⋆! : ∀ {m} (s' t' : Term m) (let (s , t) = write-variables-apart s' t') ->
-                (∃ λ n → ∃ λ σ → ∃ λ σ₁ → ∃ λ σ₂ → (σ₁ , σ₂) ≡ separate-substitutions (sub σ) × (Max⋆2 (Unifies⋆2 s' t')) (σ₁ , σ₂) × mgu s t ≡ just (n , σ))
-              ⊎ (Nothing⋆2 (Unifies⋆2 s t)                       × mgu s t ≡ nothing)
-pair-mgu-c⋆! {m} s' t'
-  with write-variable-down s' | inspect write-variable-down s' | write-variable-up t' | inspect write-variable-up t'
-… | s | Reveal_·_is_.[_] refl | t | Reveal_·_is_.[_] refl with amgu-c⋆ (view s t (2 * m , anil))
-… | (inj₁ (n , σ , (s-un-t , s-un-t-correct) , amgu=nσ)) = inj₁ (_ , σ , ((separate-substitutions-down $ sub σ) , ((separate-substitutions-up $ sub σ) , (refl , (({!trans (sym $ write≡separate σ s') s-un-t!} , (λ {(fl , fr) x → ((proj₁ ∘ s-un-t-correct (combineSubs fl fr)) {!(proj₂ ∘ s-un-t-correct (combineSubs fl fr)) !}) , ({!!} , {!!})})) , amgu=nσ))))) where
-… | (inj₂ (s-not-un-t , amgu=nothing)) = inj₂ {!!}
+Nothing'2 : ∀{m} -> (P : Property'2 m) -> Set
+Nothing'2 P = ∀{n} f -> P {n} f -> ⊥
 
--- pair-mgu-c⋆ : ∀ {m} (s' t' : Term m) (let (s , t) = write-variables-apart s' t') ->
---                 (∃ λ n → ∃ λ σ → ∃ λ σ₁ → ∃ λ σ₂ → (σ₁ , σ₂) ≡ separate-substitutions {m} {n} (sub {2 * m} {n} σ) × (Max⋆2 (Unifies⋆2 s t)) (σ₁ , σ₂) × mgu s t ≡ just (n , σ))
---               ⊎ (Nothing⋆2 (Unifies⋆2 s t)                       × mgu s t ≡ nothing)
--- pair-mgu-c⋆ {m} s' t'
---   with write-variables-apart s' t'
--- … | (s , t) with amgu-c⋆ (view s t (2 * m , anil))
--- pair-mgu-c⋆ {m} s' t' | s , t | (inj₁ (n , σ , (s-un-t , s-un-t-correct) , amgu=nσ)) = inj₁ ({!!} , {!!})
--- pair-mgu-c⋆ {m} s' t' | s , t | (inj₂ (s-not-un-t , amgu=nothing)) = inj₂ {!!}
+Unifies'2 : ∀ {m} (s t : Term m) -> Property'2 m
+Unifies'2 s t f =
+  let --s' , t' = write-variables-apart s t
+      f₁ , f₂ = separate-substitutions f
+  in f₁ ◃ s ≡ f₂ ◃ t
 
--- -- pair-mgu-c⋆ {m} s t = {!!} -- amgu-c (view s t (m , anil))
--- {-
--- Goal: Σ ℕ
---       (λ n₁ →
---          Σ (AList (m + (m + 0)) n₁)
---          (λ σ₁ →
---             Σ (Fin (m + (m + 0)) → Term n₁)
---             (λ σ₂ →
---                Σ (Fin (m + (m + 0)) → Term n₁)
---                (λ σ₃ →
---                   Σ ((σ₂ , σ₃) ≡ (?8 (sub σ₁) , ?9 (sub σ₁)))
---                   (λ x →
---                      Σ
---                      (Σ ((σ₂ ◃) s ≡ (σ₃ ◃) t)
---                       (λ x₁ →
---                          {n = n₂ : ℕ}
---                          (f'
---                           : Σ (Fin (m + (m + 0)) → Term n₂)
---                             (λ x₂ → Fin (m + (m + 0)) → Term n₂)) →
---                          (proj₁ f' ◃) s ≡ (proj₂ f' ◃) t →
---                          Σ (Fin n₁ → Term n₂)
---                          (λ f'' →
---                             Σ ((x₂ : Fin (m + (m + 0))) → proj₁ f' x₂ ≡ (f'' ◃) (σ₂ x₂))
---                             (λ x₂ →
---                                (x₃ : Fin (m + (m + 0))) → proj₂ f' x₃ ≡ (f'' ◃) (σ₃ x₃)))))
---                      (λ x₁ → amgu s t (m + (m + 0) , anil) ≡ just (n₁ , σ₁)))))))
---       ⊎
---       Σ
---       ({n = n₁ : ℕ}
---        (f
---         : Σ (Fin (m + (m + 0)) → Term n₁)
---           (λ x → Fin (m + (m + 0)) → Term n₁)) →
---        (proj₁ f ◃) s ≡ (proj₂ f ◃) t → ⊥)
---       (λ x → amgu s t (m + (m + 0) , anil) ≡ nothing)
--- ————————————————————————————————————————————————————————————
--- t'      : Term m
--- s'      : Term m
--- amgu=nσ : amgu s t (m + (m + 0) , anil) ≡ just (n , σ)
--- s-un-t-correct
---         : {n = n₁ : ℕ} (f' : Fin (m + (m + 0)) → Term n₁) →
---           (f' ◃) s ≡ (f' ◃) t →
---           Σ (Fin n → Term n₁)
---           (λ f'' → (x : Fin (m + (m + 0))) → f' x ≡ (f'' ◃) (sub σ x))
--- s-un-t  : (sub σ ◃) s ≡ (sub σ ◃) t
--- σ       : AList (m + (m + 0)) n
--- n       : ℕ
--- t       : Term (m + (m + 0))
--- s       : Term (m + (m + 0))
--- m       : ℕ
--- -}
+pair-mgu' : ∀ {m} -> (s t : Term m) -> Maybe (∃ (AList (2 * m)))
+pair-mgu' {m} s t =
+  let s' , t' = write-variables-apart s t
+      mgu' = mgu s' t'
+  in
+    mgu'
+
+up-equality : ∀ {m n} {f : (2 * m) ~> n} (t : Term m) → (f ∘ revise-up) ◃ t ≡ f ◃ write-variable-up t
+up-equality (i x) = refl
+up-equality leaf = refl
+up-equality (t₁ fork t₂) = cong₂ _fork_ (up-equality t₁) (up-equality t₂)
+
+down-equality : ∀ {m n} {f : (2 * m) ~> n} (t : Term m) → (f ∘ revise-down) ◃ t ≡ f ◃ write-variable-down t
+down-equality (i x) = refl
+down-equality leaf = refl
+down-equality (t₁ fork t₂) = cong₂ _fork_ (down-equality t₁) (down-equality t₂)
+
+revise-to-write : ∀ {m n} {f : (2 * m) ~> n} (s t : Term m) → (f ∘ revise-down) ◃ s ≡ (f ∘ revise-up) ◃ t → f ◃ write-variable-down s ≡ f ◃ write-variable-up t
+revise-to-write (i x) (i x₁) x₂ = x₂
+revise-to-write (i x) leaf x₁ = x₁
+revise-to-write (i x) (t fork t₁) x₁ = trans x₁ (up-equality (t fork t₁))
+revise-to-write leaf (i x) x₁ = x₁
+revise-to-write leaf leaf x = refl
+revise-to-write leaf (t₁ fork t₂) x = trans x (up-equality (t₁ fork t₂))
+revise-to-write (s₁ fork s₂) (i x) x₁ = trans (sym (down-equality (s₁ fork s₂))) x₁
+revise-to-write (s₁ fork s₂) leaf x = trans (sym (down-equality (s₁ fork s₂))) x
+revise-to-write (s₁ fork s₂) (t₁ fork t₂) x = trans (trans (sym (down-equality (s₁ fork s₂))) x) (up-equality (t₁ fork t₂))
+
+write-to-revise : ∀ {m n} {f : (2 * m) ~> n} (s t : Term m) → f ◃ write-variable-down s ≡ f ◃ write-variable-up t → (f ∘ revise-down) ◃ s ≡ (f ∘ revise-up) ◃ t
+write-to-revise (i x) (i x₁) x₂ = x₂
+write-to-revise (i x) leaf x₁ = x₁
+write-to-revise (i x) (t fork t₁) x₁ = trans x₁ (sym (up-equality (t fork t₁)))
+write-to-revise leaf (i x) x₁ = x₁
+write-to-revise leaf leaf x = refl
+write-to-revise leaf (t fork t₁) x = trans x (sym (up-equality (t fork t₁)))
+write-to-revise (s₁ fork s₂) (i x) x₁ = trans ((down-equality (s₁ fork s₂))) x₁
+write-to-revise (s₁ fork s₂) leaf x = trans ((down-equality (s₁ fork s₂))) x
+write-to-revise (s₁ fork s₂) (t fork t₁) x = trans (trans ((down-equality (s₁ fork s₂))) x) (sym (up-equality (t fork t₁)))
+
+pair-mgu-c' : ∀ {m} (s t : Term m) ->
+                (∃ λ n → ∃ λ σ → (Max⋆ (Unifies'2 s t)) (sub σ) × pair-mgu' s t ≡ just (n , σ))
+                ⊎ (Nothing⋆ (Unifies'2 s t)                     × pair-mgu' s t ≡ nothing)
+pair-mgu-c' {m} s t with write-variable-down s | write-variable-up t | inspect write-variable-down s | inspect write-variable-up t
+… | s' | t' | [[ refl ]] | [[ refl ]] with mgu-c s' t'
+… | (inj₁ (n , σ , (σ◃s'=σ◃t' , max-σ) , amgu=just)) =
+  inj₁ $
+  n ,
+  σ ,
+  ( write-to-revise s t σ◃s'=σ◃t' ,
+    ( λ {n'} f f◃s≡f◃t → (proj₁ $ max-σ f (revise-to-write s t f◃s≡f◃t)) ,
+      (λ x → proj₂ (max-σ f (revise-to-write s t f◃s≡f◃t)) x) ) ) ,
+  amgu=just
+… | (inj₂ (notunified , amgu=nothing)) = inj₂ ((λ {n} f x → notunified f (revise-to-write s t x)) , amgu=nothing)
