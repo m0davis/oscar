@@ -889,7 +889,23 @@ amgu-c⋆ {m} {s} {t} {l} {ρ} (Flip amguts≡amgust amguts) | _ = amgu-Ccomm⋆
 amgu-c⋆ {m} {l = l} {ρ} (fn-neq x₁) | _ = inj₂ ((λ f x → x₁ (term-function-inj₁ x)) , refl)
 amgu-c⋆ {m} {l = l} {ρ} leaf-fork | _ = inj₂ ((λ f x → case term-function-inj₂ x of λ ()) , refl)
 amgu-c⋆ {m} {l = l} {ρ} fork-leaf | _ = inj₂ (((λ f x → case term-function-inj₂ x of λ ()) , refl))
-amgu-c⋆ {m} {l = l} {ρ} (fork-fork {s = s}) | _ = {!!}
+amgu-c⋆ {m} {function x1 (s1 ∷ s1s)} {function .x1 (t1 ∷ t1s)} {l = l} {ρ} fork-fork | _
+  with amgu s1 t1 (l , ρ)  | amgu-c⋆ $ view s1 t1 (l , ρ)
+… | nothing | inj₂ (nounify , refl) = inj₂ ((λ {n} f x → {!!}) , refl)
+{-
+  where
+    P = Unifies⋆ (function x1 (s1 ∷ s1s)) (function x1 (t1 ∷ t1s))
+    Q = (Unifies⋆ s1 t1 ∧⋆ {!Unifies⋆ s2 t2!})
+    Q⇔P : Q ⇔⋆ P
+    Q⇔P = switch⋆ P Q (Properties.fact1' {_} {s1} {s2} {t1} {t2})
+    No[Q◇ρ]→No[P◇ρ] : Nothing⋆ (Q [-◇⋆ sub ρ ]) -> Nothing⋆ (P [-◇⋆ sub ρ ])
+    No[Q◇ρ]→No[P◇ρ] = Properties.fact2⋆ (Q [-◇⋆ sub ρ ]) (P [-◇⋆ sub ρ ]) (Properties.fact5⋆ Q P (sub ρ) Q⇔P)
+    No[Q◇ρ] : Nothing⋆ (Q [-◇⋆ sub ρ ])
+    No[Q◇ρ] = failure-propagation.first⋆ (sub ρ) (Unifies⋆ s1 t1) (Unifies⋆ s2 t2) nounify
+-}
+… | just x | (inj₁ x₁) = {!!}
+… | nothing | inj₁ (_ , _ , _ , ())
+… | just x | (inj₂ (_ , ()))
 amgu-c⋆ {m} var-var | _ = {!!}
 amgu-c⋆ {m} {t = t} (var-t x₁) | _ = {!!}
 amgu-c⋆ {s = s} {t} {l} s-t | _ = {!!}

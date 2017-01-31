@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module TermNode where
 
 open import OscarPrelude

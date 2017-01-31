@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module 𝑱udgement where
 
 open import OscarPrelude

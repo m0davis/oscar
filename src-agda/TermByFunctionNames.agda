@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module TermByFunctionNames where
 
 open import OscarPrelude

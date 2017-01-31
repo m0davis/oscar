@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module Theorem1 where
 
 open import OscarPrelude

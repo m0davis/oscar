@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module LiteralFormula where
 
 open import OscarPrelude

@@ -180,6 +180,7 @@ record L {ℓ} (A : Set ℓ) : Set ℓ where
     empty : Prelude.⊥′
     list : EITHER Prelude.⊥′ (L A)
 -}
+
 record FreeVariableoid ℓᵛ∈ᵗ ℓᵛ∈ˢ⁺ ℓᵛ∈ˢ⁻ ℓᵛ ℓ⁼ᵛ ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
        ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄
   : Set (lsuc (ℓᵛ∈ᵗ ⊔ ℓᵛ∈ˢ⁺ ⊔ ℓᵛ∈ˢ⁻ ⊔ ℓᵛ ⊔ ℓ⁼ᵛ ⊔ ℓᵗ ⊔ ℓ⁼ᵗ ⊔ ℓˢ ⊔ ℓ⁼ˢ)) where
@@ -214,8 +215,6 @@ record FreeVariableoid ℓᵛ∈ᵗ ℓᵛ∈ˢ⁺ ℓᵛ∈ˢ⁻ ℓᵛ ℓ⁼�
   field
     foo : ∀ {v t s} → v ᵛ∈ᵗ t → ¬ v ᵛ∈ˢ⁺ s → v ᵛ∈ᵗ (t ▹ s)
     isSep : IsSeparableInto T TermStructure V
-
-  data D : Set where
 
 record CorrectTermSubstitution ℓᵛ∈ᵗ ℓᵛ∈ˢ⁺ ℓᵛ∈ˢ⁻ ℓᵛ ℓ⁼ᵛ ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ
        ⦃ termSubstitution : TermSubstitution ℓᵗ ℓ⁼ᵗ ℓˢ ℓ⁼ˢ ⦄

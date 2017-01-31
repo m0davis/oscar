@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module HasDecidableSubstantiveDischarge where
 
 open import OscarPrelude

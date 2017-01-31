@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module LiteralProblem where
 
 open import OscarPrelude

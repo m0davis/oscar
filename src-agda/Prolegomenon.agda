@@ -34,6 +34,9 @@ record MonoidTransformer ℓˢ ℓ⁼ˢ ℓᵐ ℓ⁼ᵐ
     base : Setoid ℓˢ ℓ⁼ˢ
     exponent : Monoid ℓᵐ ℓ⁼ᵐ
 
+  module B = Setoid base
+  module E = Monoid exponent
+{-
   open Setoid base public renaming
     (Carrier to Carrierˢ
     ;_≈_ to _≈ˢ_
@@ -52,10 +55,10 @@ record MonoidTransformer ℓˢ ℓ⁼ˢ ℓᵐ ℓ⁼ᵐ
     ;refl to reflᵐ
     ;trans to transᵐ
     ;sym to symᵐ)
-
+-}
   infixl 6 _◃_
   field
-    _◃_ : Carrierᵐ → Carrierˢ → Carrierˢ
-    isMonoidTransformer : IsMonoidTransformer _≈ˢ_ _≈ᵐ_ _∙_ ε _◃_
+    _◃_ : E.Carrier → B.Carrier → B.Carrier
+    isMonoidTransformer : IsMonoidTransformer B._≈_ E._≈_ E._∙_ E.ε _◃_
 
   open IsMonoidTransformer isMonoidTransformer public

@@ -1,4 +1,4 @@
-
+{-# OPTIONS --allow-unsolved-metas #-}
 module 𝓢equent where
 
 open import OscarPrelude
