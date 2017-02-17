@@ -2,6 +2,7 @@
 module LiteralFormula where
 
 open import OscarPrelude
+
 open import IsLiteralFormula
 open import HasNegation
 open import Formula
@@ -25,51 +26,50 @@ instance HasNegationLiteralFormula : HasNegation LiteralFormula
 HasNegation.~ HasNegationLiteralFormula ⟨ atomic 𝑃 τs ⟩ = ⟨ logical 𝑃 τs ⟩
 HasNegation.~ HasNegationLiteralFormula ⟨ logical 𝑃 τs ⟩ = ⟨ atomic 𝑃 τs ⟩
 
-open import 𝓐ssertion
-
-instance 𝓐ssertionLiteralFormula : 𝓐ssertion LiteralFormula
-𝓐ssertionLiteralFormula = record {}
-
-open import HasSatisfaction
 open import Interpretation
 open import Vector
 open import Term
 open import Elements
 open import TruthValue
 
-instance HasSatisfactionLiteralFormula : HasSatisfaction LiteralFormula
-HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
-HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ logical 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ false ⟩
+module _ where
 
-instance HasSatisfaction'LiteralFormula : HasSatisfaction' LiteralFormula
-HasSatisfaction'._⊨'_ HasSatisfaction'LiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
-HasSatisfaction'._⊨'_ HasSatisfaction'LiteralFormula I ⟨ logical 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ false ⟩
+  open import HasSatisfaction
 
-open import HasDecidableSatisfaction
+  instance HasSatisfactionLiteralFormula : HasSatisfaction LiteralFormula
+  HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ atomic 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ true ⟩
+  HasSatisfaction._⊨_ HasSatisfactionLiteralFormula I ⟨ logical 𝑃 τs ⟩ = 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩ ≡ ⟨ false ⟩
 
-instance HasDecidableSatisfactionLiteralFormula : HasDecidableSatisfaction LiteralFormula
-HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
-  I ⟨ atomic 𝑃 τs ⟩
- with 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩
-… | ⟨ true ⟩ = yes refl
-… | ⟨ false ⟩ = no λ ()
-HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
-  I ⟨ logical 𝑃 τs ⟩
-  with 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩
-… | ⟨ true ⟩ = no λ ()
-… | ⟨ false ⟩ = yes refl
+  instance HasDecidableSatisfactionLiteralFormula : HasDecidableSatisfaction LiteralFormula
+  HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
+    I ⟨ atomic 𝑃 τs ⟩
+   with 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩
+  … | ⟨ true ⟩ = yes refl
+  … | ⟨ false ⟩ = no λ ()
+  HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionLiteralFormula
+    I ⟨ logical 𝑃 τs ⟩
+    with 𝑃⟦ I ⟧ 𝑃 ⟨ ⟨ τ⟦ I ⟧ <$> vector (terms τs) ⟩ ⟩
+  … | ⟨ true ⟩ = no λ ()
+  … | ⟨ false ⟩ = yes refl
 
-open import HasSubstantiveDischarge
+  instance HasDecidableValidationLiteralFormula : HasDecidableValidation LiteralFormula
+  HasDecidableValidation.⊨? HasDecidableValidationLiteralFormula = {!!}
 
-instance HasSubstantiveDischargeLiteralFormula : HasSubstantiveDischarge LiteralFormula LiteralFormula
-(HasSubstantiveDischargeLiteralFormula HasSubstantiveDischarge.≽ x) x₁ = formula x ≡ formula x₁
+module _ where
 
-open import HasDecidableValidation
+  open import HasSubstantiveDischarge
 
-instance HasDecidableValidationLiteralFormula : HasDecidableValidation LiteralFormula
-HasDecidableValidationLiteralFormula = {!!}
+  postulate
+    instance cs' : CanonicalSubstitution LiteralFormula
+    instance hpu' : HasPairUnification LiteralFormula (CanonicalSubstitution.S cs')
 
-open import HasSalvation
+  instance HasSubstantiveDischargeLiteralFormula : HasSubstantiveDischarge LiteralFormula
+  --HasSubstantiveDischarge._o≽o_ HasSubstantiveDischargeLiteralFormula φ₁ φ₂ = φ₁ ≡ φ₂
+  HasSubstantiveDischarge.hasNegation HasSubstantiveDischargeLiteralFormula = it
+  HasSubstantiveDischarge.≽-reflexive HasSubstantiveDischargeLiteralFormula = {!!}
+  HasSubstantiveDischarge.≽-consistent HasSubstantiveDischargeLiteralFormula = {!!}
+  HasSubstantiveDischarge.≽-contrapositive HasSubstantiveDischargeLiteralFormula = {!!}
 
-HasSalvationLiteralFormula : HasSalvation LiteralFormula
-(HasSalvation.▷ HasSalvationLiteralFormula) x = {!!}
+  instance HasDecidableSubstantiveDischargeLiteralFormula : HasDecidableSubstantiveDischarge LiteralFormula
+  HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeLiteralFormula = it
+  HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeLiteralFormula φ+ φ- = {!!} -- φ+ ≟ φ-

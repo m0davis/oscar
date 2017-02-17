@@ -6,8 +6,6 @@ open import VariableName
 open import FunctionName
 open import Arity
 open import Vector
-open import TermByFunctionNames
-open import Membership
 
 mutual
 
@@ -38,16 +36,20 @@ termFunction-inj₂ refl = refl
 terms-inj : ∀ {𝑎} → {τs₁ τs₂ : Vector Term 𝑎} → (τs₁≡τs₂ : (Terms.⟨_⟩ {𝑎} τs₁) ≡ ⟨ τs₂ ⟩) → τs₁ ≡ τs₂
 terms-inj refl = refl
 
-mutual
-  termToTermByFunctionNames : Term → Σ Nat TermByFunctionNames
-  termToTermByFunctionNames (variable x) = _ , (variable x)
-  termToTermByFunctionNames (function x x₁) = {!!}
+module _ where
 
-  termsToVec : Terms → Σ Nat (λ arity → Σ (Vec (Σ Nat TermByFunctionNames) arity) λ τs → Σ Nat λ n → n ≡ sum (vecToList $ (fst <$> τs)))
-  termsToVec (⟨_⟩ {arity = arity₁} ⟨ vector₁ ⟩) = {!!}
+  open import TermByFunctionNames
 
-iTermToTerm : Σ Nat TermByFunctionNames → Term
-iTermToTerm = {!!}
+  mutual
+    termToTermByFunctionNames : Term → Σ Nat TermByFunctionNames
+    termToTermByFunctionNames (variable x) = _ , (variable x)
+    termToTermByFunctionNames (function x x₁) = {!!}
+
+    termsToVec : Terms → Σ Nat (λ arity → Σ (Vec (Σ Nat TermByFunctionNames) arity) λ τs → Σ Nat λ n → n ≡ sum (vecToList $ (fst <$> τs)))
+    termsToVec (⟨_⟩ {arity = arity₁} ⟨ vector₁ ⟩) = {!!}
+
+  iTermToTerm : Σ Nat TermByFunctionNames → Term
+  iTermToTerm = {!!}
 
 eq-term-round : ∀ τ → iTermToTerm (termToTermByFunctionNames τ) ≡ τ
 eq-term-round = {!!}
@@ -151,22 +153,47 @@ instance EqTerms : Eq Terms
 Eq._==_ EqTerms x y = fst (EqTerms⇓ x y)
 -}
 
-instance MembershipTermTerms : Membership Term Terms
-Membership._∈_ MembershipTermTerms = _ᵗ∈ᵗˢ_ where
-  data _ᵗ∈ᵗˢ_ (τ : Term) : Terms → Set
-   where
-    zero : τ ᵗ∈ᵗˢ ⟨ ⟨ τ ∷ [] ⟩ ⟩
-    suc : ∀ {τs} → τ ᵗ∈ᵗˢ τs → τ ᵗ∈ᵗˢ ⟨ ⟨ τ ∷ vector (terms τs) ⟩ ⟩
-Membership._∉_ MembershipTermTerms x X = ¬ x ∈ X
-fst (Membership.xor-membership MembershipTermTerms) x₁ x₂ = x₂ x₁
-snd (Membership.xor-membership MembershipTermTerms) x₁ x₂ = x₁ x₂
+module _ where
 
-instance MembershipVariableNameTerm : Membership VariableName Term
-Membership._∈_ MembershipVariableNameTerm = _ᵛ∈ᵗ_ where
-  data _ᵛ∈ᵗ_ (𝑥 : VariableName) : Term → Set
-   where
-    variable : 𝑥 ᵛ∈ᵗ variable 𝑥
-    function : ∀ 𝑓 {τ : Term} {τs} → {_ : 𝑥 ∈ τ} → τ ∈ τs → 𝑥 ᵛ∈ᵗ function 𝑓 τs
-Membership._∉_ MembershipVariableNameTerm x X = ¬ x ∈ X
-fst (Membership.xor-membership MembershipVariableNameTerm) x₁ x₂ = x₂ x₁
-snd (Membership.xor-membership MembershipVariableNameTerm) x₁ x₂ = x₁ x₂
+  open import Membership
+
+  instance MembershipTermTerms : Membership Term Terms
+  Membership._∈_ MembershipTermTerms = _ᵗ∈ᵗˢ_ where
+    data _ᵗ∈ᵗˢ_ (τ : Term) : Terms → Set
+     where
+      zero : τ ᵗ∈ᵗˢ ⟨ ⟨ τ ∷ [] ⟩ ⟩
+      suc : ∀ {τs} → τ ᵗ∈ᵗˢ τs → τ ᵗ∈ᵗˢ ⟨ ⟨ τ ∷ vector (terms τs) ⟩ ⟩
+  Membership._∉_ MembershipTermTerms x X = ¬ x ∈ X
+  fst (Membership.xor-membership MembershipTermTerms) x₁ x₂ = x₂ x₁
+  snd (Membership.xor-membership MembershipTermTerms) x₁ x₂ = x₁ x₂
+
+  instance MembershipVariableNameTerm : Membership VariableName Term
+  Membership._∈_ MembershipVariableNameTerm = _ᵛ∈ᵗ_ where
+    data _ᵛ∈ᵗ_ (𝑥 : VariableName) : Term → Set
+     where
+      variable : 𝑥 ᵛ∈ᵗ variable 𝑥
+      function : ∀ 𝑓 {τ : Term} {τs} → {_ : 𝑥 ∈ τ} → τ ∈ τs → 𝑥 ᵛ∈ᵗ function 𝑓 τs
+  Membership._∉_ MembershipVariableNameTerm x X = ¬ x ∈ X
+  fst (Membership.xor-membership MembershipVariableNameTerm) x₁ x₂ = x₂ x₁
+  snd (Membership.xor-membership MembershipVariableNameTerm) x₁ x₂ = x₁ x₂
+
+module _ where
+  import UnifyTermL
+  import UnifyMguCorrectL
+
+  module L where
+    open UnifyTermL (Maybe FunctionName) public
+    open UnifyMguCorrectL (Maybe FunctionName) public
+
+  mutual
+
+    TermLtoTerm : ∃ L.Term → Term
+    TermLtoTerm (fst₁ , UnifyTermL.i x) = {!!}
+    TermLtoTerm (fst₁ , UnifyTermL.leaf nothing) = {!!}
+    TermLtoTerm (fst₁ , UnifyTermL.leaf (just x)) = {!!}
+    TermLtoTerm (fst₁ , (snd₁ UnifyTermL.fork snd₂)) = {!!}
+
+    TermtoTermL : Term → ∃ L.Term
+    TermtoTermL (variable x) = {!!} , (L.i {!!})
+    TermtoTermL (function x ⟨ ⟨ [] ⟩ ⟩) = {!!} , L.leaf (just x) L.fork L.leaf nothing
+    TermtoTermL (function x ⟨ ⟨ x₁ ∷ vector₁ ⟩ ⟩) = {!!} , {!!} L.fork {!!}

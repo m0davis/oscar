@@ -26,7 +26,5 @@ Membership.xor-membership MembershipList = (λ x x₁ → x₁ x) , (λ x x₁ �
 instance SuccessorMembershipList : ∀ {ℓ} {A : Set ℓ} {a : A} {x : A} {as : List A} → Successor (a ∈ as) $ a ∈ (x List.∷ as)
 Successor.⊹ SuccessorMembershipList = suc
 
-{- -- m is underdetermined in the explicit arguments
 _⊆_ : ∀ {ℓ} {m M : Set ℓ} ⦃ _ : Membership m M ⦄ → M → M → Set ℓ
 _⊆_ {m = m} M₁ M₂ = ∀ {x : m} → x ∈ M₁ → x ∈ M₂
--}

@@ -9,6 +9,6 @@ record SubstantiveDischargeIsConsistent (+ : Set) (- : Set) ⦃ _ : HasNegation 
   field
     ≽-consistent : {+ : +} → { - : - } → + ≽ - → + ⋡ ~ -
 
-open SubstantiveDischargeIsConsistent ⦃ … ⦄
+open SubstantiveDischargeIsConsistent ⦃ … ⦄ public
 
 {-# DISPLAY SubstantiveDischargeIsConsistent.≽-consistent _ = ≽-consistent #-}

@@ -84,13 +84,6 @@ module _ where
 
 module _ where
 
-  open import 𝓐ssertion
-
-  instance 𝓐ssertionFormula : 𝓐ssertion Formula
-  𝓐ssertionFormula = record {}
-
-module _ where
-
   open import OscarPrelude
   open import Term
   open import HasSatisfaction
@@ -105,18 +98,10 @@ module _ where
   HasSatisfaction._⊨_ HasSatisfactionFormula I (logical φ₁ φ₂) = ¬ I ⊨ φ₁ × ¬ I ⊨ φ₂
   HasSatisfaction._⊨_ HasSatisfactionFormula I (quantified 𝑥 φ) = (𝓘 : Interpretation) → 𝓘 ≞ I / 𝑥 → 𝓘 ⊨ φ
 
-module _ where
-
-  open import HasDecidableSatisfaction
-
   instance HasDecidableSatisfactionFormula : HasDecidableSatisfaction Formula
   HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionFormula I (atomic 𝑃 τs) = {!!}
   HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionFormula I (logical φ₁ φ₂) = {!!}
   HasDecidableSatisfaction._⊨?_ HasDecidableSatisfactionFormula I (quantified 𝑥 φ) = {!!}
-
-module _ where
-
-  open import HasDecidableValidation
 
   instance HasDecidableValidationFormula : HasDecidableValidation Formula
   HasDecidableValidation.⊨?_ HasDecidableValidationFormula (atomic 𝑃 τs) = {!!}
@@ -227,25 +212,21 @@ module _ where
 module _ where
 
   open import HasSubstantiveDischarge
+{-
+  postulate
+    instance cs : CanonicalSubstitution Formula
+    instance hpu : HasPairUnification Formula (CanonicalSubstitution.S cs)
+-}
+  instance HasSubstantiveDischargeFormulaFormula : HasSubstantiveDischarge Formula
+  HasSubstantiveDischarge.hasNegation HasSubstantiveDischargeFormulaFormula = {!!}
+  --HasSubstantiveDischarge._o≽o_ HasSubstantiveDischargeFormulaFormula φ₁ φ₂ = {!!} -- ∃ λ υ → υ Unifies φ₁ and φ₂
+  HasSubstantiveDischarge.≽-reflexive HasSubstantiveDischargeFormulaFormula = {!!}
+  HasSubstantiveDischarge.≽-consistent HasSubstantiveDischargeFormulaFormula = {!!}
+  HasSubstantiveDischarge.≽-contrapositive HasSubstantiveDischargeFormulaFormula = {!!}
 
-  instance HasSubstantiveDischargeFormulaFormula : HasSubstantiveDischarge Formula Formula
-  HasSubstantiveDischarge._≽_ HasSubstantiveDischargeFormulaFormula φ₁ φ₂ = {!!} -- ∃ λ υ → υ Unifies φ₁ and φ₂
-
-module _ where
-
-  open import HasDecidableSubstantiveDischarge
-
-  instance HasDecidableSubstantiveDischargeFormulaFormula : HasDecidableSubstantiveDischarge Formula Formula
-  HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeFormulaFormula = {!!} -- _≟_
-
-module _ where
-
-  open import OscarPrelude
-  open import HasDecidableVacuousDischarge
-
-  instance HasDecidableVacuousDischargeFormula : HasDecidableVacuousDischarge Formula
-  HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeFormula [] = {!!}
-  HasDecidableVacuousDischarge.◁?_ HasDecidableVacuousDischargeFormula (φ ∷ φs) = {!!}
+  instance HasDecidableSubstantiveDischargeFormulaFormula : HasDecidableSubstantiveDischarge Formula
+  HasDecidableSubstantiveDischarge.hasSubstantiveDischarge HasDecidableSubstantiveDischargeFormulaFormula = {!!}
+  HasDecidableSubstantiveDischarge._≽?_ HasDecidableSubstantiveDischargeFormulaFormula = {!!}
 
 module _ where
 
