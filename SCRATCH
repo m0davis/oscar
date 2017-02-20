@@ -1,3 +1,8 @@
+(progn (print-hyperlink (hyperlink 7) nil 1) (terpri) (terpri))
+
+
+
+
 ⊥
 ∀
 ⇒
@@ -15,6 +20,39 @@
 ⫴
 ≫=
 ↵
+���
+
+𝔹
+∈ 2208 el
+∉ 2209 eL
+∋ 220b El
+∌ 220c EL
+∀ 2200 fa
+∑ 2211
+∘ 2218
+∃ 2203 
+∆ 2206
+∇ 2207
+2227 ∧
+2228 ∨
+2229 ∩
+222a ∪
+∪ 222a
+⌀ 2300
+    S 226a ≪
+        S 226b ≫
+    S 22c0 ⋀
+        S 22c1 ⋁
+            S 22c2 ⋂
+                S 22c3 ⋃
+    S 22d8 ⋘
+        S 22d9 ⋙
+
+┐┒
+
+
+
+
 
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}

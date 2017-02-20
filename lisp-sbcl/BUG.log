@@ -1,0 +1,621 @@
+******************************************************************************************
+******************************************************************************************
+Problem #1
+
+(inv F B A) written as Range(F:A->B)
+(equal A B) written as A ≡ B
+(mem x A) written as x ∈ A
+(subset A B) ... A ⊂ B
+
+Given premises:
+     (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))    justification = 1.0
+      ∀ A B (A ⊂ B ↔ ∀ x (x ∈ A → x ∈ B))
+     (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))    justification = 1.0
+      ∀ A B x (x ∈ A × B ↔ x ∈ A ∧ x ∈ B)
+     (all A)(all B)((maps F A B) <-> ((all x)((mem x A) -> (some y)((mem y B) & (F x y))) & (all x)(all y)(all z)(((mem x A) & ((mem y A) & (mem z A))) -> (((F x y) & (F x z)) -> (y = z)))))    justification = 1.0
+      ∀ A B (F : A -> B ↔ ∀ x (x ∈ A → ∃ y (y ∈ B ∧ F x y → ∀ x y z (x ∈ A ∧ y ∈ A ∧ z ∈ A → (F x y ∧ F x z → y = z)))))
+     (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))    justification = 1.0
+      ∀ A x y (x = y → (x ∈ A → y ∈ A))
+     (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))    justification = 1.0
+      ∀ A B (A ≡ B ↔ (A ⊂ B ∧ B ⊂ A))
+     (all B)(all A)(all B1)(all x)((mem x (inv F B1 A)) <-> ((mem x A) & (some y)((mem y B1) & (F x y))))    justification = 1.0
+      ∀ B A B1 x (x ∈ (F ⁻¹ : B1 → A) ↔ (x ∈ A ∧ ∃ y (y ∈ B1 ∧ F x y)))
+      ;; NOTE THAT B IS UNNECESSARY
+      ∀ A B x (x ∈ Range(F:A->B) ↔ (x ∈ A ∧ ∃ y (y ∈ B ∧ F x y)))
+Ultimate epistemic interests:
+     (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))    interest = 1.0
+      ∀ A B X Y ((F : A -> B ∧ (X ⊂ B ∧ Y ⊂ B)) → Range(F:A->(X × Y)) ≡ Range(F:A->X) × Range(F:A->Y))
+
+Given premises:
+      ∀ A B (A ⊂ B ↔ ∀ x (x ∈ A → x ∈ B))
+      ∀ A B x (x ∈ A × B ↔ x ∈ A ∧ x ∈ B)
+      ∀ A B (F : A -> B ↔ ∀ x (x ∈ A → ∃ y (y ∈ B ∧ F x y → ∀ x y z (x ∈ A ∧ y ∈ A ∧ z ∈ A → (F x y ∧ F x z → y = z)))))
+      ∀ A x y (x = y → (x ∈ A → y ∈ A))
+      ∀ A B (A ≡ B ↔ (A ⊂ B ∧ B ⊂ A))
+      ∀ A B x (x ∈ Range(F:A->B) ↔ (x ∈ A ∧ ∃ y (y ∈ B ∧ F x y)))
+Ultimate epistemic interests:
+      ∀ A B X Y ((F : A -> B ∧ (X ⊂ B ∧ Y ⊂ B)) → Range(F:A->(X × Y)) ≡ Range(F:A->X) × Range(F:A->Y))
+
+
+================== ULTIMATE EPISTEMIC INTERESTS ===================
+  Interest in (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))
+  is answered affirmatively by node 2023
+---------------------------------------------------
+
+Elapsed time = 20.030 sec
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))
+      ∀ A B X Y (F : A -> B ∧ X ⊂ B ∧ Y ⊂ B → Range(F:A->(X × Y)) ≡ Range(F:A->X) × Range(F:A->Y)
+ which is of ultimate interest.
+
+ 5.  (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))     GIVEN
+      ∀ A B (A ≡ B ↔ A ⊂ B ∧ B ⊂ A
+ 10.  (all B)((equal x4 B) <-> ((subset x4 B) & (subset B x4)))     UI from { 5 }
+      ∀ B (x4 ≡ B ↔ (x4 ⊂ B ∧ B ⊂ x4))
+ 12.  ((equal x4 x6) <-> ((subset x4 x6) & (subset x6 x4)))     UI from { 10 }
+      x4 ≡ x6 ↔ (x4 ⊂ x6 ∧ x6 ⊂ x4)
+ 19.  (((subset x4 x6) & (subset x6 x4)) -> (equal x4 x6))     bicondit-simp from { 12 }
+      x4 ⊂ x6 ∧ x6 ⊂ x4 → x4 ≡ x6
+ 18.  ((equal x4 x6) -> ((subset x4 x6) & (subset x6 x4)))     bicondit-simp from { 12 }
+      x4 ≡ x6 → (x4 ⊂ x6 ∧ x6 ⊂ x4)
+ 20.  ((subset x4 x6) -> ((subset x6 x4) -> (equal x4 x6)))     exportation from { 19 }
+      x4 ⊂ x6 → (x6 ⊂ x4 → x4 ≡ x6)
+ 1.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+      ∀ A B (A ⊂ B ↔ ∀ x (x ∈ A → x ∈ B))
+ 8.  (all B)((subset x2 B) <-> (all x)((mem x x2) -> (mem x B)))     UI from { 1 }
+      ∀ B (x2 ⊂ B ↔ ∀ x (x ∈ x2 → x ∈ B))
+ 11.  ((subset x2 x5) <-> (all x)((mem x x2) -> (mem x x5)))     UI from { 8 }
+      x2 ⊂ x5 ↔ ∀ x (x ∈ x2 → x ∈ x5)
+ 14.  ((subset x2 x5) -> (all x)((mem x x2) -> (mem x x5)))     bicondit-simp from { 11 }
+      x2 ⊂ x5 → ∀ x (x ∈ x2 → x ∈ x5)
+ 15.  ((all x)((mem x x2) -> (mem x x5)) -> (subset x2 x5))     bicondit-simp from { 11 }
+       (∀ x (x ∈ x2 → x ∈ x5)) → x2 ⊂ x5
+ 16.  (some z8)(((mem z8 x2) -> (mem z8 x5)) -> (subset x2 x5))     A-removal from { 15 }
+       ∃ z8 ((z8 ∈ x2 → z8 ∈ z5) → x2 ⊂ x5)
+>>
+A-removal
+  (∀ x P(x)) → Q
+  i.e.
+  (P x₁ & P x₂ & P x₃ & ...) → Q
+  i.e.
+  ¬( (P x₁ & P x₂ & P x₃ & ...) & ¬ Q )
+  i.e.
+  ¬(P x₁ & P x₂ & P x₃ & ...) ∨ Q
+  i.e.
+  ¬ P x₁ ∨ ¬ P x₂ ∨ ¬ P x₃ ∨ ... ∨ Q
+  -----------
+  (∃ y (P(y) → Q)
+  i.e.
+  P xₖ → Q for some k
+  i.e.
+  ¬( P xₖ & ¬ Q ) for some k
+  i.e.
+  ¬ P xₖ ∨ Q for some k
+<<
+ 17.  (((mem (s9 x2 x5) x2) -> (mem (s9 x2 x5) x5)) -> (subset x2 x5))     EI from { 16 }
+       ((s9 x2 x5) ∈ x2 → (s9 x2 x5) ∈ x5) → x2 ⊂ x5
+ 46.  (~(mem (s9 x2 x5) x2) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+       (s9 x2 x5) ∉ x2 → x2 ⊂ x5
+ 47.  ((mem (s9 x2 x5) x5) -> (subset x2 x5))     cond-antecedent-simp from { 17 }
+       (s9 x2 x5) ∈ x5 → x2 ⊂ x5
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) }
+                      Range(F:c0->(c18 × c19)) ≢ Range(F:c0->c18) × Range(F:c0->c19)
+        |----------------------------------------------------------
+        | 45.  ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO-SUPPOSITION
+               Range(F:c0->(c18 × c19)) ≢ Range(F:c0->c18) × Range(F:c0->c19)
+        | 75.  ~((subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) & (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)))     modus-tollens2 from { 19 , 45 }
+               ¬(Range(F:c0->(c18 × c19)) ⊂ Range(F:c0->c18) × Range(F:c0->c19)
+                  ∧
+                 Range(F:c0->c18) × Range(F:c0->c19) ⊂ Range(F:c0->(c18 × c19))
+                )
+        | 76.  (~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) v ~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)))     DM from { 75 }
+               Range(F:c0->(c18 × c19)) ⊄ Range(F:c0->c18) × Range(F:c0->c19)
+                 ∨
+               Range(F:c0->c18) × Range(F:c0->c19) ⊄ Range(F:c0->(c18 × c19))
+        | 77.  ((subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) -> ~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)))     disj-simp from { 76 }
+               Range(F:c0->(c18 × c19)) ⊂ Range(F:c0->c18) × Range(F:c0->c19)
+                 →
+               Range(F:c0->c18) × Range(F:c0->c19) ⊄ Range(F:c0->(c18 × c19))
+        | 81.  (~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) v ~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))))     disj-cond-2 from { 77 }
+               Range(F:c0->c18) × Range(F:c0->c19) ⊄ Range(F:c0->(c18 × c19))
+                 ∨
+               Range(F:c0->(c18 × c19)) ⊄ Range(F:c0->c18) × Range(F:c0->c19)
+        | 84.  ((subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) -> ~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))))     disj-simp from { 81 }
+               Range(F:c0->c18) × Range(F:c0->c19) ⊂ Range(F:c0->(c18 × c19))
+                 →
+               Range(F:c0->(c18 × c19)) ⊄ Range(F:c0->c18) × Range(F:c0->c19)
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal x654 c18) }
+                    x654 ≢ c18
+        |----------------------------------------------------------
+        | 541.  ~(equal x654 c18)     REDUCTIO-SUPPOSITION
+                x654 ≢ c18        { x654 ≢ c18 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x89 x90) }
+                    x89 ⊂ x90
+        |----------------------------------------------------------
+        | 80.  (subset x89 x90)     REDUCTIO-SUPPOSITION
+               x89 ⊂ x90
+        |----------------------------------------------------------
+        | Suppose:  { (subset x4 x6) }
+                    x4 ⊂ x6
+        |----------------------------------------------------------
+        | 89.  ((subset x6 x4) -> (equal x4 x6))     modus-ponens2 from { 20 , 80 }
+               x6 ⊂ x4 → x4 ≡ x6
+                |----------------------------------------------------------
+                | Suppose:  { (subset x4 x6) , (subset x6 x4) }
+                            x4 ⊂ x6 , x6 ⊂ x4
+                |----------------------------------------------------------
+                | 94.  (equal x4 x6)     modus-ponens1 from { 89 , 80 }
+                       x4 ≡ x6      { x4 ⊂ x6 , x6 ⊂ x4 }
+                |----------------------------------------------------------
+                | Suppose:  { (subset c18 ^@y39) , ~(equal ^@y39 c18) }
+                            c18 ⊂ ^@y39 , ^@y39 ≢ c18
+                |----------------------------------------------------------
+                | 542.  ~(subset ^@y39 c18)     REDUCTIO from { 94 , 541 }
+                        94.   x4 ≡ x6           { x4 ⊂ x6 , x6 ⊂ x4 }
+                        541.  x654 ≢ c18        { x654 ≢ c18 }
+                        ^@y39 ⊄ c18             { c18 ⊂ ^@y39 , ^@y39 ≢ c18 } REDUCTIO
+                        --
+                        unify x654 -> ^@y39
+                         94.   x4 ≡ x6           { x4 ⊂ x6 , x6 ⊂ x4 }
+                         541.  ^@y39 ≢ c18       { ^@y39 ≢ c18 }
+                         ^@y39 ⊄ c18             { c18 ⊂ ^@y39 , ^@y39 ≢ c18 } REDUCTIO
+                         --
+                         unify x4 -> ^@y39 , x6 -> c18
+                          94.   ^@y39 ≡ c18       { ^@y39 ⊂ c18 , c18 ⊂ ^@y39 }
+                          541.  ^@y39 ≢ c18       { ^@y39 ≢ c18 }
+                          ^@y39 ⊄ c18             { c18 ⊂ ^@y39 , ^@y39 ≢ c18 } REDUCTIO
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal ^@y38 c18) }
+                    ^@y38 ≢ c18
+        |----------------------------------------------------------
+        | 544.  ((subset ^@y38 c18) -> ~(subset c18 ^@y38))     CONTRA-CONDITIONALIZATION from { 542 }
+                ^@y38 ⊂ c18 → c18 ⊄ ^@y38    { ^@y38 ≢ c18 }
+        | 549.  (~(subset ^@y39 c18) v ~(subset c18 ^@y39))     disj-cond from { 544 }
+        | 550.  ~((subset ^@y39 c18) & (subset c18 ^@y39))     i-DM from { 549 }
+        | 657.  ~(equal x4 c18)     modus-tollens2 from { 18 , 550 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(equal ^@y38 c18) , (subset c18 ^@y105) }
+                |----------------------------------------------------------
+                | 684.  ~(subset ^@y105 c18)     REDUCTIO from { 657 , 94 }
+        | 686.  ((subset c18 ^@y39) -> ~(subset ^@y39 c18))     CONDITIONALIZATION from { 684 }
+        | 762.  ~(subset c18 c18)     cond-simp1 from { 686 }
+        | 776.  ~(mem (s9 c18 c18) c18)     modus-tollens2 from { 47 , 762 }
+        | 763.  (mem (s9 c18 c18) c18)     modus-tollens2 from { 46 , 762 }
+        | 1417.  (subset c18 c18)     modus-ponens2 from { 47 , 763 }
+        | 777.  ~((mem (s9 c18 c18) c18) -> (mem (s9 c18 c18) c18))     i-neg-condit from { 776 , 763 }
+        | 778.  (some x)~((mem x c18) -> (mem x c18))     EG from { 777 }
+        | 779.  ~(all x)((mem x c18) -> (mem x c18))     i-neg-ug from { 778 }
+        | 1425.  ~((subset c18 c18) -> (all x)((mem x c18) -> (mem x c18)))     i-neg-condit from { 779 , 1417 }
+                 c18 ⊂ c18 ↛ ∀ x (x ∈ c18 → x ∈ c18)
+ 1426.  (equal ^@y38 c18)     REDUCTIO from { 1425 , 14 }
+        ^@y38 ≡ c18
+
+TODO see IV-22 and V-27 & -28
+
+
+ 1444.  ((subset x4 c18) & (subset c18 x4))     modus-ponens2 from { 18 , 1426 }
+ 1445.  (subset x4 c18)     simp from { 1444 }
+ 1480.  (subset c18 x4)     simp from { 1444 }
+ 1533.  (all x)((mem x x2) -> (mem x c18))     modus-ponens2 from { 14 , 1445 }
+ 1545.  ((mem x1528 x2) -> (mem x1528 c18))     UI from { 1533 }
+ 1539.  (all x)((mem x c18) -> (mem x x5))     modus-ponens2 from { 14 , 1480 }
+ 1544.  ((mem x1520 c18) -> (mem x1520 x5))     UI from { 1539 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x2 x5) }
+        |----------------------------------------------------------
+        | 90.  (all x)((mem x x2) -> (mem x x5))     modus-ponens2 from { 14 , 80 }
+        | 93.  ((mem x95 x2) -> (mem x95 x5))     UI from { 90 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                |----------------------------------------------------------
+                | 86.  ~(subset (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     modus-ponens2 from { 84 , 80 }
+                | 117.  ~(mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) (int (inv F c18 c0) (inv F c19 c0)))     modus-tollens2 from { 47 , 86 }
+                | 115.  (mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) (inv F (int c18 c19) c0))     modus-tollens2 from { 46 , 86 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset (inv F (int c18 c19) c0) x5) , ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                        |----------------------------------------------------------
+                        | 128.  (mem (s9 (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) x5)     modus-ponens2 from { 93 , 115 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset (inv F (int c18 c19) c0) ^@y42) , ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                        |----------------------------------------------------------
+                        | 129.  ~((mem (s9 (inv F (int c18 c19) c0)       (int (inv F c18 c0) (inv F c19 c0))) ^@y42) ->
+                                  (mem (s9 (inv F (int c18 c19) c0)       (int (inv F c18 c0) (inv F c19 c0))) (int (inv F c18 c0) (inv F c19 c0))))     i-neg-condit from { 117 , 128 }
+                        | 130.  (some x)~((mem x ^@y42) -> (mem x (int (inv F c18 c0) (inv F c19 c0))))     EG from { 129 }
+                        | 131.  ~(all x)((mem x ^@y42) -> (mem x (int (inv F c18 c0) (inv F c19 c0))))     i-neg-ug from { 130 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset (inv F (int c18 c19) c0) x2) , ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+                        |----------------------------------------------------------
+                        | 137.  ~(subset x2 (int (inv F c18 c0) (inv F c19 c0)))     modus-tollens2 from { 14 , 131 }
+                | 1510.  ~(subset (inv F (int c18 c19) c0) c18)     REDUCTIO from { 1480 , 137 }
+                | 1766.  (mem (s9 (inv F (int c18 c19) c0) c18) (inv F (int c18 c19) c0))     modus-tollens2 from { 46 , 1510 }
+                        |----------------------------------------------------------
+                        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) , (subset ^@y40 (int (inv F c18 c0) (inv F c19 c0))) }
+                        |----------------------------------------------------------
+                        | 162.  ~(subset (inv F (int c18 c19) c0) ^@y40)     REDUCTIO from { 137 , 80 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem x85 x86) }
+        |----------------------------------------------------------
+        | 79.  (mem x85 x86)     REDUCTIO-SUPPOSITION
+                        |----------------------------------------------------------
+                        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) , (subset x5 (int (inv F c18 c0) (inv F c19 c0))) }
+                        |----------------------------------------------------------
+                        | 213.  ~(mem (s9 (inv F (int c18 c19) c0) x5) x5)     modus-tollens2 from { 47 , 162 }
+                        |----------------------------------------------------------
+                        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) , (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) , (mem (s9 (inv F (int c18 c19) c0) ^@y43) ^@y43) }
+                        |----------------------------------------------------------
+                        | 315.  ~(subset ^@y43 (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO from { 213 , 79 }
+                | 1498.  ~(mem (s9 (inv F (int c18 c19) c0) c18) c18)     REDUCTIO from { 1480 , 315 }
+                | 1820.  ~(mem (s9 (inv F (int c18 c19) c0) c18) x2)     modus-tollens2 from { 1545 , 1498 }
+                | 1827.  ~((mem (s9 (inv F (int c18 c19) c0) c18) (inv F (int c18 c19) c0)) -> (mem (s9 (inv F (int c18 c19) c0) c18) ^@y43))     i-neg-condit from { 1820 , 1766 }
+                | 1828.  (some x)~((mem x (inv F (int c18 c19) c0)) -> (mem x ^@y43))     EG from { 1827 }
+                | 1829.  ~(all x)((mem x (inv F (int c18 c19) c0)) -> (mem x ^@y43))     i-neg-ug from { 1828 }
+                | 1936.  ~(subset (inv F (int c18 c19) c0) x5)     modus-tollens2 from { 14 , 1829 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) }
+        |----------------------------------------------------------
+        | 1976.  (equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO from { 1936 , 1445 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))) }
+        |----------------------------------------------------------
+        | 1978.  ~(subset (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0))     REDUCTIO from { 1976 , 45 }
+        | 1988.  ~(mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) (inv F (int c18 c19) c0))     modus-tollens2 from { 47 , 1978 }
+        | 2008.  ~(mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0)) c18)     modus-tollens2 from { 1544 , 1988 }
+        | 1981.   (mem (s9 (int (inv F c18 c0) (inv F c19 c0)) (inv F (int c18 c19) c0))
+                       (int (inv F c18 c0) (inv F c19 c0)))     modus-tollens2 from { 46 , 1978 }
+        | 2013.  ~((mem (s9 (int (inv F c18 c0) (inv F c19 c0))
+                            (inv F (int c18 c19) c0))
+                        (int (inv F c18 c0) (inv F c19 c0)))
+                   ->
+                   (mem (s9 (int (inv F c18 c0) (inv F c19 c0))
+                            (inv F (int c18 c19) c0))
+                        c18))     i-neg-condit from { 2008 , 1981 }
+        | 2014.  (some x)~((mem x (int (inv F c18 c0) (inv F c19 c0))) -> (mem x c18))     EG from { 2013 }
+        | 2015.  ~(all x)((mem x (int (inv F c18 c0) (inv F c19 c0))) -> (mem x c18))     i-neg-ug from { 2014 }
+        | 2016.  ~((subset (int (inv F c18 c0) (inv F c19 c0)) c18) -> (all x)((mem x (int (inv F c18 c0) (inv F c19 c0))) -> (mem x c18)))     i-neg-condit from { 2015 , 1445 }
+ 2017.  (equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0)))     REDUCTIO from { 2016 , 14 }
+ 2019.                       (((maps F c0 c17) & ((subset c18 c17) & (subset c19 c17))) -> (equal (inv F (int c18 c19) c0) (int (inv F c18 c0) (inv F c19 c0))))     CONDITIONALIZATION from { 2017 }
+ 2020.  (all Y)              (((maps F c0 c17) & ((subset c18 c17) & (subset Y c17)))   -> (equal (inv F (int c18 Y)   c0) (int (inv F c18 c0) (inv F Y c0))))     UG from { 2019 }
+ 2021.  (all X)(all Y)       (((maps F c0 c17) & ((subset X c17)   & (subset Y c17)))   -> (equal (inv F (int X Y)     c0) (int (inv F X   c0) (inv F Y c0))))     UG from { 2020 }
+ 2022.  (all B)(all X)(all Y)(((maps F c0 B)   & ((subset X B)     & (subset Y B)))     -> (equal (inv F (int X Y)     c0) (int (inv F X   c0) (inv F Y c0))))     UG from { 2021 }
+ 2023.  (all A)(all B)(all X)(all Y)(((maps F A B) & ((subset X B) & (subset Y B))) -> (equal (inv F (int X Y) A) (int (inv F X A) (inv F Y A))))     UG from { 2022 }
+
+===========================================================================
+
+
+Cumulative size of arguments = 85
+Size of inference-graph = 2023 of which 6 were unused suppositions.
+4% of the inference-graph was used in the argument.
+261 interests were adopted.
+9 suppositions were made.
+
+=========================== TEST RESULTS ===========================
+
+                                                                                OSCAR_4.02
+          *reductio-discount*:                                 0.23
+          *reductio-interest*:                                   0.23
+          *skolem-multiplier*:                                   10
+          *quantifier-discount*:                                   0.95
+
+#1                                                                          20.030 sec
+           cumulative  argument length:                 85
+           total number of inferences:                     2017
+
+
+
+(OSCAR_4.02 0.23 0.23 10 0.95 ((1 20029998 85 2017)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Given premises:
+      ∀ A B (A ⊂ B ↔ ∀ x (x ∈ A → x ∈ B))
+      ∀ A B x (x ∈ A × B ↔ x ∈ A ∧ x ∈ B)
+      ∀ A B (F : A -> B ↔ ∀ x (x ∈ A → ∃ y (y ∈ B ∧ F x y → ∀ x y z (x ∈ A ∧ y ∈ A ∧ z ∈ A → (F x y ∧ F x z → y = z)))))
+      ∀ A x y (x = y → (x ∈ A → y ∈ A))
+      ∀ A B (A ≡ B ↔ (A ⊂ B ∧ B ⊂ A))
+      ∀ A B x (x ∈ Range(F:A->B) ↔ (x ∈ A ∧ ∃ y (y ∈ B ∧ F x y)))
+Ultimate epistemic interests:
+      ∀ A B X Y ((F : A -> B ∧ (X ⊂ B ∧ Y ⊂ B)) → Range(F:A->(X × Y)) ≡ Range(F:A->X) × Range(F:A->Y))
+
+
+5.    GIVEN                               ∀ A B (A ≡ B ↔ A ⊂ B ∧ B ⊂ A
+10.   UI 5                                ∀ B (x4 ≡ B ↔ (x4 ⊂ B ∧ B ⊂ x4))
+12.   UI 10                               x4 ≡ x6 ↔ (x4 ⊂ x6 ∧ x6 ⊂ x4)
+19.   bicondit-simp 12                    x4 ⊂ x6 ∧ x6 ⊂ x4 → x4 ≡ x6
+18.   bicondit-simp 12                    x4 ≡ x6 → (x4 ⊂ x6 ∧ x6 ⊂ x4)
+20.   exportation 19                      x4 ⊂ x6 → (x6 ⊂ x4 → x4 ≡ x6)
+1.    GIVEN                               ∀ A B (A ⊂ B ↔ ∀ x (x ∈ A → x ∈ B))
+8.    UI 1                                ∀ B (x2 ⊂ B ↔ ∀ x (x ∈ x2 → x ∈ B))
+11.   UI 8                                x2 ⊂ x5 ↔ ∀ x (x ∈ x2 → x ∈ x5)
+14.   bicondit-simp 11                    x2 ⊂ x5 → ∀ x (x ∈ x2 → x ∈ x5)
+15.   bicondit-simp 11                    (∀ x (x ∈ x2 → x ∈ x5)) → x2 ⊂ x5
+16.   A-removal 15                        ∃ z8 ((z8 ∈ x2 → z8 ∈ x5) → x2 ⊂ x5)
+17.   EI 16                               ((s9 x2 x5) ∈ x2 → (s9 x2 x5) ∈ x5) → x2 ⊂ x5
+46.   cond-antecedent-simp 17             (s9 x2 x5) ∉ x2 → x2 ⊂ x5
+47.   cond-antecedent-simp 17             (s9 x2 x5) ∈ x5 → x2 ⊂ x5
+Suppose: R(c18 × c19) ≢ R(c18) × R(c19)
+  45.   REDUCTIO-SUPPOSITION                R(c18 × c19) ≢ R(c18) × R(c19)
+  75.   modus-tollens2 19 45                ¬(R(c18 × c19) ⊂ R(c18) × R(c19)
+                                               ∧
+                                              R(c18) × R(c19) ⊂ R(c18 × c19)
+                                             )
+  76.   DM 75                               R(c18 × c19) ⊄ R(c18) × R(c19)
+                                              ∨
+                                            R(c18) × R(c19) ⊄ R(c18 × c19)
+  77.   disj-simp 76                        R(c18 × c19) ⊂ R(c18) × R(c19)
+                                              →
+                                            R(c18) × R(c19) ⊄ R(c18 × c19)
+  81.   disj-cond-2 77                      R(c18) × R(c19) ⊄ R(c18 × c19)
+                                              ∨
+                                            R(c18 × c19) ⊄ R(c18) × R(c19)
+  84.   disj-simp 81                        R(c18) × R(c19) ⊂ R(c18 × c19)
+                                              →
+                                            R(c18 × c19) ⊄ R(c18) × R(c19)
+Suppose: x654 ≢ c18
+  541.  REDUCTIO-SUPPOSITION                x654 ≢ c18
+Suppose: x89 ⊂ x90
+  80.   REDUCTIO-SUPPOSITION                x89 ⊂ x90
+Suppose: x4 ⊂ x6
+  89.   modus-ponens2 20 80                 x6 ⊂ x4 → x4 ≡ x6
+  Suppose: x4 ⊂ x6 , x6 ⊂ x4
+    94.   modus-ponens1 89 80                 x4 ≡ x6
+  Suppose: c18 ⊂ ^@y39 , ^@y39 ≢ c18
+    542.    REDUCTIO 94 541                   ^@y39 ⊄ c18
+Suppose: ^@y38 ≢ c18
+  544.  CONTRA-CONDITIONALIZATION 542       ^@y38 ⊂ c18 → c18 ⊄ ^@y38
+  549.  disj-cond 544                       ^@y39 ⊄ c18 ∨ c18 ⊄ ^@y39
+  550.  i-DM 549                            ¬(^@y39 ⊂ c18 ∧ c18 ⊂ ^@y39)
+
+  657.  modus-tollens2 18 550               x4 ≢ c18
+        18:     x4 ≡ x6 → (x4 ⊂ x6 ∧ x6 ⊂ x4)
+        550:    ¬(^@y39 ⊂ c18 ∧ c18 ⊂ ^@y39)
+
+  Suppose: ^@y38 ≢ c18 , c18 ⊂ ^@y105
+    684.  REDUCTIO 657 94                     ^@y105 ⊄ c18
+          657:  x4 ≢ c18       { ^@y38 ≢ c18 }
+          94:   x4 ≡ x6        { x4 ⊂ x6 , x6 ⊂ x4 }
+          684:  ^@y105 ⊄ c18   { ^@y38 ≢ c18 , c18 ⊂ ^@y105 }
+          --
+          x6 -> c18
+          657:  x4 ≢ c18       { ^@y38 ≢ c18 }
+          94:   x4 ≡ c18       { x4 ⊂ c18 , c18 ⊂ x4 }
+          684:  ^@y105 ⊄ c18   { ^@y38 ≢ c18 , c18 ⊂ ^@y105 }
+          --
+          x4 -> ^@y105
+          657:  ^@y105 ≢ c18   { ^@y38 ≢ c18 }
+          94:   ^@y105 ≡ c18   { ^@y105 ⊂ c18 , c18 ⊂ ^@y105 }
+          684:  ^@y105 ⊄ c18   { ^@y38 ≢ c18 , c18 ⊂ ^@y105 }
+  686.  CONDITIONALIZATION 684              c18 ⊂ ^@y39 → ^@y39 ⊄ c18
+        684:  ^@y105 ⊄ c18                      { ^@y38 ≢ c18 , c18 ⊂ ^@y105 }
+        686:  c18 ⊂ ^@y39 → ^@y39 ⊄ c18         { ^@y38 ≢ c18 }
+        --
+        ^@y105 -> ^@y39
+        684:  ^@y39 ⊄ c18                       { ^@y38 ≢ c18 , c18 ⊂ ^@y39 }
+        686:  c18 ⊂ ^@y39 → ^@y39 ⊄ c18         { ^@y38 ≢ c18 }
+  762.  cond-simp1 686                     c18 ⊄ c18
+        686:  c18 ⊂ ^@y39 → ^@y39 ⊄ c18         { ^@y38 ≢ c18 }
+        762:  c18 ⊄ c18                         { ^@y38 ≢ c18 }
+        --
+        ^@y39 -> c18
+        686:  c18 ⊂ c18 → c18 ⊄ c18             { ^@y38 ≢ c18 }
+        762:  c18 ⊄ c18                         { ^@y38 ≢ c18 }
+  776.  modus-tollens2 47 762               (s9 c18 c18) ∉ c18
+  763.  modus-tollens2 46 762               (s9 c18 c18) ∈ c18
+  1417. modus-ponens2  47 763               c18 ⊂ c18
+  777.  i-neg-condit 776 763                (s9 c18 c18) ∈ c18 ↛ (s9 c18 c18) ∈ c18
+  778.  EG 777                              ∃ x ¬(x ∈ c18 → x ∈ c18)
+  779.  i-neg-ug 778                        ¬∀ x (x ∈ c18 → x ∈ c18)
+  1425. i-neg-condit 779 1417               c18 ⊂ c18 ↛ ∀ x (x ∈ c18 → x ∈ c18)
+1426. REDUCTIO 1425 14                    ^@y38 ≡ c18
+      1425: c18 ⊂ c18 ↛ ∀ x (x ∈ c18 → x ∈ c18)     { ^@y38 ≢ c18 }
+      14:   x2 ⊂ x5 → ∀ x (x ∈ x2 → x ∈ x5)
+      1426: ^@y38 ≡ c18
+      --
+      x2 -> c18 , x5 -> c18
+      1425: c18 ⊂ c18 ↛ ∀ x (x ∈ c18 → x ∈ c18)     { ^@y38 ≢ c18 }
+      14:   c18 ⊂ c18 → ∀ x (x ∈ c18 → x ∈ c18)
+      1426: ^@y38 ≡ c18
+1444. modus-ponens2 18 1426               x4 ⊂ c18 ∧ c18 ⊂ x4
+1445. simp 1444                           x4 ⊂ c18
+1480. simp 1444                           c18 ⊂ x4
+1533. modus-ponens2 14 1445               ∀ x (x ∈ x2 → x ∈ c18)
+1545. UI 1533                             x1528 ∈ x2 → x1528 ∈ c18
+1539. modus-ponens2 14 1480               ∀ x (x ∈ c18 → x ∈ x5)
+1544. UI 1539                             x1520 ∈ c18 → x1520 ∈ x5
+Suppose: x2 ⊂ x5
+  90.   modus-ponens2 14 80                 ∀ x (x ∈ x2 → x ∈ x5)
+  93.   UI 90                               x95 ∈ x2 → x95 ∈ x5
+  Suppose: R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19)
+    86.   modus-ponens2 84 80                 R(c18 × c19) ⊄ R(c18) × R(c19)
+    117.  modus-tollens2 47 86                (s9 R(c18 × c19) (R(c18) × R(c19))) ∉ R(c18) × R(c19)
+      47:   (s9 x2 x5) ∈ x5 → x2 ⊂ x5
+      86:   R(c18 × c19) ⊄ R(c18) × R(c19)
+      117:  (s9 R(c18 × c19) (R(c18) × R(c19))) ∉ R(c18) × R(c19)
+    115.  modus-tollens2 46 86                (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ R(c18 × c19)
+      46:   (s9 x2 x5) ∉ x2 → x2 ⊂ x5
+      86:   R(c18 × c19) ⊄ R(c18) × R(c19)
+      115:  (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ R(c18 × c19)
+      Suppose: R(c18 × c19) ⊂ x5 , R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19)
+        128. modus-ponens2 93 115                 (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ x5
+      Suppose: R(c18 × c19) ⊂ ^@y42 , R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19)
+        129. i-neg-condit 117 128                 (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ ^@y42
+                                                    ↛
+                                                  (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ R(c18) × R(c19)
+          117:  (s9 R(c18 × c19) (R(c18) × R(c19))) ∉ R(c18) × R(c19)
+          128:  (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ x5
+          129:  (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ ^@y42
+                  ↛
+                (s9 R(c18 × c19) (R(c18) × R(c19))) ∈ R(c18) × R(c19)
+        130. EG 129                               ∃ x (x ∈ ^@y42 ↛ x ∈ R(c18) × R(c19))
+        131. i-neg-ug 130                         ¬∀ x (x ∈ ^@y42 → x ∈ R(c18) × R(c19))
+      Suppose: R(c18 × c19) ⊂ x2 , R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19)
+        137. modus-tollens2 14 131                x2 ⊄ R(c18) × R(c19)
+          14:   x2 ⊂ x5 → ∀ x (x ∈ x2 → x ∈ x5)
+          131:  ¬∀ x (x ∈ ^@y42 → x ∈ R(c18) × R(c19))
+          137:  x2 ⊄ R(c18) × R(c19)
+    1510. REDUCTIO 1480 137                   R(c18 × c19) ⊄ c18
+      1480: c18 ⊂ x4
+      137:  x2 ⊄ R(c18) × R(c19)        { R(c18 × c19) ⊂ x2 , R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+      1510: R(c18 × c19) ⊄ c18          {                     R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+      --
+      x2 -> c18 , x4 -> R(c18) × R(c19)
+      1480: c18 ⊂ R(c18) × R(c19)
+      137:  c18 ⊄ R(c18) × R(c19)       { R(c18 × c19) ⊂ c18 , R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+      1510: R(c18 × c19) ⊄ c18          {                      R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+    1766. modus-tollens2 46 1510              (s9 R(c18 × c19) c18) ∈ R(c18 × c19)
+      46:   (s9 x2 x5) ∉ x2 → x2 ⊂ x5
+      1510: R(c18 × c19) ⊄ c18
+      1766: (s9 R(c18 × c19) c18) ∈ R(c18 × c19)
+      --
+      x2 -> R(c18 × c19) , x5 -> c18
+      46:   (s9 R(c18 × c19) c18) ∉ R(c18 × c19) → R(c18 × c19) ⊂ c18
+      1510: R(c18 × c19) ⊄ c18
+      1766: (s9 R(c18 × c19) c18) ∈ R(c18 × c19)
+    Suppose: R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , ^@y40 ⊂ R(c18) × R(c19)
+      162.  REDUCTIO 137 80                     R(c18 × c19) ⊄ ^@y40
+        137:  x2 ⊄ R(c18) × R(c19)      { R(c18 × c19) ⊂ x2 , R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+        80:   x89 ⊂ x90                 { x89 ⊂ x90 }
+        162:  R(c18 × c19) ⊄ ^@y40      { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , ^@y40 ⊂ R(c18) × R(c19) }
+        --
+        137:  x2 ⊄ R(c18) × R(c19)      { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , R(c18 × c19) ⊂ x2 }
+        80:   x89 ⊂ x90                 { x89 ⊂ x90 }
+        162:  R(c18 × c19) ⊄ ^@y40      { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , ^@y40 ⊂ R(c18) × R(c19) }
+        --
+        x2 -> ^@y40 , x89 -> ^@y40 , x90 -> R(c18) × R(c19)
+        137:  ^@y40 ⊄ R(c18) × R(c19)   { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) ,                           R(c18 × c19) ⊂ ^@y40 }
+        80:   ^@y40 ⊂ R(c18) × R(c19)   {                                                                   ^@y40 ⊂ R(c18) × R(c19)                        }
+        162:  R(c18 × c19) ⊄ ^@y40      { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , ^@y40 ⊂ R(c18) × R(c19)                        }
+Suppose: x85 ∈ x86
+  79. REDUCTIO-SUPPOSITION                  x85 ∈ x86
+    Suppose: R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , x5 ⊂ R(c18) × R(c19)
+      213.  modus-tollens2 47 162               (s9 R(c18 × c19) x5) ∉ x5
+        47:   (s9 x2 x5) ∈ x5 → x2 ⊂ x5
+        162:  R(c18 × c19) ⊄ ^@y40
+        213:  (s9 R(c18 × c19) x5) ∉ x5
+    Suppose: R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , (s9 R(c18 × c19) ^@y43) ∈ ^@y43
+      315.  REDUCTIO 213 79                     ^@y43 ⊄ R(c18) × R(c19)
+        213:  (s9 R(c18 × c19) x5) ∉ x5        { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , x5 ⊂ R(c18) × R(c19) }
+        79:   x85 ∈ x86                        { x85 ∈ x86 }
+        315:  ^@y43 ⊄ R(c18) × R(c19)          { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , (s9 R(c18 × c19) ^@y43) ∈ ^@y43 }
+        --
+        x85 -> (s9 R(c18 × c19) x5) , x86 -> x5
+        213:  (s9 R(c18 × c19) x5) ∉ x5        { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , x5 ⊂ R(c18) × R(c19) }
+        79:   (s9 R(c18 × c19) x5) ∈ x5        { (s9 R(c18 × c19) x5) ∈ x5 }
+        315:  ^@y43 ⊄ R(c18) × R(c19)          { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , (s9 R(c18 × c19) ^@y43) ∈ ^@y43 }
+        --
+        x5 -> ^@y43
+        213:  (s9 R(c18 × c19) ^@y43) ∉ ^@y43  { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) ,                                   ^@y43 ⊂ R(c18) × R(c19) }
+        79:   (s9 R(c18 × c19) ^@y43) ∈ ^@y43  {                                                                   (s9 R(c18 × c19) ^@y43) ∈ ^@y43                           }
+        315:  ^@y43 ⊄ R(c18) × R(c19)          { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , (s9 R(c18 × c19) ^@y43) ∈ ^@y43                           }
+    1498. REDUCTIO 1480 315                   (s9 R(c18 × c19) c18) ∉ c18
+      1480: c18 ⊂ x4
+      315:  ^@y43 ⊄ R(c18) × R(c19)             { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , (s9 R(c18 × c19) ^@y43) ∈ ^@y43 }
+      1498: (s9 R(c18 × c19) c18) ∉ c18         { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+      --
+      ^@y43 -> c18 , x4 -> R(c18) × R(c19)
+      1480: c18 ⊂ R(c18) × R(c19)
+      315:  c18 ⊄ R(c18) × R(c19)               { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) , (s9 R(c18 × c19) c18) ∈ c18 }
+      1498: (s9 R(c18 × c19) c18) ∉ c18         { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+    1820. modus-tollens2 1545 1498            (s9 R(c18 × c19) c18) ∉ x2
+    1827. i-neg-condit 1820 1766              (s9 R(c18 × c19) c18) ∈ R(c18 × c19) ↛ (s9 R(c18 × c19) c18) ∈ ^y@43
+    1828. EG 1827                             ∃ x (x ∈ R(c18 × c19) ↛ x ∈ ^@y43)
+    1829. i-neg-ug 1828                       ¬∀ x (x ∈ R(c18 × c19) → x ∈ ^@y43)
+    1936. modus-tollens2 14 1829              R(c18 × c19) ⊄ x5
+      14:   x2 ⊂ x5 → ∀ x (x ∈ x2 → x ∈ x5)
+      1829: ¬∀ x (x ∈ R(c18 × c19) → x ∈ ^@y43)
+      1936: R(c18 × c19) ⊄ x5
+      --
+      x2 -> R(c18 × c19) , ^@y43 -> x5
+      14:   R(c18 × c19) ⊂ x5 → ∀ x (x ∈ R(c18 × c19) → x ∈ x5)
+      1829: ¬∀ x (x ∈ R(c18 × c19) → x ∈ x5)
+      1936: R(c18 × c19) ⊄ x5
+Suppose: R(c18) × R(c19) ⊂ R(c18 × c19)
+  1976. REDUCTIO 1936 1445                  R(c18 × c19) ≡ R(c18) × R(c19)
+    1936: R(c18 × c19) ⊄ x5                  { R(c18 × c19) ≢ R(c18) × R(c19) , R(c18) × R(c19) ⊂ R(c18 × c19) }
+    1445: x4 ⊂ c18
+    1976: R(c18 × c19) ≡ R(c18) × R(c19)     { R(c18) × R(c19) ⊂ R(c18 × c19) }
+Suppose: R(c18 × c19) ≢ R(c18) × R(c19)
+  1978. REDUCTIO 1976 45                    R(c18) × R(c19) ⊄ R(c18 × c19)
+    1976: R(c18 × c19) ≡ R(c18) × R(c19)     { R(c18) × R(c19) ⊂ R(c18 × c19) }
+    45:   R(c18 × c19) ≢ R(c18) × R(c19)     { R(c18 × c19) ≢ R(c18) × R(c19) }
+    1978: R(c18) × R(c19) ⊄ R(c18 × c19)     { R(c18 × c19) ≢ R(c18) × R(c19) }
+  1988. modus-tollens2 47 1978              (s9 (R(c18) × R(c19)) R(c18 × c19)) ∉ R(c18 × c19)
+    47:   (s9 x2 x5) ∈ x5 → x2 ⊂ x5
+    1978: R(c18) × R(c19) ⊄ R(c18 × c19)
+    1988: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∉ R(c18 × c19)
+  2008. modus-tollens2 1544 1988            (s9 (R(c18) × R(c19)) R(c18 × c19)) ∉ c18
+    1544: x1520 ∈ c18 → x1520 ∈ x5
+    1988: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∉ R(c18 × c19)
+    2008: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∉ c18
+  1981. modus-tollens2 46 1978              (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ R(c18) × R(c19)
+    46:   (s9 x2 x5) ∉ x2 → x2 ⊂ x5
+    1978: R(c18) × R(c19) ⊄ R(c18 × c19)
+    1981: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ R(c18) × R(c19)
+  2013. i-neg-condit 2008 1981              (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ R(c18) × R(c19) ↛ (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ c18
+    2008: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∉ c18
+    1981: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ R(c18) × R(c19)
+    2013: (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ R(c18) × R(c19) ↛ (s9 (R(c18) × R(c19)) R(c18 × c19)) ∈ c18
+  2014. EG 2013                             ∃ x (x ∈ R(c18) × R(c19) ↛ x ∈ c18)
+  2015. i-neg-ug 2014                       ¬∀ x (x ∈ R(c18) × R(c19) → x ∈ c18)
+  2016. i-neg-condit 2015 1445              R(c18) × R(c19) ⊂ c18 ↛ ∀ x (x ∈ R(c18) × R(c19) → x ∈ c18)
+    2015: ¬∀ x (x ∈ R(c18) × R(c19) → x ∈ c18)
+    1445: x4 ⊂ c18
+    2016: R(c18) × R(c19) ⊂ c18 ↛ ∀ x (x ∈ R(c18) × R(c19) → x ∈ c18)
+2017. REDUCTIO 2016 14                    R(c18 × c19) ≡ R(c18) × R(c19)
+  2016: R(c18) × R(c19) ⊂ c18 ↛ ∀ x (x ∈ R(c18) × R(c19) → x ∈ c18)           { R(c18 × c19) ≢ R(c18) × R(c19) }
+  14:   x2 ⊂ x5 → ∀ x (x ∈ x2 → x ∈ x5)
+  2017: R(c18 × c19) ≡ R(c18) × R(c19)
+2019. CONDITIONALIZATION 2017             M(c17) ∧ (c18 ⊂ c17 ∧ c19 ⊂ c17) → R(c18 × c19) ≡ R(c18) × R(c19))
+
+2020. UG 2019                             ∀ Y (M(c17) ∧ (c18 ⊂ c17 ∧ Y ⊂ c17) → R(c18 × Y) ≡ R(c18) × R(Y))
+2021. UG 2020                             ∀ X Y (M(c17) ∧ (X ⊂ c17 ∧ Y ⊂ c17) → R(X × Y) ≡ R(X) × R(Y))
+2022. UG 2021                             ∀ B X Y (M(B) ∧ (X ⊂ B ∧ Y ⊂ B) → R(X × Y) ≡ R(X) × R(Y))
+2023. UG 2022

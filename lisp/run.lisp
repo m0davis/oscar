@@ -1,0 +1,7 @@
+(load "loader")
+;(setf *s-trace* t)
+;(setf *display?* t)
+(test)
+(print (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))"))
+(print (formula-code (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))")))
+(print (reason-code (reform "(all x)((some z)(Q (g x) y) v ((some y)(~(H x y z) & (Q (g x) z)) v (J a b)))") '(H)))

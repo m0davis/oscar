@@ -1,0 +1,324 @@
+Loading OSCAR_4.02
+WARNING: MODUS-TOLLENS1 is already TRACE'd, untracing it first.
+WARNING: MODUS-TOLLENS2 is already TRACE'd, untracing it first.
+
+(                                 OSCAR_4.02          
+*reductio-discount* = 0.23
+*reductio-interest* = 0.23
+*skolem-multiplier* = 10
+*quantifier-discount* = 0.95
+
+******************************************************************************************
+******************************************************************************************
+Problem #47
+
+Given premises:
+     (all x)(F x)    justification = 1.0
+     (all x)((F x) -> (G x))    justification = 1.0
+Ultimate epistemic interests:
+     (all x)(G x)    interest = 1.0
+
+MAKING HYPERNODE #1 (#<Hypernode 1: (all x)(F x)>)
+MAKING HYPERLINK #1 (#<hyperlink #1 for hypernode 1>)
+
+  # 1   (all x)(F x)
+  GIVEN
+MAKING HYPERNODE #2 (#<Hypernode 2: (all x)((F x) -> (G x))>)
+MAKING HYPERLINK #2 (#<hyperlink #2 for hypernode 2>)
+
+  # 2   (all x)((F x) -> (G x))
+  GIVEN
+REASON-BACKWARDS-FROM-QUERY
+                                        # 1  interest:
+                                           (all x)(G x)
+                                        This is of ultimate interest
+
+. APPLY-DEGENERATE-BACKWARDS-REASONS #<Interest 1>
+. . REASON-DEGENERATELY-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 1> and #<d-node: 28>
+. . . REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE #<Interest 1> and #<d-node: 28>
+. . . REASON-DEGENERATELY-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 1> and #<d-node: 20>
+. . . . REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE #<Interest 1> and #<d-node: 20>
+. . . . REASON-DEGENERATELY-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 1> and #<d-node: 1>
+. . . . . REASON-DEGENERATELY-BACKWARDS-FROM-REASON-NODE #<Interest 1> and #<d-node: 1>
+. REASON-BACKWARDS-FROM: #<Interest 1>
+. APPLY-BACKWARDS-REASONS #<Interest 1>
+. . REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 1> and #<d-node: 28>
+. . . REASON-BACKWARDS-FROM-REASON-NODE #<Interest 1> and #<d-node: 28>
+. . . REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 1> and #<d-node: 20>
+. . . . REASON-BACKWARDS-FROM-REASON-NODE #<Interest 1> and #<d-node: 20>
+. . . . . . CONSTRUCT-NEW-INTEREST-FOR LINK:
+                                        # 2  interest:
+                                           (G c0)
+                                        For interest 1 by UG
+                                        Discharge condition: 
+                                             NIL
+
+  0: (DISCHARGE-LINK #<Link 2: for  interest #1 by UG> 6 1.0 1.0 NIL)
+. . . . . . DISCHARGE-LINK: #<Link 2: for  interest #1 by UG>
+  0: DISCHARGE-LINK returned NIL
+. . . . REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 1> and #<d-node: 1>
+. . . . . REASON-BACKWARDS-FROM-REASON-NODE #<Interest 1> and #<d-node: 1>
+  0: (DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS #<Interest 1> 1)
+. DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS: #<Interest 1>
+  0: DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS returned NIL
+---------------------------------------------------------------------------
+inference-queue: 
+  #<Hypernode 1: (all x)(F x)>  degree-of-preference = 0.5263  priority = 1.0
+  #<Interest 2>  degree-of-preference = 0.5  priority = 1.0
+  #<Hypernode 2: (all x)((F x) -> (G x))>  degree-of-preference = 0.2105  priority = 1.0
+---------------------------------------------------------------------------
+1:    Retrieving #<Hypernode 1: (all x)(F x)> from the inference-queue.  Preference = 0.5263
+
+  0: (REASON-FORWARDS-FROM #<Hypernode 1: (all x)(F x)> 0)
+REASON-FORWARDS-FROM: #<Hypernode 1: (all x)(F x)>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 1: (all x)(F x)> and #<d-node: 24>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 1: (all x)(F x)> and #<d-node: 20>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 1: (all x)(F x)> and #<d-node: 1>
+    1: (DRAW-CONCLUSION (F #:|x1|) (#<Hypernode 1: (all x)(F x)>) UI (T) 1.0 0
+                        NIL NIL)
+MAKING HYPERNODE #3 (#<Hypernode 3: (F x1)>)
+MAKING HYPERLINK #3 (#<hyperlink #3 for hypernode 3>)
+ADJUST-SUPPORT-FOR-CONSEQUENCES for #<Hypernode 3: (F x1)>
+DRAW CONCLUSION: #<Hypernode 3: (F x1)>
+  # 3   (F x1)
+  Inferred by hyperlink #3 from { 1 } by UI
+
+. DISCHARGE-IMMEDIATE-REDUCTIOS-FROM #<Hypernode 3: (F x1)>
+    1: DRAW-CONCLUSION returned NIL
+DISCHARGE-DELAYED-REDUCTIOS-FROM #<Hypernode 1: (all x)(F x)>
+    1: (DISCHARGE-FORTUITOUS-REDUCTIOS #<Hypernode 1: (all x)(F x)> NIL 1)
+    1: DISCHARGE-FORTUITOUS-REDUCTIOS returned NIL
+  0: REASON-FORWARDS-FROM returned NIL
+---------------------------------------------------------------------------
+inference-queue: 
+  #<Hypernode 3: (F x1)>  degree-of-preference = 0.5  priority = 1.0
+  #<Interest 2>  degree-of-preference = 0.5  priority = 1.0
+  #<Hypernode 2: (all x)((F x) -> (G x))>  degree-of-preference = 0.2105  priority = 1.0
+---------------------------------------------------------------------------
+2:    Retrieving #<Hypernode 3: (F x1)> from the inference-queue.  Preference = 0.5
+
+  0: (REASON-FORWARDS-FROM #<Hypernode 3: (F x1)> 0)
+REASON-FORWARDS-FROM: #<Hypernode 3: (F x1)>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 3: (F x1)> and #<d-node: 30>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 3: (F x1)> and #<d-node: 1>
+DISCHARGE-DELAYED-REDUCTIOS-FROM #<Hypernode 3: (F x1)>
+  0: REASON-FORWARDS-FROM returned NIL
+---------------------------------------------------------------------------
+inference-queue: 
+  #<Interest 2>  degree-of-preference = 0.5  priority = 1.0
+  #<Hypernode 2: (all x)((F x) -> (G x))>  degree-of-preference = 0.2105  priority = 1.0
+---------------------------------------------------------------------------
+3:    Retrieving #<Interest 2> from the inference-queue.  Preference = 0.5
+
+REASON-BACKWARDS-FROM: #<Interest 2>
+APPLY-BACKWARDS-REASONS #<Interest 2>
+. REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 2> and #<d-node: 29>
+. . REASON-BACKWARDS-FROM-REASON-NODE #<Interest 2> and #<d-node: 29>
+. . REASON-BACKWARDS-FROM-DOMINANT-REASON-NODES #<Interest 2> and #<d-node: 1>
+. . . REASON-BACKWARDS-FROM-REASON-NODE #<Interest 2> and #<d-node: 1>
+MAKING HYPERNODE #4 (#<Hypernode 4: ~(G c0)/{ ~(G c0) }>)
+DRAW CONCLUSION: #<Hypernode 4: ~(G c0)/{ ~(G c0) }>
+
+  # 4   ~(G c0)    supposition: { ~(G c0) }
+  REDUCTIO-SUPPOSITION
+. ADOPT-REDUCTIO-INTEREST-FROM: #<Hypernode 4: ~(G c0)/{ ~(G c0) }>
+. . INITIATING-REDUCTIO-INTERESTS
+                                        # 3  reductio interest:
+                                           ~(F ^@y2)
+
+                                        using node 3
+                                        # 4  reductio interest:
+                                           (G c0)
+
+                                        using node 4
+  0: (DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS #<Interest 2> 0)
+DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS: #<Interest 2>
+  0: DISCHARGE-FORTUITOUS-REDUCTIO-INTERESTS returned NIL
+---------------------------------------------------------------------------
+inference-queue: 
+  #<Hypernode 2: (all x)((F x) -> (G x))>  degree-of-preference = 0.2105  priority = 1.0
+  #<Hypernode 4: ~(G c0)/{ ~(G c0) }>  degree-of-preference = 0.0383  priority = 0.23
+  #<Interest 4>  degree-of-preference = 0.0264  priority = 0.052
+  #<Interest 3>  degree-of-preference = 0.0176  priority = 0.052
+---------------------------------------------------------------------------
+4:    Retrieving #<Hypernode 2: (all x)((F x) -> (G x))> from the inference-queue.  Preference = 0.2105
+
+  0: (REASON-FORWARDS-FROM #<Hypernode 2: (all x)((F x) -> (G x))> 0)
+REASON-FORWARDS-FROM: #<Hypernode 2: (all x)((F x) -> (G x))>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 2: (all x)((F x) -> (G x))> and #<d-node: 27>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 2: (all x)((F x) -> (G x))> and #<d-node: 26>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 2: (all x)((F x) -> (G x))> and #<d-node: 25>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 2: (all x)((F x) -> (G x))> and #<d-node: 20>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 2: (all x)((F x) -> (G x))> and #<d-node: 1>
+    1: (DRAW-CONCLUSION (-> (F #:|x3|) (G #:|x3|))
+                        (#<Hypernode 2: (all x)((F x) -> (G x))>) UI (T) 1.0 0
+                        NIL NIL)
+MAKING HYPERNODE #5 (#<Hypernode 5: ((F x3) -> (G x3))>)
+MAKING HYPERLINK #4 (#<hyperlink #4 for hypernode 5>)
+ADJUST-SUPPORT-FOR-CONSEQUENCES for #<Hypernode 5: ((F x3) -> (G x3))>
+DRAW CONCLUSION: #<Hypernode 5: ((F x3) -> (G x3))>
+  # 5   ((F x3) -> (G x3))
+  Inferred by hyperlink #4 from { 2 } by UI
+
+. DISCHARGE-IMMEDIATE-REDUCTIOS-FROM #<Hypernode 5: ((F x3) -> (G x3))>
+    1: DRAW-CONCLUSION returned NIL
+DISCHARGE-DELAYED-REDUCTIOS-FROM #<Hypernode 2: (all x)((F x) -> (G x))>
+    1: (DISCHARGE-FORTUITOUS-REDUCTIOS #<Hypernode 2: (all x)((F x) -> (G x))>
+                                       NIL 1)
+    1: DISCHARGE-FORTUITOUS-REDUCTIOS returned NIL
+  0: REASON-FORWARDS-FROM returned NIL
+---------------------------------------------------------------------------
+inference-queue: 
+  #<Hypernode 5: ((F x3) -> (G x3))>  degree-of-preference = 0.2  priority = 1.0
+  #<Hypernode 4: ~(G c0)/{ ~(G c0) }>  degree-of-preference = 0.0383  priority = 0.23
+  #<Interest 4>  degree-of-preference = 0.0264  priority = 0.052
+  #<Interest 3>  degree-of-preference = 0.0176  priority = 0.052
+---------------------------------------------------------------------------
+5:    Retrieving #<Hypernode 5: ((F x3) -> (G x3))> from the inference-queue.  Preference = 0.2
+
+  0: (REASON-FORWARDS-FROM #<Hypernode 5: ((F x3) -> (G x3))> 0)
+REASON-FORWARDS-FROM: #<Hypernode 5: ((F x3) -> (G x3))>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 5: ((F x3) -> (G x3))> and #<d-node: 34>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 5: ((F x3) -> (G x3))> and #<d-node: 33>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 5: ((F x3) -> (G x3))> and #<d-node: 2>
+. REASON-FROM-CURRENT-INTEREST-SCHEME: #<Hypernode 5: ((F x3) -> (G x3))> and #<d-node: 1>
+
+  Constructing instantiated-premise #23
+  next premise:  (F x3)
+  by modus-ponens2,  basis = (5) with clues ()
+
+    1: (DRAW-CONCLUSION (G #:|x3|)
+                        (#<Hypernode 3: (F x1)>
+                         #<Hypernode 5: ((F x3) -> (G x3))>)
+                        modus-ponens1 (((#:|x1| . #:|x3|)) T) 1.0 0 NIL NIL)
+MAKING HYPERNODE #6 (#<Hypernode 6: (G x3)>)
+MAKING HYPERLINK #5 (#<hyperlink #5 for hypernode 6>)
+ADJUST-SUPPORT-FOR-CONSEQUENCES for #<Hypernode 6: (G x3)>
+DRAW CONCLUSION: #<Hypernode 6: (G x3)>
+  # 6   (G x3)
+  Inferred by hyperlink #5 from { 5 , 3 } by modus-ponens1
+
+. . Cancelling  #<Interest 4>
+  Node 6 discharges interest 2
+
+. DISCHARGE-INTEREST-IN: #<Interest 2> from #<Hypernode 6: (G x3)>
+. DISCHARGE-APPROPRIATELY-RELATED-LINK: #<Link 2: for  interest #1 by UG>
+MAKING HYPERNODE #7 (#<Hypernode 7: (all x)(G x)>)
+MAKING HYPERLINK #6 (#<hyperlink #6 for hypernode 7>)
+. ADJUST-SUPPORT-FOR-CONSEQUENCES for #<Hypernode 7: (all x)(G x)>
+. DRAW CONCLUSION: #<Hypernode 7: (all x)(G x)>
+  # 7   (all x)(G x)
+  Inferred by hyperlink #6 from { 6 } by UG
+
+  Node 7 discharges interest 1
+
+. . DISCHARGE-INTEREST-IN: #<Interest 1> from #<Hypernode 7: (all x)(G x)>
+. . DISCHARGE-APPROPRIATELY-RELATED-LINK: #<Link 1: for  query #1 by ANSWER>
+
+             ALL QUERIES HAVE BEEN ANSWERED DEDUCTIVELY.
+
+
+================== ULTIMATE EPISTEMIC INTERESTS ===================
+  Interest in (all x)(G x)
+  is answered affirmatively by node 7
+---------------------------------------------------
+
+Elapsed time = SUPPRESSED
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      (all x)(G x)
+ which is of ultimate interest.
+
+ 2.  (all x)((F x) -> (G x))     GIVEN
+ 1.  (all x)(F x)     GIVEN
+ 5.  ((F x3) -> (G x3))     UI from { 2 }
+ 3.  (F x1)     UI from { 1 }
+ 6.  (G x3)     modus-ponens1 from { 5 , 3 }
+ 7.  (all x)(G x)     UG from { 6 }
+
+===========================================================================
+
+
+Cumulative size of arguments = 6
+Size of inference-graph = 7 of which 1 were unused suppositions.
+85% of the inference-graph was used in the argument.
+4 interests were adopted.
+1 suppositions were made.
+The following nodes were used in the arguments:
+(1 2 3 5 6 7)
+===========================================================================
+THE FOLLOWING IS THE REASONING INVOLVED IN THE SOLUTION
+Hypernodes marked DEFEATED have that status at the end of the reasoning.
+
+  # 1
+  (all x)(F x)
+  GIVEN
+  # 2
+  (all x)((F x) -> (G x))
+  GIVEN
+                                        # 1
+                                        interest: (all x)(G x)
+                                        This is of ultimate interest
+                                        # 2
+                                        interest: (G c0)
+                                        For interest 1 by UG
+                                        This interest is discharged by node 6
+  # 3
+  (F x1)
+  Inferred by:
+                hyperlink #3 from { 1 } by UI
+  # 5
+  ((F x3) -> (G x3))
+  Inferred by:
+                hyperlink #4 from { 2 } by UI
+  # 6
+  (G x3)
+  Inferred by:
+                hyperlink #5 from { 5 , 3 } by modus-ponens1
+  This discharges interest 2
+  # 7
+  (all x)(G x)
+  Inferred by:
+                hyperlink #6 from { 6 } by UG
+  This node is inferred by discharging a link to interest #1
+============================================================
+
+
+(
+#<Hypernode 1: (all x)(F x)>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #1 for hypernode 1> from NIL
+     CONSEQUENT-LINKS:
+          #<hyperlink #3 for hypernode 3>
+#<Hypernode 2: (all x)((F x) -> (G x))>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #2 for hypernode 2> from NIL
+     CONSEQUENT-LINKS:
+          #<hyperlink #4 for hypernode 5>
+#<Hypernode 3: (F x1)>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #3 for hypernode 3> from (#<Hypernode 1: (all x)(F x)>)
+     CONSEQUENT-LINKS:
+          #<hyperlink #5 for hypernode 6>
+#<Hypernode 4: ~(G c0)/{ ~(G c0) }>  --  justification = 1.0
+#<Hypernode 5: ((F x3) -> (G x3))>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #4 for hypernode 5> from (#<Hypernode 2: (all x)((F x) -> (G x))>)
+     CONSEQUENT-LINKS:
+          #<hyperlink #5 for hypernode 6>
+#<Hypernode 6: (G x3)>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #5 for hypernode 6> from (#<Hypernode 5: ((F x3) -> (G x3))>
+                                                #<Hypernode 3: (F x1)>)
+     CONSEQUENT-LINKS:
+          #<hyperlink #6 for hypernode 7>
+#<Hypernode 7: (all x)(G x)>  --  justification = 1.0
+     hyperlinkS:
+          #<hyperlink #6 for hypernode 7> from (#<Hypernode 6: (G x3)>)
+)
+
+
+(OSCAR_4.02 0.23 0.23 10 0.95 ((47 NIL 6 6)))
+)

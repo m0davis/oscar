@@ -1,0 +1,1541 @@
+sketch of (load "loader")
+
+loader
+  oscar
+    tool
+    syntax
+      setf *constant-transformation*
+      setf *bracket-transformation*
+    hypergraph
+  reason
+  rule
+    setf simp
+      ?
+    setf (reason-function simp)
+      ?
+    ...
+    setf *forwards-logical-reasons*
+      ?
+    setf adjunction
+    set-conclusions-function adjunction
+      ?
+    setf (reason-function adjunction)
+    ...
+    def-backwards-reason VACUOUS-CONDITION
+      ?
+    ...
+    setf *backwards-logical-reasons*
+  argument
+  problem
+  problem-example
+    setf *problems*
+  perception-cause
+    setf *pretty-list*
+    setf *string-symbols*
+    setf *temporal-reason-decay*
+    setf *reform-list*
+    setf (get 'i 'pretty-form)
+    def-forwards-reason *PERCEPTION*
+      ?
+    def-backwards-undercutter *PERCEPTUAL-RELIABILITY*
+    def-forwards-reason *DISCOUNTED-PERCEPTION*
+    def-backwards-undercutter *PERCEPTUAL-UNRELIABILITY*
+    setf *binary-predicates*
+    def-backwards-undercutter *PROBABILISTIC-DEFEAT-FOR-TEMPORAL-PROJECTION*
+    def-backwards-reason *INCOMPATIBLE-COLORS*
+    ...
+  perception-cause-example
+    setf *simulation-problems*
+    make-simulation-problem
+    ...
+
+--
+
+sketch of (test)
+
+test
+  run-reasoning-problem
+    display-problem
+      setf *premises*
+      setf *fixed-ultimate-epistemic-interests*
+      setf *ultimate-epistemic-interests*
+      setf *query-number*
+      push ... *fixed-ultimate-epistemic-interests*
+      setf *forwards-substantive-reasons*
+      setf *backwards-substantive-reasons*
+      display-reasons
+        display-forwards-reason
+          print-premise
+        display-backwards-reason
+    COGITATE
+      setf *cycle*
+      setf time
+      initialize-reasoner
+        setf ...
+          ?
+        initialize-discrimination-net
+          setf ...
+            ?
+          compute-forwards-reason-d-nodes
+            store-forwards-reason
+              index-forwards-reason
+                index-forwards-reason-at-new-nodes
+                  push ... (d-node-discrimination-tests ...)
+                  push ... *discrimination-net*
+                store-forwards-reason-at-new-d-node
+              store-forwards-reason-at-d-node
+                push ... (d-node-forwards-reasons ...
+                setf (ip-d-node ...)
+            setf ...
+          compute-backwards-reason-d-nodes
+            store-backwards-reason
+              index-backwards-reason
+                store-backwards-reason-at-d-node
+                  push ... (d-node-degenerate-backwards-reasons ...)
+                  push ... (d-node-backwards-reasons ...)
+                  push ... (d-node-degenerate-backwards-reasons ...)
+                index-backwards-reason-at-new-nodes
+                  push ... (d-node-discrimination-tests ...)
+                  push ... *discrimination-net*
+                  store-backwards-reason-at-new-d-node
+                store-backwards-reason-at-new-d-node
+              store-backwards-reason-at-d-node
+      reason-backwards-from-query → one-one-match
+        reason-backwards-from-whether-query
+        reason-backwards-from-?-query
+        reason-backwards-from-simple-query
+      incf *cycle*
+      pull ... *premises*
+      queue-premise
+        adopt-interest-in-premise-defeater → one-one-match
+          interests-for
+          store-interest
+            push ... *interests*
+            index-interest
+              store-interest-at-d-node
+              index-interest-at-new-nodes
+                push ... *discrimination-net*
+              store-interest-at-new-d-node
+                push ... *discrimination-net*
+          display-interest
+          push ... *reasoning-log*
+          queue-interest
+            setf *inference-queue*
+          readopt-interest
+        push ... *hypergraph*
+        push ... *reasoning-log*
+        display-unsupported-hypernode
+        store-hypernode
+          index-hypernode
+            store-hypernode-at-d-node
+            index-hypernode-at-new-nodes
+            store-hypernode-at-new-d-node
+              push ... *discrimination-net*
+        discharge-interest-in
+          discharge-appropriately-related-link
+            display-belief-changes
+              push ... *reasoning-log*
+            construct-interest-link
+              draw-conclusion
+              push ... *interest-links*
+              compute-link-interest → one-one-match
+              discharge-link
+                display-belief-changes
+                construct-interest-link
+                draw-conclusion
+                cancel-interest-in
+                  cancel-interest-in-node
+                    setf *skolem-free-suppositions*
+                    remove-if-equal ... *skolem-free-suppositions*
+                    pull ... *inherited-non-reductio-suppositions*
+                    pull ... *non-reductio-supposition-nodes*
+                    pull ... *reductio-supposition-nodes*
+                    pull ... *desires*
+                    pull ... *processed-desires*
+                    cancel-interest-scheme
+                      cancel-d-node
+                    cancel-instantiated-premise
+                      cancel-d-node
+                    pull ... *inference-queue*
+                cancel-node
+              apply-degenerate-backwards-reasons
+                reason-degenerately-backwards-from-dominant-reason-nodes
+                  reason-degenerately-backwards-from-reason-node
+                    reason-substantively-from-backwards-reason
+            draw-conclusion
+              decf *hyperlink-number*
+              push ... *hypergraph*
+              discharge-interest-in-defeaters
+                recursively-compute-nearest-defeasible-ancestors
+                  ?
+                recursively-compute-hypernode-ancestors
+                  ?
+              adopt-interest-in-defeaters-for
+                ?
+              push ... *new-links*
+              ...
+              cancel-subsumed-links
+          cancel-node
+            ?
+        setf *inference-queue*
+          ordered-insert
+            ?
+      think-or-die
+        display-inference-queue
+          ?
+        setf *inference-queue*
+        store-processed-node
+        reason-forwards-from
+          decf *unused-suppositions*
+          discharge-interest-schemes
+          apply-forwards-reasons
+          discharge-interest-in
+          adopt-reductio-interest
+          discharge-delayed-reductios
+        reason-backwards-from-query
+          ?
+        form-epistemic-desires-for
+          ?
+        update-beliefs
+          ?
+        setf *new-links*
+      setf time
+      setf *deductive-only*
+      display-queries
+        ?
+      display-run-time-in-seconds
+      compute-relevant-nodes
+        ?
+      show-arguments
+        ?
+      print-list
+        ?
+      push ... *test-log*
+      display-reasoning
+        ?
+    display-hypergraph
+
+--
+
+interesting
+
+defun initialize-reasoner
+
+make-backwards-inference is defined twice
+
+--
+
+callees
+
+one-one-match
+  i-list-for
+    interests-for
+      in-interest
+      adopt-interest-in-premise-defeater
+      reason-backwards-from-whether-query
+      reason-backwards-from-simple-query
+        reason-backwards-from-query
+          OSCAR
+          think
+          COGITATE0
+          COGITATE
+          think-or-die
+      condition-satisfying-interest
+      adopt-interest
+    construct-initial-interest-link
+      make-backwards-inference
+      make-forwards-inference
+      instantiate-defeater
+    interest-for
+      compute-link-interest
+      generate-reductio-interests
+      make-undercutting-defeater
+      make-rebutting-defeater
+
+--
+
+mutual dependencies
+
+construct-initial-interest-link
+queue-supposition
+queue-non-reductio-supposition
+
+construct-interest-scheme
+queue-supposition
+apply-forwards-defeasible-reasons
+
+convert-reductio-supposition
+apply-forwards-defeasible-reasons
+
+queue-defeater-supposition
+apply-forwards-defeasible-reasons
+
+apply-forwards-defeasible-reasons
+reason-defeasibly-from-dominant-premise-nodes
+reason-defeasibly-from-instantiated-premises
+reason-substantively-from-first-instantiated-premise
+reason-from-subsidiary-c-lists
+reason-substantively-from-non-initial-instantiated-premise
+store-instantiated-premise
+make-forwards-inference
+*DRAW-CONCLUSION
+*cancel-subsumed-links
+*delete-arguments
+*recursively-compute-nearest-defeasible-ancestors
+*invert-contradictions-retrospectively
+*invert-contradiction
+*DRAW-CONCLUSION
+adopt-interest-in-defeaters-for
+queue-defeater-supposition
+queue-non-reductio-defeater-supposition
+
+make-undercutting-defeater
+instantiate-defeater
+
+invert-contradictions-from-new-hyperlink
+build-hyperlink
+*recursively-compute-nearest-defeasible-ancestors
+
+discharge-reductios
+draw-reductio-conclusion
+
+discharge-immediate-reductios
+draw-reductio-conclusion
+
+reason-from-current-interest-scheme
+reason-from-dominant-interest-schemes
+discharge-interest-schemes
+discharge-interest-in-defeaters
+discharge-appropriately-related-link
+DISCHARGE-INTEREST-IN
+invert-contradictions
+discharge-fortuitous-reductios
+adjust-support-for-consequences
+add-hyperlink
+make-rebutting-defeater
+construct-interest-link
+DISCHARGE-LINK
+reason-substantively-from-backwards-reason
+reason-degenerately-backwards-from-reason-node
+reason-degenerately-backwards-from-dominant-reason-nodes
+apply-degenerate-backwards-reasons
+make-backwards-inference
+
+reason-from-interest-scheme
+discharge-interest-scheme
+
+--
+
+compute-hypernode-justification
+compute-link-justification
+compute-hyper-defeat-link-justification
+
+--
+
+callers of 'match'
+
+set-match
+ subsumed
+ cancel-subsumed-links
+pretty
+convert-to-prefix-form
+search-d-nodes
+instance-of
+one-one-match
+ i-list-for
+  interests-for
+  interest-for
+  construct-initial-interest-link
+subsumed
+ DRAW-CONCLUSION
+ draw-reductio-conclusion
+subsuming-supposition
+cancel-subsumed-links
+make-forwards-inference
+make-reductio-supposition
+EI
+
+--
+
+theorizing about set-match
+
+
+(defun set-match (patterns data vars)
+  (catch 'match
+    (let ((matches nil)
+	  (open nil)
+	  (closed nil))
+      (dolist (P patterns)
+	(if (some #'(lambda (v) (occur v P)) vars)
+	    (push P open)
+	  (if (mem P data)
+	      (push P closed)
+	    (throw 'match nil))))
+      (cond (open
+	     (let ((P (mem1 open)))
+	       (dolist (Q data)
+		 (let ((m (match P Q vars)))
+		   (when m
+		     (dolist (sm (set-match
+				  (match-sublis m (cdr open))
+				  data
+				  (setdifference vars (match-domain m))))
+		       (push (list (adjoin= Q (union= closed (mem1 sm)))
+				   (merge-matches m (mem2 sm)))
+			     matches)))))))
+	    (t (setf matches (list (list closed T)))))
+      (when (null matches) (throw 'match nil))
+      (princ matches) (terpri)
+      matches)))
+
+set-match ∷ Patterns → Formulas → Symbols → List (Formulas × Map Symbol Pattern)
+set-match [] _ _ = [ [] , ∅ ]
+set-match _ [] _ = []
+set-match pats@(_ ∷ _) dats@(_ ∷ _) []
+ with pats ⊂? dats
+... |  no _ = []
+... | yes _ = [ pats , ∅ ]
+set-match pats@(_ ∷ _) dats@(_ ∷ _) vars@(_ ∷ _) =
+  let open-pats = pats havingFreeVarsIn vars
+      closed-pats = pats - open
+  in
+  if closed-pats ⊂ dats then
+    let open-pat ∷ open-pats = open-pats in
+    foldl
+      λ { matches dat →
+        case match open-pat dat vars of λ where
+        ∅ → matches
+        open-pat-match →
+          foldl
+            λ { matches (sm-closeds , sm-matches) →
+              (sm-closeds ∪ closed-pats ∪ [ dat ] , sm-matches ∪ open-pat-match) ∷ matches }
+            matches
+            (set-match (substitute open-pat-match open-pats) data (vars - domain open-pat-match)) }
+      []
+      dats
+  else
+    []
+
+
+
+(set-match
+  '((f x)
+    (g y))
+  '((f A)
+    (f B)
+    (g A)
+    (g B))
+  '(x y))
+
+(set-match
+  '((f x y)
+    (g x y)
+    (h x y z)
+    (h x z)
+    (h x z)
+    (j x z)
+    (f y x))
+  '((f A A)
+    (g A A)
+    (h A A B)
+    (h A B)
+    (h A A)
+    (j A B)
+    (h A B)
+    (i A w))
+  '(x x y y z z w w))
+
+(set-match
+  '((f x y)
+    (g x y)
+    (f x x)
+    (g y y))
+  '((f A B)
+    (g A B))
+  '(x y))
+(set-match
+  '((SUBSET ^@y46 (INT (INV F c18 c0) (INV F c19 c0)))
+    (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0))
+    (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+    (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+    (SUBSET (INV F (INT c18 c19) c0) ^@y41))
+
+  '((SUBSET (INV F (INT c18 c19) c0) ^@y41)
+    (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+    (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+    (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0)))
+  '(^@y41 ^@y46))
+
+((SUBSET ^@y46 (INT (INV F c18 c0) (INV F c19 c0)))
+ (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0))
+ (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+ (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+ (SUBSET (INV F (INT c18 c19) c0) ^@y41))
+
+((SUBSET (INV F (INT c18 c19) c0) ^@y41)
+ (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0)))
+ (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+ (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0)))
+(^@y41 ^@y46)
+((((SUBSET (INV F (INT c18 c19) c0) ^@y41)
+   (SUBSET (INT (INV F c18 c0) (INV F c19 c0)) (INV F (INT c18 c19) c0))
+   (~ (EQUAL (INV F (INT c18 c19) c0) (INT (INV F c18 c0) (INV F c19 c0))))
+   (SUBSET ^@y41 (INT (INV F c18 c0) (INV F c19 c0))))
+  ((^@y41 . ^@y41) (^@y46 . ^@y41))))
+
+--
+
+stuff that uses eval
+
+conclusion-instantiator
+ define-forwards-reason
+  find-forwards-con-reasons
+   make-problem-from-string
+  find-forwards-pf-reasons
+ define-backwards-reason
+ set-conclusions-function
+
+rectify-formula-condition
+ formula-condition
+  rectify-forwards-premises
+   def-forwards-reason
+    *open code
+    define-forwards-reason
+     find-forwards-con-reasons
+      make-problem-from-string
+       make-problem-list
+        default-problem-list
+	 *open code
+     find-forwards-pf-reasons
+      make-problem-from-string
+       ...
+   def-backwards-reason
+    *open code
+   def-forwards-undercutter
+    *open code
+   def-backwards-undercutter
+    *open code
+  rectify-backwards-premises
+ rectify-strength
+ simple-backwards-formula-condition
+ rectify-reason-condition
+
+reason-instantiator
+ construct-forwards-premise
+
+def-instantiator
+ reason-instantiator
+  ...
+find-backwards-con-reasons
+find-backwards-pf-reasons
+find-forwards-con-reasons
+find-forwards-pf-reasons
+rectify-forwards-premises*
+define-backwards-reason
+make-simulation-problem
+make-planning-problem
+P-TEST
+term-count
+default-term-value
+factor-difference
+combine-exponents0
+
+--
+
+users of *interest-links*
+
+descendants-of
+link
+display-links
+
+which all are unused in oscar
+
+--
+
+sketching (test 757)
+reason-backwards-from-query
+reason-backwards-from-simple-query
+apply-degenerate-backwards-reasons
+
+reason-backwards-from
+
+--
+
+make-hypernode*
+ make-new-conclusion
+ queue-non-reductio-defeater-supposition
+  why no hypernode-variables?
+ queue-non-reductio-supposition
+  e-vars?
+ queue-premise
+ queue-desire
+ queue-percept
+ make-new-reductio-supposition
+  c-vars?
+
+
+--
+
+DISCHARGE-APPROPRIATELY-RELATED-LINK (illicitly?) tries to conclude ~(subset y182 y182 -> equal y182 y182) {supposing ((~ (EQUAL #:|^@y182| #:|^@y183|)))} from link 1154 on the basis of #<Hypernode 5818: (subset x8 x8)> and LINK-SUPPORTING-NODES: (#<Hypernode 5671: ~(equal x8 x10)/{ ~(equal x10 x8) }>), seemingly due to binding = ((P SUBSET #:|^@y182| #:|^@y182|) (Q EQUAL #:|^@y182| #:|^@y182|))
+
+so how does binding get this way?
+
+binding is based on the weird-looking u2, based on U* = (((#:|x8| . #:|^@y182|)) ((#:|^@y183| . #:|^@y182|))), which is originally having the value (given, as called from DISCHARGE-INTEREST-IN) U*#1 = (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|))). This U* is based on UNIFIER = (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|))), which is a member of the CORRESPONDING-I-LISTS = ((#<i-list for (subset (s5 c41 c0) (s5 c41 c0))> ((#) T)) (#<i-list for (subset ^@y108 (s5 c41 c0))> ((#) (#))) (#<i-list for (subset (s5 c41 c0) ^@y109)> ((#) (#))) ..), namely CORRESPONDING-I-LIST = (#<i-list for (subset ^@y108 ^@y109)> (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|)))). The corresponding-i-lists are fed from DRAW-CONCLUSION under the name i-lists, which is bound by (i-lists (c-list-corresponding-i-lists (hypernode-c-list node), where NODE = #<Hypernode 5818: (subset x8 x8)>
+
+DISCHARGE-INTEREST-IN reports that NODE = #<Hypernode 5818: (subset x8 x8)> discharges interest 113, INTEREST-SEQUENT: (NIL (SUBSET #:|^@y108| #:|^@y109|)), noting that LINK#1 = #<Link 1154: for  interest #90 by i-neg-condit>, and then calls discharge-appropriately-related-link with LINK#1 = #<Link 1154: for  interest #90 by i-neg-condit> and N = #<Interest 113> and NODE = #<Hypernode 5818: (subset x8 x8)>.
+
+Let's get clear that there's a problem here.
+
+We have, from node 5818, (all x)(subset x x). We are interested in, by interest 113, (all y1)(all y2)(subset y1 y2). We cannot conclude the interest from the node, yet DISCHARGE-INTEREST-IN reports it as such.
+
+Let's trace how DISCHARGE-INTEREST-IN comes to do this. Node 5818 comes from the argument list to DISCHARGE-INTEREST-IN. Interest 113 is one of the interest-candidates, a list which happens to contain the sole interest, 113. There are two possible routes for a fix: either we should never have had 113 as an interest-candidate, or we should rule it out afterwards.
+
+To rule it out afterwards, we would note that subset x x does not subsume subset y1 y2. Let's see if there is any comparison between the candidate 113 and the node 5818. Indeed, there is a binding of unifiers to (appropriately-related-non-reductio-suppositions node N unifier), and a binding of reductio-unifiers to (appropriately-related-reductio-suppositions node N unifier), the computation only proceeding if there is at least some match.
+
+Before we investigate the (appropriately-related-*) calls, let's check on the binding of unifier. UNIFIER = (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|))) is given by the second member of the CORRESPONDING-I-LIST = (#<i-list for (subset ^@y108 ^@y109)> (((#:|x8| . #:|^@y108|)) ((#:|^@y109| . #:|^@y108|)))), which suggests(?) that it is merely a way of getting the two formulas to agree and that appropriately-related-* should rule it out. However, appropriately-related-* only concerns itself with the suppositions, and in this case, there are none. So, let's try the other route to the fix: perhaps we should never have had such an interest-candidate.
+
+...
+
+I have changed the assignment of corresponding-i-lists in (store-hypernode-at-d-node) to only include those i-lists with formulas subsumed by the c-list's formula. Prior to this, it was possible to have a c-list with formula P x x with a corresponding-i-list for P x y. See (subsumed-i-lists-for).
+
+--
+
+(mem (s15 x8 (s6 x16 x17)) x17)
+((mem x28 (s6 x16 x17)) -> ((mem x28 x16) & (mem x28 x17)))
+==========================================
+((mem (s15 x8 (s6 x16 (s6 x16 x17))) x16) & (mem (s15 x8 (s6 x16 (s6 x16 x17))) x17))
+
+while valid, it seems like this should not be allowed in forwards reasoning
+
+HYPERLINK-NUMBER: 1334
+HYPERLINK-TARGET: @0=#<Hypernode 1352: ((mem (s15 x8 (s6 x16 (s6 x16 x17))) x16) & (mem (s15 x8 (s6 x16 (s6 x16 x17))) x17))/{ ~(equal ^@y188 ^@y189) }>
+HYPERLINK-BASIS: @3=(#<Hypernode 46: ((mem x28 (s6 x16 x17)) -> ((mem x28 x16) & (mem x28 x17)))> #<Hypernode 1332: (mem (s15 x8 (s6 x16 x17)) x17)/{ ~(equal ^@y188 ^@y189) }>)
+
+I have updated all reason-functions associated with make-forwards-reason to also check for subsumption
+--
+
+This seems like it similarly might be bad in reductio reasoning:
+
+  # 1985   ~(mem ^@y212 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))    supposition: { ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+  Inferred by hyperlink #1966 from { 1845 , 183 } by REDUCTIO
+
+  # 1845   (mem ^@y212 ^@y102)    supposition: { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 ^@y103 ^@y102)) }
+  # 183   ~(mem x28 (s6 x16 x17))    supposition: { ~((mem x28 x16) & (mem x28 x17)) }
+
+rewritten:
+
+~(mem x y & mem x z) |- ~(mem x (int y z))
+~(mem x y & mem x z) , mem x (int w v) |- mem x v
+================================================= REDUCTIO
+~(mem x y & mem x z) |- ~(mem x (int w (int y z)))
+
+this is like?
+0 |- R x y z -> ~(P x (s y z))
+P x (s w v) |- R x y z -> P x v
+================
+0 |- R x y z -> ~(P x (s w (s y z)))
+
+<OOPS>this is valid and actually seems okay. maybe the trouble is in backwards reasoning. how did we come to be interested in the reductio conclusion? or is this reductio actually of a forwards nature? in which case, it is probably bad to do...</OOPS>
+
+this is valid but tells us nothing we could not have inferred from the first premise
+
+--
+
+consider instead
+
+  # 2268   ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))    supposition: { (mem ^@y212 (s6 ^@y103 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))) , ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+  Inferred by hyperlink #2249 from { 1846 , 1985 } by modus-tollens1
+
+with basis
+
+0: #<Hypernode 1846: (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))/{ (mem ^@y212 (s6 ^@y103 ^@y104)) }>
+1: #<Hypernode 1985: ~(mem ^@y212 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))/{ ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }>
+
+  # 1846   (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))    supposition: { (mem ^@y212 (s6 ^@y103 ^@y104)) }
+  Inferred by hyperlink #1827 from { 1845 } by CONDITIONALIZATION
+
+  # 1845   (mem ^@y212 ^@y102)    supposition: { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 ^@y103 ^@y102)) }
+  Inferred by hyperlink #1826 from { 1842 } by simp
+
+  # 1842   ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))    supposition: { (mem ^@y212 (s6 ^@y103 ^@y102)) , ~((mem ^@y212 x16) & (mem ^@y212 x17)) }
+  Inferred by hyperlink #1823 from { 1771 , 183 } by modus-tollens1
+
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) supposing { (mem ^@y212 (s6 ^@y103 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))) , ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+
+ 2.  (all A)(all B)(some intAB)(IsInt A B intAB)     GIVEN
+ 10.  (all B)(some intAB)(IsInt x2 B intAB)     UI from { 2 }
+ 11.  (some intAB)(IsInt x2 x3 intAB)     UI from { 10 }
+ 14.  (IsInt x2 x3 (s6 x2 x3))     EI from { 11 }
+ 3.  (all A)(all B)(all intAB)((IsInt A B intAB) <-> (all x)((mem x intAB) <-> ((mem x A) & (mem x B))))     GIVEN
+ 29.  (all B)(all intAB)((IsInt x16 B intAB) <-> (all x)((mem x intAB) <-> ((mem x x16) & (mem x B))))     UI from { 3 }
+ 30.  (all intAB)((IsInt x16 x17 intAB) <-> (all x)((mem x intAB) <-> ((mem x x16) & (mem x x17))))     UI from { 29 }
+ 31.  ((IsInt x16 x17 x18) <-> (all x)((mem x x18) <-> ((mem x x16) & (mem x x17))))     UI from { 30 }
+ 32.  ((IsInt x16 x17 x18) -> (all x)((mem x x18) <-> ((mem x x16) & (mem x x17))))     bicondit-simp from { 31 }
+ 34.  (all x)((mem x (s6 x16 x17)) <-> ((mem x x16) & (mem x x17)))     modus-ponens1 from { 32 , 14 }
+ 45.  ((mem x28 (s6 x16 x17)) <-> ((mem x28 x16) & (mem x28 x17)))     UI from { 34 }
+ 46.  ((mem x28 (s6 x16 x17)) -> ((mem x28 x16) & (mem x28 x17)))     bicondit-simp from { 45 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem x173 x172) }
+        |----------------------------------------------------------
+        | 162.  (mem x173 x172)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) }
+        |----------------------------------------------------------
+        | 181.  ~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (mem ^@y212 ^@y104) }
+        |----------------------------------------------------------
+        | 182.  (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))     CONDITIONALIZATION from { 162 }
+        |----------------------------------------------------------
+        | Suppose:  { ~((mem x28 x16) & (mem x28 x17)) }
+        |----------------------------------------------------------
+        | 183.  ~(mem x28 (s6 x16 x17))     modus-tollens2 from { 46 , 181 }
+                |----------------------------------------------------------
+                | Suppose:  { (mem ^@y212 (s6 x16 x17)) , ~((mem ^@y212 x16) & (mem ^@y212 x17)) }
+                |----------------------------------------------------------
+                | 407.  ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     modus-tollens2 from { 182 , 183 }
+                |----------------------------------------------------------
+                | Suppose:  { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 x16 x17)) }
+                |----------------------------------------------------------
+                | 1770.  (mem ^@y212 ^@y103)     simp from { 407 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem ^@y212 (s6 ^@y103 ^@y102)) }
+        |----------------------------------------------------------
+        | 1771.  (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))     CONDITIONALIZATION from { 1770 }
+                |----------------------------------------------------------
+                | Suppose:  { (mem ^@y212 (s6 ^@y103 ^@y102)) , ~((mem ^@y212 x16) & (mem ^@y212 x17)) }
+                |----------------------------------------------------------
+                | 1842.  ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     modus-tollens1 from { 1771 , 183 }
+                |----------------------------------------------------------
+                | Suppose:  { ~((mem ^@y212 x16) & (mem ^@y212 x17)) , (mem ^@y212 (s6 ^@y103 ^@y102)) }
+                |----------------------------------------------------------
+                | 1845.  (mem ^@y212 ^@y102)     simp from { 1842 }
+        |----------------------------------------------------------
+        | Suppose:  { ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+        |----------------------------------------------------------
+        | 1985.  ~(mem ^@y212 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))     REDUCTIO from { 1845 , 183 }
+        |----------------------------------------------------------
+        | Suppose:  { (mem ^@y212 (s6 ^@y103 ^@y104)) }
+        |----------------------------------------------------------
+        | 1846.  (~((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102)) -> (mem ^@y212 ^@y104))     CONDITIONALIZATION from { 1845 }
+                |----------------------------------------------------------
+                | Suppose:  { (mem ^@y212 (s6 ^@y103 (s6 ^@y103 (s6 ^@y1202 ^@y1203)))) , ~((mem ^@y212 ^@y1202) & (mem ^@y212 ^@y1203)) }
+                |----------------------------------------------------------
+                | 2268.  ((mem ^@y212 ^@y103) & (mem ^@y212 ^@y102))     modus-tollens1 from { 1846 , 1985 }
+
+
+
+--
+
+Problem #87
+Pelletier's problem 35
+Given premises:
+Ultimate epistemic interests:
+     (some u)(some v1)((P u v1) -> (all x)(all y)(P x y))    interest = 1.0
+
+MAKING HYPERNODE #100 (#<Hypernode 100: (some x)~(all y)(P x y)/{ ~(P c84 c85) }>)
+
+doesn't work if using subsumed-i-lists-for instead of matching-i-lists-for
+
+--
+
+
+  # 844   ~(subset (s7 c0 (s7 c0 (s7 c0 c0))) (s6 c61 c0))    supposition: { ~(IsInvF c61 c0 (s6 c61 c0)) }
+  Inferred by hyperlink #824 from { 838 , 204 } by REDUCTIO
+
+  Node 844 discharges interest 97
+
+                                        # 260  reductio interest:
+                                           (all x)((mem x (s7 c0 (s7 c0 (s7 c0 c0)))) -> (mem x (s6 c61 c0)))
+                                        For reductio interest 42 by i-neg-condit using node 844
+
+                                        Hypernode #414 discharges interest #260
+
+
+This is an undefeated argument of strength 1.0 for:
+      ~(subset (s7 c0 (s7 c0 (s7 c0 c0))) (s6 c61 c0)) supposing { ~(IsInvF c61 c0 (s6 c61 c0)) }
+
+ 1.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 27.  (all B)((subset x18 B) <-> (all x)((mem x x18) -> (mem x B)))     UI from { 1 }
+ 31.  ((subset x18 x22) <-> (all x)((mem x x18) -> (mem x x22)))     UI from { 27 }
+ 35.  ((subset x18 x22) -> (all x)((mem x x18) -> (mem x x22)))     bicondit-simp from { 31 }
+ 11.  (all A)(all B)(all invFBA)((IsInvF B A invFBA) <-> (all x)((mem x invFBA) <-> ((mem x A) & (some y)((mem y B) & (F x y)))))     GIVEN
+ 53.  (all B)(all invFBA)((IsInvF B x33 invFBA) <-> (all x)((mem x invFBA) <-> ((mem x x33) & (some y)((mem y B) & (F x y)))))     UI from { 11 }
+ 54.  (all invFBA)((IsInvF x34 x33 invFBA) <-> (all x)((mem x invFBA) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))))     UI from { 53 }
+ 55.  ((IsInvF x34 x33 x35) <-> (all x)((mem x x35) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))))     UI from { 54 }
+ 57.  ((all x)((mem x x35) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))) -> (IsInvF x34 x33 x35))     bicondit-simp from { 55 }
+ 10.  (all A)(all B)(some invFBA)(IsInvF B A invFBA)     GIVEN
+ 13.  (all B)(some invFBA)(IsInvF B x2 invFBA)     UI from { 10 }
+ 16.  (some invFBA)(IsInvF x5 x2 invFBA)     UI from { 13 }
+ 56.  ((IsInvF x34 x33 x35) -> (all x)((mem x x35) <-> ((mem x x33) & (some y)((mem y x34) & (F x y)))))     bicondit-simp from { 55 }
+ 17.  (IsInvF x5 x2 (s6 x5 x2))     EI from { 16 }
+ 58.  (all x)((mem x (s6 x34 x33)) <-> ((mem x x33) & (some y)((mem y x34) & (F x y))))     modus-ponens1 from { 56 , 17 }
+ 65.  ((mem x43 (s6 x34 x33)) <-> ((mem x43 x33) & (some y)((mem y x34) & (F x43 y))))     UI from { 58 }
+ 66.  ((mem x43 (s6 x34 x33)) -> ((mem x43 x33) & (some y)((mem y x34) & (F x43 y))))     bicondit-simp from { 65 }
+ 67.  (((mem x43 x33) & (some y)((mem y x34) & (F x43 y))) -> (mem x43 (s6 x34 x33)))     bicondit-simp from { 65 }
+ 3.  (all A)(all B)(all intAB)((IsInt A B intAB) <-> (all x)((mem x intAB) <-> ((mem x A) & (mem x B))))     GIVEN
+ 45.  (all B)(all intAB)((IsInt x28 B intAB) <-> (all x)((mem x intAB) <-> ((mem x x28) & (mem x B))))     UI from { 3 }
+ 46.  (all intAB)((IsInt x28 x29 intAB) <-> (all x)((mem x intAB) <-> ((mem x x28) & (mem x x29))))     UI from { 45 }
+ 47.  ((IsInt x28 x29 x30) <-> (all x)((mem x x30) <-> ((mem x x28) & (mem x x29))))     UI from { 46 }
+ 2.  (all A)(all B)(some intAB)(IsInt A B intAB)     GIVEN
+ 14.  (all B)(some intAB)(IsInt x3 B intAB)     UI from { 2 }
+ 15.  (some intAB)(IsInt x3 x4 intAB)     UI from { 14 }
+ 48.  ((IsInt x28 x29 x30) -> (all x)((mem x x30) <-> ((mem x x28) & (mem x x29))))     bicondit-simp from { 47 }
+ 18.  (IsInt x3 x4 (s7 x3 x4))     EI from { 15 }
+ 50.  (all x)((mem x (s7 x28 x29)) <-> ((mem x x28) & (mem x x29)))     modus-ponens1 from { 48 , 18 }
+ 61.  ((mem x40 (s7 x28 x29)) <-> ((mem x40 x28) & (mem x40 x29)))     UI from { 50 }
+ 63.  (((mem x40 x28) & (mem x40 x29)) -> (mem x40 (s7 x28 x29)))     bicondit-simp from { 61 }
+ 5.  (all A)(all x)(all y)((same x y) -> ((mem x A) -> (mem y A)))     GIVEN
+ 26.  (all x)(all y)((same x y) -> ((mem x x17) -> (mem y x17)))     UI from { 5 }
+ 28.  (all y)((same x19 y) -> ((mem x19 x17) -> (mem y x17)))     UI from { 26 }
+ 6.  (all x)(same x x)     GIVEN
+ 12.  (same x1 x1)     UI from { 6 }
+ 7.  (all x)(all y)((same x y) <-> (same y z))     GIVEN
+ 19.  (all y)((same x8 y) <-> (same y z))     UI from { 7 }
+ 20.  ((same x8 x9) <-> (same x9 z))     UI from { 19 }
+ 22.  ((same x9 z) -> (same x8 x9))     bicondit-simp from { 20 }
+ 21.  ((same x8 x9) -> (same x9 z))     bicondit-simp from { 20 }
+ 23.  (same x8 z)     modus-ponens1 from { 21 , 12 }
+ 34.  ((same x19 x25) -> ((mem x19 x17) -> (mem x25 x17)))     UI from { 28 }
+ 24.  (same x8 x9)     modus-ponens1 from { 22 , 23 }
+ 39.  ((mem x19 x17) -> (mem x25 x17))     modus-ponens1 from { 34 , 24 }
+ 64.  ((mem x40 x28) -> ((mem x40 x29) -> (mem x40 (s7 x28 x29))))     exportation from { 63 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 x196) }
+        |----------------------------------------------------------
+        | 153.  ~(IsInvF c61 c0 x196)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 x35) }
+        |----------------------------------------------------------
+        | 155.  ~(all x)((mem x x35) <-> ((mem x c0) & (some y)((mem y c61) & (F x y))))     modus-tollens2 from { 57 , 153 }
+        | 156.  (some x)~((mem x x35) <-> ((mem x c0) & (some y)((mem y c61) & (F x y))))     neg-ug from { 155 }
+        | 157.  ~((mem (s199 x35) x35) <-> ((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))))     EI from { 156 }
+        | 158.  (~(mem (s199 x35) x35) <-> ((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))))     neg-bicondit-simp from { 157 }
+        | 160.  (((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))) -> ~(mem (s199 x35) x35))     bicondit-simp from { 158 }
+        | 159.  (~(mem (s199 x35) x35) -> ((mem (s199 x35) c0) & (some y)((mem y c61) & (F (s199 x35) y))))     bicondit-simp from { 158 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 (s6 c61 c0)) }
+        |----------------------------------------------------------
+        | 162.  ~((mem (s199 (s6 c61 c0)) c0) & (some y)((mem y c61) & (F (s199 (s6 c61 c0)) y)))     conditional-modus-tollens from { 67 , 160 }
+        | 215.  ~(mem (s199 (s6 c61 c0)) (s6 c61 c0))     modus-tollens2 from { 66 , 162 }
+        | 214.  (mem (s199 (s6 c61 c0)) (s6 c61 c0))     modus-tollens2 from { 159 , 162 }
+        | 260.  (mem x25 (s6 c61 c0))     modus-ponens2 from { 39 , 214 }
+        | 281.  ((mem x43 c0) & (some y)((mem y c61) & (F x43 y)))     modus-ponens2 from { 66 , 260 }
+        | 329.  (mem x43 c0)     simp from { 281 }
+        | 403.  ((mem x40 x29) -> (mem x40 (s7 c0 x29)))     modus-ponens2 from { 64 , 329 }
+        | 622.  (mem x40 (s7 c0 c0))     modus-ponens1 from { 403 , 329 }
+        | 748.  (mem x40 (s7 c0 (s7 c0 c0)))     modus-ponens2 from { 403 , 622 }
+        | 837.  (mem x40 (s7 c0 (s7 c0 (s7 c0 c0))))     modus-ponens2 from { 403 , 748 }
+        | 838.  ~((mem (s199 (s6 c61 c0)) (s7 c0 (s7 c0 (s7 c0 c0)))) -> (mem (s199 (s6 c61 c0)) (s6 c61 c0)))     i-neg-condit from { 215 , 837 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x226 x225) }
+        |----------------------------------------------------------
+        | 199.  (subset x226 x225)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (subset x18 x22) }
+        |----------------------------------------------------------
+        | 203.  (all x)((mem x x18) -> (mem x x22))     modus-ponens2 from { 35 , 199 }
+        | 204.  ((mem x231 x18) -> (mem x231 x22))     UI from { 203 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(IsInvF c61 c0 (s6 c61 c0)) }
+        |----------------------------------------------------------
+        | 844.  ~(subset (s7 c0 (s7 c0 (s7 c0 c0))) (s6 c61 c0))     REDUCTIO from { 838 , 204 }
+
+
+                                        # 1834  reductio interest:
+                                           (subset ^@y22970 ^@y22970)
+
+                                        using node 11944
+
+--
+
+In problem 759
+
+                | 853.  ((mem (s196 c0) x26) -> (mem (s196 c0) (s7 c0 x26)))     modus-ponens2 from { 68 , 843 }
+                | 847.  ((mem (s196 c0) c0) & (some y)((mem y c58) & (F (s196 c0) y)))     modus-ponens2 from { 569 , 843 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(mem (s34 c0 c0 c58) c0) , ~(IsInvF c58 c0 c0) }
+                |----------------------------------------------------------
+                | 874.  (mem (s196 c0) (s6 c58 c0))     modus-ponens2 from { 71 , 847 }
+                | 974.  (mem (s196 c0) (s7 c0 (s6 c58 c0)))     modus-ponens1 from { 853 , 874 }
+                | 976.  (mem (s196 c0) (s7 c0 (s7 c0 (s6 c58 c0))))     modus-ponens2 from { 853 , 974 }
+                | 981.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0)))))     modus-ponens2 from { 853 , 976 }
+                | 986.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0))))))     modus-ponens2 from { 853 , 981 }
+                | 991.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0)))))))     modus-ponens2 from { 853 , 986 }
+                | 996.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0))))))))     modus-ponens2 from { 853 , 991 }
+                | 1001.  (mem (s196 c0) (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s7 c0 (s6 c58 c0)))))))))     modus-ponens2 from { 853 , 996 }
+
+We should block modus-ponens from making such non-productive inferences
+
+other examples might include:
+
+P x → P x
+P x → P x ∨ Q
+P x → ∃ y (P x)
+P x → ∃ y (P x ∨ Q)
+P x → P (s x)
+P x → ∃ y (P y)
+P x → (Q → P x)
+P x → ¬ (¬ P x → Q)
+P x → ¬ (¬ P x ∧ Q)
+
+disjunctive normal form:
+p ∨ q ⇒ p ∨ q
+¬(p ∧ q) ⇒ ¬p ∨ ¬q
+∀x(P x ∨ Q x) ⇒ P x ∨ Q x
+∃x(P x ∨ Q x) ⇒ P s ∨ Q s
+∀x(P x & ∃y(P y ∧
+
+-- this one is okay; though it's not productive, we don't expect it will lead to further work
+P x → ∀ y (⊥ → Q)
+
+another way to go: block any inference by forwards reasoning to something that is already concluded.
+
+--
+
+                | Suppose:  { (subset ^@y68 ^@y69) , ~(equal ^@y68 ^@y69) }
+                |----------------------------------------------------------
+                | 466.  ~(subset ^@y69 ^@y68)     REDUCTIO from { 80 , 443 }
+
+ 789.  (all x)((mem x x2) -> (mem x x2))     modus-ponens2 from { 14 , 768 }
+
+                |----------------------------------------------------------
+                | Suppose:  { (subset ^@y70 ^@y71) , ~(equal ^@y70 ^@y71) }
+                |----------------------------------------------------------
+                | 800.  ~((all x)((mem x ^@y70) -> (mem x ^@y70)) -> (subset ^@y70 ^@y70))     i-neg-condit from { 466 , 789 }
+
+reductio interests
+Interest 30: ~((all x)((mem x ^@y71) -> (mem x ^@y70)) -> (subset ^@y71 ^@y70))
+ #<Link 192: for  interest #30 by i-neg-condit>
+Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))
+
+  0: (DRAW-CONCLUSION (~ (-> (ALL X #) (SUBSET #1=#:|^@y70| #1#))) (#1=#<#2=Hypernode 466#3=: ~(subset #4=^@y69 #5=^@y68)/{ (subset #5# #4#) , ~(equal #5# #4#) }#6=> #1##2#789#3#(all x)((mem x #7=x2) -> (m..
+    NODE = #<Hypernode 800: ~((all x)((mem x ^@y70) -> (mem x ^@y70)) -> (subset ^@y70 ^@y70))/{ (subset ^@y70 ^@y71) , ~(equal ^@y70 ^@y71) }>
+     !this is not okay
+    BASIS = (#<Hypernode 466: ~(subset ^@y69 ^@y68)/{ (subset ^@y68 ^@y69) , ~(equal ^@y68 ^@y69) }> #<Hypernode 789: (all x)((mem x x2) -> (mem x x2))>)
+      0: #<Hypernode 466: ~(subset ^@y69 ^@y68)/{ (subset ^@y68 ^@y69) , ~(equal ^@y68 ^@y69) }>
+      1: #<Hypernode 789: (all x)((mem x x2) -> (mem x x2))>
+
+  1: (DISCHARGE-APPROPRIATELY-RELATED-LINK #<Link 192: for  interest #30 by i-neg-condit> (((#:|x2| . #1=#:|^@y70|)) ((#:|^@y71| . #1#))) 1.0 T 1.0 #<Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))> ..
+        NODE = #<Hypernode 789: (all x)((mem x x2) -> (mem x x2))>
+        ! this is not appropriately-related to interest 115; (at least in the sense that it does not imply the interest-formula)
+        CORRESPONDING-I-LIST = (#<i-list for (all x)((mem x ^@y71) -> (mem x ^@y70))> (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|))))
+        - this corresponds to interest 115 for node 789
+        LINK = #<Link 192: for  interest #30 by i-neg-condit>
+         LINK-RESULTANT-INTEREST: @2=#<Interest 30: ~((all x)((mem x ^@y71) -> (mem x ^@y70)) -> (subset ^@y71 ^@y70))>
+        U* = (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|)))
+        N = #<Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))>
+        INTERESTS = (#<Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))>)
+        INSTANTIATIONS = (((#:|x2| . #:|^@y70|)) ((#:|^@y69| . #:|^@y71|) (#:|^@y68| . #:|^@y70|)))
+        SUPPOSITION = NIL
+  2: (DISCHARGE-INTEREST-IN #<Hypernode 789: (all x)((mem x #1=x2) -> (mem x #1#))> ((#1=#<i-list for (all x)((mem x #2=^@y71) -> (mem x (int (inv F #3=c19 #4=c0) (inv F #5=c24 #4#))))#6=> (# #)) (#1#(all ..
+        NODE = #<Hypernode 789: (all x)((mem x x2) -> (mem x x2))>
+        CORRESPONDING-I-LIST = (#<i-list for (all x)((mem x ^@y71) -> (mem x ^@y70))> (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|))))
+        I-LIST = #<i-list for (all x)((mem x ^@y71) -> (mem x ^@y70))>
+        INTEREST-CANDIDATES = (#<Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))>)
+        N = #<Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))>
+        UNIFIER = (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|)))
+        UNIFIERS = ((T T))
+        U* = (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|)))
+
+  3: (DRAW-CONCLUSION (ALL X (-> (MEM X #1=#:|x2|) (MEM X #1#))) (#1=#<#2=Hypernode 14#3=: ((subset #4=x2 #5=x5) -> (all x)((mem x #4#) -> (mem x #5#)))#6=> #1##2#768#3#(subset #7=x4 #7#)#6#) modus-ponens2..
+        NODE = #<Hypernode 789: (all x)((mem x x2) -> (mem x x2))>
+        I-LISTS = ((#<i-list for (all x)((mem x ^@y71) -> (mem x (int (inv F c19 c0) (inv F c24 c0))))> ((#) (#))) (#<i-list for (all x)((mem x (inv F (int c19 c24) c0)) -> (mem x ^@y70))> ((#) (#))) ..)
+which includes
+2: (#<i-list for (all x)((mem x ^@y71) -> (mem x ^@y70))> (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|))))
+which has an i-list-interest
+I-LIST-INTERESTS: (#<Interest 115: (all x)((mem x ^@y71) -> (mem x ^@y70))>)
+**** perhaps that is not okay?!
+digging off to the side:
+the i-lists of the dnode are:
++0: #<i-list for (all x)((mem x ^@y71) -> (mem x ^@y71))>
+1: #<i-list for (all x)((mem x c17) -> (mem x c24))>
+2: #<i-list for (all x)((mem x c17) -> (mem x c19))>
++3: @2=#<i-list for (all x)((mem x ^@y71) -> (mem x ^@y70))>
++4: #<i-list for (all x)((mem x (inv F (int c19 c24) c0)) -> (mem x ^@y70))>
++5: #<i-list for (all x)((mem x ^@y71) -> (mem x (int (inv F c19 c0) (inv F c24 c0))))>
+6: #<i-list for (all x)((mem x (inv F (int c19 c24) c0)) -> (mem x (int (inv F c19 c0) (inv F c24 c0))))>
+7: #<i-list for (all x)((mem x (int (inv F c19 c0) (inv F c24 c0))) -> (mem x (inv F (int c19 c24) c0)))>
+and the i-lists in use by draw-conclusion are
++0: (#<i-list for (all x)((mem x ^@y71) -> (mem x (int (inv F c19 c0) (inv F c24 c0))))> (((#:|x2| INT (INV F #:|c19| #:|c0|) (INV F #:|c24| #:|c0|))) ((#:|^@y71| INT (INV F #:|c19| #:|c0|) (INV F #:|c24| #:|c0|)))))
++1: (#<i-list for (all x)((mem x (inv F (int c19 c24) c0)) -> (mem x ^@y70))> (((#:|x2| INV F (INT #:|c19| #:|c24|) #:|c0|)) ((#:|^@y70| INV F (INT #:|c19| #:|c24|) #:|c0|))))
++2: @1=(#<i-list for (all x)((mem x ^@y71) -> (mem x ^@y70))> (((#:|x2| . #:|^@y70|)) ((#:|^@y71| . #:|^@y70|))))
++3: (#<i-list for (all x)((mem x ^@y71) -> (mem x ^@y71))> (((#:|x2| . #:|^@y71|)) T))
+those in common marked with +
+
+
+------
+
+ 2.  (all A)(all B)((all x)((mem x A) -> (mem x B)) -> (subset A B))     GIVEN
+ 3.  (all B)((all x)((mem x x1) -> (mem x B)) -> (subset x1 B))     UI from { 2 }
+ 4.  ((all x)((mem x x1) -> (mem x x2)) -> (subset x1 x2))     UI from { 3 }
+ 5.  (some z3)(((mem z3 x1) -> (mem z3 x2)) -> (subset x1 x2))     A-removal from { 4 }
+ 6.  (((mem (s4 x1 x2) x1) -> (mem (s4 x1 x2) x2)) -> (subset x1 x2))     EI from { 5 }
+
+
+                        (s4 A B)  (mem z3 A) (mem z3 B) ((mem z3 A) -> (mem z3 B)) (subset A B)
+                        ?         T          F          F                          F
+                        anything  F          T          ?                          T
+
+
+s4 A B = if A is not a subset of B, then A is not empty, so pick an element of A that is not in B
+         otherwise, pick any element whatsoever
+
+       = any element from A - B or anything else if A - B is empty
+-
+                |----------------------------------------------------------
+                | Suppose:  { (~(equal c0 c7) & (subset c0 c7)) , ~(mem (s4 c0 c0) c0) }
+                |----------------------------------------------------------
+                | 262.  ~(subset c0 c7)     UNEXPECTED TODO
+
+
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset x27 x26) }
+        |----------------------------------------------------------
+        | 47.  ~(subset x27 x26)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (~(equal c0 c7) & (subset c0 c7)) }
+        |----------------------------------------------------------
+        | 269.  (mem (s4 c0 c0) c0)     REDUCTIO from { 262 , 17 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(subset c0 ^@y9) , (~(equal c0 c7) & (subset c0 c7)) }
+                |----------------------------------------------------------
+                | 270.  ~((mem (s4 c0 c0) c0) -> (subset c0 c0))     i-neg-condit from { 47 , 269 }
+
+
+
+
+-------------------------------
+
+
+#<hyperlink #282 for hypernode 295> subsumes #<hyperlink #249 for hypernode 262>
+
+ 2.  (all A)(all B)((all x)((mem x A) -> (mem x B)) -> (subset A B))     GIVEN
+ 3.  (all B)((all x)((mem x x1) -> (mem x B)) -> (subset x1 B))     UI from { 2 }
+ 4.  ((all x)((mem x x1) -> (mem x x2)) -> (subset x1 x2))     UI from { 3 }
+ 5.  (some z3)(((mem z3 x1) -> (mem z3 x2)) -> (subset x1 x2))     A-removal from { 4 }
+ 6.  (((mem (s4 x1 x2) x1) -> (mem (s4 x1 x2) x2)) -> (subset x1 x2))     EI from { 5 }
+ 10.  (~(mem (s4 x1 x2) x1) -> (subset x1 x2))     cond-antecedent-simp from { 6 }
+ 11.  ((mem (s4 x1 x2) x2) -> (subset x1 x2))     cond-antecedent-simp from { 6 }
+ 1.  (all A)(all B)((~(equal A B) & (subset A B)) -> ~(subset B A))     GIVEN
+ 7.  (all B)((~(equal x5 B) & (subset x5 B)) -> ~(subset B x5))     UI from { 1 }
+ 8.  ((~(equal x5 x6) & (subset x5 x6)) -> ~(subset x6 x5))     UI from { 7 }
+ 9.  (~(equal x5 x6) -> ((subset x5 x6) -> ~(subset x6 x5)))     exportation from { 8 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x22 x21) }
+        |----------------------------------------------------------
+        | 40.  (subset x22 x21)     REDUCTIO-SUPPOSITION
+                |----------------------------------------------------------
+                | Suppose:  { (~(equal c0 c7) & (subset c0 c7)) , ~(mem (s4 c0 c0) c0) }
+                |----------------------------------------------------------
+                | 262.  ~(subset c0 c7)     UNEXPECTED TODO
+
+
+(show-arguments (list (hypernode 295)))
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      ~(subset ^@y14 c7) supposing { ~(mem (s4 c0 ^@y14) c0) , (~(equal c0 c7) & (subset c0 c7)) }
+
+ 2.  (all A)(all B)((all x)((mem x A) -> (mem x B)) -> (subset A B))     GIVEN
+ 3.  (all B)((all x)((mem x x1) -> (mem x B)) -> (subset x1 B))     UI from { 2 }
+ 4.  ((all x)((mem x x1) -> (mem x x2)) -> (subset x1 x2))     UI from { 3 }
+ 5.  (some z3)(((mem z3 x1) -> (mem z3 x2)) -> (subset x1 x2))     A-removal from { 4 }
+ 6.  (((mem (s4 x1 x2) x1) -> (mem (s4 x1 x2) x2)) -> (subset x1 x2))     EI from { 5 }
+ 10.  (~(mem (s4 x1 x2) x1) -> (subset x1 x2))     cond-antecedent-simp from { 6 }
+ 1.  (all A)(all B)((~(equal A B) & (subset A B)) -> ~(subset B A))     GIVEN
+ 7.  (all B)((~(equal x5 B) & (subset x5 B)) -> ~(subset B x5))     UI from { 1 }
+ 8.  ((~(equal x5 x6) & (subset x5 x6)) -> ~(subset x6 x5))     UI from { 7 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x22 x21) }
+        |----------------------------------------------------------
+        | 40.  (subset x22 x21)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset x27 x26) }
+        |----------------------------------------------------------
+        | 47.  ~(subset x27 x26)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~(mem x32 c0) }
+        |----------------------------------------------------------
+        | 52.  ~(mem x32 c0)     REDUCTIO-SUPPOSITION
+                |----------------------------------------------------------
+                | Suppose:  { ~(subset c0 ^@y11) , ~(mem (s4 c0 ^@y11) c0) }
+                |----------------------------------------------------------
+                | 115.  ~(~(mem (s4 c0 ^@y11) c0) -> (subset c0 ^@y11))     i-neg-condit from { 47 , 52 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset c0 ^@y11) }
+        |----------------------------------------------------------
+        | 117.  (mem (s4 c0 ^@y11) c0)     REDUCTIO from { 115 , 10 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(mem (s4 c0 ^@y11) c0) }
+        |----------------------------------------------------------
+        | 119.  (subset c0 ^@y11)     REDUCTIO from { 117 , 52 }
+                |----------------------------------------------------------
+                | Suppose:  { (subset ^@y14 ^@y13) , ~(mem (s4 c0 ^@y14) c0) }
+                |----------------------------------------------------------
+                | 122.  ~((subset c0 ^@y14) -> ~(subset ^@y14 c0))     i-neg-condit from { 40 , 119 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(mem (s4 c0 ^@y14) c0) , (subset ^@y14 ^@y13) }
+                |----------------------------------------------------------
+                | 171.  (subset ^@y14 c0)     neg-condit from { 122 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset ^@y14 ^@y13) , ~(mem (s4 c0 ^@y14) c0) , (subset c0 ^@y13) }
+                        |----------------------------------------------------------
+                        | 173.  ~((subset ^@y13 c0) -> ~(subset c0 ^@y13))     i-neg-condit from { 40 , 171 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset c0 ^@y13) , ~(mem (s4 c0 ^@y14) c0) , (subset ^@y14 ^@y13) }
+                        |----------------------------------------------------------
+                        | 227.  (subset ^@y13 c0)     neg-condit from { 173 }
+        |----------------------------------------------------------
+        | Suppose:  { (~(equal c0 c7) & (subset c0 c7)) }
+        |----------------------------------------------------------
+        | 12.  (~(equal c0 c7) & (subset c0 c7))     SUPPOSITION
+        | 15.  ~(subset c7 c0)     modus-ponens2 from { 8 , 12 }
+        | 17.  (subset c0 c7)     simp from { 12 }
+                        |----------------------------------------------------------
+                        | Suppose:  { (subset ^@y14 c7) , ~(mem (s4 c0 ^@y14) c0) , (~(equal c0 c7) & (subset c0 c7)) }
+                        |----------------------------------------------------------
+                        | 232.  ~(subset c0 c7)     REDUCTIO from { 227 , 15 }
+                |----------------------------------------------------------
+                | Suppose:  { ~(mem (s4 c0 ^@y14) c0) , (~(equal c0 c7) & (subset c0 c7)) }
+                |----------------------------------------------------------
+                | 295.  ~(subset ^@y14 c7)     REDUCTIO from { 232 , 17 }
+
+
+--
+
+        |----------------------------------------------------------
+        | Suppose:  { (subset x22 x21) }
+        |----------------------------------------------------------
+        | 40.  (subset x22 x21)     REDUCTIO-SUPPOSITION
+
+        | Suppose:  { (subset y14 y13) }
+        | 40.  (subset y14 y13)     REDUCTIO-SUPPOSITION
+
+        |----------------------------------------------------------
+        | Suppose:  { ~(mem (s4 c0 ^@y11) c0) }
+        |----------------------------------------------------------
+        | 119.  (subset c0 ^@y11)     REDUCTIO from { 117 , 52 }
+
+        | Suppose:  { ~(mem (s4 c0 ^@y14) c0) }
+        | 119.  (subset c0 ^@y14)     REDUCTIO from { 117 , 52 }
+
+                |----------------------------------------------------------
+                | Suppose:  { (subset ^@y14 ^@y13) , ~(mem (s4 c0 ^@y14) c0) }
+                |----------------------------------------------------------
+                | 122.  ~((subset c0 ^@y14) -> ~(subset ^@y14 c0))     i-neg-condit from { 40 , 119 }
+
+what suppositions would make 122 appropriate?
+~(mem (s4 c0 ^@y14) c0) , (subset ^@y14 c0)
+that is, instantiations should include x21 . c0, rather than x21 . y13
+current calculation is
+INSTANTIATIONS = (((#:|^@y11| . #:|^@y14|)) ((#:|x21| . #:|^@y13|) (#:|x22| . #:|^@y14|)))
+  LINK-INSTANTIATIONS: @1=(((#:|x21| . #:|^@y13|) (#:|x22| . #:|^@y14|)))
+  U1 = ((#:|^@y11| . #:|^@y14|))
+  U2 = ((#:|^@y13| . #:|c0|))
+this looks fine except instantiations is not a list of assocs but rather a list of lists of assocs!
+what is link-instantations??
+construct-interest-link
+ itself
+ DISCHARGE-LINK
+   (u* (merge-unifiers* unifier u)) - a list of list of assocs
+   (instantiations
+     (cons (mem1 u*) - a list of assocs
+           (mapcar #'(lambda (in) (merge-matches* in (mem2 u*))) (link-instantiations link))))
+
+construct-initial-interest-link
+ make-forwards-inference
+  store-instantiated-premise
+  reason-substantively-from-first-instantiated-premise
+  reason-substantively-from-non-initial-instantiated-premise
+ make-backwards-inference
+  construct-interest-scheme
+   reason-from-interest-scheme
+    ?is-instantiations is apparently used as if it were a list of list of assocs
+  reason-from-interest-scheme
+
+
+(mapcar
+  #'(lambda (in)
+      (cond ((eq in t) u2)
+            (t (cons (car in) (match-sublis u2 (cdr in))))))
+  (car (link-instantiations link)))
+
+(match-sublis u2 (cdr (car (link-instantiations link))))
+
+
+
+
+
+but what is wanted is not appropriately-related to the link
+
+x22(40) = y14(122) = y13(link) = y11(119)
+x21(40) = y13(122) = y14(link) = c0(119)
+
+        LINK = #<Link 13: for  interest #29 by i-neg-condit>
+         LINK-RESULTANT-INTEREST: #<Interest 29: ~((subset ^@y13 ^@y14) -> ~(subset ^@y14 ^@y13))>
+         LINK-INTEREST: @1=#<Interest 30: (subset ^@y14 ^@y13)>
+         LINK-INTEREST-FORMULA: (SUBSET #:|^@y13| #:|^@y14|)
+         LINK-INTEREST-MATCH: ((#:|^@y13| . #:|^@y14|) (#:|^@y14| . #:|^@y13|))
+         LINK-INTEREST-REVERSE-MATCH: ((#:|^@y14| . #:|^@y13|) (#:|^@y13| . #:|^@y14|))
+         ; y14(link) = y13(122) , y13(link) = y14(122) (OR POSSIBLY THE OTHER WAY AROUND)
+        U* = (((#:|^@y11| . #:|^@y13|)) ((#:|^@y14| . #:|c0|)))
+        ; y11(119) = y13(?) , y14(?) = c0(119)
+        N = #<Interest 30: (subset ^@y14 ^@y13)>
+        NODE = #<Hypernode 119: (subset c0 ^@y11)/{ ~(mem (s4 c0 ^@y11) c0) }>
+        BINDING = ((P SUBSET #:|^@y13| #:|^@y14|) (Q ~ (SUBSET #:|^@y14| #:|^@y13|)))
+        MATCH* = ((#:|^@y14| . #:|^@y13|) (#:|^@y13| . #:|^@y14|))
+        U** = (((#:|^@y11| . #:|^@y14|)) ((#:|^@y13| . #:|c0|)))
+        ; y11(119) = y14(?) , y13(?) = c0(119)
+        U1 = ((#:|^@y11| . #:|^@y14|))
+        U2 = ((#:|^@y13| . #:|c0|))
+        BINDING* = ((P SUBSET #:|c0| #:|^@y14|) (Q ~ (SUBSET #:|^@y14| #:|c0|)))
+        INSTANTIATIONS = (((#:|^@y11| . #:|^@y14|)) ((#:|x21| . #:|^@y13|) (#:|x22| . #:|^@y14|)))
+        SUPPOSITION = NIL
+
+
+
+  0: (DRAW-CONCLUSION (~ (-> (SUBSET #:|c0| #:|^@y14|) (~ #))) (#1=#<#2=Hypernode 40#3=: (subset #4=x22 #5=x21)#6=/#7={ (subset #4# #5#)#8= }#9=> #1##2#119#3#(subset #10=c0 #11=^@y11)#6##7#~(mem (s4 #10# #..
+      Locals:
+        FORMULA = (~ (-> (SUBSET #:|c0| #:|^@y14|) (~ (SUBSET #:|^@y14| #:|c0|))))
+        BASIS = (#<Hypernode 40: (subset x22 x21)/{ (subset x22 x21) }> #<Hypernode 119: (subset c0 ^@y11)/{ ~(mem (s4 c0 ^@y11) c0) }>)
+        INSTANTIATIONS = (((#:|x21| . #:|^@y13|) (#:|x22| . #:|^@y14|)) ((#:|^@y11| . #:|^@y14|)))
+        DISCHARGE = NIL
+        RULE = i-neg-condit
+
+        #:.DEFAULTING-TEMP. = #<Interest 29: ~((subset ^@y13 ^@y14) -> ~(subset ^@y14 ^@y13))>
+        #:.DEFAULTING-TEMP.#1 = NIL
+        #:.DEFAULTING-TEMP.#2 = ((P SUBSET #:|c0| #:|^@y14|) (Q ~ (SUBSET #:|^@y14| #:|c0|)))
+        #:.DEFAULTING-TEMP.#3 = #<Link 13: for  interest #29 by i-neg-condit>
+        #:.DEFAULTING-TEMP.#4 = T
+        #:.DEFAULTING-TEMP.#5 = NIL
+        C-LIST = #<c-list for ~((subset c0 ^@y14) -> ~(subset ^@y14 c0))>
+        CD = ((((SUBSET #:|^@y14| #:|^@y13|) . #<Hypernode 40: (subset x22 x21)/{ (subset x22 x21) }>) ((~ #) . #<Hypernode 52: ~(mem x32 c0)/{ ~(mem x32 c0) }>)) NIL ..)
+        D-NODE = #<d-node: 93>
+        DEDUCTIVE-ONLY = T
+        DEFEASIBLE? = NIL
+        DEPTH = 5
+        DISCOUNT = 1.0
+        HYPERLINK = #<hyperlink #109 for hypernode 122>
+        INTERESTS = NIL
+        NDA = (NIL)
+        NEW-NODE? = T
+        NODE = #<Hypernode 122: ~((subset c0 ^@y14) -> ~(subset ^@y14 c0))/{ (subset ^@y14 ^@y13) , ~(mem (s4 c0 ^@y14) c0) }>
+        NR = NIL
+        OLD-DEGREE = 1.0
+        PROOF-NODES = (#<Hypernode 92: ~((subset c0 ^@y14) -> ~(subset ^@y14 c0))/{ (mem (s4 ^@y14 c0) c0) , (subset c0 ^@y14) }>)
+        RA = (((SUBSET #:|^@y14| #:|^@y13|) . #<Hypernode 40: (subset x22 x21)/{ (subset x22 x21) }>) ((~ (MEM # #:|c0|)) . #<Hypernode 52: ~(mem x32 c0)/{ ~(mem x32 c0) }>))
+        SEQUENT = (((SUBSET #:|^@y14| #:|^@y13|) (~ (MEM # #:|c0|))) (~ (-> (SUBSET #:|c0| #:|^@y14|) (~ #))))
+        SUP = ((SUBSET #:|^@y14| #:|^@y13|) (~ (MEM (#:|s4| #:|c0| #:|^@y14|) #:|c0|)))
+
+
+this one is probably okay:
+  # 96   ~((subset ^@y13 c0) -> ~(subset c0 ^@y13))    supposition: { (subset c0 ^@y13) , (mem (s4 ^@y13 c0) c0) }
+  Inferred by hyperlink #86 from { 40 , 90 } by i-neg-condit
+
+
+  0: (DRAW-CONCLUSION (~ (-> (SUBSET #:|^@y13| #:|c0|) (~ #))) (#1=#<#2=Hypernode 40#3=: (subset #4=x22 #5=x21)#6=/#7={ (subset #4# #5#)#8= }#9=> #1##2#90#3#(subset #10=^@y10 #11=c0)#6##7#(mem (s4 #10# #11..
+      Locals:
+        #:.DEFAULTING-TEMP. = #<Interest 29: ~((subset ^@y13 ^@y14) -> ~(subset ^@y14 ^@y13))>
+        #:.DEFAULTING-TEMP.#1 = NIL
+        #:.DEFAULTING-TEMP.#2 = ((P SUBSET #:|^@y13| #:|c0|) (Q ~ (SUBSET #:|c0| #:|^@y13|)))
+        #:.DEFAULTING-TEMP.#3 = #<Link 13: for  interest #29 by i-neg-condit>
+        #:.DEFAULTING-TEMP.#4 = T
+        #:.DEFAULTING-TEMP.#5 = NIL
+        BASIS = (#<Hypernode 40: (subset x22 x21)/{ (subset x22 x21) }> #<Hypernode 90: (subset ^@y10 c0)/{ (mem (s4 ^@y10 c0) c0) }>)
+        C-LIST = NIL
+        CD = ((((SUBSET #:|c0| #:|^@y13|) . #<Hypernode 40: (subset x22 x21)/{ (subset x22 x21) }>) ((MEM # #:|c0|) . #<Hypernode 83: (mem x44 c0)/{ (mem x44 c0) }>)) NIL ..)
+        D-NODE = #<d-node: 93>
+        DEDUCTIVE-ONLY = T
+        DEFEASIBLE? = NIL
+        DEPTH = 5
+        DISCHARGE = NIL
+        DISCOUNT = 1.0
+        FORMULA = (~ (-> (SUBSET #:|^@y13| #:|c0|) (~ (SUBSET #:|c0| #:|^@y13|))))
+        HYPERLINK = #<hyperlink #86 for hypernode 96>
+        INSTANTIATIONS = (((#:|x21| . #:|^@y13|) (#:|x22| . #:|c0|)) ((#:|^@y10| . #:|^@y13|)))
+        INTERESTS = NIL
+        NDA = (NIL)
+        NEW-NODE? = T
+        NODE = #<Hypernode 96: ~((subset ^@y13 c0) -> ~(subset c0 ^@y13))/{ (subset c0 ^@y13) , (mem (s4 ^@y13 c0) c0) }>
+        NR = NIL
+        OLD-DEGREE = 1.0
+        PROOF-NODES = NIL
+        RA = (((SUBSET #:|c0| #:|^@y13|) . #<Hypernode 40: (subset x22 x21)/{ (subset x22 x21) }>) ((MEM (#:|s4| #:|^@y13| #:|c0|) #:|c0|) . #<Hypernode 83: (mem x44 c0)/{ (mem x44 c0) }>))
+        RULE = i-neg-condit
+        SEQUENT = (((SUBSET #:|c0| #:|^@y13|) (MEM (#:|s4| #:|^@y13| #:|c0|) #:|c0|)) (~ (-> (SUBSET #:|^@y13| #:|c0|) (~ #))))
+        SUP = ((SUBSET #:|c0| #:|^@y13|) (MEM (#:|s4| #:|^@y13| #:|c0|) #:|c0|))
+  1: (DISCHARGE-APPROPRIATELY-RELATED-LINK #<Link 13: for  interest #29 by i-neg-condit> (((#:|^@y10| . #:|^@y14|)) ((#:|^@y13| . #:|c0|))) 1.0 T 1.0 #<Interest 30: (subset ^@y14 ^@y13)> #<Hypernode 90: (s..
+      Locals:
+        BINDING = ((P SUBSET #:|^@y13| #:|^@y14|) (Q ~ (SUBSET #:|^@y14| #:|^@y13|)))
+        BINDING* = ((P SUBSET #:|^@y13| #:|c0|) (Q ~ (SUBSET #:|c0| #:|^@y13|)))
+        DEGREE = 1.0
+        DEGREE* = 1.0
+        DEPTH = 5
+        INSTANTIATIONS = (((#:|^@y10| . #:|^@y13|)) ((#:|x21| . #:|^@y13|) (#:|x22| . #:|c0|)))
+        INTERESTS = (#<Interest 30: (subset ^@y14 ^@y13)> #<Interest 7: ~((mem (s4 ^@y10 ^@y9) ^@y9) -> (subset ^@y10 ^@y9))>)
+        LINK = #<Link 13: for  interest #29 by i-neg-condit>
+        MATCH* = ((#:|^@y14| . #:|^@y13|) (#:|^@y13| . #:|^@y14|))
+        N = #<Interest 30: (subset ^@y14 ^@y13)>
+        #:N-LIST842 = NIL
+        NEW? = T
+        NODE = #<Hypernode 90: (subset ^@y10 c0)/{ (mem (s4 ^@y10 c0) c0) }>
+        OLD-DEGREE = 1.0
+        P = ((~ (-> (SUBSET #:|^@y13| #:|c0|) (~ #))))
+        SPEC = NIL
+        SUPPOSITION = NIL
+        U* = (((#:|^@y10| . #:|^@y14|)) ((#:|^@y13| . #:|c0|)))
+        U** = (((#:|^@y10| . #:|^@y13|)) ((#:|^@y14| . #:|c0|)))
+        U1 = ((#:|^@y10| . #:|^@y13|))
+        U2 = ((#:|^@y14| . #:|c0|))
+
+--
+
+another unification problem, trying to trace. this one is generated by:
+
+(setf *random-state* (seed-random-state 0))
+(setf *break-node* 3645)
+(setf *problems*
+      (make-problem-list
+       "
+Problem #763
+bug on node 3645
+Given premises:
+        (all x)(x = x)                                                                                       justification = 1.0
+        (all x)(all y)((x = y) -> (y = x))                                                                   justification = 1.0
+        (all x)(all y)(all z)(((x = y) & (y = z)) -> (x = z))                                                justification = 1.0
+        (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))                                     justification = 1.0
+        (all A)(all x)(all y)((x = y) -> ((mem x A) -> (mem y A)))                                           justification = 1.0
+        (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))                                        justification = 1.0
+Ultimate epistemic interests:
+        (all A)(all B)(all C)(all x)((equal A B) -> ((mem x (int A C)) -> (mem x (int B C))))                interest = 1.0
+"
+       ))
+#|
+supposing (~ (EQUAL #:|^@y41| #:|c19|))
+        | 3640.  ((subset c19 ^@y41) -> ~(subset ^@y41 c19))     CONTRA-CONDITIONALIZATION from { 3638 }
+        | 3645.  (~(subset c19 ^@y42) v ~(subset ^@y42 c19))     disj-cond from { 3640 }
+|#
+
+
+        BINDING  = ((P ~ (SUBSET #:|^@y41| #:|^@y42|)) (Q ~ (SUBSET #:|^@y42| #:|^@y41|)))
+  WANT: BINDING* = ((P ~ (SUBSET #:|c19| #:|^@y41|)) (Q ~ (SUBSET #:|^@y41| #:|c19|)))
+        BINDING* = ((P ~ (SUBSET #:|c19| #:|^@y42|)) (Q ~ (SUBSET #:|^@y42| #:|c19|)))
+
+        MATCH* = ((#:|^@y41| . #:|^@y42|) (#:|^@y42| . #:|^@y41|))
+        U2 = ((#:|^@y41| . #:|c19|))
+
+  1: (DISCHARGE-APPROPRIATELY-RELATED-LINK #<Link 102: for  interest #106 by disj-cond> (T ((#:|^@y42| . #:|c19|))) 1.0 T 1.0 #<Interest 107: ((subset #1=^@y42 #2=^@y41) -> ~(subset #2# #1#))> #<Hypernode ..
+
+WANT: BINDING* = ((P ~ (SUBSET #:|c19| #:|^@y41|)) (Q ~ (SUBSET #:|^@y41| #:|c19|)))
+
+BINDING* = ((P ~ (SUBSET #:|c19| #:|^@y42|)) (Q ~ (SUBSET #:|^@y42| #:|c19|)))
+(binding*
+  (mapcar
+   #'(lambda (assoc)
+       (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding)
+  )
+
+  U2 = ((#:|^@y41| . #:|c19|))
+  (u2 (mem2 u**))
+    U** = (T ((#:|^@y41| . #:|c19|)))
+    (u** (match-sublis match* u*)
+      U* = (T ((#:|^@y42| . #:|c19|)))
+      defun discharge-appropriately-related-link (link u* degree new? old-degree N node depth interests)
+      (u* (merge-unifiers* unifier u))
+        UNIFIER = (T ((#:|^@y42| . #:|c19|)))
+        (unifier (mem2 corresponding-i-list))
+          CORRESPONDING-I-LIST = (#<i-list for ((subset ^@y42 ^@y41) -> ~(subset ^@y41 ^@y42))> (T ((#:|^@y42| . #:|c19|))))
+          dolist (corresponding-i-list corresponding-i-lists)
+            CORRESPONDING-I-LISTS = ((#<i-list for ((subset ^@y42 ^@y41) -> ~(subset ^@y41 ^@y42))> (T (#))))
+            defun DISCHARGE-INTEREST-IN (node corresponding-i-lists old-degree new? depth interests &key interest reductio-only)
+            (i-lists (c-list-corresponding-i-lists (hypernode-c-list node)))
+            I-LISTS = ((#<i-list for ((subset ^@y42 ^@y41) -> ~(subset ^@y41 ^@y42))> (T (#))))
+              NODE = #<Hypernode 3640: ((subset c19 ^@y41) -> ~(subset ^@y41 c19))/{ ~(equal ^@y41 c19) }>
+                HYPERNODE-C-LIST: #<c-list for ((subset c19 ^@y41) -> ~(subset ^@y41 c19))>
+                C-LIST-CORRESPONDING-I-LISTS: ((#<i-list for ((subset ^@y42 ^@y41) -> ~(subset ^@y41 ^@y42))> (T ((#:|^@y42| . #:|c19|)))))
+
+
+
+        U#1 = (T T)
+        dolist (u reductio-unifiers)
+          REDUCTIO-UNIFIERS = ((T T))
+          (reductio-unifiers
+            (if
+             (or (interest-direct-reductio N)
+                 (some #'(lambda (L)
+                           (and (not (eq (link-rule L) :answer))
+                                (interest-reductio (link-resultant-interest L))))
+                       (interest-right-links N)))
+             (appropriately-related-reductio-suppositions node N unifier))))
+             NODE = #<Hypernode 3640: ((subset c19 ^@y41) -> ~(subset ^@y41 c19))/{ ~(equal ^@y41 c19) }>
+             N = #<Interest 107: ((subset ^@y42 ^@y41) -> ~(subset ^@y41 ^@y42))>
+
+      MATCH* = ((#:|^@y41| . #:|^@y42|) (#:|^@y42| . #:|^@y41|))
+      (match* (link-interest-reverse-match link))
+        LINK = #<Link 102: for  interest #106 by disj-cond>
+          LINK-INTEREST-REVERSE-MATCH: ((#:|^@y41| . #:|^@y42|) (#:|^@y42| . #:|^@y41|))
+        defun discharge-appropriately-related-link (link u* degree new? old-degree N node depth interests)
+
+  BINDING = ((P ~ (SUBSET #:|^@y41| #:|^@y42|)) (Q ~ (SUBSET #:|^@y42| #:|^@y41|)))
+  (binding (if spec (cons (cons spec node) (link-binding link)) (link-binding link))))
+    LINK
+      LINK-BINDING: ((P ~ (SUBSET #:|^@y41| #:|^@y42|)) (Q ~ (SUBSET #:|^@y42| #:|^@y41|)))
+    SPEC = NIL
+    (spec (premise-hypernode-specifier (link-premise link)))
+      LINK-PREMISE: #<premise: (~P -> Q)>
+    NODE = #<Hypernode 3640: ((subset c19 ^@y41) -> ~(subset ^@y41 c19))/{ ~(equal ^@y41 c19) }>
+    defun discharge-appropriately-related-link (link u* degree new? old-degree N node depth interests)
+
+LINK = #<Link 102: for  interest #106 by disj-cond>
+  LINK-INTEREST-FORMULA: (-> (SUBSET #:|^@y41| #:|^@y42|) (~ (SUBSET #:|^@y42| #:|^@y41|)))
+
+(hypernode-formula NODE) is the premise which unifies with (link-interest-formula LINK)
+(link-interest LINK) = N
+
+U* is UNIFIER >> U, where UNIFIER is (T ((#:|^@y42| . #:|c19|)) corresponding to ((subset ^@y42 ^@y41) -> ~(subset ^@y41 ^@y42), the premise ; and U is some extra thing having to do with reductio unifiers
+
+U** = (match-sublis match* u*) which is improper b/c match* is a unifier, so they should be merged instead or something
+
+NODE = #<Hypernode 67: ~(mem (s18 (int c0 c25) (int c19 c25)) (int c19 c25))/{ ~(mem c26 (int c19 c25)) , (mem c26 (int c0 c25)) }>
+LINK-RESULTANT-INTEREST: #<Interest 38: ~((mem ^@y77 ^@y49) -> (mem ^@y77 ^@y50))>
+LINK-INTEREST-FORMULA: (~ (MEM #:|^@y77| #:|^@y50|))
+LINK-BINDING: ((P MEM #:|^@y77| #:|^@y49|) (Q MEM #:|^@y77| #:|^@y50|))
+MATCH = ((#:|^@y77| . #:|^@y45|) (#:|^@y50| . #:|^@y44|))
+MATCH* = ((#:|^@y45| . #:|^@y77|) (#:|^@y44| . #:|^@y50|))
+MATCH** = (((#:|^@y77| . #:|^@y45|) (#:|^@y50| . #:|^@y44|))
+           ((#:|^@y45| . #:|^@y77|) (#:|^@y44| . #:|^@y50|)))
+U2 = ((#:|^@y77| . (#:|s18| (INT #:|c0| #:|c25|) (INT #:|c19| #:|c25|)))
+      (#:|^@y50| . (INT #:|c19| #:|c25|))
+U* = (T
+      ((#:|^@y45| #:|s18| (INT #:|c0| #:|c25|) (INT #:|c19| #:|c25|))
+       (#:|^@y44| INT #:|c19| #:|c25|)))
+      ((#:|^@y45| . #:|^@y77|) (#:|^@y44| . #:|^@y50|))
+
+      (let* (;(u** (match-sublis match* u*)) ; ORIGINAL
+                                        ;(u** (merge-unifiers* u* match**))  ; TODO MSD modified hack
+                                        ;(u** (match-sublis match u*))
+                                        ;(u** (merge-unifiers* match** u*)) ; tried this doesn't work
+             (u*1 (mem1 u*))
+             (u*2 (mem2 u*))
+             (u** (list (match-keys match u*1)
+                        (match-keys match* u*2)))
+             (u1 (mem1 u**))
+                                        ;(u2-for-binding (mem2 (merge-unifiers* u* match**))) ; TODO MSD modified
+             (u2 (mem2 u**))
+             (binding*
+                 (mapcar
+                  #'(lambda (assoc)
+                                        ;(cons (car assoc) (match-sublis u2 (cdr assoc)))) binding) TODO there's a problem here in an ad-hoc test
+                      (cons (car assoc) (match-sublis u2 (cdr assoc)))) binding)
+               )
+             (instantiations
+              (cons u1
+                    (mapcar
+                     #'(lambda (in)
+                                        ; TODO MSD modified this to fix a problem in 760 - this respects that link-instantiations is a list of list of assocs (a list of matches, one for each instantiated premise, not merely a list of assocs - this makes it more in line with what is done by discharge-link, for example
+                                        ;(cond ((eq in t) u2)
+                                        ;      (t (cons (car in) (match-sublis u2 (cdr in)))))
+                         (merge-matches* in u2)
+                         )
+                     (link-instantiations link))))
+             (supposition (match-sublis u2 (link-supposition link))))
+        (list binding*
+              instantiations
+              supposition))
+
+
+--
+
+
+===========================================================================
+ARGUMENT #1
+This is an undefeated argument of strength 1.0 for:
+      (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))
+ which is of ultimate interest.
+
+ 10.  (all A)(all B)((equal A B) <-> ((subset A B) & (subset B A)))     GIVEN
+ 19.  (all B)((equal x8 B) <-> ((subset x8 B) & (subset B x8)))     UI from { 10 }
+ 30.  ((equal x8 x20) <-> ((subset x8 x20) & (subset x20 x8)))     UI from { 19 }
+ 40.  (((subset x8 x20) & (subset x20 x8)) -> (equal x8 x20))     bicondit-simp from { 30 }
+ 7.  (all A)(all B)((subset A B) <-> (all x)((mem x A) -> (mem x B)))     GIVEN
+ 18.  (all B)((subset x7 B) <-> (all x)((mem x x7) -> (mem x B)))     UI from { 7 }
+ 29.  ((subset x7 x19) <-> (all x)((mem x x7) -> (mem x x19)))     UI from { 18 }
+ 38.  ((all x)((mem x x7) -> (mem x x19)) -> (subset x7 x19))     bicondit-simp from { 29 }
+ 42.  (some z35)(((mem z35 x7) -> (mem z35 x19)) -> (subset x7 x19))     A-removal from { 38 }
+ 45.  (((mem (s45 x7 x19) x7) -> (mem (s45 x7 x19) x19)) -> (subset x7 x19))     EI from { 42 }
+ 59.  ((mem (s45 x7 x19) x19) -> (subset x7 x19))     cond-antecedent-simp from { 45 }
+ 8.  (all A)(all B)(all x)((mem x (int A B)) <-> ((mem x A) & (mem x B)))     GIVEN
+ 20.  (all B)(all x)((mem x (int x9 B)) <-> ((mem x x9) & (mem x B)))     UI from { 8 }
+ 36.  (all x)((mem x (int x9 x26)) <-> ((mem x x9) & (mem x x26)))     UI from { 20 }
+ 48.  ((mem x55 (int x9 x26)) <-> ((mem x55 x9) & (mem x55 x26)))     UI from { 36 }
+ 51.  (((mem x55 x9) & (mem x55 x26)) -> (mem x55 (int x9 x26)))     bicondit-simp from { 48 }
+ 4.  (all x)(all y)(all A)((x = y) -> ((mem x A) -> (mem y A)))     GIVEN
+ 16.  (all y)(all A)((x5 = y) -> ((mem x5 A) -> (mem y A)))     UI from { 4 }
+ 27.  (all A)((x5 = x17) -> ((mem x5 A) -> (mem x17 A)))     UI from { 16 }
+ 1.  (all x)(x = x)     GIVEN
+ 34.  ((x5 = x17) -> ((mem x5 x24) -> (mem x17 x24)))     UI from { 27 }
+ 12.  (x1 = x1)     UI from { 1 }
+ 43.  ((mem x5 x24) -> (mem x5 x24))     modus-ponens1 from { 34 , 12 }
+ 58.  (~(mem (s45 x7 x19) x7) -> (subset x7 x19))     cond-antecedent-simp from { 45 }
+ 50.  ((mem x55 (int x9 x26)) -> ((mem x55 x9) & (mem x55 x26)))     bicondit-simp from { 48 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset x127 x126) }
+        |----------------------------------------------------------
+        | 98.  (subset x127 x126)     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) }
+        |----------------------------------------------------------
+        | 100.  ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0)))     REDUCTIO-SUPPOSITION
+        |----------------------------------------------------------
+        | Suppose:  { (mem x131 x130) }
+        |----------------------------------------------------------
+        | 99.  (mem x131 x130)     REDUCTIO-SUPPOSITION
+                |----------------------------------------------------------
+                | Suppose:  { ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) , (mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (int (inv F c0 c0) (inv F c0 c0))) }
+                |----------------------------------------------------------
+                | 105.  ~((mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (int (inv F c0 c0) (inv F c0 c0))) -> (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     i-neg-condit from { 100 , 99 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) }
+        |----------------------------------------------------------
+        | 106.  ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (int (inv F c0 c0) (inv F c0 c0)))     REDUCTIO from { 105 , 59 }
+        | 114.  ~((mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)) & (mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)))     modus-tollens2 from { 51 , 106 }
+        | 130.  (~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)) v ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)))     DM from { 114 }
+        | 134.  ((mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)) -> ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0)))     disj-simp from { 130 }
+        | 135.  ~(mem (s45 (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))) (inv F c0 c0))     conditional-modus-tollens from { 43 , 134 }
+        | 143.  (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0)))     modus-ponens2 from { 58 , 135 }
+ 144.  (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0)))     REDUCTIO from { 143 , 100 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) }
+        |----------------------------------------------------------
+        | 25.  ~(equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0))     REDUCTIO-SUPPOSITION
+        | 93.  ~((subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) & (subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     modus-tollens2 from { 40 , 25 }
+        | 94.  (~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) v ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     DM from { 93 }
+        | 95.  ((subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) -> ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     disj-simp from { 94 }
+        |----------------------------------------------------------
+        | Suppose:  { (subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) }
+        |----------------------------------------------------------
+        | 145.  ~((subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) -> ~(subset (inv F c0 c0) (int (inv F c0 c0) (inv F c0 c0))))     i-neg-condit from { 144 , 98 }
+        |----------------------------------------------------------
+        | Suppose:  { ~(equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) }
+        |----------------------------------------------------------
+        | 146.  ~(subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0))     REDUCTIO from { 145 , 95 }
+        | 156.  (mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (int (inv F c0 c0) (inv F c0 c0)))     modus-tollens2 from { 58 , 146 }
+        | 172.  ((mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0)) & (mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0)))     modus-ponens2 from { 50 , 156 }
+        | 201.  (mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0))     simp from { 172 }
+        | 202.  ~((mem (s45 (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)) (inv F c0 c0)) -> (subset (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)))     i-neg-condit from { 146 , 201 }
+ 203.  (equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0))     REDUCTIO from { 202 , 59 }
+ 205.  ((maps F c0 c0) -> (equal (int (inv F c0 c0) (inv F c0 c0)) (inv F c0 c0)))     CONDITIONALIZATION from { 203 }
+ 206.  (all A)((maps F A A) -> (equal (int (inv F A A) (inv F A A)) (inv F A A)))     UG from { 205 }
+
+===========================================================================
+
+
+Cumulative size of arguments = 49
+Size of inference-graph = 206 of which 10 were unused suppositions.
+23% of the inference-graph was used in the argument.
