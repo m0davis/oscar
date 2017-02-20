@@ -27,7 +27,7 @@ module _ where
   open import Tactic.Nat.Generic (quote _≤_) (quote ≤s→≤p) (quote ≤p→≤s) public
 
 open import UnifyTermF FunctionName
-open import UnifyMguF FunctionName ⦃ isDecEquivalenceA ⦄
+open import UnifyMguF FunctionName
 
 open import Data.Fin using (Fin; suc; zero)
 open import Data.Nat hiding (_≤_)
@@ -55,7 +55,7 @@ record Σ₁ (A : Set1) (F : A -> Set) : Set1 where
 _,,_ : ∀ {A F} (x : A) -> F x -> Σ₁ A F
 x ,, b = record{ π₁ = x; π₂ = b }
 
-open Σ₁
+open Σ₁ public
 
 Property⋆ : (m : ℕ) -> Set1
 Property⋆ m = ∀ {n} -> (Fin m -> Term n) -> Set
@@ -373,16 +373,84 @@ _⊹_ : ∀ {n} (ps : List (Step n)) (t : Term n) -> Term n
 (right l ∷ ps) ⊹ t = l fork (ps ⊹ t)
 (function fn ls rs ∷ ps) ⊹ t = function fn (ls ++V (ps ⊹ t) ∷ rs)
 
-_⊹V1_ : ∀ {n N} (ps : Vec (List (Step n)) N) (t : Term n) -> Vec (Term n) N
-[] ⊹V1 t = []
-(p ∷ ps) ⊹V1 t = p ⊹ t ∷ ps ⊹V1 t
+data Fixpoint⊹ {n} : List (Step n) → Term n → Set where
+  [] : ∀ t → Fixpoint⊹ [] t
+  left : ∀ t r ps → Fixpoint⊹ (left r ∷ ps) ((ps ⊹ t) fork r)
+  right : ∀ t l ps → Fixpoint⊹ (right l ∷ ps) (l fork (ps ⊹ t))
+  function : ∀ t fn L (ls : Vec (Term _) L) R (rs : Vec (Term _) R) ps → Fixpoint⊹ (function fn ls rs ∷ ps) (function fn (ls ++V (ps ⊹ t) ∷ rs))
 
-_⊹VS_ : ∀ {n N} (ps : Vec (List (Step n)) N) (t : Vec (Term n) N) -> Vec (Term n) N
-[] ⊹VS [] = []
-(p ∷ ps) ⊹VS (t ∷ ts) = p ⊹ t ∷ ps ⊹VS ts
+fixpoint⊹ : ∀{m} (t : Term m) ps (eq : t ≡ ps ⊹ t) → Fixpoint⊹ ps t
+fixpoint⊹ t [] eq = [] _
+fixpoint⊹ (i x) (left r ∷ ps) ()
+fixpoint⊹ leaf (left r ∷ ps) ()
+fixpoint⊹ (l fork r) (left _ ∷ ps) eq rewrite Term-fork-inj-left eq | Term-fork-inj-right eq = left _ _ _
+fixpoint⊹ (function x x₁) (left r ∷ ps) ()
+fixpoint⊹ (i x) (right l ∷ ps) ()
+fixpoint⊹ leaf (right l ∷ ps) ()
+fixpoint⊹ (t fork t₁) (right l ∷ ps) eq rewrite Term-fork-inj-left eq | Term-fork-inj-right eq = right _ _ _
+fixpoint⊹ (function x x₁) (right l ∷ ps) ()
+fixpoint⊹ (i x) (function fn ls rs ∷ ps) ()
+fixpoint⊹ leaf (function fn ls rs ∷ ps) ()
+fixpoint⊹ (t fork t₁) (function fn ls rs ∷ ps) ()
+fixpoint⊹ (function fn' ts) (function fn ls rs ∷ ps) eq with Term-function-inj-VecSize eq
+… | refl with Term-function-inj-Vector eq
+… | veq rewrite Term-function-inj-FunctionName eq | veq = function _ _ _ _ _ _ _
 
-_VecTerm : ((ℕ → Set) → Set) → Set
-_VecTerm F = ∀ {N} → F (flip Vec N ∘ Term)
+fork++ : ∀ {m} {s t : Term m} ps ->
+              (ps ⊹ (s fork t) ≡ (ps ++L [ left t ]) ⊹ s)
+              × (ps ⊹ (s fork t) ≡ (ps ++L [ right s ]) ⊹ t)
+fork++ [] = refl , refl
+fork++ (left y' ∷ xs') = (cong (λ a -> a fork y') *** cong (λ a -> a fork y')) (fork++ xs')
+fork++ (right y' ∷ xs') = (cong (λ a -> y' fork a) *** cong (λ a -> y' fork a)) (fork++ xs')
+fork++ {s = s} {t} (function fn ls rs ∷ xs') =
+  (cong (λ a → function fn (ls ++V a ∷ rs)) *** cong (λ a → function fn (ls ++V a ∷ rs))) (fork++ xs')
+
+function++ : ∀ {m} {fn} {t : Term m} {L} {ls : Vec (Term m) L} {R} {rs : Vec (Term m) R} ps →
+               ps ⊹ (function fn (ls ++V t ∷ rs)) ≡ (ps ++L [ function fn ls rs ]) ⊹ t
+function++ [] = refl
+function++ (left x ∷ ps) = cong (_fork x) (function++ ps)
+function++ (right x ∷ ps) = cong (x fork_) (function++ ps)
+function++ (function fn ls rs ∷ ps) = cong (λ a → function fn (ls ++V a ∷ rs)) (function++ ps)
+
+{-
+inj-⊹ : ∀ {m} ps (t₁ t₂ : Term m) → ps ⊹ t₁ ≡ ps ⊹ t₂ → t₁ ≡ t₂
+inj-⊹ [] t₁ t₂ eq = eq
+inj-⊹ (left r ∷ ps) t₁ t₂ eq = inj-⊹ ps t₁ t₂ (Term-fork-inj-left eq)
+inj-⊹ (right l ∷ ps) t₁ t₂ eq = inj-⊹ ps t₁ t₂ (Term-fork-inj-right eq)
+inj-⊹ (function fn ls rs ∷ ps) t₁ t₂ eq = inj-⊹ ps t₁ t₂ {!Term-function-inj-Vector eq!}
+
+mutual
+
+  sizeOfTerm : ∀{m} (t : Term m) → ℕ
+  sizeOfTerm (i x) = 1
+  sizeOfTerm leaf = 1
+  sizeOfTerm (l fork r) = suc (sizeOfTerm l) + suc (sizeOfTerm r)
+  sizeOfTerm (function fn ts) = suc (sizeOfTerms ts)
+
+  sizeOfTerms : ∀{m N} (t : Vec (Term m) N) → ℕ
+  sizeOfTerms [] = 0
+  sizeOfTerms (t ∷ ts) = sizeOfTerm t + sizeOfTerms ts
+
+growingSize : ∀ {m} (st : (Term m)) → (sp : Step m) (sps : List (Step m)) → sizeOfTerm ((sp ∷ sps) ⊹ st) > sizeOfTerm st
+growingSize st (left r) [] = auto -- auto
+growingSize st (right l) [] = auto -- auto
+growingSize {m} st (function fn ls rs) [] = {!map-++-commute sizeOfTerm ls {ys = st ∷ rs}!} -- rewrite to-≡ (map-++-commute proj₁ ls {ys = st ∷ rs}) | Data.Vec.Properties.sum-++-commute (mapV proj₁ ls) {ys = mapV proj₁ (st ∷ rs)} = auto
+growingSize st (left x) (p₂ ∷ ps) = by (growingSize st p₂ ps)
+growingSize st (right x) (p₂ ∷ ps) = by (growingSize st p₂ ps)
+growingSize st (function fn ls rs) (p₂ ∷ ps) = {!!} -- rewrite to-≡ (map-++-commute proj₁ ls {ys = ((p₂ ∷ ps) Sized⊹ st) ∷ rs}) | Data.Vec.Properties.sum-++-commute (mapV proj₁ ls) {ys = mapV proj₁ (((p₂ ∷ ps) Sized⊹ st) ∷ rs)} = by (growingSize st p₂ ps)
+
+
+
+No-Cycle' : ∀{m} (t : Term m) ps -> (eq : t ≡ ps ⊹ t) → ps ≡ []
+No-Cycle' t [] eq = refl
+No-Cycle' (i x) (left r ∷ ps) ()
+No-Cycle' leaf (left r ∷ ps) ()
+No-Cycle' (l fork r) (left l' ∷ ps) eq with Term-fork-inj-left eq | sym (Term-fork-inj-right eq)
+… | leq | refl = {!cong sizeOfTerm (trans leq (proj₁ (fork++ ps)))!}
+No-Cycle' (function x x₁) (left r ∷ ps) ()
+No-Cycle' t (right l ∷ ps) eq = {!!}
+No-Cycle' t (function fn ls rs ∷ ps) eq = {!!}
+-}
 
 _◃S_ : ∀ {n m} (f : n ~> m) -> List (Step n) -> List (Step m)
 _◃S_ f = Data.List.map (fmapS (f ◃_))
@@ -425,7 +493,7 @@ module StepM where
   fact2 f t (right y ∷ xs) = cong (λ t -> (f ◃ y) fork t) (fact2 f t xs)
   fact2 f t (function fn ls rs ∷ xs) rewrite sym (◃-fact1 f ls) | sym (◃-fact1 f rs) = cong (function fn) (trans (◃-fact2 f ls ((xs ⊹ t) ∷ rs)) (cong ((f ◃ ls) ++V_) (cong (_∷ (f ◃ rs)) (fact2 f t xs))))
 
-open IsDecEquivalence isDecEquivalenceA using () renaming (_≟_ to _≟F_)
+open IsDecEquivalence isDecEquivalenceA using () renaming (_≟_ to _≟F_) public
 import Relation.Binary.HeterogeneousEquality as H
 
 unMaybe : ∀ {A : Set} {x y : A} {B : Set} {m : Maybe B} → maybe (λ _ → x) y m ≡ y → x ≢ y → m ≡ nothing
@@ -443,62 +511,51 @@ unMaybeJust' : ∀ {A B : Set} {P : B → A} {m : Maybe B} {n : A} {x : B} → m
 unMaybeJust' {m = just x} x₂ x₃ inj rewrite inj x₂ = refl
 unMaybeJust' {m = nothing} x₁ x₂ _ = ⊥-elim (x₂ _ (sym x₁))
 
-check-prop : ∀ {m} (x : Fin (suc m)) t ->
-              (∃ λ t' -> t ≡ ▹ (thin x) ◃ t' × check x t ≡ just t')
-              ⊎ (∃ λ ps -> t ≡ (ps ⊹ i x) × check x t ≡ nothing)
-check-prop x (i x') with Thick.fact1 x x' (thick x x') refl
-check-prop x (i .x) | inj₁ (refl , e) = inj₂ ([] , refl , cong (_<$>_ i) e)
-... | inj₂ (y , thinxy≡x' , thickxx'≡justy')
-    = inj₁ (i y
-           , cong i (sym (thinxy≡x'))
-           , cong (_<$>_ i) thickxx'≡justy' )
-check-prop x leaf = inj₁ (leaf , (refl , refl))
-check-prop x (s fork t)
- with check-prop x s                     | check-prop x t
-... | inj₁ (s' , s≡thinxs' , checkxs≡s') | inj₁ (t' , t≡thinxt' , checkxt≡t')
-    = inj₁ (s' fork t' , cong₂ _fork_ s≡thinxs' t≡thinxt'
-           , cong₂ (λ a b -> _fork_ <$> a ⊛ b) checkxs≡s' checkxt≡t' )
-... | inj₂ (ps , s≡ps+ix , checkxs≡no )  | _
-    = inj₂ (left t ∷ ps , cong (λ s -> s fork t) s≡ps+ix
-           , cong (λ a -> _fork_ <$> a ⊛ check x t) checkxs≡no )
-... | _                                  | inj₂ (ps , s≡ps+ix , checkxs≡no )
-    = inj₂ (right s ∷ ps , cong (λ t -> s fork t) s≡ps+ix
-           , trans (cong (λ a -> _fork_ <$> check x s ⊛ a) checkxs≡no) (lemma (_fork_ <$> check x s)))
-  where
-    lemma : ∀ {a b : Set} {y : b} (x : Maybe a) -> maybe (λ _ → y) y x ≡ y
-    lemma (just x') = refl
-    lemma nothing = refl
-check-prop x (function fn []) = inj₁ (function fn [] , refl , refl)
-check-prop x (function fn {N} (_∷_ {M} t ts)) with check-prop x t
-… | inj₂ (ps , t=ps+ix , checkxt=no) rewrite t=ps+ix | checkxt=no = inj₂ (function fn [] ts ∷ ps , refl , refl)
-… | inj₁ (t' , t=thinxt' , checkxt=t') with check-prop x (function fn ts)
-… | (inj₂ ([] , () , checkxts=no))
-… | (inj₂ (left x₁ ∷ ps , () , checkxts=no))
-… | (inj₂ (right x₁ ∷ ps , () , checkxts=no))
-… | (inj₂ (function fn' ls rs ∷ ps , ts=ps+ix , checkxts=no)) rewrite sym (Term-function-inj-FunctionName ts=ps+ix) | checkxt=t' | checkxts=no | unMaybe' {m = check x ts} checkxts=no (just≢nothing (function fn)) =
-  inj₂ ((function fn (t ∷ ls) rs ∷ ps) ,
-        H.≅-to-≡ ((H.cong₂ ((λ x₁ y → function fn {suc x₁} (t ∷ y))) ((H.≡-to-≅ (Term-function-inj-VecSize ts=ps+ix))) ((Term-function-inj-HetVector ts=ps+ix)))) ,
-        refl)
-… | (inj₁ (i x₁ , () , checkxts=ts'))
-… | (inj₁ (leaf , () , checkxts=ts'))
-… | (inj₁ ((ts' fork ts'') , () , checkxts=ts'))
-… | (inj₁ (function fn' ts' , refl , checkxts=ts')) rewrite checkxt=t' | t=thinxt' | (unMaybeJust' {m = (check x ((_◃_ (λ x₁ → i (thin x x₁))) ts'))} {x = _} checkxts=ts' (λ b ()) (λ { refl → refl})) = inj₁ (function fn (t' ∷ ts') , refl , refl)
+mutual
 
-fork++ : ∀ {m} {s t : Term m} ps ->
-              (ps ⊹ (s fork t) ≡ (ps ++L [ left t ]) ⊹ s)
-              × (ps ⊹ (s fork t) ≡ (ps ++L [ right s ]) ⊹ t)
-fork++ [] = refl , refl
-fork++ (left y' ∷ xs') = (cong (λ a -> a fork y') *** cong (λ a -> a fork y')) (fork++ xs')
-fork++ (right y' ∷ xs') = (cong (λ a -> y' fork a) *** cong (λ a -> y' fork a)) (fork++ xs')
-fork++ {s = s} {t} (function fn ls rs ∷ xs') =
-  (cong (λ a → function fn (ls ++V a ∷ rs)) *** cong (λ a → function fn (ls ++V a ∷ rs))) (fork++ xs')
+  check-props : ∀ {m} (x : Fin (suc m)) {N} (ts : Vec (Term (suc m)) N) fn ->
+                 (∃ λ (ts' : Vec (Term m) N) -> ts ≡ ▹ (thin x) ◃ ts' × check x ts ≡ just ts')
+                 ⊎ (∃ λ ps -> function fn ts ≡ (ps ⊹ i x) × check x ts ≡ nothing)
+  check-props x [] fn = inj₁ ([] , refl , refl)
+  check-props x (t ∷ ts) fn with check-prop x t
+  … | inj₂ (ps , t=ps+ix , checkxt=no) rewrite t=ps+ix | checkxt=no = inj₂ (function fn [] ts ∷ ps , refl , refl)
+  … | inj₁ (t' , t=thinxt' , checkxt=t') rewrite checkxt=t' with check-props x ts fn
+  … | inj₁ (ts' , ts=thinxts' , checkxts=ts') rewrite t=thinxt' | ts=thinxts' | checkxts=ts' = inj₁ (_ , refl , refl)
+  … | inj₂ ([] , () , checkxts=no)
+  … | inj₂ (left _ ∷ ps , () , checkxts=no)
+  … | inj₂ (right _ ∷ ps , () , checkxts=no)
+  … | inj₂ (function fn' ls rs ∷ ps , ts=ps+ix , checkxts=no) with Term-function-inj-VecSize ts=ps+ix
+  … | refl with Term-function-inj-Vector ts=ps+ix
+  … | refl rewrite checkxts=no = inj₂ (function fn (t ∷ ls) rs ∷ ps , refl , refl)
 
-function++ : ∀ {m} {fn} {t : Term m} {L} {ls : Vec (Term m) L} {R} {rs : Vec (Term m) R} ps →
-               ps ⊹ (function fn (ls ++V t ∷ rs)) ≡ (ps ++L [ function fn ls rs ]) ⊹ t
-function++ [] = refl
-function++ (left x ∷ ps) = cong (_fork x) (function++ ps)
-function++ (right x ∷ ps) = cong (x fork_) (function++ ps)
-function++ (function fn ls rs ∷ ps) = cong (λ a → function fn (ls ++V a ∷ rs)) (function++ ps)
+  check-prop : ∀ {m} (x : Fin (suc m)) t ->
+                (∃ λ t' -> t ≡ ▹ (thin x) ◃ t' × check x t ≡ just t')
+                ⊎ (∃ λ ps -> t ≡ (ps ⊹ i x) × check x t ≡ nothing)
+  check-prop x (i x') with Thick.fact1 x x' (thick x x') refl
+  check-prop x (i .x) | inj₁ (refl , e) = inj₂ ([] , refl , cong (_<$>_ i) e)
+  ... | inj₂ (y , thinxy≡x' , thickxx'≡justy')
+      = inj₁ (i y
+             , cong i (sym (thinxy≡x'))
+             , cong (_<$>_ i) thickxx'≡justy' )
+  check-prop x leaf = inj₁ (leaf , (refl , refl))
+  check-prop x (s fork t)
+   with check-prop x s                     | check-prop x t
+  ... | inj₁ (s' , s≡thinxs' , checkxs≡s') | inj₁ (t' , t≡thinxt' , checkxt≡t')
+      = inj₁ (s' fork t' , cong₂ _fork_ s≡thinxs' t≡thinxt'
+             , cong₂ (λ a b -> _fork_ <$> a ⊛ b) checkxs≡s' checkxt≡t' )
+  ... | inj₂ (ps , s≡ps+ix , checkxs≡no )  | _
+      = inj₂ (left t ∷ ps , cong (λ s -> s fork t) s≡ps+ix
+             , cong (λ a -> _fork_ <$> a ⊛ check x t) checkxs≡no )
+  ... | _                                  | inj₂ (ps , s≡ps+ix , checkxs≡no )
+      = inj₂ (right s ∷ ps , cong (λ t -> s fork t) s≡ps+ix
+             , trans (cong (λ a -> _fork_ <$> check x s ⊛ a) checkxs≡no) (lemma (_fork_ <$> check x s)))
+    where
+      lemma : ∀ {a b : Set} {y : b} (x : Maybe a) -> maybe (λ _ → y) y x ≡ y
+      lemma (just x') = refl
+      lemma nothing = refl
+  check-prop x (function fn ts) with check-props x ts fn
+  … | inj₁ (t' , t=thinxt' , checkxt=t') rewrite checkxt=t' = inj₁ (function fn t' , cong (function fn) t=thinxt' , refl)
+  … | inj₂ (ps , t=ps+ix , checkxt=no) rewrite checkxt=no = inj₂ (ps , t=ps+ix , refl)
 
 data SizedTerm (n : ℕ) : ℕ → Set where
   i : (x : Fin n) -> SizedTerm n (suc zero)
@@ -951,7 +1008,7 @@ mutual
   amguV-c : ∀ {m N} {ss ts : Vec (Term m) N} {l ρ} -> AmguTV ss ts (l , ρ) (amgu ss ts (l , ρ)) ->
               (∃ λ n → ∃ λ σ → Max⋆ (Unifies⋆V ss ts [-◇⋆ sub ρ ]) (sub σ) × amgu {m = m} ss ts (l , ρ) ≡ just (n , σ ++ ρ ))
             ⊎ (Nothing⋆ (Unifies⋆V ss ts [-◇⋆ sub ρ ])                     × amgu {m = m} ss ts (l , ρ) ≡ nothing)
-  amguV-c {m} {N} {ss} {ts} {l} {ρ} amg with amgu ⦃ ⋆amguVecTerm ⦄ ss ts (l , ρ)
+  amguV-c {m} {N} {ss} {ts} {l} {ρ} amg with amgu ss ts (l , ρ)
   amguV-c {m} {0} {.[]} {.[]} {l} {ρ} fn0-fn0 | .(just (l , ρ)) = inj₁ (_ , anil , trivial-problemV {_} {_} {_} {[]} {sub ρ} , cong (just ∘ _,_ l) (sym (SubList.anil-id-l ρ)))
   amguV-c {m} {.(suc _)} {(t₁ ∷ ts₁)} {(t₂ ∷ ts₂)} {l} {ρ} fns-fns | _  with amgu t₁ t₂ (l , ρ)  | amgu-c $ view t₁ t₂ (l , ρ)
   amguV-c {m} {.(suc _)} {(t₁ ∷ ts₁)} {(t₂ ∷ ts₂)} {l} {ρ} fns-fns | _ | am | inj₂ (nounify , refl) = inj₂ ((λ {_} → NothingVecHead t₁ t₂ ρ _ _ nounify) , refl)
@@ -1012,3 +1069,10 @@ unify : ∀ {m} (s t : Term m) ->
 unify {m} s t with amgu-c (view s t (m , anil))
 unify {m} s₁ t | inj₁ (proj₃ , proj₄ , proj₅ , proj₆) = inj₁ (proj₃ , proj₄ , proj₅)
 unify {m} s t | inj₂ (proj₃ , _) = inj₂ proj₃
+
+unifyV : ∀ {m N} (s t : Vec (Term m) N) ->
+           (∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V s t) $ sub σ)
+           ⊎ Nothing⋆ (Unifies⋆V s t)
+unifyV {m} {N} s t with amguV-c (viewV s t (m , anil))
+… | inj₁ (proj₃ , proj₄ , proj₅ , proj₆) = inj₁ (proj₃ , proj₄ , proj₅)
+… | inj₂ (proj₃ , _) = inj₂ proj₃
