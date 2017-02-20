@@ -1,3 +1,0 @@
-name: OSCAR
-include: .
-depend: standard-library, agda-prelude
