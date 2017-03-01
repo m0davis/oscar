@@ -28,21 +28,5 @@ open import Data.Vec using (Vec; []; _∷_) renaming (_++_ to _++V_; map to mapV
 
 
 open import Data.Unit
-open import Data.Permutation
 
-vectorPermutation : ∀ {A : Set} {N} (p : Permutation N) → (v : Vec A N) → ∃ λ v' → ∀ f g → < p > f ≡ g → v' Data.Vec.[ f ]= Data.Vec.lookup g v
-vectorPermutation [] v = v , λ {() g x}
-vectorPermutation (p ∷ ps) v with vectorPermutation ps {!!}
-… | vp = {!!} , (λ {f g x → {!!}})
-
-_≡ordering_ : ∀ {m N} → Vec (Term m) N → Vec (Term m) N → Set
-_≡ordering_ {_} {N} ss ts = Σ (Permutation N) λ p → ∀ f g → < p > f ≡ g → ss Data.Vec.[ f ]= Data.Vec.lookup g ts
-
-enumOrderings : ∀ {A : Set} {N} → Vec A N → Vec (Vec A N) (size N N)
-enumOrderings = {!!}
-
-unifyWith : ∀ {m N} (p q : Term m) (X Y : Vec (Term m) N) →
-            (∃ λ X* → X* ≡ordering X × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)) $ sub σ)
-            ⊎
-            (∀ X* → X* ≡ordering X → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
-unifyWith p₁ q X Y = {!!}
+-- moved to UnifyMguCorrectF

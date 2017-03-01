@@ -1076,3 +1076,21 @@ unifyV : ∀ {m N} (s t : Vec (Term m) N) ->
 unifyV {m} {N} s t with amguV-c (viewV s t (m , anil))
 … | inj₁ (proj₃ , proj₄ , proj₅ , proj₆) = inj₁ (proj₃ , proj₄ , proj₅)
 … | inj₂ (proj₃ , _) = inj₂ proj₃
+
+open import Oscar.Data.Permutation
+
+unifyWith : ∀ {m N} (p q : Term m) (X Y : Vec (Term m) N) →
+            (∃ λ X* → X ≞ X* ÷? × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)) $ sub σ)
+            ⊎
+            (∀ X* → X ≞ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
+unifyWith p q X Y = decidePermutations _ (λ x → unifyV (p ∷ x) (q ∷ Y))
+
+open import Data.Vec
+_⊆_ : ∀ {a} {A : Set a} {N} → Vec A N → ∀ {M} → Vec A (N + M) → Set a
+X ⊆ XX = ∀ x → x ∈ X → x ∈ XX
+
+unifyInto : ∀ {m N M} (p q : Term m) (X : Vec (Term m) N) (Y : Vec (Term m) (N + M)) →
+            (∃ λ Y* → Y* ⊆ Y × (∃ λ X* → X ≞ X* ÷? × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y*)) $ sub σ))
+            ⊎
+            (∀ Y* → Y* ⊆ Y → ∀ X* → X ≞ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y*)))
+unifyInto p q X Y = ?
