@@ -3,7 +3,6 @@ module Oscar.Data.Vec where
 
 open import Data.Vec public
 
---open import Data.Product
 open import Data.Nat
 
 map₂ : ∀ {a b} {A : Set a} {B : Set b} {m n}
@@ -19,7 +18,8 @@ delete {n = zero} (suc ()) _
 delete {n = suc n} (suc i) (x ∷ xs) = x ∷ delete i xs
 
 open import Function
+open import Data.Product
 
--- tabulate⋆ : ∀ {n a} {A : Set a} → (F : Fin n → A) → ∃ λ (v : Vec A n) → ∀ (i : Fin n) → F i ∈ v
--- tabulate⋆ {zero} F = [] , (λ ())
--- tabulate⋆ {suc n} F = let v , t = tabulate⋆ (F ∘ suc) in F zero ∷ v , (λ { zero → here ; (suc i) → there (t i)})
+tabulate⋆ : ∀ {n a} {A : Set a} → (F : Fin n → A) → ∃ λ (v : Vec A n) → ∀ (i : Fin n) → F i ∈ v
+tabulate⋆ {zero} F = [] , (λ ())
+tabulate⋆ {suc n} F = let v , t = tabulate⋆ (F ∘ suc) in F zero ∷ v , (λ { zero → here ; (suc i) → there (t i)})

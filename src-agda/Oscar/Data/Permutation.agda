@@ -10,7 +10,7 @@ open import Oscar.Data.Vec renaming (delete to deleteV; map to mapV)
 
 open import Relation.Binary.PropositionalEquality
 open import Data.Product
-open import Data.Fin
+open import Data.Fin renaming (inject to injectF)
 
 open ≡-Reasoning
 
@@ -31,35 +31,47 @@ open import Agda.Builtin.Nat
            (cong (flip <_> _)
                  (sym (inv-left ps))))
 
-_≞_÷_ : ∀ {a n} {A : Set a} → Vec A n → Vec A n → Permutation n → Set a
-x ≞ px ÷ p = ∀ i → lookup i px ≡ lookup (< p > i) x
+_⋟_÷_ : ∀ {a m n} {A : Set a} → Vec A n → Vec A m → Inj m n → Set a
+x ⋟ px ÷ p = ∀ i → lookup i px ≡ lookup (< p > i) x
 
 lookup-ext : ∀ {a n} {A : Set a} {pv₁ pv₂ : Vec A n} → (∀ i → lookup i pv₁ ≡ lookup i pv₂) → pv₁ ≡ pv₂
 lookup-ext {pv₁ = []} {[]} x = refl
 lookup-ext {pv₁ = x₁ ∷ pv₁} {x₂ ∷ pv₂} x with lookup-ext {pv₁ = pv₁} {pv₂} (x ∘ suc) | x zero
 … | refl | refl = refl
 
-permuted-inj : ∀ {a n} {A : Set a} {v : Vec A n} {pv₁ pv₂ : Vec A n} {p : Permutation n} → v ≞ pv₁ ÷ p → v ≞ pv₂ ÷ p → pv₁ ≡ pv₂
-permuted-inj {pv₁ = pv₁} {pv₂} v≞pv₁÷p v≞pv₂÷p = lookup-ext foo where
+injected-inj : ∀ {a n m} {A : Set a} {v : Vec A m} {pv₁ pv₂ : Vec A n} {p : Inj n m} → v ⋟ pv₁ ÷ p → v ⋟ pv₂ ÷ p → pv₁ ≡ pv₂
+injected-inj {pv₁ = pv₁} {pv₂} v⋟pv₁÷p v⋟pv₂÷p = lookup-ext foo where
   foo : (i : Fin _) → lookup i pv₁ ≡ lookup i pv₂
-  foo i = trans (v≞pv₁÷p i) (sym (v≞pv₂÷p i))
+  foo i = trans (v⋟pv₁÷p i) (sym (v⋟pv₂÷p i))
+
+permuted-inj : ∀ {a n} {A : Set a} {v : Vec A n} {pv₁ pv₂ : Vec A n} {p : Permutation n} → v ⋟ pv₁ ÷ p → v ⋟ pv₂ ÷ p → pv₁ ≡ pv₂
+permuted-inj {pv₁ = pv₁} {pv₂} v⋟pv₁÷p v⋟pv₂÷p = lookup-ext foo where
+  foo : (i : Fin _) → lookup i pv₁ ≡ lookup i pv₂
+  foo i = trans (v⋟pv₁÷p i) (sym (v⋟pv₂÷p i))
 
 permutedLookup : ∀ {a n} {A : Set a} → Permutation n → Vec A n → Fin n → A
 permutedLookup p v = flip lookup v ∘ < p >
 
+inject : ∀ {a n m} {A : Set a} → (p : Inj n m) → (v : Vec A m) → Vec A n
+inject p v = tabulate (flip lookup v ∘ < p >)
+
 permute : ∀ {a n} {A : Set a} → (p : Permutation n) → (v : Vec A n) → Vec A n
 permute p v = tabulate (flip lookup v ∘ < p >)
 
+inject-correct : ∀ {a n m} {A : Set a} → (p : Inj n m) → (v : Vec A m) →
+                  v ⋟ inject p v ÷ p
+inject-correct p v = lookup∘tabulate (flip lookup v ∘ < p >)
+
 permute-correct : ∀ {a n} {A : Set a} → (p : Permutation n) → (v : Vec A n) →
-                  v ≞ permute p v ÷ p
+                  v ⋟ permute p v ÷ p
 permute-correct p v = lookup∘tabulate (flip lookup v ∘ < p >)
 
 Permute : ∀ {a n} {A : Set a} → (p : Permutation n) → (v : Vec A n) →
-          ∃ (v ≞_÷ p)
+          ∃ (v ⋟_÷ p)
 Permute p v = permute p v , permute-correct p v
 
-_≞_÷? : ∀ {a n} {A : Set a} → Vec A n → Vec A n → Set a
-_≞_÷? x px = ∃ (x ≞ px ÷_)
+_⋟_÷? : ∀ {a m n} {A : Set a} → Vec A n → Vec A m → Set a
+_⋟_÷? x px = ∃ (x ⋟ px ÷_)
 
 ∈-allInj : ∀ {n m} (i : Inj n m) → i ∈ allInj n m
 ∈-allInj {zero} [] = here
@@ -71,34 +83,52 @@ tabulate₂ f = mapV f (allInj _ _)
 ∈-tabulate₂ : ∀ {n m a} {A : Set a} (f : Inj n m → A) i → f i ∈ tabulate₂ f
 ∈-tabulate₂ f i = ∈-map f (∈-allInj i)
 
-ENUM₂ : ∀ {a n} {A : Set a} → (v : Vec A n) → Vec (∃ (v ≞_÷?)) (size n n)
+ENUM₂ : ∀ {a n} {A : Set a} → (v : Vec A n) → Vec (∃ (v ⋟_÷?)) (size n n)
 ENUM₂ v = tabulate₂ (λ p → permute p v , p , permute-correct p v)
+
+enumᵢ : ∀ {a n m} {A : Set a} → Vec A m → Vec (Vec A n) (size n m)
+enumᵢ v = tabulate₂ (flip inject v)
 
 enum₂ : ∀ {a n} {A : Set a} → Vec A n → Vec (Vec A n) (size n n)
 enum₂ v = tabulate₂ (flip permute v)
 
-enum₂-sound : ∀ {a} {A : Set a} {n} (x px : Vec A n) → px ∈ enum₂ x → x ≞ px ÷?
+enumᵢ-sound : ∀ {a} {A : Set a} {n m} (x : Vec A m) (px : Vec A n) → px ∈ enumᵢ x → x ⋟ px ÷?
+enumᵢ-sound x _ px∈enum₂x with map-∈ px∈enum₂x
+enumᵢ-sound x _ _ | p , refl = p , inject-correct p x
+
+enum₂-sound : ∀ {a} {A : Set a} {n} (x px : Vec A n) → px ∈ enum₂ x → x ⋟ px ÷?
 enum₂-sound x _ px∈enum₂x with map-∈ px∈enum₂x
 enum₂-sound x _ _ | p , refl = p , permute-correct p x
 
 remove-÷-zero : ∀ {n a} {A : Set a} {x : A} {xs : Vec A n} {px : A}
                   {pxs : Vec A n} {ps : Inj n n} →
-                (x ∷ xs) ≞ px ∷ pxs ÷ (zero ∷ ps) →
-                xs ≞ pxs ÷ ps
+                (x ∷ xs) ⋟ px ∷ pxs ÷ (zero ∷ ps) →
+                xs ⋟ pxs ÷ ps
 remove-÷-zero f i = f (suc i)
 
-enum₂-complete : ∀ {a} {A : Set a} {n} (x px : Vec A n) → x ≞ px ÷? → px ∈ enum₂ x
-enum₂-complete x px (p , x≞px÷p) = proof where
+enumᵢ-complete : ∀ {a} {A : Set a} {n m} (x : Vec A m) (px : Vec A n) → x ⋟ px ÷? → px ∈ enumᵢ x
+enumᵢ-complete x px (p , x⋟px÷p) = proof where
+  p∈allInj : p ∈ allInj _ _
+  p∈allInj = ∈-allInj p
+  permutepx∈enum₂x : inject p x ∈ enumᵢ x
+  permutepx∈enum₂x = ∈-map (flip inject x) p∈allInj
+  x⋟permutepx÷p : x ⋟ inject p x ÷ p
+  x⋟permutepx÷p = inject-correct p x
+  proof : px ∈ enumᵢ x
+  proof = subst (_∈ _) (injected-inj {p = p} x⋟permutepx÷p x⋟px÷p) permutepx∈enum₂x
+
+enum₂-complete : ∀ {a} {A : Set a} {n} (x px : Vec A n) → x ⋟ px ÷? → px ∈ enum₂ x
+enum₂-complete x px (p , x⋟px÷p) = proof where
   p∈allInj : p ∈ allInj _ _
   p∈allInj = ∈-allInj p
   permutepx∈enum₂x : permute p x ∈ enum₂ x
   permutepx∈enum₂x = ∈-map (flip permute x) p∈allInj
-  x≞permutepx÷p : x ≞ permute p x ÷ p
-  x≞permutepx÷p = permute-correct p x
+  x⋟permutepx÷p : x ⋟ permute p x ÷ p
+  x⋟permutepx÷p = permute-correct p x
   proof : px ∈ enum₂ x
-  proof = subst (_∈ _) (permuted-inj {p = p} x≞permutepx÷p x≞px÷p) permutepx∈enum₂x
+  proof = subst (_∈ _) (permuted-inj {p = p} x⋟permutepx÷p x⋟px÷p) permutepx∈enum₂x
 
-Enum₂ : ∀ {a n} {A : Set a} → (x : Vec A n) → Σ[ pxs ∈ Vec (Vec A n) (size n n) ] (∀ px → (px ∈ pxs → x ≞ px ÷?) × (x ≞ px ÷? → px ∈ pxs))
+Enum₂ : ∀ {a n} {A : Set a} → (x : Vec A n) → Σ[ pxs ∈ Vec (Vec A n) (size n n) ] (∀ px → (px ∈ pxs → x ⋟ px ÷?) × (x ⋟ px ÷? → px ∈ pxs))
 Enum₂ x = enum₂ x , (λ px → enum₂-sound x px , enum₂-complete x px)
 
 _∃⊎∀_ : ∀ {a} {A : Set a} {l r} (L : A → Set l) (R : A → Set r) {p} (P : A → Set p) → Set _
@@ -149,23 +179,27 @@ decide∃⊎∀ dec P not-done nd-sound nd-complete = stepDecide∃⊎∀ dec P 
   []nd-complete y Py = inj₂ (nd-complete y Py)
 
 decidePermutations : ∀ {a n} {A : Set a} {l r} {L : Vec A n → Set l} {R : Vec A n → Set r} → ∀ x → (∀ y → L y ⊎ R y) →
-                     (L ∃⊎∀ R) (x ≞_÷?)
+                     (L ∃⊎∀ R) (x ⋟_÷?)
 decidePermutations x f = decide∃⊎∀ f _ (enum₂ x) (enum₂-sound x) (enum₂-complete x)
 
--- -- sym-≞∣ : ∀ {a n} {A : Set a} → (y x : Vec A n) → (p : Permutation n) →
--- --          y ≞ x ∣ p → x ≞ y ∣ (p ⁻¹)
--- -- sym-≞∣ y x ps y≞x∣p i =
--- --   trans (cong (flip lookup x) {x = i} {y = < ps > (< ps ⁻¹ > i)} (<>-inv ps i)) (sym (y≞x∣p (< ps ⁻¹ > i)))
+decideInjections : ∀ {a n m} {A : Set a} {l r} {L : Vec A n → Set l} {R : Vec A n → Set r} → ∀ (x : Vec A m) → (∀ y → L y ⊎ R y) →
+                     (L ∃⊎∀ R) (x ⋟_÷?)
+decideInjections x f = decide∃⊎∀ f _ (enumᵢ x) (enumᵢ-sound x) (enumᵢ-complete x)
+
+-- -- sym-⋟∣ : ∀ {a n} {A : Set a} → (y x : Vec A n) → (p : Permutation n) →
+-- --          y ⋟ x ∣ p → x ⋟ y ∣ (p ⁻¹)
+-- -- sym-⋟∣ y x ps y⋟x∣p i =
+-- --   trans (cong (flip lookup x) {x = i} {y = < ps > (< ps ⁻¹ > i)} (<>-inv ps i)) (sym (y⋟x∣p (< ps ⁻¹ > i)))
 
 -- -- open import Oscar.Data.Vec.Properties
 
 -- -- Permute : ∀ {a n} {A : Set a} → (p : Permutation n) → (v : Vec A n) →
--- --           ∃ λ w → w ≞ v ∥ p
+-- --           ∃ λ w → w ⋟ v ∥ p
 -- -- Permute [] v = v , λ ()
 -- -- Permute p@(p' ∷ ps) v@(v' ∷ vs) =
 -- --   let ws , [vs≡ws]ps = Permute ps (deleteV p' v)
 -- --       w = lookup p' v ∷ ws
--- --       [v≡w]p : w ≞ v ∥ p
+-- --       [v≡w]p : w ⋟ v ∥ p
 -- --       [v≡w]p = {!!}
 -- --       {-
 -- --       [v≡w]p = λ
@@ -180,7 +214,7 @@ decidePermutations x f = decide∃⊎∀ f _ (enum₂ x) (enum₂-sound x) (enum
 -- -- -- permute : ∀ {a n} {A : Set a} → Permutation n → Vec A n → Vec A n
 -- -- -- permute p v = proj₁ (Permute p v)
 
--- -- -- permute-correct : ∀ {a n} {A : Set a} → (p : Permutation n) → (v : Vec A n) → v ≞ permute p v ∥ p
+-- -- -- permute-correct : ∀ {a n} {A : Set a} → (p : Permutation n) → (v : Vec A n) → v ⋟ permute p v ∥ p
 -- -- -- permute-correct p v = proj₂ (Permute p v)
 
 -- -- -- open import Function
@@ -201,8 +235,8 @@ decidePermutations x f = decide∃⊎∀ f _ (enum₂ x) (enum₂-sound x) (enum
 -- -- -- [thin]=→delete[]= {n = suc n} {i = suc i} {suc j} {x ∷ v} (there v[thinij]=?) = there ([thin]=→delete[]= {i = i} v[thinij]=?)
 
 -- -- -- delete≡Permutation : ∀ {a n} {A : Set a} {v₀ : A} {v₊ : Vec A n} {w : Vec A (suc n)} {p : Permutation (suc n)} →
--- -- --                      (v₀ ∷ v₊) ≞ w ∥ p →
--- -- --                      v₊ ≞ deleteV (annihilator p) w ∥ delete (annihilator p) p
+-- -- --                      (v₀ ∷ v₊) ⋟ w ∥ p →
+-- -- --                      v₊ ⋟ deleteV (annihilator p) w ∥ delete (annihilator p) p
 -- -- -- delete≡Permutation {v₀ = v₀} {v₊} {w} {p} [v₀∷v₊≡w]p f = [thin]=→delete[]= {i = annihilator p} {j = f} qux where
 -- -- --   foo : thin (< p > (annihilator p)) (< delete (annihilator p) p > f) ≡ < p > (thin (annihilator p) f)
 -- -- --   foo = inj-thin p (annihilator p) f
@@ -226,13 +260,13 @@ decidePermutations x f = decide∃⊎∀ f _ (enum₂ x) (enum₂-sound x) (enum
 -- -- -- permute-complete-step {n = suc n} {w = w ∷ ws} x w∷ws[x]=v₀ x₂ = {!!}
 
 -- -- -- permute-lemma : ∀ {a n} {A : Set a} (v w : Vec A n) (p : Permutation n) →
--- -- --   v ≞ w ∥ p →
+-- -- --   v ⋟ w ∥ p →
 -- -- --   w ≡ permute (p ⁻¹) v
 -- -- -- permute-lemma v w p x = {!permute-correct p w!}
 
 -- -- -- {-
 -- -- -- permute-complete' : ∀ {a n} {A : Set a} (v w : Vec A n) (p : Permutation n) →
--- -- --   v ≞ w ∥ p →
+-- -- --   v ⋟ w ∥ p →
 -- -- --   ∀ {m} {ps : Vec (Permutation n) m} → p ∈ ps →
 -- -- --   w ≡ permute p v
 -- -- --   w ∈ mapV (flip
