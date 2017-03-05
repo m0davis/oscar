@@ -57,9 +57,6 @@ x ,, b = record{ π₁ = x; π₂ = b }
 
 open Σ₁ public
 
-Property⋆ : (m : ℕ) -> Set1
-Property⋆ m = ∀ {n} -> (Fin m -> Term n) -> Set
-
 Extensional : {m : ℕ} -> Property⋆ m -> Set
 Extensional P = ∀ {m f g} -> f ≐ g -> P {m} f -> P g
 
@@ -68,9 +65,6 @@ Property m = Σ₁ (Property⋆ m) Extensional
 
 prop-id : ∀ {m n} {f : _ ~> n} {P : Property m} -> π₁ P f -> π₁ P (i ◇ f)
 prop-id {_} {_} {f} {P'} Pf = π₂ P' (λ x → sym (Sub.fact1 (f x))) Pf
-
-Unifies⋆ : ∀ {m} (s t : Term m) -> Property⋆ m
-Unifies⋆ s t f = f ◃ s ≡ f ◃ t
 
 Unifies⋆V : ∀ {m N} (ss ts : Vec (Term m) N) -> Property⋆ m
 Unifies⋆V ss ts f = f ◃ ss ≡ f ◃ ts
@@ -318,7 +312,7 @@ module failure-propagation where
          Qgpa = π₂ Q' (◃ext' f≐g◇p ∘ a)  Qfa
 
 
-trivial-problem : ∀ {m n t} {f : m ~> n} -> (Max⋆ ((Unifies⋆ t t) [-◇⋆ f ])) i
+trivial-problem : ∀ {m n} {t : Term _} {f : m ~> n} -> (Max⋆ ((Unifies⋆ t t) [-◇⋆ f ])) i
 trivial-problem = refl , λ f' _ → f' , λ _ → refl
 
 trivial-problemV : ∀ {m n N} {t : Vec (Term _) N} {f : m ~> n} -> (Max⋆ ((Unifies⋆V t t) [-◇⋆ f ])) i

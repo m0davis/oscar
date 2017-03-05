@@ -1,5 +1,5 @@
 
-module Oscar (FunctionName : Set) where
+module Oscar (FunctionName PredicateName VariableName QuantifierName Name : Set) where
 
 open import Oscar.Data.Fin using (Fin; zero; suc; thick?)
 
@@ -17,6 +17,14 @@ data Term (n : ℕ) : Set where
   _fork_ : (s t : Term n) -> Term n
   function : FunctionName → ∀ {f} → Vec (Term n) f → Term n
 
+data Formula (n : ℕ) : Set
+ where
+  atomic : PredicateName → ∀ {t} → Vec (Term n) t → Formula n
+  logical : Formula n →
+            Formula n →
+            Formula n
+  quantified : VariableName → Formula (suc n) → Formula n
+
 Term-function-inj-FunctionName : ∀ {fn₁ fn₂} {n N₁ N₂} {ts₁ : Vec (Term n) N₁} {ts₂ : Vec (Term n) N₂} → Term.function fn₁ ts₁ ≡ Term.function fn₂ ts₂ → fn₁ ≡ fn₂
 Term-function-inj-FunctionName refl = refl
 
@@ -26,10 +34,10 @@ Term-function-inj-VecSize refl = refl
 Term-function-inj-Vector : ∀ {fn₁ fn₂} {n N} {ts₁ : Vec (Term n) N} {ts₂ : Vec (Term n) N} → Term.function fn₁ ts₁ ≡ Term.function fn₂ ts₂ → ts₁ ≡ ts₂
 Term-function-inj-Vector refl = refl
 
-Term-fork-inj-left : ∀ {n} {l₁ r₁ l₂ r₂ : Term n} → l₁ fork r₁ ≡ l₂ fork r₂ → l₁ ≡ l₂
+Term-fork-inj-left : ∀ {n} {l₁ r₁ l₂ r₂ : Term n} → l₁ Term.fork r₁ ≡ l₂ fork r₂ → l₁ ≡ l₂
 Term-fork-inj-left refl = refl
 
-Term-fork-inj-right : ∀ {n} {l₁ r₁ l₂ r₂ : Term n} → l₁ fork r₁ ≡ l₂ fork r₂ → r₁ ≡ r₂
+Term-fork-inj-right : ∀ {n} {l₁ r₁ l₂ r₂ : Term n} → l₁ Term.fork r₁ ≡ l₂ fork r₂ → r₁ ≡ r₂
 Term-fork-inj-right refl = refl
 
 open import Relation.Binary.HeterogeneousEquality using (_≅_; refl)
@@ -81,7 +89,7 @@ mutual
   instance SubstitutionExtensionalityTerm : SubstitutionExtensionality Term
   SubstitutionExtensionality.◃ext SubstitutionExtensionalityTerm = ◃ext′ where
     ◃ext′ : ∀ {m n} {f g : Fin m -> Term n} -> f ≐ g -> ∀ t -> f ◃ t ≡ g ◃ t
-    ◃ext′ p (i x) = p x
+    ◃ext′ p (Term.i x) = p x
     ◃ext′ p leaf = refl
     ◃ext′ p (s fork t) = cong₂ _fork_ (◃ext p s) (◃ext p t)
     ◃ext′ p (function fn ts) = cong (function fn) (◃ext p ts)
