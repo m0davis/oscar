@@ -1,19 +1,25 @@
 
 module Oscar.Data.Term.AlphaConversion {𝔣} (FunctionName : Set 𝔣) where
 
-open import Oscar.Data.Term.Core FunctionName
+open import Oscar.Data.Term FunctionName
 
-open import Oscar.Data.Fin.Core
-open import Oscar.Data.Vec.Core
+open import Oscar.Class.AlphaConversion
+open import Oscar.Data.Equality
+open import Oscar.Data.Fin
+open import Oscar.Data.Vec
+open import Oscar.Function
+open import Oscar.Relation
 
-mutual
+import Oscar.Data.Term.AlphaConversion.internal FunctionName as ⋆
 
-  _◂_ : ∀ {n m} → (Fin n → Fin m) → Term n → Term m
-  _◂_ x (i x₁) = i (x x₁)
-  _◂_ x leaf = leaf
-  _◂_ x (x₁ fork x₂) = (x ◂ x₁) fork (x ◂ x₂)
-  _◂_ x (function x₁ x₂) = function x₁ (x ◂s x₂)
+instance AlphaConversionFinTerm : AlphaConversion Fin Term
+AlphaConversion._◂_ AlphaConversionFinTerm = ⋆._◂_
+AlphaConversion.◂-identity AlphaConversionFinTerm = ⋆.◂-identity
+AlphaConversion.◂-associativity AlphaConversionFinTerm = ⋆.◂-associativity
+AlphaConversion.◂-extensionality AlphaConversionFinTerm = ⋆.◂-extensionality
 
-  _◂s_ : ∀ {n m N} → (Fin n → Fin m) → Vec (Term n) N → Vec (Term m) N
-  _◂s_ x [] = []
-  _◂s_ x (x₁ ∷ x₂) = x ◂ x₁ ∷ x ◂s x₂
+instance AlphaConversionFinTerms : ∀ {N} → AlphaConversion Fin (Terms N)
+AlphaConversion._◂_ AlphaConversionFinTerms _ = ⋆._◂s_ _
+AlphaConversion.◂-identity AlphaConversionFinTerms = ⋆.◂s-identity
+AlphaConversion.◂-associativity AlphaConversionFinTerms _ _ = ⋆.◂s-associativity _ _
+AlphaConversion.◂-extensionality AlphaConversionFinTerms f≡̇g = ⋆.◂s-extensionality f≡̇g

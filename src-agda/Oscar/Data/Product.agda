@@ -1,6 +1,4 @@
 
 module Oscar.Data.Product where
 
-open import Oscar.Data.Product.Core public
-
-open import Data.Product using (∃; _×_)
+open import Data.Product public using (Σ; _,_; proj₁; proj₂; ∃; ∃₂; _×_)

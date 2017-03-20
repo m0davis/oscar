@@ -1,21 +1,25 @@
 
 module Oscar.Class.AlphaConversion where
 
-open import Oscar.Data.Nat.Core
-open import Oscar.Data.Fin.Core
-open import Oscar.Data.Fin.AlphaConversion
-open import Oscar.Data.Equality.Core
+open import Oscar.Data.Nat
+open import Oscar.Data.Fin
+open import Oscar.Data.Equality
 open import Oscar.Function
-open import Oscar.Class.ExtensionalEquality
+open import Oscar.Relation
+open import Oscar.Level
 
-record AlphaConversion {a} (A : ℕ → Set a) : Set a where
+record AlphaConversion {a} {A : Set a} {b} (B : A → Set b) {c} (C : A → Set c) : Set (a ⊔ b ⊔ c) where
+  infixr 19 _◂_
   field
-    _◂_ : ∀ {m n} → m ↬ n → A m → A n
-    ◂-identity : ∀ {m} (x : A m) → id ◂ x ≡ x
-    ◂-associativity : ∀ {l m n} {f : m ↬ n} {g : l ↬ m} → (x : A l) → (f ∘ g) ◂ x ≡ f ◂ (g ◂ x)
+    _◂_ : ∀ {m n} → m ⟨ B ⟩→ n → m ⟨ C ⟩→ n
+    ◂-identity : ∀ {m} (x : C m) → id ◂ x ≡ x
+    ◂-associativity : ∀ {l m n} (f : l ⟨ B ⟩→ m) (g : m ⟨ B ⟩→ n) (x : C l) → (g ∘ f) ◂ x ≡ g ◂ f ◂ x
+    ◂-extensionality : ∀ {m n} {f g : m ⟨ B ⟩→ n} → f ≡̇ g → f ◂_ ≡̇ g ◂_
 
-  instance ExtensionalEqualityAlphaConversion : ∀ {m n} → ExtensionalEquality (A m) (λ _ → A n)
-  ExtensionalEqualityAlphaConversion = record { _≐_ = λ f g → ∀ x → f x ≡ g x }
+open AlphaConversion ⦃ … ⦄ public
 
-  field
-    ◂-extensionality : ∀ {m n} {f g : m ↬ n} → f ≐ g → (f ◂_) ≐ (g ◂_)
+instance AlphaConversion⋆ : ∀ {a} {A : Set a} {bc} {BC : A → Set bc} → AlphaConversion BC BC
+AlphaConversion._◂_ AlphaConversion⋆ = id
+AlphaConversion.◂-identity AlphaConversion⋆ _ = refl
+AlphaConversion.◂-associativity AlphaConversion⋆ _ _ _ = refl
+AlphaConversion.◂-extensionality AlphaConversion⋆ f≡̇g x = f≡̇g x
