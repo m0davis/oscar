@@ -21,6 +21,42 @@ open import Oscar.Data.Unit
 open import Oscar.Function
 open import Oscar.Level
 
+{-
+List : Set
+ListNatAction : Nat → Set
+ListNatMorphism : Nat → Nat → Set
+
+Nat : Set
+NatNatAction : Nat → Set
+NatNatMorphism : Nat → Nat → Set
+-}
+
+{-
+data ⋆ : Set where
+  ∅ : ⋆
+  ↧ : ⋆ → ⋆
+
+data ⟱ {a} {A : Set a} : Set a where
+
+
+
+data Nat[_↦_] (m : Nat) : Nat → Set where
+  zero : Nat[ m ↦ m ]
+  suc : ∀ {n} → Nat[ m ↦ n ] → Nat[ m ↦ suc n ]
+
+_+²_ : ∀ {i₂ i₃} → Nat[ i₂ ↦ i₃ ] → ∀ {i₁} → Nat[ i₁ ↦ i₂ ] → Nat[ i₁ ↦ i₃ ]
+zero +² y = y
+suc x +² y = suc (x +² y)
+
+data
+
+Nat↥ = Fin
+
+bar = Nat[ 0 ↦ 3 ]
+br = Nat
+br2 = Nat↥ 3
+-}
+
 data Object : Set where
   alist : Object
   finterm : Object
@@ -29,7 +65,9 @@ data Object : Set where
   stepstep : Object
   listStepN : Nat → Object
   termtermN : Nat → Object
+  list∘ : Object → Object
 
+{-
 object⋆ : Object → Set _
 object⋆ alist = Nat
 object⋆ finterm = Nat
@@ -50,6 +88,7 @@ IsSetoid._≋_ (Setoid.isSetoid ((objectMorphism (listStepN N) Morphism.⇒ _) _
 Setoid.⋆ ((objectMorphism (termtermN n) Morphism.⇒ _) _) = Term n → Term n
 IsSetoid._≋_ (Setoid.isSetoid ((objectMorphism (termtermN N) Morphism.⇒ _) _)) = _≡̇_
 IsSetoid._≋_ (Morphism.isSetoid (objectMorphism (termtermN N))) = _≡̇_
+-}
 
 objectCategory : Object → Category lzero 𝔣 𝔣
 objectCategory alist = {!!}
@@ -59,6 +98,13 @@ objectCategory (termsterms N) = 𝔾₂ₛ N
 objectCategory stepstep = {!!}
 objectCategory (listStepN x) = {!!}
 objectCategory (termtermN x) = {!!}
+Semigroupoid.⋆ (Category.semigroupoid (objectCategory (list∘ G))) = List (Category.⋆ (objectCategory G))
+Morphism._⇒_ (Semigroupoid.𝔐 (Category.semigroupoid (objectCategory (list∘ G)))) = {!!}
+Morphism.isSetoid (Semigroupoid.𝔐 (Category.semigroupoid (objectCategory (list∘ G)))) = {!!}
+Semigroupoid._∙_ (Category.semigroupoid (objectCategory (list∘ G))) = {!!}
+Semigroupoid.isSemigroupoid (Category.semigroupoid (objectCategory (list∘ G))) = {!!}
+Category.ε (objectCategory (list∘ G)) = {!!}
+Category.isCategory (objectCategory (list∘ G)) = {!!}
 
 data Arrow : Object → Object → Set where
   unpack : Arrow alist finterm
@@ -68,6 +114,34 @@ data Arrow : Object → Object → Set where
   collapse : (n : Nat) → Arrow (listStepN n) (termtermN n)
   reduce : (n : Nat) → Arrow (termtermN n) termterm
   COMPOSE : ∀ {o₂ o₃} → Arrow o₂ o₃ → ∀ {o₁} → Arrow o₁ o₂ → Arrow o₁ o₃
+
+data SimpleArrow : ∀ {o1 o2} → Arrow o1 o2 → Set where
+  unpack : SimpleArrow unpack
+  substitute : SimpleArrow substitute
+  substitutes : (N : Nat) → SimpleArrow (substitutes N)
+  stepify : SimpleArrow stepify
+  collapse : (n : Nat) → SimpleArrow (collapse n)
+  reduce : (n : Nat) → SimpleArrow (reduce n)
+
+import Data.List as LIST
+open import Algebra using (Monoid)
+
+serialiseArrow : ∀ {o1 o2} → Arrow o1 o2 → List (∃ λ o1 → ∃ λ o2 → ∃ λ (a : Arrow o1 o2) → SimpleArrow a)
+serialiseArrow unpack = (_ , _ , _ , unpack) ∷ []
+serialiseArrow substitute = {!!}
+serialiseArrow (substitutes N) = {!!}
+serialiseArrow stepify = {!!}
+serialiseArrow (collapse n) = {!!}
+serialiseArrow (reduce n) = {!!}
+serialiseArrow (COMPOSE g f) =
+  let g' = serialiseArrow g
+      f' = serialiseArrow f
+  in Monoid._∙_ (LIST.monoid (∃ (λ o1 → ∃ (λ o2 → ∃ SimpleArrow)))) g' f'
+
+open import Data.Empty
+
+eqArrow : ∀ {o1 o2} → Arrow o1 o2 → Arrow o1 o2 → Set
+eqArrow x y = serialiseArrow x ≡ serialiseArrow y
 
 open IsSemifunctor ⦃ … ⦄ using () renaming (extensionality to ext; distributivity to dist)
 
@@ -135,7 +209,7 @@ arrowIsFunctor : ∀ {o₁ o₂} → Arrow o₁ o₂
   → (IsFunctor (objectCategory o₁ , objectCategory o₂) {μ} f)
 arrowIsFunctor unpack = {!!}
 arrowIsFunctor substitute = _ , _ , IsFunctor𝔾₁,₂◂
-arrowIsFunctor (substitutes N) = {!!}
+arrowIsFunctor (substitutes N) = _ , _ , IsFunctor𝔾₁,₂ₛ◂ {N}
 arrowIsFunctor stepify = {!!}
 arrowIsFunctor (collapse n) = {!!}
 arrowIsFunctor (reduce n) = {!!}
@@ -143,3 +217,23 @@ arrowIsFunctor (COMPOSE a1 a2) =
   let _ , _ , isF1 = arrowIsFunctor a1
       _ , _ , isF2 = arrowIsFunctor a2
   in _ , _ , composeF _ _ _ _ _ ⦃ isF2 ⦄ ⦃ isF1 ⦄
+
+arrowFunctor : ∀ {o₁ o₂} → Arrow o₁ o₂ → Functor _ _ _ _ _ _
+arrowFunctor {o₁} {o₂} a =
+  let cs , f , IF = arrowIsFunctor a
+      instance _ = IF
+  in (objectCategory o₁ , objectCategory o₂) , f
+
+category : Category _ _ _
+Semigroupoid.⋆ (Category.semigroupoid category) = Object
+Setoid.⋆ ((Semigroupoid.𝔐 (Category.semigroupoid category) Morphism.⇒ o1) o2) = Arrow o1 o2
+IsSetoid._≋_ (Setoid.isSetoid ((Semigroupoid.𝔐 (Category.semigroupoid category) Morphism.⇒ x) x₁)) = {!!}
+IsSetoid.isEquivalence (Setoid.isSetoid ((Semigroupoid.𝔐 (Category.semigroupoid category) Morphism.⇒ x) x₁)) = {!!}
+IsSetoid._≋_ (Morphism.isSetoid (Semigroupoid.𝔐 (Category.semigroupoid category))) = eqArrow
+IsSetoid.isEquivalence (Morphism.isSetoid (Semigroupoid.𝔐 (Category.semigroupoid category))) = {!!}
+Semigroupoid._∙_ (Category.semigroupoid category) g f = COMPOSE g f
+IsSemigroupoid.extensionality (Semigroupoid.isSemigroupoid (Category.semigroupoid category)) = {!!}
+IsSemigroupoid.associativity (Semigroupoid.isSemigroupoid (Category.semigroupoid category)) = {!!}
+Category.ε category = {!!}
+IsCategory.left-identity (Category.isCategory category) = {!!}
+IsCategory.right-identity (Category.isCategory category) = {!!}

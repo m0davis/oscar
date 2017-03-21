@@ -15,5 +15,8 @@ record Morphism
   _↦_ : ⋆ → ⋆ → Set 𝔪
   _↦_ x y = Setoid.⋆ (x ⇒ y)
 
+--  instance isSetoid : ∀ {x y} → IsSetoid (Setoid.⋆ (x ⇒ y)) 𝔮
+--  isSetoid {x} {y} = Setoid.isSetoid (x ⇒ y)
+
   field
     ⦃ isSetoid ⦄ : ∀ {x y} → IsSetoid (Setoid.⋆ (x ⇒ y)) 𝔮

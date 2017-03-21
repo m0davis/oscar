@@ -1084,3 +1084,16 @@ unifyInto : ∀ {m N M} (p q : Term m) (X : Vec (Term m) N) (Y : Vec (Term m) M)
             ⊎
             (∀ X* → X ⋟ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
 unifyInto p q X Y = decideInjections _ (λ x → unifyV (p ∷ x) (q ∷ Y))
+
+{-
+showing that McBride does linear unification!
+
+postulate
+  FN : FunctionName
+
+fn : Fin 3 → Term 4
+fn = λ x → function FN (i (suc x) ∷ i (suc x) ∷ [])
+
+foo = unifyV (fn zero ∷ fn (suc zero) ∷ fn (suc (suc zero)) ∷ []) (i zero ∷ i (suc zero) ∷ i (suc (suc zero)) ∷ [])
+bar = case foo of λ {(inj₁ (_ , f , _)) → {!f!} ; (inj₂ _) → {!foo!} }
+-}

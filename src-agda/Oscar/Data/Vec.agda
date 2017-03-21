@@ -2,6 +2,8 @@
 module Oscar.Data.Vec where
 
 open import Data.Vec public
+open import Oscar.Data.Nat
+open import Oscar.Data.Equality
 
 open import Data.Nat
 
