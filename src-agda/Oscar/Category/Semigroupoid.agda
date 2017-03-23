@@ -16,6 +16,7 @@ module _
     (_∙_ : ∀ {y z} → y ↦ z → ∀ {x} → x ↦ y → x ↦ z)
     : Set (lsuc (𝔬 ⊔ 𝔪 ⊔ 𝔮))
     where
+    instance _ = IsSetoid↦
 
     field
       extensionality :
@@ -32,8 +33,8 @@ module _
         {y}
         (g : x ↦ y)
         {z}
-        (h : y ↦ z) →
-        ((h ∙ g) ∙ f) ≋ (h ∙ (g ∙ f))
+        (h : y ↦ z)
+        → ((h ∙ g) ∙ f) ≋ (h ∙ (g ∙ f))
 
 open IsSemigroupoid ⦃ … ⦄ public
 

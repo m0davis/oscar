@@ -22,6 +22,7 @@ module _ {𝔊𝔬 𝔊𝔪 𝔊𝔮} (semigroupoid : Semigroupoid 𝔊𝔬 𝔊
           ∀ {x} {s₁ s₂ : ↥ x} →
           s₁ ≋ s₂ →
           ∀ {y} {f₁ f₂ : x ↦ y} →
+          (let instance _ = IsSetoid↦) →
           f₁ ≋ f₂ → f₁ ◂ s₁ ≋ f₂ ◂ s₂
         associativity :
           ∀ {x}

@@ -59,11 +59,9 @@ open import Oscar.Category.Morphism
 
 ⇧ : ∀ {a} {A : Set a} {b} (B : A → A → Set b) → Morphism A b b
 Morphism._⇒_ (⇧ B) x y = setoidPropositionalEquality (B x y)
-IsSetoid._≋_ (Morphism.isSetoid (⇧ B)) = _≡_
 
 _⇨_ : ∀ {a} {A : Set a} {b} (B : A → Set b) {c} (C : A → Set c) → Morphism A (b ⊔ c) (b ⊔ c)
 Morphism._⇒_ (B ⇨ C) = λ m n → B m ⇒ C n
-IsSetoid._≋_ (Morphism.isSetoid (B ⇨ C)) = _≡̇_
 
 IsSemigroupoid⋆ : ∀ {a} {A : Set a} {b} {B : A → Set b} {c} {C : A → Set c}
                     (let _↦_ = λ m n → B m → C n)

@@ -28,6 +28,8 @@ module _
     {μ : 𝔊₁.⋆ → 𝔊₂.⋆}
     (𝔣 : ∀ {x y} → x 𝔊₁.↦ y → μ x 𝔊₂.↦ μ y)
     : Set (𝔬₁ ⊔ 𝔪₁ ⊔ 𝔮₁ ⊔ 𝔬₂ ⊔ 𝔪₂ ⊔ 𝔮₂) where
+    instance _ = 𝔊₁.IsSetoid↦
+    instance _ = 𝔊₂.IsSetoid↦
     field
       ⦃ isSemifunctor ⦄ : IsSemifunctor semigroupoids 𝔣
     field

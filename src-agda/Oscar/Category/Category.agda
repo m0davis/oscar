@@ -12,6 +12,7 @@ module _
   open Semigroupoid semigroupoid
 
   record IsCategory (ε : ∀ {x} → x ↦ x) : Set (𝔬 ⊔ 𝔪 ⊔ 𝔮) where
+    instance _ = IsSetoid↦
     field
       left-identity : ∀ {x y} (f : x ↦ y) → ε ∙ f ≋ f
       right-identity : ∀ {x y} (f : x ↦ y) → f ∙ ε ≋ f
