@@ -1,5 +1,5 @@
 
-module Oscar.Class where
+module Oscar.Class2 where
 
 open import Oscar.Prelude
 
@@ -15,12 +15,6 @@ open Reflexivity ⦃ … ⦄ public
     ⦃ _ : Reflexivity B ⦄
     → ∀ {x} → B x x
 ε = reflexivity
-
-ε⟦_⟧ : ∀ {a} {A : Set a}
-         {b} (B : A → A → Set b)
-       ⦃ _ : Reflexivity B ⦄
-       → ∀ {x} → B x x
-ε⟦ _ ⟧ = reflexivity
 
 record Symmetry
   {a} {A : Set a}
@@ -44,42 +38,6 @@ _∙_ : ∀ {a} {A : Set a}
       ⦃ _ : Transitivity B ⦄
       → ∀ {y z} → B y z → ∀ {x} → B x y → B x z
 g ∙ f = transitivity f g
-
-record IsSetoid
-  {a} {A : Set a}
-  {b} (B : A → A → Set b) : Ø a ∙̂ b where
-  field
-    ⦃ ⌶Reflexivity ⦄ : Reflexivity B
-    ⦃ ⌶Symmetry ⦄ : Symmetry B
-    ⦃ ⌶Transitivity ⦄ : Transitivity B
-
-record Equivalence
-  {a}
-    (A : Set a)
-    b
-  : Ø a ∙̂ ↑̂ b where
-  field
-    equivalence : A → A → Ø b
-    ⦃ ⌶IsSetoid ⦄ : IsSetoid equivalence
-
-open Equivalence ⦃ … ⦄ public
-
-infix 4 _≋_
-_≋_ : ∀ {a} {A : Set a} {b} ⦃ _ : Equivalence A b ⦄ → A → A → Ø b
-_≋_ = equivalence
-
-record MorphismEquivalence
-  {a} {A : Set a} {b}
-    (B : A → A → Set b)
-    c
-  : Ø a ∙̂ b ∙̂ ↑̂ c where
-  field
-    morphismEquivalence : ∀ {x y} → B x y → B x y → Ø c
-    ⦃ ⌶IsSetoid ⦄ : ∀ {x y} → IsSetoid (morphismEquivalence {x} {y})
-  instance ⌶Equivalence : ∀ {x y} → Equivalence (B x y) c
-  Equivalence.equivalence ⌶Equivalence = morphismEquivalence
-
-open MorphismEquivalence ⦃ … ⦄ public
 
 record Congruity
   a b {c} (C : ∀ {x} {X : Set x} → X → X → Set c)
@@ -136,6 +94,15 @@ map[_] : ∀
   → ∀ {x y} → B x y → C x y
 map[ C ] f = map f
 
+record Map'
+  {a} {A : Set a}
+  {b} (B : A → A → Set b)
+  {c} (C : ∀ {x y} → B x y → Set c)
+  : Ø a ∙̂ b ∙̂ c where
+  field map' : ∀ {x y} → (f : B x y) → C f
+
+open Map' ⦃ … ⦄ public
+
 module _
   {a} {A : Set a}
   {b} (B : A → Set b)
@@ -147,14 +114,14 @@ open Identity′ ⦃ … ⦄ public
 
 module _
   {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
-  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) {c₂} (_≋₂_ : ∀ {x y} → B₂ x y → B₂ x y → Ø c₂)
   (μ : A₁ → A₂)
   ⦃ _ : Reflexivity B₁ ⦄
   ⦃ _ : Reflexivity B₂ ⦄
   ⦃ _ : Map B₁ (B₂ on μ) ⦄
   where
-  𝓲dentity = 𝓲dentity′ (λ x → map (ε⟦ B₁ ⟧ {x = x}) ≋ ε⟦ B₂ ⟧ {x = μ x})
-  Identity = Identity′ (λ x → map (ε⟦ B₁ ⟧ {x = x}) ≋ ε⟦ B₂ ⟧ {x = μ x})
+  𝓲dentity = 𝓲dentity′ (λ x → map⟦ B₁ ⟧ (ε {x = x}) ≋₂ ε {x = μ x})
+  Identity = Identity′ (λ x → map⟦ B₁ ⟧ (ε {x = x}) ≋₂ ε {x = μ x})
 
 module _
   {a} {A : Set a}
@@ -169,8 +136,8 @@ open LeftIdentity′ ⦃ … ⦄ public
 module _
   {a} {A : Ø a} {b}
     (B : A → A → Ø b)
-    c
-    ⦃ _ : MorphismEquivalence B c ⦄
+  {c}
+    (_≋_ : ∀ {x y} → B x y → B x y → Ø c)
     ⦃ _ : Reflexivity B ⦄
     ⦃ _ : Transitivity B ⦄
   where
@@ -190,8 +157,8 @@ open RightIdentity′ ⦃ … ⦄ public
 module _
   {a} {A : Ø a} {b}
     (B : A → A → Ø b)
-    c
-    ⦃ _ : MorphismEquivalence B c ⦄
+  {c}
+    (_≋_ : ∀ {x y} → B x y → B x y → Ø c)
     ⦃ _ : Reflexivity B ⦄
     ⦃ _ : Transitivity B ⦄
   where
@@ -203,6 +170,7 @@ module _
   {b} (B : A → A → Set b)
   {c} (C : ∀ {x y} → B x y → ∀ {z} → B y z → Set c)
   where
+
   𝓬ommutativity′ = ∀ {x y} (f : B x y) {z} (g : B y z) → C f g
   record Commutativity′ : Ø a ∙̂ b ∙̂ c where field commutativity : 𝓬ommutativity′
 
@@ -210,15 +178,14 @@ open Commutativity′ ⦃ … ⦄ public
 
 module _
   {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
-  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂)
-  c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) {c₂} (_≋₂_ : ∀ {x y} → B₂ x y → B₂ x y → Ø c₂)
   (μ : A₁ → A₂)
   ⦃ _ : Transitivity B₁ ⦄
   ⦃ _ : Transitivity B₂ ⦄
   ⦃ _ : Map B₁ (B₂ on μ) ⦄
   where
-  𝓬ommutativity = 𝓬ommutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ (map g ∙ map f))
-  Commutativity = Commutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ (map g ∙ map f))
+  𝓬ommutativity = 𝓬ommutativity′ B₁ (λ f g → map (g ∙ f) ≋₂ (map g ∙ map f))
+  Commutativity = Commutativity′ B₁ (λ f g → map (g ∙ f) ≋₂ (map g ∙ map f))
 
 module _
   {a} {A : Set a}
@@ -233,8 +200,8 @@ open Associativity′ ⦃ … ⦄ public
 module _
   {a} {A : Ø a} {b}
     (B : A → A → Ø b)
-    c
-    ⦃ _ : MorphismEquivalence B c ⦄
+  {c}
+    (_≋_ : ∀ {x y} → B x y → B x y → Ø c)
     ⦃ _ : Transitivity B ⦄
   where
   𝓪ssociativity = 𝓪ssociativity′ B (λ f g h → ((h ∙ g) ∙ f) ≋ (h ∙ g ∙ f))
@@ -255,13 +222,13 @@ module _
 open Extensionality₁′ ⦃ … ⦄ public
 
 module _
-  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁) c₁ ⦃ _ : MorphismEquivalence B₁ c₁ ⦄
-  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁) {c₁} (_≋₁_ : ∀ {x y} → B₁ x y → B₁ x y → Ø c₁)
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) {c₂} (_≋₂_ : ∀ {x y} → B₂ x y → B₂ x y → Ø c₂)
   (μ : A₁ → A₂)
   ⦃ _ : Map B₁ (B₂ on μ) ⦄
   where
-  Extensionality₁ = Extensionality₁′ B₁ _≋_ (λ f₁ f₂ → map[ B₂ on μ ] f₁ ≋ map f₂)
-  𝓮xtensionality₁ = 𝓮xtensionality₁′ B₁ _≋_ (λ f₁ f₂ → map[ B₂ on μ ] f₁ ≋ map f₂)
+  Extensionality₁ = Extensionality₁′ B₁ _≋₁_ (λ f₁ f₂ → map f₁ ≋₂ map f₂)
+  𝓮xtensionality₁ = 𝓮xtensionality₁′ B₁ _≋₁_ (λ f₁ f₂ → map f₁ ≋₂ map f₂)
 
 module _
   {a} {A : Set a}
@@ -276,54 +243,75 @@ module _
 open Extensionality₂′ ⦃ … ⦄ public
 
 module _
-  {a} {A : Ø a} {b} (B : A → A → Ø b) c ⦃ _ : MorphismEquivalence B c ⦄
+  {a} {A : Ø a} {b} (B : A → A → Ø b) {c} (_≋_ : ∀ {x y} → B x y → B x y → Ø c)
   ⦃ _ : Transitivity B ⦄
   where
   𝓮xtensionality₂ = 𝓮xtensionality₂′ B _≋_ (λ f₁ f₂ g₁ g₂ → (g₁ ∙ f₁) ≋ (g₂ ∙ f₂))
   Extensionality₂ = Extensionality₂′ B _≋_ (λ f₁ f₂ g₁ g₂ → (g₁ ∙ f₁) ≋ (g₂ ∙ f₂))
 
-record IsSemigroupoid {a} {A : Ø a} {b} (B : A → A → Ø b) c ⦃ _ : MorphismEquivalence B c ⦄ : Ø a ∙̂ b ∙̂ ↑̂ c where
+record IsSetoid
+  {a} {A : Set a}
+  {b} (B : A → A → Set b) : Ø a ∙̂ b where
   field
+    ⦃ ⌶Reflexivity ⦄ : Reflexivity B
+    ⦃ ⌶Symmetry ⦄ : Symmetry B
     ⦃ ⌶Transitivity ⦄ : Transitivity B
-    ⦃ ⌶Extensionality₂ ⦄ : Extensionality₂ B c
-    ⦃ ⌶Associativity ⦄ : Associativity B c
+
+record Equivalence
+  {a}
+    (A : Set a)
+    b
+  : Ø a ∙̂ ↑̂ b where
+  infix 4 _≋_
+  field
+    _≋_ : A → A → Ø b
+    ⦃ ⌶IsSetoid ⦄ : IsSetoid _≋_
+
+open Equivalence ⦃ … ⦄ public
+
+record IsSemigroupoid {a} {A : Ø a} {b} (B : A → A → Ø b) {c} (_≋_ : ∀ {x y} → B x y → B x y → Ø c) : Ø a ∙̂ b ∙̂ c where
+  field
+    ⦃ ⌶IsSetoid ⦄ : ∀ {x y} → IsSetoid (_≋_ {x} {y})
+    ⦃ ⌶Transitivity ⦄ : Transitivity B
+    ⦃ ⌶Extensionality₂ ⦄ : Extensionality₂ B _≋_
+    ⦃ ⌶Associativity ⦄ : Associativity B _≋_
 
 record IsCategory
   {a} {A : Ø a} {b}
     (B : A → A → Ø b)
-    c
-    ⦃ _ : MorphismEquivalence B c ⦄
-  : Ø a ∙̂ b ∙̂ ↑̂ c where
+  {c}
+    (_≋_ : ∀ {x y} → B x y → B x y → Ø c)
+  : Ø a ∙̂ b ∙̂ c where
   field
-    ⦃ ⌶IsSemigroupoid ⦄ : IsSemigroupoid B c
+    ⦃ ⌶IsSemigroupoid ⦄ : IsSemigroupoid B _≋_
     ⦃ ⌶Reflexivity ⦄ : Reflexivity B
-    ⦃ ⌶LeftIdentity ⦄ : LeftIdentity B c
-    ⦃ ⌶RightIdentity ⦄ : RightIdentity B c
+    ⦃ ⌶LeftIdentity ⦄ : LeftIdentity B _≋_
+    ⦃ ⌶RightIdentity ⦄ : RightIdentity B _≋_
 
 record IsSemifunctor
-  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁) c₁ ⦃ _ : MorphismEquivalence B₁ c₁ ⦄
-  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁) {c₁} (_≋₁_ : ∀ {x y} → B₁ x y → B₁ x y → Ø c₁)
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) {c₂} (_≋₂_ : ∀ {x y} → B₂ x y → B₂ x y → Ø c₂)
   (μ : A₁ → A₂)
-  : Ø a₁ ∙̂ b₁ ∙̂ ↑̂ c₁ ∙̂ a₂ ∙̂ b₂ ∙̂ ↑̂ c₂
+  : Ø a₁ ∙̂ b₁ ∙̂ c₁ ∙̂ a₂ ∙̂ b₂ ∙̂ c₂
   where
   field
-    ⦃ ⌶IsSemigroupoid₁ ⦄ : IsSemigroupoid B₁ c₁
-    ⦃ ⌶IsSemigroupoid₂ ⦄ : IsSemigroupoid B₂ c₂
+    ⦃ ⌶IsSemigroupoid₁ ⦄ : IsSemigroupoid B₁ _≋₁_
+    ⦃ ⌶IsSemigroupoid₂ ⦄ : IsSemigroupoid B₂ _≋₂_
     ⦃ ⌶Map ⦄ : Map B₁ (B₂ on μ)
-    ⦃ ⌶Extensionality₁ ⦄ : Extensionality₁ B₁ c₁ B₂ c₂ μ
-    ⦃ ⌶Commutativity ⦄ : Commutativity B₁ B₂ c₂ μ
+    ⦃ ⌶Extensionality₁ ⦄ : Extensionality₁ B₁ _≋₁_ B₂ _≋₂_ μ
+    ⦃ ⌶Commutativity ⦄ : Commutativity B₁ B₂ _≋₂_ μ
 
 record IsFunctor
-  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁) c₁ ⦃ _ : MorphismEquivalence B₁ c₁ ⦄
-  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁) {c₁} (_≋₁_ : ∀ {x y} → B₁ x y → B₁ x y → Ø c₁)
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) {c₂} (_≋₂_ : ∀ {x y} → B₂ x y → B₂ x y → Ø c₂)
   (μ : A₁ → A₂)
-  : Ø a₁ ∙̂ b₁ ∙̂ ↑̂ c₁ ∙̂ a₂ ∙̂ b₂ ∙̂ ↑̂ c₂
+  : Ø a₁ ∙̂ b₁ ∙̂ c₁ ∙̂ a₂ ∙̂ b₂ ∙̂ c₂
   where
   field
-    ⦃ ⌶IsCategory₁ ⦄ : IsCategory B₁ c₁
-    ⦃ ⌶IsCategory₂ ⦄ : IsCategory B₂ c₂
-    ⦃ ⌶IsSemifunctor ⦄ : IsSemifunctor B₁ c₁ B₂ c₂ μ
-    ⦃ ⌶Identity ⦄ : Identity B₁ B₂ c₂ μ
+    ⦃ ⌶IsCategory₁ ⦄ : IsCategory B₁ _≋₁_
+    ⦃ ⌶IsCategory₂ ⦄ : IsCategory B₂ _≋₂_
+    ⦃ ⌶IsSemifunctor ⦄ : IsSemifunctor B₁ _≋₁_ B₂ _≋₂_ μ
+    ⦃ ⌶Identity ⦄ : Identity B₁ B₂ _≋₂_ μ
 
 record Setoid a b : Ø ↑̂ (a ∙̂ b) where
   field
@@ -335,34 +323,70 @@ record Semigroupoid a b c : Ø ↑̂ (a ∙̂ b ∙̂ c) where
   field
     Obj : Ø a
     Hom : Obj → Obj → Ø b
-    ⦃ ⌶MorophismEquivalence ⦄ : MorphismEquivalence Hom c
-    ⦃ ⌶IsSemigroupoid ⦄ : IsSemigroupoid Hom c
+    Eq : ∀ {x y} → Hom x y → Hom x y → Ø c
+    ⦃ ⌶IsSemigroupoid ⦄ : IsSemigroupoid Hom Eq
 
 record Category a b c : Ø ↑̂ (a ∙̂ b ∙̂ c) where
   field
     Obj : Ø a
     Hom : Obj → Obj → Ø b
-    ⦃ ⌶MorophismEquivalence ⦄ : MorphismEquivalence Hom c
-    ⦃ ⌶IsCategory ⦄ : IsCategory Hom c
+    Eq : ∀ {x y} → Hom x y → Hom x y → Ø c
+    ⦃ ⌶IsCategory ⦄ : IsCategory Hom Eq
 
 record Semifunctor a b c d e f : Ø ↑̂ (a ∙̂ b ∙̂ c ∙̂ d ∙̂ e ∙̂ f) where
   field
     Obj₁ : Ø a
     Hom₁ : Obj₁ → Obj₁ → Ø b
-    ⦃ ⌶MorophismEquivalence₁ ⦄ : MorphismEquivalence Hom₁ c
+    Eq₁ : ∀ {x y} → Hom₁ x y → Hom₁ x y → Ø c
     Obj₂ : Ø d
     Hom₂ : Obj₂ → Obj₂ → Ø e
-    ⦃ ⌶MorophismEquivalence₂ ⦄ : MorphismEquivalence Hom₂ f
+    Eq₂ : ∀ {x y} → Hom₂ x y → Hom₂ x y → Ø f
     μ : Obj₁ → Obj₂
-    ⦃ ⌶IsSemifunctor ⦄ : IsSemifunctor Hom₁ c Hom₂ f μ
+    ⦃ ⌶IsSemifunctor ⦄ : IsSemifunctor Hom₁ Eq₁ Hom₂ Eq₂ μ
 
 record Functor a b c d e f : Ø ↑̂ (a ∙̂ b ∙̂ c ∙̂ d ∙̂ e ∙̂ f) where
   field
     Obj₁ : Ø a
     Hom₁ : Obj₁ → Obj₁ → Ø b
-    ⦃ ⌶MorophismEquivalence₁ ⦄ : MorphismEquivalence Hom₁ c
+    Eq₁ : ∀ {x y} → Hom₁ x y → Hom₁ x y → Ø c
     Obj₂ : Ø d
     Hom₂ : Obj₂ → Obj₂ → Ø e
-    ⦃ ⌶MorophismEquivalence₂ ⦄ : MorphismEquivalence Hom₂ f
+    Eq₂ : ∀ {x y} → Hom₂ x y → Hom₂ x y → Ø f
     μ : Obj₁ → Obj₂
-    ⦃ ⌶IsFunctor ⦄ : IsFunctor Hom₁ c Hom₂ f μ
+    ⦃ ⌶IsFunctor ⦄ : IsFunctor Hom₁ Eq₁ Hom₂ Eq₂ μ
+
+{-
++ε⟦_⟧ : ∀ {a} {A : Set a}
++         {b} (B : A → A → Set b)
++       ⦃ _ : Reflexivity B ⦄
++       → ∀ {x} → B x x
++ε⟦ _ ⟧ = reflexivity
++
+ record Symmetry
+   {a} {A : Set a}
+   {b} (B : A → A → Set b) : Ø a ∙̂ b where
+@@ -39,6 +45,26 @@ _∙_ : ∀ {a} {A : Set a}
+       → ∀ {y z} → B y z → ∀ {x} → B x y → B x z
+ g ∙ f = transitivity f g
+
++record IsSetoid
++  {a} {A : Set a}
++  {b} (B : A → A → Set b) : Ø a ∙̂ b where
++  field
++    ⦃ ⌶Reflexivity ⦄ : Reflexivity B
++    ⦃ ⌶Symmetry ⦄ : Symmetry B
++    ⦃ ⌶Transitivity ⦄ : Transitivity B
++
++record Equivalence
++  {a}
++    (A : Set a)
++    b
++  : Ø a ∙̂ ↑̂ b where
++  infix 4 _≋_
++  field
++    _≋_ : A → A → Ø b
++    ⦃ ⌶IsSetoid ⦄ : IsSetoid _≋_
++
++open Equivalence ⦃ … ⦄ public
++
+-}
