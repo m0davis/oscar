@@ -103,3 +103,10 @@ module _ where
 
   _×_ : ∀ {𝔬₁} (𝔒₁ : Ø 𝔬₁) {𝔬₂} (𝔒₂ : Ø 𝔬₂) → Ø 𝔬₁ ∙̂ 𝔬₂
   _×_ O₁ O₂ = Σ O₁ (λ _ → O₂)
+
+
+Function : ∀ {a} (A B : Ø a) → Ø a
+Function A B = A → B
+
+Function⟦_⟧ : ∀ a (A B : Ø a) → Ø a
+Function⟦ a ⟧ = Function {a = a}

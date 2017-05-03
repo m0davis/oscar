@@ -5,12 +5,17 @@ open import Oscar.Prelude
 
 module _ where
 
-  open import Agda.Builtin.Nat public
-    using ()
-    renaming (zero to ∅)
-    renaming (suc to ↑_)
+  data ¶ : Set where
+    ∅ : ¶
+    ↑_  : ¶ → ¶
 
-  ¶ = Agda.Builtin.Nat.Nat
+  {-# BUILTIN NATURAL ¶ #-}
+
+  Nat = ¶
+
+  record ℕ : Ø₀ where
+    constructor ↑_
+    field ⋆ : ¶
 
 module _ where
 
@@ -18,8 +23,9 @@ module _ where
     using ()
     renaming ([] to ∅)
     renaming (_∷_ to _,_)
-
   ⟨_⟩¶ = Agda.Builtin.List.List
+
+  List⟨_⟩ = ⟨_⟩¶
 
 module _ where
 
@@ -27,11 +33,33 @@ module _ where
     ∅ : ∀ ..{n} → ¶⟨< ↑ n ⟩
     ↑_ : ∀ ..{n} → ¶⟨< n ⟩ → ¶⟨< ↑ n ⟩
 
+  Fin = ¶⟨<_⟩
+
 module _ where
 
   data ⟨_⟩¶⟨≤_⟩ {𝔭} (𝔓 : ¶ → Ø 𝔭) : ¶ → Ø 𝔭 where
     ∅ : ⟨ 𝔓 ⟩¶⟨≤ ∅ ⟩
     _,_ : ∀ ..{n} → 𝔓 n → ⟨ 𝔓 ⟩¶⟨≤ n ⟩ → ⟨ 𝔓 ⟩¶⟨≤ ↑ n ⟩
+
+  Vec⟨_⟩ = ⟨_⟩¶⟨≤_⟩
+{-
+module _ where
+
+  -- m ≤ n, counting down from n-1 to m
+  data ⟨_⟩¶⟨_≤_↓⟩ {a} (A : ¶ → Ø a) (m : ¶) : ¶ → Ø a where
+    ∅ : ⟨ A ⟩¶⟨ m ≤ m ↓⟩
+    _,_ : ∀ {n} → A n → ⟨ A ⟩¶⟨ m ≤ n ↓⟩ → ⟨ A ⟩¶⟨ m ≤ ↑ n ↓⟩
+
+  AList⟨_⟩ = ⟨_⟩¶⟨_≤_↓⟩
+-}
+module _ where
+
+  -- m ≤ n, counting down from n-1 to m
+  data Descender⟨_⟩ {a} (A : ¶ → Ø a) (m : ¶) : ¶ → Ø a where
+    ∅ : Descender⟨ A ⟩ m m
+    _,_ : ∀ {n} → A n → Descender⟨ A ⟩ m n → Descender⟨ A ⟩ m (↑ n)
+
+  Vec'⟨_⟩ = λ {a} (A : Ø a) N → Descender⟨ (λ _ → A) ⟩ 0 N
 
 module _ where
 
@@ -126,3 +154,15 @@ module SubstitunctionOperator {𝔭} (𝔓 : Ø 𝔭) where
   open Substitunction 𝔓
 
   _⊸_ = Substitunction
+
+module Substitist {𝔭} (𝔓 : Ø 𝔭) where
+
+  open Term 𝔓
+
+  Substitist = λ n m → Descender⟨ (λ n-o → Fin (↑ n-o) × Term n-o) ⟩ m n
+
+module _ where
+
+  data Maybe {a} (A : Ø a) : Ø a where
+    ∅ : Maybe A
+    ↑_ : A → Maybe A

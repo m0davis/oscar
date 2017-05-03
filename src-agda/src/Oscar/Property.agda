@@ -5,7 +5,11 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 
-module PropertyProposequality where
+module Nat⌶ where
+
+
+
+module Proposequality⌶ where
 
   module _ {𝔬} {𝔒 : Ø 𝔬} where
 
@@ -23,12 +27,6 @@ module PropertyProposequality where
       IsSetoidProposequality : IsSetoid Proposequality⟦ 𝔒 ⟧
       IsSetoidProposequality = record {}
 
-  module _ {𝔬} (𝔒 : Ø 𝔬) where
-
-    SetoidProposequality : Setoid _ _
-    Setoid.Obj SetoidProposequality = _
-    Setoid.Eq SetoidProposequality = Proposequality⟦ 𝔒 ⟧
-
   instance
 
     CongruityProposequality : ∀ {a b} → Congruity a b Proposequality
@@ -37,9 +35,26 @@ module PropertyProposequality where
     Congruity₂Proposequality : ∀ {a b c} → Congruity₂ a b c Proposequality
     Congruity₂.congruity₂ Congruity₂Proposequality _ ∅ ∅ = ∅
 
-open PropertyProposequality public
+  instance
 
-module PropertyProposextensequality where
+    Extensionality₂⌶Proposequality : ∀ {a} {A : Set a} {b} {B : A → A → Ø b}
+      → {T : 𝓽ransitivity B}
+      → Extensionality₂′ B Proposequality (λ f₁ f₂ g₁ g₂ → T f₁ g₁ ≡ T f₂ g₂)
+    Extensionality₂′.extensionality₂ Extensionality₂⌶Proposequality = congruity₂ _
+
+open Proposequality⌶ public
+
+module ProposequalityØ where
+
+  module _ {𝔬} (𝔒 : Ø 𝔬) where
+
+    SetoidProposequality : Setoid _ _
+    Setoid.Object SetoidProposequality = _
+    Setoid.Eq SetoidProposequality = Proposequality⟦ 𝔒 ⟧
+
+open ProposequalityØ public
+
+module Proposextensequality⌶ where
 
   module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
 
@@ -57,26 +72,24 @@ module PropertyProposextensequality where
       IsSetoidProposextensequality : IsSetoid Proposextensequality⟦ 𝔓 ⟧
       IsSetoidProposextensequality = record {}
 
-  module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) where
-
-    SetoidProposextensequality : Setoid _ _
-    Setoid.Obj SetoidProposextensequality = _
-    Setoid.Eq SetoidProposextensequality = Proposextensequality⟦ 𝔓 ⟧
-
   instance
 
     ĊongruityProposextensequality : ∀ {a b} → Ċongruity a b Proposextensequality
     Ċongruity.ċongruity ĊongruityProposextensequality F f≡̇g x rewrite f≡̇g x = ∅
 
-open PropertyProposextensequality public
+open Proposextensequality⌶ public
 
-Function : ∀ {a} (A B : Ø a) → Ø a
-Function A B = A → B
+module ProposextensequalityØ where
 
-Function⟦_⟧ : ∀ a (A B : Ø a) → Ø a
-Function⟦ a ⟧ = Function {a = a}
+  module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) where
 
-module PropertyFunction where
+    SetoidProposextensequality : Setoid _ _
+    Setoid.Object SetoidProposextensequality = _
+    Setoid.Eq SetoidProposextensequality = Proposextensequality⟦ 𝔓 ⟧
+
+open ProposextensequalityØ public
+
+module Function⌶ where
 
   module _
     {a}
@@ -90,9 +103,9 @@ module PropertyFunction where
       TransitivityFunction : Transitivity Function⟦ a ⟧
       Transitivity.transitivity TransitivityFunction f g = g ∘ f
 
-open PropertyFunction public
+open Function⌶ public
 
-module PropertyExtension where
+module Extension⌶ where
 
   module _
     {a} {A : Ø a} {b} {B : A → Ø b}
@@ -105,6 +118,9 @@ module PropertyExtension where
 
       TransitivityExtension : Transitivity (Extension B)
       Transitivity.transitivity TransitivityExtension f g = g ∘ f
+
+      EquivalenceExtension : ∀ {x y} → Equivalence (Extension B x y) b
+      Equivalence.equivalence EquivalenceExtension = Proposextensequality
 
       MorphismEquivalenceExtension : MorphismEquivalence (Extension B) b
       MorphismEquivalence.morphismEquivalence MorphismEquivalenceExtension = Proposextensequality
@@ -127,9 +143,10 @@ module PropertyExtension where
       IsCategoryExtension : IsCategory (Extension B) _
       IsCategoryExtension = record {}
 
-open PropertyExtension public
+open Extension⌶ public
 
-module SubstitunctionExtensionTermProperty {𝔭} (𝔓 : Ø 𝔭) where
+record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
+  no-eta-equality
 
   open Substitunction 𝔓
   open Term 𝔓
@@ -155,11 +172,11 @@ module SubstitunctionExtensionTermProperty {𝔭} (𝔓 : Ø 𝔭) where
 
   instance
 
-    MapSubstitunctionExtensionTerm : Map Substitunction (Extension Term)
-    Map.map MapSubstitunctionExtensionTerm = 𝓶apSubstitunctionExtensionTerm
+    Substitunction,ExtensionTerm⌶Map : Map Substitunction (Extension Term)
+    Map.map Substitunction,ExtensionTerm⌶Map = 𝓶apSubstitunctionExtensionTerm
 
-    MapSubstitunctionExtensionTerms : ∀ {N} → Map Substitunction (Extension $ Terms N)
-    Map.map MapSubstitunctionExtensionTerms = 𝓶apSubstitunctionExtensionTerms
+    Substitunction,ExtensionTerms⌶Map : ∀ {N} → Map Substitunction (Extension $ Terms N)
+    Map.map Substitunction,ExtensionTerms⌶Map = 𝓶apSubstitunctionExtensionTerms
 
     TransitivitySubstitunction : Transitivity Substitunction
     Transitivity.transitivity TransitivitySubstitunction f g = map g ∘ f
@@ -209,34 +226,19 @@ module SubstitunctionExtensionTermProperty {𝔭} (𝔓 : Ø 𝔭) where
     Commutativity′.commutativity CommtativitySubstitunctionExtensionTerms = 𝓬ommutativitySubstitunctionExtensionTerms
 
     AssociativitySubstitunction : Associativity Substitunction _
-    Associativity′.associativity AssociativitySubstitunction f g h x rewrite commutativity g h $ f x = ∅
+    Associativity′.associativity AssociativitySubstitunction f g h x = commutativity g h $ f x
 
-    Extensionality₂Substitunction : Extensionality₂ Substitunction ∅̂
+    Extensionality₂Substitunction : Extensionality₂ Substitunction _
     Extensionality₂′.extensionality₂ Extensionality₂Substitunction {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = extensionality₁ g₁≡̇g₂ $ f₂ x
 
-    IsSemigroupoidSubstitunction : IsSemigroupoid Substitunction ∅̂
+    IsSemigroupoidSubstitunction : IsSemigroupoid Substitunction _
     IsSemigroupoidSubstitunction = record {}
-
-  SemigroupoidSubstitunction : Semigroupoid _ _ _
-  Semigroupoid.Obj SemigroupoidSubstitunction = _
-  Semigroupoid.Hom SemigroupoidSubstitunction = Substitunction
-
-  instance
 
     IsSemifunctorSubstitunctionExtensionTerm : IsSemifunctor Substitunction _ (Extension Term) _ ¡
     IsSemifunctorSubstitunctionExtensionTerm = record {}
 
     IsSemifunctorSubstitunctionExtensionTerms : ∀ {N} → IsSemifunctor Substitunction _ (Extension $ Terms N) _ ¡
     IsSemifunctorSubstitunctionExtensionTerms = record {}
-
-  SemifunctorSubstitunctionExtensionTerm : Semifunctor _ _ _ _ _ _
-  Semifunctor.Obj₁ SemifunctorSubstitunctionExtensionTerm = _
-  Semifunctor.Hom₁ SemifunctorSubstitunctionExtensionTerm = Substitunction
-  Semifunctor.Obj₂ SemifunctorSubstitunctionExtensionTerm = _
-  Semifunctor.Hom₂ SemifunctorSubstitunctionExtensionTerm = Extension Term
-  Semifunctor.μ SemifunctorSubstitunctionExtensionTerm = ¡
-
-  instance
 
     ReflexivitySubstitunction : Reflexivity Substitunction
     Reflexivity.reflexivity ReflexivitySubstitunction = i
@@ -263,24 +265,14 @@ module SubstitunctionExtensionTermProperty {𝔭} (𝔓 : Ø 𝔭) where
     IdentitySubstitunctionExtensionTerms : ∀ {N} → Identity Substitunction (Extension $ Terms N) _ ¡
     Identity′.identity IdentitySubstitunctionExtensionTerms = 𝓲dentitySubstitunctionExtensionTerms
 
-  instance
-
     LeftIdentitySubstitunction : LeftIdentity Substitunction _
     LeftIdentity′.left-identity LeftIdentitySubstitunction f = identity ∘ f
 
     RightIdentitySubstitunction : RightIdentity Substitunction _
     RightIdentity′.right-identity RightIdentitySubstitunction _ _ = ∅
 
-  instance
-
     IsCategorySubstitunction : IsCategory Substitunction _
     IsCategorySubstitunction = record {}
-
-  CategorySubstitunction : Category _ _ _
-  Category.Obj CategorySubstitunction = _
-  Category.Hom CategorySubstitunction = Substitunction
-
-  instance
 
     IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _ (Extension Term) _ ¡
     IsFunctorSubstitunctionExtensionTerm = record {}
@@ -288,16 +280,141 @@ module SubstitunctionExtensionTermProperty {𝔭} (𝔓 : Ø 𝔭) where
     IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _ (Extension $ Terms N) _ ¡
     IsFunctorSubstitunctionExtensionTerms = record {}
 
+module SubstitunctionØ {𝔭} (𝔓 : Ø 𝔭) where
+
+  open Substitunction 𝔓
+  open Term 𝔓
+
+  open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
+
+  SemigroupoidSubstitunction : Semigroupoid _ _ _
+  Semigroupoid.Object SemigroupoidSubstitunction = _
+  Semigroupoid.Morphism SemigroupoidSubstitunction = Substitunction
+
+  SemifunctorSubstitunctionExtensionTerm : Semifunctor _ _ _ _ _ _
+  Semifunctor.Object₁ SemifunctorSubstitunctionExtensionTerm = _
+  Semifunctor.Morphism₁ SemifunctorSubstitunctionExtensionTerm = Substitunction
+  Semifunctor.Object₂ SemifunctorSubstitunctionExtensionTerm = _
+  Semifunctor.Morphism₂ SemifunctorSubstitunctionExtensionTerm = Extension Term
+  Semifunctor.μ SemifunctorSubstitunctionExtensionTerm = ¡
+
+  CategorySubstitunction : Category _ _ _
+  Category.Object CategorySubstitunction = _
+  Category.Morphism CategorySubstitunction = Substitunction
+
   FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
-  Functor.Obj₁ FunctorSubstitunctionExtensionTerm = _
-  Functor.Hom₁ FunctorSubstitunctionExtensionTerm = Substitunction
-  Functor.Obj₂ FunctorSubstitunctionExtensionTerm = _
-  Functor.Hom₂ FunctorSubstitunctionExtensionTerm = Extension Term
+  Functor.Object₁ FunctorSubstitunctionExtensionTerm = _
+  Functor.Morphism₁ FunctorSubstitunctionExtensionTerm = Substitunction
+  Functor.Object₂ FunctorSubstitunctionExtensionTerm = _
+  Functor.Morphism₂ FunctorSubstitunctionExtensionTerm = Extension Term
   Functor.μ FunctorSubstitunctionExtensionTerm = ¡
 
-  FunctorSubstitunctionExtensionTerms : ¶ → Functor _ _ _ _ _ _
-  Functor.Obj₁ (FunctorSubstitunctionExtensionTerms _) = _
-  Functor.Hom₁ (FunctorSubstitunctionExtensionTerms _) = Substitunction
-  Functor.Obj₂ (FunctorSubstitunctionExtensionTerms _) = _
-  Functor.Hom₂ (FunctorSubstitunctionExtensionTerms N) = Extension $ Terms N
-  Functor.μ (FunctorSubstitunctionExtensionTerms _) = ¡
+  module _ (N : ¶) where
+
+    FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
+    Functor.Object₁ FunctorSubstitunctionExtensionTerms = _
+    Functor.Morphism₁ FunctorSubstitunctionExtensionTerms = Substitunction
+    Functor.Object₂ FunctorSubstitunctionExtensionTerms = _
+    Functor.Morphism₂ FunctorSubstitunctionExtensionTerms = Extension $ Terms N
+    Functor.μ FunctorSubstitunctionExtensionTerms = ¡
+
+open SubstitunctionØ public
+
+module AList⌶ {a} {A : Nat → Set a} where
+
+  private AList = Descender⟨ A ⟩
+
+  instance
+
+    Reflexivity⌶AList : Reflexivity AList
+    Reflexivity.reflexivity Reflexivity⌶AList = ∅
+
+    Transitivity⌶AList : Transitivity AList
+    Transitivity.transitivity Transitivity⌶AList f ∅ = f
+    Transitivity.transitivity Transitivity⌶AList f (x , g) = x , transitivity f g
+
+    MorphismEquivalence⌶AList : MorphismEquivalence AList _
+    MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
+
+    Associativity⌶AList : Associativity AList _
+    Associativity′.associativity Associativity⌶AList _ _ ∅ = ∅
+    Associativity′.associativity Associativity⌶AList f g (x , h) = congruity (x ,_) $ associativity f g h
+
+    IsSemigroupoid⌶AList : IsSemigroupoid AList _
+    IsSemigroupoid⌶AList = record {}
+
+    LeftIdentity⌶AList : LeftIdentity AList _
+    LeftIdentity′.left-identity LeftIdentity⌶AList _ = ∅
+
+    RightIdentity⌶AList : RightIdentity AList _
+    RightIdentity′.right-identity RightIdentity⌶AList ∅ = ∅
+    RightIdentity′.right-identity RightIdentity⌶AList (x , f) = congruity (x ,_) $ right-identity f
+
+    IsCategory⌶AList : IsCategory AList _
+    IsCategory⌶AList = record {}
+
+module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
+
+  open Substitunction 𝔓
+  open Term 𝔓
+  open Substitist 𝔓
+  open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
+
+  postulate
+    _for_ : ∀ {n} (t' : Term n) (x : Fin (↑ n)) -> Fin (↑ n) -> Term n
+
+  instance
+
+    Map⌶Substitist,Substitunction : Map Substitist Substitunction
+    Map.map Map⌶Substitist,Substitunction ∅ = i
+    Map.map Map⌶Substitist,Substitunction ((x , t) , σ) = map σ ∙ (t for x)
+
+-- module Fin⌶ where
+
+--   instance
+
+--     Upper⌶Fin : Upper Fin
+--     Upper.up Upper⌶Fin = ↑_
+
+--     ThickAndThin⌶Fin : ThickAndThin Fin Fin
+--     ThickAndThin.thin ThickAndThin⌶Fin ∅ y = ↑ y
+--     ThickAndThin.thin ThickAndThin⌶Fin (↑ x) ∅ = ∅
+--     ThickAndThin.thin ThickAndThin⌶Fin (↑ x) (↑ y) = ↑ thin x y
+--     ThickAndThin.thin-injective ThickAndThin⌶Fin x x₁ = {!!}
+--     ThickAndThin.thick ThickAndThin⌶Fin = {!!}
+--     ThickAndThin.thick∘thin=id ThickAndThin⌶Fin = {!!}
+--     ThickAndThin.check ThickAndThin⌶Fin = {!!}
+--     ThickAndThin.thin-check-id ThickAndThin⌶Fin = {!!}
+
+-- module Term⌶ {𝔭} {𝔓 : Ø 𝔭} where
+
+--   open Term 𝔓
+
+-- --   instance
+
+-- --     ThickAndThin⌶Term : ThickAndThin Term
+-- --     ThickAndThin.thin ThickAndThin⌶Term x (i x₁) = {!!}
+-- --     ThickAndThin.thin ThickAndThin⌶Term x leaf = {!!}
+-- --     ThickAndThin.thin ThickAndThin⌶Term x (x₁ fork x₂) = {!!}
+-- --     ThickAndThin.thin ThickAndThin⌶Term x (function x₁ x₂) = {!!}
+-- --     ThickAndThin.thin-injective ThickAndThin⌶Term = {!!}
+-- --     ThickAndThin.thick ThickAndThin⌶Term = {!!}
+-- --     ThickAndThin.thick∘thin=id ThickAndThin⌶Term = {!!}
+-- --     ThickAndThin.check ThickAndThin⌶Term = {!!}
+-- --     ThickAndThin.thin-check-id ThickAndThin⌶Term = {!!}
+
+-- -- {-
+-- -- Data
+-- --   Nat
+-- --   ≤↓List -- m ≤ n, n-1...m
+-- --   Substitunction
+-- --   Substitist
+-- -- Record
+-- --   Product
+-- --   Functor
+-- -- Class
+-- --   Reflexivity
+-- --   IsFunctor
+-- --   ThickAndThin
+
+-- -- -}

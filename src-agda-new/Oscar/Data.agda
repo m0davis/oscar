@@ -32,6 +32,7 @@ pattern ¡_ ⟦A⟧ = tt ∷ ⟦A⟧
 --¡ ⟦A⟧ = tt ∷ ⟦A⟧
 
 -- Fin (with a payload)
+-- n-1 , ... 0
 data ⟦_⟧[_] {a} (A : ⟦⟧ → Set a) : ⟦⟧ → Set a where
   ∅ : ∀ {n} → ⟦ A ⟧[ ¡ n ]
   _∷_ : ∀ {n} → A n → ⟦ A ⟧[ n ] → ⟦ A ⟧[ ¡ n ]
@@ -39,12 +40,16 @@ data ⟦_⟧[_] {a} (A : ⟦⟧ → Set a) : ⟦⟧ → Set a where
 ⟦⟧[_] = ⟦ const ⊤ ⟧[_]
 
 -- Vec (with an (optional) index)
+-- 0 ≤ n, counting down from n to 0
 data ⟦_⟧[_₀] {a} (A : ⟦⟧ → Set a) : ⟦⟧ → Set a where
   ∅ : ⟦ A ⟧[ ∅ ₀]
   _∷_ : ∀ {n} → A n → ⟦ A ⟧[ n ₀] → ⟦ A ⟧[ ¡ n ₀]
 
 ⟦⟧[_₀] = ⟦ const ⊤ ⟧[_₀]
 
+-- Interval↓
+-- Interval⟨_⟩［_↙_）
+-- Descenderval
 -- m ≤ n, counting down from n-1 to m
 data ⟦_⟧[_≤_↓] {a} (A : ⟦⟧ → Set a) (m : ⟦⟧) : ⟦⟧ → Set a where
   ∅ : ⟦ A ⟧[ m ≤ m ↓]
@@ -52,6 +57,11 @@ data ⟦_⟧[_≤_↓] {a} (A : ⟦⟧ → Set a) (m : ⟦⟧) : ⟦⟧ → Set 
 
 ⟦⟧[_≤_↓] = ⟦ const ⊤ ⟧[_≤_↓]
 
+-- Fin⟨_⟩ = λ A n → Interval↓ A 0 n
+-- Vec n = Descenderval 0 (↑ n)
+
+-- Interval⟨_⟩［_↗_）
+-- Ascenderval
 -- m ≤ n, counting up from m to n-1
 data ⟦_⟧[↑_≤_] {a} (A : ⟦⟧ → Set a) (m : ⟦⟧) : ⟦⟧ → Set a where
   ∅ : ⟦ A ⟧[↑ m ≤ m ]
@@ -60,9 +70,13 @@ data ⟦_⟧[↑_≤_] {a} (A : ⟦⟧ → Set a) (m : ⟦⟧) : ⟦⟧ → Set 
 ⟦⟧[↑_≤_] = ⟦ const ⊤ ⟧[↑_≤_]
 
 -- Inj (almost)
+-- m ≤ n, m-1...0, n-1...n-m
+-- Paradescenderval
 data ⟦_⟧[↓_≤_↓] {a} (A : ⟦⟧ → ⟦⟧ → Set a) : ⟦⟧ → ⟦⟧ → Set a where
   ∅ : ∀ {n} → ⟦ A ⟧[↓ ∅ ≤ n ↓]
   _∷_ : ∀ {m n} → A m n → ⟦ A ⟧[↓ m ≤ n ↓] → ⟦ A ⟧[↓ ¡ m ≤ ¡ n ↓]
+
+-- Inj = Paradescenderval (λ _ → Fin ∘ ↑_)
 
 ⟦⟧[↓_≤_↓] = ⟦ const const ⊤ ⟧[↓_≤_↓]
 
