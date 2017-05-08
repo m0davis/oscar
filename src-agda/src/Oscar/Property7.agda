@@ -1,8 +1,8 @@
 {-# OPTIONS --show-implicit #-}
-module Oscar.Property where
+module Oscar.Property7 where
 
 open import Oscar.Prelude
-open import Oscar.Class
+open import Oscar.Class7
 open import Oscar.Data
 
 module Proposequality⌶ where
@@ -19,9 +19,6 @@ module Proposequality⌶ where
 
       TransitivityProposequality : Transitivity Proposequality⟦ 𝔒 ⟧
       Transitivity.transitivity TransitivityProposequality ∅ = ¡
-
-      TransitivityProposequality! : Transitivity! Proposequality⟦ 𝔒 ⟧
-      Commutativity′.commutativity TransitivityProposequality! ∅ = ¡
 
       IsSetoidProposequality : IsSetoid Proposequality⟦ 𝔒 ⟧
       IsSetoidProposequality = record {}
@@ -68,9 +65,6 @@ module Proposextensequality⌶ where
       TransitivityProposextensequality : Transitivity Proposextensequality⟦ 𝔓 ⟧
       Transitivity.transitivity TransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x | f₂≡̇f₃ x = ∅
 
-      TransitivityProposextensequality! : Transitivity! Proposextensequality⟦ 𝔓 ⟧
-      Commutativity′.commutativity TransitivityProposextensequality! f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x | f₂≡̇f₃ x = ∅
-
       IsSetoidProposextensequality : IsSetoid Proposextensequality⟦ 𝔓 ⟧
       IsSetoidProposextensequality = record {}
 
@@ -105,9 +99,6 @@ module Function⌶ where
       TransitivityFunction : Transitivity Function⟦ a ⟧
       Transitivity.transitivity TransitivityFunction f g = g ∘ f
 
-      TransitivityFunction! : Transitivity! Function⟦ a ⟧
-      Commutativity′.commutativity TransitivityFunction! f g = g ∘ f
-
 open Function⌶ public
 
 module Extension⌶ where
@@ -123,9 +114,6 @@ module Extension⌶ where
 
       TransitivityExtension : Transitivity (Extension B)
       Transitivity.transitivity TransitivityExtension f g = g ∘ f
-
-      TransitivityExtension! : Transitivity! (Extension B)
-      Commutativity′.commutativity TransitivityExtension! f g = g ∘ f
 
       EquivalenceExtension : ∀ {x y} → Equivalence (Extension B x y) b
       Equivalence.equivalence EquivalenceExtension = Proposextensequality
@@ -164,6 +152,7 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
     MorphismEquivalenceSubstitunction : MorphismEquivalence Substitunction _
     MorphismEquivalence.morphismEquivalence MorphismEquivalenceSubstitunction = Proposextensequality
 
+
   private
 
     mutual
@@ -188,9 +177,6 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
 
     TransitivitySubstitunction : Transitivity Substitunction
     Transitivity.transitivity TransitivitySubstitunction f g = map g ∘ f
-
-    TransitivitySubstitunction! : Transitivity! Substitunction
-    Commutativity′.commutativity TransitivitySubstitunction! f g = map g ∘ f
 
   private
 
@@ -361,10 +347,6 @@ module AList⌶ {a} {A : Nat → Set a} where
     Transitivity.transitivity Transitivity⌶AList f ∅ = f
     Transitivity.transitivity Transitivity⌶AList f (x , g) = x , transitivity f g
 
-    Transitivity⌶AList! : Transitivity! AList
-    Commutativity′.commutativity Transitivity⌶AList! f ∅ = f
-    Commutativity′.commutativity Transitivity⌶AList! f (x , g) = x , commutativity f g
-
     MorphismEquivalence⌶AList : MorphismEquivalence AList _
     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
 
@@ -399,7 +381,7 @@ module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
 
     Map⌶Substitist,Substitunction : Map Substitist Substitunction
     Map.map Map⌶Substitist,Substitunction ∅ = i
-    Map.map Map⌶Substitist,Substitunction ((x , t) , σ) = commutativity (t for x) (map σ)  -- map σ ∙ (t for x)
+    Map.map Map⌶Substitist,Substitunction ((x , t) , σ) = map σ ∙ (t for x)
 
 module Fin⌶ where
 

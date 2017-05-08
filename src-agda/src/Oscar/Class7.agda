@@ -1,5 +1,5 @@
--- {-# OPTIONS --show-implicit #-}
-module Oscar.Class where
+{-# OPTIONS --show-implicit #-}
+module Oscar.Class7 where
 
 open import Oscar.Prelude
 
@@ -39,14 +39,13 @@ module _
   record Transitivity : Ø a ∙̂ b where field transitivity : 𝓽ransitivity
   open Transitivity ⦃ … ⦄ public
 
-{-
 infixr 9 _∙_
 _∙_ : ∀ {a} {A : Set a}
         {b} {B : A → A → Set b}
       ⦃ _ : Transitivity B ⦄
       → ∀ {y z x} → B y z → B x y → B x z
 g ∙ f = transitivity f g
--}
+
 record IsSetoid
   {a} {A : Set a}
   {b} (B : A → A → Set b) : Ø a ∙̂ b where
@@ -81,19 +80,16 @@ record IndexedEquivalence
   instance ⌶Equivalence : ∀ {x} → Equivalence (B x) c
   Equivalence.equivalence ⌶Equivalence = indexedEquivalence
 
-module _
+record MorphismEquivalence
   {a} {A : Set a} {b}
     (B : A → A → Set b)
     c
-  where
-  𝓶orphismEquivalence = ∀ {x y} → B x y → B x y → Ø c
-
-  record MorphismEquivalence : Ø a ∙̂ b ∙̂ ↑̂ c where
-    field
-      morphismEquivalence : 𝓶orphismEquivalence
-      ⦃ ⌶IsSetoid ⦄ : ∀ {x y} → IsSetoid (morphismEquivalence {x} {y})
-    instance ⌶Equivalence : ∀ {x y} → Equivalence (B x y) c
-    Equivalence.equivalence ⌶Equivalence = morphismEquivalence
+  : Ø a ∙̂ b ∙̂ ↑̂ c where
+  field
+    morphismEquivalence : ∀ {x y} → B x y → B x y → Ø c
+    ⦃ ⌶IsSetoid ⦄ : ∀ {x y} → IsSetoid (morphismEquivalence {x} {y})
+  instance ⌶Equivalence : ∀ {x y} → Equivalence (B x y) c
+  Equivalence.equivalence ⌶Equivalence = morphismEquivalence
 
 open MorphismEquivalence ⦃ … ⦄ public
 
@@ -166,50 +162,87 @@ module _
   Identity = Identity′ 𝓘dentity
 
 module _
-  {a} {A : Set a}
-  {b} (B : A → A → Set b)
-  {c} (C : ∀ {x y z} → B x y → B y z → Set c)
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂) c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  (μ : A₂ → A₂)
+  ⦃ _ : Reflexivity B₂ ⦄
+  ⦃ _ : Map B₂ (B₂ on μ) ⦄
   where
-  𝓬ommutativity′ = ∀ {x y z} (f : B x y) (g : B y z) → C f g
-  record Commutativity′ : Ø a ∙̂ b ∙̂ c where field commutativity : 𝓬ommutativity′
-
-open Commutativity′ ⦃ … ⦄ public
-
-module _
-  {a} {A : Set a}
-  {b} (B : A → A → Set b)
-  where
-  Transitivity! = Commutativity′ B (λ {x y z} f g → B x z)
-
-infixr 9 _∙_
-_∙_ : ∀ {a} {A : Set a}
-        {b} {B : A → A → Set b}
-      ⦃ _ : Transitivity! B ⦄
-      → ∀ {y z x} → B y z → B x y → B x z
-g ∙ f = commutativity f g
+  record Identity! : Ø a₂ ∙̂ c₂ where
+    field identity! : ∀ {x} → map (ε[ B₂ ] {x = x}) ≋ ε[ B₂ ] {x = μ x}
+  open Identity! ⦃ … ⦄ public
 
 {-
-infixr 9 _∙_
-_∙_ : ∀ {a} {A : Set a}
-        {b} {B : A → A → Set b}
-        {c} {C : ∀ {x y z} → B x y → B y z → Set c}
-        ⦃ _ : Commutativity′ B C ⦄
-      → ∀ {x y z} (g : B y z) (f : B x y) → C f g
-g ∙ f = commutativity f g
+test-identity! : ∀
+  {a₂} {A₂ : Ø a₂} {b₂} {B₂ : A₂ → A₂ → Ø b₂} {c₂} ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  {μ : A₂ → A₂}
+  ⦃ _ : Reflexivity B₂ ⦄
+  ⦃ m : Map B₂ (B₂ on μ) ⦄
+  ⦃ _ : Identity! B₂ c₂ μ ⦄
+  ⦃ _ : Map B₂ (B₂ on ¡) ⦄
+  ⦃ _ : Identity! B₂ c₂ ¡ ⦄
+  → ∀ {x} ⦃ _ : Map B₂ (λ _ _ → B₂ (μ x) (μ x)) ⦄ ⦃ _ : Identity! B₂ c₂ (λ v → μ x) ⦄
+  → map ⦃ m ⦄ (ε[ B₂ ] {x = x}) ≋ ε[ B₂ ] {x = μ x}
+test-identity! {B₂ = B₂} ⦃ me ⦄ {μ = μ} ⦃ r ⦄ ⦃ m1 ⦄ ⦃ i1 ⦄ ⦃ m2 ⦄ ⦃ i2 ⦄ {x = x} ⦃ m! ⦄ ⦃ i! ⦄ = identity! {B₂ = B₂} ⦃ me ⦄ {λ v → μ x} ⦃ r ⦄ ⦃ {!it!} ⦄ ⦃ {!!} ⦄ {_}
 -}
 
+{-
 module _
-  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
-  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂)
-  c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
-  (μ : A₁ → A₂)
-  ⦃ _ : Transitivity! B₁ ⦄
-  ⦃ _ : Transitivity! B₂ ⦄
-  ⦃ _ : Map B₁ (B₂ on μ) ⦄
+  {a₂} {A₂ : Ø a₂} {b₂} {B₂ : A₂ → A₂ → Ø b₂} {c₂}
+  ⦃ me : MorphismEquivalence B₂ c₂ ⦄
+  {μ : A₂ → A₂}
+  ⦃ r : Reflexivity B₂ ⦄
   where
-  𝓬ommutativity = 𝓬ommutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ map g ∙ map f)
---  𝓬ommutativity = 𝓬ommutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ map g ∙ map f)
-  Commutativity = Commutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ map g ∙ map f)
+  postulate mapper : ∀ {x y} → B₂ x y → B₂ (μ x) (μ y)
+  instance m : Map B₂ (B₂ on μ)
+  Map.map m x = {!mapper x!}
+  instance i : Identity! B₂ c₂ μ
+  Identity!.identity! i = {!!}
+  module _ {x} where
+    postulate mapper! : ∀ {x' y'} → B₂ x' y' → B₂ (μ x) (μ x)
+    instance m! : Map B₂ (λ _ _ → B₂ (μ x) (μ x))
+    Map.map m! x₂ = {!!} -- mapper! x₂
+    instance i! : Identity! B₂ c₂ (λ v → μ x)
+    Identity!.identity! i! = {!!}
+    foo : map ⦃ m ⦄ (ε[ B₂ ] {x = x}) ≋ ε[ B₂ ] {x = μ x}
+    foo = identity! {B₂ = B₂} ⦃ me ⦄ {λ v → μ x} ⦃ r ⦄ ⦃ m! ⦄ ⦃ i! ⦄ {x}
+-}
+
+{-
+module M where
+  postulate
+    magic : ∀ {A : Set} → A
+  data A₂ : Set where
+    DA1 : A₂
+  data B₂ : A₂ → A₂ → Set where
+    DB1 : B₂ DA1 DA1
+  module _ {c₂}
+    ⦃ me : MorphismEquivalence B₂ c₂ ⦄
+    where
+    μ : A₂ → A₂
+    μ DA1 = DA1
+    module _
+      where
+      instance r : Reflexivity B₂
+      Reflexivity.reflexivity r {DA1} = DB1
+      mapper : ∀ {x y} → B₂ x y → B₂ (μ x) (μ y)
+      mapper = magic
+      instance m : Map B₂ (B₂ on μ)
+      Map.map m x = mapper x
+      instance i : Identity! B₂ c₂ μ
+      Identity!.identity! i = {!!}
+      module _ {x} where
+        mapper! : ∀ {x' y'} → B₂ x' y' → B₂ (μ x) (μ x)
+        mapper! = magic
+        instance m! : Map B₂ (λ _ _ → B₂ (μ x) (μ x))
+        Map.map m! x₂ = mapper! x₂
+        instance i! : Identity! B₂ c₂ (λ v → μ x)
+        Identity!.identity! i! = {!!}
+        foo : map ⦃ m ⦄ (ε[ B₂ ] {x = x}) ≋ ε[ B₂ ] {x = μ x}
+        foo = identity! ⦃ me ⦄ ⦃ it ⦄ ⦃ m! ⦄
+        -- identity! {B₂ = B₂} ⦃ me ⦄ {λ v → μ x} ⦃ r ⦄ ⦃ m! ⦄ ⦃ i! ⦄ {x}
+        -- identity! {B₂ = B₂} ⦃ me ⦄ {μ} ⦃ r ⦄ ⦃ m ⦄ ⦃ i ⦄ {x}
+        -- identity! {B₂ = B₂} ⦃ me ⦄ {λ v → μ x} ⦃ r ⦄ ⦃ m! ⦄ ⦃ i! ⦄ {x}
+-}
 
 record LeftIdentity
   {a} {A : Ø a} {b}
@@ -217,11 +250,11 @@ record LeftIdentity
     c
     ⦃ _ : MorphismEquivalence B c ⦄
     ⦃ _ : Reflexivity B ⦄
-    ⦃ _ : Transitivity! B ⦄
+    ⦃ _ : Transitivity B ⦄
   : Ø a ∙̂ b ∙̂ c where
-  field left-identity : ∀ {x y} (f : B x y) → commutativity f ε ≋ f -- ε ∙ f ≋ f
+  field left-identity : ∀ {x y} (f : B x y) → ε ∙ f ≋ f
 
-open LeftIdentity ⦃ … ⦄ public
+open LeftIdentity ⦃ … ⦄
 
 record RightIdentity
   {a} {A : Ø a} {b}
@@ -229,21 +262,42 @@ record RightIdentity
     c
     ⦃ _ : MorphismEquivalence B c ⦄
     ⦃ _ : Reflexivity B ⦄
-    ⦃ _ : Transitivity! B ⦄
+    ⦃ _ : Transitivity B ⦄
   : Ø a ∙̂ b ∙̂ c where
   field right-identity : ∀ {x y} (f : B x y) → f ∙ ε ≋ f
 open RightIdentity ⦃ … ⦄ public
+
+module _
+  {a} {A : Set a}
+  {b} (B : A → A → Set b)
+  {c} (C : ∀ {x y} → B x y → ∀ {z} → B y z → Set c)
+  where
+  𝓬ommutativity′ = ∀ {x y} (f : B x y) {z} (g : B y z) → C f g
+  record Commutativity′ : Ø a ∙̂ b ∙̂ c where field commutativity : 𝓬ommutativity′
+
+open Commutativity′ ⦃ … ⦄ public
+
+module _
+  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂)
+  c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  (μ : A₁ → A₂)
+  ⦃ _ : Transitivity B₁ ⦄
+  ⦃ _ : Transitivity B₂ ⦄
+  ⦃ _ : Map B₁ (B₂ on μ) ⦄
+  where
+  𝓬ommutativity = 𝓬ommutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ (map g ∙ map f))
+  Commutativity = Commutativity′ B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ (map g ∙ map f))
 
 record Associativity
   {a} {A : Ø a} {b}
     (B : A → A → Ø b)
     c
     ⦃ _ : MorphismEquivalence B c ⦄
-    ⦃ _ : Transitivity! B ⦄
+    ⦃ _ : Transitivity B ⦄
   : Ø a ∙̂ b ∙̂ c where
   field associativity : ∀ {w x y z} (f : B w x) (g : B x y) (h : B y z) → (h ∙ g) ∙ f ≋ h ∙ g ∙ f
 open Associativity ⦃ … ⦄ public
-
 
 module _
   {a} {A : Set a}
@@ -282,14 +336,14 @@ open Extensionality₂′ ⦃ … ⦄ public
 
 module _
   {a} {A : Ø a} {b} (B : A → A → Ø b) c ⦃ _ : MorphismEquivalence B c ⦄
-  ⦃ _ : Transitivity! B ⦄
+  ⦃ _ : Transitivity B ⦄
   where
   𝓮xtensionality₂ = 𝓮xtensionality₂′ B equivalence (λ f₁ f₂ g₁ g₂ → g₁ ∙ f₁ ≋ g₂ ∙ f₂)
   Extensionality₂ = Extensionality₂′ B equivalence (λ f₁ f₂ g₁ g₂ → g₁ ∙ f₁ ≋ g₂ ∙ f₂)
 
 record IsSemigroupoid {a} {A : Ø a} {b} (B : A → A → Ø b) c ⦃ _ : MorphismEquivalence B c ⦄ : Ø a ∙̂ b ∙̂ c where
   field
-    ⦃ ⌶Transitivity ⦄ : Transitivity! B
+    ⦃ ⌶Transitivity ⦄ : Transitivity B
     ⦃ ⌶Extensionality₂ ⦄ : Extensionality₂ B c
     ⦃ ⌶Associativity ⦄ : Associativity B c
 
