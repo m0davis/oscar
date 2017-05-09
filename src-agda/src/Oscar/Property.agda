@@ -18,13 +18,10 @@ module Proposequality⌶ where
       Symmetry.symmetry SymmetryProposequality ∅ = ∅
 
       TransitivityProposequality : Transitivity Proposequality⟦ 𝔒 ⟧
-      Transitivity.transitivity TransitivityProposequality ∅ = ¡
-
-      TransitivityProposequality! : Transitivity! Proposequality⟦ 𝔒 ⟧
-      Commutativity′.commutativity TransitivityProposequality! ∅ = ¡
+      Contiguity.contiguity TransitivityProposequality ∅ = ¡
 
       IsSetoidProposequality : IsSetoid Proposequality⟦ 𝔒 ⟧
-      IsSetoidProposequality = record {}
+      IsSetoidProposequality = {!record {}!}
 
   instance
 
@@ -66,13 +63,10 @@ module Proposextensequality⌶ where
       Symmetry.symmetry SymmetryProposextensequality f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
 
       TransitivityProposextensequality : Transitivity Proposextensequality⟦ 𝔓 ⟧
-      Transitivity.transitivity TransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x | f₂≡̇f₃ x = ∅
-
-      TransitivityProposextensequality! : Transitivity! Proposextensequality⟦ 𝔓 ⟧
-      Commutativity′.commutativity TransitivityProposextensequality! f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x | f₂≡̇f₃ x = ∅
+      Contiguity.contiguity TransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x | f₂≡̇f₃ x = ∅
 
       IsSetoidProposextensequality : IsSetoid Proposextensequality⟦ 𝔓 ⟧
-      IsSetoidProposextensequality = record {}
+      IsSetoidProposextensequality = {!record {}!}
 
   instance
 
@@ -103,10 +97,7 @@ module Function⌶ where
       Reflexivity.reflexivity ReflexivityFunction = ¡
 
       TransitivityFunction : Transitivity Function⟦ a ⟧
-      Transitivity.transitivity TransitivityFunction f g = g ∘ f
-
-      TransitivityFunction! : Transitivity! Function⟦ a ⟧
-      Commutativity′.commutativity TransitivityFunction! f g = g ∘ f
+      Contiguity.contiguity TransitivityFunction f g = g ∘ f
 
 open Function⌶ public
 
@@ -122,10 +113,7 @@ module Extension⌶ where
       Reflexivity.reflexivity ReflexivityExtension = ¡
 
       TransitivityExtension : Transitivity (Extension B)
-      Transitivity.transitivity TransitivityExtension f g = g ∘ f
-
-      TransitivityExtension! : Transitivity! (Extension B)
-      Commutativity′.commutativity TransitivityExtension! f g = g ∘ f
+      Contiguity.contiguity TransitivityExtension f g = g ∘ f
 
       EquivalenceExtension : ∀ {x y} → Equivalence (Extension B x y) b
       Equivalence.equivalence EquivalenceExtension = Proposextensequality
@@ -187,10 +175,7 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
     Map.map Substitunction,ExtensionTerms⌶Map = 𝓶apSubstitunctionExtensionTerms
 
     TransitivitySubstitunction : Transitivity Substitunction
-    Transitivity.transitivity TransitivitySubstitunction f g = map g ∘ f
-
-    TransitivitySubstitunction! : Transitivity! Substitunction
-    Commutativity′.commutativity TransitivitySubstitunction! f g = map g ∘ f
+    Contiguity.contiguity TransitivitySubstitunction f g = map g ∘ f
 
   private
 
@@ -230,14 +215,14 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
 
   instance
 
-    CommtativitySubstitunctionExtensionTerm : Commutativity Substitunction (Extension Term) _ ¡
-    Commutativity′.commutativity CommtativitySubstitunctionExtensionTerm = 𝓬ommutativitySubstitunctionExtensionTerm
+    CommutativitySubstitunctionExtensionTerm : Commutativity Substitunction (Extension Term) _ ¡
+    Contiguity.contiguity CommutativitySubstitunctionExtensionTerm = 𝓬ommutativitySubstitunctionExtensionTerm
 
-    CommtativitySubstitunctionExtensionTerms : ∀ {N} → Commutativity Substitunction (Extension $ Terms N) _ ¡
-    Commutativity′.commutativity CommtativitySubstitunctionExtensionTerms = 𝓬ommutativitySubstitunctionExtensionTerms
-
+    CommutativitySubstitunctionExtensionTerms : ∀ {N} → Commutativity Substitunction (Extension $ Terms N) _ ¡
+    Contiguity.contiguity CommutativitySubstitunctionExtensionTerms = 𝓬ommutativitySubstitunctionExtensionTerms
+-- !!!!!
     AssociativitySubstitunction : Associativity Substitunction _
-    Associativity.associativity AssociativitySubstitunction f g h x = commutativity g h $ f x
+    Associativity.associativity AssociativitySubstitunction f g h x = contiguity' g h $ (f x)
 
     Extensionality₂Substitunction : Extensionality₂ Substitunction _
     Extensionality₂′.extensionality₂ Extensionality₂Substitunction {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = extensionality₁ g₁≡̇g₂ $ f₂ x
@@ -358,12 +343,8 @@ module AList⌶ {a} {A : Nat → Set a} where
     Reflexivity.reflexivity Reflexivity⌶AList = ∅
 
     Transitivity⌶AList : Transitivity AList
-    Transitivity.transitivity Transitivity⌶AList f ∅ = f
-    Transitivity.transitivity Transitivity⌶AList f (x , g) = x , transitivity f g
-
-    Transitivity⌶AList! : Transitivity! AList
-    Commutativity′.commutativity Transitivity⌶AList! f ∅ = f
-    Commutativity′.commutativity Transitivity⌶AList! f (x , g) = x , commutativity f g
+    Contiguity.contiguity Transitivity⌶AList f ∅ = f
+    Contiguity.contiguity Transitivity⌶AList f (x , g) = x , contiguity f g
 
     MorphismEquivalence⌶AList : MorphismEquivalence AList _
     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
@@ -399,7 +380,7 @@ module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
 
     Map⌶Substitist,Substitunction : Map Substitist Substitunction
     Map.map Map⌶Substitist,Substitunction ∅ = i
-    Map.map Map⌶Substitist,Substitunction ((x , t) , σ) = commutativity (t for x) (map σ)  -- map σ ∙ (t for x)
+    Map.map Map⌶Substitist,Substitunction ((x , t) , σ) = map σ ∙ (t for x)
 
 module Fin⌶ where
 
@@ -459,6 +440,7 @@ module Fin⌶ where
 
   test-thin-injective : ∀ {m} (x : Fin (↑ m)) {y₁ y₂ : Fin m} → thin x y₁ ≋ thin x y₂ → y₁ ≋ y₂
   test-thin-injective x eq = injectivity₂[ thin[ Fin ] ] x eq
+
   -- injectivity₂[ thin[ Fin ] ] x eq
   -- injectivity₁[ thin[ Fin ] ] x eq
 
