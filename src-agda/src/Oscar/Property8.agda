@@ -259,6 +259,7 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
 -- !!!!!
     AssociativitySubstitunction : Associativity Substitunction _
     Associativity.associativity AssociativitySubstitunction f g h x = contiguity' g h $ (f x)
+    -- ⦃ Contiguity'FromCommutativity' ⦃ it ⦄ ⦄
 
     Extensionality₂Substitunction : Extensionality₂ Substitunction _
     Extensionality₂′.extensionality₂ Extensionality₂Substitunction {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = extensionality₁ g₁≡̇g₂ $ f₂ x

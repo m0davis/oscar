@@ -288,6 +288,13 @@ module _
   record Contiguity' : Ø a ∙̂ b ∙̂ c where field contiguity' : 𝓬ontiguity'
   open Contiguity' ⦃ … ⦄ public
 
+record FALSE
+    {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
+    {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂)
+    (c₂ : Ł)
+    (μ : A₁ → A₂)
+  : Set where no-eta-equality
+
 record Commutativity'
   {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
   a₂ b₂ c₂
@@ -306,20 +313,77 @@ record Commutativity'
 
 open Commutativity' ⦃ … ⦄ public
 
+record Commutativity''
+  {a₁} {A₁ : Ø a₁} {b₁} (B₁ : A₁ → A₁ → Ø b₁)
+  {a₂} {A₂ : Ø a₂} {b₂} (B₂ : A₂ → A₂ → Ø b₂)
+  c₂ ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+  (μ : A₁ → A₂)
+  ⦃ _ : Transitivity B₁ ⦄
+  ⦃ _ : Transitivity B₂ ⦄
+  ⦃ _ : Map B₁ (B₂ on μ) ⦄
+  : Ø a₁ ∙̂ b₁ ∙̂ a₂ ∙̂ b₂ ∙̂ c₂ where
+  field
+    commutativity'' : ∀
+      {x y z} (f : B₁ x y) (g : B₁ y z)
+      → map[ B₂ on μ ] (g ∙ f) ≋ map g ∙ map f
+
+open Commutativity'' ⦃ … ⦄ public
+
 instance
+
+  -- Commutativity'' → Contiguity'
+  {-
+  Contiguity'FromCommutativity'' : ∀
+    {a₁} {A₁ : Ø a₁} {b₁} {B₁ : A₁ → A₁ → Ø b₁}
+    {a₂} {A₂ : Ø a₂} {b₂} {B₂ : A₂ → A₂ → Ø b₂}
+    {c₂} ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+    {μ : A₁ → A₂}
+    ⦃ _ : Transitivity B₁ ⦄
+    ⦃ _ : Transitivity B₂ ⦄
+    ⦃ _ : Map B₁ (B₂ on μ) ⦄
+    ⦃ x : Commutativity'' B₁ B₂ c₂ μ ⦄
+    → Contiguity' B₁ (λ f g → map[ B₂ on μ ] (g ∙ f) ≋ map g ∙ map f)
+  Contiguity'.contiguity' (Contiguity'FromCommutativity'' ⦃ x = x ⦄) = commutativity'' ⦃ r = x ⦄
+  -}
+
+  -- Commutativity'' → Commutativity'
+  Commutativity'FromCommutativity'' : ∀
+    {a₁} {A₁ : Ø a₁} {b₁} {B₁ : A₁ → A₁ → Ø b₁}
+    {a₂} {A₂ : Ø a₂} {b₂} {B₂ : A₂ → A₂ → Ø b₂}
+    {c₂} ⦃ _ : MorphismEquivalence B₂ c₂ ⦄
+    {μ : A₁ → A₂}
+    ⦃ _ : Transitivity B₁ ⦄
+    ⦃ _ : Transitivity B₂ ⦄
+    ⦃ _ : Map B₁ (B₂ on μ) ⦄
+    ⦃ x : Commutativity'' B₁ B₂ c₂ μ ⦄
+    ⦃ _ : FALSE B₁ B₂ c₂ μ ⦄
+    → Commutativity' B₁ a₂ b₂ c₂
+  Commutativity'.A₂ Commutativity'FromCommutativity'' = _
+  Commutativity'.B₂ (Commutativity'FromCommutativity'' {B₂ = B₂}) = B₂
+  Commutativity'.me Commutativity'FromCommutativity'' = it
+  Commutativity'.μ (Commutativity'FromCommutativity'' {μ = μ}) = μ
+  Commutativity'.t1 Commutativity'FromCommutativity'' = it
+  Commutativity'.t2 Commutativity'FromCommutativity'' = it
+  Commutativity'.mp Commutativity'FromCommutativity'' = it
+  Commutativity'.commutativity' (Commutativity'FromCommutativity'' {B₂ = B₂} {μ = μ}) = commutativity'' {B₂ = B₂} {μ = μ}
+
+  -- Indexed → Packaged → General
+
+  -- Commutativity' → Contiguity'
   Contiguity'FromCommutativity' : ∀
     {a₁} {A₁ : Ø a₁} {b₁} {B₁ : A₁ → A₁ → Ø b₁}
     {a₂ b₂ c₂}
     ⦃ C : Commutativity' B₁ a₂ b₂ c₂ ⦄
+    ⦃ _ : FALSE B₁ (B₂ ⦃ C ⦄) c₂ (μ ⦃ C ⦄) ⦄
     → Contiguity' B₁ (λ f g → map[ B₂ ⦃ C ⦄ on μ ⦃ C ⦄ ] (g ∙ f) ≋ map g ∙ map f)
-  Contiguity'.contiguity' Contiguity'FromCommutativity' = commutativity'
+  Contiguity'.contiguity' (Contiguity'FromCommutativity' {B₁ = B₁} {a₂} {b₂} ⦃ C ⦄) = commutativity' {B₁ = B₁} {a₂} {b₂} ⦃ it ⦄
 
+  -- Transitivity → Contiguity'
   Contiguity'FromTransitivity : ∀
     {a} {A : Ø a} {b} {B : A → A → Ø b}
     ⦃ _ : Transitivity B ⦄
     → Contiguity' B (λ {x y z} f g → B x z)
   Contiguity'.contiguity' Contiguity'FromTransitivity = transitivity
-
 
 {-
 instance

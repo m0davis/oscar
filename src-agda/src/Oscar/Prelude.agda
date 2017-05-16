@@ -53,6 +53,8 @@ module _ where -- Function
   it {{x}} = x
   {-# INLINE it #-}
 
+  ! = it
+
   asInstance : ∀ {a b} {A : Set a} {B : A → Set b} (x : A) → (∀ {{x}} → B x) → B x
   asInstance x f = f {{x}}
   {-# INLINE asInstance #-}
@@ -110,3 +112,6 @@ Function A B = A → B
 
 Function⟦_⟧ : ∀ a (A B : Ø a) → Ø a
 Function⟦ a ⟧ = Function {a = a}
+
+postulate
+  magic : ∀ {a} {A : Set a} → A
