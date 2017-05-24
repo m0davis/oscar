@@ -21,12 +21,10 @@ module _ where
       𝓣ransitivityProposequality : 𝓣ransitivity Proposequality⟦ 𝔒 ⟧
       𝓣ransitivityProposequality .𝓣ransitivity.transitivity ∅ = ¡
 
-{-
       IsEquivalenceProposequality : IsEquivalence Proposequality⟦ 𝔒 ⟧
-      IsEquivalenceProposequality .IsEquivalence.⌶𝓡eflexivity = !
-      IsEquivalenceProposequality .IsEquivalence.⌶𝓢ymmetry = !
-      IsEquivalenceProposequality .IsEquivalence.⌶𝓣ransitivity = !
--}
+      IsEquivalenceProposequality .IsEquivalence.`𝓡eflexivity = !
+      IsEquivalenceProposequality .IsEquivalence.`𝓢ymmetry = !
+      IsEquivalenceProposequality .IsEquivalence.`𝓣ransitivity = !
 
 --   instance
 
