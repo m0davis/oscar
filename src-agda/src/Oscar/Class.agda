@@ -83,6 +83,28 @@ module _ where
   ∙[]-syntax = transitivity[_]
   syntax ∙[]-syntax _⊸_ f g = g ∙[ _⊸_ ] f
 
+  record 𝓣ransitivity²
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    : Ø 𝔬 ∙̂ 𝔯 where
+    field
+      ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _∼_
+      -- ⦃ `𝓣ransitivityFlip ⦄ : 𝓣ransitivity (flip _∼_)
+    instance
+      `𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
+      `𝓣ransitivityFlip .𝓣ransitivity.transitivity = flip transitivity
+
+{-
+  instance
+    𝓣ransitivity²From𝓣ransitivity : ∀
+      {𝔬} {𝔒 : Ø 𝔬}
+      {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+      ⦃ _ : 𝓣ransitivity _∼_ ⦄
+      → 𝓣ransitivity² _∼_
+    𝓣ransitivity²From𝓣ransitivity {𝔬} {𝔒} {𝔯} {_∼_} {{x}} .𝓣ransitivity².`𝓣ransitivity = x
+    𝓣ransitivity²From𝓣ransitivity {𝔬} {𝔒} {𝔯} {_∼_} {{x}} .𝓣ransitivity².`𝓣ransitivityFlip .𝓣ransitivity.transitivity = flip transitivity
+-}
+
 record IsEquivalence
   {𝔬} {𝔒 : Ø 𝔬}
   {ℓ} (_≈_ : 𝔒 → 𝔒 → Ø ℓ)

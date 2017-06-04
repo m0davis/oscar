@@ -8,6 +8,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 
+-- SetoidProposequality
 module _ where
 
   module _ {𝔬} {𝔒 : Ø 𝔬} where
@@ -25,6 +26,13 @@ module _ where
 
       IsEquivalenceProposequality : IsEquivalence Proposequality⟦ 𝔒 ⟧
       IsEquivalenceProposequality = ∁
+
+  module _ {𝔬} (𝔒 : Ø 𝔬) where
+
+    SetoidProposequality : Setoid _ _
+    SetoidProposequality = ∁ Proposequality⟦ 𝔒 ⟧
+
+module _ where
 
   instance
 
@@ -47,13 +55,7 @@ module _ where
       → 𝓣ransextensionality _⊸_ Proposequality
     𝓣ransextensionalityProposequality .𝓣ransextensionality.transextensionality = congruity₂ _
 
-module _ where
-
-  module _ {𝔬} (𝔒 : Ø 𝔬) where
-
-    SetoidProposequality : Setoid _ _
-    SetoidProposequality = ∁ Proposequality⟦ 𝔒 ⟧
-
+-- SetoidProposextensequality
 module _ where
 
   module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
@@ -72,15 +74,17 @@ module _ where
       IsEquivalenceProposextensequality : IsEquivalence Proposextensequality⟦ 𝔓 ⟧
       IsEquivalenceProposextensequality = ∁
 
-      𝓒̇ongruityProposextensequality : ∀ {a b} → 𝓒̇ongruity a b Proposextensequality
-      𝓒̇ongruity.ċongruity 𝓒̇ongruityProposextensequality _ f≡̇g x rewrite f≡̇g x = ∅
-
-module _ where
-
   module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) where
 
     SetoidProposextensequality : Setoid _ _
     SetoidProposextensequality = ∁ Proposextensequality⟦ 𝔓 ⟧
+
+module _ where
+
+  instance
+
+    𝓒̇ongruityProposextensequality : ∀ {a b} → 𝓒̇ongruity a b Proposextensequality
+    𝓒̇ongruity.ċongruity 𝓒̇ongruityProposextensequality _ f≡̇g x rewrite f≡̇g x = ∅
 
 module _ where
 
@@ -96,6 +100,7 @@ module _ where
       𝓣ransitivityFunction : 𝓣ransitivity Function⟦ a ⟧
       𝓣ransitivity.transitivity 𝓣ransitivityFunction f g = g ∘ f
 
+-- CategoryExtensionProposextensequality
 module _ where
 
   module _
@@ -110,7 +115,8 @@ module _ where
       𝓣ransitivityExtension : 𝓣ransitivity (Extension B)
       𝓣ransitivity.transitivity 𝓣ransitivityExtension f g = g ∘ f
 
-      [𝓣ransassociativity]ExtensionProposextensequality = [𝓣ransassociativity] (Extension B) Proposextensequality ∋ ∁
+      [𝓣ransassociativity]ExtensionProposextensequality : [𝓣ransassociativity] (Extension B) Proposextensequality
+      [𝓣ransassociativity]ExtensionProposextensequality = ∁
 
       𝓣ransassociativityExtensionProposextensequality : 𝓣ransassociativity (Extension B) Proposextensequality
       𝓣ransassociativityExtensionProposextensequality .𝓣ransassociativity.transassociativity _ _ _ _ = !
@@ -162,6 +168,7 @@ module _ where
     CategoryExtension : Category _ _ _
     CategoryExtension = ∁ (Extension B) Proposextensequality
 
+-- FunctorSubstitunctionProposextensequalityExtensionTermProposextensequality
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   where
@@ -204,27 +211,7 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
     𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjectivity Substitunction (Extension $ Terms N)
     𝓢urjectivitySubstitunctionExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerms
 
-  private
-
-    mutual
-
-      𝓶apSubstitunctionExtensionTerm : 𝓶ap Substitunction (Extension Term)
-      𝓶apSubstitunctionExtensionTerm σ (i x) = σ x
-      𝓶apSubstitunctionExtensionTerm σ leaf = leaf
-      𝓶apSubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓶apSubstitunctionExtensionTerm σ τ₁ fork 𝓶apSubstitunctionExtensionTerm σ τ₂
-      𝓶apSubstitunctionExtensionTerm σ (function p τs) = function p (𝓶apSubstitunctionExtensionTerms σ τs)
-
-      𝓶apSubstitunctionExtensionTerms : ∀ {N} → 𝓶ap Substitunction (Extension $ Terms N)
-      𝓶apSubstitunctionExtensionTerms σ ∅ = ∅
-      𝓶apSubstitunctionExtensionTerms σ (τ , τs) = 𝓶apSubstitunctionExtensionTerm σ τ , 𝓶apSubstitunctionExtensionTerms σ τs
-
   instance
-
-    𝓜apSubstitunctionExtensionTerm : 𝓜ap Substitunction (Extension Term)
-    𝓜apSubstitunctionExtensionTerm .𝓜ap.map = 𝓶apSubstitunctionExtensionTerm
-
-    𝓜apSubstitunctionExtensionTerms : ∀ {N} → 𝓜ap Substitunction (Extension $ Terms N)
-    𝓜apSubstitunctionExtensionTerms .𝓜ap.map = 𝓶apSubstitunctionExtensionTerms
 
     𝓣ransitivitySubstitunction : 𝓣ransitivity Substitunction
     𝓣ransitivitySubstitunction .𝓣ransitivity.transitivity f g = surjectivity g ∘ f
@@ -262,7 +249,7 @@ record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
     [𝓢urjextensionality]Substitunction = ∁
 
     𝓢urjextensionalitySubstitunction : 𝓢urjextensionality Substitunction Proposextensequality (Extension Term) Proposextensequality
-    𝓢urjextensionality.surjextensionality 𝓢urjextensionalitySubstitunction = 𝓼urjextensionalitySubstitunctionExtensionTerm
+    𝓢urjextensionalitySubstitunction .𝓢urjextensionality.surjextensionality = 𝓼urjextensionalitySubstitunctionExtensionTerm
 
     [𝓢urjextensionality]Substitunctions : ∀ {N} → [𝓢urjextensionality] Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
     [𝓢urjextensionality]Substitunctions = ∁
@@ -393,48 +380,63 @@ module SubstitunctionØ {𝔭} (𝔓 : Ø 𝔭) where
 
 open SubstitunctionØ public
 
-module AList⌶ {a} {A : Nat → Set a} where
 
-  private AList = Descender⟨ A ⟩
+-- CategoryAListProposequality
+module _ where
 
-  instance
+  module _ {a} {A : ¶ → Set a} where
 
-    𝓡eflexivityAList : 𝓡eflexivity AList
-    𝓡eflexivity.reflexivity 𝓡eflexivityAList = ∅
+    private AList = Descender⟨ A ⟩
 
-    𝓣ransitivityAList : 𝓣ransitivity AList
-    𝓣ransitivityAList .𝓣ransitivity.transitivity f ∅ = f
-    𝓣ransitivityAList .𝓣ransitivity.transitivity f (x , g) = x , g ∙ f
+    instance
 
---    HasEquivalenceAList : HasEquivalence AList
---     MorphismEquivalence⌶AList : MorphismEquivalence AList _
---     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
+      𝓡eflexivityAList : 𝓡eflexivity AList
+      𝓡eflexivity.reflexivity 𝓡eflexivityAList = ∅
 
-    [𝓣ransassociativity]AList : [𝓣ransassociativity] AList Proposequality
-    [𝓣ransassociativity]AList = ∁
+      𝓣ransitivityAList : 𝓣ransitivity AList
+      𝓣ransitivityAList .𝓣ransitivity.transitivity f ∅ = f
+      𝓣ransitivityAList .𝓣ransitivity.transitivity f (x , g) = x , g ∙ f
 
-    𝓣ransassociativityAList : 𝓣ransassociativity AList Proposequality
-    𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g ∅ = ∅
-    𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g (x , h) = congruity (x ,_) $ h ⟨∙ _ ⟨∙ _
+  --    HasEquivalenceAList : HasEquivalence AList
+  --     MorphismEquivalence⌶AList : MorphismEquivalence AList _
+  --     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
 
-    IsSemigroupoidAList : IsPrecategory AList Proposequality
-    IsSemigroupoidAList = ∁
+      [𝓣ransassociativity]AList : [𝓣ransassociativity] AList Proposequality
+      [𝓣ransassociativity]AList = ∁
 
-    [𝓣ransleftidentity]AList : [𝓣ransleftidentity] AList Proposequality
-    [𝓣ransleftidentity]AList = ∁
+      𝓣ransassociativityAList : 𝓣ransassociativity AList Proposequality
+      𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g ∅ = ∅
+      𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g (x , h) = congruity (x ,_) $ h ⟨∙ _ ⟨∙ _
 
-    𝓣ransleftidentityAList : 𝓣ransleftidentity AList Proposequality
-    𝓣ransleftidentityAList .𝓣ransleftidentity.transleftidentity = ∅
+      IsPrecategoryAList : IsPrecategory AList Proposequality
+      IsPrecategoryAList = ∁
 
-    [𝓣ransrightidentity]AList : [𝓣ransrightidentity] AList Proposequality
-    [𝓣ransrightidentity]AList = ∁
+      [𝓣ransleftidentity]AList : [𝓣ransleftidentity] AList Proposequality
+      [𝓣ransleftidentity]AList = ∁
 
-    𝓣ransrightidentityAList : 𝓣ransrightidentity AList Proposequality
-    𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = ∅} = ∅
-    𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} = congruity (x ,_) transrightidentity
+      𝓣ransleftidentityAList : 𝓣ransleftidentity AList Proposequality
+      𝓣ransleftidentityAList .𝓣ransleftidentity.transleftidentity = ∅
 
-    IsCategoryAList : IsCategory AList Proposequality
-    IsCategoryAList = ∁
+      [𝓣ransrightidentity]AList : [𝓣ransrightidentity] AList Proposequality
+      [𝓣ransrightidentity]AList = ∁
+
+      𝓣ransrightidentityAList : 𝓣ransrightidentity AList Proposequality
+      𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = ∅} = ∅
+      𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} = congruity (x ,_) transrightidentity
+
+      IsCategoryAList : IsCategory AList Proposequality
+      IsCategoryAList = ∁
+
+  module _ {a} (A : ¶ → Ø a) where
+
+    private AList = Descender⟨ A ⟩
+
+    PrecategoryAListProposequality : Precategory _ _ _
+    PrecategoryAListProposequality = ∁ AList Proposequality
+
+    CategoryAListProposequality : Category _ _ _
+    CategoryAListProposequality = ∁ AList Proposequality
+
 
 module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
 
@@ -454,6 +456,12 @@ module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
     𝓢urjectivitySubstitist,Substitunction : 𝓢urjectivity Substitist Substitunction
     𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ = i
     𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ((x , t) , σ) = surjectivity σ ∙ (t for x)
+
+    [𝓢urjtranscommutativity]Substitist,Substitunction : [𝓢urjtranscommutativity] Substitist Substitunction _≈_
+    [𝓢urjtranscommutativity]Substitist,Substitunction = ∁
+
+    𝓢urjtranscommutativitySubstitist,Substitunction : 𝓢urjtranscommutativity Substitist Substitunction _≈_
+    𝓢urjtranscommutativitySubstitist,Substitunction = {!!}
 
 module _ where
 
@@ -573,25 +581,19 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   open Substitunction 𝔓
   open Term 𝔓
 
-  mutual
+  private
 
-    𝓶apExtensionFinExtensionTerm : 𝓶ap (Extension Fin) (Extension Term)
-    𝓶apExtensionFinExtensionTerm x (i y) = i (x y)
-    𝓶apExtensionFinExtensionTerm x leaf = leaf
-    𝓶apExtensionFinExtensionTerm x (l fork r) = 𝓶apExtensionFinExtensionTerm x l fork 𝓶apExtensionFinExtensionTerm x r
-    𝓶apExtensionFinExtensionTerm x (function f ts) = function f $ 𝓶apExtensionFinExtensionTerms x ts
+    mutual
 
-    𝓶apExtensionFinExtensionTerms : ∀ {N} → 𝓶ap (Extension Fin) (Extension $ Terms N)
-    𝓶apExtensionFinExtensionTerms x ∅ = ∅
-    𝓶apExtensionFinExtensionTerms x (t , ts) = 𝓶apExtensionFinExtensionTerm x t , 𝓶apExtensionFinExtensionTerms x ts
+      𝓼urjectivityExtensionFinExtensionTerm : 𝓼urjectivity (Extension Fin) (Extension Term)
+      𝓼urjectivityExtensionFinExtensionTerm x (i y) = i (x y)
+      𝓼urjectivityExtensionFinExtensionTerm x leaf = leaf
+      𝓼urjectivityExtensionFinExtensionTerm x (l fork r) = 𝓼urjectivityExtensionFinExtensionTerm x l fork 𝓼urjectivityExtensionFinExtensionTerm x r
+      𝓼urjectivityExtensionFinExtensionTerm x (function f ts) = function f $ 𝓼urjectivityExtensionFinExtensionTerms x ts
 
-  instance
-
-    𝓜apExtensionFinExtensionTerm : 𝓜ap (Extension Fin) (Extension Term)
-    𝓜apExtensionFinExtensionTerm .𝓜ap.map = 𝓶apExtensionFinExtensionTerm
-
-    𝓜apExtensionFinExtensionTerms : ∀ {N} → 𝓜ap (Extension Fin) (Extension $ Terms N)
-    𝓜apExtensionFinExtensionTerms .𝓜ap.map = 𝓶apExtensionFinExtensionTerms
+      𝓼urjectivityExtensionFinExtensionTerms : ∀ {N} → 𝓼urjectivity (Extension Fin) (Extension $ Terms N)
+      𝓼urjectivityExtensionFinExtensionTerms x ∅ = ∅
+      𝓼urjectivityExtensionFinExtensionTerms x (t , ts) = 𝓼urjectivityExtensionFinExtensionTerm x t , 𝓼urjectivityExtensionFinExtensionTerms x ts
 
   instance
 
@@ -599,13 +601,13 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     [𝓢urjectivity]ExtensionFinExtensionTerm = ∁
 
     𝓢urjectivityExtensionFinExtensionTerm : 𝓢urjectivity (Extension Fin) (Extension Term)
-    𝓢urjectivityExtensionFinExtensionTerm .𝓢urjectivity.surjectivity = map
+    𝓢urjectivityExtensionFinExtensionTerm .𝓢urjectivity.surjectivity = 𝓼urjectivityExtensionFinExtensionTerm
 
     [𝓢urjectivity]ExtensionFinExtensionTerms : ∀ {N} → [𝓢urjectivity] (Extension Fin) (Extension $ Terms N)
     [𝓢urjectivity]ExtensionFinExtensionTerms = ∁
 
     𝓢urjectivityExtensionFinExtensionTerms : ∀ {N} → 𝓢urjectivity (Extension Fin) (Extension $ Terms N)
-    𝓢urjectivityExtensionFinExtensionTerms .𝓢urjectivity.surjectivity = map
+    𝓢urjectivityExtensionFinExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivityExtensionFinExtensionTerms
 
   instance
 

@@ -162,6 +162,25 @@ module Test3 where
     -- -- Test1.test-functor-transextensionality
 
 
+test-𝓣ransitivity² : ∀
+  {𝔬} {𝔒 : Ø 𝔬}
+  {𝔯} {_↦_ : 𝔒 → 𝔒 → Ø 𝔯}
+  ⦃ _ : 𝓣ransitivity² _↦_ ⦄
+  (let _↤_ = flip _↦_)
+  → 𝓽ransitivity _↤_
+test-𝓣ransitivity² = transitivity
+
+{-
+test-is-transitive₃' : ∀
+  {𝔬} {𝔒 : Ø 𝔬}
+  {𝔯} {_↦_ : 𝔒 → 𝔒 → Ø 𝔯}
+  ⦃ _ : 𝓣ransitivity _↦_ ⦄
+  (let _↤_ = flip _↦_)
+  → 𝓽ransitivity _↤_
+test-is-transitive₃' = transitivity
+-}
+
+
 {-
 module _ where
 

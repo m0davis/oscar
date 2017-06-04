@@ -166,7 +166,7 @@ module Substitist {𝔭} (𝔓 : Ø 𝔭) where
 
   open Term 𝔓
 
-  Substitist = λ n m → Descender⟨ (λ n-o → Fin (↑ n-o) × Term n-o) ⟩ m n
+  Substitist = flip Descender⟨ (λ n-o → Fin (↑ n-o) × Term n-o) ⟩
 
 module _ where
 
