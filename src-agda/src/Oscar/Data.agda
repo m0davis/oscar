@@ -35,6 +35,8 @@ module _ where
 
   Fin = ¶⟨<_⟩
 
+  module Fin = ¶⟨<_⟩
+
 module _ where
 
   data ⟨_⟩¶⟨≤_⟩ {𝔭} (𝔓 : ¶ → Ø 𝔭) : ¶ → Ø 𝔭 where
@@ -42,6 +44,7 @@ module _ where
     _,_ : ∀ ..{n} → 𝔓 n → ⟨ 𝔓 ⟩¶⟨≤ n ⟩ → ⟨ 𝔓 ⟩¶⟨≤ ↑ n ⟩
 
   Vec⟨_⟩ = ⟨_⟩¶⟨≤_⟩
+
 {-
 module _ where
 
@@ -52,6 +55,7 @@ module _ where
 
   AList⟨_⟩ = ⟨_⟩¶⟨_≤_↓⟩
 -}
+
 module _ where
 
   -- m ≤ n, counting down from n-1 to m
@@ -89,6 +93,9 @@ module _ where
 
   Proposequality⟦_⟧ : ∀ {𝔬} (𝔒 : Ø 𝔬) → 𝔒 → 𝔒 → Ø₀
   Proposequality⟦ _ ⟧ = Proposequality
+
+  [Proposequality] : ∀ {𝔬} {𝔒 : Ø 𝔬} → {x y : 𝔒} → Ø₀
+  [Proposequality] {x = x} {y = y} = Proposequality x y
 
 module _ where
 

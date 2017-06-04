@@ -1,5 +1,7 @@
-{-# OPTIONS --show-implicit #-}
+--{-# OPTIONS --show-implicit #-}
 {-# OPTIONS --postfix-projections #-}
+--{-# OPTIONS -v30 #-}
+{-# OPTIONS --rewriting #-}
 module Oscar.Property where
 
 open import Oscar.Prelude
@@ -22,687 +24,797 @@ module _ where
       𝓣ransitivityProposequality .𝓣ransitivity.transitivity ∅ = ¡
 
       IsEquivalenceProposequality : IsEquivalence Proposequality⟦ 𝔒 ⟧
-      IsEquivalenceProposequality .IsEquivalence.`𝓡eflexivity = !
-      IsEquivalenceProposequality .IsEquivalence.`𝓢ymmetry = !
-      IsEquivalenceProposequality .IsEquivalence.`𝓣ransitivity = !
+      IsEquivalenceProposequality = ∁
 
---   instance
+  instance
 
---     𝓒ongruity∁Proposequality : ∀ {a b} → 𝓒ongruity∁ a b Proposequality
---     𝓒ongruity∁Proposequality .𝓒ongruity∁.congruity _ ∅ = !
+    𝓒ongruityProposequality : ∀ {a b} → 𝓒ongruity Proposequality a b
+    𝓒ongruityProposequality .𝓒ongruity.congruity _ ∅ = !
 
---     𝓒ongruity₂∁Proposequality : ∀ {a b c} → 𝓒ongruity₂∁ a b c Proposequality
---     𝓒ongruity₂∁Proposequality .𝓒ongruity₂∁.congruity₂ _ ∅ ∅ = !
+    𝓒ongruity₂Proposequality : ∀ {a b c} → 𝓒ongruity₂ Proposequality a b c
+    𝓒ongruity₂Proposequality .𝓒ongruity₂.congruity₂ _ ∅ ∅ = !
 
---     𝓣ransextensionality∁Proposequality : ∀
---       {a} {A : Ø a}
---       {m} {_⊸_ : A → A → Ø m}
---       ⦃ _ : 𝓣ransitivity∁ _⊸_ ⦄
---       → 𝓣ransextensionality∁ _⊸_ Proposequality
---     𝓣ransextensionality∁Proposequality .𝓣ransextensionality∁.⌶𝓣ransitivity∁ = !
---     𝓣ransextensionality∁Proposequality .𝓣ransextensionality∁.⌶𝓣ransextensionality/ .𝓣ransextensionality/.transextensionality = congruity₂ _
+    [𝓣ransextensionality]Proposequality : ∀
+      {a} {A : Ø a}
+      {m} {_⊸_ : A → A → Ø m}
+      → [𝓣ransextensionality] _⊸_ Proposequality
+    [𝓣ransextensionality]Proposequality = ∁
 
--- -- module _ where
+    𝓣ransextensionalityProposequality : ∀
+      {a} {A : Ø a}
+      {m} {_⊸_ : A → A → Ø m}
+      ⦃ _ : 𝓣ransitivity _⊸_ ⦄
+      → 𝓣ransextensionality _⊸_ Proposequality
+    𝓣ransextensionalityProposequality .𝓣ransextensionality.transextensionality = congruity₂ _
 
--- --   module _ {𝔬} (𝔒 : Ø 𝔬) where
+module _ where
 
--- --     SetoidProposequality : Setoid _ _
--- --     Setoid.Object SetoidProposequality = _
--- --     Setoid.ObjectEquality SetoidProposequality = Proposequality⟦ 𝔒 ⟧
--- --     Setoid.isEquivalence SetoidProposequality = !
+  module _ {𝔬} (𝔒 : Ø 𝔬) where
 
--- -- module _ where
+    SetoidProposequality : Setoid _ _
+    SetoidProposequality = ∁ Proposequality⟦ 𝔒 ⟧
 
--- --   module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
+module _ where
 
--- --     instance
+  module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
 
--- --       𝓡eflexivity∁Proposextensequality : 𝓡eflexivity∁ Proposextensequality⟦ 𝔓 ⟧
--- --       𝓡eflexivity∁.reflexivity 𝓡eflexivity∁Proposextensequality _ = ∅
+    instance
 
--- --       𝓢ymmetry∁Proposextensequality : 𝓢ymmetry∁ Proposextensequality⟦ 𝔓 ⟧
--- --       𝓢ymmetry∁.symmetry 𝓢ymmetry∁Proposextensequality f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
+      𝓡eflexivityProposextensequality : 𝓡eflexivity Proposextensequality⟦ 𝔓 ⟧
+      𝓡eflexivity.reflexivity 𝓡eflexivityProposextensequality _ = ∅
 
--- --       𝓣ransitivity∁Proposextensequality : 𝓣ransitivity∁ Proposextensequality⟦ 𝔓 ⟧
--- --       𝓣ransitivity∁.transitivity 𝓣ransitivity∁Proposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x
+      𝓢ymmetryProposextensequality : 𝓢ymmetry Proposextensequality⟦ 𝔓 ⟧
+      𝓢ymmetry.symmetry 𝓢ymmetryProposextensequality f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
 
--- --       IsEquivalence∁Proposextensequality : IsEquivalence∁ Proposextensequality⟦ 𝔓 ⟧
--- --       IsEquivalence∁.⌶𝓡eflexivity∁ IsEquivalence∁Proposextensequality = !
--- --       IsEquivalence∁.⌶𝓢ymmetry∁ IsEquivalence∁Proposextensequality = !
--- --       IsEquivalence∁.⌶𝓣ransitivity∁ IsEquivalence∁Proposextensequality = !
+      𝓣ransitivityProposextensequality : 𝓣ransitivity Proposextensequality⟦ 𝔓 ⟧
+      𝓣ransitivity.transitivity 𝓣ransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x
 
--- --       IsĊongruousProposextensequality : ∀ {a b} → IsĊongruous a b Proposextensequality
--- --       IsĊongruous.ċongruity IsĊongruousProposextensequality _ f≡̇g x rewrite f≡̇g x = ∅
+      IsEquivalenceProposextensequality : IsEquivalence Proposextensequality⟦ 𝔓 ⟧
+      IsEquivalenceProposextensequality = ∁
 
--- -- module _ where
+      𝓒̇ongruityProposextensequality : ∀ {a b} → 𝓒̇ongruity a b Proposextensequality
+      𝓒̇ongruity.ċongruity 𝓒̇ongruityProposextensequality _ f≡̇g x rewrite f≡̇g x = ∅
 
--- --   module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) where
+module _ where
 
--- --     SetoidProposextensequality : Setoid _ _
--- --     Setoid.Object SetoidProposextensequality = _
--- --     Setoid.ObjectEquality SetoidProposextensequality = Proposextensequality⟦ 𝔓 ⟧
--- --     Setoid.isEquivalence SetoidProposextensequality = !
+  module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) where
 
--- -- module _ where
+    SetoidProposextensequality : Setoid _ _
+    SetoidProposextensequality = ∁ Proposextensequality⟦ 𝔓 ⟧
 
--- --   module _
--- --     {a}
--- --     where
+module _ where
 
--- --     instance
+  module _
+    {a}
+    where
 
--- --       𝓡eflexivity∁Function : 𝓡eflexivity∁ Function⟦ a ⟧
--- --       𝓡eflexivity∁.reflexivity 𝓡eflexivity∁Function = ¡
+    instance
 
--- --       𝓣ransitivity∁Function : 𝓣ransitivity∁ Function⟦ a ⟧
--- --       𝓣ransitivity∁.transitivity 𝓣ransitivity∁Function f g = g ∘ f
+      𝓡eflexivityFunction : 𝓡eflexivity Function⟦ a ⟧
+      𝓡eflexivity.reflexivity 𝓡eflexivityFunction = ¡
 
--- -- module _ where
+      𝓣ransitivityFunction : 𝓣ransitivity Function⟦ a ⟧
+      𝓣ransitivity.transitivity 𝓣ransitivityFunction f g = g ∘ f
 
--- --   module _
--- --     {a} {A : Ø a} {b} {B : A → Ø b}
--- --     where
+module _ where
 
--- --     instance
+  module _
+    {a} {A : Ø a} {b} {B : A → Ø b}
+    where
 
--- --       𝓡eflexivity∁Extension : 𝓡eflexivity∁ (Extension B)
--- --       𝓡eflexivity∁.reflexivity 𝓡eflexivity∁Extension = ¡
+    instance
 
--- --       𝓣ransitivity∁Extension : 𝓣ransitivity∁ (Extension B)
--- --       𝓣ransitivity∁.transitivity 𝓣ransitivity∁Extension f g = g ∘ f
+      𝓡eflexivityExtension : 𝓡eflexivity (Extension B)
+      𝓡eflexivity.reflexivity 𝓡eflexivityExtension = ¡
 
--- --       IsTransassociativeExtension : IsTransassociative (Extension B) Proposextensequality
--- --       IsTransassociative.⌶𝓣ransitivity∁ IsTransassociativeExtension = !
--- --       IsTransassociative.transassociativity IsTransassociativeExtension _ _ _ _ = !
+      𝓣ransitivityExtension : 𝓣ransitivity (Extension B)
+      𝓣ransitivity.transitivity 𝓣ransitivityExtension f g = g ∘ f
 
--- --       𝓣ransextensionality∁Extensional : 𝓣ransextensionality∁ (Extension B) (λ {x} {y} → Proposextensequality)
--- --       𝓣ransextensionality∁.⌶𝓣ransitivity∁ 𝓣ransextensionality∁Extensional = !
--- --       𝓣ransextensionality∁.transextensionality 𝓣ransextensionality∁Extensional {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
+      [𝓣ransassociativity]ExtensionProposextensequality = [𝓣ransassociativity] (Extension B) Proposextensequality ∋ ∁
 
--- --       IsTransleftidentityExtension : IsTransleftidentity (Extension B) Proposextensequality
--- --       IsTransleftidentity.⌶𝓡eflexivity∁ IsTransleftidentityExtension = !
--- --       IsTransleftidentity.⌶𝓣ransitivity∁ IsTransleftidentityExtension = !
--- --       IsTransleftidentity.transleftidentity IsTransleftidentityExtension _ = !
-
--- --       IsTransrightidentityExtension : IsTransrightidentity (Extension B) Proposextensequality
--- --       IsTransrightidentity.⌶𝓡eflexivity∁ IsTransrightidentityExtension = !
--- --       IsTransrightidentity.⌶𝓣ransitivity∁ IsTransrightidentityExtension = !
--- --       IsTransrightidentity.transrightidentity IsTransrightidentityExtension _ = !
+      𝓣ransassociativityExtensionProposextensequality : 𝓣ransassociativity (Extension B) Proposextensequality
+      𝓣ransassociativityExtensionProposextensequality .𝓣ransassociativity.transassociativity _ _ _ _ = !
 
--- --       -- EqualityExtension : ∀ {x y : A} → Equality (Extension B x y) _
--- --       -- EqualityExtension .Equality._≋_ = Proposextensequality
--- --       -- EqualityExtension .Equality.isEquivalence = it
+      [𝓣ransextensionality]ExtensionProposextensequality : [𝓣ransextensionality] (Extension B) Proposextensequality
+      [𝓣ransextensionality]ExtensionProposextensequality = ∁
 
--- --   module _
--- --     {a} {A : Ø a} {b} (B : A → Ø b)
--- --     where
+      𝓣ransextensionalityExtensionProposextensequality : 𝓣ransextensionality (Extension B) Proposextensequality
+      𝓣ransextensionalityExtensionProposextensequality .𝓣ransextensionality.transextensionality {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
 
--- --     PrecategoryExtension : Precategory _ _ _
--- --     Precategory.Object PrecategoryExtension = _
--- --     Precategory.Arrow PrecategoryExtension = Extension B
--- --     Precategory.ArrowEquality PrecategoryExtension = Proposextensequality
--- --     Precategory.⌶𝓣ransitivity∁ PrecategoryExtension = !
--- --     Precategory.isEquivalence PrecategoryExtension = !
--- --     Precategory.isTransassociative PrecategoryExtension = !
--- --     Precategory.isTransextensional PrecategoryExtension = !
--- --     Precategory.⌶𝓣ransitivity∁∈isTransassociative PrecategoryExtension = !
--- --     Precategory.⌶𝓣ransitivity∁∈isTransextensional PrecategoryExtension = !
-
--- --     CategoryExtension : Category _ _ _
--- --     Category.precategory CategoryExtension = PrecategoryExtension
--- --     Category.isTransleftidentity CategoryExtension = it
--- --     Category.isTransrightidentity CategoryExtension = it
--- --     Category.⌶𝓣ransitivity∁∈isTransleftidentity CategoryExtension = !
--- --     Category.⌶𝓣ransitivity∁∈isTransrightidentity CategoryExtension = !
--- --     Category.⌶𝓡eflexivity∁∈Transleftidentity≡⌶𝓡eflexivity∁Transrightidentity CategoryExtension = !
-
--- -- record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
--- --   no-eta-equality
+      [𝓣ransleftidentity]ExtensionProposextensequality : [𝓣ransleftidentity] (Extension B) Proposextensequality
+      [𝓣ransleftidentity]ExtensionProposextensequality = ∁
 
--- --   open Substitunction 𝔓
--- --   open Term 𝔓
+      𝓣ransleftidentityExtensionProposextensequality : 𝓣ransleftidentity (Extension B) Proposextensequality
+      𝓣ransleftidentityExtensionProposextensequality .𝓣ransleftidentity.transleftidentity _ = !
 
--- --   private
-
--- --     mutual
+      [𝓣ransrightidentity]ExtensionProposextensequality : [𝓣ransrightidentity] (Extension B) Proposextensequality
+      [𝓣ransrightidentity]ExtensionProposextensequality = ∁
 
--- --       𝓶apSubstitunctionExtensionTerm : 𝓶ap Substitunction (Extension Term) ¡
--- --       𝓶apSubstitunctionExtensionTerm σ (i x) = σ x
--- --       𝓶apSubstitunctionExtensionTerm σ leaf = leaf
--- --       𝓶apSubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓶apSubstitunctionExtensionTerm σ τ₁ fork 𝓶apSubstitunctionExtensionTerm σ τ₂
--- --       𝓶apSubstitunctionExtensionTerm σ (function p τs) = function p (𝓶apSubstitunctionExtensionTerms σ τs)
-
--- --       𝓶apSubstitunctionExtensionTerms : ∀ {N} → 𝓶ap Substitunction (Extension $ Terms N) ¡
--- --       𝓶apSubstitunctionExtensionTerms σ ∅ = ∅
--- --       𝓶apSubstitunctionExtensionTerms σ (τ , τs) = 𝓶apSubstitunctionExtensionTerm σ τ , 𝓶apSubstitunctionExtensionTerms σ τs
-
--- --   instance
-
--- --     IsMappableSubstitunctionExtensionTerm : IsMappable Substitunction (Extension Term)
--- --     IsMappable.μ IsMappableSubstitunctionExtensionTerm = _
--- --     IsMappable.map IsMappableSubstitunctionExtensionTerm = 𝓶apSubstitunctionExtensionTerm
-
--- --     IsMappableSubstitunctionExtensionTerms : ∀ {N} → IsMappable Substitunction (Extension $ Terms N)
--- --     IsMappableSubstitunctionExtensionTerms .IsMappable.μ = _
--- --     IsMappableSubstitunctionExtensionTerms .IsMappable.map = 𝓶apSubstitunctionExtensionTerms
-
--- --     𝓣ransitivity∁Substitunction : 𝓣ransitivity∁ Substitunction
--- --     𝓣ransitivity∁Substitunction .𝓣ransitivity∁.transitivity f g = map g ∘ f
-
--- --     EqualitySubstitunction : ∀ {x y} → Equality (Substitunction x y) _
--- --     EqualitySubstitunction {x} {y} .Equality._≋_ = Proposextensequality
--- --     EqualitySubstitunction {x} {y} .Equality.isEquivalence = it
-
--- --     EqualityExtensionTerm : ∀ {x y} → Equality (Extension Term x y) _
--- --     EqualityExtensionTerm .Equality._≋_ = Proposextensequality
--- --     EqualityExtensionTerm .Equality.isEquivalence = it
-
--- --     EqualityExtensionTerms : ∀ {N x y} → Equality (Extension (Terms N) x y) _
--- --     EqualityExtensionTerms .Equality._≋_ = Proposextensequality
--- --     EqualityExtensionTerms .Equality.isEquivalence = it
-
--- --   private
-
--- --     mutual
-
--- --       𝓶apextensionalitySubstitunctionExtensionTerm : 𝓶apextensionality! Substitunction (Extension Term)
--- --       𝓶apextensionalitySubstitunctionExtensionTerm p (i x) = p x
--- --       𝓶apextensionalitySubstitunctionExtensionTerm p leaf = ∅
--- --       𝓶apextensionalitySubstitunctionExtensionTerm p (s fork t) = congruity₂ _fork_ (𝓶apextensionalitySubstitunctionExtensionTerm p s) (𝓶apextensionalitySubstitunctionExtensionTerm p t)
--- --       𝓶apextensionalitySubstitunctionExtensionTerm p (function fn ts) = congruity (function fn) (𝓶apextensionalitySubstitunctionExtensionTerms p ts)
-
--- --       𝓶apextensionalitySubstitunctionExtensionTerms : ∀ {N} → 𝓶apextensionality! Substitunction (Extension $ Terms N)
--- --       𝓶apextensionalitySubstitunctionExtensionTerms p ∅ = ∅
--- --       𝓶apextensionalitySubstitunctionExtensionTerms p (t , ts) = congruity₂ _,_ (𝓶apextensionalitySubstitunctionExtensionTerm p t) (𝓶apextensionalitySubstitunctionExtensionTerms p ts)
-
--- --   instance
-
--- --     --IsMapextensionalSubstitunction : IsMapextensional Substitunction Proposextensequality (Extension Term) Proposextensequality
--- --     IsMapextensionalSubstitunction : IsMapextensional! Substitunction (Extension Term)
--- --     IsMapextensional.isMappable IsMapextensionalSubstitunction = !
--- --     IsMapextensional.mapextensionality IsMapextensionalSubstitunction = 𝓶apextensionalitySubstitunctionExtensionTerm
-
--- --     IsMapextensionalSubstitunctions : ∀ {N} → IsMapextensional! Substitunction (Extension $ Terms N)
--- --     IsMapextensionalSubstitunctions .IsMapextensional.isMappable = it
--- --     IsMapextensionalSubstitunctions .IsMapextensional.mapextensionality = 𝓶apextensionalitySubstitunctionExtensionTerms
-
--- --   private
-
--- --     mutual
-
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerm : 𝓶aptranscommutativity! Substitunction (Extension Term) ! ! ! !
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerm _ _ (i _) = !
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerm _ _ leaf = !
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerm _ _ (τ₁ fork τ₂) = congruity₂ _fork_ (𝓶aptranscommutativitySubstitunctionExtensionTerm _ _ τ₁) (𝓶aptranscommutativitySubstitunctionExtensionTerm _ _ τ₂)
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerm f g (function fn ts) = congruity (function fn) (𝓶aptranscommutativitySubstitunctionExtensionTerms f g ts)
-
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerms : ∀ {N} → 𝓶aptranscommutativity! Substitunction (Extension $ Terms N) ! ! ! !
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerms _ _ ∅ = !
--- --       𝓶aptranscommutativitySubstitunctionExtensionTerms _ _ (τ , τs) = congruity₂ _,_ (𝓶aptranscommutativitySubstitunctionExtensionTerm _ _ τ) (𝓶aptranscommutativitySubstitunctionExtensionTerms _ _ τs)
-
--- --   instance
-
--- --     IsMaptranscommutativeSubstitunctionExtensionTerm : IsMaptranscommutative! Substitunction (Extension Term) !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerm .IsMaptranscommutative.isMappable = !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerm .IsMaptranscommutative.⌶𝓣ransitivity∁₁ = !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerm .IsMaptranscommutative.⌶𝓣ransitivity∁₂ = !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerm .IsMaptranscommutative.maptranscommutativity = 𝓶aptranscommutativitySubstitunctionExtensionTerm
-
--- --     IsMaptranscommutativeSubstitunctionExtensionTerms : ∀ {N} → IsMaptranscommutative! Substitunction (Extension $ Terms N) !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerms .IsMaptranscommutative.isMappable = !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerms .IsMaptranscommutative.⌶𝓣ransitivity∁₁ = !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerms .IsMaptranscommutative.⌶𝓣ransitivity∁₂ = !
--- --     IsMaptranscommutativeSubstitunctionExtensionTerms .IsMaptranscommutative.maptranscommutativity = 𝓶aptranscommutativitySubstitunctionExtensionTerms
-
--- --   instance
-
--- --     IsTransassociativeSubstitunction : IsTransassociative Substitunction _≋_
--- --     IsTransassociativeSubstitunction .IsTransassociative.⌶𝓣ransitivity∁ = !
--- --     IsTransassociativeSubstitunction .IsTransassociative.transassociativity f g h = maptranscommutativity g h ∘ f
-
--- --     𝓣ransextensionality∁Substitunction : 𝓣ransextensionality∁ Substitunction _≋_
--- --     𝓣ransextensionality∁Substitunction .𝓣ransextensionality∁.⌶𝓣ransitivity∁ = !
--- --     𝓣ransextensionality∁Substitunction .𝓣ransextensionality∁.transextensionality {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = mapextensionality g₁≡̇g₂ $ f₂ x
-
--- --   PrecategorySubstitunction : Precategory _ _ _
--- --   PrecategorySubstitunction .Precategory.Object = _
--- --   PrecategorySubstitunction .Precategory.Arrow = Substitunction
--- --   PrecategorySubstitunction .Precategory.ArrowEquality = _≋_
--- --   PrecategorySubstitunction .Precategory.⌶𝓣ransitivity∁ = !
--- --   PrecategorySubstitunction .Precategory.isEquivalence = !
--- --   PrecategorySubstitunction .Precategory.isTransassociative = !
--- --   PrecategorySubstitunction .Precategory.isTransextensional = !
--- --   PrecategorySubstitunction .Precategory.⌶𝓣ransitivity∁∈isTransassociative = !
--- --   PrecategorySubstitunction .Precategory.⌶𝓣ransitivity∁∈isTransextensional = !
+      𝓣ransrightidentityExtensionProposextensequality : 𝓣ransrightidentity (Extension B) Proposextensequality
+      𝓣ransrightidentityExtensionProposextensequality .𝓣ransrightidentity.transrightidentity _ = !
 
--- --   instance
+      -- -- {- TODO
+      -- HasEquivalenceExtension : ∀ {x y : A} → HasEquivalence (Extension B x y) _
+      -- HasEquivalenceExtension = ∁ Proposextensequality
+      -- -- -}
+      -- HasËquivalenceExtension : HasËquivalence (Extension B) _
+      -- HasËquivalenceExtension = ∁ Proposextensequality
 
--- --     IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor PrecategorySubstitunction (PrecategoryExtension Term)
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.isMappable = !
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.isMapextensional = !
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.isMaptranscommutative = !
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.isMappable∈isMapextensional = !
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.isMappable∈isMaptranscommutative = !
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.⌶𝓣ransitivity∁₁∈isMaptranscommutative = !
--- --     IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.⌶𝓣ransitivity∁₂∈isMaptranscommutative = !
+  module _
+    {a} {A : Ø a} {b} {B : A → Ø b}
+    where
 
--- --     IsPrefunctorSubstitunctionExtensionTermSC : IsPrefunctorSC PrecategorySubstitunction (PrecategoryExtension Term)
--- --     IsPrefunctorSubstitunctionExtensionTermSC
+    instance
 
--- --     IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor PrecategorySubstitunction (PrecategoryExtension $ Terms N)
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.isMappable = !
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.isMapextensional = !
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.isMaptranscommutative = !
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.isMappable∈isMapextensional = !
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.isMappable∈isMaptranscommutative = !
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.⌶𝓣ransitivity∁₁∈isMaptranscommutative = !
--- --     IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.⌶𝓣ransitivity∁₂∈isMaptranscommutative = !
+      IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality
+      IsPrecategoryExtension = ∁
 
--- --   PrefunctorSubstitunctionExtensionTerm : Prefunctor _ _ _ _ _ _
--- --   PrefunctorSubstitunctionExtensionTerm .Prefunctor.precategory₁ = PrecategorySubstitunction
--- --   PrefunctorSubstitunctionExtensionTerm .Prefunctor.precategory₂ = PrecategoryExtension Term
--- --   PrefunctorSubstitunctionExtensionTerm .Prefunctor.isPrefunctor = !
-
--- --   PrefunctorSubstitunctionExtensionTerms : ∀ N → Prefunctor _ _ _ _ _ _
--- --   PrefunctorSubstitunctionExtensionTerms _ .Prefunctor.precategory₁ = PrecategorySubstitunction
--- --   PrefunctorSubstitunctionExtensionTerms N .Prefunctor.precategory₂ = PrecategoryExtension $ Terms N
--- --   PrefunctorSubstitunctionExtensionTerms _ .Prefunctor.isPrefunctor = !
+      IsCategoryExtension : IsCategory (Extension B) Proposextensequality
+      IsCategoryExtension = ∁
 
--- -- -- -- -- -- -- -- -- -- --     ReflexivitySubstitunction : Reflexivity Substitunction
--- -- -- -- -- -- -- -- -- -- --     Reflexivity.reflexivity ReflexivitySubstitunction = i
+  module _
+    {a} {A : Ø a} {b} (B : A → Ø b)
+    where
 
--- -- -- -- -- -- -- -- -- -- --   private
+    PrecategoryExtension : Precategory _ _ _
+    PrecategoryExtension = ∁ (Extension B) Proposextensequality
 
--- -- -- -- -- -- -- -- -- -- --     mutual
+    CategoryExtension : Category _ _ _
+    CategoryExtension = ∁ (Extension B) Proposextensequality
 
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerm : 𝓲dentity Substitunction (Extension Term) _ ¡
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerm (i x) = ∅
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerm leaf = ∅
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerm (s fork t) = congruity₂ _fork_ (𝓲dentitySubstitunctionExtensionTerm s) (𝓲dentitySubstitunctionExtensionTerm t)
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerm (function fn ts) = congruity (function fn) (𝓲dentitySubstitunctionExtensionTerms ts)
+module _
+  {𝔬} {𝔒 : Ø 𝔬}
+  where
+  instance
+    𝓢urjectionIdentity : 𝓢urjection 𝔒 𝔒
+    𝓢urjectionIdentity .𝓢urjection.surjection = ¡
 
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerms : ∀ {N} → 𝓲dentity Substitunction (Extension $ Terms N) _ ¡
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerms ∅ = ∅
--- -- -- -- -- -- -- -- -- -- --       𝓲dentitySubstitunctionExtensionTerms (t , ts) = congruity₂ _,_ (𝓲dentitySubstitunctionExtensionTerm t) (𝓲dentitySubstitunctionExtensionTerms ts)
+record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
+  constructor ∁
+  no-eta-equality
 
--- -- -- -- -- -- -- -- -- -- --   instance
+  open Substitunction 𝔓
+  open Term 𝔓
 
--- -- -- -- -- -- -- -- -- -- -- {-
--- -- -- -- -- -- -- -- -- -- --     Identity!SubstitunctionExtensionTerm : Identity! Substitunction (Extension Term) _ ¡
--- -- -- -- -- -- -- -- -- -- --     Identity!.identity! Identity!SubstitunctionExtensionTerm = {!!} -- 𝓲dentitySubstitunctionExtensionTerm
+  private
 
--- -- -- -- -- -- -- -- -- -- --     Identity!SubstitunctionExtensionTerms : ∀ {N} → Identity! Substitunction (Extension $ Terms N) _ ¡
--- -- -- -- -- -- -- -- -- -- --     Identity!.identity! Identity!SubstitunctionExtensionTerms = {!!} -- 𝓲dentitySubstitunctionExtensionTerms
+    mutual
 
--- -- -- -- -- -- -- -- -- -- --     Identity?SubstitunctionExtensionTerm : Identity? Substitunction (Extension Term) _ ¡
--- -- -- -- -- -- -- -- -- -- --     Identity?.identity? Identity?SubstitunctionExtensionTerm = 𝓲dentitySubstitunctionExtensionTerm
+      𝓼urjectivitySubstitunctionExtensionTerm : 𝓼urjectivity Substitunction (Extension Term)
+      𝓼urjectivitySubstitunctionExtensionTerm σ (i x) = σ x
+      𝓼urjectivitySubstitunctionExtensionTerm σ leaf = leaf
+      𝓼urjectivitySubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ₁ fork 𝓼urjectivitySubstitunctionExtensionTerm σ τ₂
+      𝓼urjectivitySubstitunctionExtensionTerm σ (function p τs) = function p (𝓼urjectivitySubstitunctionExtensionTerms σ τs)
 
--- -- -- -- -- -- -- -- -- -- --     Identity?SubstitunctionExtensionTerms : ∀ {N} → Identity? Substitunction (Extension $ Terms N) _ ¡
--- -- -- -- -- -- -- -- -- -- --     Identity?.identity? Identity?SubstitunctionExtensionTerms = 𝓲dentitySubstitunctionExtensionTerms
+      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjectivity Substitunction (Extension $ Terms N)
+      𝓼urjectivitySubstitunctionExtensionTerms σ ∅ = ∅
+      𝓼urjectivitySubstitunctionExtensionTerms σ (τ , τs) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ , 𝓼urjectivitySubstitunctionExtensionTerms σ τs
 
--- -- -- -- -- -- -- -- -- -- --     LeftIdentity!Substitunction : LeftIdentity! Substitunction _
--- -- -- -- -- -- -- -- -- -- --     LeftIdentity!.left-identity! LeftIdentity!Substitunction f x = ((Term _ → Proposequality (𝓶apSubstitunctionExtensionTerm i (f x)) (f x)) ∋ identity?) (f x) -- {!{!identity!!} ∘ f!}
--- -- -- -- -- -- -- -- -- -- -- -}
+  instance
 
--- -- -- -- -- -- -- -- -- -- --     IdentitySubstitunctionExtensionTerm : Identity Substitunction (Extension Term) _ ¡
--- -- -- -- -- -- -- -- -- -- --     Identity′.identity IdentitySubstitunctionExtensionTerm = 𝓲dentitySubstitunctionExtensionTerm
+    [𝓢urjectivity]SubstitunctionExtensionTerm : [𝓢urjectivity] Substitunction (Extension Term)
+    [𝓢urjectivity]SubstitunctionExtensionTerm = ∁
 
--- -- -- -- -- -- -- -- -- -- --     IdentitySubstitunctionExtensionTerms : ∀ {N} → Identity Substitunction (Extension $ Terms N) _ ¡
--- -- -- -- -- -- -- -- -- -- --     Identity′.identity IdentitySubstitunctionExtensionTerms = 𝓲dentitySubstitunctionExtensionTerms
+    𝓢urjectivitySubstitunctionExtensionTerm : 𝓢urjectivity Substitunction (Extension Term)
+    𝓢urjectivitySubstitunctionExtensionTerm .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerm
 
--- -- -- -- -- -- -- -- -- -- --     LeftIdentitySubstitunction : LeftIdentity Substitunction _
--- -- -- -- -- -- -- -- -- -- --     LeftIdentity.left-identity LeftIdentitySubstitunction f = identity ∘ f
+    [𝓢urjectivity]SubstitunctionExtensionTerms : ∀ {N} → [𝓢urjectivity] Substitunction (Extension $ Terms N)
+    [𝓢urjectivity]SubstitunctionExtensionTerms = ∁
 
--- -- -- -- -- -- -- -- -- -- --     RightIdentitySubstitunction : RightIdentity Substitunction _
--- -- -- -- -- -- -- -- -- -- --     RightIdentity.right-identity RightIdentitySubstitunction _ _ = ∅
+    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjectivity Substitunction (Extension $ Terms N)
+    𝓢urjectivitySubstitunctionExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerms
 
--- -- -- -- -- -- -- -- -- -- --     IsCategorySubstitunction : IsCategory Substitunction _
--- -- -- -- -- -- -- -- -- -- --     IsCategorySubstitunction = record {}
+  private
 
--- -- -- -- -- -- -- -- -- -- --     IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _ (Extension Term) _ ¡
--- -- -- -- -- -- -- -- -- -- --     IsFunctorSubstitunctionExtensionTerm = record {}
+    mutual
 
--- -- -- -- -- -- -- -- -- -- --     IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _ (Extension $ Terms N) _ ¡
--- -- -- -- -- -- -- -- -- -- --     IsFunctorSubstitunctionExtensionTerms = record {}
+      𝓶apSubstitunctionExtensionTerm : 𝓶ap Substitunction (Extension Term)
+      𝓶apSubstitunctionExtensionTerm σ (i x) = σ x
+      𝓶apSubstitunctionExtensionTerm σ leaf = leaf
+      𝓶apSubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓶apSubstitunctionExtensionTerm σ τ₁ fork 𝓶apSubstitunctionExtensionTerm σ τ₂
+      𝓶apSubstitunctionExtensionTerm σ (function p τs) = function p (𝓶apSubstitunctionExtensionTerms σ τs)
 
--- -- -- -- -- -- -- -- -- -- -- module SubstitunctionØ {𝔭} (𝔓 : Ø 𝔭) where
+      𝓶apSubstitunctionExtensionTerms : ∀ {N} → 𝓶ap Substitunction (Extension $ Terms N)
+      𝓶apSubstitunctionExtensionTerms σ ∅ = ∅
+      𝓶apSubstitunctionExtensionTerms σ (τ , τs) = 𝓶apSubstitunctionExtensionTerm σ τ , 𝓶apSubstitunctionExtensionTerms σ τs
 
--- -- -- -- -- -- -- -- -- -- --   open Substitunction 𝔓
--- -- -- -- -- -- -- -- -- -- --   open Term 𝔓
+  instance
 
--- -- -- -- -- -- -- -- -- -- --   open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
+    𝓜apSubstitunctionExtensionTerm : 𝓜ap Substitunction (Extension Term)
+    𝓜apSubstitunctionExtensionTerm .𝓜ap.map = 𝓶apSubstitunctionExtensionTerm
 
--- -- -- -- -- -- -- -- -- -- --   SemigroupoidSubstitunction : Semigroupoid _ _ _
--- -- -- -- -- -- -- -- -- -- --   Semigroupoid.Object SemigroupoidSubstitunction = _
--- -- -- -- -- -- -- -- -- -- --   Semigroupoid.Morphism SemigroupoidSubstitunction = Substitunction
+    𝓜apSubstitunctionExtensionTerms : ∀ {N} → 𝓜ap Substitunction (Extension $ Terms N)
+    𝓜apSubstitunctionExtensionTerms .𝓜ap.map = 𝓶apSubstitunctionExtensionTerms
 
--- -- -- -- -- -- -- -- -- -- --   SemifunctorSubstitunctionExtensionTerm : Semifunctor _ _ _ _ _ _
--- -- -- -- -- -- -- -- -- -- --   Semifunctor.Object₁ SemifunctorSubstitunctionExtensionTerm = _
--- -- -- -- -- -- -- -- -- -- --   Semifunctor.Morphism₁ SemifunctorSubstitunctionExtensionTerm = Substitunction
--- -- -- -- -- -- -- -- -- -- --   Semifunctor.Object₂ SemifunctorSubstitunctionExtensionTerm = _
--- -- -- -- -- -- -- -- -- -- --   Semifunctor.Morphism₂ SemifunctorSubstitunctionExtensionTerm = Extension Term
--- -- -- -- -- -- -- -- -- -- --   Semifunctor.μ SemifunctorSubstitunctionExtensionTerm = ¡
+    𝓣ransitivitySubstitunction : 𝓣ransitivity Substitunction
+    𝓣ransitivitySubstitunction .𝓣ransitivity.transitivity f g = surjectivity g ∘ f
 
--- -- -- -- -- -- -- -- -- -- --   CategorySubstitunction : Category _ _ _
--- -- -- -- -- -- -- -- -- -- --   Category.Object CategorySubstitunction = _
--- -- -- -- -- -- -- -- -- -- --   Category.Morphism CategorySubstitunction = Substitunction
+    HasEquivalenceSubstitunction : ∀ {x y} → HasEquivalence (Substitunction x y) _
+    HasEquivalenceSubstitunction = ∁ Proposextensequality
 
--- -- -- -- -- -- -- -- -- -- --   FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
--- -- -- -- -- -- -- -- -- -- --   Functor.Object₁ FunctorSubstitunctionExtensionTerm = _
--- -- -- -- -- -- -- -- -- -- --   Functor.Morphism₁ FunctorSubstitunctionExtensionTerm = Substitunction
--- -- -- -- -- -- -- -- -- -- --   Functor.Object₂ FunctorSubstitunctionExtensionTerm = _
--- -- -- -- -- -- -- -- -- -- --   Functor.Morphism₂ FunctorSubstitunctionExtensionTerm = Extension Term
--- -- -- -- -- -- -- -- -- -- --   Functor.μ FunctorSubstitunctionExtensionTerm = ¡
+    HasEquivalenceExtensionTerm : ∀ {x y} → HasEquivalence (Extension Term x y) _
+    HasEquivalenceExtensionTerm = ∁ Proposextensequality
 
--- -- -- -- -- -- -- -- -- -- --   module _ (N : ¶) where
+    HasEquivalenceExtensionTerms : ∀ {N x y} → HasEquivalence (Extension (Terms N) x y) _
+    HasEquivalenceExtensionTerms = ∁ Proposextensequality
 
--- -- -- -- -- -- -- -- -- -- --     FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
--- -- -- -- -- -- -- -- -- -- --     Functor.Object₁ FunctorSubstitunctionExtensionTerms = _
--- -- -- -- -- -- -- -- -- -- --     Functor.Morphism₁ FunctorSubstitunctionExtensionTerms = Substitunction
--- -- -- -- -- -- -- -- -- -- --     Functor.Object₂ FunctorSubstitunctionExtensionTerms = _
--- -- -- -- -- -- -- -- -- -- --     Functor.Morphism₂ FunctorSubstitunctionExtensionTerms = Extension $ Terms N
--- -- -- -- -- -- -- -- -- -- --     Functor.μ FunctorSubstitunctionExtensionTerms = ¡
+  private
 
--- -- -- -- -- -- -- -- -- -- -- open SubstitunctionØ public
+    mutual
+      -- TODO
+      -- 𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x} {y} → _≈̈_ {x = x} {y})
+      --𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x} {y} → _≈̈_ {x = x} {y}) -- (λ {x y} → _≈̈_ ⦃ HasËquivalenceExtension ⦄ {x} {_})
+      -- 𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x y} → _≈_ ⦃ HasEquivalenceExtension {x = x} {y = y} ⦄)
+      -- 𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x y} → _≈_ {𝔒 = Extension Term x y})
+      𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) _≈_
+      𝓼urjextensionalitySubstitunctionExtensionTerm p (i x) = p x
+      𝓼urjextensionalitySubstitunctionExtensionTerm p leaf = ∅
+      𝓼urjextensionalitySubstitunctionExtensionTerm p (s fork t) = congruity₂ _fork_ (𝓼urjextensionalitySubstitunctionExtensionTerm p s) (𝓼urjextensionalitySubstitunctionExtensionTerm p t)
+      𝓼urjextensionalitySubstitunctionExtensionTerm p (function fn ts) = congruity (function fn) (𝓼urjextensionalitySubstitunctionExtensionTerms p ts)
 
--- -- -- -- -- -- -- -- -- -- -- module AList⌶ {a} {A : Nat → Set a} where
+      𝓼urjextensionalitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjextensionality Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
+      𝓼urjextensionalitySubstitunctionExtensionTerms p ∅ = ∅
+      𝓼urjextensionalitySubstitunctionExtensionTerms p (t , ts) = congruity₂ _,_ (𝓼urjextensionalitySubstitunctionExtensionTerm p t) (𝓼urjextensionalitySubstitunctionExtensionTerms p ts)
 
--- -- -- -- -- -- -- -- -- -- --   private AList = Descender⟨ A ⟩
+  instance
 
--- -- -- -- -- -- -- -- -- -- --   instance
+    [𝓢urjextensionality]Substitunction : [𝓢urjextensionality] Substitunction Proposextensequality (Extension Term) Proposextensequality
+    [𝓢urjextensionality]Substitunction = ∁
 
--- -- -- -- -- -- -- -- -- -- --     Reflexivity⌶AList : Reflexivity AList
--- -- -- -- -- -- -- -- -- -- --     Reflexivity.reflexivity Reflexivity⌶AList = ∅
+    𝓢urjextensionalitySubstitunction : 𝓢urjextensionality Substitunction Proposextensequality (Extension Term) Proposextensequality
+    𝓢urjextensionality.surjextensionality 𝓢urjextensionalitySubstitunction = 𝓼urjextensionalitySubstitunctionExtensionTerm
 
--- -- -- -- -- -- -- -- -- -- --     Transitivity⌶AList : Transitivity AList
--- -- -- -- -- -- -- -- -- -- --     Contiguity.contiguity Transitivity⌶AList f ∅ = f
--- -- -- -- -- -- -- -- -- -- --     Contiguity.contiguity Transitivity⌶AList f (x , g) = x , contiguity f g
+    [𝓢urjextensionality]Substitunctions : ∀ {N} → [𝓢urjextensionality] Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
+    [𝓢urjextensionality]Substitunctions = ∁
 
--- -- -- -- -- -- -- -- -- -- --     MorphismEquivalence⌶AList : MorphismEquivalence AList _
--- -- -- -- -- -- -- -- -- -- --     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
+    𝓢urjextensionalitySubstitunctions : ∀ {N} → 𝓢urjextensionality Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
+    𝓢urjextensionalitySubstitunctions .𝓢urjextensionality.surjextensionality = 𝓼urjextensionalitySubstitunctionExtensionTerms
 
--- -- -- -- -- -- -- -- -- -- --     Associativity⌶AList : Associativity AList _
--- -- -- -- -- -- -- -- -- -- --     Associativity.associativity Associativity⌶AList _ _ ∅ = ∅
--- -- -- -- -- -- -- -- -- -- --     Associativity.associativity Associativity⌶AList f g (x , h) = congruity (x ,_) $ associativity f g h
+  private
 
--- -- -- -- -- -- -- -- -- -- --     IsSemigroupoid⌶AList : IsSemigroupoid AList _
--- -- -- -- -- -- -- -- -- -- --     IsSemigroupoid⌶AList = record {}
+    mutual
 
--- -- -- -- -- -- -- -- -- -- --     LeftIdentity⌶AList : LeftIdentity AList _
--- -- -- -- -- -- -- -- -- -- --     LeftIdentity.left-identity LeftIdentity⌶AList _ = ∅
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm : 𝓼urjtranscommutativity Substitunction (Extension Term) Proposextensequality
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ (i _) = !
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ leaf = !
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ (τ₁ fork τ₂) = congruity₂ _fork_ (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ₁) (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ₂)
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm f g (function fn ts) = congruity (function fn) (𝓼urjtranscommutativitySubstitunctionExtensionTerms f g ts)
 
--- -- -- -- -- -- -- -- -- -- --     RightIdentity⌶AList : RightIdentity AList _
--- -- -- -- -- -- -- -- -- -- --     RightIdentity.right-identity RightIdentity⌶AList ∅ = ∅
--- -- -- -- -- -- -- -- -- -- --     RightIdentity.right-identity RightIdentity⌶AList (x , f) = congruity (x ,_) $ right-identity f
+      𝓼urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjtranscommutativity Substitunction (Extension $ Terms N) Proposextensequality
+      𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ ∅ = !
+      𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ (τ , τs) = congruity₂ _,_ (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ) (𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ τs)
 
--- -- -- -- -- -- -- -- -- -- --     IsCategory⌶AList : IsCategory AList _
--- -- -- -- -- -- -- -- -- -- --     IsCategory⌶AList = record {}
+  instance
 
--- -- -- -- -- -- -- -- -- -- -- module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
+    [𝓢urjtranscommutativity]SubstitunctionExtensionTerm = [𝓢urjtranscommutativity] Substitunction (Extension Term) Proposextensequality ∋ ∁
+    𝓢urjtranscommutativitySubstitunctionExtensionTerm : 𝓢urjtranscommutativity Substitunction (Extension Term) Proposextensequality
+    𝓢urjtranscommutativitySubstitunctionExtensionTerm .𝓢urjtranscommutativity.surjtranscommutativity = 𝓼urjtranscommutativitySubstitunctionExtensionTerm
 
--- -- -- -- -- -- -- -- -- -- --   open Substitunction 𝔓
--- -- -- -- -- -- -- -- -- -- --   open Term 𝔓
--- -- -- -- -- -- -- -- -- -- --   open Substitist 𝔓
--- -- -- -- -- -- -- -- -- -- --   open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
+    [𝓢urjtranscommutativity]SubstitunctionExtensionTerms = λ {N} → [𝓢urjtranscommutativity] Substitunction (Extension $ Terms N) Proposextensequality ∋ ∁
+    𝓢urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjtranscommutativity Substitunction (Extension $ Terms N) Proposextensequality
+    𝓢urjtranscommutativitySubstitunctionExtensionTerms .𝓢urjtranscommutativity.surjtranscommutativity = 𝓼urjtranscommutativitySubstitunctionExtensionTerms
 
--- -- -- -- -- -- -- -- -- -- --   postulate
--- -- -- -- -- -- -- -- -- -- --     _for_ : ∀ {n} (t' : Term n) (x : Fin (↑ n)) -> Fin (↑ n) -> Term n
+  instance
 
--- -- -- -- -- -- -- -- -- -- --   instance
+    [𝓣ransassociativity]Substitunction : [𝓣ransassociativity] Substitunction _≈_
+    [𝓣ransassociativity]Substitunction = ∁
+    𝓣ransassociativitySubstitunction : 𝓣ransassociativity Substitunction _≈_
+    𝓣ransassociativitySubstitunction .𝓣ransassociativity.transassociativity f g h = surjtranscommutativity g h ∘ f
 
--- -- -- -- -- -- -- -- -- -- --     Map⌶Substitist,Substitunction : Map Substitist Substitunction
--- -- -- -- -- -- -- -- -- -- --     Map.map Map⌶Substitist,Substitunction ∅ = i
--- -- -- -- -- -- -- -- -- -- --     Map.map Map⌶Substitist,Substitunction ((x , t) , σ) = map σ ∙ (t for x)
+    [𝓣ransextensionality]Substitunction : [𝓣ransextensionality] Substitunction _≈_
+    [𝓣ransextensionality]Substitunction = ∁
+    𝓣ransextensionalitySubstitunction : 𝓣ransextensionality Substitunction _≈_
+    𝓣ransextensionalitySubstitunction .𝓣ransextensionality.transextensionality {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = surjextensionality g₁≡̇g₂ $ f₂ x
 
--- -- -- -- -- -- -- -- -- -- -- module Fin⌶ where
+    IsPrecategorySubstitunction : IsPrecategory Substitunction _≈_
+    IsPrecategorySubstitunction = ∁
 
--- -- -- -- -- -- -- -- -- -- --   instance
+    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ (Extension Term) _≈_
+    IsPrefunctorSubstitunctionExtensionTerm = ∁
 
--- -- -- -- -- -- -- -- -- -- --     Map⌶Maybe : ∀ {x} → Map {A = Ø x} (λ x y → x → y) (λ x y → Maybe x → Maybe y)
--- -- -- -- -- -- -- -- -- -- --     Map.map Map⌶Maybe f ∅ = ∅
--- -- -- -- -- -- -- -- -- -- --     Map.map Map⌶Maybe f (↑ x) = ↑ (f x)
+    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ (Extension $ Terms N) _≈_
+    IsPrefunctorSubstitunctionExtensionTerms = ∁
 
--- -- -- -- -- -- -- -- -- -- --   instance
+    𝓡eflexivitySubstitunction : 𝓡eflexivity Substitunction
+    𝓡eflexivitySubstitunction .𝓡eflexivity.reflexivity = i
 
--- -- -- -- -- -- -- -- -- -- --     Successor₀⌶¶ : Successor₀ ¶
--- -- -- -- -- -- -- -- -- -- --     Successor₀.⇑₀ Successor₀⌶¶ = ↑_
+  private
 
--- -- -- -- -- -- -- -- -- -- --     Principal₁Fin : Principal₁ Fin
--- -- -- -- -- -- -- -- -- -- --     Principal₁Fin = record {}
+    mutual
 
--- -- -- -- -- -- -- -- -- -- --     Successor₁⌶Fin : Successor₁ Fin
--- -- -- -- -- -- -- -- -- -- --     Successor₁.⇑₁ Successor₁⌶Fin = ↑_
+      𝓼urjidentitySubstitunctionExtensionTerm : 𝓼urjidentity Substitunction (Extension Term) _≈_
+      𝓼urjidentitySubstitunctionExtensionTerm (i x) = ∅
+      𝓼urjidentitySubstitunctionExtensionTerm leaf = ∅
+      𝓼urjidentitySubstitunctionExtensionTerm (s fork t) = congruity₂ _fork_ (𝓼urjidentitySubstitunctionExtensionTerm s) (𝓼urjidentitySubstitunctionExtensionTerm t)
+      𝓼urjidentitySubstitunctionExtensionTerm (function fn ts) = congruity (function fn) (𝓼urjidentitySubstitunctionExtensionTerms ts)
 
--- -- -- -- -- -- -- -- -- -- --     Thin⌶Fin,Fin : Thin Fin Fin
--- -- -- -- -- -- -- -- -- -- --     Thin.thin Thin⌶Fin,Fin ∅ = ↑_
--- -- -- -- -- -- -- -- -- -- --     Thin.thin Thin⌶Fin,Fin (↑ x) ∅ = ∅
--- -- -- -- -- -- -- -- -- -- --     Thin.thin Thin⌶Fin,Fin (↑ x) (↑ y) = ↑ (thin x y)
+      𝓼urjidentitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjidentity Substitunction (Extension $ Terms N) _≈_
+      𝓼urjidentitySubstitunctionExtensionTerms ∅ = ∅
+      𝓼urjidentitySubstitunctionExtensionTerms (t , ts) = congruity₂ _,_ (𝓼urjidentitySubstitunctionExtensionTerm t) (𝓼urjidentitySubstitunctionExtensionTerms ts)
 
--- -- -- -- -- -- -- -- -- -- --     Equivalence⌶Fin : ∀ {n} → Equivalence (Fin n) ∅̂
--- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶Fin = Proposequality
+  instance
 
--- -- -- -- -- -- -- -- -- -- --     Equivalence⌶¶ : Equivalence ¶ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶¶ = Proposequality
+    [𝓢urjidentity]SubstitunctionExtensionTerm : [𝓢urjidentity] Substitunction (Extension Term) _≈_ _ _ _
+    [𝓢urjidentity]SubstitunctionExtensionTerm = ∁ Substitunction (Extension Term) _≈_
 
--- -- -- -- -- -- -- -- -- -- --     pattern Fin↑ n = ¶⟨<_⟩.↑_ {n = n}
+    𝓢urjidentitySubstitunctionExtensionTerm : 𝓢urjidentity Substitunction (Extension Term) _≈_
+    𝓢urjidentitySubstitunctionExtensionTerm .𝒮urjidentity.surjidentity = 𝓼urjidentitySubstitunctionExtensionTerm
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity₀⌶¶↑ : Injectivity₀ ¶.↑_ ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity₀⌶¶↑ = {!!}
+    [𝓢urjidentity]SubstitunctionExtensionTerms : ∀ {N} → [𝓢urjidentity] Substitunction (Extension $ Terms N) _≈_ _ _ _
+    [𝓢urjidentity]SubstitunctionExtensionTerms {N} = ∁ Substitunction (Extension $ Terms N) _≈_
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity₀⌶Fin↑ : ∀ {n} → Injectivity₀ (Fin↑ n) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity₀.injectivity₀ (Injectivity₀⌶Fin↑ {n}) = {!!}
+    𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjidentity Substitunction (Extension $ Terms N) _≈_
+    𝓢urjidentitySubstitunctionExtensionTerms .𝒮urjidentity.surjidentity = 𝓼urjidentitySubstitunctionExtensionTerms
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity₁⌶Fin↑ : Injectivity₁ Fin↑ ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity₁.injectivity₁ Injectivity₁⌶Fin↑ = {!!}
+    [𝓣ransleftidentitySubstitunction] : [𝓣ransleftidentity] Substitunction _≈_
+    [𝓣ransleftidentitySubstitunction] = ∁
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity!⌶Fin↑ : Injectivity? Fin↑ ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity!.injectivity! Injectivity!⌶Fin↑ = {!!}
+    𝓣ransleftidentitySubstitunction : 𝓣ransleftidentity Substitunction _≈_
+    𝓣ransleftidentitySubstitunction .𝓣ransleftidentity.transleftidentity {f = f} = surjidentity ∘ f
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity₁⌶ThinFin : ∀ {m} → Injectivity₁ (thin {A = Fin} {B = Fin} {m = m}) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity₁.injectivity₁ (Injectivity₁⌶ThinFin {m}) (∅ {n = .m}) {x} {y} x₁ = injectivity₁[ Fin↑ ] _ x₁
--- -- -- -- -- -- -- -- -- -- --     Injectivity₁.injectivity₁ (Injectivity₁⌶ThinFin {m}) (↑_ {n = .m} w) {x} {y} x₁ = {!!}
+    [𝓣ransrightidentitySubstitunction] : [𝓣ransrightidentity] Substitunction _≈_
+    [𝓣ransrightidentitySubstitunction] = ∁
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity!⌶ThinFin : ∀ {m} → Injectivity? (thin {A = Fin} {B = Fin} {m = m}) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity!.injectivity! (Injectivity!⌶ThinFin {m}) (∅ {n = .m}) {x} {y} x₁ = injectivity?[ Fin↑ ] _ x₁
--- -- -- -- -- -- -- -- -- -- --     Injectivity!.injectivity! (Injectivity!⌶ThinFin {m}) (↑_ {n = .m} w) {x} {y} x₁ = {!!}
+    𝓣ransrightidentitySubstitunction : 𝓣ransrightidentity Substitunction _≈_
+    𝓣ransrightidentitySubstitunction .𝓣ransrightidentity.transrightidentity _ = !
 
--- -- -- -- -- -- -- -- -- -- --     Injectivity₂⌶ThinFin : ∀ {m} → Injectivity₂ (thin {A = Fin} {B = Fin} {m = m}) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     Injectivity₂.injectivity₂ (Injectivity₂⌶ThinFin {m}) (∅ {n = .m}) {x} {y} x₁ = injectivity₀[ Fin↑ m ] x₁
--- -- -- -- -- -- -- -- -- -- --     Injectivity₂.injectivity₂ (Injectivity₂⌶ThinFin {m}) (↑_ {n = .m} w) {x} {y} x₁ = {!!}
+    IsCategorySubstitunction : IsCategory Substitunction _≈_
+    IsCategorySubstitunction = ∁
 
--- -- -- -- -- -- -- -- -- -- --   test-thin-injective : ∀ {m} (x : Fin (↑ m)) {y₁ y₂ : Fin m} → thin x y₁ ≋ thin x y₂ → y₁ ≋ y₂
--- -- -- -- -- -- -- -- -- -- --   test-thin-injective x eq = injectivity₂[ thin[ Fin ] ] x eq
+    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ (Extension Term) _≈_
+    IsFunctorSubstitunctionExtensionTerm = ∁
 
--- -- -- -- -- -- -- -- -- -- --   -- injectivity₂[ thin[ Fin ] ] x eq
--- -- -- -- -- -- -- -- -- -- --   -- injectivity₁[ thin[ Fin ] ] x eq
+    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ (Extension $ Terms N) _≈_
+    IsFunctorSubstitunctionExtensionTerms = ∁
 
--- -- -- -- -- -- -- -- -- -- --     -- ∀ {n} → Injectivity₁ (thin {A = Fin} {B = Fin} {m = n}) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- --     -- Injectivity₁⌶ThinFin = ?
+module SubstitunctionØ {𝔭} (𝔓 : Ø 𝔭) where
 
+  open Substitunction 𝔓
+  open Term 𝔓
 
--- -- -- -- -- -- -- -- -- -- -- --     Injectivity₁.injectivity₁ (Injectivity₁⌶ThinFin {n}) (∅ {n = .n}) {x} {y} eq = injectivity![ (λ n → ¶⟨<_⟩.↑_ {n = n}) ] _ _ _ eq
--- -- -- -- -- -- -- -- -- -- -- --       -- injectivity₁⋆[ (λ {n} → ¶⟨<_⟩.↑_ {n}) ] eq -- injectivity₀[ ¶⟨<_⟩.↑_ {n = n} ] eq
--- -- -- -- -- -- -- -- -- -- -- --     Injectivity₁.injectivity₁ (Injectivity₁⌶ThinFin {n}) (↑_ {n = .n} w) {x} {y} eq = {!!}
+  open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ ∁)
 
--- -- -- -- -- -- -- -- -- -- -- -- -- --     InjThinFin : ∀ {m} {x : Fin (↑ m)} → INJ (thin[ Fin ] x) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- --     INJ.inj (InjThinFin {m} {∅ {n = .m}}) {x} {y} = INj (¶⟨<_⟩.↑_ {m}) ⦃ it ⦄ ⦃ it ⦄ ⦃ {!InjThinFin {m = m} {x = ∅}!} ⦄ {x} {y}
--- -- -- -- -- -- -- -- -- -- -- -- -- --     INJ.inj (InjThinFin {m} {↑_ {n = .m} x}) {x₁} {y} = {!!}
+  PrecategorySubstitunction : Precategory _ _ _
+  PrecategorySubstitunction = ∁ Substitunction _≈_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective : ∀ {m} {x : Fin (↑ m)} {y₁ y₂ : Fin m} → thin x y₁ ≋ thin x y₂ → y₁ ≋ y₂
--- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective {m = m} {x = x} eq = INj2 (thin {A = Fin} {B = Fin}) {w = x} eq -- INj2 (thin[ Fin ]) {w = x} eq -- INj2 (thin {A = Fin} {B = Fin}) eq
+  PrefunctorSubstitunctionExtensionTerm : Prefunctor _ _ _ _ _ _
+  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ (Extension Term) _≈_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective2 : ∀ {m} {x : Fin (↑ m)} {y₁ y₂ : Fin m} → thin x y₁ ≋ thin x y₂ → y₁ ≋ y₂
--- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective2 {x = x} = test-thin-injective {x = x}
+  CategorySubstitunction : Category _ _ _
+  CategorySubstitunction = ∁ Substitunction _≈_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   instance
+  FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
+  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ (Extension Term) _≈_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Injectivity⌶↑¶ : Injectivity ¶.↑_ ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Injectivity.injectivity Injectivity⌶↑¶ ∅ = ∅
+  module _ (N : ¶) where
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Injectivity⌶↑Fin : ∀ {n} → Injectivity {A = ¶⟨< n ⟩} {B = ¶⟨< ↑ n ⟩} ¶⟨<_⟩.↑_ ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Injectivity.injectivity (Injectivity⌶↑Fin {n}) {x} {.x} ∅ = ∅
+    FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
+    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ (Extension $ Terms N) _≈_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Injectivity⌶ThinFin : ∀ {m} {x : Fin (⇑₀ m)} → Injectivity (thin[ Fin ] x) ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Injectivity.injectivity (Injectivity⌶ThinFin {m = m} {x = ∅}) e = injectivity {B = Fin (↑ m)} {f = ↑_ {n = m}} e -- injectivity {B = Fin m} {f = ↑_ {n = _}} e -- injectivity {f = ¶⟨<_⟩.↑_ {n = _}} ⦃ r = {!!} ⦄ {!e!} -- injectivity {f = ¶⟨<_⟩.↑_} e
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --       -- injectivity[ ¶⟨<_⟩.↑_ ] ⦃ e1 = ! ⦄ ⦃ e2 = Equivalence⌶Fin ⦄ ⦃ i1 = Injectivity⌶↑Fin ⦄ e
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --       -- injectivity[ ¶.↑_ ] e
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Injectivity.injectivity (Injectivity⌶ThinFin {.(↑ _)} {↑_ {n = .(↑ n)} x}) {∅ {n = n}} {y} x₂ = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Injectivity.injectivity (Injectivity⌶ThinFin {.(↑ _)} {↑_ {n = .(↑ n)} x}) {↑_ {n = n} x₁} {y} x₂ = {!!}
+open SubstitunctionØ public
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   instance
+module AList⌶ {a} {A : Nat → Set a} where
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective⌶Fin,Fin : ThinInjective Fin Fin ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective.iInjectivity ThinInjective⌶Fin,Fin {m} {x} = Injectivity⌶ThinFin {m} {x} -- Injectivity⌶ThinFin
+  private AList = Descender⟨ A ⟩
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective : ∀ {m} {x : Fin (↑ m)} {y₁ y₂ : Fin m} → thin x y₁ ≋ thin x y₂ → y₁ ≋ y₂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective {x = x} = thin-injective {B = Fin} { x = x }
+  instance
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   instance I1 = Injectivity⌶ThinFin
+    𝓡eflexivityAList : 𝓡eflexivity AList
+    𝓡eflexivity.reflexivity 𝓡eflexivityAList = ∅
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective' : ∀ {m} {x : Fin (↑ m)} {y₁ y₂ : Fin m} → thin x y₁ ≋ thin x y₂ → y₁ ≋ y₂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   test-thin-injective' {m} {x = x} eq = injectivity {A = Fin m} {B = Fin (↑ m)} {f = thin {A = Fin} {B = λ v → Fin v} x} ⦃ r = I1 {m} {{!!}} ⦄ eq --
+    𝓣ransitivityAList : 𝓣ransitivity AList
+    𝓣ransitivityAList .𝓣ransitivity.transitivity f ∅ = f
+    𝓣ransitivityAList .𝓣ransitivity.transitivity f (x , g) = x , g ∙ f
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --   instance
+--    HasEquivalenceAList : HasEquivalence AList
+--     MorphismEquivalence⌶AList : MorphismEquivalence AList _
+--     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     InjectivityP⌶Fin : ∀ {m} {x : Fin m} → InjectivityP (¶⟨<_⟩.↑_ {n = m})
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     InjectivityP.injectivityP (InjectivityP⌶Fin {m} {x}) = {!!}
+    [𝓣ransassociativity]AList : [𝓣ransassociativity] AList Proposequality
+    [𝓣ransassociativity]AList = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     InjectivityP⌶ThinFin : ∀ {m} {x : Fin (⇑₀ m)} → InjectivityP (thin[ Fin ] x)
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     InjectivityP.injectivityP (InjectivityP⌶ThinFin {m} {∅ {n = .m}}) {x} {y} x₂ = injectivityP x₂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- --     InjectivityP.injectivityP (InjectivityP⌶ThinFin {m} {↑_ {n = .m} x}) {x₁} {y} x₂ = {!!}
+    𝓣ransassociativityAList : 𝓣ransassociativity AList Proposequality
+    𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g ∅ = ∅
+    𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g (x , h) = congruity (x ,_) $ h ⟨∙ _ ⟨∙ _
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   test-fin-injective : ∀ {m} {y₁ y₂ : Fin m} → ¶⟨<_⟩.↑ y₁ ≋ ↑ y₂ → y₁ ≋ y₂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   test-fin-injective {m} = injectivity {f = λ v → ¶⟨<_⟩.↑_ {m} v}
+    IsSemigroupoidAList : IsPrecategory AList Proposequality
+    IsSemigroupoidAList = ∁
 
+    [𝓣ransleftidentity]AList : [𝓣ransleftidentity] AList Proposequality
+    [𝓣ransleftidentity]AList = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- {-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective⌶Fin,Fin : ThinInjective Fin Fin ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective.thin-injective ThinInjective⌶Fin,Fin {x = ∅} e = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective.thin-injective ThinInjective⌶Fin,Fin {x = ↑ x} {∅} {∅} _ = ∅
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective.thin-injective ThinInjective⌶Fin,Fin {x = ↑ x} {∅} {↑ _} ()
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective.thin-injective ThinInjective⌶Fin,Fin {x = ↑ x} {↑ _} {∅} ()
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinInjective.thin-injective ThinInjective⌶Fin,Fin {x = ↑ x} {↑ y₁} {↑ y₂} = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -}
+    𝓣ransleftidentityAList : 𝓣ransleftidentity AList Proposequality
+    𝓣ransleftidentityAList .𝓣ransleftidentity.transleftidentity = ∅
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Thick⌶Fin,Fin : Thick Fin Fin
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Thick.thick Thick⌶Fin,Fin = {!!}
+    [𝓣ransrightidentity]AList : [𝓣ransrightidentity] AList Proposequality
+    [𝓣ransrightidentity]AList = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickThinId⌶Fin,Fin : ThickThinId Fin Fin ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickThinId.thick∘thin=id ThickThinId⌶Fin,Fin = {!!}
+    𝓣ransrightidentityAList : 𝓣ransrightidentity AList Proposequality
+    𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = ∅} = ∅
+    𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} = congruity (x ,_) transrightidentity
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Maybe*⌶ : ∀ {a} → Maybe* a
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Maybe*.Maybe Maybe*⌶ = Maybe
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Maybe*.just Maybe*⌶ = ↑_
+    IsCategoryAList : IsCategory AList Proposequality
+    IsCategoryAList = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Check⌶Fin,Fin : Check Fin Fin
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Check.check Check⌶Fin,Fin ∅ ∅ = ∅
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Check.check Check⌶Fin,Fin ∅ (↑ y) = ↑ y
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Check.check Check⌶Fin,Fin {∅} (↑ ()) _
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Check.check Check⌶Fin,Fin {↑ _} (↑ x) ∅ = ↑ ∅
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Check.check Check⌶Fin,Fin {↑ _} (↑ x) (↑ y) = map ¶⟨<_⟩.↑_ $ check x y
+module Substitist⌶ {𝔭} {𝔓 : Ø 𝔭} where
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- {-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence⌶Maybe : ∀ {a} {A : Ø a} {ℓ} ⦃ _ : Equivalence A ℓ ⦄ → Equivalence (Maybe A) ℓ
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶Maybe ∅ ∅ = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶Maybe ∅ (↑ x₁) = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶Maybe (↑ x₁) ∅ = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶Maybe (↑ x₁) (↑ x₂) = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence.⌶IsSetoid Equivalence⌶Maybe = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -}
+  open Substitunction 𝔓
+  open Term 𝔓
+  open Substitist 𝔓
+  open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence⌶MaybeFin : ∀ {n} → Equivalence (Maybe (Fin n)) ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Equivalence.equivalence Equivalence⌶MaybeFin = Proposequality
+  postulate
+    _for_ : ∀ {n} (t' : Term n) (x : Fin (↑ n)) -> Fin (↑ n) -> Term n
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinCheckId⌶Fin,Fin : ThinCheckId Fin Fin ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThinCheckId.thin-check-id ThinCheckId⌶Fin,Fin x y y' x₁ = {!!}
+  instance
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin⌶FinFin : ThickAndThin Fin Fin ∅̂ ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin⌶FinFin = record {}
+    [𝓢urjectivity]Substitist,Substitunction : [𝓢urjectivity] Substitist Substitunction
+    [𝓢urjectivity]Substitist,Substitunction = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   module _ {𝔭} {𝔓 : Ø 𝔭} where
+    𝓢urjectivitySubstitist,Substitunction : 𝓢urjectivity Substitist Substitunction
+    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ = i
+    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ((x , t) , σ) = surjectivity σ ∙ (t for x)
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     open Term 𝔓
+module _ where
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     instance
+  instance
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Principal₁⌶Term : Principal₁ Term
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Principal₁⌶Term = record {}
+    𝓕mapMaybe : ∀ {𝔬₁ 𝔬₂} → 𝓕map Maybe 𝔬₁ 𝔬₂
+    𝓕mapMaybe .𝓕map.fmap f ∅ = ∅
+    𝓕mapMaybe .𝓕map.fmap f (↑ x) = ↑ f x
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     private
+    𝓟ureMaybe : ∀ {𝔬} → 𝓟ure (Maybe {𝔬})
+    𝓟ureMaybe .𝓟ure.pure = ↑_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       mutual
+    𝓐pplyMaybe : ∀ {𝔬₁ 𝔬₂} → 𝓐pply Maybe 𝔬₁ 𝔬₂
+    𝓐pplyMaybe .𝓐pply.apply ∅ x = ∅
+    𝓐pplyMaybe .𝓐pply.apply (↑ f) x = fmap f x
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerm : 𝓶ap (Extension Fin) (Extension Term)
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerm f (i x) = i (f x)
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerm f leaf = leaf
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerm f (t1 fork t2) = (𝓶ap⌶ExtensionFin,ExtensionTerm f t1) fork 𝓶ap⌶ExtensionFin,ExtensionTerm f t2
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerm f (function F ts) = function F (𝓶ap⌶ExtensionFin,ExtensionTerms f ts)
+module _ where
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerms : ∀ {N} → 𝓶ap (Extension Fin) (Extension (Terms N))
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerms f ∅ = ∅
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --         𝓶ap⌶ExtensionFin,ExtensionTerms f (t , ts) = 𝓶ap⌶ExtensionFin,ExtensionTerm f t , 𝓶ap⌶ExtensionFin,ExtensionTerms f ts
+  instance
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     instance
+    𝓢uccessor₀¶ : 𝓢uccessor₀ ¶
+    𝓢uccessor₀¶ .𝓢uccessor₀.successor₀ = ↑_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Map⌶ExtensionFin,ExtensionTerm : Map (Extension Fin) (Extension Term)
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Map.map Map⌶ExtensionFin,ExtensionTerm = 𝓶ap⌶ExtensionFin,ExtensionTerm
+    [𝓢uccessor₁]Fin : [𝓢uccessor₁] Fin
+    [𝓢uccessor₁]Fin = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Map⌶ExtensionFin,ExtensionTerms : ∀ {N} → Map (Extension Fin) (Extension (Terms N))
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Map.map Map⌶ExtensionFin,ExtensionTerms = 𝓶ap⌶ExtensionFin,ExtensionTerms
+    𝓢uccessor₁Fin : 𝓢uccessor₁ Fin
+    𝓢uccessor₁Fin .𝓢uccessor₁.successor₁ = ↑_
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Thin⌶Fin,Term : Thin Fin Term
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Thin.thin Thin⌶Fin,Term = map ∘ thin
+    [𝓘njectivity₁]Fin : ∀ {m} → [𝓘njectivity₁] (λ (_ : Fin m) → Fin (⇑₀ m)) Proposequality Proposequality
+    [𝓘njectivity₁]Fin = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Equivalence⌶Term : ∀ {n} → Equivalence (Term n) ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Equivalence.equivalence Equivalence⌶Term = Proposequality
+    𝓘njectivity₁Fin : ∀ {m} → 𝓘njectivity₁ (λ (_ : Fin m) → Fin (⇑₀ m)) Proposequality Proposequality
+    𝓘njectivity₁Fin .𝓘njectivity₁.injectivity₁ ∅ = ∅
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       Injectivity⌶ASD : Injectivity
+    [𝓣hick]Fin,Fin : [𝓣hick] Fin Fin
+    [𝓣hick]Fin,Fin = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       ThinInjective⌶Fin,Term : ThinInjective Fin Term ∅̂
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --       ThinInjective.thin-injective ThinInjective⌶Fin,Term = {!!}
+    𝓣hickFin,Fin : 𝓣hick Fin Fin
+    𝓣hickFin,Fin .𝓣hick.thick {∅} () ∅
+    𝓣hickFin,Fin .𝓣hick.thick {↑ _} _ ∅ = ∅
+    𝓣hickFin,Fin .𝓣hick.thick ∅ (↑ y) = y
+    𝓣hickFin,Fin .𝓣hick.thick (↑ x) (↑ y) = ↑ thick x y
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Successor₀⌶¶ : Upper Fin
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     Upper.up Upper⌶Fin = ↑_
+    [𝓣hin]Fin,Fin : [𝓣hin] Fin Fin
+    [𝓣hin]Fin,Fin = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin⌶Fin : ThickAndThin Fin Fin
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Fin ∅ y = ↑ y
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Fin (↑ x) ∅ = ∅
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Fin (↑ x) (↑ y) = ↑ thin x y
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin-injective ThickAndThin⌶Fin x x₁ = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thick ThickAndThin⌶Fin = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thick∘thin=id ThickAndThin⌶Fin = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.check ThickAndThin⌶Fin = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin-check-id ThickAndThin⌶Fin = {!!}
+    𝓣hinFin,Fin : 𝓣hin Fin Fin
+    𝓣hinFin,Fin .𝓣hin.thin ∅ = ↑_
+    𝓣hinFin,Fin .𝓣hin.thin (↑ x) ∅ = ∅
+    𝓣hinFin,Fin .𝓣hin.thin (↑ x) (↑ y) = ↑ (thin x y)
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- module Term⌶ {𝔭} {𝔓 : Ø 𝔭} where
+    [𝓘njectivity₂,₁]ThinFinFin : ∀ {m} → [𝓘njectivity₂,₁] (𝔱hin Fin Fin m) Proposequality Proposequality
+    [𝓘njectivity₂,₁]ThinFinFin = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   open Term 𝔓
+    𝓘njectivity₂,₁ThinFinFin : ∀ {m} → 𝓘njectivity₂,₁ (𝔱hin Fin Fin m) Proposequality Proposequality
+    𝓘njectivity₂,₁ThinFinFin .𝓘njectivity₂,₁.injectivity₂,₁ ∅ ∅ = ∅
+    𝓘njectivity₂,₁ThinFinFin .𝓘njectivity₂,₁.injectivity₂,₁ (↑ _) {∅}    {∅} _ = ∅
+    𝓘njectivity₂,₁ThinFinFin .𝓘njectivity₂,₁.injectivity₂,₁ (↑ _) {∅}    {↑ _} ()
+    𝓘njectivity₂,₁ThinFinFin .𝓘njectivity₂,₁.injectivity₂,₁ (↑ _) {↑ _}  {∅}   ()
+    𝓘njectivity₂,₁ThinFinFin .𝓘njectivity₂,₁.injectivity₂,₁ (↑ x) {↑ _}  {↑ _} = congruity ↑_ ∘ injectivity₂,₁ x ∘ injectivity₁[ Proposequality ]
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   instance
+    [𝓒heck]FinFinMaybe : [𝓒heck] Fin Fin Maybe
+    [𝓒heck]FinFinMaybe = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin⌶Term : ThickAndThin Term
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Term x (i x₁) = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Term x leaf = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Term x (x₁ fork x₂) = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin ThickAndThin⌶Term x (function x₁ x₂) = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin-injective ThickAndThin⌶Term = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thick ThickAndThin⌶Term = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thick∘thin=id ThickAndThin⌶Term = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.check ThickAndThin⌶Term = {!!}
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --     ThickAndThin.thin-check-id ThickAndThin⌶Term = {!!}
+    𝓒heckFinFinMaybe : 𝓒heck Fin Fin Maybe
+    𝓒heckFinFinMaybe .𝓒heck.check ∅ ∅ = ∅
+    𝓒heckFinFinMaybe .𝓒heck.check ∅ (↑ y) = ↑ y
+    𝓒heckFinFinMaybe .𝓒heck.check {∅} (↑ ()) _
+    𝓒heckFinFinMaybe .𝓒heck.check {↑ _} (↑ x) ∅ = ↑ ∅
+    𝓒heckFinFinMaybe .𝓒heck.check {↑ _} (↑ x) (↑ y) = fmap ¶⟨<_⟩.↑_ $ check x y
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- {-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- Data
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Nat
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   ≤↓List -- m ≤ n, n-1...m
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Substitunction
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Substitist
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- Record
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Product
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Functor
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- Class
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   Reflexivity
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   IsFunctor
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --   ThickAndThin
+    [𝓣hick/thin=1]FinFin : [𝓣hick/thin=1] Fin Fin Proposequality
+    [𝓣hick/thin=1]FinFin = ∁
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -}
+    𝓣hick/thin=1FinFin : 𝓣hick/thin=1 Fin Fin Proposequality
+    𝓣hick/thin=1FinFin .𝓣hick/thin=1.thick/thin=1 x ∅ = ∅
+    𝓣hick/thin=1FinFin .𝓣hick/thin=1.thick/thin=1 ∅ (↑ y) = ∅
+    𝓣hick/thin=1FinFin .𝓣hick/thin=1.thick/thin=1 (↑ x) (↑ y) = congruity ↑_ (thick/thin=1 x y)
+
+    [𝓒heck/thin=1FinFin] : [𝓒heck/thin=1] Fin Fin Maybe Proposequality
+    [𝓒heck/thin=1FinFin] = ∁
+
+    𝓒heck/thin=1FinFin : 𝓒heck/thin=1 Fin Fin Maybe Proposequality
+    𝓒heck/thin=1FinFin .𝓒heck/thin=1.check/thin=1 ∅ y = ∅
+    𝓒heck/thin=1FinFin .𝓒heck/thin=1.check/thin=1 (↑ x) ∅ = ∅
+    𝓒heck/thin=1FinFin .𝓒heck/thin=1.check/thin=1 (↑ x) (↑ y) rewrite check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x y = ∅
+
+    IsThickandthinFinFin : IsThickandthin Fin Fin Proposequality Maybe Proposequality
+    IsThickandthinFinFin = ∁
+
+  ThickandthinFinFin : Thickandthin _ _ _ _ _ _
+  ThickandthinFinFin = ∁ Fin Fin Proposequality Maybe Proposequality
+
+
+module _ where
+
+  instance
+
+    𝓘njection₂Vec : ∀ {N} {𝔭} {𝔓 : ¶ → Ø 𝔭} → 𝓘njection₂ (λ (x : 𝔓 N) (_ : Vec⟨ 𝔓 ⟩ N) → Vec⟨ 𝔓 ⟩ (⇑₀ N))
+    𝓘njection₂Vec .𝓘njection₂.injection₂ = _,_
+
+    [𝓘njectivity₂,₀,₁]Vec : ∀ {N} {𝔭} {𝔓 : ¶ → Ø 𝔭} → [𝓘njectivity₂,₀,₁] (λ (x : 𝔓 N) (_ : Vec⟨ 𝔓 ⟩ N) → Vec⟨ 𝔓 ⟩ (⇑₀ N)) Proposequality Proposequality
+    [𝓘njectivity₂,₀,₁]Vec = ∁
+
+    𝓘njectivity₂,₀,₁Vec :   ∀ {N} {𝔭} {𝔓 : ¶ → Ø 𝔭} → 𝓘njectivity₂,₀,₁   (λ (x : 𝔓 N) (_ : Vec⟨ 𝔓 ⟩ N) → Vec⟨ 𝔓 ⟩ (⇑₀ N)) Proposequality Proposequality
+    𝓘njectivity₂,₀,₁Vec .𝓘njectivity₂,₀,₁.injectivity₂,₀,₁ ∅ = ∅
+
+    [𝓘njectivity₂,₀,₂]Vec : ∀ {N} {𝔭} {𝔓 : ¶ → Ø 𝔭} → [𝓘njectivity₂,₀,₂] (λ (x : 𝔓 N) (_ : Vec⟨ 𝔓 ⟩ N) → Vec⟨ 𝔓 ⟩ (⇑₀ N)) Proposequality Proposequality
+    [𝓘njectivity₂,₀,₂]Vec = ∁
+
+    𝓘njectivity₂,₀,₂Vec : ∀ {N} {𝔭} {𝔓 : ¶ → Ø 𝔭} → 𝓘njectivity₂,₀,₂ (λ (x : 𝔓 N) (_ : Vec⟨ 𝔓 ⟩ N) → Vec⟨ 𝔓 ⟩ (⇑₀ N)) Proposequality Proposequality
+    𝓘njectivity₂,₀,₂Vec .𝓘njectivity₂,₀,₂.injectivity₂,₀,₂ ∅ = ∅
+
+module _ {𝔭} {𝔓 : Ø 𝔭} where
+
+  open Substitunction 𝔓
+  open Term 𝔓
+
+  mutual
+
+    𝓶apExtensionFinExtensionTerm : 𝓶ap (Extension Fin) (Extension Term)
+    𝓶apExtensionFinExtensionTerm x (i y) = i (x y)
+    𝓶apExtensionFinExtensionTerm x leaf = leaf
+    𝓶apExtensionFinExtensionTerm x (l fork r) = 𝓶apExtensionFinExtensionTerm x l fork 𝓶apExtensionFinExtensionTerm x r
+    𝓶apExtensionFinExtensionTerm x (function f ts) = function f $ 𝓶apExtensionFinExtensionTerms x ts
+
+    𝓶apExtensionFinExtensionTerms : ∀ {N} → 𝓶ap (Extension Fin) (Extension $ Terms N)
+    𝓶apExtensionFinExtensionTerms x ∅ = ∅
+    𝓶apExtensionFinExtensionTerms x (t , ts) = 𝓶apExtensionFinExtensionTerm x t , 𝓶apExtensionFinExtensionTerms x ts
+
+  instance
+
+    𝓜apExtensionFinExtensionTerm : 𝓜ap (Extension Fin) (Extension Term)
+    𝓜apExtensionFinExtensionTerm .𝓜ap.map = 𝓶apExtensionFinExtensionTerm
+
+    𝓜apExtensionFinExtensionTerms : ∀ {N} → 𝓜ap (Extension Fin) (Extension $ Terms N)
+    𝓜apExtensionFinExtensionTerms .𝓜ap.map = 𝓶apExtensionFinExtensionTerms
+
+  instance
+
+    [𝓢urjectivity]ExtensionFinExtensionTerm : [𝓢urjectivity] (Extension Fin) (Extension Term)
+    [𝓢urjectivity]ExtensionFinExtensionTerm = ∁
+
+    𝓢urjectivityExtensionFinExtensionTerm : 𝓢urjectivity (Extension Fin) (Extension Term)
+    𝓢urjectivityExtensionFinExtensionTerm .𝓢urjectivity.surjectivity = map
+
+    [𝓢urjectivity]ExtensionFinExtensionTerms : ∀ {N} → [𝓢urjectivity] (Extension Fin) (Extension $ Terms N)
+    [𝓢urjectivity]ExtensionFinExtensionTerms = ∁
+
+    𝓢urjectivityExtensionFinExtensionTerms : ∀ {N} → 𝓢urjectivity (Extension Fin) (Extension $ Terms N)
+    𝓢urjectivityExtensionFinExtensionTerms .𝓢urjectivity.surjectivity = map
+
+  instance
+
+    [𝓣hick]FinTerm : [𝓣hick] Fin Term
+    [𝓣hick]FinTerm = ∁
+
+    𝓣hickFinTerm : 𝓣hick Fin Term
+    𝓣hickFinTerm .𝓣hick.thick x t = surjectivity (thick x) $ t
+
+    [𝓣hick]FinTerms : ∀ {N} → [𝓣hick] Fin (Terms N)
+    [𝓣hick]FinTerms = ∁
+
+    𝓣hickFinTerms : ∀ {N} → 𝓣hick Fin (Terms N)
+    𝓣hickFinTerms .𝓣hick.thick x t = surjectivity (thick x) $ t
+
+    [𝓣hin]FinTerm : [𝓣hin] Fin Term
+    [𝓣hin]FinTerm = ∁
+
+    𝓣hinFinTerm : 𝓣hin Fin Term
+    𝓣hinFinTerm .𝓣hin.thin = surjectivity ∘ thin
+
+    [𝓣hin]FinTerms : ∀ {N} → [𝓣hin] Fin (Terms N)
+    [𝓣hin]FinTerms = ∁
+
+    𝓣hinFinTerms : ∀ {N} → 𝓣hin Fin (Terms N)
+    𝓣hinFinTerms .𝓣hin.thin = surjectivity ∘ thin
+
+    [𝓘njectivity₂,₁]FinTerm : ∀ {m} → [𝓘njectivity₂,₁] (𝔱hin Fin Term m) Proposequality Proposequality
+    [𝓘njectivity₂,₁]FinTerm = ∁
+
+    𝓘njection₂FinTerm : ∀ {m} → 𝓘njection₂ (λ (_ : ¶⟨< ↑ m ⟩) (_ : Term m) → Term (↑ m))
+    𝓘njection₂FinTerm {m} .𝓘njection₂.injection₂ = thin
+
+    [𝓘njectivity₂,₁]FinTerms : ∀ {N m} → [𝓘njectivity₂,₁] (𝔱hin Fin (Terms N) m) Proposequality Proposequality
+    [𝓘njectivity₂,₁]FinTerms = ∁
+
+    𝓘njection₂FinTerms : ∀ {N m} → 𝓘njection₂ (λ (_ : ¶⟨< ↑ m ⟩) (_ : Terms N m) → Terms N (↑ m))
+    𝓘njection₂FinTerms {m} .𝓘njection₂.injection₂ = thin
+
+
+
+
+    𝓘njection₁-TermI : ∀ {n} → 𝓘njection₁ (λ (_ : ¶⟨< n ⟩) → Term n)
+    𝓘njection₁-TermI .𝓘njection₁.injection₁ = i
+
+    [𝓘njectivity₁]TermI : ∀ {n} → [𝓘njectivity₁] (λ (_ : ¶⟨< n ⟩) → Term n) Proposequality Proposequality
+    [𝓘njectivity₁]TermI = ∁
+
+    𝓘njectivity₁TermI : ∀ {n} → 𝓘njectivity₁ (λ (_ : ¶⟨< n ⟩) → Term n) Proposequality Proposequality
+    𝓘njectivity₁TermI {n} .𝓘njectivity₁.injectivity₁ ∅ = ∅
+
+    𝓘njection₂-TermFork : ∀ {n} → 𝓘njection₂ (λ (_ : Term n) (_ : Term n) → Term n)
+    𝓘njection₂-TermFork .𝓘njection₂.injection₂ = _fork_
+
+    [𝓘njection₂,₀,₁]-TermFork : ∀ {n} → [𝓘njectivity₂,₀,₁] (λ (_ : Term n) (_ : Term n) → Term n) Proposequality Proposequality
+    [𝓘njection₂,₀,₁]-TermFork = ∁
+
+    𝓘njection₂,₀,₁-TermFork : ∀ {n} → 𝓘njectivity₂,₀,₁ (λ (_ : Term n) (_ : Term n) → Term n) Proposequality Proposequality
+    𝓘njection₂,₀,₁-TermFork .𝓘njectivity₂,₀,₁.injectivity₂,₀,₁ ∅ = ∅
+
+    [𝓘njection₂,₀,₂]-TermFork : ∀ {n} → [𝓘njectivity₂,₀,₂] (λ (_ : Term n) (_ : Term n) → Term n) Proposequality Proposequality
+    [𝓘njection₂,₀,₂]-TermFork = ∁
+
+    𝓘njection₂,₀,₂-TermFork : ∀ {n} → 𝓘njectivity₂,₀,₂ (λ (_ : Term n) (_ : Term n) → Term n) Proposequality Proposequality
+    𝓘njection₂,₀,₂-TermFork .𝓘njectivity₂,₀,₂.injectivity₂,₀,₂ ∅ = ∅
+
+    𝓘njection₃TermFunction : ∀ {n} → 𝓘njection₃ (λ (_ : 𝔓) (N : ¶) (_ : Terms N n) → Term n)
+    𝓘njection₃TermFunction {n} .𝓘njection₃.injection₃ p N ts = function p ts
+
+    [𝓘njectivity₃,₀,₁]TermFunction : ∀ {n} → [𝓘njectivity₃,₀,₁] (λ (_ : 𝔓) (N : ¶) (_ : Terms N n) → Term n) Proposequality Proposequality
+    [𝓘njectivity₃,₀,₁]TermFunction = ∁
+
+    𝓘njectivity₃,₀,₁TermFunction : ∀ {n} → 𝓘njectivity₃,₀,₁ (λ (_ : 𝔓) (N : ¶) (_ : Terms N n) → Term n) Proposequality Proposequality
+    𝓘njectivity₃,₀,₁TermFunction .𝓘njectivity₃,₀,₁.injectivity₃,₀,₁ ∅ = ∅
+
+    [𝓘njectivity₃,₀,₂]TermFunction : ∀ {n} → [𝓘njectivity₃,₀,₂] (λ (_ : 𝔓) (N : ¶) (_ : Terms N n) → Term n) Proposequality Proposequality
+    [𝓘njectivity₃,₀,₂]TermFunction = ∁
+
+    𝓘njectivity₃,₀,₂TermFunction : ∀ {n} → 𝓘njectivity₃,₀,₂ (λ (_ : 𝔓) (N : ¶) (_ : Terms N n) → Term n) Proposequality Proposequality
+    𝓘njectivity₃,₀,₂TermFunction .𝓘njectivity₃,₀,₂.injectivity₃,₀,₂ ∅ = ∅
+
+    𝓘njection₂TermFunction : ∀ {N n} → 𝓘njection₂ (λ (_ : 𝔓) (_ : Terms N n) → Term n)
+    𝓘njection₂TermFunction {N} {n} .𝓘njection₂.injection₂ p ts = function p ts
+
+    [𝓘njectivity₂,₀,₂]TermFunction : ∀ {N n} → [𝓘njectivity₂,₀,₂] (λ (_ : 𝔓) (_ : Terms N n) → Term n) Proposequality Proposequality
+    [𝓘njectivity₂,₀,₂]TermFunction = ∁
+
+    𝓘njectivity₂,₀,₂TermFunction : ∀ {N n} → 𝓘njectivity₂,₀,₂ (λ (_ : 𝔓) (_ : Terms N n) → Term n) Proposequality Proposequality
+    𝓘njectivity₂,₀,₂TermFunction .𝓘njectivity₂,₀,₂.injectivity₂,₀,₂ ∅ = ∅
+
+  mutual
+
+    instance
+
+      𝓘njectivity₂,₁FinTerm : ∀ {m} → 𝓘njectivity₂,₁ (𝔱hin Fin Term m) Proposequality Proposequality -- ⦃ 𝓘njection₂FinTerm {m} ⦄
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ x {i _} {i _} eq = congruity i (injectivity₂,₁ x (injectivity₁[ Proposequality ] eq))
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {i _} {leaf} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {i _} {_ fork _} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {i _} {function _ _} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {leaf} {i _} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {leaf} {leaf} _ = ∅
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {leaf} {_ fork _} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {leaf} {function _ _} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {_ fork _} {i _} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {_ fork _} {leaf} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ x {y₁ fork y₂} {y₃ fork y₄} eq
+        rewrite injectivity₂,₁ {_∼₂_ = Proposequality} x {y₁ = y₁} (injectivity₂,₀,₁[ Proposequality ] eq)
+              | injectivity₂,₁ {_∼₂_ = Proposequality} x {y₁ = y₂} (injectivity₂,₀,₂[ Proposequality ] eq)
+        = ∅
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {y₁ fork y₂} {function x₁ x₂} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {function _ _} {i x₃} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {function _ _} {leaf} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {function _ _} {y₂ fork y₃} ()
+      𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ x {function p1 {N1} ts1} {function p2 {N2} ts2} t₁≡t₂
+        rewrite injectivity₃,₀,₁[ Proposequality ] {x₂ = p2} t₁≡t₂
+        with injectivity₃,₀,₂[ Proposequality ] {y₂ = N2} t₁≡t₂
+      … | ∅
+        with injectivity₂,₀,₂[ Proposequality ] {y₂ = thin x ts2} t₁≡t₂
+      … | ts₁≡ts₂ = congruity (function p2) (injectivity₂,₁ x ts₁≡ts₂)
+
+      𝓘njectivity₂,₁FinTerms : ∀ {N m} → 𝓘njectivity₂,₁ (𝔱hin Fin (Terms N) m) Proposequality Proposequality -- ⦃ 𝓘njection₂FinTerms {N} {m} ⦄
+      𝓘njectivity₂,₁FinTerms .𝓘njectivity₂,₁.injectivity₂,₁ x {∅} {∅} x₁ = ∅
+      𝓘njectivity₂,₁FinTerms .𝓘njectivity₂,₁.injectivity₂,₁ x {_ , _} {t₂ , ts₂} eq
+        rewrite injectivity₂,₁ {_∼₂_ = Proposequality} x {y₂ = t₂} (injectivity₂,₀,₁[ Proposequality ] eq)
+              | injectivity₂,₁ {_∼₂_ = Proposequality} x {y₂ = ts₂} (injectivity₂,₀,₂[ Proposequality ] eq)
+        = ∅
+
+  instance
+
+    [𝓒heck]FinTermMaybe : [𝓒heck] Fin Term Maybe
+    [𝓒heck]FinTermMaybe = ∁
+
+    [𝓒heck]FinTermsMaybe : ∀ {N} → [𝓒heck] Fin (Terms N) Maybe
+    [𝓒heck]FinTermsMaybe = ∁
+
+  mutual
+
+    instance
+
+      𝓒heckFinTermMaybe : 𝓒heck Fin Term Maybe
+      𝓒heckFinTermMaybe .𝓒heck.check x (i y) = ⦇ i (check x y) ⦈
+      𝓒heckFinTermMaybe .𝓒heck.check x leaf = ⦇ leaf ⦈
+      𝓒heckFinTermMaybe .𝓒heck.check x (y₁ fork y₂) = ⦇ _fork_ (check x y₁) (check x y₂) ⦈
+      𝓒heckFinTermMaybe .𝓒heck.check x (function p ts) = ⦇ (function p) (check x ts) ⦈
+
+      𝓒heckFinTermsMaybe : ∀ {N} → 𝓒heck Fin (Terms N) Maybe
+      𝓒heckFinTermsMaybe .𝓒heck.check _ ∅ = ⦇ ∅ ⦈
+      𝓒heckFinTermsMaybe .𝓒heck.check x (t , ts) = ⦇ check x t , check x ts ⦈
+
+  instance
+
+    [𝓣hick/thin=1]FinTermProposequality : [𝓣hick/thin=1] Fin Term Proposequality
+    [𝓣hick/thin=1]FinTermProposequality = ∁
+
+    [𝓣hick/thin=1]FinTermsProposequality : ∀ {N} → [𝓣hick/thin=1] Fin (Terms N) Proposequality
+    [𝓣hick/thin=1]FinTermsProposequality = ∁
+
+  mutual
+
+    instance
+
+      𝓣hick/thin=1FinTermProposequality : 𝓣hick/thin=1 Fin Term Proposequality
+      𝓣hick/thin=1FinTermProposequality .𝓣hick/thin=1.thick/thin=1 x (i y) rewrite thick/thin=1 {_≈_ = Proposequality} x y = ∅ -- congruity i $ thick/thin=1 x y
+      𝓣hick/thin=1FinTermProposequality .𝓣hick/thin=1.thick/thin=1 x leaf = ∅
+      𝓣hick/thin=1FinTermProposequality .𝓣hick/thin=1.thick/thin=1 x (y₁ fork y₂) = congruity₂ _fork_ (thick/thin=1 x y₁) (thick/thin=1 x y₂)
+      𝓣hick/thin=1FinTermProposequality .𝓣hick/thin=1.thick/thin=1 x (function p ts) = congruity (function p) (thick/thin=1 x ts)
+
+      𝓣hick/thin=1FinTermsProposequality : ∀ {N} → 𝓣hick/thin=1 Fin (Terms N) Proposequality
+      𝓣hick/thin=1FinTermsProposequality .𝓣hick/thin=1.thick/thin=1 x ∅ = ∅
+      𝓣hick/thin=1FinTermsProposequality .𝓣hick/thin=1.thick/thin=1 x (t , ts) = congruity₂ _,_ (thick/thin=1 x t) (thick/thin=1 x ts)
+
+  instance
+
+    [𝓒heck/thin=1]FinTermMaybe : [𝓒heck/thin=1] Fin Term Maybe Proposequality
+    [𝓒heck/thin=1]FinTermMaybe = ∁
+
+    [𝓒heck/thin=1]FinTermsMaybe : ∀ {N} → [𝓒heck/thin=1] Fin (Terms N) Maybe Proposequality
+    [𝓒heck/thin=1]FinTermsMaybe = ∁
+
+  mutual
+
+    instance
+
+      𝓒heck/thin=1FinTermMaybe : 𝓒heck/thin=1 Fin Term Maybe Proposequality
+      𝓒heck/thin=1FinTermMaybe .𝓒heck/thin=1.check/thin=1 x (i y) rewrite check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x y = ∅
+      𝓒heck/thin=1FinTermMaybe .𝓒heck/thin=1.check/thin=1 x leaf = ∅
+      𝓒heck/thin=1FinTermMaybe .𝓒heck/thin=1.check/thin=1 x (y₁ fork y₂)
+        rewrite check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x y₁
+              | check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x y₂
+        = ∅
+      𝓒heck/thin=1FinTermMaybe .𝓒heck/thin=1.check/thin=1 x (function p ys) rewrite check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x ys = ∅
+
+      𝓒heck/thin=1FinTermsMaybe : ∀ {N} → 𝓒heck/thin=1 Fin (Terms N) Maybe Proposequality
+      𝓒heck/thin=1FinTermsMaybe .𝓒heck/thin=1.check/thin=1 x ∅ = ∅
+      𝓒heck/thin=1FinTermsMaybe .𝓒heck/thin=1.check/thin=1 x (y , ys)
+        rewrite check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x y
+              | check/thin=1 {_≈_ = Proposequality⟦ Maybe _ ⟧} x ys
+        = ∅
+
+  instance
+
+    IsThickandthinFinTerm : IsThickandthin Fin Term Proposequality Maybe Proposequality
+    IsThickandthinFinTerm = ∁
+
+    IsThickandthinFinTerms : ∀ {N} → IsThickandthin Fin (Terms N) Proposequality Maybe Proposequality
+    IsThickandthinFinTerms = ∁
+
+  ThickandthinFinTerm : Thickandthin _ _ _ _ _ _
+  ThickandthinFinTerm = ∁ Fin Term Proposequality Maybe Proposequality
+
+  ThickandthinFinTerms : ∀ N → Thickandthin _ _ _ _ _ _
+  ThickandthinFinTerms N = ∁ Fin (Terms N) Proposequality Maybe Proposequality
