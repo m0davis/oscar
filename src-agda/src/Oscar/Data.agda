@@ -69,6 +69,9 @@ module _ where
 
   data 𝟘 : Ø₀ where
 
+  ¬_ : ∀ {a} (A : Ø a) → Ø a
+  ¬_ x = x → 𝟘
+
 module _ where
 
   open import Agda.Builtin.Unit public
@@ -173,3 +176,9 @@ module _ where
   data Maybe {a} (A : Ø a) : Ø a where
     ∅ : Maybe A
     ↑_ : A → Maybe A
+
+module _ where
+
+  data Decidable {a} (A : Ø a) : Ø a where
+    ↑_ : A → Decidable A
+    ↓_ : ¬ A → Decidable A

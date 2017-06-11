@@ -3,6 +3,14 @@ open import Agda.Builtin.Equality
 
 module UnifyMguF (FunctionName : Set) ⦃ isDecEquivalenceA : IsDecEquivalence (_≡_ {A = FunctionName}) ⦄ where
 
+{-
+module UnifyMguF where
+
+postulate
+  FunctionName : Set
+  instance isDecEquivalenceA : IsDecEquivalence (_≡_ {A = FunctionName})
+-}
+
 open IsDecEquivalence isDecEquivalenceA using () renaming (_≟_ to _≟F_)
 
 open import UnifyTermF FunctionName
@@ -21,6 +29,8 @@ record ⋆amgu (T : ℕ → Set) : Set where
   field amgu : ∀ {m} (s t : T m) (acc : ∃ (AList m)) -> Maybe (∃ (AList m))
 
 open ⋆amgu ⦃ … ⦄ public
+
+
 
 mutual
 

@@ -346,7 +346,8 @@ var-elim x t' = first , \{_} -> second
 
 var-elim-i : ∀ {m} (x : Fin (suc m)) (t' : Term _)
               -> π₁ (Max ((Unifies (i x) ((▹ (thin x) ◃_) t')))) (i ◇ (t' for x))
-var-elim-i {m} x t = prop-id {_} {_} {t for x} {Max (Unifies (i x) ((▹ (thin x) ◃_) t))} (var-elim {m} x t)
+--var-elim-i {m} x t = prop-id {_} {_} {t for x} {Max (Unifies (i x) ((▹ (thin x) ◃_) t))} (var-elim {m} x t)
+var-elim-i {m} x t = prop-id {_} {_} {_} {Max (Unifies (i x) ((▹ (thin x) ◃_) t))} (var-elim {m} x t)
 
 var-elim-i-≡ : ∀ {m} {t'} (x : Fin (suc m)) t1  -> t1 ≡ (i ∘ thin x) ◃ t' -> π₁ (Max (Unifies (i x) t1)) (i ◇ (t' for x))
 var-elim-i-≡ {_} {t'} x .((i ∘ thin x) ◃ t') refl = var-elim-i x t'
@@ -1071,29 +1072,29 @@ unifyV {m} {N} s t with amguV-c (viewV s t (m , anil))
 … | inj₁ (proj₃ , proj₄ , proj₅ , proj₆) = inj₁ (proj₃ , proj₄ , proj₅)
 … | inj₂ (proj₃ , _) = inj₂ proj₃
 
-open import Oscar.Data.Permutation
+-- open import Oscar.Data.Permutation
 
-unifyWith : ∀ {m N} (p q : Term m) (X Y : Vec (Term m) N) →
-            (∃ λ X* → X ⋟ X* ÷? × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)) $ sub σ)
-            ⊎
-            (∀ X* → X ⋟ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
-unifyWith p q X Y = decidePermutations _ (λ x → unifyV (p ∷ x) (q ∷ Y))
+-- unifyWith : ∀ {m N} (p q : Term m) (X Y : Vec (Term m) N) →
+--             (∃ λ X* → X ⋟ X* ÷? × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)) $ sub σ)
+--             ⊎
+--             (∀ X* → X ⋟ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
+-- unifyWith p q X Y = decidePermutations _ (λ x → unifyV (p ∷ x) (q ∷ Y))
 
-unifyInto : ∀ {m N M} (p q : Term m) (X : Vec (Term m) N) (Y : Vec (Term m) M) →
-            (∃ λ X* → X ⋟ X* ÷? × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)) $ sub σ)
-            ⊎
-            (∀ X* → X ⋟ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
-unifyInto p q X Y = decideInjections _ (λ x → unifyV (p ∷ x) (q ∷ Y))
+-- unifyInto : ∀ {m N M} (p q : Term m) (X : Vec (Term m) N) (Y : Vec (Term m) M) →
+--             (∃ λ X* → X ⋟ X* ÷? × ∃ λ n → ∃ λ (σ : AList m n) → Max⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)) $ sub σ)
+--             ⊎
+--             (∀ X* → X ⋟ X* ÷? → Nothing⋆ (Unifies⋆V (p ∷ X*) (q ∷ Y)))
+-- unifyInto p q X Y = decideInjections _ (λ x → unifyV (p ∷ x) (q ∷ Y))
 
-{-
-showing that McBride does linear unification!
+-- {-
+-- showing that McBride does linear unification!
 
-postulate
-  FN : FunctionName
+-- postulate
+--   FN : FunctionName
 
-fn : Fin 3 → Term 4
-fn = λ x → function FN (i (suc x) ∷ i (suc x) ∷ [])
+-- fn : Fin 3 → Term 4
+-- fn = λ x → function FN (i (suc x) ∷ i (suc x) ∷ [])
 
-foo = unifyV (fn zero ∷ fn (suc zero) ∷ fn (suc (suc zero)) ∷ []) (i zero ∷ i (suc zero) ∷ i (suc (suc zero)) ∷ [])
-bar = case foo of λ {(inj₁ (_ , f , _)) → {!f!} ; (inj₂ _) → {!foo!} }
--}
+-- foo = unifyV (fn zero ∷ fn (suc zero) ∷ fn (suc (suc zero)) ∷ []) (i zero ∷ i (suc zero) ∷ i (suc (suc zero)) ∷ [])
+-- bar = case foo of λ {(inj₁ (_ , f , _)) → {!f!} ; (inj₂ _) → {!foo!} }
+-- -}

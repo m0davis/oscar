@@ -66,10 +66,30 @@ module _ where
     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     where
     𝓽ransitivity = ∀ {x y z} → x ∼ y → y ∼ z → x ∼ z
+    {-
     record 𝓣ransitivity : Ø 𝔬 ∙̂ 𝔯 where
       field transitivity : 𝓽ransitivity
       infixr 9 transitivity
       syntax transitivity f g = g ∙ f
+
+      instance
+        ``𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
+        ``𝓣ransitivityFlip = ?
+    -}
+
+  record 𝓣ransitivity
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    : Ø 𝔬 ∙̂ 𝔯 where
+    field transitivity : 𝓽ransitivity _∼_
+    infixr 9 transitivity
+    syntax transitivity f g = g ∙ f
+    {-
+    instance
+      `𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
+      `𝓣ransitivityFlip .transitivity = flip transitivity -- .𝓣ransitivity.transitivity = flip transitivity
+    -}
+
   open 𝓣ransitivity ⦃ … ⦄ public
 
   transitivity[_] : ∀
@@ -83,16 +103,35 @@ module _ where
   ∙[]-syntax = transitivity[_]
   syntax ∙[]-syntax _⊸_ f g = g ∙[ _⊸_ ] f
 
+  open import Oscar.Data
+
+  ≡̇-transitivity : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
+    ⦃ _ : 𝓣ransitivity (Proposextensequality⟦ 𝔓 ⟧) ⦄
+    → 𝓽ransitivity Proposextensequality⟦ 𝔓 ⟧
+  ≡̇-transitivity = transitivity[ Proposextensequality ]
+
+  infixr 9 ≡̇-transitivity
+  syntax ≡̇-transitivity f g = g ≡̇-∙ f
+
+  infixr 9 ≡̇-transitivity-syntax
+  ≡̇-transitivity-syntax = ≡̇-transitivity
+  syntax ≡̇-transitivity-syntax f g = g ⟨≡̇⟩ f
+
+{-
   record 𝓣ransitivity²
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     : Ø 𝔬 ∙̂ 𝔯 where
+    constructor ∁
     field
       ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _∼_
       -- ⦃ `𝓣ransitivityFlip ⦄ : 𝓣ransitivity (flip _∼_)
     instance
       `𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
       `𝓣ransitivityFlip .𝓣ransitivity.transitivity = flip transitivity
+-}
 
 {-
   instance
@@ -102,7 +141,6 @@ module _ where
       ⦃ _ : 𝓣ransitivity _∼_ ⦄
       → 𝓣ransitivity² _∼_
     𝓣ransitivity²From𝓣ransitivity {𝔬} {𝔒} {𝔯} {_∼_} {{x}} .𝓣ransitivity².`𝓣ransitivity = x
-    𝓣ransitivity²From𝓣ransitivity {𝔬} {𝔒} {𝔯} {_∼_} {{x}} .𝓣ransitivity².`𝓣ransitivityFlip .𝓣ransitivity.transitivity = flip transitivity
 -}
 
 record IsEquivalence
@@ -172,6 +210,21 @@ module _ where
     ⦃ _ : 𝓣ransassociativity _∼_ _∼̇_ ⦄
     → 𝓽ransassociativity _∼_ _∼̇_
   transassociativity[ _ ] = transassociativity
+{-
+  module _
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+    {ℓ} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ} (let infix 4 _∼̇_ ; _∼̇_ = _∼̇_)
+    ⦃ _ : 𝓣ransitivity² _∼_ ⦄
+    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
+    ⦃ _ : [𝓣ransassociativity] _∼_ _∼̇_ ⦄
+    ⦃ ta! : 𝓣ransassociativity _∼_ _∼̇_ ⦄
+    ⦃ _ : [𝓣ransassociativity] (flip _∼_) _∼̇_ ⦄
+    where
+    instance
+      taflip : 𝓣ransassociativity (flip _∼_) _∼̇_
+      taflip .𝓣ransassociativity.transassociativity f g h = symmetry $ transassociativity h g f
+-}
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
@@ -233,18 +286,35 @@ module _ where
       where
       𝓼urjectivity = ∀ {x y} → x ∼₁ y → surjection x ∼₂ surjection y
       record 𝓢urjectivity ⦃ _ : [𝓢urjectivity] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ where field surjectivity : 𝓼urjectivity
-  open 𝓢urjectivity ⦃ … ⦄ public
+  private
 
-  surjectivity[_] : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-    ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-    ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
-    → 𝓼urjectivity _∼₁_ _∼₂_
-  surjectivity[ _ ] = surjectivity
+    module projection where
+      open 𝓢urjectivity ⦃ … ⦄ public
+
+      surjectivity[_] : ∀
+        {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+        {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+        {𝔬₂} {𝔒₂ : Ø 𝔬₂}
+        {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+        ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+        ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
+        ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
+        → 𝓼urjectivity _∼₁_ _∼₂_
+      surjectivity[ _ ] = surjectivity
+
+  module _ where
+    open projection public
+
+  {-
+  module _ where
+    open projection public using () renaming (surjectivity to ⟦_⟧)
+    open projection using (surjectivity[_])
+    ⟦⟧-surjectivity[]-syntax = surjectivity[_]
+    syntax ⟦⟧-surjectivity[]-syntax t x = ⟦ x ⟧[ t ]
+  -}
+
+  module _ where
+    open projection public using () renaming (surjectivity to §; surjectivity[_] to §[_])
 
 module _ where
 
@@ -266,25 +336,39 @@ module _ where
       ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
       where
       𝓼urjtranscommutativity = ∀ {x y z} (f : x ∼₁ y) (g : y ∼₁ z) → surjectivity (g ∙ f) ∼̇₂ surjectivity g ∙ surjectivity f
-      record 𝓢urjtranscommutativity ⦃ _ : [𝓢urjtranscommutativity] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂ where field surjtranscommutativity : 𝓼urjtranscommutativity
+      record 𝓢urjtranscommutativity ⦃ _ : [𝓢urjtranscommutativity] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂ where
+        field
+          surjtranscommutativity : 𝓼urjtranscommutativity
+        syntax surjtranscommutativity f g = g ⟪∙⟫ f
 
-  open 𝓢urjtranscommutativity ⦃ … ⦄ public
+  private
 
-  surjtranscommutativity[_] : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
-    {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-    ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-    ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
-    ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
-    ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
-    ⦃ _ : [𝓢urjtranscommutativity] _∼₁_ _∼₂_ _∼̇₂_ ⦄
-    ⦃ _ : 𝓢urjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_ ⦄
-    → 𝓼urjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_
-  surjtranscommutativity[ _ ] = surjtranscommutativity
+    module projection where
+
+      open 𝓢urjtranscommutativity ⦃ … ⦄ public
+
+      surjtranscommutativity[_] : ∀
+        {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+        {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+        {𝔬₂} {𝔒₂ : Ø 𝔬₂}
+        {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+        {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
+        ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+        ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
+        ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
+        ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
+        ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
+        ⦃ _ : [𝓢urjtranscommutativity] _∼₁_ _∼₂_ _∼̇₂_ ⦄
+        ⦃ _ : 𝓢urjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_ ⦄
+        → 𝓼urjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_
+      surjtranscommutativity[ _ ] = surjtranscommutativity
+
+      ⟪∙⟫-surjtranscommutativity[]-syntax = surjtranscommutativity[_]
+      syntax ⟪∙⟫-surjtranscommutativity[]-syntax t f g = g ⟪∙⟫[ t ] f
+
+  open projection public
+
+
 
 module _ where
 
@@ -306,22 +390,34 @@ module _ where
       where
       𝓼urjextensionality = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂
       record 𝓢urjextensionality ⦃ _ : [𝓢urjextensionality] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ ℓ₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂ where field surjextensionality : 𝓼urjextensionality
-  open 𝓢urjextensionality ⦃ … ⦄ public
 
-  surjextensionality[_] : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-    {ℓ₁} {_∼̇₁_ : ∀ {x y} → x ∼₁ y → x ∼₁ y → Ø ℓ₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
-    {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-      ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-      ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-      ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
-    ⦃ _ : [𝓢urjextensionality] _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
-    ⦃ _ : 𝓢urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
-    → 𝓼urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_
-  surjextensionality[ _ ] = surjextensionality
+  private
+
+    module projection where
+
+      open 𝓢urjextensionality ⦃ … ⦄ public
+
+      surjextensionality[_] : ∀
+        {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+        {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+        {ℓ₁} {_∼̇₁_ : ∀ {x y} → x ∼₁ y → x ∼₁ y → Ø ℓ₁}
+        {𝔬₂} {𝔒₂ : Ø 𝔬₂}
+        {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+        {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
+        ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+        ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
+        ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
+        ⦃ _ : [𝓢urjextensionality] _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
+        ⦃ _ : 𝓢urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
+        → 𝓼urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_
+      surjextensionality[ _ ] = surjextensionality
+
+  open projection public
+
+  module _ where
+    open projection using () renaming (surjextensionality to ⟪_⟫)
+    ⟪⟫-surjextensionality[]-syntax = surjextensionality[_]
+    syntax ⟪⟫-surjextensionality[]-syntax t x = ⟪ x ⟫[ t ]
 
 module _ where
 
@@ -890,6 +986,17 @@ module _ where
   open 𝓟ure ⦃ … ⦄ public
 
   module _
+    (𝔉 : ∀ {𝔣} → Ø 𝔣 → Ø 𝔣)
+    𝔬₁ 𝔬₂
+    where
+    𝓫ind = ∀ {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂} → 𝔉 𝔒₁ → (𝔒₁ → 𝔉 𝔒₂) → 𝔉 𝔒₂
+    record 𝓑ind : Ø ↑̂ (𝔬₁ ∙̂ 𝔬₂) where
+      infixl 6 bind
+      field bind : 𝓫ind
+      syntax bind m f = f =<< m
+    open 𝓑ind ⦃ … ⦄ public
+
+  module _
     {x} {X : Ø x} {a} (A : X → Ø a) {b} (B : X → Ø b)
     where
     record [𝓣hin] : Ø₀ where
@@ -958,6 +1065,17 @@ module _ where
       𝓬heck = ∀ {m} → A (⇑₀ m) → B (⇑₀ m) → C (B m)
       record 𝓒heck ⦃ _ : [𝓒heck] ⦄ : Ø x ∙̂ a ∙̂ b ∙̂ c where field check : 𝓬heck
   open 𝓒heck ⦃ … ⦄ public
+
+  check[_] : ∀
+    {x} {X : Ø x}
+    {a} {A : X → Ø a}
+    {b} {B : X → Ø b}
+    {c} (C : Ø b → Ø c)
+    ⦃ _ : [𝓒heck] A B C ⦄
+    ⦃ _ : 𝓢uccessor₀ X ⦄
+    ⦃ _ : 𝓒heck A B C ⦄
+    → 𝓬heck A B C
+  check[ _ ] = check
 
   module _
     {x} {X : Ø x}
@@ -1063,6 +1181,17 @@ module _ where
     _≈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
     _≈_ = HasEquivalence.Equivalence !
 
+module _ where
+
+  open import Oscar.Data
+
+  record IsDecidable {𝔬} (𝔒 : Ø 𝔬) : Ø 𝔬 where
+    infix 4 _≟_
+    field
+      _≟_ : (x y : 𝔒) → Decidable (x ≡ y)
+
+  open IsDecidable ⦃ … ⦄ public
+
 -- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
 --   constructor ∁
 --   field
@@ -1075,8 +1204,8 @@ module _ where
 --   _≈̈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {ℓ} ⦃ _ : HasËquivalence _∼_ ℓ ⦄ → ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ
 --   _≈̈_ = HasËquivalence.Ëquivalence !
 
-transport : ∀ {a b} {A : Set a} (B : A → Set b) {x y} → x ≡ y → B x → B y
-transport _ ∅ = ¡
+-- transport : ∀ {a b} {A : Set a} (B : A → Set b) {x y} → x ≡ y → B x → B y
+-- transport _ ∅ = ¡
 
-transport₂ : ∀ {a b c} {A : Set a} {B : Set b} (C : A → B → Set c) {x₁ x₂ y₁ y₂} → x₁ ≡ x₂ → y₁ ≡ y₂ → C x₁ y₁ → C x₂ y₂
-transport₂ _ ∅ ∅ = ¡
+-- transport₂ : ∀ {a b c} {A : Set a} {B : Set b} (C : A → B → Set c) {x₁ x₂ y₁ y₂} → x₁ ≡ x₂ → y₁ ≡ y₂ → C x₁ y₁ → C x₂ y₂
+-- transport₂ _ ∅ ∅ = ¡
