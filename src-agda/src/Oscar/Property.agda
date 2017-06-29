@@ -1225,8 +1225,19 @@ module TestPropertyFunctions
 
 
 
+record ArrowType
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+    {ℓ̇} (_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+    : Ø₀ where
+  no-eta-equality
 
-
+record [ExtensibleType]
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+    {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+    : Ø₀ where
+  no-eta-equality
 
 instance
 
@@ -1235,13 +1246,14 @@ instance
     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
     {ℓ : Ł}
-    {ℓ̇} {_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+    {ℓ̇} {_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+    ⦃ _ : [ExtensibleType] (λ {x} → _↦_ {x}) ⦄
     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
     ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
-    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _))) ⦄
-    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _)))
+    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_))
   ExtendedPropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
 
 module TestExtendedPropertyFunctions
@@ -1249,7 +1261,44 @@ module TestExtendedPropertyFunctions
   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
   {ℓ}
+  {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+  ⦃ _ : [ExtensibleType] _↦_ ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+  ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+  ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+  ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+  -- ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
+  -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
+  where
+  test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+  test[∙] P f = f ◃ P
+
+
+instance
+
+  ExtendedPropertySurjectivity' : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+    {ℓ : Ł}
+    {ℓ̇} {_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+    ⦃ _ : ArrowType _↦_ ⦄
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+    ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
+    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _))) ⦄
+    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _)))
+  ExtendedPropertySurjectivity' .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+
+module TestExtendedPropertyFunctions'
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+  {ℓ}
   {ℓ̇} (_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+  ⦃ _ : ArrowType _↦_ ⦄
   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
@@ -1259,7 +1308,7 @@ module TestExtendedPropertyFunctions
   -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
   where
   test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended (_↦_ _)) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended (_↦_ _))
-  test[∙] P f = § f $ P
+  test[∙] P f = §' f P
 
 
 
@@ -1270,39 +1319,6 @@ module TestExtendedPropertyFunctions
 
 
 
-
--- instance
-
---   ExtendedPropertySurjectivity : ∀
---     {𝔵} {𝔛 : Ø 𝔵}
---     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
---     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
---     {ℓ : Ł}
---     {ℓ̇} {_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
---     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
---     ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
---     ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
---     ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
---     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
---     → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_))
---   ExtendedPropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
-
--- module TestExtendedPropertyFunctions
---   {𝔵} {𝔛 : Ø 𝔵}
---   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
---   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
---   {ℓ}
---   {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
---   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
---   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
---   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
---   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
---   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
---   -- ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
---   -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
---   where
---   test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
---   test[∙] P f = § f $ P
 
 -- -- module ExtendedPropertyFunctions
 -- --   {𝔵} {𝔛 : Ø 𝔵}
