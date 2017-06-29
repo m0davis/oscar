@@ -1,4 +1,4 @@
-
+{-# OPTIONS --postfix-projections #-}
 module Oscar.Data where
 
 open import Oscar.Prelude
@@ -124,10 +124,17 @@ module _ where
   Proposextensequality⟦_⟧ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) → ((𝓞 : 𝔒) → 𝔓 𝓞) → ((𝓞 : 𝔒) → 𝔓 𝓞) → Ø 𝔬
   Proposextensequality⟦ _ ⟧ = Proposextensequality
 
+  Proposextensequality[_/_] : ∀ {𝔬} (𝔒 : Ø 𝔬) {𝔭} (𝔓 : 𝔒 → Ø 𝔭) → ((𝓞 : 𝔒) → 𝔓 𝓞) → ((𝓞 : 𝔒) → 𝔓 𝓞) → Ø 𝔬
+  Proposextensequality[ _ / _ ] = Proposextensequality
+
 module _ where
 
   infix 4 _≡̇_
   _≡̇_ = Proposextensequality
+
+  infix 4 ≡̇⟦⟧-syntax
+  ≡̇⟦⟧-syntax = Proposextensequality⟦_⟧
+  syntax ≡̇⟦⟧-syntax t x y = x ≡̇⟦ t ⟧ y
 
 module _ where
 
@@ -182,3 +189,53 @@ module _ where
   data Decidable {a} (A : Ø a) : Ø a where
     ↑_ : A → Decidable A
     ↓_ : ¬ A → Decidable A
+
+Arrow : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
+  {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
+  → 𝔛 → 𝔛
+  → Ø 𝔞 ∙̂ 𝔟
+Arrow 𝔄 𝔅 x y = 𝔄 x → 𝔅 y
+
+Extended : ∀
+    {𝔞} {𝔄 : Ø 𝔞}
+    {𝔟} {𝔅 : Ø 𝔟}
+    {ℓ} (_≈_ : 𝔅 → 𝔅 → Ø ℓ)
+    → (𝔄 → 𝔅) → (𝔄 → 𝔅)
+    → Ø 𝔞 ∙̂ ℓ
+Extended _≈_ = λ f g → ∀ x → f x ≈ g x
+
+Property : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔬} (𝔒 : 𝔛 → Ø 𝔬)
+  ℓ
+  → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ
+Property 𝔒 ℓ = ∀ {x} → 𝔒 x → Ø ℓ
+
+ExtendedProperty : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔬} (𝔒 : 𝔛 → Ø 𝔬)
+  ℓ
+  {ℓ̇} (_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇)
+  → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
+ExtendedProperty 𝔒 ℓ _↦_ = Σ (Property 𝔒 ℓ) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → P f → P g)
+
+ArrowsourceProperty : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
+  {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
+  ℓ
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ x = Property (Arrow 𝔒₁ 𝔒₂ x) ℓ
+
+ArrowsourceExtendedProperty :
+  ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    ℓ
+    → (x : 𝔛) → ∀
+      {ℓ̇} (_↦_ : ∀ {y} → Arrow 𝔒₁ 𝔒₂ x y → Arrow 𝔒₁ 𝔒₂ x y → Ø ℓ̇) → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ ∙̂ ℓ̇
+ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x _↦_ = ExtendedProperty (Arrow 𝔒₁ 𝔒₂ x) ℓ _↦_

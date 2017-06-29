@@ -44,6 +44,11 @@ module _ where
     𝓼ymmetry = ∀ {x y} → x ∼ y → y ∼ x
     record 𝓢ymmetry : Ø 𝔬 ∙̂ 𝔯 where field symmetry : 𝓼ymmetry
 
+    record 𝓢ymmetryOpen : Ø 𝔬 ∙̂ 𝔯 where
+      field
+        symmetryOpen : ∀ x y → x ∼ y → y ∼ x
+      syntax symmetryOpen x y eq = x ⟨∼ eq ∼⟩ y
+
   private
 
     module projection where
@@ -58,6 +63,17 @@ module _ where
       symmetry[ _ ] = symmetry
 
   open projection public
+
+  instance
+
+    SymmetryOpenInstances : ∀
+      {𝔬} {𝔒 : Ø 𝔬}
+      {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+      ⦃ _ : 𝓢ymmetry _∼_ ⦄
+      → 𝓢ymmetryOpen _∼_
+    SymmetryOpenInstances .𝓢ymmetryOpen.symmetryOpen _ _ = symmetry
+
+  open 𝓢ymmetryOpen ⦃ … ⦄ public
 
 module _ where
 
@@ -275,6 +291,25 @@ module _ where
   module _
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
     {𝔯₁} (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
+    where
+    module _
+      where
+      𝓼urjectivity' = ∀ {x y} → x ∼₁ y → 𝔒₂ x → 𝔒₂ y
+      record 𝓢urjectivity' : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ where
+        field
+          surjectivity' : 𝓼urjectivity'
+        --𝓤nifies : ∀ {x} → 𝔒₂ x → 𝔒₂ x → ∀ {y} → x ∼₁ y → Ø₀
+        --𝓤nifies s t f = surjectivity' f s ≡ surjectivity' f t
+        infixr 10 surjectivity'
+        syntax surjectivity' σ τ = σ ◃ τ
+
+  open 𝓢urjectivity' ⦃ … ⦄ public hiding (surjectivity')
+  open 𝓢urjectivity' ⦃ … ⦄ public using () renaming (surjectivity' to §')
+
+  module _
+    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+    {𝔯₁} (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
     {𝔬₂} {𝔒₂ : Ø 𝔬₂}
     {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
     where
@@ -285,7 +320,10 @@ module _ where
       ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
       where
       𝓼urjectivity = ∀ {x y} → x ∼₁ y → surjection x ∼₂ surjection y
-      record 𝓢urjectivity ⦃ _ : [𝓢urjectivity] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ where field surjectivity : 𝓼urjectivity
+      record 𝓢urjectivity ⦃ _ : [𝓢urjectivity] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ where
+        field
+          surjectivity : 𝓼urjectivity
+
   private
 
     module projection where
@@ -315,6 +353,19 @@ module _ where
 
   module _ where
     open projection public using () renaming (surjectivity to §; surjectivity[_] to §[_])
+
+  open import Oscar.Data
+
+  instance
+
+    toSurj' : ∀
+      {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+      {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+      {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
+      ⦃ _ : [𝓢urjectivity] _∼₁_ (Extension 𝔒₂) ⦄
+      ⦃ _ : 𝓢urjectivity _∼₁_ (Extension 𝔒₂) ⦃ record { surjection = ¡ } ⦄ ⦄
+      → 𝓢urjectivity' _∼₁_ 𝔒₂
+    toSurj' {𝔬₁} {𝔒₁} {𝔯₁} {_∼₁_} {𝔬₂} {𝔒₂} {{x}} {{x₂}} .𝓢urjectivity'.surjectivity' {x₃} {y} x₄ x₅ = § {{r = x₂}} x₄ x₅
 
 module _ where
 
@@ -351,8 +402,8 @@ module _ where
         {𝔬₁} {𝔒₁ : Ø 𝔬₁}
         {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
         {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-        {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-        {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
+        {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
+        {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
         ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
         ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
         ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
@@ -402,8 +453,8 @@ module _ where
         {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
         {ℓ₁} {_∼̇₁_ : ∀ {x y} → x ∼₁ y → x ∼₁ y → Ø ℓ₁}
         {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-        {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-        {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
+        {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
+        {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
         ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
         ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
         ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
@@ -415,7 +466,7 @@ module _ where
   open projection public
 
   module _ where
-    open projection using () renaming (surjextensionality to ⟪_⟫)
+    open projection public using () renaming (surjextensionality to ⟪_⟫)
     ⟪⟫-surjextensionality[]-syntax = surjextensionality[_]
     syntax ⟪⟫-surjextensionality[]-syntax t x = ⟪ x ⟫[ t ]
 
@@ -481,6 +532,87 @@ module _ where
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     → 𝓽ransleftidentity _∼_ _∼̇_
   transleftidentity[ _ ] = transleftidentity
+
+module _ where
+
+  open import Oscar.Data
+
+  module _
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔣} (F : 𝔒 → Ø 𝔣)
+    {𝔱} (T : {x : 𝔒} → F x → 𝔒 → Ø 𝔱)
+    (let _∼_ : ∀ x y → Ø 𝔣 ∙̂ 𝔱
+         _∼_ = λ x y → (f : F x) → T f y)
+    where
+    record [≡̇-𝓣ransleftidentity] : Ø₀ where
+      no-eta-equality
+      constructor ∁
+    module _
+      ⦃ _ : 𝓡eflexivity _∼_ ⦄
+      ⦃ _ : 𝓣ransitivity _∼_ ⦄
+      where
+      ≡̇-𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ≡̇ f
+      record ≡̇-𝓣ransleftidentity ⦃ _ : [≡̇-𝓣ransleftidentity] ⦄ : Ø 𝔬 ∙̂ 𝔣 ∙̂ 𝔱 where field ≡̇-transleftidentity : ≡̇-𝓽ransleftidentity
+  open ≡̇-𝓣ransleftidentity ⦃ … ⦄ public
+
+  module _
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔣} {F : 𝔒 → Ø 𝔣}
+    {𝔱} {T : {x : 𝔒} → F x → 𝔒 → Ø 𝔱}
+    (let _∼_ : ∀ x y → Ø 𝔣 ∙̂ 𝔱
+         _∼_ = λ x y → (f : F x) → T f y)
+    where
+    instance
+      `[≡̇-𝓣ransleftidentity] :
+        ⦃ _ : [𝓣ransleftidentity] _∼_ _≡̇_ ⦄
+        → [≡̇-𝓣ransleftidentity] F T
+      `[≡̇-𝓣ransleftidentity] = ∁
+
+      `≡̇-𝓣ransleftidentity :
+        ⦃ _ : [𝓣ransleftidentity] _∼_ _≡̇_ ⦄
+        ⦃ _ : 𝓡eflexivity _∼_ ⦄
+        ⦃ _ : 𝓣ransitivity _∼_ ⦄
+        ⦃ _ : 𝓣ransleftidentity _∼_ _≡̇_ ⦄
+        → ≡̇-𝓣ransleftidentity F T
+      `≡̇-𝓣ransleftidentity .≡̇-𝓣ransleftidentity.≡̇-transleftidentity = transleftidentity
+
+
+
+
+--   module _
+--     {𝔬} {𝔒 : Ø 𝔬}
+--     {𝔣} {F : 𝔒 → Ø 𝔣}
+--     {𝔱} {T : 𝔒 → Ø 𝔱}
+--     -- (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+--     (let _∼_ : ∀ x y → Ø 𝔣 ∙̂ 𝔱
+--          _∼_ = λ x y → F x → T y)
+--     where
+--     record [≡̇-𝓣ransleftidentity] : Ø₀ where
+--       no-eta-equality
+--       constructor ∁
+--     module _
+--       ⦃ _ : 𝓡eflexivity _∼_ ⦄
+--       ⦃ _ : 𝓣ransitivity _∼_ ⦄
+--       where
+--       ≡̇-𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ≡̇ f
+--       record ≡̇-𝓣ransleftidentity ⦃ _ : [≡̇-𝓣ransleftidentity] ⦄ : Ø 𝔬 ∙̂ 𝔣 ∙̂ 𝔱 where field ≡̇-transleftidentity : ≡̇-𝓽ransleftidentity
+--   open ≡̇-𝓣ransleftidentity ⦃ … ⦄ public
+
+-- --   module _
+-- --     {𝔬} {𝔒 : Ø 𝔬}
+-- --     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+-- --     (let _∼_ : ((𝓞 : 𝔒) → 𝔓 𝓞) x λ x y → x → y)
+-- --     where
+-- --     record [≡̇-𝓣ransleftidentity] : Ø₀ where
+-- --       no-eta-equality
+-- --       constructor ∁
+-- --     module _
+-- --       ⦃ _ : 𝓡eflexivity _∼_ ⦄
+-- --       ⦃ _ : 𝓣ransitivity _∼_ ⦄
+-- --       where
+-- --       ≡̇-𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ≡̇ f
+-- --       record ≡̇-𝓣ransleftidentity ⦃ _ : [≡̇-𝓣ransleftidentity] ⦄ : Ø 𝔬 ∙̂ 𝔯 where field ≡̇-transleftidentity : ≡̇-𝓽ransleftidentity
+-- --   open ≡̇-𝓣ransleftidentity ⦃ … ⦄ public
 
 module _ where
 
@@ -1191,6 +1323,28 @@ module _ where
       _≟_ : (x y : 𝔒) → Decidable (x ≡ y)
 
   open IsDecidable ⦃ … ⦄ public
+
+module _ where
+
+  record Properthing {𝔬} ℓ (𝔒 : Ø 𝔬) : Ø 𝔬 ∙̂ ↑̂ ℓ where
+    field
+      _∧_ : 𝔒 → 𝔒 → 𝔒
+      _⇔_ : 𝔒 → 𝔒 → Ø ℓ
+      Symmetry⇔ : 𝓢ymmetry _⇔_
+      Nothing : 𝔒 → Ø ℓ
+
+  open Properthing ⦃ … ⦄ public
+
+module _ where
+
+  record Exotransitivity
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
+    {𝔟} (𝔅 : 𝔛 → 𝔛 → Ø 𝔟)
+    : Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟
+    where
+    field
+      exotransitivity : ∀ {x y} → 𝔅 x y → 𝔄 x → 𝔄 y
 
 -- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
 --   constructor ∁
