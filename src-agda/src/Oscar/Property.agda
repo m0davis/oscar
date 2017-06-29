@@ -1212,63 +1212,159 @@ module TestPropertyFunctions
   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ) ⦄
   where
   test[∙] : ∀ {x y} → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ y
-  test[∙] P f = §' f P
+  test[∙] P f g = (f ◃ λ {_} → P) g -- ((λ {_} → P) ● f) g
+  -- ((λ {_} → P) ● f)
+  -- (f ◃ (λ {_} → P)) g
   -- §' ⦃ r = toSurj' ⦄ f P
 
-module ExtendedPropertyFunctions
+
+
+
+
+
+
+
+
+
+
+
+instance
+
+  ExtendedPropertySurjectivity : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+    {ℓ : Ł}
+    {ℓ̇} {_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+    ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
+    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _))) ⦄
+    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _)))
+  ExtendedPropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+
+module TestExtendedPropertyFunctions
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
   {ℓ}
-  {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+  {ℓ̇} (_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-  ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-  ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+  ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
+  ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _))) ⦄
+  -- ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
+  -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
   where
-  _[∙_] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
-  (P [∙ f ]) = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+  test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended (_↦_ _)) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended (_↦_ _))
+  test[∙] P f = § f $ P
 
--- -- -- -- -- -- -- -- --   module Properties where
--- -- -- -- -- -- -- -- --     fact1' : ∀ {m} {s t : Term m} → Unifies s t ⇔ Unifies t s
--- -- -- -- -- -- -- -- --     fact1' _ = symmetry , symmetry
 
--- -- -- -- -- -- -- -- -- -- --   switch⋆ : ∀ {m} (P Q : Property⋆ m) → P ⇔⋆ Q → Q ⇔⋆ P
--- -- -- -- -- -- -- -- -- -- --   switch⋆ _ _ P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
 
--- -- -- -- -- -- -- -- -- -- --   switch : ∀ {m} (P Q : Property m) → P ⇔ Q → Q ⇔ P
--- -- -- -- -- -- -- -- -- -- --   switch _ _ P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
 
--- -- -- -- -- -- -- -- -- -- --   Nothing⋆ : ∀ {m} → (P : Property⋆ m) → Ø 𝔭
--- -- -- -- -- -- -- -- -- -- --   Nothing⋆ P = ∀ {n} f → P {n} f → 𝟘
 
--- -- -- -- -- -- -- -- -- -- --   Nothing : ∀ {m} → (P : Property m) → Ø 𝔭
--- -- -- -- -- -- -- -- -- -- --   Nothing P = ∀ {n} f → π₀ P {n} f → 𝟘
 
--- -- -- -- -- -- -- -- -- -- --   _[-◇⋆_] : ∀{m n} → Property⋆ m → Substitunction m n → Property⋆ n
--- -- -- -- -- -- -- -- -- -- --   (P [-◇⋆ f ]) g = P (g ∙ f)
 
--- -- -- -- -- -- -- -- -- -- --   _[-◇_] : ∀ {m n} → Property m → Substitunction m n → Property n
--- -- -- -- -- -- -- -- -- -- --   P [-◇ f ] = (λ g → π₀ P (g ∙ f)) , λ f'≐g' Pf'◇f → π₁ P (⟪ f'≐g' ⟫ ∘ f) Pf'◇f
+
+
+
+
+-- instance
+
+--   ExtendedPropertySurjectivity : ∀
+--     {𝔵} {𝔛 : Ø 𝔵}
+--     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+--     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+--     {ℓ : Ł}
+--     {ℓ̇} {_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+--     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+--     ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+--     ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+--     ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+--     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+--     → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_))
+--   ExtendedPropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+
+-- module TestExtendedPropertyFunctions
+--   {𝔵} {𝔛 : Ø 𝔵}
+--   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+--   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+--   {ℓ}
+--   {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+--   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+--   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+--   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+--   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+--   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+--   -- ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
+--   -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
+--   where
+--   test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+--   test[∙] P f = § f $ P
+
+-- -- module ExtendedPropertyFunctions
+-- --   {𝔵} {𝔛 : Ø 𝔵}
+-- --   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+-- --   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+-- --   {ℓ}
+-- --   {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+-- --   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+-- --   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+-- --   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+-- --   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+-- --   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
+-- --   where
+-- --   _[∙_] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+-- --   (P [∙ f ]) = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+
+-- --   test[∙]' : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+-- --   test[∙]' P f = surjectivity f $ P -- f P
+
+-- --   test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+-- --   test[∙] P f = surjectivity ⦃ r = ExtendedPropertySurjectivity {_↦_ = _↦_} ⦄ f P -- f P
 
 -- -- -- -- -- -- -- -- -- -- --   module Properties where
--- -- -- -- -- -- -- -- -- -- --     fact1 : ∀ {m} {s t : Term m} → Unifies s t ⇔ Unifies t s
--- -- -- -- -- -- -- -- -- -- --     fact1 _ = symmetry , symmetry
+-- -- -- -- -- -- -- -- -- -- --     fact1' : ∀ {m} {s t : Term m} → Unifies s t ⇔ Unifies t s
+-- -- -- -- -- -- -- -- -- -- --     fact1' _ = symmetry , symmetry
 
--- -- -- -- -- -- -- -- -- -- -- {-
--- -- -- -- -- -- -- -- -- -- --     fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
--- -- -- -- -- -- -- -- -- -- --            -> Unifies⋆ (s1 fork s2) (t1 fork t2) ⇔⋆ (Unifies⋆ s1 t1 ∧⋆ Unifies⋆ s2 t2)
--- -- -- -- -- -- -- -- -- -- --     fact1'⋆ f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
--- -- -- -- -- -- -- -- -- -- --       where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
--- -- -- -- -- -- -- -- -- -- --                      -> (s1 fork s2) ≡ (t1 fork t2)
--- -- -- -- -- -- -- -- -- -- --                      -> (s1 ≡ t1) × (s2 ≡ t2)
--- -- -- -- -- -- -- -- -- -- --             deconstr s1 s2 .s1 .s2 refl = refl , refl
+-- -- -- -- -- -- -- -- -- -- -- -- --   switch⋆ : ∀ {m} (P Q : Property⋆ m) → P ⇔⋆ Q → Q ⇔⋆ P
+-- -- -- -- -- -- -- -- -- -- -- -- --   switch⋆ _ _ P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
 
--- -- -- -- -- -- -- -- -- -- --     fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
--- -- -- -- -- -- -- -- -- -- --            -> Unifies (s1 fork s2) (t1 fork t2) ⇔ (Unifies s1 t1 ∧ Unifies s2 t2)
--- -- -- -- -- -- -- -- -- -- --     fact1' f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
--- -- -- -- -- -- -- -- -- -- --       where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
--- -- -- -- -- -- -- -- -- -- --                      -> (s1 fork s2) ≡ (t1 fork t2)
--- -- -- -- -- -- -- -- -- -- --                      -> (s1 ≡ t1) × (s2 ≡ t2)
--- -- -- -- -- -- -- -- -- -- --             deconstr s1 s2 .s1 .s2 refl = refl , refl
--- -- -- -- -- -- -- -- -- -- -- -}
+-- -- -- -- -- -- -- -- -- -- -- -- --   switch : ∀ {m} (P Q : Property m) → P ⇔ Q → Q ⇔ P
+-- -- -- -- -- -- -- -- -- -- -- -- --   switch _ _ P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
+
+-- -- -- -- -- -- -- -- -- -- -- -- --   Nothing⋆ : ∀ {m} → (P : Property⋆ m) → Ø 𝔭
+-- -- -- -- -- -- -- -- -- -- -- -- --   Nothing⋆ P = ∀ {n} f → P {n} f → 𝟘
+
+-- -- -- -- -- -- -- -- -- -- -- -- --   Nothing : ∀ {m} → (P : Property m) → Ø 𝔭
+-- -- -- -- -- -- -- -- -- -- -- -- --   Nothing P = ∀ {n} f → π₀ P {n} f → 𝟘
+
+-- -- -- -- -- -- -- -- -- -- -- -- --   _[-◇⋆_] : ∀{m n} → Property⋆ m → Substitunction m n → Property⋆ n
+-- -- -- -- -- -- -- -- -- -- -- -- --   (P [-◇⋆ f ]) g = P (g ∙ f)
+
+-- -- -- -- -- -- -- -- -- -- -- -- --   _[-◇_] : ∀ {m n} → Property m → Substitunction m n → Property n
+-- -- -- -- -- -- -- -- -- -- -- -- --   P [-◇ f ] = (λ g → π₀ P (g ∙ f)) , λ f'≐g' Pf'◇f → π₁ P (⟪ f'≐g' ⟫ ∘ f) Pf'◇f
+
+-- -- -- -- -- -- -- -- -- -- -- -- --   module Properties where
+-- -- -- -- -- -- -- -- -- -- -- -- --     fact1 : ∀ {m} {s t : Term m} → Unifies s t ⇔ Unifies t s
+-- -- -- -- -- -- -- -- -- -- -- -- --     fact1 _ = symmetry , symmetry
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- {-
+-- -- -- -- -- -- -- -- -- -- -- -- --     fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
+-- -- -- -- -- -- -- -- -- -- -- -- --            -> Unifies⋆ (s1 fork s2) (t1 fork t2) ⇔⋆ (Unifies⋆ s1 t1 ∧⋆ Unifies⋆ s2 t2)
+-- -- -- -- -- -- -- -- -- -- -- -- --     fact1'⋆ f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
+-- -- -- -- -- -- -- -- -- -- -- -- --       where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
+-- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 fork s2) ≡ (t1 fork t2)
+-- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 ≡ t1) × (s2 ≡ t2)
+-- -- -- -- -- -- -- -- -- -- -- -- --             deconstr s1 s2 .s1 .s2 refl = refl , refl
+
+-- -- -- -- -- -- -- -- -- -- -- -- --     fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
+-- -- -- -- -- -- -- -- -- -- -- -- --            -> Unifies (s1 fork s2) (t1 fork t2) ⇔ (Unifies s1 t1 ∧ Unifies s2 t2)
+-- -- -- -- -- -- -- -- -- -- -- -- --     fact1' f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
+-- -- -- -- -- -- -- -- -- -- -- -- --       where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
+-- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 fork s2) ≡ (t1 fork t2)
+-- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 ≡ t1) × (s2 ≡ t2)
+-- -- -- -- -- -- -- -- -- -- -- -- --             deconstr s1 s2 .s1 .s2 refl = refl , refl
+-- -- -- -- -- -- -- -- -- -- -- -- -- -}

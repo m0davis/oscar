@@ -303,6 +303,9 @@ module _ where
         --𝓤nifies s t f = surjectivity' f s ≡ surjectivity' f t
         infixr 10 surjectivity'
         syntax surjectivity' σ τ = σ ◃ τ
+        surjectivity'!syntax = surjectivity'
+        infixl 10 surjectivity'!syntax
+        syntax surjectivity'!syntax rxy px = px ● rxy
 
   open 𝓢urjectivity' ⦃ … ⦄ public hiding (surjectivity')
   open 𝓢urjectivity' ⦃ … ⦄ public using () renaming (surjectivity' to §')
