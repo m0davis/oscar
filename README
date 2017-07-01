@@ -1,9 +1,9 @@
 Version history:
 
-0.1.0.0: 
+0.1.0.0:
     (feature) The file 'combined-problems' is now parsed into [Problems], which encodes the full syntactic structure.
 
-0.2.0.0: 
+0.2.0.0:
     * refactoring
         - use Tagged instead of newtypes?
             unicode utility: http://www.cs.tut.fi/~jkorpela/fui.html8
@@ -35,6 +35,10 @@ Version history:
     * remove any unused build-depends from cabal
     * refactor: favor using patterns instead of accessors for ReasonSection
     * fixes for GHC 7.10 compatibility
+
+0.3.0.1:
+    * major bugfix in LISP code
+    * now developing using the Agda language (this makes much of the below TODO's moot)
 
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
