@@ -82,16 +82,6 @@ module _ where
     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     where
     𝓽ransitivity = ∀ {x y z} → x ∼ y → y ∼ z → x ∼ z
-    {-
-    record 𝓣ransitivity : Ø 𝔬 ∙̂ 𝔯 where
-      field transitivity : 𝓽ransitivity
-      infixr 9 transitivity
-      syntax transitivity f g = g ∙ f
-
-      instance
-        ``𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
-        ``𝓣ransitivityFlip = ?
-    -}
 
   record 𝓣ransitivity
     {𝔬} {𝔒 : Ø 𝔬}
@@ -100,11 +90,6 @@ module _ where
     field transitivity : 𝓽ransitivity _∼_
     infixr 9 transitivity
     syntax transitivity f g = g ∙ f
-    {-
-    instance
-      `𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
-      `𝓣ransitivityFlip .transitivity = flip transitivity -- .𝓣ransitivity.transitivity = flip transitivity
-    -}
 
   open 𝓣ransitivity ⦃ … ⦄ public
 
@@ -134,30 +119,6 @@ module _ where
   infixr 9 ≡̇-transitivity-syntax
   ≡̇-transitivity-syntax = ≡̇-transitivity
   syntax ≡̇-transitivity-syntax f g = g ⟨≡̇⟩ f
-
-{-
-  record 𝓣ransitivity²
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-    : Ø 𝔬 ∙̂ 𝔯 where
-    constructor ∁
-    field
-      ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _∼_
-      -- ⦃ `𝓣ransitivityFlip ⦄ : 𝓣ransitivity (flip _∼_)
-    instance
-      `𝓣ransitivityFlip : 𝓣ransitivity (flip _∼_)
-      `𝓣ransitivityFlip .𝓣ransitivity.transitivity = flip transitivity
--}
-
-{-
-  instance
-    𝓣ransitivity²From𝓣ransitivity : ∀
-      {𝔬} {𝔒 : Ø 𝔬}
-      {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
-      ⦃ _ : 𝓣ransitivity _∼_ ⦄
-      → 𝓣ransitivity² _∼_
-    𝓣ransitivity²From𝓣ransitivity {𝔬} {𝔒} {𝔯} {_∼_} {{x}} .𝓣ransitivity².`𝓣ransitivity = x
--}
 
 record IsEquivalence
   {𝔬} {𝔒 : Ø 𝔬}
@@ -226,21 +187,6 @@ module _ where
     ⦃ _ : 𝓣ransassociativity _∼_ _∼̇_ ⦄
     → 𝓽ransassociativity _∼_ _∼̇_
   transassociativity[ _ ] = transassociativity
-{-
-  module _
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
-    {ℓ} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ} (let infix 4 _∼̇_ ; _∼̇_ = _∼̇_)
-    ⦃ _ : 𝓣ransitivity² _∼_ ⦄
-    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-    ⦃ _ : [𝓣ransassociativity] _∼_ _∼̇_ ⦄
-    ⦃ ta! : 𝓣ransassociativity _∼_ _∼̇_ ⦄
-    ⦃ _ : [𝓣ransassociativity] (flip _∼_) _∼̇_ ⦄
-    where
-    instance
-      taflip : 𝓣ransassociativity (flip _∼_) _∼̇_
-      taflip .𝓣ransassociativity.transassociativity f g h = symmetry $ transassociativity h g f
--}
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
@@ -275,7 +221,7 @@ module _ where
       where
       𝓼urjection = 𝔒₁ → 𝔒₂
       record 𝓢urjection : Ø 𝔬₁ ∙̂ 𝔬₂ where
-        constructor ∁ -- TODO
+        constructor ∁
         field surjection : 𝓼urjection
   open 𝓢urjection ⦃ … ⦄ public
 
@@ -296,11 +242,9 @@ module _ where
     module _
       where
       𝓼urjectivity' = ∀ {x y} → x ∼₁ y → 𝔒₂ x → 𝔒₂ y
-      record 𝓢urjectivity' : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ where
+      record 𝓢urjectivity' : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ where -- TODO rename
         field
           surjectivity' : 𝓼urjectivity'
-        --𝓤nifies : ∀ {x} → 𝔒₂ x → 𝔒₂ x → ∀ {y} → x ∼₁ y → Ø₀
-        --𝓤nifies s t f = surjectivity' f s ≡ surjectivity' f t
         infixr 10 surjectivity'
         syntax surjectivity' σ τ = σ ◃ τ
         surjectivity'!syntax = surjectivity'
@@ -309,6 +253,16 @@ module _ where
 
   open 𝓢urjectivity' ⦃ … ⦄ public hiding (surjectivity')
   open 𝓢urjectivity' ⦃ … ⦄ public using () renaming (surjectivity' to §')
+
+  surjectivity'[]syntax : ∀
+    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+    {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
+    ⦃ _ : 𝓢urjectivity' _∼₁_ 𝔒₂ ⦄
+    → 𝓼urjectivity' _∼₁_ 𝔒₂
+  surjectivity'[]syntax _ = §'
+
+  syntax surjectivity'[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
 
   module _
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
@@ -346,29 +300,24 @@ module _ where
   module _ where
     open projection public
 
-  {-
-  module _ where
-    open projection public using () renaming (surjectivity to ⟦_⟧)
-    open projection using (surjectivity[_])
-    ⟦⟧-surjectivity[]-syntax = surjectivity[_]
-    syntax ⟦⟧-surjectivity[]-syntax t x = ⟦ x ⟧[ t ]
-  -}
-
   module _ where
     open projection public using () renaming (surjectivity to §; surjectivity[_] to §[_])
+    -- TODO rename § to ⟦_⟧?
 
-  open import Oscar.Data
+  module _ where -- TODO move to another file
 
-  instance
+    open import Oscar.Data
 
-    toSurj' : ∀
-      {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-      {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-      {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
-      ⦃ _ : [𝓢urjectivity] _∼₁_ (Extension 𝔒₂) ⦄
-      ⦃ _ : 𝓢urjectivity _∼₁_ (Extension 𝔒₂) ⦃ record { surjection = ¡ } ⦄ ⦄
-      → 𝓢urjectivity' _∼₁_ 𝔒₂
-    toSurj' {𝔬₁} {𝔒₁} {𝔯₁} {_∼₁_} {𝔬₂} {𝔒₂} {{x}} {{x₂}} .𝓢urjectivity'.surjectivity' {x₃} {y} x₄ x₅ = § {{r = x₂}} x₄ x₅
+    instance
+
+      toSurj' : ∀
+        {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+        {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+        {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
+        ⦃ _ : [𝓢urjectivity] _∼₁_ (Extension 𝔒₂) ⦄
+        ⦃ _ : 𝓢urjectivity _∼₁_ (Extension 𝔒₂) ⦃ record { surjection = ¡ } ⦄ ⦄
+        → 𝓢urjectivity' _∼₁_ 𝔒₂
+      toSurj' {{_}} {{x₂}} .𝓢urjectivity'.surjectivity' = § {{r = x₂}}
 
 module _ where
 
@@ -578,44 +527,6 @@ module _ where
         ⦃ _ : 𝓣ransleftidentity _∼_ _≡̇_ ⦄
         → ≡̇-𝓣ransleftidentity F T
       `≡̇-𝓣ransleftidentity .≡̇-𝓣ransleftidentity.≡̇-transleftidentity = transleftidentity
-
-
-
-
---   module _
---     {𝔬} {𝔒 : Ø 𝔬}
---     {𝔣} {F : 𝔒 → Ø 𝔣}
---     {𝔱} {T : 𝔒 → Ø 𝔱}
---     -- (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
---     (let _∼_ : ∀ x y → Ø 𝔣 ∙̂ 𝔱
---          _∼_ = λ x y → F x → T y)
---     where
---     record [≡̇-𝓣ransleftidentity] : Ø₀ where
---       no-eta-equality
---       constructor ∁
---     module _
---       ⦃ _ : 𝓡eflexivity _∼_ ⦄
---       ⦃ _ : 𝓣ransitivity _∼_ ⦄
---       where
---       ≡̇-𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ≡̇ f
---       record ≡̇-𝓣ransleftidentity ⦃ _ : [≡̇-𝓣ransleftidentity] ⦄ : Ø 𝔬 ∙̂ 𝔣 ∙̂ 𝔱 where field ≡̇-transleftidentity : ≡̇-𝓽ransleftidentity
---   open ≡̇-𝓣ransleftidentity ⦃ … ⦄ public
-
--- --   module _
--- --     {𝔬} {𝔒 : Ø 𝔬}
--- --     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
--- --     (let _∼_ : ((𝓞 : 𝔒) → 𝔓 𝓞) x λ x y → x → y)
--- --     where
--- --     record [≡̇-𝓣ransleftidentity] : Ø₀ where
--- --       no-eta-equality
--- --       constructor ∁
--- --     module _
--- --       ⦃ _ : 𝓡eflexivity _∼_ ⦄
--- --       ⦃ _ : 𝓣ransitivity _∼_ ⦄
--- --       where
--- --       ≡̇-𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ≡̇ f
--- --       record ≡̇-𝓣ransleftidentity ⦃ _ : [≡̇-𝓣ransleftidentity] ⦄ : Ø 𝔬 ∙̂ 𝔯 where field ≡̇-transleftidentity : ≡̇-𝓽ransleftidentity
--- --   open ≡̇-𝓣ransleftidentity ⦃ … ⦄ public
 
 module _ where
 
@@ -1306,15 +1217,21 @@ module _ where
 
   record HasEquivalence {𝔬} (𝔒 : Ø 𝔬) ℓ : Ø 𝔬 ∙̂ ↑̂ ℓ where
     constructor ∁
+
     field
       Equivalence : 𝔒 → 𝔒 → Ø ℓ
       ⦃ ⌶IsEquivalence ⦄ : IsEquivalence Equivalence
+    -- infix 4 Equivalence
+    -- syntax Equivalence x y = x ≈ y
+
+  open HasEquivalence ⦃ … ⦄ public
 
   module _ where
 
     infix 4 _≈_
     _≈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
     _≈_ = HasEquivalence.Equivalence !
+
 
 module _ where
 
@@ -1333,10 +1250,20 @@ module _ where
     field
       _∧_ : 𝔒 → 𝔒 → 𝔒
       _⇔_ : 𝔒 → 𝔒 → Ø ℓ
-      Symmetry⇔ : 𝓢ymmetry _⇔_
+      ⦃ IsEquivalence⇔ ⦄ : IsEquivalence _⇔_
       Nothing : 𝔒 → Ø ℓ
+      fact2 : ∀ {P Q} → P ⇔ Q → Nothing P → Nothing Q
 
   open Properthing ⦃ … ⦄ public
+
+  ⇔syntax : ∀
+    {𝔬} {ℓ} (𝔒 : Ø 𝔬)
+    ⦃ _ : Properthing ℓ 𝔒 ⦄
+    → 𝔒 → 𝔒 → Ø ℓ
+  ⇔syntax _ = _⇔_
+
+  syntax ⇔syntax 𝔒 P Q = P ⇔[ 𝔒 ] Q
+
 
 module _ where
 
@@ -1349,6 +1276,51 @@ module _ where
     field
       exotransitivity : ∀ {x y} → 𝔅 x y → 𝔄 x → 𝔄 y
 
+module _ where
+
+  module _
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
+    {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
+    (let _∼_ = Arrow 𝔄 𝔅) (let infix 4 _∼_ ; _∼_ = _∼_)
+    {ℓ̇} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇)
+    ⦃ _ : 𝓣ransitivity _∼_ ⦄
+    ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    ℓ
+    where
+    𝓹rop-id = ∀ {m n} {f : m ∼ n} (P : ExtendedProperty (Arrow 𝔄 𝔅 m) ℓ _∼̇_)
+              (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
+    record PropId : Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ℓ̇ ∙̂ ↑̂ ℓ where field prop-id : 𝓹rop-id
+
+  open PropId ⦃ … ⦄ public
+
+module _ where
+
+  record Amgu {𝔵} {X : Ø 𝔵} {𝔱} (T : X → Ø 𝔱) {𝔞} (A : X → Ø 𝔞) {𝔪} (M : Ø 𝔞 → Ø 𝔪) : Ø 𝔵 ∙̂ 𝔱 ∙̂ 𝔞 ∙̂ 𝔪 where
+    field amgu : ∀ {x} → T x → T x → A x → M (A x)
+
+  open Amgu ⦃ … ⦄ public
+
+module _ where
+
+  record [IsExtensionB]
+    {a} {A : Ø a}
+    {b} (B : A → Ø b)
+    : Ø₀ where
+    constructor ∁
+    no-eta-equality
+
+module _ where
+
+  record [ExtensibleType]
+      {𝔵} {𝔛 : Ø 𝔵}
+      {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+      {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+      : Ø₀ where
+    constructor ∁
+    no-eta-equality
+
+
 -- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
 --   constructor ∁
 --   field
@@ -1360,9 +1332,3 @@ module _ where
 --   infix 4 _≈̈_
 --   _≈̈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {ℓ} ⦃ _ : HasËquivalence _∼_ ℓ ⦄ → ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ
 --   _≈̈_ = HasËquivalence.Ëquivalence !
-
--- transport : ∀ {a b} {A : Set a} (B : A → Set b) {x y} → x ≡ y → B x → B y
--- transport _ ∅ = ¡
-
--- transport₂ : ∀ {a b c} {A : Set a} {B : Set b} (C : A → B → Set c) {x₁ x₂ y₁ y₂} → x₁ ≡ x₂ → y₁ ≡ y₂ → C x₁ y₁ → C x₂ y₂
--- transport₂ _ ∅ ∅ = ¡

@@ -4,6 +4,7 @@ module Oscar where
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
+open import Oscar.Property
 
 
 test-transassociativity-≡ : ∀
@@ -161,223 +162,91 @@ module Test3 where
     test = asInstance `IsFunctor transextensionality
     -- -- Test1.test-functor-transextensionality
 
-
-test-𝓣ransitivity² : ∀
-  {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} {_↦_ : 𝔒 → 𝔒 → Ø 𝔯}
-  ⦃ _ : 𝓣ransitivity² _↦_ ⦄
-  (let _↤_ = flip _↦_)
-  → 𝓽ransitivity _↤_
-test-𝓣ransitivity² = transitivity
-
-{-
-test-is-transitive₃' : ∀
-  {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} {_↦_ : 𝔒 → 𝔒 → Ø 𝔯}
-  ⦃ _ : 𝓣ransitivity _↦_ ⦄
-  (let _↤_ = flip _↦_)
-  → 𝓽ransitivity _↤_
-test-is-transitive₃' = transitivity
--}
+module Test4
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+  {ℓ : Ł}
+  ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
+  -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ) ⦄
+  where
+  test[∙] : ∀ {x y} → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ y
+  test[∙] P f g = (f ◃ λ {_} → P) g
 
 
-{-
-module _ where
+module Test5
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
+  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+  {ℓ}
+  {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+  ⦃ _ : [ExtensibleType] _↦_ ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+  ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+  ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+  ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+  where
+  test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+  test[∙] P f = f ◃ P
 
-  record Injection
-    {𝔬₁} (𝔒₁ : Ø 𝔬₁)
-    {𝔬₂} (𝔒₂ : Ø 𝔬₂)
-    : Ø 𝔬₁ ∙̂ 𝔬₂ where
-    field
-      injection : 𝔒₁ → 𝔒₂
+module Test6 where
+  postulate 𝔓 : Set
+  postulate ℓ : Ł
+  open Term 𝔓
+  test-epfs : ∀ {x y} → ArrowsourceExtendedProperty Fin Term ℓ x (λ {y} → Extended Proposequality⟦ Term y ⟧) → Arrow Fin Term x y → ArrowsourceExtendedProperty Fin Term ℓ y (Extended _≡_)
+  test-epfs P f = f ◃ P
 
-  open Injection ⦃ … ⦄ public
+  test-epfs' : ∀ {x y} → ArrowsourceProperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceProperty Fin Term ℓ y
+  test-epfs' P f = f ◃ (λ {_} → P)
 
-  record Injectivity
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    ⦃ _ : Injection 𝔒₁ 𝔒₂ ⦄
-    {ℓ₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø ℓ₂)
-    {ℓ₁} (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø ℓ₁)
-    : Ø 𝔬₁ ∙̂ 𝔬₂ ∙̂ ℓ₂ ∙̂ ℓ₁ where
-    field
-      injectivity : ∀ {x₁ x₂} → injection x₁ ∼₂ injection x₂ → x₁ ∼₁ x₂
+  fact1U : ∀ {m} {s t : Term m} → (λ {d} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {d}) ⇔ ≡-Unifies₀ t s
+  fact1U = symmetry , symmetry
 
-  open Injectivity ⦃ … ⦄ public
+  Properties-fact1 : ∀ {m} {s t : Term m} → (≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} s t) ⇔ ≡-ExtensionalUnifies t s
+  Properties-fact1 = symmetry , symmetry
 
-{-
-  test-injectivity''' : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    ⦃ _ : Injection 𝔒₁ 𝔒₂ ⦄
-    {ℓ₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø ℓ₂}
-    {ℓ₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø ℓ₁}
-    ⦃ _ : Injectivity _∼₂_ _∼₁_ ⦄
-    → ∀ {x₁ x₂} → injection x₁ ∼₂ injection x₂ → x₁ ∼₁ x₂
-  test-injectivity''' = injectivity
--}
+  Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
+         → (λ {m} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {m}) ⇔ ((λ {m} → ≡-Unifies₀ s1 t1 {m}) ∧ ≡-Unifies₀ s2 t2)
+  Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  injectivity⟦_⟧ : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    ⦃ _ : Injection 𝔒₁ 𝔒₂ ⦄
-    (`injection : 𝔒₁ → 𝔒₂)
-    {ℓ₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø ℓ₂}
-    {ℓ₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø ℓ₁}
-    ⦃ _ : Injectivity _∼₂_ _∼₁_ ⦄
-    ⦃ _ : `injection ≡ injection ⦄
-    → ∀ {x₁ x₂} → injection x₁ ∼₂ injection x₂ → x₁ ∼₁ x₂
-  injectivity⟦ injection ⟧ {_∼₂_ = _∼₂_} {_∼₁_ = _∼₁_} = injectivity {_∼₂_ = _∼₂_} {_∼₁_ = _∼₁_}
+  Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
+         → ≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} (s1 fork s2) (t1 fork t2) ⇔ (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+  Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  test-injectivity' : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    ⦃ _ : Injection 𝔒₁ 𝔒₂ ⦄
-    {ℓ₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø ℓ₂}
-    {ℓ₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø ℓ₁}
-    ⦃ _ : Injectivity _∼₂_ _∼₁_ ⦄
-    → ∀ {x₁ x₂} → injection x₁ ∼₂ injection x₂ → x₁ ∼₁ x₂
-  test-injectivity' {_∼₂_ = _∼₂_} {_∼₁_ = _∼₁_} = injectivity⟦ injection ⟧ {_∼₂_ = _∼₂_} {_∼₁_ = _∼₁_}
--}
+  fact3 : ∀ {m} {P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
+  fact3 = ¡ , ¡
 
--- ⦃ r = inj ⦄
-{-
-  ≡-injectivity⟦_⟧ : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    (injection : 𝔒₁ → 𝔒₂)
-    ⦃ _ : Injectivity injection _≡_ _≡_ ⦄
-    → ∀ {x₁ x₂} → injection x₁ ≡ injection x₂ → x₁ ≡ x₂
-  ≡-injectivity⟦ injection ⟧ = injectivity { injection = injection }
--}
+  fact4 : ∀{m n} {P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} (f : _ → Term n)
+          → Nothing P → Nothing (f ◃ P)
+  fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
-{-
+  fact5⋆ : ∀{m n} {P Q : ArrowsourceProperty Fin Term ℓ m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
+           → (λ {w} → (f ◃ λ {_} → P) {w}) ⇔ (f ◃ λ {_} → Q)
+  fact5⋆ P⇔Q = P⇔Q
 
-  ≡-injectivity₂,₀,₁ : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
-    {𝔬₃} {𝔒₃ : Ø 𝔬₃}
-    ⦃ _ : 𝓘njection₂ {𝔒₂ = 𝔒₂} (λ _ _ → 𝔒₃) ⦄
-    ⦃ _ : [𝓘njectivity₂,₀,₁] {𝔒₂ = 𝔒₂} (λ _ _ → 𝔒₃) Proposequality Proposequality ⦄
-    ⦃ _ : 𝓘njectivity₂,₀,₁ {𝔒₂ = 𝔒₂} (λ _ _ → 𝔒₃) Proposequality Proposequality ⦄
-    → 𝓲njectivity₂,₀,₁ {𝔒₂ = 𝔒₂} (λ _ _ → 𝔒₃) Proposequality Proposequality
-  ≡-injectivity₂,₀,₁ = injectivity₂,₀,₁
--}
+  fact5 : ∀{m n} {P Q : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} {f : Arrow Fin Term m n} → P ⇔ Q
+           → (f ◃ P) ⇔ (f ◃ Q)
+  fact5 P⇔Q = P⇔Q
 
-{-
+  fact6 : ∀{m n} (P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
-  module _ -- Arity=2
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔭₁} (𝔓₁ : 𝔒 → Ø 𝔭₁)
-    {𝔭₂} (𝔓₂ : 𝔒 → Ø 𝔭₂)
-    where
-    𝓲njection₁̇ = ∀ {x} → 𝔓₁ x → 𝔓₂ x
-    record 𝓘njection₁̇ : Ø 𝔬 ∙̂ 𝔭₁ ∙̂ 𝔭₂ where
-      constructor ∁
-      field injection₁̇ : 𝓲njection₁̇
-    open 𝓘njection₁̇ ⦃ … ⦄ public
-    module _ -- Fixed=1
-      {ℓ₁} (_∼₁_ : ∀ {x} → 𝔓₁ x → 𝔓₁ x → Ø ℓ₁)
-      {ℓ₂} (_∼₂_ : ∀ {x} → 𝔓₂ x → 𝔓₂ x → Ø ℓ₂)
-      where
-      record [𝓘njectivity₁̇] : Ø₀ where
-        no-eta-equality
-        constructor ∁
-      module _
-        ⦃ _ : 𝓘njection₁̇ ⦄
-        where
-        𝓲njectivity₁̇ = ∀ {x : 𝔒} {y₁ y₂ : 𝔓₁ x} → injection₁̇ y₁ ∼₂ injection₁̇ y₂ → y₁ ∼₁ y₂
-        record 𝓘njectivity₁̇ ⦃ _ : [𝓘njectivity₁̇] ⦄ : Ø 𝔬 ∙̂ 𝔭₁ ∙̂ 𝔭₂ ∙̂ ℓ₁ ∙̂ ℓ₂ where field injectivity₁̇ : 𝓲njectivity₁̇
-        open 𝓘njectivity₁̇ ⦃ … ⦄ public
--}
+module Test7 where
 
-{-
-
-{-
-    module _ -- Fixed=1
-      {ℓ₃} (_∼₃_ : ∀ {x} {y₁ y₂ : 𝔒₂ x} → 𝔒₃ _ y₁ → 𝔒₃ _ y₂ → Ø ℓ₃)
-      {ℓ₂} (_∼₂_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ₂)
-      where
-      record [𝓘njectivity₃,₁] : Ø₀ where
-        no-eta-equality
-        constructor ∁
-      module _
-        ⦃ _ : 𝓘njection₂ ⦄
-        where
-        𝓲njectivity₃,₁ = ∀ {x₁ x₂ : 𝔒₁} {y₁ : 𝔒₂ x₁} {y₂ : 𝔒₂ x₂} → injection₂ _ y₁ ∼₄ injection₂ _ y₂ → y₁ ∼₂ y₂
-        record 𝓘njectivity₃,₁ ⦃ _ : [𝓘njectivity₃,₁] ⦄ : Ø 𝔬₁ ∙̂ 𝔬₂ ∙̂ 𝔬₃ ∙̂ ℓ₂ ∙̂ ℓ₃ where field injectivity₂,₁ : 𝓲njectivity₂,₁
-        open 𝓘njectivity₃,₁ ⦃ … ⦄ public
--}
-
-{-
-    module _ -- Fixed=1/Proposequality
-      {ℓ₃} (_∼₃_ : ∀ {x} {y₁ y₂ : 𝔒₂ x} → 𝔒₃ _ y₁ → 𝔒₃ _ y₂ → Ø ℓ₃)
-      where
-      record [≡-𝓘njectivity₂,₁] : Ø₀ where
-        no-eta-equality
-        constructor ∁
-      where
-      module _
-        ⦃ _ : 𝓘njection₂ ⦄
-        where
-        ≡-𝓲njectivity₂,₁ = 𝓲njectivity₂,₁ Proposequality _∼₃_
-        record ≡-𝓘njectivity₂,₁ : Ø 𝔬₁ ∙̂ 𝔬₂ ∙̂ 𝔬₃ ∙̂ ℓ₂ where
-          field
-            ⦃ `[𝓘njectivity₂,₁] ⦄ : [𝓘njectivity₂,₁] Proposequality _∼₃_
-            ⦃ `𝓘njectivity₂,₁ ⦄ : 𝓘njectivity₂,₁ Proposequality _∼₃_
--}
-
-  injectivity₂,₁′ : ∀
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-    {𝔬₃} {𝔒₃ : 𝔒₁ → 𝔒₂ → Ø 𝔬₃}
-    {ℓ₃} {_∼₃_ : ∀ {x} {y₁ y₂ : 𝔒₂} → 𝔒₃ x y₁ → 𝔒₃ x y₂ → Ø ℓ₃}
-    {ℓ₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø ℓ₂}
-    ⦃ _ : 𝓘njection₂ 𝔒₃ ⦄
-    ⦃ _ : [𝓘njectivity₂,₁] 𝔒₃  _∼₃_ _∼₂_ ⦄
-    ⦃ _ : 𝓘njectivity₂,₁ 𝔒₃ _∼₃_ _∼₂_ ⦄
-    → ∀ {y₁ y₂ : 𝔒₂} (x : 𝔒₁) → injection₂ x y₁ ∼₃ injection₂ x y₂ → y₁ ∼₂ y₂
-  injectivity₂,₁′ x = injectivity₂,₁ x
-
--}
-
-{-
-
-          `𝓘njection₁̇ : 𝓘njection₁̇ 𝔓 (𝔓 ∘ ⇑₀)
-          `𝓘njection₁̇ .𝓘njection₁̇.injection₁̇ = successor₁
-
--}
-
-{-
-
-  module _
-    {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-    {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
-    {ℓ₁} (_∼₁_ : (x : 𝔒₁) → 𝔒₂ x → Ø ℓ₁)
-    {ℓ₂} (_∼₂_ : (x : 𝔒₁) → 𝔒₂ x → Ø ℓ₂)
-    where
-    𝓶ap' = ∀ {x y} → x ∼₁ y → x ∼₂ y
-    record 𝓜ap' : Ø 𝔬₁ ∙̂ 𝔬₂ ∙̂ ℓ₁ ∙̂ ℓ₂ where field map' : 𝓶ap'
-  open 𝓜ap' ⦃ … ⦄ public
--}
-
-{-
-
-    -- 𝓢urjectionMaybe : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓢urjection 𝔒 (Maybe 𝔒)
-    -- 𝓢urjectionMaybe .𝓢urjection.surjection = ↑_
-
-    𝓜apMaybe : ∀ {𝔬₁} → 𝓜ap {𝔒₁ = Ø 𝔬₁} (λ x y → x → y) (λ x y → Maybe x → Maybe y)
-    𝓜apMaybe .𝓜ap.map f ∅ = ∅
-    𝓜apMaybe .𝓜ap.map f (↑ x) = ↑ f x
-
--}
-
-{-
-
-    [𝓘njectivity₁̇]Fin : [𝓘njectivity₁̇] Fin (Fin ∘ ⇑₀) Proposequality Proposequality
-    [𝓘njectivity₁̇]Fin = ∁
-
-    𝓘njectivity₁̇Fin : 𝓘njectivity₁̇ Fin (Fin ∘ ⇑₀) Proposequality Proposequality
-    𝓘njectivity₁̇Fin .𝓘njectivity₁̇.injectivity₁̇ ∅ = ∅
-
--}
+  𝓅rop-id : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
+    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    (let _∼_ = Arrow 𝔄 𝔅)
+    {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
+    ⦃ _ : 𝓣ransitivity _∼_ ⦄
+    ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
+    ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
+    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
+    {m n}
+    {ℓ} {f : m ∼ n} (P : ExtendedProperty (Arrow 𝔄 𝔅 m) ℓ _∼̇_) (let P₀ = π₀ P)
+    → P₀ f
+    → P₀ (ε ∙ f)
+  𝓅rop-id = prop-id

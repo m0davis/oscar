@@ -24,9 +24,6 @@ module _ where
       𝓣ransitivityProposequality : 𝓣ransitivity Proposequality⟦ 𝔒 ⟧
       𝓣ransitivityProposequality .𝓣ransitivity.transitivity ∅ = ¡
 
-      --𝓣ransitivity²Proposequality : 𝓣ransitivity² Proposequality⟦ 𝔒 ⟧
-      --𝓣ransitivity²Proposequality = ∁
-
       IsEquivalenceProposequality : IsEquivalence Proposequality⟦ 𝔒 ⟧
       IsEquivalenceProposequality = ∁
 
@@ -74,9 +71,6 @@ module _ where
       𝓣ransitivityProposextensequality : 𝓣ransitivity Proposextensequality⟦ 𝔓 ⟧
       𝓣ransitivity.transitivity 𝓣ransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x
 
-      --𝓣ransitivity²Proposextensequality : 𝓣ransitivity² Proposextensequality⟦ 𝔓 ⟧
-      --𝓣ransitivity²Proposextensequality = ∁
-
       IsEquivalenceProposextensequality : IsEquivalence Proposextensequality⟦ 𝔓 ⟧
       IsEquivalenceProposextensequality = ∁
 
@@ -121,13 +115,6 @@ module _ where
       𝓣ransitivityExtension : 𝓣ransitivity (Extension B)
       𝓣ransitivity.transitivity 𝓣ransitivityExtension f g = g ∘ f
 
-      --𝓣ransitivity²Extension : 𝓣ransitivity² (Extension B)
-      --𝓣ransitivity²Extension = ∁
-
---      𝓣ransitivity²Extension : 𝓣ransitivity² (Extension B)
---      𝓣ransitivity²Extension .𝓣ransitivity².`𝓣ransitivity = !
---      -- 𝓣ransitivity²Extension .𝓣ransitivity².`𝓣ransitivityFlip = {!!}
-
       [𝓣ransassociativity]ExtensionProposextensequality : [𝓣ransassociativity] (Extension B) Proposextensequality
       [𝓣ransassociativity]ExtensionProposextensequality = ∁
 
@@ -152,12 +139,8 @@ module _ where
       𝓣ransrightidentityExtensionProposextensequality : 𝓣ransrightidentity (Extension B) Proposextensequality
       𝓣ransrightidentityExtensionProposextensequality .𝓣ransrightidentity.transrightidentity _ = !
 
-      -- -- {- TODO
-      -- HasEquivalenceExtension : ∀ {x y : A} → HasEquivalence (Extension B x y) _
-      -- HasEquivalenceExtension = ∁ Proposextensequality
-      -- -- -}
-      -- HasËquivalenceExtension : HasËquivalence (Extension B) _
-      -- HasËquivalenceExtension = ∁ Proposextensequality
+      HasEquivalenceExtension : ∀ {x y : A} ⦃ _ : [IsExtensionB] B ⦄ → HasEquivalence (Extension B x y) _
+      HasEquivalenceExtension = ∁ Proposextensequality
 
   module _
     {a} {A : Ø a} {b} {B : A → Ø b}
@@ -181,7 +164,6 @@ module _ where
     CategoryExtension : Category _ _ _
     CategoryExtension = ∁ (Extension B) Proposextensequality
 
--- FunctorSubstitunctionProposextensequalityExtensionTermProposextensequality
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   where
@@ -190,9 +172,6 @@ module _
     𝓢urjectionIdentity .𝓢urjection.surjection = ¡
 
 module _ {𝔭} {𝔓 : Ø 𝔭} where
--- record Substitunction⌶ {𝔭} (𝔓 : Ø 𝔭) : Ø₀ where
---   constructor ∁
---  no-eta-equality
 
   open Substitunction 𝔓
   open Term 𝔓
@@ -230,26 +209,18 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓣ransitivitySubstitunction : 𝓣ransitivity Substitunction
     𝓣ransitivitySubstitunction .𝓣ransitivity.transitivity f g = surjectivity g ∘ f
 
-    --𝓣ransitivity²Substitunction : 𝓣ransitivity² Substitunction
-    --𝓣ransitivity²Substitunction = ∁
-
     HasEquivalenceSubstitunction : ∀ {x y} → HasEquivalence (Substitunction x y) _
     HasEquivalenceSubstitunction = ∁ Proposextensequality
 
-    HasEquivalenceExtensionTerm : ∀ {x y} → HasEquivalence (Extension Term x y) _
-    HasEquivalenceExtensionTerm = ∁ Proposextensequality
+    [IsExtensionB]Term : [IsExtensionB] Term
+    [IsExtensionB]Term = ∁
 
-    HasEquivalenceExtensionTerms : ∀ {N x y} → HasEquivalence (Extension (Terms N) x y) _
-    HasEquivalenceExtensionTerms = ∁ Proposextensequality
+    [IsExtensionB]Terms : ∀ {N} → [IsExtensionB] (Terms N)
+    [IsExtensionB]Terms = ∁
 
   private
 
     mutual
-      -- TODO
-      -- 𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x} {y} → _≈̈_ {x = x} {y})
-      --𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x} {y} → _≈̈_ {x = x} {y}) -- (λ {x y} → _≈̈_ ⦃ HasËquivalenceExtension ⦄ {x} {_})
-      -- 𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x y} → _≈_ ⦃ HasEquivalenceExtension {x = x} {y = y} ⦄)
-      -- 𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) (λ {x y} → _≈_ {𝔒 = Extension Term x y})
       𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) _≈_
       𝓼urjextensionalitySubstitunctionExtensionTerm p (i x) = p x
       𝓼urjextensionalitySubstitunctionExtensionTerm p leaf = ∅
@@ -268,7 +239,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓢urjextensionalitySubstitunction : 𝓢urjextensionality Substitunction Proposextensequality (Extension Term) Proposextensequality
     𝓢urjextensionalitySubstitunction .𝓢urjextensionality.surjextensionality = 𝓼urjextensionalitySubstitunctionExtensionTerm
 
-    [𝓢urjextensionality]Substitunctions : ∀ {N} → [𝓢urjextensionality] Substitunction Proposextensequality⟦ {!!} ⟧ (Extension $ Terms N) Proposextensequality⟦ {!!} ⟧
+    [𝓢urjextensionality]Substitunctions : ∀ {N} → [𝓢urjextensionality] Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
     [𝓢urjextensionality]Substitunctions = ∁
 
     𝓢urjextensionalitySubstitunctions : ∀ {N} → 𝓢urjextensionality Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
@@ -373,12 +344,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ (Extension $ Terms N) _≈_
     IsFunctorSubstitunctionExtensionTerms = ∁
 
-module SubstitunctionØ {𝔭} (𝔓 : Ø 𝔭) where
+module _ {𝔭} (𝔓 : Ø 𝔭) where
 
   open Substitunction 𝔓
   open Term 𝔓
-
-  -- open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ ∁)
 
   PrecategorySubstitunction : Precategory _ _ _
   PrecategorySubstitunction = ∁ Substitunction _≈_
@@ -397,13 +366,11 @@ module SubstitunctionØ {𝔭} (𝔓 : Ø 𝔭) where
     FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
     FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ (Extension $ Terms N) _≈_
 
-open SubstitunctionØ public
-
 
 -- CategoryAListProposequality
 module _ where
 
-  module XXXX {a} (A : ¶ → Set a) where
+  module _ {a} {A : ¶ → Set a} where
 
     private AList = Descender⟨ A ⟩
 
@@ -422,12 +389,8 @@ module _ where
       𝓣ransitivityAList' : 𝓣ransitivity (flip AList)
       𝓣ransitivityAList' .𝓣ransitivity.transitivity = flip transitivity
 
-      --𝓣ransitivity²AList : 𝓣ransitivity² AList
-      --𝓣ransitivity²AList = ∁
-
-  --    HasEquivalenceAList : HasEquivalence AList
-  --     MorphismEquivalence⌶AList : MorphismEquivalence AList _
-  --     MorphismEquivalence.morphismEquivalence MorphismEquivalence⌶AList = Proposequality
+      HasEquivalenceAList : ∀ {m n} → HasEquivalence (AList m n) _
+      HasEquivalenceAList = ∁ Proposequality
 
       [𝓣ransassociativity]AList : [𝓣ransassociativity] AList Proposequality
       [𝓣ransassociativity]AList = ∁
@@ -466,8 +429,8 @@ module _ where
       𝓣ransrightidentityAList : 𝓣ransrightidentity AList Proposequality
       𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = ∅} = ∅
       𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} rewrite transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality} {f = f} = ∅
-      -- congruity (x ,_) (transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality})
-      -- 𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} rewrite (f ∙ ε[ AList ] ≡ f) ∋ transrightidentity {_∼_ = AList} = ∅ -- congruity (x ,_) (transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality})
+      --𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} = congruity (x ,_) (transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality})
+      --𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} rewrite (f ∙ ε[ AList ] ≡ f) ∋ transrightidentity {_∼_ = AList} = ∅
 
       𝓣ransleftidentityAList' : 𝓣ransleftidentity (flip AList) Proposequality
       𝓣ransleftidentityAList' .𝓣ransleftidentity.transleftidentity = transrightidentity {_∼_ = AList}
@@ -480,9 +443,6 @@ module _ where
 
       IsCategoryAList' : IsCategory (flip AList) Proposequality
       IsCategoryAList' = ∁
-
-  module _ {a} {A : ¶ → Ø a} where
-    open XXXX A public
 
   module _ {a} (A : ¶ → Ø a) where
 
@@ -622,12 +582,22 @@ module _ where
   instance
 
     IsDecidableFin : ∀ {n} → IsDecidable (Fin n)
-    IsDecidableFin = {!!}
+    IsDecidableFin .IsDecidable._≟_ ∅ ∅ = ↑ ∅
+    IsDecidableFin .IsDecidable._≟_ ∅ (↑ _) = ↓ λ ()
+    IsDecidableFin .IsDecidable._≟_ (↑ _) ∅ = ↓ λ ()
+    IsDecidableFin .IsDecidable._≟_ (↑ x) (↑ y) with x ≟ y
+    … | ↑ ∅ = ↑ ∅
+    … | ↓ x≢y = ↓ λ {∅ → x≢y ∅}
 
   instance
 
     IsDecidable¶ : IsDecidable ¶
-    IsDecidable¶ = {!!}
+    IsDecidable¶ .IsDecidable._≟_ ∅ ∅ = ↑ ∅
+    IsDecidable¶ .IsDecidable._≟_ ∅ (↑ _) = ↓ λ ()
+    IsDecidable¶ .IsDecidable._≟_ (↑ _) ∅ = ↓ λ ()
+    IsDecidable¶ .IsDecidable._≟_ (↑ x) (↑ y) with x ≟ y
+    … | ↑ ∅ = ↑ ∅
+    … | ↓ x≢y = ↓ λ {∅ → x≢y ∅}
 
 module _ {𝔭} {𝔓 : Ø 𝔭} where
 
@@ -669,8 +639,6 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     𝓣hickFinTerm : 𝓣hick Fin Term
     𝓣hickFinTerm .𝓣hick.thick x t = thick x ◃ t
-    -- § (thick x) $ t
-    -- surjectivity (thick x) $ t
 
     [𝓣hick]FinTerms : ∀ {N} → [𝓣hick] Fin (Terms N)
     [𝓣hick]FinTerms = ∁
@@ -757,7 +725,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     instance
 
-      𝓘njectivity₂,₁FinTerm : ∀ {m} → 𝓘njectivity₂,₁ (𝔱hin Fin Term m) Proposequality Proposequality -- ⦃ 𝓘njection₂FinTerm {m} ⦄
+      𝓘njectivity₂,₁FinTerm : ∀ {m} → 𝓘njectivity₂,₁ (𝔱hin Fin Term m) Proposequality Proposequality
       𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ x {i _} {i _} eq = congruity i (injectivity₂,₁ x (injectivity₁[ Proposequality ] eq))
       𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {i _} {leaf} ()
       𝓘njectivity₂,₁FinTerm .𝓘njectivity₂,₁.injectivity₂,₁ _ {i _} {_ fork _} ()
@@ -783,7 +751,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
         with injectivity₂,₀,₂[ Proposequality ] {y₂ = thin x ts2} t₁≡t₂
       … | ts₁≡ts₂ = congruity (function p2) (injectivity₂,₁ x ts₁≡ts₂)
 
-      𝓘njectivity₂,₁FinTerms : ∀ {N m} → 𝓘njectivity₂,₁ (𝔱hin Fin (Terms N) m) Proposequality Proposequality -- ⦃ 𝓘njection₂FinTerms {N} {m} ⦄
+      𝓘njectivity₂,₁FinTerms : ∀ {N m} → 𝓘njectivity₂,₁ (𝔱hin Fin (Terms N) m) Proposequality Proposequality
       𝓘njectivity₂,₁FinTerms .𝓘njectivity₂,₁.injectivity₂,₁ x {∅} {∅} x₁ = ∅
       𝓘njectivity₂,₁FinTerms .𝓘njectivity₂,₁.injectivity₂,₁ x {_ , _} {t₂ , ts₂} eq
         rewrite injectivity₂,₁ {_∼₂_ = Proposequality} x {y₂ = t₂} (injectivity₂,₀,₁[ Proposequality ] eq)
@@ -898,27 +866,9 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   open Substitunction 𝔓
   open Term 𝔓
   open Substitist 𝔓
-  -- open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
 
   _for_ : ∀ {n} (t' : Term n) (x : Fin (↑ n)) → Fin (↑ n) → Term n
-  (t for x) y = maybe′ i t (check {C = Maybe} x y)
-
-
-module _ {𝔭} {𝔓 : Ø 𝔭} where
-
-  open Substitunction 𝔓
-  open Term 𝔓
-  open Substitist 𝔓
-  -- open Substitunction⌶ (Substitunction⌶ 𝔓 ∋ record {})
-
-  -- _for_ : ∀ {n} (t' : Term n) (x : Fin (↑ n)) → Fin (↑ n) → Term n
-  -- (t for x) y = maybe′ i t (check {C = Maybe} x y)
-  -- {-
-  -- (t for x) y with check {C = Maybe} x y
-  -- … | ∅ = t
-  -- … | ↑ x' = i x'
-  -- -- (t for x) y = case check {C = Maybe} x y of λ { ∅ → t ; (↑ x₁) → i x₁}
-  -- -}
+  (t for x) y = maybe′ ε t (check[ Maybe ] x y)
 
   instance
 
@@ -973,13 +923,6 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   … | ∅ = ∅
   flexRigid {∅} () _
 
-module _ where
-
-  record Amgu {𝔵} {X : Ø 𝔵} {𝔱} (T : X → Ø 𝔱) {𝔞} (A : X → Ø 𝔞) {𝔪} (M : Ø 𝔞 → Ø 𝔪) : Ø 𝔵 ∙̂ 𝔱 ∙̂ 𝔞 ∙̂ 𝔪 where
-    field amgu : ∀ {x} → T x → T x → A x → M (A x)
-
-  open Amgu ⦃ … ⦄ public
-
 module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   open Substitunction 𝔓
@@ -1017,7 +960,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
         ⋆amguVecTerm .Amgu.amgu ∅ ∅ acc = ↑ acc
         ⋆amguVecTerm .Amgu.amgu (t₁ , t₁s) (t₂ , t₂s) acc = amgu t₁s t₂s =<< amgu t₁ t₂ acc
 
-module MGU {𝔭} (𝔓 : Ø 𝔭) where
+module _ {𝔭} (𝔓 : Ø 𝔭) where
 
   open Substitunction 𝔓
   open Term 𝔓
@@ -1029,22 +972,6 @@ module MGU {𝔭} (𝔓 : Ø 𝔭) where
     mgu {m} s t = amgu s t (m Σ., ∅)
 
 module _ where
-
-  module _
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
-    {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
-    (let _∼_ = Arrow 𝔄 𝔅) (let infix 4 _∼_ ; _∼_ = _∼_)
-    {ℓ̇} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇)
-    ⦃ _ : 𝓣ransitivity _∼_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
-    ℓ
-    where
-    𝓹rop-id = ∀ {m n} {f : m ∼ n} (P : ExtendedProperty (Arrow 𝔄 𝔅 m) ℓ _∼̇_)
-              (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
-    record PropId : Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ℓ̇ ∙̂ ↑̂ ℓ where field prop-id : 𝓹rop-id
-
-  open PropId ⦃ … ⦄ public
 
   instance
     PropIdFromTransleftidentity : ∀
@@ -1062,50 +989,54 @@ module _ where
       → PropId 𝔄 𝔅 _∼̇_ ℓ
     PropIdFromTransleftidentity .PropId.prop-id (_ , P₁) = P₁ $ symmetry transleftidentity
 
-  𝓅rop-id : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
-    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-    (let _∼_ = Arrow 𝔄 𝔅)
-    {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
-    ⦃ _ : 𝓣ransitivity _∼_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
-    ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
-    ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
-    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-    {m n}
-    {ℓ} {f : m ∼ n} (P : ExtendedProperty (Arrow 𝔄 𝔅 m) ℓ _∼̇_) (let P₀ = π₀ P)
-    → P₀ f
-    → P₀ (ε ∙ f)
-  𝓅rop-id = prop-id
-
   Unifies₀ : ∀
     {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
-    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔄 𝔅) (Extension ℭ) ⦄
-    ⦃ _ : 𝓢urjectivity (Arrow 𝔄 𝔅) (Extension ℭ) ⦄
+    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
     {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
-    → ∀ {m} → ℭ m → ℭ m → Property (Arrow 𝔄 𝔅 m) ℓ
-  Unifies₀ _≈_ s t f = (f ◃ s) ≈ (f ◃ t)
+    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ℓ
+  Unifies₀ _≈_ s t f =
+    let _≈_ = _≈_
+        infix 4 _≈_
+    in
+    f ◃ s ≈ f ◃ t
+
+  Unifies₀⟦_⟧ : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
+    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
+    {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
+    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ℓ
+  Unifies₀⟦ _ ⟧ = Unifies₀
 
   ≡-Unifies₀ : ∀
     {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
-    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔄 𝔅) (Extension ℭ) ⦄
-    ⦃ _ : 𝓢urjectivity (Arrow 𝔄 𝔅) (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Property (Arrow 𝔄 𝔅 m) ∅̂
+    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
+    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ∅̂
   ≡-Unifies₀ = Unifies₀ _≡_
+
+  ≡-Unifies₀⟦_⟧ : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
+    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
+    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ∅̂
+  ≡-Unifies₀⟦ _ ⟧ = ≡-Unifies₀
 
   ExtensionalUnifies : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     (let _↦_ = Arrow 𝔄 𝔅)
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     {ℓ₁} (_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁)
     {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
@@ -1123,8 +1054,8 @@ module _ where
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     (let _↦_ = Arrow 𝔄 𝔅)
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
     ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
@@ -1132,12 +1063,10 @@ module _ where
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
     ⦃ _ : [𝓢urjextensionality] _↦_ (Extended _≡_) (Extension ℭ) (Extended _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ (Extended _≡_) (Extension ℭ) (Extended _∼₂_) ⦄
-    → ∀ {m} → ℭ m → ℭ m → ExtendedProperty (Arrow 𝔄 𝔅 m) ℓ₂ (Extended _≡_)
-  ≡-ExtensionalUnifies {_∼₂_ = _∼₂_} s t =
-    Unifies₀ _∼₂_ s t , λ f≐g f◃s=f◃t →
-      ⟪ f≐g ⟫[ Extended _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Extended _∼₂_ ] s)
+    → ∀ {m} → ℭ m → ℭ m → ExtendedProperty (m ↦_) ℓ₂ (Extended _≡_)
+  ≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _≡_ {_∼₂_ = _∼₂_} s t
 
-module MORE {𝔭} (𝔓 : Ø 𝔭) where
+module _ {𝔭} (𝔓 : Ø 𝔭) where
 
   open Substitunction 𝔓
   open Term 𝔓
@@ -1150,13 +1079,45 @@ module MORE {𝔭} (𝔓 : Ø 𝔭) where
   ≡-Unifies₀-Term = ≡-Unifies₀
 
   ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Property (Arrow Fin Term m) ∅̂
-  ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x -- ≡-Unifies₀
+  ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
 
   ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ExtendedProperty (Arrow Fin Term m) ∅̂ _
   ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
 
   ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → ExtendedProperty (Arrow Fin Term m) ∅̂ Proposextensequality
   ≡-ExtensionalUnifies-Terms = ExtensionalUnifies _≡_
+
+module _
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+  {ℓ : Ł}
+  where
+
+  PropertyEquivalence : Property 𝔒 ℓ → Property 𝔒 ℓ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
+  PropertyEquivalence P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+
+  instance
+
+    𝓡eflexivityProperty : 𝓡eflexivity PropertyEquivalence
+    𝓡eflexivityProperty .𝓡eflexivity.reflexivity = ¡ , ¡
+
+    𝓢ymmetryProperty : 𝓢ymmetry PropertyEquivalence
+    𝓢ymmetryProperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+
+    𝓣ransitivityProperty : 𝓣ransitivity PropertyEquivalence
+    𝓣ransitivityProperty .𝓣ransitivity.transitivity P⇔Q Q⇔R = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
+
+    IsEquivalenceProperty : IsEquivalence PropertyEquivalence
+    IsEquivalenceProperty = ∁
+
+instance
+
+  HasEquivalenceProperty : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+    {ℓ}
+    → HasEquivalence (Property 𝔒 ℓ) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
+  HasEquivalenceProperty .HasEquivalence.Equivalence P Q = PropertyEquivalence (λ {x} → P {x}) Q -- ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
 
 instance
 
@@ -1166,30 +1127,61 @@ instance
     {ℓ}
     → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Property 𝔒 ℓ)
   ProperthingProperty .Properthing._∧_ P Q f = P f × Q f
-  ProperthingProperty .Properthing._⇔_ P Q = ∀ {n} f → (P {n} f → Q f) × (Q f → P f)
-  ProperthingProperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
+  ProperthingProperty .Properthing._⇔_ P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+  -- ProperthingProperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
   ProperthingProperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P f → 𝟘
+  ProperthingProperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
-  ProperthingExtendedProperty : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
-    {ℓ}
-    {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
-    → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtendedProperty 𝔒 ℓ _↦_)
-  ProperthingExtendedProperty .Properthing._∧_ P Q = (λ f → π₀ P f × π₀ Q f) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
-  ProperthingExtendedProperty .Properthing._⇔_ P Q = (λ {x} → π₀ P {x}) ⇔ π₀ Q
-  ProperthingExtendedProperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
-  ProperthingExtendedProperty .Properthing.Nothing P = ∀ {n f} → π₀ P {n} f → 𝟘
-
-module PropertyFunctions
+module _
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-  {ℓ : Ł}
-  ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
+  {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+  {ℓ}
+  {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
   where
-  _[∙_] : ∀ {x y} → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ y
-  (P [∙ f ]) g = P (g ∙ f)
+
+  ExtendedPropertyEquivalence : ExtendedProperty 𝔒 ℓ _↦_ → ExtendedProperty 𝔒 ℓ _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
+  ExtendedPropertyEquivalence P Q = (λ {x} → π₀ P {x}) ⇔ π₀ Q
+
+  instance
+
+    𝓡eflexivityExtendedProperty : 𝓡eflexivity ExtendedPropertyEquivalence
+    𝓡eflexivityExtendedProperty .𝓡eflexivity.reflexivity = ¡ , ¡
+
+    𝓢ymmetryExtendedProperty : 𝓢ymmetry ExtendedPropertyEquivalence
+    𝓢ymmetryExtendedProperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+
+  𝓣ransitivityExtendedProperty' : 𝓣ransitivity ExtendedPropertyEquivalence
+  𝓣ransitivityExtendedProperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R = transitivity (λ {x} {f} → P⇔Q {x} {f}) Q⇔R
+
+  instance
+
+    𝓣ransitivityExtendedProperty : 𝓣ransitivity ExtendedPropertyEquivalence
+    𝓣ransitivityExtendedProperty = 𝓣ransitivityExtendedProperty'
+
+    IsEquivalenceExtendedProperty : IsEquivalence ExtendedPropertyEquivalence
+    IsEquivalenceExtendedProperty = ∁
+
+  instance
+
+    ProperthingExtendedProperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtendedProperty 𝔒 ℓ _↦_)
+    ProperthingExtendedProperty .Properthing._∧_ P Q = (λ _ → π₀ P _ × π₀ Q _) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
+    ProperthingExtendedProperty .Properthing._⇔_ P Q = ExtendedPropertyEquivalence P Q -- ExtendedPropertyEquivalence P Q -- (λ {x} → π₀ P {x}) ⇔ π₀ Q
+    --ProperthingExtendedProperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+    ProperthingExtendedProperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
+    ProperthingExtendedProperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
+
+{-
+module _
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+  {ℓ : Ł}
+  where
+
+  instance
+
+    𝓡eflexivityProperty : 𝓡eflexivity (_⇔_ {ℓ = (𝔵 ∙̂ 𝔬 ∙̂ ℓ)} {𝔒 = (Property 𝔒 ℓ)})
+    𝓡eflexivityProperty .𝓡eflexivity.reflexivity = ¡ , ¡
+-}
 
 instance
 
@@ -1202,42 +1194,6 @@ instance
     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ) ⦄
     → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ)
   PropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
-
-module TestPropertyFunctions
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-  {ℓ : Ł}
-  ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ) ⦄
-  where
-  test[∙] : ∀ {x y} → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ y
-  test[∙] P f g = (f ◃ λ {_} → P) g -- ((λ {_} → P) ● f) g
-  -- ((λ {_} → P) ● f)
-  -- (f ◃ (λ {_} → P)) g
-  -- §' ⦃ r = toSurj' ⦄ f P
-
-
-
-
-
-
-
-
-
-record ArrowType
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-    {ℓ̇} (_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
-    : Ø₀ where
-  no-eta-equality
-
-record [ExtensibleType]
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-    {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
-    : Ø₀ where
-  no-eta-equality
 
 instance
 
@@ -1256,131 +1212,57 @@ instance
     → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_))
   ExtendedPropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
 
-module TestExtendedPropertyFunctions
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-  {ℓ}
-  {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
-  ⦃ _ : [ExtensibleType] _↦_ ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-  ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-  ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-  ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
-  -- ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
-  -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
-  where
-  test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
-  test[∙] P f = f ◃ P
-
-
 instance
 
-  ExtendedPropertySurjectivity' : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-    {ℓ : Ł}
-    {ℓ̇} {_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
-    ⦃ _ : ArrowType _↦_ ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
-    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _))) ⦄
-    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _)))
-  ExtendedPropertySurjectivity' .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+  [ExtensibleType]Proposequality : ∀ {a} {b} {A : Set a} {B : A → Set b} → [ExtensibleType] (λ {w} → Proposequality⟦ B w ⟧)
+  [ExtensibleType]Proposequality = ∁
 
-module TestExtendedPropertyFunctions'
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-  {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-  {ℓ}
-  {ℓ̇} (_↦_ : ∀ x → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
-  ⦃ _ : ArrowType _↦_ ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-  ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-  ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
-  ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended (_↦_ _)) (Extension 𝔒₂) (Extended (_↦_ _)) ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended (_↦_ _))) ⦄
-  -- ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
-  -- ⦃ _ : 𝓢urjectivity' (Arrow 𝔒₁ 𝔒₂) (λ x → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_)) ⦄
-  where
-  test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended (_↦_ _)) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended (_↦_ _))
-  test[∙] P f = §' f P
+  [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ λ v → ArrowsourceExtendedProperty Fin Term ℓ v (Extended _≡_))
+  [𝓢urjectivity]ArrowE = ∁
 
+  [𝓢urjectivity]Arrow : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ ArrowsourceProperty Fin Term ℓ)
+  [𝓢urjectivity]Arrow = ∁
 
+module Test where
+  postulate 𝔓 : Set
+  postulate ℓ : Ł
+  open Term 𝔓
+  test-epfs : ∀ {x y} → ArrowsourceExtendedProperty Fin Term ℓ x (λ {y} → Extended Proposequality⟦ Term y ⟧) → Arrow Fin Term x y → ArrowsourceExtendedProperty Fin Term ℓ y (Extended _≡_)
+  test-epfs P f = f ◃ P
 
+  test-epfs' : ∀ {x y} → ArrowsourceProperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceProperty Fin Term ℓ y
+  test-epfs' P f = f ◃ (λ {_} → P)
 
+  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowsourceProperty Fin Term _ _ ] ≡-Unifies₀ t s
+  --fact1U : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
+  fact1U = symmetry , symmetry
 
+  Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔ ≡-ExtensionalUnifies t s
+  --Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔[ ArrowsourceExtendedProperty Fin Term _ _ _ ] ≡-ExtensionalUnifies t s
+  Properties-fact1 = symmetry , symmetry
 
+  Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
+         → (λ {m} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {m}) ⇔ ((λ {m} → ≡-Unifies₀ s1 t1 {m}) ∧ ≡-Unifies₀ s2 t2)
+  Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+  Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
+         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ArrowsourceExtendedProperty Fin _ _ _ _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+  Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+  fact3 : ∀ {m} {P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
+  fact3 = ¡ , ¡
 
+  fact4 : ∀{m n} {P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} (f : _ → Term n)
+          → Nothing P → Nothing (f ◃ P)
+  fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
+  fact5⋆ : ∀{m n} {P Q : ArrowsourceProperty Fin Term ℓ m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
+           → ((f ◃[ ArrowsourceProperty Fin Term _ ] P)) ⇔[ ArrowsourceProperty Fin Term _ _ ] (f ◃ λ {_} → Q)
+  fact5⋆ P⇔Q = P⇔Q
 
--- -- module ExtendedPropertyFunctions
--- --   {𝔵} {𝔛 : Ø 𝔵}
--- --   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
--- --   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
--- --   {ℓ}
--- --   {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
--- --   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
--- --   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
--- --   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
--- --   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
--- --   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (λ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)) ⦄
--- --   where
--- --   _[∙_] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
--- --   (P [∙ f ]) = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+  fact5 : ∀{m n} {P Q : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} {f : Arrow Fin Term m n} → P ⇔ Q
+           → (f ◃ P) ⇔ (f ◃ Q)
+  fact5 P⇔Q = P⇔Q
 
--- --   test[∙]' : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
--- --   test[∙]' P f = surjectivity f $ P -- f P
-
--- --   test[∙] : ∀ {x y} → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
--- --   test[∙] P f = surjectivity ⦃ r = ExtendedPropertySurjectivity {_↦_ = _↦_} ⦄ f P -- f P
-
--- -- -- -- -- -- -- -- -- -- --   module Properties where
--- -- -- -- -- -- -- -- -- -- --     fact1' : ∀ {m} {s t : Term m} → Unifies s t ⇔ Unifies t s
--- -- -- -- -- -- -- -- -- -- --     fact1' _ = symmetry , symmetry
-
--- -- -- -- -- -- -- -- -- -- -- -- --   switch⋆ : ∀ {m} (P Q : Property⋆ m) → P ⇔⋆ Q → Q ⇔⋆ P
--- -- -- -- -- -- -- -- -- -- -- -- --   switch⋆ _ _ P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
-
--- -- -- -- -- -- -- -- -- -- -- -- --   switch : ∀ {m} (P Q : Property m) → P ⇔ Q → Q ⇔ P
--- -- -- -- -- -- -- -- -- -- -- -- --   switch _ _ P⇔Q f = π₁ (P⇔Q f) , π₀ (P⇔Q f)
-
--- -- -- -- -- -- -- -- -- -- -- -- --   Nothing⋆ : ∀ {m} → (P : Property⋆ m) → Ø 𝔭
--- -- -- -- -- -- -- -- -- -- -- -- --   Nothing⋆ P = ∀ {n} f → P {n} f → 𝟘
-
--- -- -- -- -- -- -- -- -- -- -- -- --   Nothing : ∀ {m} → (P : Property m) → Ø 𝔭
--- -- -- -- -- -- -- -- -- -- -- -- --   Nothing P = ∀ {n} f → π₀ P {n} f → 𝟘
-
--- -- -- -- -- -- -- -- -- -- -- -- --   _[-◇⋆_] : ∀{m n} → Property⋆ m → Substitunction m n → Property⋆ n
--- -- -- -- -- -- -- -- -- -- -- -- --   (P [-◇⋆ f ]) g = P (g ∙ f)
-
--- -- -- -- -- -- -- -- -- -- -- -- --   _[-◇_] : ∀ {m n} → Property m → Substitunction m n → Property n
--- -- -- -- -- -- -- -- -- -- -- -- --   P [-◇ f ] = (λ g → π₀ P (g ∙ f)) , λ f'≐g' Pf'◇f → π₁ P (⟪ f'≐g' ⟫ ∘ f) Pf'◇f
-
--- -- -- -- -- -- -- -- -- -- -- -- --   module Properties where
--- -- -- -- -- -- -- -- -- -- -- -- --     fact1 : ∀ {m} {s t : Term m} → Unifies s t ⇔ Unifies t s
--- -- -- -- -- -- -- -- -- -- -- -- --     fact1 _ = symmetry , symmetry
-
--- -- -- -- -- -- -- -- -- -- -- -- -- {-
--- -- -- -- -- -- -- -- -- -- -- -- --     fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
--- -- -- -- -- -- -- -- -- -- -- -- --            -> Unifies⋆ (s1 fork s2) (t1 fork t2) ⇔⋆ (Unifies⋆ s1 t1 ∧⋆ Unifies⋆ s2 t2)
--- -- -- -- -- -- -- -- -- -- -- -- --     fact1'⋆ f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
--- -- -- -- -- -- -- -- -- -- -- -- --       where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
--- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 fork s2) ≡ (t1 fork t2)
--- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 ≡ t1) × (s2 ≡ t2)
--- -- -- -- -- -- -- -- -- -- -- -- --             deconstr s1 s2 .s1 .s2 refl = refl , refl
-
--- -- -- -- -- -- -- -- -- -- -- -- --     fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
--- -- -- -- -- -- -- -- -- -- -- -- --            -> Unifies (s1 fork s2) (t1 fork t2) ⇔ (Unifies s1 t1 ∧ Unifies s2 t2)
--- -- -- -- -- -- -- -- -- -- -- -- --     fact1' f = deconstr _ _ _ _ , uncurry (cong₂ _fork_)
--- -- -- -- -- -- -- -- -- -- -- -- --       where deconstr : ∀ {m} (s1 s2 t1 t2 : Term m)
--- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 fork s2) ≡ (t1 fork t2)
--- -- -- -- -- -- -- -- -- -- -- -- --                      -> (s1 ≡ t1) × (s2 ≡ t2)
--- -- -- -- -- -- -- -- -- -- -- -- --             deconstr s1 s2 .s1 .s2 refl = refl , refl
--- -- -- -- -- -- -- -- -- -- -- -- -- -}
+  fact6 : ∀{m n} (P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
