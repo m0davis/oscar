@@ -40,6 +40,9 @@ Version history:
     * major bugfix in LISP code
     * now developing using the Agda language (this makes much of the below TODO's moot)
 
+0.3.0.2:
+    * major cleanup of src-agda
+
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
     * feature: implement Variables

@@ -1,5 +1,5 @@
 
-module Oscar.Property-NoInstanceBug5 where
+module AgdaFeatureNoInstanceFromHidden where
 
 postulate
   A : Set

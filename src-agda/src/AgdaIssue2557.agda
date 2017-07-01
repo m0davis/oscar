@@ -1,5 +1,5 @@
 
-module Oscar.PropertyBug where
+module AgdaIssue2557 where
 
 record Superclass : Set₁ where field super : Set
 
