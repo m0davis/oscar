@@ -1,3 +1,4 @@
 name: OSCAR
-include: .
-depend: standard-library, agda-prelude
+include: src
+depend: standard-library
+--depend: standard-library, agda-prelude

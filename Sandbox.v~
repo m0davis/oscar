@@ -1,4 +1,0 @@
-Inductive list (e : Type) : Type :=
-| Nil : list e
-| Cons : e -> list e -> list e.
-
