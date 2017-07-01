@@ -49,6 +49,7 @@ Version history:
       - rename Property et al. to Ṗroperty
       - rename Extended to Pointwise
       - decrease position of level argument in Ṗroperty et al.
+    * replace _⇔_ with HasEquivalence in Properthing
 
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
