@@ -121,6 +121,23 @@ Arrow : ∀
   → Ø 𝔞 ∙̂ 𝔟
 Arrow 𝔄 𝔅 x y = 𝔄 x → 𝔅 y
 
+Property : ∀
+  {𝔵} (𝔛 : Ø 𝔵)
+  ℓ
+  → Ø 𝔵 ∙̂ ↑̂ ℓ
+Property 𝔛 ℓ = 𝔛 → Ø ℓ
+
+Relation : ∀
+  {𝔞} (𝔄 : Ø 𝔞)
+  ℓ → Ø 𝔞 ∙̂ ↑̂ ℓ
+Relation 𝔄 ℓ = 𝔄 → Property 𝔄 ℓ
+
+Ṙelation : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
+  ℓ → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
+Ṙelation 𝔄 ℓ = ∀ {x} → 𝔄 x → Property (𝔄 x) ℓ
+
 Extended : ∀
     {𝔞} {𝔄 : Ø 𝔞}
     {𝔟} {𝔅 : Ø 𝔟}
@@ -129,12 +146,12 @@ Extended : ∀
     → Ø 𝔞 ∙̂ ℓ
 Extended _≈_ = λ f g → ∀ x → f x ≈ g x
 
-Property : ∀
+Ṗroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔬} (𝔒 : 𝔛 → Ø 𝔬)
+  {𝔬} (𝔒 : Property 𝔛 𝔬)
   ℓ
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ
-Property 𝔒 ℓ = ∀ {x} → 𝔒 x → Ø ℓ
+Ṗroperty 𝔒 ℓ = ∀ {x} → Property (𝔒 x) ℓ
 
 module _ where
 
@@ -157,24 +174,24 @@ module _ where
               (∀ x (y : B x) → C x y) → (p : Σ A B) → C (π₀ p) (π₁ p)
   uncurry f (x , y) = f x y
 
-ExtendedProperty : ∀
+ExtendedṖroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬} (𝔒 : 𝔛 → Ø 𝔬)
   ℓ
   {ℓ̇} (_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇)
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
-ExtendedProperty 𝔒 ℓ _↦_ = Σ (Property 𝔒 ℓ) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → P f → P g)
+ExtendedṖroperty 𝔒 ℓ _↦_ = Σ (Ṗroperty 𝔒 ℓ) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → Extension P f g)
 
-ArrowsourceProperty : ∀
+ArrowsourceṖroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
   {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
   ℓ
   → 𝔛
   → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ x = Property (Arrow 𝔒₁ 𝔒₂ x) ℓ
+ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ x = Ṗroperty (Arrow 𝔒₁ 𝔒₂ x) ℓ
 
-ArrowsourceExtendedProperty :
+ArrowsourceExtendedṖroperty :
   ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
@@ -182,4 +199,4 @@ ArrowsourceExtendedProperty :
     ℓ
     → (x : 𝔛) → ∀
       {ℓ̇} (_↦_ : ∀ {y} → Arrow 𝔒₁ 𝔒₂ x y → Arrow 𝔒₁ 𝔒₂ x y → Ø ℓ̇) → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ ∙̂ ℓ̇
-ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ x _↦_ = ExtendedProperty (Arrow 𝔒₁ 𝔒₂ x) ℓ _↦_
+ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ x _↦_ = ExtendedṖroperty (Arrow 𝔒₁ 𝔒₂ x) ℓ _↦_
