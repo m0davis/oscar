@@ -200,7 +200,7 @@ module Test6 where
   test-epfs' : ∀ {x y} → ArrowsourceProperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceProperty Fin Term ℓ y
   test-epfs' P f = f ◃ (λ {_} → P)
 
-  fact1U : ∀ {m} {s t : Term m} → (λ {d} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {d}) ⇔ ≡-Unifies₀ t s
+  fact1U : ∀ {m} {s t : Term m} → (λ {d} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {d}) ≈ ≡-Unifies₀ t s
   fact1U = symmetry , symmetry
 
   Properties-fact1 : ∀ {m} {s t : Term m} → (≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} s t) ⇔ ≡-ExtensionalUnifies t s
@@ -225,7 +225,7 @@ module Test6 where
            → (λ {w} → (f ◃ λ {_} → P) {w}) ⇔ (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} {f : Arrow Fin Term m n} → P ⇔ Q
+  fact5 : ∀{m n} {P Q : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} {f : Arrow Fin Term m n} → P ≈ Q
            → (f ◃ P) ⇔ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 

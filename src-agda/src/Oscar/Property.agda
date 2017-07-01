@@ -1170,6 +1170,16 @@ module _
     ProperthingExtendedProperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
     ProperthingExtendedProperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
+instance
+
+  HasEquivalenceExtendedProperty : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+    {ℓ}
+    {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
+    → HasEquivalence (ExtendedProperty 𝔒 ℓ _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
+  HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = P ⇔ Q
+
 {-
 module _
   {𝔵} {𝔛 : Ø 𝔵}

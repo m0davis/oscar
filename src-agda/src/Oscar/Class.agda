@@ -1232,6 +1232,10 @@ module _ where
     _≈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
     _≈_ = HasEquivalence.Equivalence !
 
+    infix 4 ≈-syntax
+    ≈-syntax : ∀ {𝔬} (𝔒 : Ø 𝔬) {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
+    ≈-syntax _ = _≈_
+    syntax ≈-syntax 𝔒 x y = x ≈[ 𝔒 ] y
 
 module _ where
 
