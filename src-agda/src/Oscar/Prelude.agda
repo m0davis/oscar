@@ -115,8 +115,10 @@ module _ where
 
 Arrow : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
-  {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
+  {𝔞}
+  {𝔟}
+  (𝔄 : 𝔛 → Ø 𝔞)
+  (𝔅 : 𝔛 → Ø 𝔟)
   → 𝔛 → 𝔛
   → Ø 𝔞 ∙̂ 𝔟
 Arrow 𝔄 𝔅 x y = 𝔄 x → 𝔅 y
@@ -161,14 +163,165 @@ Ṗroperty : ∀
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ
 Ṗroperty = Dotter Property
 
-ArrowsourceṖroperty : ∀
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
-  {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
+GIndexer : ∀
+  {𝔵} {𝔛 : Ø 𝔵} {𝔬₁} {𝔬₂}
+  (G : ∀
+         (𝔛 : Ø 𝔵)
+         ℓ
+         → Ø 𝔵 ∙̂ ↑̂ ℓ)
+  (I : ∀
+    {𝔛 : Ø 𝔵}
+    {𝔬} (𝔒 : G 𝔛 𝔬)
+    ℓ
+    → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ)
+  (F : ∀
+    {𝔛 : Ø 𝔵}
+    (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    → 𝔛 → G 𝔛 (𝔬₁ ∙̂ 𝔬₂))
+  (𝔒₁ : 𝔛 → Ø 𝔬₁)
+  (𝔒₂ : 𝔛 → Ø 𝔬₂)
   ℓ
   → 𝔛
   → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ x = Ṗroperty (Arrow 𝔒₁ 𝔒₂ x) ℓ
+GIndexer _ I F 𝔒₁ 𝔒₂ ℓ x = I (F 𝔒₁ 𝔒₂ x) ℓ
+
+IndexerṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  (F : ∀
+    (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    → 𝔛 → 𝔛 → Ø 𝔬₁ ∙̂ 𝔬₂)
+  (𝔒₁ : 𝔛 → Ø 𝔬₁)
+  (𝔒₂ : 𝔛 → Ø 𝔬₂)
+  ℓ
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IndexerṖroperty F 𝔒₁ 𝔒₂ ℓ x = Ṗroperty (F 𝔒₁ 𝔒₂ x) ℓ
+-- F 𝔒₁ 𝔒₂ ℓ x = Ṗroperty (F 𝔒₁ 𝔒₂ x) ℓ
+
+IXR : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  (IX : (𝔛 → Set (𝔬₂ ∙̂ 𝔬₁)) → ∀ ℓ → Set ((↑̂ ℓ) ∙̂ (𝔬₂ ∙̂ (𝔬₁ ∙̂ 𝔵))))
+  (F : ∀
+    (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    → 𝔛 → 𝔛 → Ø 𝔬₁ ∙̂ 𝔬₂)
+  (𝔒₁ : 𝔛 → Ø 𝔬₁)
+  (𝔒₂ : 𝔛 → Ø 𝔬₂)
+  ℓ
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR IX F 𝔒₁ 𝔒₂ ℓ x = IX (F 𝔒₁ 𝔒₂ x) ℓ
+
+IXR' : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  {FOO : Set (𝔵 ∙̂ ↑̂ (𝔬₂ ∙̂ 𝔬₁))}
+  (IX : FOO → ∀ ℓ → Set ((↑̂ ℓ) ∙̂ (𝔬₂ ∙̂ (𝔬₁ ∙̂ 𝔵))))
+  (F : ∀
+    (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    → 𝔛 → FOO)
+  (𝔒₁ : 𝔛 → Ø 𝔬₁)
+  (𝔒₂ : 𝔛 → Ø 𝔬₂)
+  ℓ
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR' IX F 𝔒₁ 𝔒₂ ℓ x = IX (F 𝔒₁ 𝔒₂ x) ℓ
+
+IXR'' : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  {FOO : Ø 𝔵 ∙̂ ↑̂ (𝔬₁ ∙̂ 𝔬₂)}
+  {XO1 : Ø 𝔵 ∙̂ ↑̂ 𝔬₁}
+  {XO2 : Ø 𝔵 ∙̂ ↑̂ 𝔬₂}
+  (IX : FOO → ∀ ℓ → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ)
+  (F : XO1 → XO2 → 𝔛 → FOO)
+  (𝔒₁ : XO1)
+  (𝔒₂ : XO2)
+  ℓ
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR'' IX F 𝔒₁ 𝔒₂ ℓ x = IX (F 𝔒₁ 𝔒₂ x) ℓ
+
+IXR''' : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  {FOO : Ø 𝔵 ∙̂ ↑̂ (𝔬₁ ∙̂ 𝔬₂)}
+  {XO1 : Ø 𝔵 ∙̂ ↑̂ 𝔬₁}
+  {XO2 : Ø 𝔵 ∙̂ ↑̂ 𝔬₂}
+  (IX : FOO → ∀ ℓ → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ)
+  (F : XO1 → XO2 → 𝔛 → FOO)
+  (𝔒₁ : XO1)
+  (𝔒₂ : XO2)
+  (ℓ : Ł)
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR''' IX F 𝔒₁ 𝔒₂ ℓ x = IX (F 𝔒₁ 𝔒₂ x) ℓ
+
+{-
+_ : ∀ l1 l2 (A : Ø ↑̂ l1 ∙̂ l2) (B : Ø ↑̂ {!l1!} ∙̂ l2) (_≈_ : ∀ {l} {X Y : Ø l} → X → Y → Ø₀) → Set
+_ = λ l1 l2 A B _≈_ → A ≈ B
+
+_ : ∀ l1 (A : Ø ↑̂ l1) (B : Ø ↑̂ {!l1!}) (_≈_ : ∀ {l} {X Y : Ø l} → X → Y → Ø₀) → Set
+_ = λ l1 A B _≈_ → A ≈ B
+-}
+
+IXR'''' : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  {FOO : Ø 𝔵 ∙̂ ↑̂ (𝔬₁ ∙̂ 𝔬₂)}
+  {XO1 : Ø 𝔵 ∙̂ ↑̂ 𝔬₁}
+  {XO2 : Ø 𝔵 ∙̂ ↑̂ 𝔬₂}
+  (F : XO1 → XO2 → 𝔛 → FOO)
+  (𝔒₁ : XO1)
+  (𝔒₂ : XO2)
+  (ℓ : Ł)
+  (IX : FOO → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ)
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR'''' F 𝔒₁ 𝔒₂ ℓ IX x = IX (F 𝔒₁ 𝔒₂ x)
+
+IXR5 : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  {FOO : Ø 𝔵 ∙̂ ↑̂ (𝔬₁ ∙̂ 𝔬₂)}
+  {XO1 : Ø 𝔵 ∙̂ ↑̂ 𝔬₁}
+  {XO2 : Ø 𝔵 ∙̂ ↑̂ 𝔬₂}
+  (F : XO1 → XO2 → 𝔛 → FOO)
+  (𝔒₁ : XO1)
+  (𝔒₂ : XO2)
+  (ℓ : Ł)
+  (IX : FOO → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ)
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR5 F 𝔒₁ 𝔒₂ ℓ IX x = IX (F 𝔒₁ 𝔒₂ x)
+
+IXR6 : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
+  {FOO : Ø 𝔵 ∙̂ ↑̂ (𝔬₁ ∙̂ 𝔬₂)}
+  (F : 𝔛 → FOO)
+  (ℓ : Ł)
+  (IX : FOO → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ)
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+IXR6 F𝔒₁𝔒₂ ℓ IX x = IX (F𝔒₁𝔒₂ x)
+
+IXR7 : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁𝔬₂}
+  {FOO : Ø 𝔵 ∙̂ ↑̂ (𝔬₁𝔬₂)}
+  (F : 𝔛 → FOO)
+  (ℓ : Ł)
+  (IX : FOO → Ø 𝔵 ∙̂ 𝔬₁𝔬₂ ∙̂ ↑̂ ℓ)
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔬₁𝔬₂ ∙̂ ↑̂ ℓ
+IXR7 F𝔒₁𝔒₂ ℓ IX x = IX (F𝔒₁𝔒₂ x)
+
+IXR8 : ∀ {𝔵} {𝔛 : Ø 𝔵} {x+𝔬₁𝔬₂ x+𝔬₁𝔬₂+l}
+  {FOO : Ø x+𝔬₁𝔬₂}
+  (F : 𝔛 → FOO)
+  (IX : FOO → Ø x+𝔬₁𝔬₂+l)
+  → 𝔛
+  → Ø x+𝔬₁𝔬₂+l
+IXR8 F𝔒₁𝔒₂ IX x = IX (F𝔒₁𝔒₂ x)
+
+ArrowsourceṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁} {𝔬₂} → (𝔛 → Ø 𝔬₁) → (𝔛 → Ø 𝔬₂) → ∀ ℓ → 𝔛 → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR8 (Arrow O1 O2) (λ foo → Dotter Property foo ℓ) x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR7 (Arrow O1 O2) ℓ (λ foo → Dotter Property foo _) x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} = IXR' (Dotter Property) Arrow
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} = IXR'' {𝔬₁ = 𝔬₁} {𝔬₂ = 𝔬₂ ∙̂ {!𝔬₁!}} (Dotter Property) Arrow
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} = IXR'' {𝔬₁ = 𝔬₁} {𝔬₂ = 𝔬₂} (Dotter Property) Arrow
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR''' (Dotter Property) Arrow O1 O2 ℓ x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR'''' {𝔬₁ = 𝔬₁} {𝔬₂ = 𝔬₂} Arrow O1 O2 ℓ (λ foo → Dotter Property foo _) x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR5 {𝔬₁ = 𝔬₁} {𝔬₂ = 𝔬₂} Arrow O1 O2 ℓ (λ foo → Dotter Property foo _) x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR6 (Arrow O1 O2) ℓ (λ foo → Dotter Property foo _) x
 
 module _ where
 
