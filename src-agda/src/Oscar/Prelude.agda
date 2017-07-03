@@ -136,16 +136,16 @@ Relation 𝔄 ℓ = 𝔄 → Property 𝔄 ℓ
 
 Dotter :
   (∀ {𝔞} (𝔄 : Ø 𝔞) ℓ → Ø 𝔞 ∙̂ ↑̂ ℓ)
-  → ∀
+  → ∀ ℓ
       {𝔵} {𝔛 : Ø 𝔵}
       {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
-      ℓ → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
-Dotter D 𝔄 ℓ = ∀ {x} → D (𝔄 x) ℓ
+      → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
+Dotter D ℓ 𝔄 = ∀ {x} → D (𝔄 x) ℓ
 
-Ṙelation : ∀
+Ṙelation : ∀ ℓ
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
-  ℓ → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
+  → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
 Ṙelation = Dotter Relation
 
 Extended : ∀
@@ -156,10 +156,10 @@ Extended : ∀
     → Ø 𝔞 ∙̂ ℓ
 Extended _≈_ = λ f g → ∀ x → f x ≈ g x
 
-Ṗroperty : ∀
+Ṗroperty :
+  ∀ ℓ
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬} (𝔒 : Property 𝔛 𝔬)
-  ℓ
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ
 Ṗroperty = Dotter Property
 
@@ -196,7 +196,7 @@ IndexerṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
   ℓ
   → 𝔛
   → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-IndexerṖroperty F 𝔒₁ 𝔒₂ ℓ x = Ṗroperty (F 𝔒₁ 𝔒₂ x) ℓ
+IndexerṖroperty F 𝔒₁ 𝔒₂ ℓ x = Ṗroperty ℓ (F 𝔒₁ 𝔒₂ x)
 -- F 𝔒₁ 𝔒₂ ℓ x = Ṗroperty (F 𝔒₁ 𝔒₂ x) ℓ
 
 IXR : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁ 𝔬₂}
@@ -313,7 +313,9 @@ IXR8 : ∀ {𝔵} {𝔛 : Ø 𝔵} {x+𝔬₁𝔬₂ x+𝔬₁𝔬₂+l}
 IXR8 F𝔒₁𝔒₂ IX x = IX (F𝔒₁𝔒₂ x)
 
 ArrowsourceṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁} {𝔬₂} → (𝔛 → Ø 𝔬₁) → (𝔛 → Ø 𝔬₂) → ∀ ℓ → 𝔛 → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR8 (Arrow O1 O2) (λ foo → Dotter Property foo ℓ) x
+ArrowsourceṖroperty O1 O2 ℓ x = IXR8 (Arrow O1 O2) (Dotter Property ℓ) x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR8 (Arrow O1 O2) (Dotter Property ℓ) x
+--ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR8 (Arrow O1 O2) (λ foo → Dotter Property foo ℓ) x
 --ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} O1 O2 ℓ x = IXR7 (Arrow O1 O2) ℓ (λ foo → Dotter Property foo _) x
 --ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} = IXR' (Dotter Property) Arrow
 --ArrowsourceṖroperty {𝔵} {𝔛} {𝔬₁} {𝔬₂} = IXR'' {𝔬₁ = 𝔬₁} {𝔬₂ = 𝔬₂ ∙̂ {!𝔬₁!}} (Dotter Property) Arrow
@@ -348,9 +350,10 @@ ExtendedṖroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬} (𝔒 : 𝔛 → Ø 𝔬)
   ℓ
-  {ℓ̇} (_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇)
+  {ℓ̇} (_↦_ : Dotter Relation ℓ̇ 𝔒)
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
-ExtendedṖroperty 𝔒 ℓ _↦_ = Σ (Ṗroperty 𝔒 ℓ) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → Extension P f g)
+ExtendedṖroperty 𝔒 ℓ _↦_ = Σ (Dotter Property ℓ 𝔒) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → Extension P f g)
+--ExtendedṖroperty 𝔒 ℓ _↦_ = Σ (Ṗroperty ℓ 𝔒) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → Extension P f g)
 
 ArrowsourceExtendedṖroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
@@ -358,6 +361,7 @@ ArrowsourceExtendedṖroperty : ∀
   {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
   ℓ
   → (x : 𝔛)
-  → ∀ {ℓ̇} (_↦_ : ∀ {y} → Arrow 𝔒₁ 𝔒₂ x y → Arrow 𝔒₁ 𝔒₂ x y → Ø ℓ̇)
+--  → ∀ {ℓ̇} (_↦_ : ∀ {y} → Arrow 𝔒₁ 𝔒₂ x y → Arrow 𝔒₁ 𝔒₂ x y → Ø ℓ̇)
+  → ∀ {ℓ̇} (_↦_ : Dotter Relation ℓ̇ (Arrow 𝔒₁ 𝔒₂ x))
   → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ ∙̂ ℓ̇
 ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ x _↦_ = ExtendedṖroperty (Arrow 𝔒₁ 𝔒₂ x) ℓ _↦_

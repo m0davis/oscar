@@ -995,7 +995,7 @@ module _ where
     {𝔯₁} (_↦₁_ : Relation 𝔒 𝔯₁)
     𝔯₂
     → Ø 𝔵 ∙̂ 𝔭 ∙̂ 𝔯₁ ∙̂ ↑̂ 𝔯₂
-  𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂ = ∀ {m} → 𝔓 m → 𝔓 m → Ṗroperty (m ↦₁_) 𝔯₂
+  𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂ = ∀ {m} → 𝔓 m → 𝔓 m → Ṗroperty 𝔯₂ (m ↦₁_)
 
   Unifies₀ : ∀
     {𝔵} {𝔒 : Ø 𝔵}
@@ -1003,7 +1003,7 @@ module _ where
     {𝔯₁} {_↦₁_ : Relation 𝔒 𝔯₁}
     ⦃ _ : [𝓢urjectivity] _↦₁_ (Extension 𝔓) ⦄
     ⦃ _ : 𝓢urjectivity _↦₁_ (Extension 𝔓) ⦄
-    {𝔯₂} (_↦₂_ : Ṙelation 𝔓 𝔯₂)
+    {𝔯₂} (_↦₂_ : Ṙelation 𝔯₂ 𝔓)
     → 𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂
   Unifies₀ _↦₂_ p q x =
     let _↦₂_ = _↦₂_
@@ -1018,7 +1018,7 @@ module _ where
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
     {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
-    → ∀ {m} → ℭ m → ℭ m → Ṗroperty (𝔄 m) ℓ
+    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ℓ (𝔄 m)
   Unifies₀⟦ _ ⟧ = Unifies₀
 
   ≡-Unifies₀ : ∀
@@ -1027,7 +1027,7 @@ module _ where
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Ṗroperty (𝔄 m) ∅̂
+    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ∅̂ (𝔄 m)
   ≡-Unifies₀ = Unifies₀ _≡_
 
   ≡-Unifies₀⟦_⟧ : ∀
@@ -1036,7 +1036,7 @@ module _ where
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Ṗroperty (𝔄 m) ∅̂
+    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ∅̂ (𝔄 m)
   ≡-Unifies₀⟦ _ ⟧ = ≡-Unifies₀
 
   ExtensionalUnifies : ∀
@@ -1083,10 +1083,10 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : ExtendedṖroperty (Substitunction m) ℓ Proposextensequality) (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
   prop-id-Substitunction = prop-id
 
-  ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty (Arrow Fin Term m) ∅̂
+  ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
   ≡-Unifies₀-Term = ≡-Unifies₀
 
-  ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty (Arrow Fin Term m) ∅̂
+  ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty ∅̂ (Arrow Fin Term m)
   ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
 
   ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ExtendedṖroperty (Arrow Fin Term m) ∅̂ _
@@ -1101,7 +1101,7 @@ module _
   {ℓ : Ł}
   where
 
-  ṖropertyEquivalence : Ṗroperty 𝔒 ℓ → Ṗroperty 𝔒 ℓ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
+  ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
   ṖropertyEquivalence P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
 
   instance
@@ -1124,7 +1124,7 @@ instance
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
     {ℓ}
-    → HasEquivalence (Ṗroperty 𝔒 ℓ) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
+    → HasEquivalence (Ṗroperty ℓ 𝔒) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
   HasEquivalenceṖroperty .HasEquivalence.Equivalence P Q = ṖropertyEquivalence (λ {x} → P {x}) Q -- ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
 
 instance
@@ -1133,7 +1133,7 @@ instance
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
     {ℓ}
-    → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty 𝔒 ℓ)
+    → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
   ProperthingṖroperty .Properthing._∧_ P Q f = P f × Q f
   ProperthingṖroperty .Properthing._⇔_ P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
   -- ProperthingṖroperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
