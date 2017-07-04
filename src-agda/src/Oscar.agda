@@ -185,7 +185,9 @@ module Test5
   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+  -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
+--  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ExtendedṖroperty (Arrow 𝔒₁ 𝔒₂ v) ℓ (Extended _↦_)) ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtendedṖroperty 𝔒₁ 𝔒₂ ℓ _↦_) ⦄
   where
   test[∙] : ∀ {x y} → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
   test[∙] P f = f ◃ P
@@ -194,7 +196,7 @@ module Test6 where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → ArrowsourceExtendedṖroperty Fin Term ℓ x (λ {y} → Extended Proposequality⟦ Term y ⟧) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
+  test-epfs : ∀ {x y} → ExtendedṖroperty (Arrow Fin Term x) ℓ (Extended Proposequality) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
   test-epfs P f = f ◃ P
 
   test-epfs' : ∀ {x y} → ArrowsourceṖroperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceṖroperty Fin Term ℓ y
@@ -250,3 +252,23 @@ module Test7 where
     → P₀ f
     → P₀ (ε ∙ f)
   𝓅rop-id = prop-id
+
+module Test8 where
+  ≡-ExtendedṖroperty : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    ℓ
+    → 𝔛
+    → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+  ≡-ExtendedṖroperty 𝔒₁ 𝔒₂ ℓ x = ArrowExtendedṖroperty 𝔒₁ 𝔒₂ ℓ _≡_ x
+
+  postulate 𝔓 : Set
+  postulate ℓ : Ł
+  open Term 𝔓
+
+  test-epfs : ∀ {x y} → ExtendedṖroperty (Arrow Fin Term x) ℓ (Extended Proposequality) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
+  test-epfs P f = f ◃ P
+
+  test-epfs2 : ∀ {x y} → ≡-ExtendedṖroperty Fin Term ℓ x → Arrow Fin Term x y → ≡-ExtendedṖroperty Fin Term ℓ y
+  test-epfs2 P f = f ◃ P

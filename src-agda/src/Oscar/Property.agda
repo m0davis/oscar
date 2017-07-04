@@ -992,7 +992,7 @@ module _ where
   𝓾nifies₀ : ∀
     {𝔵} {𝔒 : Ø 𝔵}
     {𝔭} (𝔓 : 𝔒 → Ø 𝔭)
-    {𝔯₁} (_↦₁_ : Relation 𝔒 𝔯₁)
+    {𝔯₁} (_↦₁_ : π̂² 𝔯₁ 𝔒)
     𝔯₂
     → Ø 𝔵 ∙̂ 𝔭 ∙̂ 𝔯₁ ∙̂ ↑̂ 𝔯₂
   𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂ = ∀ {m} → 𝔓 m → 𝔓 m → Ṗroperty 𝔯₂ (m ↦₁_)
@@ -1000,7 +1000,7 @@ module _ where
   Unifies₀ : ∀
     {𝔵} {𝔒 : Ø 𝔵}
     {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
-    {𝔯₁} {_↦₁_ : Relation 𝔒 𝔯₁}
+    {𝔯₁} {_↦₁_ : π̂² 𝔯₁ 𝔒}
     ⦃ _ : [𝓢urjectivity] _↦₁_ (Extension 𝔓) ⦄
     ⦃ _ : 𝓢urjectivity _↦₁_ (Extension 𝔓) ⦄
     {𝔯₂} (_↦₂_ : Ṙelation 𝔯₂ 𝔓)
@@ -1199,7 +1199,7 @@ instance
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
     {ℓ : Ł}
     ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ) ⦄
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ LeftṖroperty (Arrow 𝔒₁ 𝔒₂) ℓ) ⦄
     → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ)
   ṖropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
 
@@ -1235,7 +1235,7 @@ module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → ArrowsourceExtendedṖroperty Fin Term ℓ x (λ {y} → Extended Proposequality⟦ Term y ⟧) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
+  test-epfs : ∀ {x y} → ArrowsourceExtendedṖroperty Fin _ ℓ x (λ {y} → Extended Proposequality) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
   test-epfs P f = f ◃ P
 
   test-epfs' : ∀ {x y} → ArrowsourceṖroperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceṖroperty Fin Term ℓ y
@@ -1254,10 +1254,10 @@ module Test where
   Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ArrowsourceExtendedṖroperty Fin _ _ _ _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ExtendedṖroperty (Arrow Fin _ _) _ _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
   Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3 : ∀ {m} {P : ArrowsourceExtendedṖroperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
+  fact3 : ∀ {m} {P : ExtendedṖroperty (Arrow Fin Term m) ℓ (λ {y} → Extended Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
   fact3 = ¡ , ¡
 
   fact4 : ∀{m n} {P : ArrowsourceExtendedṖroperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} (f : _ → Term n)
