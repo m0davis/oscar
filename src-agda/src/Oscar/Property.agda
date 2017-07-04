@@ -1195,12 +1195,11 @@ instance
 
   ṖropertySurjectivity : ∀
     {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+    {𝔯} {_↦_ : 𝔛 → 𝔛 → Ø 𝔯}
     {ℓ : Ł}
-    ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ LeftṖroperty ℓ (Arrow 𝔒₁ 𝔒₂)) ⦄
-    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ)
+    ⦃ _ : 𝓣ransitivity _↦_ ⦄
+    ⦃ _ : [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_) ⦄
+    → 𝓢urjectivity _↦_ (Extension $ LeftṖroperty ℓ _↦_)
   ṖropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
 
 instance
@@ -1210,7 +1209,7 @@ instance
     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
     {ℓ : Ł}
-    {ℓ̇} {_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+    {ℓ̇} {_↦_ : Ṙelation ℓ̇ 𝔒₂}
     ⦃ _ : [ExtensibleType] (λ {x} → _↦_ {x}) ⦄
     ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
     ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
@@ -1228,8 +1227,8 @@ instance
   [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ ArrowExtensionṖroperty Fin Term ℓ _≡_)
   [𝓢urjectivity]ArrowE = ∁
 
-  [𝓢urjectivity]Arrow : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ ArrowsourceṖroperty Fin Term ℓ)
-  [𝓢urjectivity]Arrow = ∁
+  [𝓢urjectivity]LeftṖroperty : ∀ {ℓ} {a} {f} {¶ : Set a} {_↦_ : ¶ → ¶ → Set f} → [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_)
+  [𝓢urjectivity]LeftṖroperty = ∁
 
 module Test where
   postulate 𝔓 : Set
