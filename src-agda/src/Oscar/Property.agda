@@ -1199,7 +1199,7 @@ instance
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
     {ℓ : Ł}
     ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ LeftṖroperty (Arrow 𝔒₁ 𝔒₂) ℓ) ⦄
+    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ LeftṖroperty ℓ (Arrow 𝔒₁ 𝔒₂)) ⦄
     → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ)
   ṖropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
 
