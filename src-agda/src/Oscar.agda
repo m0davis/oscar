@@ -185,18 +185,16 @@ module Test5
   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-  -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
---  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ExtendedṖroperty (Arrow 𝔒₁ 𝔒₂ v) ℓ (Extended _↦_)) ⦄
   ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtendedṖroperty 𝔒₁ 𝔒₂ ℓ _↦_) ⦄
   where
-  test[∙] : ∀ {x y} → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ x (Extended _↦_) → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceExtendedṖroperty 𝔒₁ 𝔒₂ ℓ y (Extended _↦_)
+  test[∙] : ∀ {x y} → ArrowExtendedṖroperty 𝔒₁ 𝔒₂ ℓ _↦_ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowExtendedṖroperty 𝔒₁ 𝔒₂ ℓ _↦_ y
   test[∙] P f = f ◃ P
 
 module Test6 where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → ExtendedṖroperty (Arrow Fin Term x) ℓ (Extended Proposequality) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
+  test-epfs : ∀ {x y} → ExtendedṖroperty (Arrow Fin Term x) ℓ (Extended Proposequality) → Arrow Fin Term x y → ArrowExtendedṖroperty Fin Term ℓ _≡_ y
   test-epfs P f = f ◃ P
 
   test-epfs' : ∀ {x y} → ArrowsourceṖroperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceṖroperty Fin Term ℓ y
@@ -216,10 +214,10 @@ module Test6 where
          → ≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} (s1 fork s2) (t1 fork t2) ⇔ (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
   Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3 : ∀ {m} {P : ArrowsourceExtendedṖroperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
+  fact3 : ∀ {m} {P : ArrowExtendedṖroperty Fin Term ℓ Proposequality m} → P ⇔ (i ◃ P)
   fact3 = ¡ , ¡
 
-  fact4 : ∀{m n} {P : ArrowsourceExtendedṖroperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} (f : _ → Term n)
+  fact4 : ∀{m n} {P : ArrowExtendedṖroperty Fin Term ℓ Proposequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
@@ -227,11 +225,11 @@ module Test6 where
            → (λ {w} → (f ◃ λ {_} → P) {w}) ⇔ (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : ArrowsourceExtendedṖroperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} {f : Arrow Fin Term m n} → P ⇔ Q
+  fact5 : ∀{m n} {P Q : ArrowExtendedṖroperty Fin Term ℓ Proposequality m} {f : Arrow Fin Term m n} → P ⇔ Q
            → (f ◃ P) ⇔ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 
-  fact6 : ∀{m n} (P : ArrowsourceExtendedṖroperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 : ∀{m n} (P : ArrowExtendedṖroperty Fin Term ℓ Proposequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
   fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
 module Test7 where
@@ -267,7 +265,7 @@ module Test8 where
   postulate ℓ : Ł
   open Term 𝔓
 
-  test-epfs : ∀ {x y} → ExtendedṖroperty (Arrow Fin Term x) ℓ (Extended Proposequality) → Arrow Fin Term x y → ArrowsourceExtendedṖroperty Fin Term ℓ y (Extended _≡_)
+  test-epfs : ∀ {x y} → ExtendedṖroperty (Arrow Fin Term x) ℓ (Extended Proposequality) → Arrow Fin Term x y → ArrowExtendedṖroperty Fin Term ℓ _≡_ y
   test-epfs P f = f ◃ P
 
   test-epfs2 : ∀ {x y} → ≡-ExtendedṖroperty Fin Term ℓ x → Arrow Fin Term x y → ≡-ExtendedṖroperty Fin Term ℓ y
