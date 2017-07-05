@@ -135,6 +135,9 @@ syntax π̇-hidden-quantifier-syntax 𝔄 (λ _ → 𝔅𝓐) = 𝔅𝓐 ← �
 π̂² : ∀ {𝔞} ℓ → Ø 𝔞 → Ø 𝔞 ∙̂ ↑̂ ℓ
 π̂² ℓ 𝔄 = ℓ ←̂ 𝔄 ← 𝔄
 
+_→̂²_ : ∀ {𝔞} → Ø 𝔞 → ∀ ℓ → Ø 𝔞 ∙̂ ↑̂ ℓ
+_→̂²_ 𝔒 ℓ = π̂² ℓ 𝔒
+
 ∀̇ : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞}
   → (∀ ℓ (𝔄 : Ø 𝔞) → Ø 𝔞 ∙̂ ↑̂ ℓ)
   → ∀ ℓ → (𝔛 → Ø 𝔞) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
@@ -143,17 +146,17 @@ syntax π̇-hidden-quantifier-syntax 𝔄 (λ _ → 𝔅𝓐) = 𝔅𝓐 ← �
 Ṙelation : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞} ℓ → (𝔞 ←̂ 𝔛) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
 Ṙelation = ∀̇ π̂²
 
-Pointwise : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} {ℓ} → (π̂ ℓ 𝔅 ← 𝔅) → (𝔅 ← 𝔄) → (𝔄 → 𝔅) → Ø 𝔞 ∙̂ ℓ
+Pointwise : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} {ℓ} → 𝔅 →̂² ℓ → (𝔅 ← 𝔄) → (𝔄 → 𝔅) → Ø 𝔞 ∙̂ ℓ
 Pointwise _≈_ = λ f g → ∀ x → f x ≈ g x
 
 Ṗroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} ℓ → (𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ) ←̂ (𝔬 ←̂ 𝔛)
 Ṗroperty = ∀̇ π̂
 
-LeftṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁} → ∀ ℓ → (𝔛 → 𝔛 → Ø 𝔬₁) → 𝔛 → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ ↑̂ ℓ
-LeftṖroperty ℓ ArrowO1O2 = ∀̇ π̂ ℓ ∘ ArrowO1O2
+LeftṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔯} → ∀ ℓ → 𝔛 →̂² 𝔯 → 𝔛 → Ø 𝔵 ∙̂ 𝔯 ∙̂ ↑̂ ℓ
+LeftṖroperty ℓ _↦_ = ∀̇ π̂ ℓ ∘ _↦_
 
-ArrowsourceṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬₁} {𝔬₂} → (𝔛 → Ø 𝔬₁) → (𝔛 → Ø 𝔬₂) → ∀ ℓ → 𝔛 → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-ArrowsourceṖroperty O1 O2 ℓ = LeftṖroperty ℓ (Arrow O1 O2)
+ArrowsourceṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔭₁ 𝔭₂} → (𝔛 → Ø 𝔭₁) → (𝔛 → Ø 𝔭₂) → ∀ ℓ → 𝔛 → Ø 𝔵 ∙̂ 𝔭₁ ∙̂ 𝔭₂ ∙̂ ↑̂ ℓ
+ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ = LeftṖroperty ℓ (Arrow 𝔒₁ 𝔒₂)
 
 module _ where
 
