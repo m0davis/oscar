@@ -1237,10 +1237,10 @@ module Test where
   test-epfs : ∀ {x y} → ArrowExtensionṖroperty Fin Term ℓ Proposequality x → Arrow Fin Term x y → ArrowExtensionṖroperty Fin Term ℓ _≡_ y
   test-epfs P f = f ◃ P
 
-  test-epfs' : ∀ {x y} → ArrowsourceṖroperty ℓ Fin Term x → Arrow Fin Term x y → ArrowsourceṖroperty ℓ Fin Term y
+  test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Arrow Fin Term x y → ArrowṖroperty ℓ Fin Term y
   test-epfs' P f = f ◃ (λ {_} → P)
 
-  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowsourceṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
+  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
   fact1U = symmetry , symmetry
 
   fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
@@ -1267,8 +1267,8 @@ module Test where
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
-  fact5⋆ : ∀{m n} {P Q : ArrowsourceṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
-           → ((f ◃[ ArrowsourceṖroperty _ Fin Term ] P)) ⇔[ ArrowsourceṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
+  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
+           → ((f ◃[ ArrowṖroperty _ Fin Term ] P)) ⇔[ ArrowṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
   fact5 : ∀{m n} {P Q : ArrowExtensionṖroperty Fin Term ℓ Proposequality m} {f : Arrow Fin Term m n} → P ⇔ Q
