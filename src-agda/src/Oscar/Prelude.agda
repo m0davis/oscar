@@ -155,8 +155,8 @@ Ṗroperty = ∀̇ π̂
 LeftṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔯} → ∀ ℓ → 𝔛 →̂² 𝔯 → 𝔛 → Ø 𝔵 ∙̂ 𝔯 ∙̂ ↑̂ ℓ
 LeftṖroperty ℓ _↦_ = ∀̇ π̂ ℓ ∘ _↦_
 
-ArrowsourceṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔭₁ 𝔭₂} → (𝔛 → Ø 𝔭₁) → (𝔛 → Ø 𝔭₂) → ∀ ℓ → 𝔛 → Ø 𝔵 ∙̂ 𝔭₁ ∙̂ 𝔭₂ ∙̂ ↑̂ ℓ
-ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ = LeftṖroperty ℓ (Arrow 𝔒₁ 𝔒₂)
+ArrowsourceṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔭₁ 𝔭₂} → ∀ ℓ → (𝔛 → Ø 𝔭₁) → (𝔛 → Ø 𝔭₂) → 𝔛 → Ø 𝔵 ∙̂ 𝔭₁ ∙̂ 𝔭₂ ∙̂ ↑̂ ℓ
+ArrowsourceṖroperty ℓ 𝔒₁ 𝔒₂ = LeftṖroperty ℓ (Arrow 𝔒₁ 𝔒₂)
 
 module _ where
 

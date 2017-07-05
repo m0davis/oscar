@@ -168,9 +168,9 @@ module Test4
   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
   {ℓ : Ł}
   ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
-  -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ) ⦄
+  -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceṖroperty ℓ 𝔒₁ 𝔒₂) ⦄
   where
-  test[∙] : ∀ {x y} → ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceṖroperty 𝔒₁ 𝔒₂ ℓ y
+  test[∙] : ∀ {x y} → ArrowsourceṖroperty ℓ 𝔒₁ 𝔒₂ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowsourceṖroperty ℓ 𝔒₁ 𝔒₂ y
   test[∙] P f g = (f ◃ λ {_} → P) g
 
 
@@ -197,7 +197,7 @@ module Test6 where
   test-epfs : ∀ {x y} → ExtensionṖroperty (Arrow Fin Term x) ℓ (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty Fin Term ℓ _≡_ y
   test-epfs P f = f ◃ P
 
-  test-epfs' : ∀ {x y} → ArrowsourceṖroperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceṖroperty Fin Term ℓ y
+  test-epfs' : ∀ {x y} → ArrowsourceṖroperty ℓ Fin Term x → Arrow Fin Term x y → ArrowsourceṖroperty ℓ Fin Term y
   test-epfs' P f = f ◃ (λ {_} → P)
 
   fact1U : ∀ {m} {s t : Term m} → (λ {d} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {d}) ⇔ ≡-Unifies₀ t s
@@ -221,7 +221,7 @@ module Test6 where
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
-  fact5⋆ : ∀{m n} {P Q : ArrowsourceṖroperty Fin Term ℓ m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
+  fact5⋆ : ∀{m n} {P Q : ArrowsourceṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
            → (λ {w} → (f ◃ λ {_} → P) {w}) ⇔ (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
