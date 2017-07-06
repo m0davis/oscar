@@ -184,6 +184,15 @@ ExtensionṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} {ℓ̇}
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
 ExtensionṖroperty 𝔒 ℓ _↦_ = Σ (∀̇ π̂ ℓ 𝔒) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → Extension P f g)
 
+LeftExtensionṖroperty : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔯} (_∼_ : 𝔛 → 𝔛 → Ø 𝔯)
+  ℓ
+  → ∀ {ℓ̇} (_↦_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇)
+  → 𝔛
+  → Ø 𝔵 ∙̂ 𝔯 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
+LeftExtensionṖroperty _∼_ ℓ _↦_ x = ExtensionṖroperty (x ∼_) ℓ _↦_
+
 ArrowExtensionṖroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
@@ -192,4 +201,4 @@ ArrowExtensionṖroperty : ∀
   → ∀ {ℓ̇} (_↦_ : ∀̇ π̂² ℓ̇ 𝔒₂)
   → 𝔛
   → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ ∙̂ ℓ̇
-ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_ x = ExtensionṖroperty (Arrow 𝔒₁ 𝔒₂ x) ℓ (Pointwise _↦_)
+ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_ = LeftExtensionṖroperty (Arrow 𝔒₁ 𝔒₂) ℓ (Pointwise _↦_)
