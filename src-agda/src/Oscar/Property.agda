@@ -1053,7 +1053,7 @@ module _ where
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
     ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-    → ∀ {m} → ℭ m → ℭ m → ExtensionṖroperty (Arrow 𝔄 𝔅 m) ℓ₂ (Pointwise _∼₁_)
+    → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty 𝔄 𝔅 ℓ₂ _∼₁_ m
   ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
     Unifies₀ _∼₂_ s t , λ f≐g f◃s=f◃t →
       ⟪ f≐g ⟫[ Pointwise _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise _∼₂_ ] s)
@@ -1071,7 +1071,7 @@ module _ where
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
     ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-    → ∀ {m} → ℭ m → ℭ m → ExtensionṖroperty (m ↦_) ℓ₂ (Pointwise _≡_)
+    → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty 𝔄 𝔅 ℓ₂ _≡_ m
   ≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _≡_ {_∼₂_ = _∼₂_} s t
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
@@ -1080,7 +1080,7 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
   open Substitist 𝔓
 
-  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : ExtensionṖroperty (Substitunction m) ℓ Proposextensequality) (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
+  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : LeftExtensionṖroperty Substitunction ℓ Proposextensequality m) (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
   prop-id-Substitunction = prop-id
 
   ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
@@ -1089,10 +1089,10 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty ∅̂ (Arrow Fin Term m)
   ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
 
-  ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ExtensionṖroperty (Arrow Fin Term m) ∅̂ _
+  ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ArrowExtensionṖroperty Fin Term ∅̂ _≡_ m
   ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
 
-  ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → ExtensionṖroperty (Arrow Fin Term m) ∅̂ Proposextensequality
+  ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → LeftExtensionṖroperty (Arrow Fin Term) ∅̂ (Pointwise Proposequality) m
   ≡-ExtensionalUnifies-Terms = ExtensionalUnifies _≡_
 
 module _
@@ -1208,15 +1208,16 @@ instance
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-    {ℓ : Ł}
+    (let _∼_ = Arrow 𝔒₁ 𝔒₂)
+    {ℓ}
     {ℓ̇} {_↦_ : Ṙelation ℓ̇ 𝔒₂}
     ⦃ _ : [ExtensibleType] (λ {x} → _↦_ {x}) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
-    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_) ⦄
-    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_)
+    ⦃ _ : [𝓢urjectivity] _∼_ (Extension 𝔒₂) ⦄
+    ⦃ _ : 𝓢urjectivity _∼_ (Extension 𝔒₂) ⦄
+    ⦃ _ : [𝓢urjextensionality] _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
+    ⦃ _ : 𝓢urjextensionality _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
+    ⦃ _ : [𝓢urjectivity] _∼_ (Extension $ LeftExtensionṖroperty _∼_ ℓ (Pointwise _↦_)) ⦄
+    → 𝓢urjectivity _∼_ (Extension $ LeftExtensionṖroperty _∼_ ℓ (Pointwise _↦_))
   ExtensionṖropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
 
 instance
@@ -1224,7 +1225,7 @@ instance
   [ExtensibleType]Proposequality : ∀ {a} {b} {A : Set a} {B : A → Set b} → [ExtensibleType] (λ {w} → Proposequality⟦ B w ⟧)
   [ExtensibleType]Proposequality = ∁
 
-  [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ ArrowExtensionṖroperty Fin Term ℓ _≡_)
+  [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ LeftExtensionṖroperty (Arrow Fin Term) ℓ _≡̇_)
   [𝓢urjectivity]ArrowE = ∁
 
   [𝓢urjectivity]LeftṖroperty : ∀ {ℓ} {a} {f} {¶ : Set a} {_↦_ : ¶ → ¶ → Set f} → [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_)
@@ -1234,7 +1235,7 @@ module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → ArrowExtensionṖroperty Fin Term ℓ Proposequality x → Arrow Fin Term x y → ArrowExtensionṖroperty Fin Term ℓ _≡_ y
+  test-epfs : ∀ {x y} → LeftExtensionṖroperty (Arrow Fin Term) ℓ Proposextensequality x → Arrow Fin Term x y → LeftExtensionṖroperty (Arrow Fin Term) ℓ _≡̇_ y
   test-epfs P f = f ◃ P
 
   test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Arrow Fin Term x y → ArrowṖroperty ℓ Fin Term y
@@ -1249,7 +1250,7 @@ module Test where
   Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔ ≡-ExtensionalUnifies t s
   Properties-fact1 = symmetry , symmetry
 
-  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ⇔[ ArrowExtensionṖroperty Fin Term _ Proposequality _ ] ≡-ExtensionalUnifies t s
+  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ⇔[ LeftExtensionṖroperty (Arrow Fin Term) _ Proposextensequality _ ] ≡-ExtensionalUnifies t s
   Properties-fact1-test2 = symmetry , symmetry
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
@@ -1263,7 +1264,7 @@ module Test where
   fact3 : ∀ {m} {P : ExtensionṖroperty (Arrow Fin Term m) ℓ (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
   fact3 = ¡ , ¡
 
-  fact4 : ∀{m n} {P : ArrowExtensionṖroperty Fin Term ℓ Proposequality m} (f : _ → Term n)
+  fact4 : ∀{m n} {P : LeftExtensionṖroperty (Arrow Fin Term) ℓ Proposextensequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
@@ -1271,9 +1272,9 @@ module Test where
            → ((f ◃[ ArrowṖroperty _ Fin Term ] P)) ⇔[ ArrowṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : ArrowExtensionṖroperty Fin Term ℓ Proposequality m} {f : Arrow Fin Term m n} → P ⇔ Q
+  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty (Arrow Fin Term) ℓ Proposextensequality m} {f : Arrow Fin Term m n} → P ⇔ Q
            → (f ◃ P) ⇔ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 
-  fact6 : ∀{m n} (P : ArrowExtensionṖroperty Fin Term ℓ Proposequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 : ∀{m n} (P : LeftExtensionṖroperty (Arrow Fin Term) ℓ Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
   fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
