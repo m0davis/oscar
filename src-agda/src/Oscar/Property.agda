@@ -1186,7 +1186,7 @@ instance
     {ℓ}
     {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
     → HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-  HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = P ⇔ Q
+  HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = ExtensionṖropertyEquivalence P Q
 
 {-
 module _
