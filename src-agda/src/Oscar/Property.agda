@@ -1127,13 +1127,26 @@ instance
     → HasEquivalence (Ṗroperty ℓ 𝔒) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
   HasEquivalenceṖroperty .HasEquivalence.Equivalence P Q = ṖropertyEquivalence (λ {x} → P {x}) Q -- ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
 
+
+record Lift {a ℓ} (A : Set a) : Set (a ∙̂ ℓ) where
+  constructor lift
+  field lower : A
+
+open Lift public
+
+record [Propertyish] {𝔵} {𝔛 : Ø 𝔵} {𝔬} (𝔒 : 𝔛 → Ø 𝔬) : Ø₀ where
+  no-eta-equality
+  constructor ∁
+
 instance
 
   ProperthingṖroperty : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+    ⦃ _ : [Propertyish] 𝔒 ⦄
     {ℓ}
     → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
+  ProperthingṖroperty .Properthing.➊ _ = Lift 𝟙
   ProperthingṖroperty .Properthing._∧_ P Q f = P f × Q f
   ProperthingṖroperty .Properthing.⌶HasEquivalence = !
   ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P f → 𝟘
@@ -1176,6 +1189,7 @@ module _
   instance
 
     ProperthingExtensionṖroperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
+    ProperthingExtensionṖroperty .Properthing.➊ = magic
     ProperthingExtensionṖroperty .Properthing._∧_ P Q = (λ _ → π₀ P _ × π₀ Q _) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
     ProperthingExtensionṖroperty .Properthing.⌶HasEquivalence = !
     ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
@@ -1245,6 +1259,11 @@ module Test where
   Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ≈[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
   Properties-fact1-test2 = symmetry , symmetry
 
+  instance
+
+    [Propertyish]Substitunction : ∀ {m} → [Propertyish] (Substitunction m)
+    [Propertyish]Substitunction = ∁
+
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          → (λ {m} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {m}) ≈ ((λ {m} → ≡-Unifies₀ s1 t1 {m}) ∧ ≡-Unifies₀ s2 t2)
   Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
@@ -1270,3 +1289,8 @@ module Test where
 
   fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ≈ (g ◃ P)
   fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
+
+  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (λ {_} → (λ {x} → ➊ ⦃ ProperthingṖroperty ⦄) ∧ (λ {x} → P {x})) ≈ (λ {x} → P {x}) -- ((λ{x} → P {x}) ∧ (λ {x} → P {x})) ≈ (λ {x} → P {x})
+  left-identity-∧ P .π₀ (π₂ , π₃) = π₃
+  left-identity-∧ P .π₁ x .π₀ = lift ∅
+  left-identity-∧ P .π₁ x .π₁ = x
