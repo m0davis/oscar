@@ -989,19 +989,27 @@ module _ where
       → PropId 𝔄 𝔅 _∼̇_ ℓ
     PropIdFromTransleftidentity .PropId.prop-id (_ , P₁) = P₁ $ symmetry transleftidentity
 
+  𝓾nifies₀ : ∀
+    {𝔵} {𝔒 : Ø 𝔵}
+    {𝔭} (𝔓 : 𝔒 → Ø 𝔭)
+    {𝔯₁} (_↦₁_ : π̂² 𝔯₁ 𝔒)
+    𝔯₂
+    → Ø 𝔵 ∙̂ 𝔭 ∙̂ 𝔯₁ ∙̂ ↑̂ 𝔯₂
+  𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂ = ∀ {m} → 𝔓 m → 𝔓 m → Ṗroperty 𝔯₂ (m ↦₁_)
+
   Unifies₀ : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
-    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
-    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
-    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ℓ
-  Unifies₀ _≈_ s t f =
-    let _≈_ = _≈_
-        infix 4 _≈_
+    {𝔵} {𝔒 : Ø 𝔵}
+    {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
+    {𝔯₁} {_↦₁_ : π̂² 𝔯₁ 𝔒}
+    ⦃ _ : [𝓢urjectivity] _↦₁_ (Extension 𝔓) ⦄
+    ⦃ _ : 𝓢urjectivity _↦₁_ (Extension 𝔓) ⦄
+    {𝔯₂} (_↦₂_ : Ṙelation 𝔯₂ 𝔓)
+    → 𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂
+  Unifies₀ _↦₂_ p q x =
+    let _↦₂_ = _↦₂_
+        infix 4 _↦₂_
     in
-    f ◃ s ≈ f ◃ t
+    x ◃ p ↦₂ x ◃ q
 
   Unifies₀⟦_⟧ : ∀
     {𝔵} {𝔛 : Ø 𝔵}
@@ -1010,7 +1018,7 @@ module _ where
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
     {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
-    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ℓ
+    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ℓ (𝔄 m)
   Unifies₀⟦ _ ⟧ = Unifies₀
 
   ≡-Unifies₀ : ∀
@@ -1019,7 +1027,7 @@ module _ where
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ∅̂
+    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ∅̂ (𝔄 m)
   ≡-Unifies₀ = Unifies₀ _≡_
 
   ≡-Unifies₀⟦_⟧ : ∀
@@ -1028,7 +1036,7 @@ module _ where
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Property (𝔄 m) ∅̂
+    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ∅̂ (𝔄 m)
   ≡-Unifies₀⟦ _ ⟧ = ≡-Unifies₀
 
   ExtensionalUnifies : ∀
@@ -1043,12 +1051,12 @@ module _ where
     ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
     ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
-    ⦃ _ : [𝓢urjextensionality] _↦_ (Extended _∼₁_) (Extension ℭ) (Extended _∼₂_) ⦄
-    ⦃ _ : 𝓢urjextensionality _↦_ (Extended _∼₁_) (Extension ℭ) (Extended _∼₂_) ⦄
-    → ∀ {m} → ℭ m → ℭ m → ExtendedProperty (Arrow 𝔄 𝔅 m) ℓ₂ (Extended _∼₁_)
+    ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _∼₁_ m
   ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
     Unifies₀ _∼₂_ s t , λ f≐g f◃s=f◃t →
-      ⟪ f≐g ⟫[ Extended _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Extended _∼₂_ ] s)
+      ⟪ f≐g ⟫[ Pointwise _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise _∼₂_ ] s)
 
   ≡-ExtensionalUnifies : ∀
     {𝔵} {𝔛 : Ø 𝔵}
@@ -1061,9 +1069,9 @@ module _ where
     ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
     ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
-    ⦃ _ : [𝓢urjextensionality] _↦_ (Extended _≡_) (Extension ℭ) (Extended _∼₂_) ⦄
-    ⦃ _ : 𝓢urjextensionality _↦_ (Extended _≡_) (Extension ℭ) (Extended _∼₂_) ⦄
-    → ∀ {m} → ℭ m → ℭ m → ExtendedProperty (m ↦_) ℓ₂ (Extended _≡_)
+    ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _≡_ m
   ≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _≡_ {_∼₂_ = _∼₂_} s t
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
@@ -1072,19 +1080,19 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
   open Substitist 𝔓
 
-  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : ExtendedProperty (Substitunction m) ℓ Proposextensequality) (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
+  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
   prop-id-Substitunction = prop-id
 
-  ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Property (Arrow Fin Term m) ∅̂
+  ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
   ≡-Unifies₀-Term = ≡-Unifies₀
 
-  ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Property (Arrow Fin Term m) ∅̂
+  ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty ∅̂ (Arrow Fin Term m)
   ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
 
-  ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ExtendedProperty (Arrow Fin Term m) ∅̂ _
+  ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ArrowExtensionṖroperty ∅̂ Fin Term _≡_ m
   ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
 
-  ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → ExtendedProperty (Arrow Fin Term m) ∅̂ Proposextensequality
+  ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → LeftExtensionṖroperty ∅̂ (Arrow Fin Term) (Pointwise Proposequality) m
   ≡-ExtensionalUnifies-Terms = ExtensionalUnifies _≡_
 
 module _
@@ -1093,44 +1101,44 @@ module _
   {ℓ : Ł}
   where
 
-  PropertyEquivalence : Property 𝔒 ℓ → Property 𝔒 ℓ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  PropertyEquivalence P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+  ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
+  ṖropertyEquivalence P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
 
   instance
 
-    𝓡eflexivityProperty : 𝓡eflexivity PropertyEquivalence
-    𝓡eflexivityProperty .𝓡eflexivity.reflexivity = ¡ , ¡
+    𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence
+    𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity = ¡ , ¡
 
-    𝓢ymmetryProperty : 𝓢ymmetry PropertyEquivalence
-    𝓢ymmetryProperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+    𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence
+    𝓢ymmetryṖroperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
 
-    𝓣ransitivityProperty : 𝓣ransitivity PropertyEquivalence
-    𝓣ransitivityProperty .𝓣ransitivity.transitivity P⇔Q Q⇔R = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
+    𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence
+    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity P⇔Q Q⇔R = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
 
-    IsEquivalenceProperty : IsEquivalence PropertyEquivalence
-    IsEquivalenceProperty = ∁
-
-instance
-
-  HasEquivalenceProperty : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
-    {ℓ}
-    → HasEquivalence (Property 𝔒 ℓ) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-  HasEquivalenceProperty .HasEquivalence.Equivalence P Q = PropertyEquivalence (λ {x} → P {x}) Q -- ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+    IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence
+    IsEquivalenceṖroperty = ∁
 
 instance
 
-  ProperthingProperty : ∀
+  HasEquivalenceṖroperty : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
     {ℓ}
-    → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Property 𝔒 ℓ)
-  ProperthingProperty .Properthing._∧_ P Q f = P f × Q f
-  ProperthingProperty .Properthing._⇔_ P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
-  -- ProperthingProperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
-  ProperthingProperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P f → 𝟘
-  ProperthingProperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
+    → HasEquivalence (Ṗroperty ℓ 𝔒) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
+  HasEquivalenceṖroperty .HasEquivalence.Equivalence P Q = ṖropertyEquivalence (λ {x} → P {x}) Q -- ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+
+instance
+
+  ProperthingṖroperty : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
+    {ℓ}
+    → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
+  ProperthingṖroperty .Properthing._∧_ P Q f = P f × Q f
+  ProperthingṖroperty .Properthing._⇔_ P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+  -- ProperthingṖroperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+  ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P f → 𝟘
+  ProperthingṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
 module _
   {𝔵} {𝔛 : Ø 𝔵}
@@ -1139,36 +1147,36 @@ module _
   {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
   where
 
-  ExtendedPropertyEquivalence : ExtendedProperty 𝔒 ℓ _↦_ → ExtendedProperty 𝔒 ℓ _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ExtendedPropertyEquivalence P Q = (λ {x} → π₀ P {x}) ⇔ π₀ Q
+  ExtensionṖropertyEquivalence : ExtensionṖroperty ℓ 𝔒 _↦_ → ExtensionṖroperty ℓ 𝔒 _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
+  ExtensionṖropertyEquivalence P Q = (λ {x} → π₀ P {x}) ⇔ π₀ Q
 
   instance
 
-    𝓡eflexivityExtendedProperty : 𝓡eflexivity ExtendedPropertyEquivalence
-    𝓡eflexivityExtendedProperty .𝓡eflexivity.reflexivity = ¡ , ¡
+    𝓡eflexivityExtensionṖroperty : 𝓡eflexivity ExtensionṖropertyEquivalence
+    𝓡eflexivityExtensionṖroperty .𝓡eflexivity.reflexivity = ¡ , ¡
 
-    𝓢ymmetryExtendedProperty : 𝓢ymmetry ExtendedPropertyEquivalence
-    𝓢ymmetryExtendedProperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+    𝓢ymmetryExtensionṖroperty : 𝓢ymmetry ExtensionṖropertyEquivalence
+    𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
 
-  𝓣ransitivityExtendedProperty' : 𝓣ransitivity ExtendedPropertyEquivalence
-  𝓣ransitivityExtendedProperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R = transitivity (λ {x} {f} → P⇔Q {x} {f}) Q⇔R
-
-  instance
-
-    𝓣ransitivityExtendedProperty : 𝓣ransitivity ExtendedPropertyEquivalence
-    𝓣ransitivityExtendedProperty = 𝓣ransitivityExtendedProperty'
-
-    IsEquivalenceExtendedProperty : IsEquivalence ExtendedPropertyEquivalence
-    IsEquivalenceExtendedProperty = ∁
+  𝓣ransitivityExtensionṖroperty' : 𝓣ransitivity ExtensionṖropertyEquivalence
+  𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R = transitivity (λ {x} {f} → P⇔Q {x} {f}) Q⇔R
 
   instance
 
-    ProperthingExtendedProperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtendedProperty 𝔒 ℓ _↦_)
-    ProperthingExtendedProperty .Properthing._∧_ P Q = (λ _ → π₀ P _ × π₀ Q _) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
-    ProperthingExtendedProperty .Properthing._⇔_ P Q = ExtendedPropertyEquivalence P Q -- ExtendedPropertyEquivalence P Q -- (λ {x} → π₀ P {x}) ⇔ π₀ Q
-    --ProperthingExtendedProperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
-    ProperthingExtendedProperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
-    ProperthingExtendedProperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
+    𝓣ransitivityExtensionṖroperty : 𝓣ransitivity ExtensionṖropertyEquivalence
+    𝓣ransitivityExtensionṖroperty = 𝓣ransitivityExtensionṖroperty'
+
+    IsEquivalenceExtensionṖroperty : IsEquivalence ExtensionṖropertyEquivalence
+    IsEquivalenceExtensionṖroperty = ∁
+
+  instance
+
+    ProperthingExtensionṖroperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
+    ProperthingExtensionṖroperty .Properthing._∧_ P Q = (λ _ → π₀ P _ × π₀ Q _) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
+    ProperthingExtensionṖroperty .Properthing._⇔_ P Q = ExtensionṖropertyEquivalence P Q -- ExtensionṖropertyEquivalence P Q -- (λ {x} → π₀ P {x}) ⇔ π₀ Q
+    --ProperthingExtensionṖroperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
+    ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
+    ProperthingExtensionṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
 instance
 
@@ -1177,7 +1185,7 @@ instance
     {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
     {ℓ}
     {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
-    → HasEquivalence (ExtendedProperty 𝔒 ℓ _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
+    → HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
   HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = P ⇔ Q
 
 {-
@@ -1189,90 +1197,96 @@ module _
 
   instance
 
-    𝓡eflexivityProperty : 𝓡eflexivity (_⇔_ {ℓ = (𝔵 ∙̂ 𝔬 ∙̂ ℓ)} {𝔒 = (Property 𝔒 ℓ)})
-    𝓡eflexivityProperty .𝓡eflexivity.reflexivity = ¡ , ¡
+    𝓡eflexivityṖroperty : 𝓡eflexivity (_⇔_ {ℓ = (𝔵 ∙̂ 𝔬 ∙̂ ℓ)} {𝔒 = (Ṗroperty 𝔒 ℓ)})
+    𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity = ¡ , ¡
 -}
 
 instance
 
-  PropertySurjectivity : ∀
+  ṖropertySurjectivity : ∀
     {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
-    {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+    {𝔯} {_↦_ : 𝔛 → 𝔛 → Ø 𝔯}
     {ℓ : Ł}
-    ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ) ⦄
-    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowsourceProperty 𝔒₁ 𝔒₂ ℓ)
-  PropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
+    ⦃ _ : 𝓣ransitivity _↦_ ⦄
+    ⦃ _ : [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_) ⦄
+    → 𝓢urjectivity _↦_ (Extension $ LeftṖroperty ℓ _↦_)
+  ṖropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
 
 instance
 
-  ExtendedPropertySurjectivity : ∀
+  ExtensionṖropertySurjectivity : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-    {ℓ : Ł}
-    {ℓ̇} {_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇}
+    (let _∼_ = Arrow 𝔒₁ 𝔒₂)
+    {ℓ}
+    {ℓ̇} {_↦_ : Ṙelation ℓ̇ 𝔒₂}
     ⦃ _ : [ExtensibleType] (λ {x} → _↦_ {x}) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
-    ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-    ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Extended _↦_) (Extension 𝔒₂) (Extended _↦_) ⦄
-    ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_)) ⦄
-    → 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension $ λ v → ArrowsourceExtendedProperty 𝔒₁ 𝔒₂ ℓ v (Extended _↦_))
-  ExtendedPropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+    ⦃ _ : [𝓢urjectivity] _∼_ (Extension 𝔒₂) ⦄
+    ⦃ _ : 𝓢urjectivity _∼_ (Extension 𝔒₂) ⦄
+    ⦃ _ : [𝓢urjextensionality] _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
+    ⦃ _ : 𝓢urjextensionality _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
+    ⦃ _ : [𝓢urjectivity] _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_)) ⦄
+    → 𝓢urjectivity _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_))
+  ExtensionṖropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
 
 instance
 
   [ExtensibleType]Proposequality : ∀ {a} {b} {A : Set a} {B : A → Set b} → [ExtensibleType] (λ {w} → Proposequality⟦ B w ⟧)
   [ExtensibleType]Proposequality = ∁
 
-  [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ λ v → ArrowsourceExtendedProperty Fin Term ℓ v (Extended _≡_))
+  [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ LeftExtensionṖroperty ℓ (Arrow Fin Term) _≡̇_)
   [𝓢urjectivity]ArrowE = ∁
 
-  [𝓢urjectivity]Arrow : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ ArrowsourceProperty Fin Term ℓ)
-  [𝓢urjectivity]Arrow = ∁
+  [𝓢urjectivity]LeftṖroperty : ∀ {ℓ} {a} {f} {¶ : Set a} {_↦_ : ¶ → ¶ → Set f} → [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_)
+  [𝓢urjectivity]LeftṖroperty = ∁
 
 module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → ArrowsourceExtendedProperty Fin Term ℓ x (λ {y} → Extended Proposequality⟦ Term y ⟧) → Arrow Fin Term x y → ArrowsourceExtendedProperty Fin Term ℓ y (Extended _≡_)
+  open Substitunction 𝔓
+
+  test-epfs : ∀ {x y} → LeftExtensionṖroperty ℓ Substitunction Proposextensequality x → Arrow Fin Term x y → LeftExtensionṖroperty ℓ (Arrow Fin Term) _≡̇_ y
   test-epfs P f = f ◃ P
 
-  test-epfs' : ∀ {x y} → ArrowsourceProperty Fin Term ℓ x → Arrow Fin Term x y → ArrowsourceProperty Fin Term ℓ y
+  test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
   test-epfs' P f = f ◃ (λ {_} → P)
 
-  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowsourceProperty Fin Term _ _ ] ≡-Unifies₀ t s
-  --fact1U : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
+  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
   fact1U = symmetry , symmetry
 
+  fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Substitunction ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
+  fact1U-test2 = symmetry , symmetry
+
   Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔ ≡-ExtensionalUnifies t s
-  --Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔[ ArrowsourceExtendedProperty Fin Term _ _ _ ] ≡-ExtensionalUnifies t s
   Properties-fact1 = symmetry , symmetry
+
+  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ⇔[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
+  Properties-fact1-test2 = symmetry , symmetry
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          → (λ {m} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {m}) ⇔ ((λ {m} → ≡-Unifies₀ s1 t1 {m}) ∧ ≡-Unifies₀ s2 t2)
   Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ArrowsourceExtendedProperty Fin _ _ _ _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ExtensionṖroperty _ (Substitunction _) _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
   Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3 : ∀ {m} {P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
+  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
   fact3 = ¡ , ¡
 
-  fact4 : ∀{m n} {P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} (f : _ → Term n)
+  fact4 : ∀{m n} {P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
-  fact5⋆ : ∀{m n} {P Q : ArrowsourceProperty Fin Term ℓ m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
-           → ((f ◃[ ArrowsourceProperty Fin Term _ ] P)) ⇔[ ArrowsourceProperty Fin Term _ _ ] (f ◃ λ {_} → Q)
+  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
+           → ((f ◃[ ArrowṖroperty _ Fin Term ] P)) ⇔[ ArrowṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)} {f : Arrow Fin Term m n} → P ⇔ Q
+  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} {f : Arrow Fin Term m n} → P ⇔ Q
            → (f ◃ P) ⇔ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 
-  fact6 : ∀{m n} (P : ArrowsourceExtendedProperty Fin Term ℓ m (λ {y} → Extended Proposequality⟦ Term y ⟧)) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
   fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
