@@ -1148,7 +1148,7 @@ module _
   where
 
   ExtensionṖropertyEquivalence : ExtensionṖroperty ℓ 𝔒 _↦_ → ExtensionṖroperty ℓ 𝔒 _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ExtensionṖropertyEquivalence P Q = (λ {x} → π₀ P {x}) ⇔ π₀ Q
+  ExtensionṖropertyEquivalence P Q = (λ {x} → π₀ P {x}) ≈ π₀ Q
 
   instance
 
@@ -1253,40 +1253,40 @@ module Test where
   test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
   test-epfs' P f = f ◃ (λ {_} → P)
 
-  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
+  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
   fact1U = symmetry , symmetry
 
-  fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Substitunction ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
+  fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Substitunction ⟧ s t {x}) ≈ ≡-Unifies₀ t s
   fact1U-test2 = symmetry , symmetry
 
-  Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔ ≡-ExtensionalUnifies t s
+  Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
   Properties-fact1 = symmetry , symmetry
 
-  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ⇔[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
+  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ≈[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
   Properties-fact1-test2 = symmetry , symmetry
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → (λ {m} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {m}) ⇔ ((λ {m} → ≡-Unifies₀ s1 t1 {m}) ∧ ≡-Unifies₀ s2 t2)
+         → (λ {m} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {m}) ≈ ((λ {m} → ≡-Unifies₀ s1 t1 {m}) ∧ ≡-Unifies₀ s2 t2)
   Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ExtensionṖroperty _ (Substitunction _) _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ≈[ ExtensionṖroperty _ (Substitunction _) _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
   Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
+  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ≈ (i ◃ P)
   fact3 = ¡ , ¡
 
   fact4 : ∀{m n} {P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
-  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ⇔ Q
-           → ((f ◃[ ArrowṖroperty _ Fin Term ] P)) ⇔[ ArrowṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
+  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ≈ Q
+           → ((f ◃[ ArrowṖroperty _ Fin Term ] P)) ≈[ ArrowṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} {f : Arrow Fin Term m n} → P ⇔ Q
-           → (f ◃ P) ⇔ (f ◃ Q)
+  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} {f : Arrow Fin Term m n} → P ≈ Q
+           → (f ◃ P) ≈ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 
-  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ≈ (g ◃ P)
   fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
