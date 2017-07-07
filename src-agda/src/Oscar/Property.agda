@@ -1135,7 +1135,7 @@ instance
     {ℓ}
     → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
   ProperthingṖroperty .Properthing._∧_ P Q f = P f × Q f
-  ProperthingṖroperty .Properthing._⇔_ P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
+  ProperthingṖroperty .Properthing._⇔_ P Q = (λ {x} → P {x}) ≈ Q
   -- ProperthingṖroperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
   ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P f → 𝟘
   ProperthingṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
