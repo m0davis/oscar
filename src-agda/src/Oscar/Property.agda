@@ -1235,22 +1235,24 @@ module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → LeftExtensionṖroperty (Arrow Fin Term) ℓ Proposextensequality x → Arrow Fin Term x y → LeftExtensionṖroperty (Arrow Fin Term) ℓ _≡̇_ y
+  open Substitunction 𝔓
+
+  test-epfs : ∀ {x y} → LeftExtensionṖroperty Substitunction ℓ Proposextensequality x → Arrow Fin Term x y → LeftExtensionṖroperty (Arrow Fin Term) ℓ _≡̇_ y
   test-epfs P f = f ◃ P
 
-  test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Arrow Fin Term x y → ArrowṖroperty ℓ Fin Term y
+  test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
   test-epfs' P f = f ◃ (λ {_} → P)
 
   fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ⇔[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
   fact1U = symmetry , symmetry
 
-  fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
+  fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Substitunction ⟧ s t {x}) ⇔ ≡-Unifies₀ t s
   fact1U-test2 = symmetry , symmetry
 
   Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ⇔ ≡-ExtensionalUnifies t s
   Properties-fact1 = symmetry , symmetry
 
-  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ⇔[ LeftExtensionṖroperty (Arrow Fin Term) _ Proposextensequality _ ] ≡-ExtensionalUnifies t s
+  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ⇔[ LeftExtensionṖroperty Substitunction _ Proposextensequality _ ] ≡-ExtensionalUnifies t s
   Properties-fact1-test2 = symmetry , symmetry
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
@@ -1258,7 +1260,7 @@ module Test where
   Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ExtensionṖroperty (Arrow Fin _ _) _ _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ⇔[ ExtensionṖroperty (Substitunction _) _ _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
   Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   fact3 : ∀ {m} {P : ExtensionṖroperty (Arrow Fin Term m) ℓ (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ⇔ (i ◃ P)
@@ -1272,7 +1274,7 @@ module Test where
            → ((f ◃[ ArrowṖroperty _ Fin Term ] P)) ⇔[ ArrowṖroperty _ Fin Term _ ] (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty (Arrow Fin Term) ℓ Proposextensequality m} {f : Arrow Fin Term m n} → P ⇔ Q
+  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty Substitunction ℓ Proposextensequality m} {f : Arrow Fin Term m n} → P ⇔ Q
            → (f ◃ P) ⇔ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 
