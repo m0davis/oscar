@@ -1288,7 +1288,7 @@ module _ where
     ⦃ _ : 𝓡eflexivity _∼_ ⦄
     ℓ
     where
-    𝓹rop-id = ∀ {m n} {f : m ∼ n} (P : LeftExtensionṖroperty _∼_ ℓ _∼̇_ m)
+    𝓹rop-id = ∀ {m n} {f : m ∼ n} (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
               (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
     record PropId : Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ℓ̇ ∙̂ ↑̂ ℓ where field prop-id : 𝓹rop-id
 

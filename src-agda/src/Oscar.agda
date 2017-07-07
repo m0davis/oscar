@@ -185,16 +185,16 @@ module Test5
   ⦃ _ : 𝓢urjectivity (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : [𝓢urjextensionality] (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
   ⦃ _ : 𝓢urjextensionality (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
-  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_) ⦄
+  ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_) ⦄
   where
-  test[∙] : ∀ {x y} → ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _↦_ y
+  test[∙] : ∀ {x y} → ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_ y
   test[∙] P f = f ◃ P
 
 module Test6 where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
-  test-epfs : ∀ {x y} → ExtensionṖroperty (Arrow Fin Term x) ℓ (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty Fin Term ℓ _≡_ y
+  test-epfs : ∀ {x y} → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
   test-epfs P f = f ◃ P
 
   test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Arrow Fin Term x y → ArrowṖroperty ℓ Fin Term y
@@ -214,10 +214,10 @@ module Test6 where
          → ≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} (s1 fork s2) (t1 fork t2) ⇔ (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
   Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3 : ∀ {m} {P : ArrowExtensionṖroperty Fin Term ℓ Proposequality m} → P ⇔ (i ◃ P)
+  fact3 : ∀ {m} {P : ArrowExtensionṖroperty ℓ Fin Term Proposequality m} → P ⇔ (i ◃ P)
   fact3 = ¡ , ¡
 
-  fact4 : ∀{m n} {P : ArrowExtensionṖroperty Fin Term ℓ Proposequality m} (f : _ → Term n)
+  fact4 : ∀{m n} {P : ArrowExtensionṖroperty ℓ Fin Term Proposequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
@@ -225,11 +225,11 @@ module Test6 where
            → (λ {w} → (f ◃ λ {_} → P) {w}) ⇔ (f ◃ λ {_} → Q)
   fact5⋆ P⇔Q = P⇔Q
 
-  fact5 : ∀{m n} {P Q : ArrowExtensionṖroperty Fin Term ℓ Proposequality m} {f : Arrow Fin Term m n} → P ⇔ Q
+  fact5 : ∀{m n} {P Q : ArrowExtensionṖroperty ℓ Fin Term Proposequality m} {f : Arrow Fin Term m n} → P ⇔ Q
            → (f ◃ P) ⇔ (f ◃ Q)
   fact5 P⇔Q = P⇔Q
 
-  fact6 : ∀{m n} (P : ArrowExtensionṖroperty Fin Term ℓ Proposequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
+  fact6 : ∀{m n} (P : ArrowExtensionṖroperty ℓ Fin Term Proposequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ⇔ (g ◃ P)
   fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
 module Test7 where
@@ -246,7 +246,7 @@ module Test7 where
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
     {m n}
-    {ℓ} {f : m ∼ n} (P : ExtensionṖroperty (Arrow 𝔄 𝔅 m) ℓ _∼̇_) (let P₀ = π₀ P)
+    {ℓ} {f : m ∼ n} (P : ExtensionṖroperty ℓ (Arrow 𝔄 𝔅 m) _∼̇_) (let P₀ = π₀ P)
     → P₀ f
     → P₀ (ε ∙ f)
   𝓅rop-id = prop-id
@@ -254,19 +254,18 @@ module Test7 where
 module Test8 where
   ≡-ExtensionṖroperty : ∀
     {𝔵} {𝔛 : Ø 𝔵}
-    {𝔬₁} (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    {𝔬₁} ℓ (𝔒₁ : 𝔛 → Ø 𝔬₁)
     {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
-    ℓ
     → 𝔛
     → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-  ≡-ExtensionṖroperty 𝔒₁ 𝔒₂ ℓ x = ArrowExtensionṖroperty 𝔒₁ 𝔒₂ ℓ _≡_ x
+  ≡-ExtensionṖroperty ℓ 𝔒₁ 𝔒₂ x = ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _≡_ x
 
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
 
-  test-epfs : ∀ {x y} → ExtensionṖroperty (Arrow Fin Term x) ℓ (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty Fin Term ℓ _≡_ y
+  test-epfs : ∀ {x y} → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
   test-epfs P f = f ◃ P
 
-  test-epfs2 : ∀ {x y} → ≡-ExtensionṖroperty Fin Term ℓ x → Arrow Fin Term x y → ≡-ExtensionṖroperty Fin Term ℓ y
+  test-epfs2 : ∀ {x y} → ≡-ExtensionṖroperty ℓ Fin Term x → Arrow Fin Term x y → ≡-ExtensionṖroperty ℓ Fin Term y
   test-epfs2 P f = f ◃ P
