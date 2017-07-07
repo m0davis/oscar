@@ -1171,22 +1171,17 @@ module _
 
   instance
 
+    HasEquivalenceExtendedProperty : HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
+    HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = ExtensionṖropertyEquivalence P Q
+
+  instance
+
     ProperthingExtensionṖroperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
     ProperthingExtensionṖroperty .Properthing._∧_ P Q = (λ _ → π₀ P _ × π₀ Q _) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
-    ProperthingExtensionṖroperty .Properthing._⇔_ P Q = ExtensionṖropertyEquivalence P Q -- ExtensionṖropertyEquivalence P Q -- (λ {x} → π₀ P {x}) ⇔ π₀ Q
+    ProperthingExtensionṖroperty .Properthing._⇔_ = _≈_ -- ExtensionṖropertyEquivalence P Q -- (λ {x} → π₀ P {x}) ⇔ π₀ Q
     --ProperthingExtensionṖroperty .Properthing.Symmetry⇔ .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
     ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
     ProperthingExtensionṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
-
-instance
-
-  HasEquivalenceExtendedProperty : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
-    {ℓ}
-    {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
-    → HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-  HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = ExtensionṖropertyEquivalence P Q
 
 {-
 module _
