@@ -1253,21 +1253,11 @@ module _ where
   record Properthing {𝔬} ℓ (𝔒 : Ø 𝔬) : Ø 𝔬 ∙̂ ↑̂ ℓ where
     field
       _∧_ : 𝔒 → 𝔒 → 𝔒
-      _⇔_ : 𝔒 → 𝔒 → Ø ℓ
-      ⦃ IsEquivalence⇔ ⦄ : IsEquivalence _⇔_
+      ⦃ ⌶HasEquivalence ⦄ : HasEquivalence 𝔒 ℓ
       Nothing : 𝔒 → Ø ℓ
-      fact2 : ∀ {P Q} → P ⇔ Q → Nothing P → Nothing Q
+      fact2 : ∀ {P Q} → P ≈ Q → Nothing P → Nothing Q
 
   open Properthing ⦃ … ⦄ public
-
-  ⇔syntax : ∀
-    {𝔬} {ℓ} (𝔒 : Ø 𝔬)
-    ⦃ _ : Properthing ℓ 𝔒 ⦄
-    → 𝔒 → 𝔒 → Ø ℓ
-  ⇔syntax _ = _⇔_
-
-  syntax ⇔syntax 𝔒 P Q = P ⇔[ 𝔒 ] Q
-
 
 module _ where
 
