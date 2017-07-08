@@ -33,11 +33,8 @@ module Test where
     [Propertyish]Substitunction = ∁
 
   postulate
-    works1 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty ℓ (Substitunction m)} ⦃ ProperthingṖroperty ⦄ {x = x}) ∧ (λ {x} → P {x})) {x}) ≈ (λ {x} → P {x}))
-    works2 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty _ _}) ∧ (λ {x} → P {x})) {x}) ≈ (λ {x} → P {x}))
-    works2' : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty _ _} {x = x})) {x}) ≈ (λ {x} → P {x}))
-    works3 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty _ _}) ∧ (λ {x} → P))) ≈[ ({x : ¶} → π̂ {∅̂} ℓ (Substitunction m x)) ] (λ {x} → P {x}))
-    works1' : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty ℓ (Substitunction m)} ⦃ ProperthingṖroperty ⦄ {x = x})) {x}) ≈ (λ {x} → P {x}))
-    -- fails : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {y} → ➊ ⦃ ! ⦄ {x = y}) ∧ (λ {x} → P {x})) {x}) ≈[ ({x : ¶} → π̂ {∅̂} ℓ (Substitunction m x)) ] (λ {x} → P {x}))
-    fails2 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {y} → ➊ ⦃ ! ⦄ {x = y})) {x}) ≈[ ({x : ¶} → π̂ {∅̂} ℓ (Substitunction m x)) ] (λ {x} → P {x}))
+    works1 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty ℓ (Substitunction m)} ⦃ ProperthingṖroperty ⦄ {x = x})) {x}) ≈ (λ {x} → P {x}))
+    works2 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty _ _} {x = x})) {x}) ≈ (λ {x} → P {x}))
+    works3 : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ {𝔒 = Ṗroperty _ _} {x = x})) {x}) ≈[ ({x : ¶} → π̂ {∅̂} ℓ (Substitunction m x)) ] (λ {x} → P {x}))
+    fails : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → ((λ {x} → ((λ {x} → ➊ ⦃ ! ⦄ {x = x})) {x}) ≈ (λ {x} → P {x}))
     --worksfoo : ∀ {m} (P : Ṗroperty ℓ (Substitunction m)) → (➊ ∧ P) ≈ P
