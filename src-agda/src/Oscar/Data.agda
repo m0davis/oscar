@@ -168,12 +168,6 @@ module SubstitunctionOperator {𝔭} (𝔓 : Ø 𝔭) where
 
   _⊸_ = Substitunction
 
-module Substitist {𝔭} (𝔓 : Ø 𝔭) where
-
-  open Term 𝔓
-
-  Substitist = flip Descender⟨ (λ n-o → Fin (↑ n-o) × Term n-o) ⟩
-
 module _ where
 
   data Maybe {a} (A : Ø a) : Ø a where

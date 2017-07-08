@@ -141,7 +141,7 @@ _→̂²_ 𝔒 ℓ = π̂² ℓ 𝔒
 ∀̇ : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞}
   → (∀ ℓ (𝔄 : Ø 𝔞) → Ø 𝔞 ∙̂ ↑̂ ℓ)
   → ∀ ℓ → (𝔛 → Ø 𝔞) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
-∀̇ Q ℓ 𝔄 = ∀ {x} → Q ℓ (𝔄 x)
+∀̇ Q ℓ 𝔄 = ∀ x → Q ℓ (𝔄 x)
 
 Ṙelation : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞} ℓ → (𝔞 ←̂ 𝔛) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
 Ṙelation = ∀̇ π̂²
@@ -182,7 +182,7 @@ module _ where
 ExtensionṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} {ℓ̇}
   ℓ (𝔒 : 𝔛 → Ø 𝔬) (_↦_ : ∀̇ π̂² ℓ̇ 𝔒)
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
-ExtensionṖroperty ℓ 𝔒 _↦_ = Σ (∀̇ π̂ ℓ 𝔒) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → Extension P f g)
+ExtensionṖroperty ℓ 𝔒 _↦_ = Σ (∀̇ π̂ ℓ 𝔒) (λ P → ∀ {x} {f g : 𝔒 x} → _↦_ _ f g → Extension (P _) f g)
 
 LeftExtensionṖroperty : ∀ {𝔶} {𝔜 : Ø 𝔶} {𝔵} {𝔛 : 𝔜 → Ø 𝔵} {𝔬} {ℓ̇}
   ℓ (𝔒 : (y : 𝔜) → 𝔛 y → Ø 𝔬) (_↦_ : ∀ {y} → ∀̇ π̂² ℓ̇ (𝔒 y))
@@ -190,6 +190,7 @@ LeftExtensionṖroperty : ∀ {𝔶} {𝔜 : Ø 𝔶} {𝔵} {𝔛 : 𝔜 → Ø
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
 LeftExtensionṖroperty ℓ 𝔒 _↦_ y = ExtensionṖroperty ℓ (𝔒 y) _↦_
 
+{-
 ArrowExtensionṖroperty : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬₁} ℓ (𝔒₁ : 𝔛 → Ø 𝔬₁)
@@ -198,3 +199,4 @@ ArrowExtensionṖroperty : ∀
   → 𝔛
   → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ ∙̂ ℓ̇
 ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_ = LeftExtensionṖroperty ℓ (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_)
+-}
