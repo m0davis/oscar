@@ -51,6 +51,8 @@ Version history:
       - decrease position of level argument in Ṗroperty et al.
     * replace _⇔_ with HasEquivalence in Properthing
     * remove some commented code related to Equivalence of Ṗroperty
+    * add identity (➊) for conjunction (_∧_) in Properthing
+    * add wrapper for type-constructors that have hidden variables
 
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
