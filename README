@@ -54,6 +54,18 @@ Version history:
     * add identity (➊) for conjunction (_∧_) in Properthing
     * add wrapper for type-constructors that have hidden variables
 
+TODO for 0.3.0.2:
+    * do we need a wrapper for Properthing.Nothing (which uses hidden variables)?
+    * do we need [Propertyish] now that we use wrappers?
+    * adjust precedence of _◃_ (et al?) and remove parentheses
+    * why is the declaration of 𝓣ransitivityExtensionṖroperty' as instance done late?
+    * move Lift to Prelude
+    * move [Propertyish] (if needed) to Class? this is somehow special, so maybe somewhere else?
+    * rename the wrapper class, V, to something else (Wrapper?)
+    * out of curiosity, what are we using (or did we originally need) _$′_ for?
+    * now that we're using wrappers, can we remove a lot of type specifiers?
+    * decide if it's better to have or not have the wrapper in the index of ExtendedṖroperty (branch: develop-remove-wrapper)
+
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
     * feature: implement Variables
