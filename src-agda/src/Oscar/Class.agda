@@ -159,9 +159,5 @@ module _ where
   record Properthing {𝔬} ℓ (𝔒 : Ø 𝔬) : Ø 𝔬 ∙̂ ↑̂ ℓ where
     field
       ➊ : 𝔒
-      _∧_ : 𝔒 → 𝔒 → 𝔒
-      ⦃ ⌶HasEquivalence ⦄ : HasEquivalence 𝔒 ℓ
-      Nothing : 𝔒 → Ø ℓ
-      fact2 : ∀ {P Q} → P ≈ Q → Nothing P → Nothing Q
 
   open Properthing ⦃ … ⦄ public

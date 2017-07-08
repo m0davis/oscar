@@ -143,12 +143,6 @@ _→̂²_ 𝔒 ℓ = π̂² ℓ 𝔒
   → ∀ ℓ → (𝔛 → Ø 𝔞) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
 ∀̇ Q ℓ 𝔄 = ∀ x → Q ℓ (𝔄 x)
 
-Ṙelation : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞} ℓ → (𝔞 ←̂ 𝔛) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
-Ṙelation = ∀̇ π̂²
-
-Pointwise : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} {ℓ} → 𝔅 →̂² ℓ → (𝔅 ← 𝔄) → (𝔄 → 𝔅) → Ø 𝔞 ∙̂ ℓ
-Pointwise _≈_ = λ f g → ∀ x → f x ≈ g x
-
 Ṗroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} ℓ → (𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ) ←̂ (𝔬 ←̂ 𝔛)
 Ṗroperty = ∀̇ π̂
 
@@ -189,14 +183,3 @@ LeftExtensionṖroperty : ∀ {𝔶} {𝔜 : Ø 𝔶} {𝔵} {𝔛 : 𝔜 → Ø
   → 𝔜
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
 LeftExtensionṖroperty ℓ 𝔒 _↦_ y = ExtensionṖroperty ℓ (𝔒 y) _↦_
-
-{-
-ArrowExtensionṖroperty : ∀
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔬₁} ℓ (𝔒₁ : 𝔛 → Ø 𝔬₁)
-  {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
-  → ∀ {ℓ̇} (_↦_ : ∀̇ π̂² ℓ̇ 𝔒₂)
-  → 𝔛
-  → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ ∙̂ ℓ̇
-ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_ = LeftExtensionṖroperty ℓ (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_)
--}

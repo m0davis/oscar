@@ -13,22 +13,12 @@ module _
   {ℓ : Ł}
   where
 
-  ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ṖropertyEquivalence P Q = ∀ {n f} → (P n f → Q _ f) × (Q _ f → P _ f)
+  postulate ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
+  -- ṖropertyEquivalence P Q = ∀ {n f} → (P n f → Q _ f) × (Q _ f → P _ f)
 
   instance
 
-    𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence
-    𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity = ¡ , ¡
-
-    𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence
-    𝓢ymmetryṖroperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
-
-    𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence
-    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity P⇔Q Q⇔R = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
-
-    IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence
-    IsEquivalenceṖroperty = ∁
+    postulate IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence
 
 instance
 
@@ -58,10 +48,6 @@ instance
     {ℓ}
     → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
   ProperthingṖroperty .Properthing.➊ _ _ = Lift 𝟙
-  ProperthingṖroperty .Properthing._∧_ P Q _ f = P _ f × Q _ f
-  ProperthingṖroperty .Properthing.⌶HasEquivalence = !
-  ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P _ f → 𝟘
-  ProperthingṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
 module Test where
   postulate 𝔓 : Set
@@ -76,8 +62,3 @@ module Test where
 
   postulate
     foo : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → ➊ ≈ P
-
-  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (➊ ∧ P) ≈ P
-  left-identity-∧ P .π₀ (π₂ , π₃) = π₃
-  left-identity-∧ P .π₁ x .π₀ = lift ∅
-  left-identity-∧ P .π₁ x .π₁ = x
