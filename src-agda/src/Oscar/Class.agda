@@ -1,6 +1,4 @@
 {-# OPTIONS --show-implicit #-}
-{-# OPTIONS --postfix-projections #-}
-{-# OPTIONS --rewriting #-}
 module Oscar.Class where
 
 open import Oscar.Prelude

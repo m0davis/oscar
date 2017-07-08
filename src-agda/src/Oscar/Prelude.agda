@@ -97,48 +97,13 @@ module _ where -- Function
   h on f = λ x y → h (f x) (f y)
   {-# INLINE _on_ #-}
 
-Function : ∀ {a} (A B : Ø a) → Ø a
-Function A B = A → B
-
-Function⟦_⟧ : ∀ a (A B : Ø a) → Ø a
-Function⟦ a ⟧ = Function {a = a}
-
-Arrow : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞} {𝔟} → (𝔛 → Ø 𝔞) → (𝔛 → Ø 𝔟) → 𝔛 → 𝔛 → Ø 𝔞 ∙̂ 𝔟
-Arrow 𝔄 𝔅 x y = 𝔄 x → 𝔅 y
-
-module _ where
-
-  Extension : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) → 𝔒 → 𝔒 → Ø 𝔭
-  Extension 𝔓 = Arrow 𝔓 𝔓
-
-module _ where
-
-  _⟨_⟩→_ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝔒 → ∀ {𝔭} → (𝔒 → Ø 𝔭) → 𝔒 → Ø 𝔭
-  m ⟨ 𝔓 ⟩→ n = Extension 𝔓 m n
-
 π̂ : ∀ {𝔵} ℓ (𝔛 : Ø 𝔵) → Ø 𝔵 ∙̂ ↑̂ ℓ
 π̂ ℓ 𝔛 = 𝔛 → Ø ℓ
-
-infixl 21 _←̂_
-_←̂_ = π̂
-
-π̇ : ∀ {𝔞 𝔟} (𝔄 : Ø 𝔞) (𝔅 : 𝔄 → Ø 𝔟) → Ø 𝔞 ∙̂ 𝔟
-π̇ 𝔄 𝔅 = (𝓐 : 𝔄) → 𝔅 𝓐
-
-infixl 20 π̇
-syntax π̇ 𝔄 (λ 𝓐 → 𝔅𝓐) = 𝔅𝓐 ← 𝓐 ≔ 𝔄
-
-π̇-hidden-quantifier-syntax = π̇
-infixl 20 π̇-hidden-quantifier-syntax
-syntax π̇-hidden-quantifier-syntax 𝔄 (λ _ → 𝔅𝓐) = 𝔅𝓐 ← 𝔄
 
 ∀̇ : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞}
   → (∀ ℓ (𝔄 : Ø 𝔞) → Ø 𝔞 ∙̂ ↑̂ ℓ)
   → ∀ ℓ → (𝔛 → Ø 𝔞) → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
 ∀̇ Q ℓ 𝔄 = ∀ {x} → Q ℓ (𝔄 x)
 
-Ṗroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} ℓ → (𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ) ←̂ (𝔬 ←̂ 𝔛)
+Ṗroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} ℓ → (𝔛 → Ø 𝔬) → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ
 Ṗroperty = ∀̇ π̂
-
-LeftṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔶} {𝔜 : 𝔛 → Ø 𝔶} {𝔯} → ∀ ℓ → ((x : 𝔛) → 𝔜 x → Ø 𝔯) → 𝔛 → Ø 𝔶 ∙̂ 𝔯 ∙̂ ↑̂ ℓ
-LeftṖroperty ℓ _↦_ = ∀̇ π̂ ℓ ∘ _↦_
