@@ -42,6 +42,13 @@ Version history:
 
 0.3.0.2:
     * major cleanup of src-agda
+    * add useful type-constructor constuctors, e.g.:
+      - ∀̇
+      - π̂
+    * revise some type-constructor constructors, e.g.:
+      - rename Property et al. to Ṗroperty
+      - rename Extended to Pointwise
+      - decrease position of level argument in Ṗroperty et al.
 
 TODO for 0.4.0.0:
     * tool: add tests for parsers (or any tricky stuff that isn't checked by the typesystem)
