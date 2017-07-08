@@ -159,5 +159,6 @@ module _ where
   record Properthing {𝔬} ℓ (𝔒 : Ø 𝔬) : Ø 𝔬 ∙̂ ↑̂ ℓ where
     field
       ➊ : 𝔒
+      _∧_ : 𝔒 → 𝔒 → 𝔒
 
   open Properthing ⦃ … ⦄ public
