@@ -53,6 +53,8 @@ Version history:
     * remove some commented code related to Equivalence of Ṗroperty
     * add identity (➊) for conjunction (_∧_) in Properthing
     * add wrapper for type-constructors that have hidden variables
+    * fix and add tests for equivalence properties of (Extension)Ṗroperty
+      - instance resolution failed for 𝓣ransitivity, et al., due to ???
 
 TODO for 0.3.0.2:
     * do we need a wrapper for Properthing.Nothing (which uses hidden variables)?
@@ -60,6 +62,7 @@ TODO for 0.3.0.2:
       - No. Now, explain why. (branch: develop-explain-how-wrapper-obviates-need-for-class-constraint)
     * adjust precedence of _◃_ (et al?) and remove parentheses
     * why is the declaration of 𝓣ransitivityExtensionṖroperty' as instance done late?
+      - ?
     * move Lift to Prelude
     * move [Propertyish] (if needed) to Class? this is somehow special, so maybe somewhere else?
     * rename the wrapper class, V, to something else (Wrapper?)

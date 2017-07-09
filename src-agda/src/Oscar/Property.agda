@@ -1158,27 +1158,10 @@ module _
 
   instance
 
-    𝓡eflexivityExtensionṖroperty : 𝓡eflexivity ExtensionṖropertyEquivalence
-    𝓡eflexivityExtensionṖroperty .𝓡eflexivity.reflexivity .π₀ = ¡ , ¡
-
-    𝓢ymmetryExtensionṖroperty : 𝓢ymmetry ExtensionṖropertyEquivalence
-    𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q
-
-  𝓣ransitivityExtensionṖroperty' : 𝓣ransitivity ExtensionṖropertyEquivalence
-  𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R = transitivity P⇔Q Q⇔R
---  𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity (∁ P⇔Q) (∁ Q⇔R) .π₀ =
---    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity (∁ (λ {x} {f} → P⇔Q {x} {f})) (∁ Q⇔R) .π₀
-  -- π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
-  -- π₀ $′ transitivity ⦃ 𝓣ransitivityṖroperty ⦄ (∁ P⇔Q) (∁ Q⇔R)  -- transitivity (λ {x} {f} → P⇔Q {x} {f}) Q⇔R
-  --𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R .π₀ = transitivity (λ {x} {f} → P⇔Q {x} {f}) Q⇔R
-
-  instance
-
-    𝓣ransitivityExtensionṖroperty : 𝓣ransitivity ExtensionṖropertyEquivalence
-    𝓣ransitivityExtensionṖroperty = 𝓣ransitivityExtensionṖroperty'
-
     IsEquivalenceExtensionṖroperty : IsEquivalence ExtensionṖropertyEquivalence
-    IsEquivalenceExtensionṖroperty = ∁
+    IsEquivalenceExtensionṖroperty .IsEquivalence.`𝓡eflexivity = record { reflexivity = reflexivity }
+    IsEquivalenceExtensionṖroperty .IsEquivalence.`𝓢ymmetry = record { symmetry = symmetry }
+    IsEquivalenceExtensionṖroperty .IsEquivalence.`𝓣ransitivity = record { transitivity = transitivity }
 
   instance
 
