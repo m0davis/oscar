@@ -206,11 +206,6 @@ module Test6 where
   Properties-fact1 : ∀ {m} {s t : Term m} → (≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} s t) ≈ ≡-ExtensionalUnifies t s
   Properties-fact1 .π₀ = symmetry , symmetry
 
-  instance
-
-    [Propertyish]Substitunction : ∀ {m} → [Propertyish] (Arrow Fin Term m)
-    [Propertyish]Substitunction = ∁
-
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ (≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2)
   Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)

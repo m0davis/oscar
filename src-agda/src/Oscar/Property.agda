@@ -1133,16 +1133,11 @@ record Lift {a ℓ} (A : Set a) : Set (a ∙̂ ℓ) where
 
 open Lift public
 
-record [Propertyish] {𝔵} {𝔛 : Ø 𝔵} {𝔬} (𝔒 : 𝔛 → Ø 𝔬) : Ø₀ where
-  no-eta-equality
-  constructor ∁
-
 instance
 
   ProperthingṖroperty : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
-    ⦃ _ : [Propertyish] 𝔒 ⦄
     {ℓ}
     → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
   ProperthingṖroperty .Properthing.➊ = ∁ (λ _ → Lift 𝟙)
@@ -1192,7 +1187,7 @@ module _
 
   instance
 
-    ProperthingExtensionṖroperty : ⦃ _ : [Propertyish] 𝔒 ⦄ → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
+    ProperthingExtensionṖroperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
     ProperthingExtensionṖroperty .Properthing.➊ = ➊ , (λ _ _ → lift ∅)
     ProperthingExtensionṖroperty .Properthing._∧_ P Q = ∁ (λ f → π₀ (π₀ P) f × π₀ (π₀ Q) f) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
     ProperthingExtensionṖroperty .Properthing.⌶HasEquivalence = !
@@ -1262,11 +1257,6 @@ module Test where
 
   Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ≈[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
   Properties-fact1-test2 .π₀ = symmetry , symmetry
-
-  instance
-
-    [Propertyish]Substitunction : ∀ {m} → [Propertyish] (Substitunction m)
-    [Propertyish]Substitunction = ∁
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ (≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2)

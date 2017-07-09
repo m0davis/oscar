@@ -57,6 +57,7 @@ Version history:
 TODO for 0.3.0.2:
     * do we need a wrapper for Properthing.Nothing (which uses hidden variables)?
     * do we need [Propertyish] now that we use wrappers?
+      - No. Now, explain why. (branch: develop-explain-how-wrapper-obviates-need-for-class-constraint)
     * adjust precedence of _◃_ (et al?) and remove parentheses
     * why is the declaration of 𝓣ransitivityExtensionṖroperty' as instance done late?
     * move Lift to Prelude
