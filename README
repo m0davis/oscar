@@ -53,6 +53,7 @@ Version history:
     * remove some commented code related to Equivalence of Ṗroperty
     * add identity (➊) for conjunction (_∧_) in Properthing
     * add wrapper for type-constructors that have hidden variables
+    * add tests showing failure to resolve equivalence instances of (Extension)Ṗroperty
 
 TODO for 0.3.0.2:
     * do we need a wrapper for Properthing.Nothing (which uses hidden variables)?
