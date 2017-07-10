@@ -1018,7 +1018,7 @@ module _ where
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
     {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
-    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ℓ (𝔄 m)
+    → 𝓾nifies₀ ℭ 𝔄 ℓ
   Unifies₀⟦ _ ⟧ = Unifies₀
 
   ≡-Unifies₀ : ∀
@@ -1027,7 +1027,7 @@ module _ where
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ∅̂ (𝔄 m)
+    → 𝓾nifies₀ ℭ 𝔄 ∅̂
   ≡-Unifies₀ = Unifies₀ _≡_
 
   ≡-Unifies₀⟦_⟧ : ∀
@@ -1036,7 +1036,7 @@ module _ where
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
     ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    → ∀ {m} → ℭ m → ℭ m → Ṗroperty ∅̂ (𝔄 m)
+    → 𝓾nifies₀ ℭ 𝔄 ∅̂
   ≡-Unifies₀⟦ _ ⟧ = ≡-Unifies₀
 
   ExtensionalUnifies : ∀
@@ -1224,7 +1224,7 @@ module Test where
   test-epfs' P f = f ◃ P
 
   fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
-  fact1U .π₀ = {!!} -- symmetry , symmetry
+  fact1U .π₀ = symmetry , symmetry
 
   fact1U-test2 : ∀ {m} {s t : Term m} → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
   fact1U-test2 .π₀ = symmetry , symmetry
