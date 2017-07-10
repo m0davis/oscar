@@ -1003,7 +1003,7 @@ module _ where
     {𝔯₁} {_↦₁_ : π̂² 𝔯₁ 𝔒}
     ⦃ _ : [𝓢urjectivity] _↦₁_ (Extension 𝔓) ⦄
     ⦃ _ : 𝓢urjectivity _↦₁_ (Extension 𝔓) ⦄
-    {𝔯₂} (_↦₂_ : Ṙelation 𝔯₂ 𝔓)
+    {𝔯₂} (_↦₂_ : ∀̇ π̂² 𝔯₂ 𝔓)
     → 𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂
   Unifies₀ _↦₂_ p q .π₀ x =
     let _↦₂_ = _↦₂_
@@ -1190,7 +1190,7 @@ instance
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
     (let _∼_ = Arrow 𝔒₁ 𝔒₂)
     {ℓ}
-    {ℓ̇} {_↦_ : Ṙelation ℓ̇ 𝔒₂}
+    {ℓ̇} {_↦_ : ∀̇ π̂² ℓ̇ 𝔒₂}
     ⦃ _ : [ExtensibleType] (λ {x} → _↦_ {x}) ⦄
     ⦃ _ : [𝓢urjectivity] _∼_ (Extension 𝔒₂) ⦄
     ⦃ _ : 𝓢urjectivity _∼_ (Extension 𝔒₂) ⦄
@@ -1224,7 +1224,7 @@ module Test where
   test-epfs' P f = f ◃ P
 
   fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
-  fact1U .π₀ = symmetry , symmetry
+  fact1U .π₀ = {!!} -- symmetry , symmetry
 
   fact1U-test2 : ∀ {m} {s t : Term m} → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
   fact1U-test2 .π₀ = symmetry , symmetry
