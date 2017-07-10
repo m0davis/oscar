@@ -52,7 +52,7 @@ Version history:
     * replace _⇔_ with HasEquivalence in Properthing
     * remove some commented code related to Equivalence of Ṗroperty
     * add identity (➊) for conjunction (_∧_) in Properthing
-    * add wrapper for type-constructors that have hidden variables
+    * add wrapper (Wrap) for type-constructors that have hidden variables
     * fix and add tests for equivalence properties of (Extension)Ṗroperty
       - instance resolution failed for 𝓣ransitivity, et al., due to ???
 

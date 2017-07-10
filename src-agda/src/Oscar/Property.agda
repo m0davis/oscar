@@ -1102,7 +1102,7 @@ module _
   where
 
   ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ṖropertyEquivalence (∁ P) (∁ Q) = V (∀ {n f} → (P {n} f → Q f) × (Q f → P f))
+  ṖropertyEquivalence (∁ P) (∁ Q) = Wrap (∀ {n f} → (P {n} f → Q f) × (Q f → P f))
 
   instance
 
