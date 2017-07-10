@@ -1127,12 +1127,6 @@ instance
     → HasEquivalence (Ṗroperty ℓ 𝔒) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
   HasEquivalenceṖroperty .HasEquivalence.Equivalence P Q = ṖropertyEquivalence P Q
 
-record Lift {a ℓ} (A : Set a) : Set (a ∙̂ ℓ) where
-  constructor lift
-  field lower : A
-
-open Lift public
-
 instance
 
   ProperthingṖroperty : ∀

@@ -142,6 +142,12 @@ syntax π̇-hidden-quantifier-syntax 𝔄 (λ _ → 𝔅𝓐) = 𝔅𝓐 ← �
 _→̂²_ : ∀ {𝔞} → Ø 𝔞 → ∀ ℓ → Ø 𝔞 ∙̂ ↑̂ ℓ
 _→̂²_ 𝔒 ℓ = π̂² ℓ 𝔒
 
+record Lift {a ℓ} (A : Set a) : Set (a ∙̂ ℓ) where
+  constructor lift
+  field lower : A
+
+open Lift public
+
 record V {𝔵} (𝔛 : Ø 𝔵) : Ø 𝔵 where
   constructor ∁
   field
