@@ -294,3 +294,11 @@ module TestEquivalenceExtensionṖroperty
 
   test-trans-ext : {P Q R : ExtensionṖroperty ℓ 𝔒 _↦_} → P ≈ Q → Q ≈ R → P ≈ R
   test-trans-ext P≈Q Q≈R = transitivity P≈Q Q≈R
+
+module TestSymmetrical where
+  test-𝓢ymmetrical𝓢ymmetry : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
+    ⦃ _ : 𝓢ymmetry _∼_ ⦄
+    → 𝓼ymmetry _∼_
+  test-𝓢ymmetrical𝓢ymmetry = symmetrical _ _

@@ -1213,6 +1213,13 @@ instance
 
 instance
 
+  𝓢ymmetrical𝓢ymmetry : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
+    ⦃ _ : 𝓢ymmetry _∼_ ⦄
+    → 𝓢ymmetrical 𝔒 (λ s t t' s' → s ∼ t → t' ∼ s')
+  𝓢ymmetrical𝓢ymmetry .𝓢ymmetrical.symmetrical x y = symmetry
+
   𝓢ymmetricalUnifies₀ : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
