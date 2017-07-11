@@ -1302,9 +1302,13 @@ module Test where
           → Nothing P → Nothing (f ◃ P)
   fact4-test = fact4
 
-  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → P ≈ Q
+  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q
            → (f ◃ P) ≈ (f ◃ Q)
-  fact5⋆ (∁ P⇔Q) .π₀ = P⇔Q
+  fact5⋆ _ (∁ P⇔Q) .π₀ = P⇔Q
+
+  fact5⋆-test : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q
+                → (f ◃ P) ≈ (f ◃ Q)
+  fact5⋆-test = fact5⋆
 
   fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} {f : Arrow Fin Term m n} → P ≈ Q
            → (f ◃ P) ≈ (f ◃ Q)
