@@ -1315,6 +1315,16 @@ module _ where
     constructor ∁
     no-eta-equality
 
+module _ where
+
+  record 𝓢ymmetrical
+    {𝔞} (𝔄 : Ø 𝔞)
+    {ℓ} (_∼_↦_∼_ : 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ)
+    : Ø 𝔞 ∙̂ ℓ where
+    field
+      symmetrical : (x y : 𝔄) → x ∼ y ↦ y ∼ x
+
+  open 𝓢ymmetrical ⦃ … ⦄ public
 
 -- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
 --   constructor ∁
