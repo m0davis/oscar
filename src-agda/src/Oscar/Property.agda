@@ -1224,6 +1224,25 @@ instance
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
   𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
 
+  𝓢ymmetricalExtensionalUnifies : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
+    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    (let _↦_ = Arrow 𝔄 𝔅)
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
+    {ℓ₁} {_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
+    {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
+    ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
+    ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
+    ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
+    ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    -- {-{ℓ}-} {_≈'_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
+    ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₁_ {y}) ⦄
+    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _∼₁_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _∼₁_ t' s')
+  𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
+
 module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
@@ -1250,6 +1269,9 @@ module Test where
 
   Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
   Properties-fact1 .π₀ = symmetry , symmetry
+
+  Properties-fact1-s : ∀ {m} (s t : Term m) → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
+  Properties-fact1-s = symmetrical
 
   Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ≈[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
   Properties-fact1-test2 .π₀ = symmetry , symmetry
