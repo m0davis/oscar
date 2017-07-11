@@ -1223,8 +1223,11 @@ module Test where
   test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
   test-epfs' P f = f ◃ P
 
-  fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
-  fact1U .π₀ = symmetry , symmetry
+  fact1U : ∀ {m} (s t : Term m) → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
+  fact1U _ _ .π₀ = symmetry , symmetry
+
+  fact1U' : ∀ {m} (s t : Term m) → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
+  fact1U' = fact1U
 
   fact1U-test2 : ∀ {m} {s t : Term m} → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
   fact1U-test2 .π₀ = symmetry , symmetry
