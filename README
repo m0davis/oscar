@@ -55,6 +55,7 @@ Version history:
     * add wrapper (Wrap) for type-constructors that have hidden variables
     * fix and add tests for equivalence properties of (Extension)Ṗroperty
       - instance resolution failed for 𝓣ransitivity, et al., due to ???
+    * rename 𝓢urjectivity' to 𝓢urjectextensivity
 
 TODO for 0.3.0.2:
     * do we need a wrapper for Properthing.Nothing (which uses hidden variables)?

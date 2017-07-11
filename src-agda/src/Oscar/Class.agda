@@ -241,28 +241,28 @@ module _ where
     where
     module _
       where
-      𝓼urjectivity' = ∀ {x y} → x ∼₁ y → 𝔒₂ x → 𝔒₂ y
-      record 𝓢urjectivity' : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ where -- TODO rename
+      𝓼urjectextensivity = ∀ {x y} → x ∼₁ y → 𝔒₂ x → 𝔒₂ y
+      record 𝓢urjectextensivity : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ where
         field
-          surjectivity' : 𝓼urjectivity'
-        infixr 10 surjectivity'
-        syntax surjectivity' σ τ = σ ◃ τ
-        surjectivity'!syntax = surjectivity'
-        infixl 10 surjectivity'!syntax
-        syntax surjectivity'!syntax rxy px = px ● rxy
+          surjectextensivity : 𝓼urjectextensivity
+        infixr 10 surjectextensivity
+        syntax surjectextensivity σ τ = σ ◃ τ
+        surjectextensivity!syntax = surjectextensivity
+        infixl 10 surjectextensivity!syntax
+        syntax surjectextensivity!syntax rxy px = px ● rxy
 
-  open 𝓢urjectivity' ⦃ … ⦄ public hiding (surjectivity')
-  open 𝓢urjectivity' ⦃ … ⦄ public using () renaming (surjectivity' to §')
+  open 𝓢urjectextensivity ⦃ … ⦄ public hiding (surjectextensivity)
+  open 𝓢urjectextensivity ⦃ … ⦄ public using () renaming (surjectextensivity to §')
 
-  surjectivity'[]syntax : ∀
+  surjectextensivity[]syntax : ∀
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
     {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
-    ⦃ _ : 𝓢urjectivity' _∼₁_ 𝔒₂ ⦄
-    → 𝓼urjectivity' _∼₁_ 𝔒₂
-  surjectivity'[]syntax _ = §'
+    ⦃ _ : 𝓢urjectextensivity _∼₁_ 𝔒₂ ⦄
+    → 𝓼urjectextensivity _∼₁_ 𝔒₂
+  surjectextensivity[]syntax _ = §'
 
-  syntax surjectivity'[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
+  syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
 
   module _
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
@@ -316,8 +316,8 @@ module _ where
         {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
         ⦃ _ : [𝓢urjectivity] _∼₁_ (Extension 𝔒₂) ⦄
         ⦃ _ : 𝓢urjectivity _∼₁_ (Extension 𝔒₂) ⦃ record { surjection = ¡ } ⦄ ⦄
-        → 𝓢urjectivity' _∼₁_ 𝔒₂
-      toSurj' {{_}} {{x₂}} .𝓢urjectivity'.surjectivity' = § {{r = x₂}}
+        → 𝓢urjectextensivity _∼₁_ 𝔒₂
+      toSurj' {{_}} {{x₂}} .𝓢urjectextensivity.surjectextensivity = § {{r = x₂}}
 
 module _ where
 

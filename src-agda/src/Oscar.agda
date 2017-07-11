@@ -30,7 +30,7 @@ module Test-Surjidentity
   ⦃ `[𝓢urjectivity] : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
   ⦃ `[𝓢urjectivity]' : [𝓢urjectivity] _∼₁_ _∼₂'_ ⦄
   ⦃ `𝓢urjectivity : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
-  ⦃ `𝓢urjectivity' : 𝓢urjectivity _∼₁_ _∼₂'_ ⦄
+  ⦃ `𝓢urjectextensivity : 𝓢urjectivity _∼₁_ _∼₂'_ ⦄
   ⦃ `𝓡eflexivity₁ : 𝓡eflexivity _∼₁_ ⦄
   ⦃ `𝓡eflexivity₂ : 𝓡eflexivity _∼₂_ ⦄
   ⦃ `𝓡eflexivity₂' : 𝓡eflexivity _∼₂'_ ⦄
@@ -65,7 +65,7 @@ module TestSurjidentityI
     instance `[𝓢urjectivity]' : [𝓢urjectivity] _∼₁_ _∼₂'_
     instance `[𝓢urjectivity]2 : [𝓢urjectivity] _∼₁_ _∼₂2_
     instance `𝓢urjectivity : 𝓢urjectivity _∼₁_ _∼₂_
-    instance `𝓢urjectivity' : 𝓢urjectivity _∼₁_ _∼₂'_
+    instance `𝓢urjectextensivity : 𝓢urjectivity _∼₁_ _∼₂'_
     instance `𝓢urjectivity2 : 𝓢urjectivity _∼₁_ _∼₂2_
     instance `𝓡eflexivity₁ : 𝓡eflexivity _∼₁_
     instance `𝓡eflexivity₂ : 𝓡eflexivity _∼₂_
