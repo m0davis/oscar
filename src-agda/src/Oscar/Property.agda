@@ -1264,6 +1264,12 @@ module _
     𝓢urjectextenscongruityArrowṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftṖroperty ℓ Substitunction) _≈_
     𝓢urjectextenscongruityArrowṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ P⇔Q) .π₀ = P⇔Q
 
+    [𝓢urjectextenscongruity]ArrowExtensionṖropertySubstitunction : [𝓢urjectextenscongruity] Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
+    [𝓢urjectextenscongruity]ArrowExtensionṖropertySubstitunction = ∁
+
+    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
+    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ P⇔Q) .π₀ = P⇔Q
+
 module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
@@ -1302,11 +1308,11 @@ module Test where
   fact4-test = fact4
 
   fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q → (f ◃ P) ≈ (f ◃ Q)
-  fact5⋆ = surjectextenscongruity
+  fact5⋆ {P = P} = surjectextenscongruity {P = P}
 
-  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} {f : Arrow Fin Term m n} → P ≈ Q
+  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} (f : Arrow Fin Term m n) → P ≈ Q
            → (f ◃ P) ≈ (f ◃ Q)
-  fact5 (∁ P⇔Q) .π₀ = P⇔Q
+  fact5 {P = P} {Q = Q} = surjectextenscongruity {P = P} {Q = Q}
 
   fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n} → f ≈ g → (f ◃ P) ≈ (g ◃ P)
   fact6 P f≐g .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
