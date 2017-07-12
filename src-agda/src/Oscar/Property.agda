@@ -1265,14 +1265,8 @@ module Test where
   fact1⋆ : ∀ {m} (s t : Term m) → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
   fact1⋆ = symmetrical
 
-  Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
-  Properties-fact1 .π₀ = symmetry , symmetry
-
-  Properties-fact1-s : ∀ {m} (s t : Term m) → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
-  Properties-fact1-s = symmetrical
-
-  Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ≈[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
-  Properties-fact1-test2 .π₀ = symmetry , symmetry
+  fact1 : ∀ {m} (s t : Term m) → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
+  fact1 = symmetrical
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ (≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2)
