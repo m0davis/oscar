@@ -1250,6 +1250,20 @@ instance
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _∼₁_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _∼₁_ t' s')
   𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
 
+module _
+  {𝔭} {𝔓 : Ø 𝔭}
+  {ℓ : Ł}
+  where
+  open Substitunction 𝔓
+
+  instance
+
+    [𝓢urjectextenscongruity]ArrowṖropertySubstitunction : [𝓢urjectextenscongruity] Substitunction (LeftṖroperty ℓ Substitunction) _≈_
+    [𝓢urjectextenscongruity]ArrowṖropertySubstitunction = ∁
+
+    𝓢urjectextenscongruityArrowṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftṖroperty ℓ Substitunction) _≈_
+    𝓢urjectextenscongruityArrowṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ P⇔Q) .π₀ = P⇔Q
+
 module Test where
   postulate 𝔓 : Set
   postulate ℓ : Ł
@@ -1286,14 +1300,6 @@ module Test where
   fact4-test : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4-test = fact4
-
-  instance
-
-    [𝓢urjectextenscongruity]ArrowṖropertySubstitunction : [𝓢urjectextenscongruity] (Arrow Fin Term) (ArrowṖroperty ℓ Fin Term) _≈_
-    [𝓢urjectextenscongruity]ArrowṖropertySubstitunction = ∁
-
-    𝓢urjectextenscongruityArrowṖropertySubstitunction : 𝓢urjectextenscongruity (Arrow Fin Term) (ArrowṖroperty ℓ Fin Term) _≈_
-    𝓢urjectextenscongruityArrowṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ P⇔Q) .π₀ = P⇔Q
 
   fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q → (f ◃ P) ≈ (f ◃ Q)
   fact5⋆ = surjectextenscongruity
