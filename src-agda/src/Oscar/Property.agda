@@ -1308,7 +1308,7 @@ module Test where
            → (f ◃ P) ≈ (f ◃ Q)
   fact5 (∁ P⇔Q) .π₀ = P⇔Q
 
-  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ≈ (g ◃ P)
+  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n} → f ≈ g → (f ◃ P) ≈ (g ◃ P)
   fact6 P f≐g .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
   left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (➊ ∧ P) ≈ P
