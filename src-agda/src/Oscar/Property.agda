@@ -1147,6 +1147,13 @@ module _
   {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
   where
 
+  record WrapExtensionṖropertyEquivalence (P Q : ExtensionṖroperty ℓ 𝔒 _↦_) : Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ where
+    constructor ∁
+    field
+      π₀ : π₀ P ≈ π₀ Q
+
+  open WrapExtensionṖropertyEquivalence public
+
   ExtensionṖropertyEquivalence : ExtensionṖroperty ℓ 𝔒 _↦_ → ExtensionṖroperty ℓ 𝔒 _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
   ExtensionṖropertyEquivalence P Q = π₀ P ≈ π₀ Q
 
