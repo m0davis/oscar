@@ -151,7 +151,7 @@ module Test2 where
     → 𝓽ransextensionality _∼₁_ _∼̇₁_
   test-functor-transextensionality = transextensionality
 
-module Test3 where
+module Test3 (_ : Ø₀) where
 
   module _
     {𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂}
