@@ -18,5 +18,8 @@ module TestEquivalenceExtensionṖroperty
   test-sym-ext2 : {P Q : ExtensionṖroperty ℓ 𝔒 _↦_} → P ≈ Q → Q ≈ P
   test-sym-ext2 {P} {Q} P≈Q = 𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
+  test-sym-ext3 : {P Q : ExtensionṖroperty ℓ 𝔒 _↦_} → P ≈ Q → Q ≈ P
+  test-sym-ext3 {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+
   test-sym-ext-fails : {P Q : ExtensionṖroperty ℓ 𝔒 _↦_} → P ≈ Q → Q ≈ P
   test-sym-ext-fails P≈Q = symmetry P≈Q
