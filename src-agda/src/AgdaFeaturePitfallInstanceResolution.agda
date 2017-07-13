@@ -41,7 +41,6 @@ module _
 
   postulate
     ṖropertyEquivalence : Ṗroperty 𝔒 → Ṗroperty 𝔒 → Set
-    instance 𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence
 
 module _
   {𝔛 : Set}
@@ -55,9 +54,6 @@ module _
   postulate
     instance
       𝓢ymmetryExtensionṖroperty : 𝓢ymmetry _≈_
-
-  test-sym-ext1 : {P Q : ExtensionṖroperty 𝔒 _↦_} → P ≈ Q → Q ≈ P
-  test-sym-ext1 P≈Q = 𝓢ymmetryṖroperty .𝓢ymmetry.symmetry P≈Q
 
   test-sym-ext2 : {P Q : ExtensionṖroperty 𝔒 _↦_} → P ≈ Q → Q ≈ P
   test-sym-ext2 {P} {Q} P≈Q = 𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
