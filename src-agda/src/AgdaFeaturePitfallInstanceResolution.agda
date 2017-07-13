@@ -10,20 +10,13 @@ record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
 
 open Σ public
 
-record V {𝔵} (𝔛 : Set 𝔵) : Set 𝔵 where
-  constructor ∁
-  field
-    π₀ : 𝔛
-
-open V public
-
 Ṗroperty : ∀ {𝔛 : Set} → (𝔛 → Set) → Set₁
-Ṗroperty P = V (∀ {x} → P x → Set)
+Ṗroperty P = ∀ x → P x → Set
 
 ExtensionṖroperty : ∀ {𝔛 : Set}
   (𝔒 : 𝔛 → Set) (_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Set)
   → Set₁
-ExtensionṖroperty 𝔒 _↦_ = Σ (V (∀ {x} → 𝔒 x → Set)) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → π₀ P f → π₀ P g)
+ExtensionṖroperty 𝔒 _↦_ = Σ (∀ x → 𝔒 x → Set) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → P _ f → P _ g)
 
 module _
   {𝔒 : Set₁}
