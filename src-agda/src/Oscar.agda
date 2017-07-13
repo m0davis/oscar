@@ -205,7 +205,7 @@ module Test6 where
   fact1U .π₀ = symmetry , symmetry
 
   Properties-fact1 : ∀ {m} {s t : Term m} → (≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} s t) ≈ ≡-ExtensionalUnifies t s
-  Properties-fact1 .π₀ = symmetry , symmetry
+  Properties-fact1 .π₀ = ∁ (symmetry , symmetry)
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ (≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2)
@@ -213,10 +213,10 @@ module Test6 where
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-ExtensionalUnifies {𝔄 = Fin} {𝔅 = Term} (s1 fork s2) (t1 fork t2) ≈ (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
-  Properties-fact1' .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+  Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   fact3 : ∀ {m} {P : ArrowExtensionṖroperty ℓ Fin Term Proposequality m} → P ≈ (i ◃ P)
-  fact3 .π₀ = ¡ , ¡
+  fact3 .π₀ .π₀ = ¡ , ¡
 
   fact4 : ∀{m n} {P : ArrowExtensionṖroperty ℓ Fin Term Proposequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
@@ -228,10 +228,10 @@ module Test6 where
 
   fact5 : ∀{m n} {P Q : ArrowExtensionṖroperty ℓ Fin Term Proposequality m} {f : Arrow Fin Term m n} → P ≈ Q
            → (f ◃ P) ≈ (f ◃ Q)
-  fact5 (∁ P⇔Q) .π₀ = P⇔Q
+  fact5 (∁ (∁ P⇔Q)) .π₀ .π₀ = P⇔Q
 
   fact6 : ∀{m n} (P : ArrowExtensionṖroperty ℓ Fin Term Proposequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ≈ (g ◃ P)
-  fact6 P f≐g .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
+  fact6 P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
 module Test7 where
 
@@ -287,10 +287,10 @@ module Test8 where
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ≈[ ExtensionṖroperty _ (Substitunction _) _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
-  Properties-fact1' .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+  Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ≈ (i ◃ P)
-  fact3 .π₀ = ¡ , ¡
+  fact3 .π₀ .π₀ = ¡ , ¡
 
   fact4 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
@@ -301,21 +301,21 @@ module Test8 where
   fact4-test = fact4
 
   fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q → (f ◃ P) ≈ (f ◃ Q)
-  fact5⋆ {P = P} = surjectextenscongruity {P = P}
+  fact5⋆ = surjectextenscongruity
 
   fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} (f : Arrow Fin Term m n) → P ≈ Q
            → (f ◃ P) ≈ (f ◃ Q)
-  fact5 {P = P} {Q = Q} = surjectextenscongruity {P = P} {Q = Q}
+  fact5 = surjectextenscongruity
 
   fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n} → f ≈ g → (f ◃ P) ≈ (g ◃ P)
-  fact6 P f≐g .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
+  fact6 P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
   left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (➊ ∧ P) ≈ P
   left-identity-∧ P .π₀ .π₀ (_ , π₃) = π₃
   left-identity-∧ P .π₀ .π₁ x = lift ∅ , x
 
   left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) → (➊ ∧ P) ≈ P
-  left-identity-∧-ext P .π₀ = π₁ , (λ x → (lift ∅) , x)
+  left-identity-∧-ext P .π₀ .π₀ = π₁ , (λ x → (lift ∅) , x)
 
 module TestEquivalenceṖroperty
   {𝔵} {𝔛 : Ø 𝔵}

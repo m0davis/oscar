@@ -1155,14 +1155,21 @@ module _
   open WrapExtensionṖropertyEquivalence public
 
   ExtensionṖropertyEquivalence : ExtensionṖroperty ℓ 𝔒 _↦_ → ExtensionṖroperty ℓ 𝔒 _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ExtensionṖropertyEquivalence P Q = π₀ P ≈ π₀ Q
+  ExtensionṖropertyEquivalence = WrapExtensionṖropertyEquivalence
 
   instance
 
+    𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity ExtensionṖropertyEquivalence
+    𝓡eflexivityExtensionṖropertyEquivalence .𝓡eflexivity.reflexivity .π₀ = reflexivity
+
+    𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry ExtensionṖropertyEquivalence
+    𝓢ymmetryExtensionṖropertyEquivalence .𝓢ymmetry.symmetry (∁ P≈Q) .π₀ = symmetry P≈Q
+
+    𝓣ransitivityExtensionṖropertyEquivalence : 𝓣ransitivity ExtensionṖropertyEquivalence
+    𝓣ransitivityExtensionṖropertyEquivalence .𝓣ransitivity.transitivity (∁ P≈Q) (∁ Q≈R) .π₀ = transitivity P≈Q Q≈R
+
     IsEquivalenceExtensionṖroperty : IsEquivalence ExtensionṖropertyEquivalence
-    IsEquivalenceExtensionṖroperty .IsEquivalence.`𝓡eflexivity = record { reflexivity = reflexivity }
-    IsEquivalenceExtensionṖroperty .IsEquivalence.`𝓢ymmetry = record { symmetry = symmetry }
-    IsEquivalenceExtensionṖroperty .IsEquivalence.`𝓣ransitivity = record { transitivity = transitivity }
+    IsEquivalenceExtensionṖroperty = ∁
 
   instance
 
@@ -1176,7 +1183,7 @@ module _
     ProperthingExtensionṖroperty .Properthing._∧_ P Q = ∁ (λ f → π₀ (π₀ P) f × π₀ (π₀ Q) f) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
     ProperthingExtensionṖroperty .Properthing.⌶HasEquivalence = !
     ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ (π₀ P) f → 𝟘
-    ProperthingExtensionṖroperty .Properthing.fact2 (∁ P⇔Q) NoP Q = NoP $ π₁ P⇔Q Q
+    ProperthingExtensionṖroperty .Properthing.fact2 (∁ (∁ P⇔Q)) NoP Q = NoP $ π₁ P⇔Q Q
 
 instance
 
@@ -1255,7 +1262,7 @@ instance
     -- {-{ℓ}-} {_≈'_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₁_ {y}) ⦄
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _∼₁_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _∼₁_ t' s')
-  𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
+  𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)
 
 module _
   {𝔭} {𝔓 : Ø 𝔭}
@@ -1275,4 +1282,4 @@ module _
     [𝓢urjectextenscongruity]ArrowExtensionṖropertySubstitunction = ∁
 
     𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
-    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ P⇔Q) .π₀ = P⇔Q
+    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ (∁ P⇔Q)) .π₀ = ∁ P⇔Q -- P⇔Q
