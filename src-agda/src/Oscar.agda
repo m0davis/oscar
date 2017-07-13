@@ -194,6 +194,7 @@ module Test6 where
   postulate 𝔓 : Set
   postulate ℓ : Ł
   open Term 𝔓
+
   test-epfs : ∀ {x y} → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
   test-epfs P f = f ◃ P
 
