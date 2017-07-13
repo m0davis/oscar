@@ -65,5 +65,8 @@ module _
   test-sym-ext3 : {P Q : ExtensionṖroperty 𝔒 _↦_} → P ≈ Q → Q ≈ P
   test-sym-ext3 {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-  test-sym-ext-fails : {P Q : ExtensionṖroperty 𝔒 _↦_} → P ≈ Q → Q ≈ P
-  test-sym-ext-fails P≈Q = symmetry P≈Q
+  test-sym-ext-fails1 : {P Q : ExtensionṖroperty 𝔒 _↦_} → P ≈ Q → Q ≈ P
+  test-sym-ext-fails1 {P} {Q} P≈Q = 𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry {x = _ , _} {y = _ , _} P≈Q
+
+  test-sym-ext-fails2 : {P Q : ExtensionṖroperty 𝔒 _↦_} → P ≈ Q → Q ≈ P
+  test-sym-ext-fails2 P≈Q = symmetry P≈Q
