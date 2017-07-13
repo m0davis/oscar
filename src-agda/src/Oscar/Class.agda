@@ -1284,7 +1284,7 @@ module _ where
     ℓ
     where
     𝓹rop-id = ∀ {m n} {f : m ∼ n} (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
-              (let P₀ = π₀ (π₀ P)) → P₀ f → P₀ (ε ∙ f)
+              (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
     record PropId : Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ℓ̇ ∙̂ ↑̂ ℓ where field prop-id : 𝓹rop-id
 
   open PropId ⦃ … ⦄ public

@@ -1005,7 +1005,7 @@ module _ where
     ⦃ _ : 𝓢urjectivity _↦₁_ (Extension 𝔓) ⦄
     {𝔯₂} (_↦₂_ : Ṙelation 𝔯₂ 𝔓)
     → 𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂
-  Unifies₀ _↦₂_ p q .π₀ x =
+  Unifies₀ _↦₂_ p q x =
     let _↦₂_ = _↦₂_
         infix 4 _↦₂_
     in
@@ -1080,7 +1080,7 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
   open Substitist 𝔓
 
-  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) (let P₀ = π₀ (π₀ P)) → P₀ f → P₀ (ε ∙ f)
+  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) (let P₀ = π₀ P) → P₀ f → P₀ (ε ∙ f)
   prop-id-Substitunction = prop-id
 
   ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
@@ -1102,18 +1102,18 @@ module _
   where
 
   ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ṖropertyEquivalence (∁ P) (∁ Q) = V (∀ {n f} → (P {n} f → Q f) × (Q f → P f))
+  ṖropertyEquivalence P Q = ∀ {n f} → (P {n} f → Q f) × (Q f → P f)
 
   instance
 
     𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence
-    𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity .π₀ = ¡ , ¡
+    𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity = ¡ , ¡
 
     𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence
-    𝓢ymmetryṖroperty .𝓢ymmetry.symmetry (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q
+    𝓢ymmetryṖroperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
 
     𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence
-    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity (∁ P⇔Q) (∁ Q⇔R) .π₀ = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
+    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity P⇔Q Q⇔R = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
 
     IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence
     IsEquivalenceṖroperty = ∁
@@ -1145,11 +1145,11 @@ instance
     ⦃ _ : [Propertyish] 𝔒 ⦄
     {ℓ}
     → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (Ṗroperty ℓ 𝔒)
-  ProperthingṖroperty .Properthing.➊ = ∁ (λ _ → Lift 𝟙)
-  ProperthingṖroperty .Properthing._∧_ (∁ P) (∁ Q) = ∁ (λ f → P f × Q f)
+  ProperthingṖroperty .Properthing.➊ = λ _ → Lift 𝟙
+  ProperthingṖroperty .Properthing._∧_ P Q = λ f → P f × Q f
   ProperthingṖroperty .Properthing.⌶HasEquivalence = !
-  ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing (∁ P) = ∀ {n} {f : 𝔒 n} → P f → 𝟘
-  ProperthingṖroperty .Properthing.fact2 (∁ P⇔Q) NoP Q = NoP $ π₁ P⇔Q Q
+  ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → P f → 𝟘
+  ProperthingṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
 module _
   {𝔵} {𝔛 : Ø 𝔵}
@@ -1159,18 +1159,18 @@ module _
   where
 
   ExtensionṖropertyEquivalence : ExtensionṖroperty ℓ 𝔒 _↦_ → ExtensionṖroperty ℓ 𝔒 _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ExtensionṖropertyEquivalence P Q = π₀ P ≈ π₀ Q
+  ExtensionṖropertyEquivalence P Q = (λ {x} → π₀ P {x}) ≈ π₀ Q
 
   instance
 
     𝓡eflexivityExtensionṖroperty : 𝓡eflexivity ExtensionṖropertyEquivalence
-    𝓡eflexivityExtensionṖroperty .𝓡eflexivity.reflexivity .π₀ = ¡ , ¡
+    𝓡eflexivityExtensionṖroperty .𝓡eflexivity.reflexivity = ¡ , ¡
 
     𝓢ymmetryExtensionṖroperty : 𝓢ymmetry ExtensionṖropertyEquivalence
-    𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q
+    𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry P⇔Q = π₁ P⇔Q , π₀ P⇔Q
 
   𝓣ransitivityExtensionṖroperty' : 𝓣ransitivity ExtensionṖropertyEquivalence
-  𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R = transitivity P⇔Q Q⇔R
+  𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity P⇔Q Q⇔R = transitivity (λ {n} {f} → P⇔Q {n} {f}) Q⇔R -- transitivity (λ {x} → P⇔Q {x}) Q⇔R
 --  𝓣ransitivityExtensionṖroperty' .𝓣ransitivity.transitivity (∁ P⇔Q) (∁ Q⇔R) .π₀ =
 --    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity (∁ (λ {x} {f} → P⇔Q {x} {f})) (∁ Q⇔R) .π₀
   -- π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
@@ -1193,11 +1193,11 @@ module _
   instance
 
     ProperthingExtensionṖroperty : ⦃ _ : [Propertyish] 𝔒 ⦄ → Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
-    ProperthingExtensionṖroperty .Properthing.➊ = ➊ , (λ _ _ → lift ∅)
-    ProperthingExtensionṖroperty .Properthing._∧_ P Q = ∁ (λ f → π₀ (π₀ P) f × π₀ (π₀ Q) f) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
+    ProperthingExtensionṖroperty .Properthing.➊ = ➊ {𝔒 = Ṗroperty _ _} , λ _ _ → lift ∅
+    ProperthingExtensionṖroperty .Properthing._∧_ P Q = (λ f → π₀ P f × π₀ Q f) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
     ProperthingExtensionṖroperty .Properthing.⌶HasEquivalence = !
-    ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ (π₀ P) f → 𝟘
-    ProperthingExtensionṖroperty .Properthing.fact2 (∁ P⇔Q) NoP Q = NoP $ π₁ P⇔Q Q
+    ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ P f → 𝟘
+    ProperthingExtensionṖroperty .Properthing.fact2 P⇔Q NoP Q = NoP $ π₁ P⇔Q Q
 
 instance
 
@@ -1208,7 +1208,7 @@ instance
     ⦃ _ : 𝓣ransitivity _↦_ ⦄
     ⦃ _ : [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_) ⦄
     → 𝓢urjectivity _↦_ (Extension $ LeftṖroperty ℓ _↦_)
-  ṖropertySurjectivity .𝓢urjectivity.surjectivity f (∁ P) .π₀ g = P (g ∙ f)
+  ṖropertySurjectivity .𝓢urjectivity.surjectivity f P g = P (g ∙ f)
 
 instance
 
@@ -1226,7 +1226,7 @@ instance
     ⦃ _ : 𝓢urjextensionality _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
     ⦃ _ : [𝓢urjectivity] _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_)) ⦄
     → 𝓢urjectivity _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_))
-  ExtensionṖropertySurjectivity .𝓢urjectivity.surjectivity f P = ∁ (λ g → π₀ (π₀ P) (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+  ExtensionṖropertySurjectivity .𝓢urjectivity.surjectivity f P = (λ g → π₀ P (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
 
 instance
 
@@ -1249,19 +1249,19 @@ module Test where
   test-epfs P f = f ◃ P
 
   test-epfs' : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
-  test-epfs' P f = f ◃ P
+  test-epfs' P f = f ◃ (λ {x} → P {x})
 
   fact1U : ∀ {m} {s t : Term m} → ≡-Unifies₀ s t ≈[ ArrowṖroperty _ Fin Term _ ] ≡-Unifies₀ t s
-  fact1U .π₀ = symmetry , symmetry
+  fact1U = symmetry , symmetry
 
-  fact1U-test2 : ∀ {m} {s t : Term m} → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
-  fact1U-test2 .π₀ = symmetry , symmetry
+  fact1U-test2 : ∀ {m} {s t : Term m} → (λ {x} → ≡-Unifies₀⟦ Substitunction ⟧ s t {x}) ≈ ≡-Unifies₀ t s
+  fact1U-test2 = symmetry , symmetry
 
   Properties-fact1 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
-  Properties-fact1 .π₀ = symmetry , symmetry
+  Properties-fact1 = symmetry , symmetry
 
   Properties-fact1-test2 : ∀ {m} {s t : Term m} → ≡-ExtensionalUnifies s t ≈[ LeftExtensionṖroperty _ Substitunction Proposextensequality _ ] ≡-ExtensionalUnifies t s
-  Properties-fact1-test2 .π₀ = symmetry , symmetry
+  Properties-fact1-test2 = symmetry , symmetry
 
   instance
 
@@ -1269,34 +1269,34 @@ module Test where
     [Propertyish]Substitunction = ∁
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ (≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2)
-  Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+         → (λ {x} → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) {x}) ≈ ((λ {x} → ≡-Unifies₀ s1 t1 {x}) ∧ ≡-Unifies₀ s2 t2)
+  Properties-fact1'⋆ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
          → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ≈[ ExtensionṖroperty _ (Substitunction _) _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
-  Properties-fact1' .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+  Properties-fact1' = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ≈ (i ◃ P)
-  fact3 .π₀ = ¡ , ¡
+  fact3 = ¡ , ¡
 
   fact4 : ∀{m n} {P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m} (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
   fact4 f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
 
-  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → P ≈ Q
-           → (f ◃ P) ≈ (f ◃ Q)
-  fact5⋆ (∁ P⇔Q) .π₀ = P⇔Q
+  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} {f : Arrow Fin Term m n} → (λ {x} → P {x}) ≈ Q
+           → (λ {x} → (f ◃ (λ {x} → P {x})) {x}) ≈ (f ◃ (λ {x} → Q {x}))
+  fact5⋆ P⇔Q = P⇔Q
 
   fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} {f : Arrow Fin Term m n} → P ≈ Q
            → (f ◃ P) ≈ (f ◃ Q)
-  fact5 (∁ P⇔Q) .π₀ = P⇔Q
+  fact5 P⇔Q = P⇔Q
 
   fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) {f g : Arrow Fin Term m n} → f ≡̇ g → (f ◃ P) ≈ (g ◃ P)
-  fact6 P f≐g .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
+  fact6 P f≐g {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
-  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (➊ ∧ P) ≈ P
-  left-identity-∧ P .π₀ .π₀ (_ , π₃) = π₃
-  left-identity-∧ P .π₀ .π₁ x = lift ∅ , x
+  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (λ {x} → (➊ ∧ (λ {x} → P {x})) {x}) ≈ P
+  left-identity-∧ P .π₀ (_ , π₃) = π₃
+  left-identity-∧ P .π₁ x = lift ∅ , x
 
   left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) → (➊ ∧ P) ≈ P
-  left-identity-∧-ext P .π₀ = π₁ , (λ x → (lift ∅) , x)
+  left-identity-∧-ext P = π₁ , (λ x → (lift ∅) , x)
