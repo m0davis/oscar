@@ -10,13 +10,12 @@ record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
 
 open Σ public
 
-Ṗroperty : ∀ {𝔛 : Set} → (𝔛 → Set) → Set₁
-Ṗroperty P = ∀ x → P x → Set
+Ṗroperty : Set → Set₁
+Ṗroperty P = P → Set
 
-ExtensionṖroperty : ∀ {𝔛 : Set}
-  (𝔒 : 𝔛 → Set) (_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Set)
+ExtensionṖroperty : ∀ (𝔒 : Set) (_↦_ : 𝔒 → 𝔒 → Set)
   → Set₁
-ExtensionṖroperty 𝔒 _↦_ = Σ (∀ x → 𝔒 x → Set) (λ P → ∀ {x} {f g : 𝔒 x} → f ↦ g → P _ f → P _ g)
+ExtensionṖroperty 𝔒 _↦_ = Σ (𝔒 → Set) (λ P → ∀ {f g : 𝔒} → f ↦ g → P f → P g)
 
 module _
   {𝔒 : Set₁}
@@ -28,17 +27,15 @@ module _
 open 𝓢ymmetry ⦃ … ⦄ public
 
 module _
-  {𝔛 : Set}
-  {𝔒 : 𝔛 → Set}
+  {𝔒 : Set}
   where
 
   postulate
     ṖropertyEquivalence : Ṗroperty 𝔒 → Ṗroperty 𝔒 → Set
 
 module _
-  {𝔛 : Set}
-  {𝔒 : 𝔛 → Set}
-  {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Set}
+  {𝔒 : Set}
+  {_↦_ : 𝔒 → 𝔒 → Set}
   where
 
   _≈_ : ExtensionṖroperty 𝔒 _↦_ → ExtensionṖroperty 𝔒 _↦_ → Set
