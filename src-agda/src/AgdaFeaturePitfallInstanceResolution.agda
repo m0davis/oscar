@@ -15,7 +15,7 @@ Ṗroperty P = P → Set
 
 ExtensionṖroperty : ∀ (𝔒 : Set)
   → Set₁
-ExtensionṖroperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f g → P f → P g)
+ExtensionṖroperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
 
 module _
   {𝔒 : Set₁}
