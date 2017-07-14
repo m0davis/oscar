@@ -13,8 +13,7 @@ open Σ public
 Property : Set → Set₁
 Property P = P → Set
 
-ExtensionProperty : ∀ (𝔒 : Set)
-  → Set₁
+ExtensionProperty : ∀ (𝔒 : Set) → Set₁
 ExtensionProperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
 
 module _
@@ -32,10 +31,6 @@ module _
 
   postulate
     PropertyEquivalence : Property 𝔒 → Property 𝔒 → Set
-
-module _
-  {𝔒 : Set}
-  where
 
   _≈_ : ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
   _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
