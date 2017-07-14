@@ -1,6 +1,18 @@
 
 module AgdaFeaturePitfallInstanceResolution where
 
+module _
+  {𝔒 : Set₁}
+  (_∼_ : 𝔒 → 𝔒 → Set)
+  where
+  𝓼ymmetry = ∀ {x y} → x ∼ y → y ∼ x
+  record 𝓢ymmetry : Set₁ where field symmetry : 𝓼ymmetry
+
+open 𝓢ymmetry ⦃ … ⦄ public
+
+Property : Set → Set₁
+Property P = P → Set
+
 infixr 5 _,_
 record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
   constructor _,_
@@ -10,28 +22,8 @@ record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
 
 open Σ public
 
-Property : Set → Set₁
-Property P = P → Set
-
 ExtensionProperty : ∀ (𝔒 : Set) → Set₁
 ExtensionProperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
-
-record ExtensionProperty' (𝔒 : Set) : Set₁ where
-  constructor _,_
-  field
-    π₀ : 𝔒 → Set
-    π₁ : ∀ f → π₀ f
-
-open ExtensionProperty' public
-
-module _
-  {𝔒 : Set₁}
-  (_∼_ : 𝔒 → 𝔒 → Set)
-  where
-  𝓼ymmetry = ∀ {x y} → x ∼ y → y ∼ x
-  record 𝓢ymmetry : Set₁ where field symmetry : 𝓼ymmetry
-
-open 𝓢ymmetry ⦃ … ⦄ public
 
 module _
   {𝔒 : Set}
@@ -59,6 +51,18 @@ module _
   test-sym-ext-fails2 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
   test-sym-ext-fails2 P≈Q = symmetry P≈Q
 
+record ExtensionProperty' (𝔒 : Set) : Set₁ where
+  constructor _,_
+  field
+    π₀ : 𝔒 → Set
+    π₁ : ∀ f → π₀ f
+
+open ExtensionProperty' public
+
+module _
+  {𝔒 : Set}
+  where
+
   _≈'_ : ExtensionProperty' 𝔒 → ExtensionProperty' 𝔒 → Set
   _≈'_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
 
@@ -77,6 +81,10 @@ module _
 
   test-sym-ext-fails2' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
   test-sym-ext-fails2' P≈'Q = symmetry P≈'Q
+
+module _
+  {𝔒 : Set}
+  where
 
   record _≈''_ (P Q : ExtensionProperty 𝔒) : Set where
     constructor ∁
