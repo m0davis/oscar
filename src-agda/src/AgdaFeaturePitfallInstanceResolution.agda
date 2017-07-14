@@ -10,12 +10,12 @@ record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
 
 open Σ public
 
-Ṗroperty : Set → Set₁
-Ṗroperty P = P → Set
+Property : Set → Set₁
+Property P = P → Set
 
-ExtensionṖroperty : ∀ (𝔒 : Set)
+ExtensionProperty : ∀ (𝔒 : Set)
   → Set₁
-ExtensionṖroperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
+ExtensionProperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
 
 module _
   {𝔒 : Set₁}
@@ -31,27 +31,27 @@ module _
   where
 
   postulate
-    ṖropertyEquivalence : Ṗroperty 𝔒 → Ṗroperty 𝔒 → Set
+    PropertyEquivalence : Property 𝔒 → Property 𝔒 → Set
 
 module _
   {𝔒 : Set}
   where
 
-  _≈_ : ExtensionṖroperty 𝔒 → ExtensionṖroperty 𝔒 → Set
-  _≈_ P Q = ṖropertyEquivalence (π₀ P) (π₀ Q)
+  _≈_ : ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
+  _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
 
   postulate
     instance
-      𝓢ymmetryExtensionṖroperty : 𝓢ymmetry _≈_
+      𝓢ymmetryExtensionProperty : 𝓢ymmetry _≈_
 
-  test-sym-ext2 : {P Q : ExtensionṖroperty 𝔒} → P ≈ Q → Q ≈ P
-  test-sym-ext2 {P} {Q} P≈Q = 𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+  test-sym-ext2 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+  test-sym-ext2 {P} {Q} P≈Q = 𝓢ymmetryExtensionProperty .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
-  test-sym-ext3 : {P Q : ExtensionṖroperty 𝔒} → P ≈ Q → Q ≈ P
+  test-sym-ext3 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
   test-sym-ext3 {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-  test-sym-ext-fails1 : {P Q : ExtensionṖroperty 𝔒} → P ≈ Q → Q ≈ P
-  test-sym-ext-fails1 {P} {Q} P≈Q = 𝓢ymmetryExtensionṖroperty .𝓢ymmetry.symmetry {x = _ , _} {y = _ , _} P≈Q
+  test-sym-ext-fails1 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+  test-sym-ext-fails1 {P} {Q} P≈Q = 𝓢ymmetryExtensionProperty .𝓢ymmetry.symmetry {x = _ , _} {y = _ , _} P≈Q
 
-  test-sym-ext-fails2 : {P Q : ExtensionṖroperty 𝔒} → P ≈ Q → Q ≈ P
+  test-sym-ext-fails2 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
   test-sym-ext-fails2 P≈Q = symmetry P≈Q
