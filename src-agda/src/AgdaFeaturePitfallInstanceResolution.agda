@@ -16,6 +16,14 @@ Property P = P → Set
 ExtensionProperty : ∀ (𝔒 : Set) → Set₁
 ExtensionProperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
 
+record ExtensionProperty' (𝔒 : Set) : Set₁ where
+  constructor _,_
+  field
+    π₀ : 𝔒 → Set
+    π₁ : ∀ f → π₀ f
+
+open ExtensionProperty' public
+
 module _
   {𝔒 : Set₁}
   (_∼_ : 𝔒 → 𝔒 → Set)
@@ -50,3 +58,45 @@ module _
 
   test-sym-ext-fails2 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
   test-sym-ext-fails2 P≈Q = symmetry P≈Q
+
+  _≈'_ : ExtensionProperty' 𝔒 → ExtensionProperty' 𝔒 → Set
+  _≈'_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
+
+  postulate
+    instance
+      𝓢ymmetryExtension'Property : 𝓢ymmetry _≈'_
+
+  test-sym-ext2' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
+  test-sym-ext2' {P} {Q} P≈'Q = 𝓢ymmetryExtension'Property .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈'Q
+
+  test-sym-ext3' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
+  test-sym-ext3' {P} {Q} P≈'Q = symmetry {x = P} {y = Q} P≈'Q
+
+  test-sym-ext-fails1' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
+  test-sym-ext-fails1' {P} {Q} P≈'Q = 𝓢ymmetryExtension'Property .𝓢ymmetry.symmetry {x = _ , _} {y = _ , _} P≈'Q
+
+  test-sym-ext-fails2' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
+  test-sym-ext-fails2' P≈'Q = symmetry P≈'Q
+
+  record _≈''_ (P Q : ExtensionProperty 𝔒) : Set where
+    constructor ∁
+    field
+      π₀ : PropertyEquivalence (π₀ P) (π₀ Q)
+
+  open _≈''_
+
+  postulate
+    instance
+      𝓢ymmetryExtension''Property : 𝓢ymmetry _≈''_
+
+  test-sym-ext2'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
+  test-sym-ext2'' {P} {Q} P≈''Q = 𝓢ymmetryExtension''Property .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈''Q
+
+  test-sym-ext3'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
+  test-sym-ext3'' {P} {Q} P≈''Q = symmetry {x = P} {y = Q} P≈''Q
+
+  test-sym-ext-fails1'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
+  test-sym-ext-fails1'' {P} {Q} P≈''Q = 𝓢ymmetryExtension''Property .𝓢ymmetry.symmetry {x = _} {y = _} P≈''Q
+
+  test-sym-ext-fails2'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
+  test-sym-ext-fails2'' P≈''Q = symmetry P≈''Q
