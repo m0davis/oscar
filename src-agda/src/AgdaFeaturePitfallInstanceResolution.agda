@@ -438,80 +438,80 @@ record RegularVsConstructedMoreSimpler : Set where
   ExtProp : Set₁
   ExtProp = Σ Prop Ext
 
-  record ≈C_ (P : ExtProp) : Set where
+  record Con (P : ExtProp) : Set where
     constructor ∁
     field
       π₀ : PropEq (π₀ P)
 
-  ≈R_ : ExtProp → Set
-  ≈R_ P = PropEq (π₀ P)
+  Reg : ExtProp → Set
+  Reg P = PropEq (π₀ P)
 
   record Instance : Set where
     no-eta-equality
 
-    record Class {B : Set₁} (∼_ : B → Set) : Set₁ where
-      field foo : ∀ {x} → ∼ x → Set
+    record Class {B : Set₁} (F : B → Set) : Set₁ where
+      field foo : ∀ {x} → F x → Set
     open Class ⦃ … ⦄
 
-    postulate instance _ : Class ≈C_
-    postulate instance _ : Class ≈R_
+    postulate instance _ : Class Reg
+    postulate instance _ : Class Con
 
     module Test where
 
-      test1-worksC : {P : ExtProp} → ≈C P → Set
+      test1-worksC : {P : ExtProp} → Con P → Set
       test1-worksC P≈Q = foo P≈Q
 
-      test2-worksC : {P : ExtProp} → ≈C P → Set
+      test2-worksC : {P : ExtProp} → Con P → Set
       test2-worksC {P} P≈Q = foo {x = P} P≈Q
 
-      test3-worksC : {P : ExtProp} → ≈C P → Set
+      test3-worksC : {P : ExtProp} → Con P → Set
       test3-worksC {P} P≈Q = foo {x = _ , _} P≈Q
 
-      test4-worksC : {P : ExtProp} → ≈C P → Set
+      test4-worksC : {P : ExtProp} → Con P → Set
       test4-worksC {P} P≈Q = foo {x = _ , π₁ P} P≈Q
 
-      test1-failsR : {P : ExtProp} → ≈R P → Set
+      test1-failsR : {P : ExtProp} → Reg P → Set
       test1-failsR P≈Q = foo P≈Q
 
-      test2-worksR : {P : ExtProp} → ≈R P → Set
+      test2-worksR : {P : ExtProp} → Reg P → Set
       test2-worksR {P} P≈Q = foo {x = P} P≈Q
 
-      test3-failsR : {P : ExtProp} → ≈R P → Set
+      test3-failsR : {P : ExtProp} → Reg P → Set
       test3-failsR {P} P≈Q = foo {x = _ , _} P≈Q
 
-      test4-worksR : {P : ExtProp} → ≈R P → Set
+      test4-worksR : {P : ExtProp} → Reg P → Set
       test4-worksR {P} P≈Q = foo {x = _ , π₁ P} P≈Q
 
   record Function : Set where
     no-eta-equality
 
-    postulate fooC : {x : ExtProp} → ≈C x → Set
-    postulate fooR : {x : ExtProp} → ≈R x → Set
+    postulate fooC : {x : ExtProp} → Con x → Set
+    postulate fooR : {x : ExtProp} → Reg x → Set
 
     module Test where
 
-      test1-worksC : {P : ExtProp} → ≈C P → Set
+      test1-worksC : {P : ExtProp} → Con P → Set
       test1-worksC P≈Q = fooC P≈Q
 
-      test2-worksC : {P : ExtProp} → ≈C P → Set
+      test2-worksC : {P : ExtProp} → Con P → Set
       test2-worksC {P} P≈Q = fooC {x = P} P≈Q
 
-      test3-worksC : {P : ExtProp} → ≈C P → Set
+      test3-worksC : {P : ExtProp} → Con P → Set
       test3-worksC {P} P≈Q = fooC {x = _ , _} P≈Q
 
-      test4-worksC : {P : ExtProp} → ≈C P → Set
+      test4-worksC : {P : ExtProp} → Con P → Set
       test4-worksC {P} P≈Q = fooC {x = _ , π₁ P} P≈Q
 
-      test1-failsR : {P : ExtProp} → ≈R P → Set
+      test1-failsR : {P : ExtProp} → Reg P → Set
       test1-failsR P≈Q = fooR P≈Q
 
-      test2-worksR : {P : ExtProp} → ≈R P → Set
+      test2-worksR : {P : ExtProp} → Reg P → Set
       test2-worksR {P} P≈Q = fooR {x = P} P≈Q
 
-      test3-failsR : {P : ExtProp} → ≈R P → Set
+      test3-failsR : {P : ExtProp} → Reg P → Set
       test3-failsR {P} P≈Q = fooR {x = _ , _} P≈Q
 
-      test4-worksR : {P : ExtProp} → ≈R P → Set
+      test4-worksR : {P : ExtProp} → Reg P → Set
       test4-worksR {P} P≈Q = fooR {x = _ , π₁ P} P≈Q
 
 module RevampedSimpleFailure where
