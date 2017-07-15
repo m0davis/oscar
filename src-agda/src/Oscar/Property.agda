@@ -1140,6 +1140,29 @@ instance
   ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing (∁ P) = ∀ {n} {f : 𝔒 n} → P f → 𝟘
   ProperthingṖroperty .Properthing.fact2 (∁ P⇔Q) NoP Q = NoP $ π₁ P⇔Q Q
 
+module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄  where
+
+  record _≈₀_ (P Q : Σ 𝔒 𝔓) : Ø ℓ where
+    constructor ∁
+    field
+      π₀ : π₀ P ≈ π₀ Q
+
+  open _≈₀_ public
+
+  instance
+
+    𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity _≈₀_
+    𝓡eflexivityExtensionṖropertyEquivalence .𝓡eflexivity.reflexivity .π₀ = reflexivity
+
+    𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry _≈₀_
+    𝓢ymmetryExtensionṖropertyEquivalence .𝓢ymmetry.symmetry (∁ P≈Q) .π₀ = symmetry P≈Q
+
+    𝓣ransitivityExtensionṖropertyEquivalence : 𝓣ransitivity _≈₀_
+    𝓣ransitivityExtensionṖropertyEquivalence .𝓣ransitivity.transitivity (∁ P≈Q) (∁ Q≈R) .π₀ = transitivity P≈Q Q≈R
+
+    IsEquivalenceExtensionṖroperty : IsEquivalence _≈₀_
+    IsEquivalenceExtensionṖroperty = ∁
+
 module _
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
@@ -1147,34 +1170,10 @@ module _
   {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
   where
 
-  record WrapExtensionṖropertyEquivalence (P Q : ExtensionṖroperty ℓ 𝔒 _↦_) : Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ where
-    constructor ∁
-    field
-      π₀ : π₀ P ≈ π₀ Q
-
-  open WrapExtensionṖropertyEquivalence public
-
-  ExtensionṖropertyEquivalence : ExtensionṖroperty ℓ 𝔒 _↦_ → ExtensionṖroperty ℓ 𝔒 _↦_ → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ExtensionṖropertyEquivalence = WrapExtensionṖropertyEquivalence
-
-  instance
-
-    𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity ExtensionṖropertyEquivalence
-    𝓡eflexivityExtensionṖropertyEquivalence .𝓡eflexivity.reflexivity .π₀ = reflexivity
-
-    𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry ExtensionṖropertyEquivalence
-    𝓢ymmetryExtensionṖropertyEquivalence .𝓢ymmetry.symmetry (∁ P≈Q) .π₀ = symmetry P≈Q
-
-    𝓣ransitivityExtensionṖropertyEquivalence : 𝓣ransitivity ExtensionṖropertyEquivalence
-    𝓣ransitivityExtensionṖropertyEquivalence .𝓣ransitivity.transitivity (∁ P≈Q) (∁ Q≈R) .π₀ = transitivity P≈Q Q≈R
-
-    IsEquivalenceExtensionṖroperty : IsEquivalence ExtensionṖropertyEquivalence
-    IsEquivalenceExtensionṖroperty = ∁
-
   instance
 
     HasEquivalenceExtendedProperty : HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-    HasEquivalenceExtendedProperty .HasEquivalence.Equivalence P Q = ExtensionṖropertyEquivalence P Q
+    HasEquivalenceExtendedProperty .HasEquivalence.Equivalence = _≈₀_
 
   instance
 
