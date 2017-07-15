@@ -4,6 +4,7 @@
   * expressing those constructors as records (instead of as aliases) averts the above inconvenience
   * the loss of information happens when the resultant type is made from projections on the dependencies, where only a proper subset of all the possible projections are used
   TODO: what if instead of projections, we use a function? (try one that's abstract, and one that case splits on arguments)
+    - see ProjectedMorality ... so far it looks like it doesn't matter --- not sure why
   TODO: what if the argument type (the one that's losing information) were data instead of record?
 -}
 
@@ -607,7 +608,7 @@ module RegularVsConstructed-EnhancedReg where
     test4-worksC : {P : ExtProp} → Con P → Set
     test4-worksC {P} P≈Q = fooC {x = _ , π₁ P} P≈Q
 
-record Moral : Set where
+record ProjectedMorality : Set where
   no-eta-equality
 
   infixr 5 _,_
@@ -626,23 +627,80 @@ record Moral : Set where
   Reg : Σ Prop Ext → Set
   Reg P = PropEq (π₀ P)
 
+  postulate bar : ∀ {𝔒 : Set₁} → 𝔒 → 𝔒
+  postulate qux : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → Σ 𝔒 𝔓
+  postulate fake-π₀ : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → 𝔒
+
+  abstract
+
+    abstracted-π₀ : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → 𝔒
+    abstracted-π₀ x = π₀ x
+
+  Reg-using-abstracted-projection : Σ Prop Ext → Set
+  Reg-using-abstracted-projection (P0 , P1) = PropEq (abstracted-π₀ {𝔒 = Prop} {𝔓 = Ext} (P0 , P1))
+
+  Reg-using-q : Σ Prop Ext → Set
+  Reg-using-q x = PropEq (π₀ (qux x))
+
+  Reg-using-fake-π₀ : Σ Prop Ext → Set
+  Reg-using-fake-π₀ x = PropEq (fake-π₀ x)
+
   record Con (P : Σ Prop Ext) : Set where
     constructor ∁
     field
       π₀ : Reg P
+
+  record Con-using-abstracted-projection (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg-using-abstracted-projection P
+
+  record Con-using-q (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg-using-q P
+
+  record Con-using-fake-π₀ (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg-using-fake-π₀ P
 
   record Class {B : Set₁} (F : B → Set) : Set₁ where
     field foo : ∀ {x} → F x → Set
   open Class ⦃ … ⦄
 
   postulate instance _ : Class Reg
+  postulate instance _ : Class Reg-using-abstracted-projection
+  postulate instance _ : Class Reg-using-q
+  postulate instance _ : Class Reg-using-fake-π₀
   postulate instance _ : Class Con
+  postulate instance _ : Class Con-using-abstracted-projection
+  postulate instance _ : Class Con-using-q
+  postulate instance _ : Class Con-using-fake-π₀
 
   test1-failsR : ∀ {P} → Reg P → Set
   test1-failsR = foo
 
+  test1-failsRap : ∀ {P} → Reg-using-abstracted-projection P → Set
+  test1-failsRap = foo
+
+  test1-failsRq : ∀ {P} → Reg-using-q P → Set
+  test1-failsRq = foo
+
+  test1-failsRf : ∀ {P} → Reg-using-fake-π₀ P → Set
+  test1-failsRf = foo
+
   test1-worksC : ∀ {P} → Con P → Set
   test1-worksC = foo
+
+  test1-worksCap : ∀ {P} → Con-using-abstracted-projection P → Set
+  test1-worksCap = foo
+
+  test1-worksCq : ∀ {P} → Con-using-q P → Set
+  test1-worksCq = foo
+
+  test1-worksCf : ∀ {P} → Con-using-fake-π₀ P → Set
+  test1-worksCf = foo
 
 module RevampedSimpleFailure where
 
