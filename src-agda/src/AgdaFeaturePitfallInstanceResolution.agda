@@ -354,9 +354,12 @@ record RegularVsConstructedSimpler : Set where
   record Instance : Set where
     no-eta-equality
 
-    postulate instance _ : Symmetry _≈R_
-    postulate instance _ : Symmetry _≈F_
-    open Symmetry ⦃ … ⦄
+    record Symmetry' {B : Set₁} (_∼_ : B → B → Set) : Set₁ where
+      field symmetry : ∀ {x y} → x ∼ y → y ∼ x
+    open Symmetry' ⦃ … ⦄
+
+    postulate instance _ : Symmetry' _≈R_
+    postulate instance _ : Symmetry' _≈F_
 
     module Test where
 
