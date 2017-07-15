@@ -438,13 +438,13 @@ record RegularVsConstructedMoreSimpler : Set where
   ExtProp : Set₁
   ExtProp = Σ Prop Ext
 
+  Reg : ExtProp → Set
+  Reg P = PropEq (π₀ P)
+
   record Con (P : ExtProp) : Set where
     constructor ∁
     field
       π₀ : PropEq (π₀ P)
-
-  Reg : ExtProp → Set
-  Reg P = PropEq (π₀ P)
 
   record Instance : Set where
     no-eta-equality
