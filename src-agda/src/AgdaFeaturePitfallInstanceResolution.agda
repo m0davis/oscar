@@ -33,7 +33,7 @@ record Regular : Set where
   record Instance : Set where
     no-eta-equality
 
-    postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    postulate instance _ : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
     open Symmetry ⦃ … ⦄
 
     module Test {𝔒 : Set} where
@@ -87,7 +87,7 @@ record Revamped : Set where
   record Instance : Set where
     no-eta-equality
 
-    postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    postulate instance _ : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
     open Symmetry ⦃ … ⦄
 
     module Test {𝔒 : Set} where
@@ -139,13 +139,13 @@ record PostulatedExtensionProperty : Set where
   record Instance : Set where
     no-eta-equality
 
-    postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    postulate instance _ : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
     open Symmetry ⦃ … ⦄
 
     module Test {𝔒 : Set} where
 
-      test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-      test1-fails P≈Q = symmetry P≈Q
+      test1-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-works P≈Q = symmetry P≈Q
 
       test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
       test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
@@ -164,7 +164,6 @@ record PostulatedExtensionProperty : Set where
 
     module Test {𝔒 : Set} where
 
-      -- why does this work?
       test1-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
       test1-works P≈Q = symmetry P≈Q
 
@@ -200,7 +199,7 @@ record Constructed : Set where
   record Instance : Set where
     no-eta-equality
 
-    postulate instance SymmetryExtensionProperty : {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    postulate instance _ : {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
     open Symmetry ⦃ … ⦄
 
     module Test {𝔒 : Set} where
