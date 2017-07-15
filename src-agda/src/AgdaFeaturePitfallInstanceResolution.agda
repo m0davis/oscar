@@ -271,12 +271,13 @@ module PostulatedExtensionPropertySimpleSuccess where
 
 module RevampedVerySimpleFailure where
 
+  -- was PropertyEquivalence : ∀ {P : Set} → Property P → Property P → Set
   postulate _∼_ : Set → Set → Set
 
   record ExtensionProperty : Set₁ where
     field
-      π₀ : Set
-      π₁ : Set
+      π₀ : Set -- was Property 𝔒
+      π₁ : Set -- was Extension π₀
 
   open ExtensionProperty
 
@@ -304,6 +305,7 @@ module PostulatedExtensionPropertyVerySimpleSuccess where
 
 module RevampedEvenSimplerFailure where
 
+  -- was _∼_, which was PropertyEquivalence
   postulate F : Set → Set
 
   record ExtensionProperty : Set₁ where
