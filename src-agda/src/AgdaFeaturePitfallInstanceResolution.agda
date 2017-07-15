@@ -1,110 +1,114 @@
 
 module AgdaFeaturePitfallInstanceResolution where
 
-module _
-  {𝔒 : Set₁}
-  (_∼_ : 𝔒 → 𝔒 → Set)
-  where
-  𝓼ymmetry = ∀ {x y} → x ∼ y → y ∼ x
-  record 𝓢ymmetry : Set₁ where field symmetry : 𝓼ymmetry
-
-open 𝓢ymmetry ⦃ … ⦄ public
+record Symmetry {B : Set₁} (_∼_ : B → B → Set) : Set₁ where
+  field symmetry : ∀ {x y} → x ∼ y → y ∼ x
+open Symmetry ⦃ … ⦄
 
 Property : Set → Set₁
-Property P = P → Set
+Property A = A → Set
 
-infixr 5 _,_
-record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
-  constructor _,_
-  field
-    π₀ : 𝔒
-    π₁ : 𝔓 π₀
+Extension : {A : Set} → Property A → Set
+Extension P = ∀ f → P f
 
-open Σ public
+postulate PropertyEquivalence : ∀ {P : Set} → Property P → Property P → Set
 
-ExtensionProperty : ∀ (𝔒 : Set) → Set₁
-ExtensionProperty 𝔒 = Σ (𝔒 → Set) (λ P → ∀ f → P f)
+record Regular : Set where
+  no-eta-equality
 
-module _
-  {𝔒 : Set}
-  where
+  infixr 5 _,_
+  record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
+    constructor _,_
+    field
+      π₀ : 𝔒
+      π₁ : 𝔓 π₀
 
-  postulate
-    PropertyEquivalence : Property 𝔒 → Property 𝔒 → Set
+  open Σ public
 
-  _≈_ : ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
+  ExtensionProperty : ∀ (𝔒 : Set) → Set₁
+  ExtensionProperty 𝔒 = Σ (Property 𝔒) Extension
+
+  _≈_ : {𝔒 : Set} → ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
   _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
 
-  postulate
-    instance
-      𝓢ymmetryExtensionProperty : 𝓢ymmetry _≈_
+  postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
 
-  test-sym-ext2 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-  test-sym-ext2 {P} {Q} P≈Q = 𝓢ymmetryExtensionProperty .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+  module Test {𝔒 : Set} where
 
-  test-sym-ext3 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-  test-sym-ext3 {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+    test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test1-fails P≈Q = symmetry P≈Q
 
-  test-sym-ext-fails1 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-  test-sym-ext-fails1 {P} {Q} P≈Q = 𝓢ymmetryExtensionProperty .𝓢ymmetry.symmetry {x = _ , _} {y = _ , _} P≈Q
+    test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-  test-sym-ext-fails2 : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-  test-sym-ext-fails2 P≈Q = symmetry P≈Q
+    test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
 
-record ExtensionProperty' (𝔒 : Set) : Set₁ where
-  constructor _,_
-  field
-    π₀ : 𝔒 → Set
-    π₁ : ∀ f → π₀ f
+    test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
-open ExtensionProperty' public
+record Revamped : Set where
+  no-eta-equality
 
-module _
-  {𝔒 : Set}
-  where
+  record ExtensionProperty (𝔒 : Set) : Set₁ where
+    constructor _,_
+    field
+      π₀ : Property 𝔒
+      π₁ : Extension π₀
 
-  _≈'_ : ExtensionProperty' 𝔒 → ExtensionProperty' 𝔒 → Set
-  _≈'_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
+  open ExtensionProperty
 
-  postulate
-    instance
-      𝓢ymmetryExtension'Property : 𝓢ymmetry _≈'_
+  _≈_ : {𝔒 : Set} → ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
+  _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
 
-  test-sym-ext2' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
-  test-sym-ext2' {P} {Q} P≈'Q = 𝓢ymmetryExtension'Property .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈'Q
+  postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
 
-  test-sym-ext3' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
-  test-sym-ext3' {P} {Q} P≈'Q = symmetry {x = P} {y = Q} P≈'Q
+  module Test {𝔒 : Set} where
 
-  test-sym-ext-fails1' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
-  test-sym-ext-fails1' {P} {Q} P≈'Q = 𝓢ymmetryExtension'Property .𝓢ymmetry.symmetry {x = _ , _} {y = _ , _} P≈'Q
+    test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test1-fails P≈Q = symmetry P≈Q
 
-  test-sym-ext-fails2' : {P Q : ExtensionProperty' 𝔒} → P ≈' Q → Q ≈' P
-  test-sym-ext-fails2' P≈'Q = symmetry P≈'Q
+    test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-module _
-  {𝔒 : Set}
-  where
+    test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
 
-  record _≈''_ (P Q : ExtensionProperty 𝔒) : Set where
+    test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+record Constructed : Set where
+  no-eta-equality
+
+  infixr 5 _,_
+  record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
+    constructor _,_
+    field
+      π₀ : 𝔒
+      π₁ : 𝔓 π₀
+
+  open Σ public
+
+  ExtensionProperty : Set → Set₁
+  ExtensionProperty 𝔒 = Σ (Property 𝔒) Extension
+
+  record _≈_ {𝔒 : Set} (P Q : ExtensionProperty 𝔒) : Set where
     constructor ∁
     field
       π₀ : PropertyEquivalence (π₀ P) (π₀ Q)
 
-  open _≈''_
+  postulate instance SymmetryExtensionProperty : {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
 
-  postulate
-    instance
-      𝓢ymmetryExtension''Property : 𝓢ymmetry _≈''_
+  module Test {𝔒 : Set} where
 
-  test-sym-ext2'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
-  test-sym-ext2'' {P} {Q} P≈''Q = 𝓢ymmetryExtension''Property .𝓢ymmetry.symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈''Q
+    test1-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test1-works P≈Q = symmetry P≈Q
 
-  test-sym-ext3'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
-  test-sym-ext3'' {P} {Q} P≈''Q = symmetry {x = P} {y = Q} P≈''Q
+    test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-  test-sym-ext-fails1'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
-  test-sym-ext-fails1'' {P} {Q} P≈''Q = 𝓢ymmetryExtension''Property .𝓢ymmetry.symmetry {x = _} {y = _} P≈''Q
+    test3-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test3-works {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
 
-  test-sym-ext-fails2'' : {P Q : ExtensionProperty 𝔒} → P ≈'' Q → Q ≈'' P
-  test-sym-ext-fails2'' P≈''Q = symmetry P≈''Q
+    test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+    test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
