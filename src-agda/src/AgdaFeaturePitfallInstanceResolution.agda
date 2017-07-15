@@ -429,7 +429,7 @@ record RegularVsConstructedMoreSimpler : Set where
       π₀ : 𝔒
       π₁ : Set
 
-  open Σ public
+  open Σ
 
   postulate Prop : Set₁
   postulate Ext : Prop → Set
