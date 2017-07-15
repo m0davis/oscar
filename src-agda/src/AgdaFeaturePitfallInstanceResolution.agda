@@ -444,7 +444,7 @@ record RegularVsConstructedMoreSimpler : Set where
   record Con (P : ExtProp) : Set where
     constructor ∁
     field
-      π₀ : PropEq (π₀ P)
+      π₀ : Reg P
 
   module Instance where
 
