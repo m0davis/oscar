@@ -607,6 +607,43 @@ module RegularVsConstructed-EnhancedReg where
     test4-worksC : {P : ExtProp} → Con P → Set
     test4-worksC {P} P≈Q = fooC {x = _ , π₁ P} P≈Q
 
+record Moral : Set where
+  no-eta-equality
+
+  infixr 5 _,_
+  record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
+    constructor _,_
+    field
+      π₀ : 𝔒
+      π₁ : Set
+
+  open Σ
+
+  postulate Prop : Set₁
+  postulate Ext : Prop → Set
+  postulate PropEq : Prop → Set
+
+  Reg : Σ Prop Ext → Set
+  Reg P = PropEq (π₀ P)
+
+  record Con (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg P
+
+  record Class {B : Set₁} (F : B → Set) : Set₁ where
+    field foo : ∀ {x} → F x → Set
+  open Class ⦃ … ⦄
+
+  postulate instance _ : Class Reg
+  postulate instance _ : Class Con
+
+  test1-failsR : ∀ {P} → Reg P → Set
+  test1-failsR = foo
+
+  test1-worksC : ∀ {P} → Con P → Set
+  test1-worksC = foo
+
 module RevampedSimpleFailure where
 
   record ExtensionProperty (𝔒 : Set) : Set₁ where
