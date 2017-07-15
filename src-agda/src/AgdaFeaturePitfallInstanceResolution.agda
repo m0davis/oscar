@@ -163,3 +163,22 @@ record Constructed : Set where
 
       test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
       test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+  record Function : Set where
+    no-eta-equality
+
+    postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → x ≈ y → y ≈ x
+
+    module Test {𝔒 : Set} where
+
+      test1-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-works P≈Q = symmetry P≈Q
+
+      test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+
+      test3-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test3-works {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
