@@ -510,6 +510,96 @@ record RegularVsConstructedMoreSimpler : Set where
     test4-worksC : {P : ExtProp} → Con P → Set
     test4-worksC {P} P≈Q = fooC {x = _ , π₁ P} P≈Q
 
+module RegularVsConstructed-EnhancedReg where
+
+  infixr 5 _,_
+  record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
+    constructor _,_
+    field
+      π₀ : 𝔒
+      π₁ : Set
+
+  open Σ
+
+  postulate Prop : Set₁
+  postulate Ext : Prop → Set
+  postulate PropEq : Prop → Set
+
+  ExtProp : Set₁
+  ExtProp = Σ Prop Ext
+
+  Reg : ExtProp → Set
+  Reg P = PropEq (π₀ P)
+
+  record Con (P : ExtProp) : Set where
+    constructor ∁
+    field
+      π₀ : Reg P
+
+  module Instance where
+
+    record Class {B : Set₁} (F : B → Set) : Set₁ where
+      field foo : ∀ {x} → F x → Set
+    open Class ⦃ … ⦄
+
+    postulate instance _ : Class Reg
+    postulate instance _ : Class Con
+    postulate instance _ : Class Ext
+    postulate instance _ : Class PropEq
+
+    test1-failsR : {P : ExtProp} → Reg P → Set
+    test1-failsR P≈Q = foo P≈Q
+
+    test2-worksR : {P : ExtProp} → Reg P → Set
+    test2-worksR {P} P≈Q = foo {x = P} P≈Q
+
+    test3-failsR : {P : ExtProp} → Reg P → Set
+    test3-failsR {P} P≈Q = foo {x = _ , _} P≈Q
+
+    test4-worksR : {P : ExtProp} → Reg P → Set
+    test4-worksR {P} P≈Q = foo {x = _ , π₁ P} P≈Q
+
+    test1-worksC : {P : ExtProp} → Con P → Set
+    test1-worksC P≈Q = foo P≈Q
+
+    test2-worksC : {P : ExtProp} → Con P → Set
+    test2-worksC {P} P≈Q = foo {x = P} P≈Q
+
+    test3-worksC : {P : ExtProp} → Con P → Set
+    test3-worksC {P} P≈Q = foo {x = _ , _} P≈Q
+
+    test4-worksC : {P : ExtProp} → Con P → Set
+    test4-worksC {P} P≈Q = foo {x = _ , π₁ P} P≈Q
+
+  module Function where
+
+    postulate fooR : {x : ExtProp} → Reg x → Set
+    postulate fooC : {x : ExtProp} → Con x → Set
+
+    test1-failsR : {P : ExtProp} → Reg P → Set
+    test1-failsR P≈Q = fooR P≈Q
+
+    test2-worksR : {P : ExtProp} → Reg P → Set
+    test2-worksR {P} P≈Q = fooR {x = P} P≈Q
+
+    test3-failsR : {P : ExtProp} → Reg P → Set
+    test3-failsR {P} P≈Q = fooR {x = _ , _} P≈Q
+
+    test4-worksR : {P : ExtProp} → Reg P → Set
+    test4-worksR {P} P≈Q = fooR {x = _ , π₁ P} P≈Q
+
+    test1-worksC : {P : ExtProp} → Con P → Set
+    test1-worksC P≈Q = fooC P≈Q
+
+    test2-worksC : {P : ExtProp} → Con P → Set
+    test2-worksC {P} P≈Q = fooC {x = P} P≈Q
+
+    test3-worksC : {P : ExtProp} → Con P → Set
+    test3-worksC {P} P≈Q = fooC {x = _ , _} P≈Q
+
+    test4-worksC : {P : ExtProp} → Con P → Set
+    test4-worksC {P} P≈Q = fooC {x = _ , π₁ P} P≈Q
+
 module RevampedSimpleFailure where
 
   record ExtensionProperty (𝔒 : Set) : Set₁ where
