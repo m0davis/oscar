@@ -6,6 +6,7 @@
   TODO: what if instead of projections, we use a function? (try one that's abstract, and one that case splits on arguments)
     - see ProjectedMorality ... so far it looks like it doesn't matter --- not sure why
   TODO: what if the argument type (the one that's losing information) were data instead of record?
+    - see DataMorality ... weirdness!
 -}
 
 module AgdaFeaturePitfallInstanceResolution where
@@ -705,21 +706,25 @@ record ProjectedMorality : Set where
 record DataMorality : Set where
   no-eta-equality
 
-  infixr 5 _,_
-  record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
-    constructor _,_
-    field
-      π₀ : 𝔒
-      π₁ : Set
+  module _ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) where
 
-  open Σ
+    data Σ : Set₁ where
+      _,_ : 𝔒 → Set → Σ
+
+  module _ {𝔒 : Set₁} {𝔓 : 𝔒 → Set} where
+
+    dπ₀ : Σ _ 𝔓 → 𝔒
+    dπ₀ (x , _) = x
+
+    dπ₁ : Σ _ 𝔓 → Set
+    dπ₁ (_ , y) = y
 
   postulate Prop : Set₁
   postulate Ext : Prop → Set
   postulate PropEq : Prop → Set
 
   Reg : Σ Prop Ext → Set
-  Reg P = PropEq (π₀ P)
+  Reg P = PropEq (dπ₀ P)
 
   postulate bar : ∀ {𝔒 : Set₁} → 𝔒 → 𝔒
   postulate qux : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → Σ 𝔒 𝔓
@@ -728,13 +733,13 @@ record DataMorality : Set where
   abstract
 
     abstracted-π₀ : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → 𝔒
-    abstracted-π₀ x = π₀ x
+    abstracted-π₀ x = dπ₀ x
 
   Reg-using-abstracted-projection : Σ Prop Ext → Set
   Reg-using-abstracted-projection (P0 , P1) = PropEq (abstracted-π₀ {𝔒 = Prop} {𝔓 = Ext} (P0 , P1))
 
   Reg-using-q : Σ Prop Ext → Set
-  Reg-using-q x = PropEq (π₀ (qux x))
+  Reg-using-q x = PropEq (dπ₀ (qux x))
 
   Reg-using-fake-π₀ : Σ Prop Ext → Set
   Reg-using-fake-π₀ x = PropEq (fake-π₀ x)
@@ -776,13 +781,13 @@ record DataMorality : Set where
   test1-failsR = foo
 
   test1-failsRap : ∀ {P} → Reg-using-abstracted-projection P → Set
-  test1-failsRap = foo
+  test1-failsRap = foo -- woah, it actually works. why?
 
   test1-failsRq : ∀ {P} → Reg-using-q P → Set
-  test1-failsRq = foo
+  test1-failsRq = foo -- NB this doesn't fail if instance of Class Reg is excluded
 
   test1-failsRf : ∀ {P} → Reg-using-fake-π₀ P → Set
-  test1-failsRf = foo
+  test1-failsRf = foo -- NB this doesn't fail if instance of Class Reg is excluded
 
   test1-worksC : ∀ {P} → Con P → Set
   test1-worksC = foo
