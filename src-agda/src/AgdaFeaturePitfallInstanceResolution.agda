@@ -268,3 +268,32 @@ module PostulatedExtensionPropertySimpleSuccess where
 
   test-works : {𝔒 : Set} {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
   test-works P≈Q = symmetry P≈Q
+
+module RevampedVerySimpleFailure where
+
+  postulate _∼_ : Set → Set → Set
+
+  record ExtensionProperty : Set₁ where
+    field
+      π₀ : Set
+      π₁ : Set
+
+  open ExtensionProperty
+
+  postulate symmetry : ∀ {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
+
+  test-fails : {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
+  test-fails = symmetry
+
+module PostulatedExtensionPropertyVerySimpleSuccess where
+
+  postulate _∼_ : Set → Set → Set
+
+  postulate
+    ExtensionProperty : Set₁
+    π₀ : ExtensionProperty → Set
+
+  postulate symmetry : ∀ {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
+
+  test-works : {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
+  test-works P≈Q = symmetry P≈Q
