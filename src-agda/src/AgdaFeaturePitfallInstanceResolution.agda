@@ -325,6 +325,97 @@ record RegularVsConstructed : Set where
       test4-worksF : {P Q : ExtensionProperty 𝔒} → P ≈F Q → Q ≈F P
       test4-worksF {P} {Q} P≈Q = symmetryF {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
+record RegularVsConstructedSimpler : Set where
+  no-eta-equality
+
+  infixr 5 _,_
+  record Σ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) : Set₁ where
+    constructor _,_
+    field
+      π₀ : 𝔒
+      π₁ : 𝔓 π₀
+
+  open Σ public
+
+  postulate 𝔒 : Set
+
+  ExtensionProperty : Set₁
+  ExtensionProperty = Σ (Property 𝔒) Extension
+
+  record _≈R_ (P Q : ExtensionProperty) : Set where
+    constructor ∁
+    field
+      π₀ : PropertyEquivalence (π₀ P) (π₀ Q)
+
+  _≈F_ : ExtensionProperty → ExtensionProperty → Set
+  _≈F_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
+
+  record Instance : Set where
+    no-eta-equality
+
+    postulate instance _ : Symmetry _≈R_
+    postulate instance _ : Symmetry _≈F_
+    open Symmetry ⦃ … ⦄
+
+    module Test where
+
+      test1-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test1-worksR P≈Q = symmetry P≈Q
+
+      test2-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test2-worksR {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+
+      test3-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test3-worksR {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test4-worksR {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+      test1-failsF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test1-failsF P≈Q = symmetry P≈Q
+
+      test2-worksF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test2-worksF {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+
+      test3-failsF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test3-failsF {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-worksF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test4-worksF {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+  record Function : Set where
+    no-eta-equality
+
+    postulate symmetryR : {x y : ExtensionProperty} → x ≈R y → y ≈R x
+    -- normalises to   : {𝔒 : Set} {x y : Σ (𝔒 → Set) (λ P → (f : 𝔒) → P f)} → x ≈R y → y ≈R x
+    postulate symmetryF : {x y : ExtensionProperty} → x ≈F y → y ≈F x
+
+    module Test where
+
+      test1-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test1-worksR P≈Q = symmetryR P≈Q
+
+      test2-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test2-worksR {P} {Q} P≈Q = symmetryR {x = P} {y = Q} P≈Q
+
+      test3-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test3-worksR {P} {Q} P≈Q = symmetryR {x = _ , _} {y = _ , _} P≈Q
+
+      test4-worksR : {P Q : ExtensionProperty} → P ≈R Q → Q ≈R P
+      test4-worksR {P} {Q} P≈Q = symmetryR {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+      test1-failsF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test1-failsF P≈Q = symmetryF P≈Q
+
+      test2-worksF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test2-worksF {P} {Q} P≈Q = symmetryF {x = P} {y = Q} P≈Q
+
+      test3-failsF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test3-failsF {P} {Q} P≈Q = symmetryF {x = _ , _} {y = _ , _} P≈Q
+
+      test4-worksF : {P Q : ExtensionProperty} → P ≈F Q → Q ≈F P
+      test4-worksF {P} {Q} P≈Q = symmetryF {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
 module RevampedSimpleFailure where
 
   record ExtensionProperty (𝔒 : Set) : Set₁ where
