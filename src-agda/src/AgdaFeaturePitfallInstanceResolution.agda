@@ -427,7 +427,7 @@ record RegularVsConstructedMoreSimpler : Set where
     constructor _,_
     field
       π₀ : 𝔒
-      π₁ : 𝔓 π₀
+      π₁ : Set
 
   open Σ public
 
