@@ -355,7 +355,7 @@ record RegularVsConstructedSimpler : Set where
     no-eta-equality
 
     record Symmetry' {B : Set₁} (_∼_ : B → B → Set) : Set₁ where
-      field symmetry : ∀ {x y} → x ∼ y → y ∼ x
+      field symmetry : ∀ {x y} → x ∼ y → Set
     open Symmetry' ⦃ … ⦄
 
     postulate instance _ : Symmetry' _≈R_
@@ -363,60 +363,60 @@ record RegularVsConstructedSimpler : Set where
 
     module Test where
 
-      test1-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test1-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test1-worksR P≈Q = symmetry P≈Q
 
-      test2-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test2-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test2-worksR {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-      test3-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test3-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test3-worksR {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
 
-      test4-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test4-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test4-worksR {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
-      test1-failsF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test1-failsF : {P Q : ExtProp} → P ≈F Q → Set
       test1-failsF P≈Q = symmetry P≈Q
 
-      test2-worksF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test2-worksF : {P Q : ExtProp} → P ≈F Q → Set
       test2-worksF {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-      test3-failsF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test3-failsF : {P Q : ExtProp} → P ≈F Q → Set
       test3-failsF {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
 
-      test4-worksF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test4-worksF : {P Q : ExtProp} → P ≈F Q → Set
       test4-worksF {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
   record Function : Set where
     no-eta-equality
 
-    postulate symmetryR : {x y : ExtProp} → x ≈R y → y ≈R x
-    postulate symmetryF : {x y : ExtProp} → x ≈F y → y ≈F x
+    postulate symmetryR : {x y : ExtProp} → x ≈R y → Set
+    postulate symmetryF : {x y : ExtProp} → x ≈F y → Set
 
     module Test where
 
-      test1-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test1-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test1-worksR P≈Q = symmetryR P≈Q
 
-      test2-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test2-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test2-worksR {P} {Q} P≈Q = symmetryR {x = P} {y = Q} P≈Q
 
-      test3-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test3-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test3-worksR {P} {Q} P≈Q = symmetryR {x = _ , _} {y = _ , _} P≈Q
 
-      test4-worksR : {P Q : ExtProp} → P ≈R Q → Q ≈R P
+      test4-worksR : {P Q : ExtProp} → P ≈R Q → Set
       test4-worksR {P} {Q} P≈Q = symmetryR {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
-      test1-failsF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test1-failsF : {P Q : ExtProp} → P ≈F Q → Set
       test1-failsF P≈Q = symmetryF P≈Q
 
-      test2-worksF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test2-worksF : {P Q : ExtProp} → P ≈F Q → Set
       test2-worksF {P} {Q} P≈Q = symmetryF {x = P} {y = Q} P≈Q
 
-      test3-failsF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test3-failsF : {P Q : ExtProp} → P ≈F Q → Set
       test3-failsF {P} {Q} P≈Q = symmetryF {x = _ , _} {y = _ , _} P≈Q
 
-      test4-worksF : {P Q : ExtProp} → P ≈F Q → Q ≈F P
+      test4-worksF : {P Q : ExtProp} → P ≈F Q → Set
       test4-worksF {P} {Q} P≈Q = symmetryF {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
 module RevampedSimpleFailure where
