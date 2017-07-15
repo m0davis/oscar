@@ -523,13 +523,13 @@ module RegularVsConstructed-EnhancedReg where
 
   postulate Prop : Set₁
   postulate Ext : Prop → Set
-  postulate PropEq : Prop → Set
+  postulate PropEq : Prop → Set → Set
 
   ExtProp : Set₁
   ExtProp = Σ Prop Ext
 
   Reg : ExtProp → Set
-  Reg P = PropEq (π₀ P)
+  Reg P = PropEq (π₀ P) (π₁ P)
 
   record Con (P : ExtProp) : Set where
     constructor ∁
@@ -545,7 +545,6 @@ module RegularVsConstructed-EnhancedReg where
     postulate instance _ : Class Reg
     postulate instance _ : Class Con
     postulate instance _ : Class Ext
-    postulate instance _ : Class PropEq
 
     test1-failsR : {P : ExtProp} → Reg P → Set
     test1-failsR P≈Q = foo P≈Q
