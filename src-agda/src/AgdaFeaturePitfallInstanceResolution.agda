@@ -313,12 +313,13 @@ module RevampedEvenSimplerFailure where
 
   open ExtensionProperty
 
-  postulate symmetry : ∀ {x : ExtensionProperty} → F (π₀ x) → F (π₀ x)
+  postulate symmetry : ∀ {x : ExtensionProperty} → F (π₀ x) → Set
 
   postulate x : ExtensionProperty
+  postulate Fpx : F (π₀ x)
 
-  test-fails : F (π₀ x) → F (π₀ x)
-  test-fails = symmetry
+  test-fails : Set
+  test-fails = symmetry Fpx
 
 module PostulatedExtensionPropertyEvenSimplerSuccess where
 
@@ -328,9 +329,10 @@ module PostulatedExtensionPropertyEvenSimplerSuccess where
     ExtensionProperty : Set₁
     π₀ : ExtensionProperty → Set
 
-  postulate symmetry : ∀ {x : ExtensionProperty} → F (π₀ x) → F (π₀ x)
+  postulate symmetry : ∀ {x : ExtensionProperty} → F (π₀ x) → Set
 
   postulate x : ExtensionProperty
+  postulate Fpx : F (π₀ x)
 
-  test-works : F (π₀ x) → F (π₀ x)
-  test-works = symmetry
+  test-works : Set
+  test-works = symmetry Fpx
