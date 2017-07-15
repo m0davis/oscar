@@ -282,7 +282,9 @@ module RevampedVerySimpleFailure where
 
   postulate symmetry : ∀ {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
 
-  test-fails : {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
+  postulate x y : ExtensionProperty
+
+  test-fails : π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
   test-fails = symmetry
 
 module PostulatedExtensionPropertyVerySimpleSuccess where
@@ -295,5 +297,7 @@ module PostulatedExtensionPropertyVerySimpleSuccess where
 
   postulate symmetry : ∀ {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
 
-  test-works : {x y : ExtensionProperty} → π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
+  postulate x y : ExtensionProperty
+
+  test-works : π₀ x ∼ π₀ y → π₀ y ∼ π₀ x
   test-works P≈Q = symmetry P≈Q
