@@ -318,8 +318,14 @@ module RevampedEvenSimplerFailure where
   postulate x : ExtensionProperty
   postulate Fpx : F (π₀ x)
 
-  test-fails : Set
-  test-fails = symmetry Fpx
+  test-fails1 : Set
+  test-fails1 = symmetry Fpx
+
+  test-fails2 : Set
+  test-fails2 = symmetry {x = record { π₀ = π₀ x ; π₁ = _}} Fpx
+
+  test-works-arbitrarily : Set
+  test-works-arbitrarily = symmetry {x = record { π₀ = π₀ x ; π₁ = F (F (π₁ x)) }} Fpx
 
 module PostulatedExtensionPropertyEvenSimplerSuccess where
 
@@ -334,5 +340,8 @@ module PostulatedExtensionPropertyEvenSimplerSuccess where
   postulate x : ExtensionProperty
   postulate Fpx : F (π₀ x)
 
-  test-works : Set
-  test-works = symmetry Fpx
+  test-works1 : Set
+  test-works1 = symmetry Fpx
+
+  test-works2 : Set
+  test-works2 = symmetry {x = x} Fpx
