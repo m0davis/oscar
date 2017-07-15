@@ -3,7 +3,6 @@ module AgdaFeaturePitfallInstanceResolution where
 
 record Symmetry {B : Set₁} (_∼_ : B → B → Set) : Set₁ where
   field symmetry : ∀ {x y} → x ∼ y → y ∼ x
-open Symmetry ⦃ … ⦄
 
 Property : Set → Set₁
 Property A = A → Set
@@ -31,21 +30,44 @@ record Regular : Set where
   _≈_ : {𝔒 : Set} → ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
   _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
 
-  postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+  record Instance : Set where
+    no-eta-equality
 
-  module Test {𝔒 : Set} where
+    postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    open Symmetry ⦃ … ⦄
 
-    test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test1-fails P≈Q = symmetry P≈Q
+    module Test {𝔒 : Set} where
 
-    test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+      test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-fails P≈Q = symmetry P≈Q
 
-    test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+      test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-    test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+      test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+  record Function : Set where
+    no-eta-equality
+
+    postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
+
+    module Test {𝔒 : Set} where
+
+      test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-fails P≈Q = symmetry P≈Q
+
+      test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+
+      test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
 record Revamped : Set where
   no-eta-equality
@@ -61,21 +83,44 @@ record Revamped : Set where
   _≈_ : {𝔒 : Set} → ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
   _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
 
-  postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+  record Instance : Set where
+    no-eta-equality
 
-  module Test {𝔒 : Set} where
+    postulate instance SymmetryExtensionProperty : ∀ {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    open Symmetry ⦃ … ⦄
 
-    test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test1-fails P≈Q = symmetry P≈Q
+    module Test {𝔒 : Set} where
 
-    test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+      test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-fails P≈Q = symmetry P≈Q
 
-    test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+      test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-    test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+      test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+  record Function : Set where
+    no-eta-equality
+
+    postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
+
+    module Test {𝔒 : Set} where
+
+      test1-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-fails P≈Q = symmetry P≈Q
+
+      test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+
+      test3-fails : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test3-fails {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
 
 record Constructed : Set where
   no-eta-equality
@@ -97,18 +142,22 @@ record Constructed : Set where
     field
       π₀ : PropertyEquivalence (π₀ P) (π₀ Q)
 
-  postulate instance SymmetryExtensionProperty : {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+  record Instance : Set where
+    no-eta-equality
 
-  module Test {𝔒 : Set} where
+    postulate instance SymmetryExtensionProperty : {𝔒 : Set} → Symmetry (_≈_ {𝔒 = 𝔒})
+    open Symmetry ⦃ … ⦄
 
-    test1-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test1-works P≈Q = symmetry P≈Q
+    module Test {𝔒 : Set} where
 
-    test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
+      test1-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test1-works P≈Q = symmetry P≈Q
 
-    test3-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test3-works {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+      test2-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test2-works {P} {Q} P≈Q = symmetry {x = P} {y = Q} P≈Q
 
-    test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
-    test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+      test3-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test3-works {P} {Q} P≈Q = symmetry {x = _ , _} {y = _ , _} P≈Q
+
+      test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+      test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
