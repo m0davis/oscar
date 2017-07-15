@@ -345,3 +345,32 @@ module PostulatedExtensionPropertyEvenSimplerSuccess where
 
   test-works2 : Set
   test-works2 = symmetry {x = x} Fpx
+
+module RevampedVsPostulated where
+
+  record R : Set₁ where
+    field
+      f1 : Set
+      f2 : Set
+
+  open R
+
+  postulate fooR : ∀ {x : R} → f1 x → Set
+
+  postulate r : R
+  postulate f1r : f1 r
+
+  test-fails1 : Set
+  test-fails1 = fooR f1r
+
+  postulate
+    S : Set₁
+    g1 : S → Set
+
+  postulate fooS : ∀ {x : S} → g1 x → Set
+
+  postulate s : S
+  postulate g1s : g1 s
+
+  test-works1 : Set
+  test-works1 = fooS g1s
