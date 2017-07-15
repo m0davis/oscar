@@ -235,3 +235,36 @@ record Constructed : Set where
 
       test4-works : {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
       test4-works {P} {Q} P≈Q = symmetry {x = _ , π₁ P} {y = _ , π₁ Q} P≈Q
+
+module RevampedSimpleFailure where
+
+  record ExtensionProperty (𝔒 : Set) : Set₁ where
+    field
+      π₀ : Property 𝔒
+      π₁ : Extension π₀
+
+  open ExtensionProperty
+
+  _≈_ : {𝔒 : Set} → ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
+  _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
+
+  postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → x ≈ y → y ≈ x
+  -- normalises to   : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
+
+  test-fails : {𝔒 : Set} {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+  test-fails P≈Q = symmetry P≈Q
+
+module PostulatedExtensionPropertySimpleSuccess where
+
+  postulate
+    ExtensionProperty : Set → Set₁
+    π₀ : {𝔒 : Set} → ExtensionProperty 𝔒 → Property 𝔒
+
+  _≈_ : {𝔒 : Set} → ExtensionProperty 𝔒 → ExtensionProperty 𝔒 → Set
+  _≈_ P Q = PropertyEquivalence (π₀ P) (π₀ Q)
+
+  postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → x ≈ y → y ≈ x
+  -- normalises to   : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ {𝔒} x) (π₀ {𝔒} y) → PropertyEquivalence (π₀ {𝔒} y) (π₀ {𝔒} x)
+
+  test-works : {𝔒 : Set} {P Q : ExtensionProperty 𝔒} → P ≈ Q → Q ≈ P
+  test-works P≈Q = symmetry P≈Q
