@@ -6,6 +6,7 @@
   TODO: what if instead of projections, we use a function? (try one that's abstract, and one that case splits on arguments)
     - see ProjectedMorality ... so far it looks like it doesn't matter --- not sure why
   TODO: what if the argument type (the one that's losing information) were data instead of record?
+    - see DataMorality ... weirdness!
 -}
 
 module AgdaFeaturePitfallInstanceResolution where
@@ -689,6 +690,104 @@ record ProjectedMorality : Set where
 
   test1-failsRf : ∀ {P} → Reg-using-fake-π₀ P → Set
   test1-failsRf = foo
+
+  test1-worksC : ∀ {P} → Con P → Set
+  test1-worksC = foo
+
+  test1-worksCap : ∀ {P} → Con-using-abstracted-projection P → Set
+  test1-worksCap = foo
+
+  test1-worksCq : ∀ {P} → Con-using-q P → Set
+  test1-worksCq = foo
+
+  test1-worksCf : ∀ {P} → Con-using-fake-π₀ P → Set
+  test1-worksCf = foo
+
+record DataMorality : Set where
+  no-eta-equality
+
+  module _ (𝔒 : Set₁) (𝔓 : 𝔒 → Set) where
+
+    data Σ : Set₁ where
+      _,_ : 𝔒 → Set → Σ
+
+  module _ {𝔒 : Set₁} {𝔓 : 𝔒 → Set} where
+
+    dπ₀ : Σ _ 𝔓 → 𝔒
+    dπ₀ (x , _) = x
+
+    dπ₁ : Σ _ 𝔓 → Set
+    dπ₁ (_ , y) = y
+
+  postulate Prop : Set₁
+  postulate Ext : Prop → Set
+  postulate PropEq : Prop → Set
+
+  Reg : Σ Prop Ext → Set
+  Reg P = PropEq (dπ₀ P)
+
+  postulate bar : ∀ {𝔒 : Set₁} → 𝔒 → 𝔒
+  postulate qux : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → Σ 𝔒 𝔓
+  postulate fake-π₀ : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → 𝔒
+
+  abstract
+
+    abstracted-π₀ : ∀ {𝔒} {𝔓 : 𝔒 → Set} → Σ 𝔒 𝔓 → 𝔒
+    abstracted-π₀ x = dπ₀ x
+
+  Reg-using-abstracted-projection : Σ Prop Ext → Set
+  Reg-using-abstracted-projection (P0 , P1) = PropEq (abstracted-π₀ {𝔒 = Prop} {𝔓 = Ext} (P0 , P1))
+
+  Reg-using-q : Σ Prop Ext → Set
+  Reg-using-q x = PropEq (dπ₀ (qux x))
+
+  Reg-using-fake-π₀ : Σ Prop Ext → Set
+  Reg-using-fake-π₀ x = PropEq (fake-π₀ x)
+
+  record Con (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg P
+
+  record Con-using-abstracted-projection (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg-using-abstracted-projection P
+
+  record Con-using-q (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg-using-q P
+
+  record Con-using-fake-π₀ (P : Σ Prop Ext) : Set where
+    constructor ∁
+    field
+      π₀ : Reg-using-fake-π₀ P
+
+  record Class {B : Set₁} (F : B → Set) : Set₁ where
+    field foo : ∀ {x} → F x → Set
+  open Class ⦃ … ⦄
+
+  postulate instance _ : Class Reg
+  postulate instance _ : Class Reg-using-abstracted-projection
+  postulate instance _ : Class Reg-using-q
+  postulate instance _ : Class Reg-using-fake-π₀
+  postulate instance _ : Class Con
+  postulate instance _ : Class Con-using-abstracted-projection
+  postulate instance _ : Class Con-using-q
+  postulate instance _ : Class Con-using-fake-π₀
+
+  test1-failsR : ∀ {P} → Reg P → Set
+  test1-failsR = foo
+
+  test1-failsRap : ∀ {P} → Reg-using-abstracted-projection P → Set
+  test1-failsRap = foo -- woah, it actually works. why?
+
+  test1-failsRq : ∀ {P} → Reg-using-q P → Set
+  test1-failsRq = foo -- NB this doesn't fail if instance of Class Reg is excluded
+
+  test1-failsRf : ∀ {P} → Reg-using-fake-π₀ P → Set
+  test1-failsRf = foo -- NB this doesn't fail if instance of Class Reg is excluded
 
   test1-worksC : ∀ {P} → Con P → Set
   test1-worksC = foo
