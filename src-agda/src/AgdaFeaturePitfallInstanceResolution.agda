@@ -1,3 +1,11 @@
+{-
+  The moral of the story is best told by comparing RegularVsConstructedMoreSimpler and RegularVsConstructed-EnhancedReg:
+  * aliased type constructors can lose information about their dependencies, leading to some inconvenience when using a function which takes those dependencies implicitly
+  * expressing those constructors as records (instead of as aliases) averts the above inconvenience
+  * the loss of information happens when the resultant type is made from projections on the dependencies, where only a proper subset of all the possible projections are used
+  TODO: what if instead of projections, we use a function? (try one that's abstract, and one that case splits on arguments)
+  TODO: what if the argument type (the one that's losing information) were data instead of record?
+-}
 
 module AgdaFeaturePitfallInstanceResolution where
 
