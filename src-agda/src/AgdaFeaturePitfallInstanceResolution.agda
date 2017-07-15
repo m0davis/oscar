@@ -54,7 +54,7 @@ record Regular : Set where
     no-eta-equality
 
     postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → x ≈ y → y ≈ x
-    --                 : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
+    -- normalises to   : {𝔒 : Set} {x y : Σ (𝔒 → Set) (λ P → (f : 𝔒) → P f)} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
 
     module Test {𝔒 : Set} where
 
@@ -108,7 +108,7 @@ record Revamped : Set where
     no-eta-equality
 
     postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → x ≈ y → y ≈ x
-    --                 : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
+    -- normalises to   : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → PropertyEquivalence (π₀ x) (π₀ y) → PropertyEquivalence (π₀ y) (π₀ x)
 
     module Test {𝔒 : Set} where
 
@@ -168,6 +168,7 @@ record Constructed : Set where
     no-eta-equality
 
     postulate symmetry : ∀ {𝔒} {x y : ExtensionProperty 𝔒} → x ≈ y → y ≈ x
+    -- normalises to   : {𝔒 : Set} {x y : Σ (𝔒 → Set) (λ P → (f : 𝔒) → P f)} → x ≈ y → y ≈ x
 
     module Test {𝔒 : Set} where
 
