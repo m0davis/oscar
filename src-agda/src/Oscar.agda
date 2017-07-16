@@ -253,6 +253,8 @@ module Test8 where
     record 𝓖enfact1 : Ø 𝔞 ∙̂ ℓ where
       field genfact1 : 𝓰enfact1 _∼_ _⊛_
 
+  open 𝓖enfact1 ⦃ … ⦄ public
+
   instance
 
     𝓖enfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
