@@ -61,3 +61,12 @@ No instance of type Foo (B _x_48 → Set) was found in scope.
 when checking that unwrapped is a valid argument to a function of
 type {F : Set₁} {{r : Foo F}} → F → Set
 -}
+
+
+-- tests for unwrapping
+
+unwrap-test-generic : Unwrapped B
+unwrap-test-generic = let instance _ = generic in let open Generic ⦃ … ⦄ in unwrap {A = Unwrapped _}
+
+unwrap-test-index : Unwrapped B
+unwrap-test-index = let instance _ = indexed in let open Indexed ⦃ … ⦄ in unwrap
