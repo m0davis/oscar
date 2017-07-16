@@ -266,6 +266,11 @@ module Test8 where
 
   open 𝓖enfact1' ⦃ … ⦄ public
 
+  module _
+    {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) (let _∼_ = _∼_; infix 18 _∼_) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄)
+    where
+    𝓖enfact1-Alias = 𝓖enfact1' _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
+
   instance
 
     𝓖enfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
