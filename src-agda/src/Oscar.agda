@@ -257,7 +257,10 @@ module Test8 where
   module _
     {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) (_⊛_ : 𝔄 → 𝔄 → 𝔄)
     where
-    record 𝓖enfact1 {ℓ : Ł} ⦃ _ : Properthing ℓ 𝔅 ⦄ : Ø 𝔞 ∙̂ ℓ where
+    record [𝓖enfact1] : Ø₀ where
+      no-eta-equality
+      constructor ∁
+    record 𝓖enfact1 {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ ⦃ _ : [𝓖enfact1] ⦄ : Ø 𝔞 ∙̂ ℓ where
       field genfact1 : 𝓰enfact1-Alias _∼_ _⊛_
 
   open 𝓖enfact1 ⦃ … ⦄ public
@@ -277,8 +280,14 @@ module Test8 where
 
   instance
 
+    [𝓖enfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1] (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+    [𝓖enfact1]UnifiesSubstitunctionFork = ∁
+
     𝓖enfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
     𝓖enfact1.genfact1 𝓖enfact1UnifiesSubstitunctionFork _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
+    [𝓖enfact1]ExtensionalUnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1] (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+    [𝓖enfact1]ExtensionalUnifiesSubstitunctionFork = ∁
 
     𝓖enfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
     𝓖enfact1.genfact1 𝓖enfact1ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
