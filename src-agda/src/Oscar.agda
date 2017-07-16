@@ -266,6 +266,9 @@ module Test8 where
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+  test-Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+  test-Properties-fact1'⋆ = Properties-fact1'⋆ -- FIXME (unsolved metas)
+
   Properties-fact1' : ∀ {n} → 𝓰enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
