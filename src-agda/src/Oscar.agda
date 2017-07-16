@@ -278,6 +278,10 @@ module Test8 where
                                        → 𝓖enfact1' _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
     𝓖enfact1'.genfact1' 𝓖enfact1'UnifiesSubstitunctionFork _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+    𝓖enfact1'ExtensionalUnifiesSubstitunctionFork : ∀ {n} (let _∼_ = (≡-ExtensionalUnifies {𝔄 = Fin}); infix 16 _∼_) (let _⊛_ = _fork_ {n = n}; infix 18 _⊛_)
+                                       → 𝓖enfact1' _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
+    𝓖enfact1'.genfact1' 𝓖enfact1'ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
@@ -295,6 +299,9 @@ module Test8 where
 
   Properties-fact1' : ∀ {n} → 𝓰enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
+  test'-genfact1'-works : ∀ {n} → 𝓰enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+  test'-genfact1'-works = genfact1'
 
   fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)}
          → P ≈ i ◃ P
