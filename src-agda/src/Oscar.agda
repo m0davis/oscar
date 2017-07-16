@@ -223,11 +223,11 @@ module Test8 where
   open Term 𝔓
   open Substitunction 𝔓
 
-  test-epfs : ∀ {x y} → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
-  test-epfs P f = f ◃ P
-
   test-epfs⋆ : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
   test-epfs⋆ P f = f ◃ P
+
+  test-epfs : ∀ {x y} → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
+  test-epfs P f = f ◃ P
 
   test-epfs2 : ∀ {x y} → ≡-ExtensionṖroperty ℓ Fin Term x → Arrow Fin Term x y → ≡-ExtensionṖroperty ℓ Fin Term y
   test-epfs2 P f = f ◃ P
