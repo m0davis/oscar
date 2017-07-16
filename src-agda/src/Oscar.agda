@@ -295,6 +295,35 @@ module Test8 where
 
   open New𝓖enfact1 ⦃ … ⦄ public
 
+  module _
+    {𝔞} (𝔄 : Ø 𝔞)
+    where
+    record N𝓖enfact1⊛ : Ø 𝔞 where
+      field _⊛_ : 𝔄 → 𝔄 → 𝔄
+  open N𝓖enfact1⊛ ⦃ … ⦄ public
+  module _
+    {𝔞} (𝔄 : Ø 𝔞) {𝔟} (𝔅 : Ø 𝔟)
+    where
+    record N𝓖enfact1∼ : Ø 𝔞 ∙̂ 𝔟 where
+      infix 18 _∼_
+      field _∼_ : 𝔄 → 𝔄 → 𝔅
+  open N𝓖enfact1∼ ⦃ … ⦄ public
+  module _
+    {𝔞} (𝔄 : Ø 𝔞) {𝔟} (𝔅 : Ø 𝔟)
+    where
+    record [N𝓖enfact1] : Ø₀ where
+      no-eta-equality
+      constructor ∁
+    module _
+      ⦃ _ : N𝓖enfact1⊛ 𝔄 ⦄
+      ⦃ _ : N𝓖enfact1∼ 𝔄 𝔅 ⦄
+      {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄
+      where
+      n𝓰enfact1 = ∀ (s1 s2 t1 t2 : 𝔄) → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈[ 𝔅 ] s1 ∼ t1 ∧ s2 ∼ t2
+      record N𝓖enfact1 ⦃ _ : [N𝓖enfact1] ⦄ : Ø 𝔞 ∙̂ ℓ where
+        field ngenfact1 : n𝓰enfact1
+  open N𝓖enfact1 ⦃ … ⦄ public
+
   instance
 
     [𝓖enfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1] (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
@@ -321,6 +350,18 @@ module Test8 where
     New𝓖enfact1Term : ∀ {n} → New𝓖enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n) (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
     New𝓖enfact1.newgenfact1 New𝓖enfact1Term = genfact1'
 
+    N𝓖enfact1⊛Fork : ∀ {n} → N𝓖enfact1⊛ (Term n)
+    N𝓖enfact1⊛Fork .N𝓖enfact1⊛._⊛_ = _fork_
+
+    N𝓖enfact1∼Unif : ∀ {n} → N𝓖enfact1∼ (Term n) (ArrowṖroperty ∅̂ Fin Term n)
+    N𝓖enfact1∼Unif .N𝓖enfact1∼._∼_ = ≡-Unifies₀⟦ Arrow Fin Term ⟧
+
+    [N𝓖enfact1]Term : ∀ {n} → [N𝓖enfact1] (Term n) (ArrowṖroperty ∅̂ Fin Term n)
+    [N𝓖enfact1]Term = ∁
+
+    N𝓖enfact1Term : ∀ {n} → N𝓖enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n)
+    N𝓖enfact1.ngenfact1 N𝓖enfact1Term _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
@@ -338,6 +379,9 @@ module Test8 where
 
   test-newgenfact1- : ∀ {n} → new𝓰enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n) (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   test-newgenfact1- = newgenfact1 -- FIXME (unsolved metas)
+
+  test-ngenfact1- : ∀ {n} → n𝓰enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n)
+  test-ngenfact1- = ngenfact1 -- FIXME (unsolved metas)
 
   Properties-fact1' : ∀ {n} → 𝓰enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
