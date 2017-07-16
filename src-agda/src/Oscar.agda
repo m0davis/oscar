@@ -251,11 +251,11 @@ module Test8 where
 
   fact4⋆ : ∀{m n} (P : LeftṖroperty ℓ (Arrow Fin Term) m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
-  fact4⋆ _ f nop = nop {f = _ ∙[ Arrow Fin Term ] f}
+  fact4⋆ _ _ nop = nop
 
   fact4 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
-  fact4 _ f nop = nop {f = _ ∙[ Arrow Fin Term ] f}
+  fact4 _ _ nop = nop
 
   fact4-test : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
