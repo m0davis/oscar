@@ -245,7 +245,7 @@ module Test8 where
 
   𝓰enfact1 : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄) → Ø 𝔞 ∙̂ ℓ
   𝓰enfact1 _∼_ _⊛_ = let _∼_ = _∼_ ; infix 18 _∼_ in
-    ∀ {s1 s2 t1 t2} → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
+    ∀ s1 s2 t1 t2 → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
 
   module _
     {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄)
@@ -258,19 +258,19 @@ module Test8 where
   instance
 
     𝓖enfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-    𝓖enfact1.genfact1 𝓖enfact1UnifiesSubstitunctionFork .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+    𝓖enfact1.genfact1 𝓖enfact1UnifiesSubstitunctionFork _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
     𝓖enfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
-    𝓖enfact1.genfact1 𝓖enfact1ExtensionalUnifiesSubstitunctionFork .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+    𝓖enfact1.genfact1 𝓖enfact1ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-  Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+  Properties-fact1'⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   test-Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-  test-Properties-fact1'⋆ = Properties-fact1'⋆ -- FIXME (unsolved metas)
+  test-Properties-fact1'⋆ = Properties-fact1'⋆
 
   Properties-fact1' : ∀ {n} → 𝓰enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
-  Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+  Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)}
          → P ≈ i ◃ P
