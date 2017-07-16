@@ -269,6 +269,13 @@ module Test8 where
   test-Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   test-Properties-fact1'⋆ = Properties-fact1'⋆
 
+  test-genfact1-works : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+  test-genfact1-works {n} = genfact1 {_∼_ = ≡-Unifies₀⟦ Arrow Fin Term ⟧} ⦃ ProperthingṖroperty {𝔒 = Arrow Fin Term n} ⦄ {_⊛_ = _fork_}
+
+  test-genfact1-fails : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+  test-genfact1-fails = genfact1 -- FIXME (unsolved metas)
+
+
   Properties-fact1' : ∀ {n} → 𝓰enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
