@@ -281,12 +281,11 @@ module Test8 where
 
   left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m)
                   → ➊ ∧ P ≈ P
-  left-identity-∧ P .π₀ .π₀ (_ , π₃) = π₃
-  left-identity-∧ P .π₀ .π₁ x = lift ∅ , x
+  left-identity-∧ P .π₀ = π₁ , (lift ∅ ,_)
 
   left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m)
                       → ➊ ∧ P ≈ P
-  left-identity-∧-ext P .π₀ .π₀ = π₁ , (λ x → (lift ∅) , x)
+  left-identity-∧-ext P .π₀ .π₀ = π₁ , (lift ∅ ,_)
 
 module TestEquivalenceṖroperty
   {𝔵} {𝔛 : Ø 𝔵}
