@@ -282,19 +282,19 @@ module Test8 where
   fact1 = symmetrical
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ (≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2)
+         → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ ≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2
   Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-ExtensionalUnifies (s1 fork s2) (t1 fork t2) ≈[ ExtensionṖroperty _ (Substitunction _) _ ] (≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2)
+         → ≡-ExtensionalUnifies {𝔄 = Fin} (s1 fork s2) (t1 fork t2) ≈ ≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2
   Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ≈ (i ◃ P)
+  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (λ {y} → Pointwise Proposequality⟦ Term y ⟧)} → P ≈ i ◃ P
   fact3 .π₀ .π₀ = ¡ , ¡
 
   fact4 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
-  fact4 _ f nop {f = g} Pf = nop {f = g ∙[ Arrow Fin Term ] f} Pf
+  fact4 _ f nop = nop {f = _ ∙[ Arrow Fin Term ] f}
 
   fact4-test : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
           → Nothing P → Nothing (f ◃ P)
@@ -304,17 +304,17 @@ module Test8 where
   fact5⋆ = surjectextenscongruity
 
   fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} (f : Arrow Fin Term m n) → P ≈ Q
-           → (f ◃ P) ≈ (f ◃ Q)
+           → f ◃ P ≈ f ◃ Q
   fact5 = surjectextenscongruity
 
-  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n} → f ≈ g → (f ◃ P) ≈ (g ◃ P)
+  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n} → f ≈ g → f ◃ P ≈ g ◃ P
   fact6 P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
-  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → (➊ ∧ P) ≈ P
+  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → ➊ ∧ P ≈ P
   left-identity-∧ P .π₀ .π₀ (_ , π₃) = π₃
   left-identity-∧ P .π₀ .π₁ x = lift ∅ , x
 
-  left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) → (➊ ∧ P) ≈ P
+  left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) → ➊ ∧ P ≈ P
   left-identity-∧-ext P .π₀ .π₀ = π₁ , (λ x → (lift ∅) , x)
 
 module TestEquivalenceṖroperty
