@@ -278,23 +278,6 @@ module Test8 where
     where
     𝓖enfact1-Alias = 𝓖enfact1' _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
 
-  module _
-    {𝔞} (𝔄 : Ø 𝔞) {𝔟} (𝔅 : Ø 𝔟)
-    where
-    record [New𝓖enfact1] : Ø₀ where
-      no-eta-equality
-      constructor ∁
-    module _
-      (_∼_ : 𝔄 → 𝔄 → 𝔅) (let _∼_ = _∼_; infix 18 _∼_)
-      (_⊛_ : 𝔄 → 𝔄 → 𝔄)
-      {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄
-      where
-      new𝓰enfact1 = ∀ s1 s2 t1 t2 → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
-      record New𝓖enfact1 ⦃ _ : [New𝓖enfact1] ⦄ : Ø 𝔞 ∙̂ ℓ where
-        field newgenfact1 : new𝓰enfact1
-
-  open New𝓖enfact1 ⦃ … ⦄ public
-
   instance
 
     [𝓖enfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1] (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
@@ -315,12 +298,6 @@ module Test8 where
     𝓖enfact1'ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
     𝓖enfact1'.genfact1' 𝓖enfact1'ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-    [New𝓖enfact1]Term : ∀ {n} → [New𝓖enfact1] (Term n) (ArrowṖroperty ∅̂ Fin Term n)
-    [New𝓖enfact1]Term = ∁
-
-    New𝓖enfact1Term : ∀ {n} → New𝓖enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n) (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-    New𝓖enfact1.newgenfact1 New𝓖enfact1Term = genfact1'
-
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
@@ -335,9 +312,6 @@ module Test8 where
 
   test-genfact1'-works : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   test-genfact1'-works = genfact1'
-
-  test-newgenfact1- : ∀ {n} → new𝓰enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n) (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-  test-newgenfact1- = newgenfact1 -- FIXME (unsolved metas)
 
   Properties-fact1' : ∀ {n} → 𝓰enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
