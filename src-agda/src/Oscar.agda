@@ -296,7 +296,7 @@ module Test8 where
   test-Properties-fact1'⋆ = Properties-fact1'⋆
 
   test-genfact1-works : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-  test-genfact1-works {n} = genfact1 {_∼_ = ≡-Unifies₀⟦ Arrow Fin Term ⟧} {_⊛_ = _fork_} ⦃ ProperthingṖroperty {𝔒 = Arrow Fin Term n} ⦄
+  test-genfact1-works {n} = genfact1 {_∼_ = ≡-Unifies₀⟦ Arrow Fin Term ⟧} {_⊛_ = _fork_}
 
   test-genfact1-fails : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   test-genfact1-fails = genfact1 -- FIXME (unsolved metas)
