@@ -260,10 +260,6 @@ module Test8 where
           → Nothing P → Nothing (f ◃ P)
   fact4 _ _ nop = nop
 
-  fact4-test : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
-          → Nothing P → Nothing (f ◃ P)
-  fact4-test = fact4
-
   fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q → (f ◃ P) ≈ (f ◃ Q)
   fact5⋆ = surjectextenscongruity
 
