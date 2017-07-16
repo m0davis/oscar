@@ -400,7 +400,7 @@ module Test8 where
   test-ngenfact1- = ngenfact1 -- FIXME (unsolved metas)
 
   test-mgenfact1- : ∀ {n} → n𝓰enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n)
-  test-mgenfact1- = mgenfact1 {𝔅 = ArrowṖroperty ∅̂ Fin Term _} -- {𝔄 = Term _} {𝔅 = ArrowṖroperty ∅̂ Fin Term _} -- FIXME (unsolved metas)
+  test-mgenfact1- = mgenfact1 -- {𝔄 = Term _} {𝔅 = ArrowṖroperty ∅̂ Fin Term _} -- FIXME (unsolved metas)
 
   Properties-fact1' : ∀ {n} → 𝓰enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
