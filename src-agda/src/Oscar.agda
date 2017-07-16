@@ -225,15 +225,15 @@ module Test8 where
 
   test-epfs⋆ : ∀ {x y}
              → Substitunction x y → ArrowṖroperty ℓ Fin Term x → ArrowṖroperty ℓ Fin Term y
-  test-epfs⋆ = §'
+  test-epfs⋆ = surjectextensivity
 
   test-epfs : ∀ {x y}
             → Arrow Fin Term x y → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
-  test-epfs = §'
+  test-epfs = surjectextensivity
 
   test-epfs2 : ∀ {x y}
              → Arrow Fin Term x y → ≡-ExtensionṖroperty ℓ Fin Term x → ≡-ExtensionṖroperty ℓ Fin Term y
-  test-epfs2 = §'
+  test-epfs2 = surjectextensivity
 
   fact1⋆ : ∀ {m} (s t : Term m)
          → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s

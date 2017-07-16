@@ -251,8 +251,7 @@ module _ where
         infixl 10 surjectextensivity!syntax
         syntax surjectextensivity!syntax rxy px = px ● rxy
 
-  open 𝓢urjectextensivity ⦃ … ⦄ public hiding (surjectextensivity)
-  open 𝓢urjectextensivity ⦃ … ⦄ public using () renaming (surjectextensivity to §')
+  open 𝓢urjectextensivity ⦃ … ⦄ public
 
   surjectextensivity[]syntax : ∀
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
@@ -260,7 +259,7 @@ module _ where
     {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
     ⦃ _ : 𝓢urjectextensivity _∼₁_ 𝔒₂ ⦄
     → 𝓼urjectextensivity _∼₁_ 𝔒₂
-  surjectextensivity[]syntax _ = §'
+  surjectextensivity[]syntax _ = surjectextensivity
 
   syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
 
