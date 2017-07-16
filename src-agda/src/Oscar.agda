@@ -244,7 +244,7 @@ module Test8 where
   fact1 = symmetrical
 
   gen-Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
-                         → Unifies₀⟦ Arrow Fin Term ⟧ _≡_ (s1 fork s2) (t1 fork t2) ≈ Unifies₀ _≡_ s1 t1 ∧ Unifies₀ _≡_ s2 t2
+                         → Unifies₀⟦ Arrow Fin Term ⟧ _≡_ (s1 fork s2) (t1 fork t2) ≈ Unifies₀⟦ Arrow Fin Term ⟧ _≡_ s1 t1 ∧ Unifies₀⟦ Arrow Fin Term ⟧ _≡_ s2 t2
   gen-Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
