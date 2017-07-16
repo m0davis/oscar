@@ -243,6 +243,10 @@ module Test8 where
         → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
   fact1 = symmetrical
 
+  𝓰enfact1 : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄) → Ø 𝔞 ∙̂ ℓ
+  𝓰enfact1 _∼_ _⊛_ = let _∼_ = _∼_ ; infix 18 _∼_ in
+    ∀ {s1 s2 t1 t2} → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
+
   gen2-Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
                             (let _∼_ = Unifies₀⟦ Arrow Fin Term ⟧ _≡_ ; infix 18 _∼_)
                           → s1 fork s2 ∼ t1 fork t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
