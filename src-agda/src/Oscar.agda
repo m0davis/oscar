@@ -253,6 +253,14 @@ module Test8 where
     record 𝓖enfact1 : Ø 𝔞 ∙̂ ℓ where
       field genfact1 : 𝓰enfact1 _∼_ _⊛_
 
+  instance
+
+    𝓖enfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+    𝓖enfact1.genfact1 𝓖enfact1UnifiesSubstitunctionFork .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
+    𝓖enfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+    𝓖enfact1.genfact1 𝓖enfact1ExtensionalUnifiesSubstitunctionFork .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
