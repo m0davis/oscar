@@ -324,6 +324,16 @@ module Test8 where
         field ngenfact1 : n𝓰enfact1
   open N𝓖enfact1 ⦃ … ⦄ public
 
+  record M𝓖enfact1 {𝔞} (𝔄 : Ø 𝔞) {𝔟} (𝔅 : Ø 𝔟) ℓ : Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ ℓ where
+    infix 18 _∼_
+    field
+      _⊛_ : 𝔄 → 𝔄 → 𝔄
+      _∼_ : 𝔄 → 𝔄 → 𝔅
+      ⦃ ⌶Properthing ⦄ : Properthing ℓ 𝔅
+      mgenfact1 : ∀ s1 s2 t1 t2 → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈[ 𝔅 ] s1 ∼ t1 ∧ s2 ∼ t2
+
+  open M𝓖enfact1 ⦃ … ⦄ public using (mgenfact1)
+
   instance
 
     [𝓖enfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1] (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
@@ -362,6 +372,12 @@ module Test8 where
     N𝓖enfact1Term : ∀ {n} → N𝓖enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n)
     N𝓖enfact1.ngenfact1 N𝓖enfact1Term _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+    M𝓖enfact1Term : ∀ {n} → M𝓖enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n) ∅̂
+    M𝓖enfact1._⊛_ M𝓖enfact1Term = _fork_
+    M𝓖enfact1._∼_ M𝓖enfact1Term = ≡-Unifies₀⟦ Arrow Fin Term ⟧
+    M𝓖enfact1.⌶Properthing M𝓖enfact1Term = !
+    M𝓖enfact1.mgenfact1 M𝓖enfact1Term _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
@@ -382,6 +398,9 @@ module Test8 where
 
   test-ngenfact1- : ∀ {n} → n𝓰enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n)
   test-ngenfact1- = ngenfact1 -- FIXME (unsolved metas)
+
+  test-mgenfact1- : ∀ {n} → n𝓰enfact1 (Term n) (ArrowṖroperty ∅̂ Fin Term n)
+  test-mgenfact1- = mgenfact1 -- FIXME (unsolved metas)
 
   Properties-fact1' : ∀ {n} → 𝓰enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
   Properties-fact1' _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
