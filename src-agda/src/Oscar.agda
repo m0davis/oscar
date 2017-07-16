@@ -243,17 +243,17 @@ module Test8 where
         → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
   fact1 = symmetrical
 
-  𝓰enfact1' : ∀ {𝔞} {𝔄 : Ø 𝔞} ℓ (_⊛_∼_⊛_≈_∼_∧_∼_ : 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ) → Ø 𝔞 ∙̂ ℓ
-  𝓰enfact1' ℓ _⊛_∼_⊛_≈_∼_∧_∼_ = ∀ s1 s2 t1 t2 → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
+  𝓅roperfact1 : ∀ {𝔞} {𝔄 : Ø 𝔞} ℓ (_⊛_∼_⊛_≈_∼_∧_∼_ : 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ) → Ø 𝔞 ∙̂ ℓ
+  𝓅roperfact1 ℓ _⊛_∼_⊛_≈_∼_∧_∼_ = ∀ s1 s2 t1 t2 → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
 
-  𝓰enfact1-Alias : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄) → Ø 𝔞 ∙̂ ℓ
-  𝓰enfact1-Alias _∼_ _⊛_ = let _∼_ = _∼_ ; infix 18 _∼_ in
-    𝓰enfact1' _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
+  𝓹roperfact1 : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄) → Ø 𝔞 ∙̂ ℓ
+  𝓹roperfact1 _∼_ _⊛_ = let _∼_ = _∼_ ; infix 18 _∼_ in
+    𝓅roperfact1 _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
 
   module _
     {𝔞} {𝔄 : Ø 𝔞} ℓ (_⊛_∼_⊛_≈_∼_∧_∼_ : 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ)
     where
-    record [𝓖enfact1'] 𝔟 : Ø 𝔞 ∙̂ ↑̂ 𝔟 ∙̂ ↑̂ ℓ where
+    record [𝒫roperfact1] 𝔟 : Ø 𝔞 ∙̂ ↑̂ 𝔟 ∙̂ ↑̂ ℓ where
       constructor ∁
       infix 18 _∼_
       field
@@ -263,44 +263,44 @@ module Test8 where
         _⊛_ : 𝔄 → 𝔄 → 𝔄
         ⦃ ⌶CorrectProp ⦄ : (λ s1 s2 t1 t2 s1' t1' s2' t2' → (s1 ⊛ s2) ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2') ≡ _⊛_∼_⊛_≈_∼_∧_∼_
 
-    record 𝓖enfact1' {𝔟} ⦃ _ : [𝓖enfact1'] 𝔟 ⦄ : Ø 𝔞 ∙̂ ℓ where
-      field genfact1' : 𝓰enfact1' ℓ _⊛_∼_⊛_≈_∼_∧_∼_
+    record 𝒫roperfact1 {𝔟} ⦃ _ : [𝒫roperfact1] 𝔟 ⦄ : Ø 𝔞 ∙̂ ℓ where
+      field properfact1 : 𝓅roperfact1 ℓ _⊛_∼_⊛_≈_∼_∧_∼_
 
-  open 𝓖enfact1' ⦃ … ⦄ public
+  open 𝒫roperfact1 ⦃ … ⦄ public
 
   module _
     {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) (let _∼_ = _∼_; infix 18 _∼_) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄)
     where
-    [𝓖enfact1]-Alias = [𝓖enfact1'] _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2') 𝔟
-    𝓖enfact1-Alias = 𝓖enfact1' _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
+    [𝓟roperfact1] = [𝒫roperfact1] _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2') 𝔟
+    𝓟roperfact1 = 𝒫roperfact1 _ (λ s1 s2 t1 t2 s1' t1' s2' t2' → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1' ∼ t1' ∧ s2' ∼ t2')
 
   instance
 
-    [𝓖enfact1']UnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1]-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-    [𝓖enfact1'].𝔅 [𝓖enfact1']UnifiesSubstitunctionFork = _
-    [𝓖enfact1']._∼_ [𝓖enfact1']UnifiesSubstitunctionFork = ≡-Unifies₀⟦ Arrow Fin Term ⟧
-    [𝓖enfact1'].⌶Properthing [𝓖enfact1']UnifiesSubstitunctionFork = !
-    [𝓖enfact1']._⊛_ [𝓖enfact1']UnifiesSubstitunctionFork = _fork_
-    [𝓖enfact1'].⌶CorrectProp [𝓖enfact1']UnifiesSubstitunctionFork = !
+    [𝒫roperfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+    [𝒫roperfact1].𝔅 [𝒫roperfact1]UnifiesSubstitunctionFork = _
+    [𝒫roperfact1]._∼_ [𝒫roperfact1]UnifiesSubstitunctionFork = ≡-Unifies₀⟦ Arrow Fin Term ⟧
+    [𝒫roperfact1].⌶Properthing [𝒫roperfact1]UnifiesSubstitunctionFork = !
+    [𝒫roperfact1]._⊛_ [𝒫roperfact1]UnifiesSubstitunctionFork = _fork_
+    [𝒫roperfact1].⌶CorrectProp [𝒫roperfact1]UnifiesSubstitunctionFork = !
 
-    [𝓖enfact1']ExtensionalUnifiesSubstitunctionFork : ∀ {n} → [𝓖enfact1]-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
-    [𝓖enfact1'].𝔅 [𝓖enfact1']ExtensionalUnifiesSubstitunctionFork = _
-    [𝓖enfact1']._∼_ [𝓖enfact1']ExtensionalUnifiesSubstitunctionFork = ≡-ExtensionalUnifies {𝔄 = Fin}
-    [𝓖enfact1'].⌶Properthing [𝓖enfact1']ExtensionalUnifiesSubstitunctionFork = !
-    [𝓖enfact1']._⊛_ [𝓖enfact1']ExtensionalUnifiesSubstitunctionFork = _fork_
-    [𝓖enfact1'].⌶CorrectProp [𝓖enfact1']ExtensionalUnifiesSubstitunctionFork = !
+    [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+    [𝒫roperfact1].𝔅 [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = _
+    [𝒫roperfact1]._∼_ [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = ≡-ExtensionalUnifies {𝔄 = Fin}
+    [𝒫roperfact1].⌶Properthing [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = !
+    [𝒫roperfact1]._⊛_ [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = _fork_
+    [𝒫roperfact1].⌶CorrectProp [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = !
 
-    𝓖enfact1'UnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-    𝓖enfact1'.genfact1' 𝓖enfact1'UnifiesSubstitunctionFork _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+    𝒫roperfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+    𝒫roperfact1.properfact1 𝒫roperfact1UnifiesSubstitunctionFork _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-    𝓖enfact1'ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓖enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
-    𝓖enfact1'.genfact1' 𝓖enfact1'ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+    𝒫roperfact1.properfact1 𝒫roperfact1ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1-Alias (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
-  Properties-fact1'⋆ = genfact1'
+  Properties-fact1'⋆ : ∀ {n} → 𝓹roperfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+  Properties-fact1'⋆ = properfact1
 
-  Properties-fact1' : ∀ {n} → 𝓰enfact1-Alias (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
-  Properties-fact1' = genfact1'
+  Properties-fact1' : ∀ {n} → 𝓹roperfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+  Properties-fact1' = properfact1
 
   fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)}
          → P ≈ i ◃ P
