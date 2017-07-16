@@ -247,6 +247,12 @@ module Test8 where
   𝓰enfact1 _∼_ _⊛_ = let _∼_ = _∼_ ; infix 18 _∼_ in
     ∀ {s1 s2 t1 t2} → s1 ⊛ s2 ∼ t1 ⊛ t2 ≈ s1 ∼ t1 ∧ s2 ∼ t2
 
+  module _
+    {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : Ø 𝔟} (_∼_ : 𝔄 → 𝔄 → 𝔅) {ℓ} ⦃ _ : Properthing ℓ 𝔅 ⦄ (_⊛_ : 𝔄 → 𝔄 → 𝔄)
+    where
+    record 𝓖enfact1 : Ø 𝔞 ∙̂ ℓ where
+      field genfact1 : 𝓰enfact1 _∼_ _⊛_
+
   Properties-fact1'⋆ : ∀ {n} → 𝓰enfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
   Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
