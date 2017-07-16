@@ -246,6 +246,9 @@ module Test8 where
          → ≡-ExtensionalUnifies {𝔄 = Fin} (s1 fork s2) (t1 fork t2) ≈ ≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2
   Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+  fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)} → P ≈ i ◃ P
+  fact3⋆ .π₀ = ¡ , ¡
+
   fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (Pointwise Proposequality)} → P ≈ i ◃ P
   fact3 .π₀ .π₀ = ¡ , ¡
 
