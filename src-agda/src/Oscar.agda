@@ -223,58 +223,69 @@ module Test8 where
   open Term 𝔓
   open Substitunction 𝔓
 
-  test-epfs⋆ : ∀ {x y} → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
+  test-epfs⋆ : ∀ {x y}
+             → ArrowṖroperty ℓ Fin Term x → Substitunction x y → ArrowṖroperty ℓ Fin Term y
   test-epfs⋆ P f = f ◃ P
 
-  test-epfs : ∀ {x y} → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
+  test-epfs : ∀ {x y}
+            → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → Arrow Fin Term x y → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
   test-epfs P f = f ◃ P
 
-  test-epfs2 : ∀ {x y} → ≡-ExtensionṖroperty ℓ Fin Term x → Arrow Fin Term x y → ≡-ExtensionṖroperty ℓ Fin Term y
+  test-epfs2 : ∀ {x y}
+             → ≡-ExtensionṖroperty ℓ Fin Term x → Arrow Fin Term x y → ≡-ExtensionṖroperty ℓ Fin Term y
   test-epfs2 P f = f ◃ P
 
-  fact1⋆ : ∀ {m} (s t : Term m) → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
+  fact1⋆ : ∀ {m} (s t : Term m)
+         → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
   fact1⋆ = symmetrical
 
-  fact1 : ∀ {m} (s t : Term m) → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
+  fact1 : ∀ {m} (s t : Term m)
+        → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
   fact1 = symmetrical
 
   Properties-fact1'⋆ : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ ≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2
+                     → ≡-Unifies₀⟦ Arrow Fin Term ⟧ (s1 fork s2) (t1 fork t2) ≈ ≡-Unifies₀ s1 t1 ∧ ≡-Unifies₀ s2 t2
   Properties-fact1'⋆ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   Properties-fact1' : ∀ {m} {s1 s2 t1 t2 : Term m}
-         → ≡-ExtensionalUnifies {𝔄 = Fin} (s1 fork s2) (t1 fork t2) ≈ ≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2
+                    → ≡-ExtensionalUnifies {𝔄 = Fin} (s1 fork s2) (t1 fork t2) ≈ ≡-ExtensionalUnifies s1 t1 ∧ ≡-ExtensionalUnifies s2 t2
   Properties-fact1' .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-  fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)} → P ≈ i ◃ P
+  fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)}
+         → P ≈ i ◃ P
   fact3⋆ .π₀ = ¡ , ¡
 
-  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (Pointwise Proposequality)} → P ≈ i ◃ P
+  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (Pointwise Proposequality)}
+        → P ≈ i ◃ P
   fact3 .π₀ .π₀ = ¡ , ¡
 
   fact4⋆ : ∀{m n} (P : LeftṖroperty ℓ (Arrow Fin Term) m) (f : _ → Term n)
-          → Nothing P → Nothing (f ◃ P)
+         → Nothing P → Nothing (f ◃ P)
   fact4⋆ _ _ nop = nop
 
   fact4 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
-          → Nothing P → Nothing (f ◃ P)
+        → Nothing P → Nothing (f ◃ P)
   fact4 _ _ nop = nop
 
-  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n) → P ≈ Q → (f ◃ P) ≈ (f ◃ Q)
+  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n)
+         → P ≈ Q → f ◃ P ≈ f ◃ Q
   fact5⋆ = surjectextenscongruity
 
-  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} (f : Arrow Fin Term m n) → P ≈ Q
-           → f ◃ P ≈ f ◃ Q
+  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} (f : Arrow Fin Term m n)
+        → P ≈ Q → f ◃ P ≈ f ◃ Q
   fact5 = surjectextenscongruity
 
-  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n} → f ≈ g → f ◃ P ≈ g ◃ P
+  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n}
+        → f ≈ g → f ◃ P ≈ g ◃ P
   fact6 P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
 
-  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m) → ➊ ∧ P ≈ P
+  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m)
+                  → ➊ ∧ P ≈ P
   left-identity-∧ P .π₀ .π₀ (_ , π₃) = π₃
   left-identity-∧ P .π₀ .π₁ x = lift ∅ , x
 
-  left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) → ➊ ∧ P ≈ P
+  left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m)
+                      → ➊ ∧ P ≈ P
   left-identity-∧-ext P .π₀ .π₀ = π₁ , (λ x → (lift ∅) , x)
 
 module TestEquivalenceṖroperty
