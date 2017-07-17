@@ -1319,3 +1319,25 @@ module _
 
     𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
     𝒫roperfact1.properfact1 𝒫roperfact1ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
+  instance
+
+    [𝓕actsurj3]Regular : ∀ {ℓ} → [𝓕actsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) 𝔭
+    [𝓕actsurj3]Regular .[𝐹actsurj3]._∼ᵣ_ = Arrow Fin Term
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶Reflexivity = !
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶Surjectextensivity = !
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶HasEquivalence = !
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶CorrectFactsurj3 = !
+
+    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
+    𝓕actsurj3Regular .𝐹actsurj3.factsurj3 .π₀ = ¡ , ¡
+
+    [𝓕actsurj3]Extension : ∀ {ℓ} → [𝓕actsurj3] (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) 𝔭
+    [𝓕actsurj3]Extension .[𝐹actsurj3]._∼ᵣ_ = Arrow Fin Term
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶Reflexivity = !
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶Surjectextensivity = !
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶HasEquivalence = !
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶CorrectFactsurj3 = !
+
+    𝓕actsurj3Extension : ∀ {ℓ} → 𝓕actsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term)
+    𝓕actsurj3Extension .𝐹actsurj3.factsurj3 .π₀ .π₀ = ¡ , ¡
