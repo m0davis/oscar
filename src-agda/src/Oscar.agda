@@ -42,6 +42,9 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
          → P ≈ i ◃ P
   fact3⋆ = factsurj3
 
+  test-fact3⋆ : 𝓯actsurj3 (LeftṖroperty ℓ Substitunction) Substitunction
+  test-fact3⋆ = fact3⋆
+
   fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (Pointwise Proposequality)}
         → P ≈ i ◃ P
   fact3 = factsurj3
