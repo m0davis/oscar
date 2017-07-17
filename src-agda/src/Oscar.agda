@@ -8,9 +8,7 @@ open import Oscar.Data
 open import Oscar.Property
 open import Test
 
-module Test8 where
-  postulate 𝔓 : Set
-  postulate ℓ : Ł
+module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓
   open Substitunction 𝔓
 
