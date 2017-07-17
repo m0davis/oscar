@@ -74,8 +74,8 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
 
   left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m)
                   → ➊ ∧ P ≈ P
-  left-identity-∧ P .π₀ = π₁ , (lift ∅ ,_)
+  left-identity-∧ = ∧-leftIdentity
 
   left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m)
                       → ➊ ∧ P ≈ P
-  left-identity-∧-ext P .π₀ .π₀ = π₁ , (lift ∅ ,_)
+  left-identity-∧-ext = ∧-leftIdentity

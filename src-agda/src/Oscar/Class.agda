@@ -1257,6 +1257,7 @@ module _ where
       ⦃ ⌶HasEquivalence ⦄ : HasEquivalence 𝔒 ℓ
       Nothing : 𝔒 → Ø ℓ
       fact2 : ∀ {P Q} → P ≈ Q → Nothing P → Nothing Q
+      ∧-leftIdentity : ∀ P → ➊ ∧ P ≈ P
 
   open Properthing ⦃ … ⦄ public
 

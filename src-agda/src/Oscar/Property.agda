@@ -1149,6 +1149,7 @@ instance
   ProperthingṖroperty .Properthing.⌶HasEquivalence = !
   ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing (∁ P) = ∀ {n} {f : 𝔒 n} → P f → 𝟘
   ProperthingṖroperty .Properthing.fact2 (∁ P⇔Q) NoP Q = NoP $ π₁ P⇔Q Q
+  ProperthingṖroperty .Properthing.∧-leftIdentity _ .π₀ = π₁ , (lift ∅ ,_)
 
 module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄  where
 
@@ -1193,6 +1194,7 @@ module _
     ProperthingExtensionṖroperty .Properthing.⌶HasEquivalence = !
     ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ (π₀ P) f → 𝟘
     ProperthingExtensionṖroperty .Properthing.fact2 (∁ (∁ P⇔Q)) NoP Q = NoP $ π₁ P⇔Q Q
+    ProperthingExtensionṖroperty .Properthing.∧-leftIdentity _ .π₀ .π₀ = π₁ , (lift ∅ ,_)
 
 instance
 
