@@ -40,7 +40,7 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
 
   fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)}
          → P ≈ i ◃ P
-  fact3⋆ .π₀ = ¡ , ¡
+  fact3⋆ = factsurj3
 
   fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (Pointwise Proposequality)}
         → P ≈ i ◃ P
