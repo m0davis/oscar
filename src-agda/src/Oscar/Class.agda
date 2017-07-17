@@ -1220,16 +1220,13 @@ module _ where
     field
       Equivalence : 𝔒 → 𝔒 → Ø ℓ
       ⦃ ⌶IsEquivalence ⦄ : IsEquivalence Equivalence
-    -- infix 4 Equivalence
+    infix 4 Equivalence
     -- syntax Equivalence x y = x ≈ y
 
   open HasEquivalence ⦃ … ⦄ public
+  open HasEquivalence ⦃ … ⦄ public using () renaming (Equivalence to _≈_)
 
   module _ where
-
-    infix 4 _≈_
-    _≈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
-    _≈_ = HasEquivalence.Equivalence !
 
     infix 4 ≈-syntax
     ≈-syntax : ∀ {𝔬} (𝔒 : Ø 𝔬) {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
