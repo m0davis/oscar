@@ -1074,6 +1074,16 @@ module _ where
     → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _≡_ m
   ≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _≡_ {_∼₂_ = _∼₂_} s t
 
+module _ where
+
+  ≡-ExtensionṖroperty : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔬₁} ℓ (𝔒₁ : 𝔛 → Ø 𝔬₁)
+    {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
+    → 𝔛
+    → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
+  ≡-ExtensionṖroperty ℓ 𝔒₁ 𝔒₂ x = ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _≡_ x
+
 module _ {𝔭} (𝔓 : Ø 𝔭) where
 
   open Substitunction 𝔓
