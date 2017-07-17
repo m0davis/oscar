@@ -1319,3 +1319,15 @@ module _
 
     𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
     𝒫roperfact1.properfact1 𝒫roperfact1ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+
+  instance
+
+    [𝓕act3]Regular : ∀ {ℓ} → [𝓕act3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) 𝔭
+    [𝓕act3]Regular .[𝐹act3]._∼ᵣ_ = Arrow Fin Term
+    [𝓕act3]Regular .[𝐹act3].⌶Reflexivity = !
+    [𝓕act3]Regular .[𝐹act3].⌶Surjectextensivity = !
+    [𝓕act3]Regular .[𝐹act3].⌶HasEquivalence = !
+    [𝓕act3]Regular .[𝐹act3].⌶CorrectFact3 = !
+
+    𝓕act3Regular : ∀ {ℓ} → 𝓕act3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
+    𝓕act3Regular .𝐹act3.fact3 .π₀ = ¡ , ¡
