@@ -1331,3 +1331,13 @@ module _
 
     𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
     𝓕actsurj3Regular .𝐹actsurj3.factsurj3 .π₀ = ¡ , ¡
+
+    [𝓕actsurj3]Extension : ∀ {ℓ} → [𝓕actsurj3] (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) 𝔭
+    [𝓕actsurj3]Extension .[𝐹actsurj3]._∼ᵣ_ = Arrow Fin Term
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶Reflexivity = !
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶Surjectextensivity = !
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶HasEquivalence = !
+    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶CorrectFactsurj3 = !
+
+    𝓕actsurj3Extension : ∀ {ℓ} → 𝓕actsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term)
+    𝓕actsurj3Extension .𝐹actsurj3.factsurj3 .π₀ .π₀ = ¡ , ¡
