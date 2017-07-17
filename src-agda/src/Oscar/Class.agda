@@ -1456,6 +1456,25 @@ module _ where
 
   open 𝓕actsurj4 ⦃ … ⦄ public
 
+module _ where
+
+  module _
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭} (𝔓 : 𝔒 → Ø 𝔭)
+    {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    {ℓ∼ ℓ𝔭}
+    where
+    record [𝓕actsurj6] : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ↑̂ (ℓ∼ ∙̂ ℓ𝔭) where
+      constructor ∁
+      field
+        ⦃ ⌶HasEquivalence∼ ⦄ : ∀ {x y} → HasEquivalence (x ∼ y) ℓ∼
+        ⦃ ⌶HasEquivalence𝔓 ⦄ : ∀ {x} → HasEquivalence (𝔓 x) ℓ𝔭
+        ⦃ ⌶Surjextens ⦄ : 𝓢urjectextensivity _∼_ 𝔓
+    record 𝓕actsurj6 ⦃ _ : [𝓕actsurj6] ⦄ : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ℓ∼ ∙̂ ℓ𝔭 where
+      field factsurj6 : ∀ {m n} (P : 𝔓 m) {f g : m ∼ n} → f ≈ g → f ◃ P ≈ g ◃ P
+
+  open 𝓕actsurj6 ⦃ … ⦄ public
+
 -- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
 --   constructor ∁
 --   field

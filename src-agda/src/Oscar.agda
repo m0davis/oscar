@@ -70,7 +70,7 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
 
   fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n}
         → f ≈ g → f ◃ P ≈ g ◃ P
-  fact6 P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (symmetry (congruity (surjectivity h) ∘ f≐g))
+  fact6 = factsurj6
 
   left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m)
                   → ➊ ∧ P ≈ P
