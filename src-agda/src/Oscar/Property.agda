@@ -1322,12 +1322,12 @@ module _
 
   instance
 
-    [𝓕act3]Regular : ∀ {ℓ} → [𝓕act3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) 𝔭
-    [𝓕act3]Regular .[𝐹act3]._∼ᵣ_ = Arrow Fin Term
-    [𝓕act3]Regular .[𝐹act3].⌶Reflexivity = !
-    [𝓕act3]Regular .[𝐹act3].⌶Surjectextensivity = !
-    [𝓕act3]Regular .[𝐹act3].⌶HasEquivalence = !
-    [𝓕act3]Regular .[𝐹act3].⌶CorrectFact3 = !
+    [𝓕actsurj3]Regular : ∀ {ℓ} → [𝓕actsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) 𝔭
+    [𝓕actsurj3]Regular .[𝐹actsurj3]._∼ᵣ_ = Arrow Fin Term
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶Reflexivity = !
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶Surjectextensivity = !
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶HasEquivalence = !
+    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶CorrectFactsurj3 = !
 
-    𝓕act3Regular : ∀ {ℓ} → 𝓕act3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
-    𝓕act3Regular .𝐹act3.fact3 .π₀ = ¡ , ¡
+    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
+    𝓕actsurj3Regular .𝐹actsurj3.factsurj3 .π₀ = ¡ , ¡
