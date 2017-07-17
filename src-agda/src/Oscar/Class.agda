@@ -1428,6 +1428,26 @@ module _ where
     [𝓕actsurj3] = [𝐹actsurj3] (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
     𝓕actsurj3 = 𝐹actsurj3 (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
 
+module _ where
+
+  module _
+    {𝔞} (𝔄 : Ø 𝔞)
+    {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
+    {𝔠} (ℭ : 𝔄 → 𝔄 → Ø 𝔠)
+    where
+    record [𝓕actsurj4] : Ø 𝔞 ∙̂ 𝔠 ∙̂ 𝔟 where
+      constructor ∁
+      field
+        act : ∀ {a₁ a₂} → ℭ a₁ a₂ → 𝔅 a₁ → 𝔅 a₂
+    module _
+      {𝔡} (𝔇 : ∀ {a} → 𝔅 a → Ø 𝔡)
+      where
+      record 𝓕actsurj4 ⦃ ⌶[𝓕actsurj4] : [𝓕actsurj4] ⦄ : Ø 𝔞 ∙̂ 𝔟 ∙̂ 𝔠 ∙̂ 𝔡 where
+        open [𝓕actsurj4] ⌶[𝓕actsurj4]
+        field factsurj4 : ∀ {a₁ a₂} (b : 𝔅 a₁) (c : ℭ a₁ a₂) → 𝔇 b → 𝔇 (act c b)
+
+  open 𝓕actsurj4 ⦃ … ⦄ public
+
 -- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
 --   constructor ∁
 --   field
