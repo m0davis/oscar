@@ -53,6 +53,10 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
          → Nothing P → Nothing (f ◃ P)
   fact4⋆ = factsurj4
 
+  fact4⋆-fails-when-P-hidden : ∀{m n} {P : LeftṖroperty ℓ (Arrow Fin Term) m} (f : _ → Term n)
+                             → Nothing P → Nothing (f ◃ P)
+  fact4⋆-fails-when-P-hidden = factsurj4 _
+
   test-fact4⋆ : 𝓯actsurj4 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing surjectextensivity
   test-fact4⋆ = factsurj4
 
