@@ -58,8 +58,8 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   fact5 : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷¹ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
   fact5 = surjectextenscongruity
 
-  fact6 : ∀ {𝓂 𝓃} (𝒫 : 𝑷¹ 𝓂) {𝒻 g : 𝑪 𝓂 𝓃} → 𝒻 ≈ g → 𝒻 ◃ 𝒫 ≈ g ◃ 𝒫
-  fact6 = factsurj6
+  fact6 : ∀ {𝓂 𝓃} {𝒻 g : 𝑪 𝓂 𝓃} (𝒫 : 𝑷¹ 𝓂) → 𝒻 ≈ g → 𝒻 ◃ 𝒫 ≈ g ◃ 𝒫
+  fact6 = factsurj6 -- FIXME
 
   left-identity-∧ : ∀ {𝓃} (𝒫 : 𝑷⁰ 𝓃) → ➊ ∧ 𝒫 ≈ 𝒫
   left-identity-∧ = ∧-leftIdentity
