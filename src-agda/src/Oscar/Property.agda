@@ -1186,14 +1186,21 @@ module _
     HasEquivalenceExtendedProperty : HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
     HasEquivalenceExtendedProperty .HasEquivalence.Equivalence = _≈₀_
 
+  record ProperlyExtensionNothing (P : ExtensionṖroperty ℓ 𝔒 _↦_) : Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ where
+    constructor ∁
+    field
+      π₀ : ∀ {n} {f : 𝔒 n} → π₀ (π₀ P) f → 𝟘
+
+  open ProperlyExtensionNothing public
+
   instance
 
     ProperthingExtensionṖroperty : Properthing (𝔵 ∙̂ 𝔬 ∙̂ ℓ) (ExtensionṖroperty ℓ 𝔒 _↦_)
     ProperthingExtensionṖroperty .Properthing.➊ = ➊ , (λ _ _ → lift ∅)
     ProperthingExtensionṖroperty .Properthing._∧_ P Q = ∁ (λ f → π₀ (π₀ P) f × π₀ (π₀ Q) f) , λ f≐g Pf×Qf → π₁ P f≐g (π₀ Pf×Qf) , π₁ Q f≐g (π₁ Pf×Qf)
     ProperthingExtensionṖroperty .Properthing.⌶HasEquivalence = !
-    ProperthingExtensionṖroperty .Properthing.Nothing P = ∀ {n} {f : 𝔒 n} → π₀ (π₀ P) f → 𝟘
-    ProperthingExtensionṖroperty .Properthing.fact2 (∁ (∁ P⇔Q)) NoP Q = NoP $ π₁ P⇔Q Q
+    ProperthingExtensionṖroperty .Properthing.Nothing = ProperlyExtensionNothing
+    ProperthingExtensionṖroperty .Properthing.fact2 (∁ (∁ P⇔Q)) (∁ NoP) .π₀ Q = NoP $ π₁ P⇔Q Q
     ProperthingExtensionṖroperty .Properthing.∧-leftIdentity _ .π₀ .π₀ = π₁ , (lift ∅ ,_)
 
 instance
@@ -1348,17 +1355,17 @@ module _
 
   instance
 
-    [𝓕actsurj4]Regular : ∀ {ℓ} → [𝓕actsurj4] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
+    [𝓕actsurj4]Regular : ∀ {ℓ} → [𝓕actsurj4] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
     [𝓕actsurj4]Regular = ∁ surjectextensivity
 
     𝓕actsurj4Regular : ∀ {ℓ} → 𝓕actsurj4 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
-    𝓕actsurj4Regular .𝓕actsurj4.factsurj4 _ _ nop = nop
+    𝓕actsurj4Regular .𝓕actsurj4.factsurj4 _ nop = nop
 
-    [𝓕actsurj4]Extension : ∀ {ℓ} → [𝓕actsurj4] (ArrowExtensionṖroperty ℓ Fin Term Proposequality) Substitunction
+    [𝓕actsurj4]Extension : ∀ {ℓ} → [𝓕actsurj4] (ArrowExtensionṖroperty ℓ Fin Term Proposequality) Substitunction Nothing
     [𝓕actsurj4]Extension = ∁ surjectextensivity
 
     𝓕actsurj4Extension : ∀ {ℓ} → 𝓕actsurj4 (LeftExtensionṖroperty ℓ Substitunction (Pointwise Proposequality)) (Arrow Fin Term) Nothing
-    𝓕actsurj4Extension .𝓕actsurj4.factsurj4 _ _ nop = nop
+    𝓕actsurj4Extension .𝓕actsurj4.factsurj4 _ (∁ nop) .π₀ = nop
 
   instance
 
