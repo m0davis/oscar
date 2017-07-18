@@ -64,6 +64,10 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
         → Nothing P → Nothing (f ◃ P)
   fact4 = factsurj4
 
+  fact4-fails-when-P-hidden : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
+        → Nothing P → Nothing (f ◃ P)
+  fact4-fails-when-P-hidden P = factsurj4 {𝔅 = λ _ → Σ (Wrap (∀ {_} → _)) (λ _ → ∀ {_} → _)} _
+
   fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n)
          → P ≈ Q → f ◃ P ≈ f ◃ Q
   fact5⋆ = surjectextenscongruity
