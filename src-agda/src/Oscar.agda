@@ -22,47 +22,47 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   _∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧
   _∼¹_ = ≡-ExtensionalUnifies {𝔄 = Fin}
 
-  test-epfs⋆ : ∀ {x y} → 𝑪 x y → 𝑷⁰ x → 𝑷⁰ y
+  test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ = surjectextensivity
 
-  test-epfs : ∀ {x y} → 𝑪 x y → 𝑷¹ x → 𝑷¹ y
+  test-epfs : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
   test-epfs = surjectextensivity
 
-  fact1⋆ : ∀ {m} (s t : 𝑩 m) → s ∼⁰ t ≈ t ∼⁰ s
+  fact1⋆ : ∀ {𝓂} (𝓈 𝓉 : 𝑩 𝓂) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ = symmetrical
 
-  fact1 : ∀ {m} (s t : 𝑩 m) → s ∼¹ t ≈ t ∼¹ s
+  fact1 : ∀ {𝓂} (𝓈 𝓉 : 𝑩 𝓂) → 𝓈 ∼¹ 𝓉 ≈ 𝓉 ∼¹ 𝓈
   fact1 = symmetrical
 
-  Properties-fact1'⋆ : ∀ {n} (s₁ s₂ t₁ t₂ : 𝑩 n) → s₁ ⊛ s₂ ∼⁰ t₁ ⊛ t₂ ≈ s₁ ∼⁰ t₁ ∧ s₂ ∼⁰ t₂
+  Properties-fact1'⋆ : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ ∼⁰ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ ∼⁰ 𝓉₁ ∧ 𝓈₂ ∼⁰ 𝓉₂
   Properties-fact1'⋆ = properfact1
 
-  Properties-fact1' : ∀ {n} (s₁ s₂ t₁ t₂ : 𝑩 n) → s₁ ⊛ s₂ ∼¹ t₁ ⊛ t₂ ≈ s₁ ∼¹ t₁ ∧ s₂ ∼¹ t₂
+  Properties-fact1' : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ ∼¹ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ ∼¹ 𝓉₁ ∧ 𝓈₂ ∼¹ 𝓉₂
   Properties-fact1' = properfact1
 
-  fact3⋆ : ∀ {m} {P : 𝑷⁰ m} → P ≈ 𝒖 ◃ P
+  fact3⋆ : ∀ {𝓂} {𝒫 : 𝑷⁰ 𝓂} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆ = factsurj3
 
-  fact3 : ∀ {m} {P : 𝑷¹ m} → P ≈ 𝒖 ◃ P
+  fact3 : ∀ {𝓂} {𝒫 : 𝑷¹ 𝓂} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3 = factsurj3
 
-  fact4⋆ : ∀ {m n} (P : 𝑷⁰ m) (f : 𝑪 _ n) → Nothing P → Nothing (f ◃ P)
+  fact4⋆ : ∀ {𝓂 𝓃} (𝒫 : 𝑷⁰ 𝓂) (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4⋆ = factsurj4
 
-  fact4 : ∀ {m n} (P : 𝑷¹ m) (f : 𝑪 _ n) → Nothing P → Nothing (f ◃ P)
+  fact4 : ∀ {𝓂 𝓃} (𝒫 : 𝑷¹ 𝓂) (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4 = factsurj4
 
-  fact5⋆ : ∀ {m n} {P Q : 𝑷⁰ m} (f : 𝑪 m n) → P ≈ Q → f ◃ P ≈ f ◃ Q
+  fact5⋆ : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
   fact5⋆ = surjectextenscongruity
 
-  fact5 : ∀ {m n} {P Q : 𝑷¹ m} (f : 𝑪 m n) → P ≈ Q → f ◃ P ≈ f ◃ Q
+  fact5 : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷¹ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
   fact5 = surjectextenscongruity
 
-  fact6 : ∀ {m n} (P : 𝑷¹ m) {f g : 𝑪 m n} → f ≈ g → f ◃ P ≈ g ◃ P
+  fact6 : ∀ {𝓂 𝓃} (𝒫 : 𝑷¹ 𝓂) {𝒻 g : 𝑪 𝓂 𝓃} → 𝒻 ≈ g → 𝒻 ◃ 𝒫 ≈ g ◃ 𝒫
   fact6 = factsurj6
 
-  left-identity-∧ : ∀ {m} (P : 𝑷⁰ m) → ➊ ∧ P ≈ P
+  left-identity-∧ : ∀ {𝓂} (𝒫 : 𝑷⁰ 𝓂) → ➊ ∧ 𝒫 ≈ 𝒫
   left-identity-∧ = ∧-leftIdentity
 
-  left-identity-∧-ext : ∀ {m} (P : 𝑷¹ m) → ➊ ∧ P ≈ P
+  left-identity-∧-ext : ∀ {𝓂} (𝒫 : 𝑷¹ 𝓂) → ➊ ∧ 𝒫 ≈ 𝒫
   left-identity-∧-ext = ∧-leftIdentity
