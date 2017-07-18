@@ -9,8 +9,12 @@ open import Oscar.Property
 open import Test
 
 module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
-  open Term 𝔓
-  open Substitunction 𝔓
+  open Term 𝔓 using () renaming (
+    Term to Term;
+    i to i;
+    _fork_ to _fork_)
+  open Substitunction 𝔓 using () renaming (
+    Substitunction to Substitunction)
 
   test-epfs⋆ : ∀ {x y}
              → Substitunction x y → ArrowṖroperty ℓ Fin Term x → ArrowṖroperty ℓ Fin Term y
