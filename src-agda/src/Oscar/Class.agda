@@ -1437,13 +1437,13 @@ module _ where
     {𝔠} (ℭ : 𝔄 → 𝔄 → Ø 𝔠)
     where
     𝓯actsurj4-act = ∀ {a₁ a₂} → ℭ a₁ a₂ → 𝔅 a₁ → 𝔅 a₂
-    record [𝓕actsurj4] : Ø 𝔞 ∙̂ 𝔠 ∙̂ 𝔟 where
-      constructor ∁
-      field
-        act : 𝓯actsurj4-act
     module _
       {𝔡} (𝔇 : ∀ {a} → 𝔅 a → Ø 𝔡)
       where
+      record [𝓕actsurj4] : Ø 𝔞 ∙̂ 𝔠 ∙̂ 𝔟 where
+        constructor ∁
+        field
+          act : 𝓯actsurj4-act
       module _
         (act : 𝓯actsurj4-act)
         where
