@@ -38,10 +38,10 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
         → s ∼¹ t ≈ t ∼¹ s
   fact1 = symmetrical
 
-  Properties-fact1'⋆ : ∀ {n} → 𝓹roperfact1 _∼⁰_ (_fork_ {n = n})
+  Properties-fact1'⋆ : ∀ {n} (s₁ s₂ t₁ t₂ : Term n) → s₁ fork s₂ ∼⁰ t₁ fork t₂ ≈ s₁ ∼⁰ t₁ ∧ s₂ ∼⁰ t₂
   Properties-fact1'⋆ = properfact1
 
-  Properties-fact1' : ∀ {n} → 𝓹roperfact1 _∼¹_ (_fork_ {n = n})
+  Properties-fact1' : ∀ {n} (s₁ s₂ t₁ t₂ : Term n) → s₁ fork s₂ ∼¹ t₁ fork t₂ ≈ s₁ ∼¹ t₁ ∧ s₂ ∼¹ t₂
   Properties-fact1' = properfact1
 
   fact3⋆ : ∀ {m} {P : 𝑷⁰ m}
