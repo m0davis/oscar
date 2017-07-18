@@ -18,8 +18,9 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
 
   𝑷⁰ = LeftṖroperty ℓ 𝑨
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑨 _≈_
-  𝑼⁰ = ≡-Unifies₀⟦ 𝑨 ⟧
-  𝑼¹ = ≡-ExtensionalUnifies {𝔄 = Fin}
+  infix 18 _∼⁰_ _∼¹_
+  _∼⁰_ = ≡-Unifies₀⟦ 𝑨 ⟧
+  _∼¹_ = ≡-ExtensionalUnifies {𝔄 = Fin}
 
   test-epfs⋆ : ∀ {x y}
              → 𝑨 x y → 𝑷⁰ x → 𝑷⁰ y
@@ -30,17 +31,17 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   test-epfs = surjectextensivity
 
   fact1⋆ : ∀ {m} (s t : Term m)
-         → 𝑼⁰ s t ≈ 𝑼⁰ t s
+         → s ∼⁰ t ≈ t ∼⁰ s
   fact1⋆ = symmetrical
 
   fact1 : ∀ {m} (s t : Term m)
-        → 𝑼¹ s t ≈ 𝑼¹ t s
+        → s ∼¹ t ≈ t ∼¹ s
   fact1 = symmetrical
 
-  Properties-fact1'⋆ : ∀ {n} → 𝓹roperfact1 𝑼⁰ (_fork_ {n = n})
+  Properties-fact1'⋆ : ∀ {n} → 𝓹roperfact1 _∼⁰_ (_fork_ {n = n})
   Properties-fact1'⋆ = properfact1
 
-  Properties-fact1' : ∀ {n} → 𝓹roperfact1 𝑼¹ (_fork_ {n = n})
+  Properties-fact1' : ∀ {n} → 𝓹roperfact1 _∼¹_ (_fork_ {n = n})
   Properties-fact1' = properfact1
 
   fact3⋆ : ∀ {m} {P : 𝑷⁰ m}
