@@ -14,72 +14,73 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
     i to i;
     _fork_ to _fork_)
   open Substitunction 𝔓 using () renaming (
-    Substitunction to Substitunction)
+    Substitunction to 𝑨)
+
+  𝑷⁰ = LeftṖroperty ℓ 𝑨
+  𝑷¹ = LeftExtensionṖroperty ℓ 𝑨 _≈_
+  𝑼⁰ = ≡-Unifies₀⟦ 𝑨 ⟧
+  𝑼¹ = ≡-ExtensionalUnifies {𝔄 = Fin}
 
   test-epfs⋆ : ∀ {x y}
-             → Substitunction x y → ArrowṖroperty ℓ Fin Term x → ArrowṖroperty ℓ Fin Term y
+             → 𝑨 x y → 𝑷⁰ x → 𝑷⁰ y
   test-epfs⋆ = surjectextensivity
 
   test-epfs : ∀ {x y}
-            → Arrow Fin Term x y → ExtensionṖroperty ℓ (Arrow Fin Term x) (Pointwise Proposequality) → ArrowExtensionṖroperty ℓ Fin Term _≡_ y
+            → 𝑨 x y → 𝑷¹ x → 𝑷¹ y
   test-epfs = surjectextensivity
 
-  test-epfs2 : ∀ {x y}
-             → Arrow Fin Term x y → ≡-ExtensionṖroperty ℓ Fin Term x → ≡-ExtensionṖroperty ℓ Fin Term y
-  test-epfs2 = surjectextensivity
-
   fact1⋆ : ∀ {m} (s t : Term m)
-         → ≡-Unifies₀⟦ Substitunction ⟧ s t ≈ ≡-Unifies₀ t s
+         → 𝑼⁰ s t ≈ 𝑼⁰ t s
   fact1⋆ = symmetrical
 
   fact1 : ∀ {m} (s t : Term m)
-        → ≡-ExtensionalUnifies {𝔄 = Fin} s t ≈ ≡-ExtensionalUnifies t s
+        → 𝑼¹ s t ≈ 𝑼¹ t s
   fact1 = symmetrical
 
-  Properties-fact1'⋆ : ∀ {n} → 𝓹roperfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+  Properties-fact1'⋆ : ∀ {n} → 𝓹roperfact1 𝑼⁰ (_fork_ {n = n})
   Properties-fact1'⋆ = properfact1
 
-  Properties-fact1' : ∀ {n} → 𝓹roperfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+  Properties-fact1' : ∀ {n} → 𝓹roperfact1 𝑼¹ (_fork_ {n = n})
   Properties-fact1' = properfact1
 
-  fact3⋆ : ∀ {m} {P : Ṗroperty ℓ (Arrow Fin Term m)}
+  fact3⋆ : ∀ {m} {P : 𝑷⁰ m}
          → P ≈ i ◃ P
   fact3⋆ = factsurj3
 
-  test-fact3⋆ : 𝓯actsurj3 (LeftṖroperty ℓ Substitunction) Substitunction
+  test-fact3⋆ : 𝓯actsurj3 𝑷⁰ 𝑨
   test-fact3⋆ = fact3⋆
 
-  fact3 : ∀ {m} {P : ExtensionṖroperty ℓ (Arrow Fin Term m) (Pointwise Proposequality)}
+  fact3 : ∀ {m} {P : 𝑷¹ m}
         → P ≈ i ◃ P
   fact3 = factsurj3
 
-  fact4⋆ : ∀{m n} (P : LeftṖroperty ℓ (Arrow Fin Term) m) (f : _ → Term n)
+  fact4⋆ : ∀{m n} (P : 𝑷⁰ m) (f : 𝑨 _ n)
          → Nothing P → Nothing (f ◃ P)
   fact4⋆ = factsurj4
 
-  test-fact4⋆ : 𝓯actsurj4 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing surjectextensivity
+  test-fact4⋆ : 𝓯actsurj4 𝑷⁰ 𝑨 Nothing surjectextensivity
   test-fact4⋆ = factsurj4
 
-  fact4 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) Proposextensequality m) (f : _ → Term n)
+  fact4 : ∀{m n} (P : 𝑷¹ m) (f : 𝑨 _ n)
         → Nothing P → Nothing (f ◃ P)
   fact4 = factsurj4
 
-  fact5⋆ : ∀{m n} {P Q : ArrowṖroperty ℓ Fin Term m} (f : Arrow Fin Term m n)
+  fact5⋆ : ∀{m n} {P Q : 𝑷⁰ m} (f : 𝑨 m n)
          → P ≈ Q → f ◃ P ≈ f ◃ Q
   fact5⋆ = surjectextenscongruity
 
-  fact5 : ∀{m n} {P Q : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m} (f : Arrow Fin Term m n)
+  fact5 : ∀{m n} {P Q : 𝑷¹ m} (f : 𝑨 m n)
         → P ≈ Q → f ◃ P ≈ f ◃ Q
   fact5 = surjectextenscongruity
 
-  fact6 : ∀{m n} (P : LeftExtensionṖroperty ℓ (Arrow Fin Term) _≈_ m) {f g : Arrow Fin Term m n}
+  fact6 : ∀{m n} (P : 𝑷¹ m) {f g : 𝑨 m n}
         → f ≈ g → f ◃ P ≈ g ◃ P
   fact6 = factsurj6
 
-  left-identity-∧ : ∀ {m} (P : LeftṖroperty ℓ Substitunction m)
+  left-identity-∧ : ∀ {m} (P : 𝑷⁰ m)
                   → ➊ ∧ P ≈ P
   left-identity-∧ = ∧-leftIdentity
 
-  left-identity-∧-ext : ∀ {m} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m)
+  left-identity-∧-ext : ∀ {m} (P : 𝑷¹ m)
                       → ➊ ∧ P ≈ P
   left-identity-∧-ext = ∧-leftIdentity
