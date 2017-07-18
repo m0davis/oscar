@@ -1147,8 +1147,8 @@ instance
   ProperthingṖroperty .Properthing.➊ = ∁ (λ _ → Lift 𝟙)
   ProperthingṖroperty .Properthing._∧_ (∁ P) (∁ Q) = ∁ (λ f → P f × Q f)
   ProperthingṖroperty .Properthing.⌶HasEquivalence = !
-  ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing (∁ P) = ∀ {n} {f : 𝔒 n} → P f → 𝟘
-  ProperthingṖroperty .Properthing.fact2 (∁ P⇔Q) NoP Q = NoP $ π₁ P⇔Q Q
+  ProperthingṖroperty {𝔒 = 𝔒} .Properthing.Nothing (∁ P) = Wrap (∀ {n} {f : 𝔒 n} → P f → 𝟘)
+  ProperthingṖroperty .Properthing.fact2 (∁ P⇔Q) (∁ NoP) .π₀ Q = NoP $ π₁ P⇔Q Q
   ProperthingṖroperty .Properthing.∧-leftIdentity _ .π₀ = π₁ , (lift ∅ ,_)
 
 module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄  where
@@ -1359,7 +1359,7 @@ module _
     [𝓕actsurj4]Regular = ∁ surjectextensivity
 
     𝓕actsurj4Regular : ∀ {ℓ} → 𝓕actsurj4 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
-    𝓕actsurj4Regular .𝓕actsurj4.factsurj4 _ nop = nop
+    𝓕actsurj4Regular .𝓕actsurj4.factsurj4 _ (∁ nop) .π₀ = nop
 
     [𝓕actsurj4]Extension : ∀ {ℓ} → [𝓕actsurj4] (ArrowExtensionṖroperty ℓ Fin Term Proposequality) Substitunction Nothing
     [𝓕actsurj4]Extension = ∁ surjectextensivity
