@@ -1220,16 +1220,13 @@ module _ where
     field
       Equivalence : 𝔒 → 𝔒 → Ø ℓ
       ⦃ ⌶IsEquivalence ⦄ : IsEquivalence Equivalence
-    -- infix 4 Equivalence
+    infix 4 Equivalence
     -- syntax Equivalence x y = x ≈ y
 
   open HasEquivalence ⦃ … ⦄ public
+  open HasEquivalence ⦃ … ⦄ public using () renaming (Equivalence to _≈_)
 
   module _ where
-
-    infix 4 _≈_
-    _≈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
-    _≈_ = HasEquivalence.Equivalence !
 
     infix 4 ≈-syntax
     ≈-syntax : ∀ {𝔬} (𝔒 : Ø 𝔬) {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
@@ -1463,16 +1460,17 @@ module _ where
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔭} (𝔓 : 𝔒 → Ø 𝔭)
     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-    {ℓ∼ ℓ𝔭}
+    {ℓ∼} (_≈̈_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ∼) (let _≈̈_ = _≈̈_ ; infix 4 _≈̈_)
+    {ℓ𝔭} (_≈̇_ : ∀ {x} → 𝔓 x → 𝔓 x → Ø ℓ𝔭) (let _≈̇_ = _≈̇_ ; infix 4 _≈̇_)
     where
-    record [𝓕actsurj6] : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ↑̂ (ℓ∼ ∙̂ ℓ𝔭) where
+    record [𝓕actsurj6] : Ø₀ where
+      no-eta-equality
       constructor ∁
-      field
-        ⦃ ⌶HasEquivalence∼ ⦄ : ∀ {x y} → HasEquivalence (x ∼ y) ℓ∼
-        ⦃ ⌶HasEquivalence𝔓 ⦄ : ∀ {x} → HasEquivalence (𝔓 x) ℓ𝔭
-        ⦃ ⌶Surjextens ⦄ : 𝓢urjectextensivity _∼_ 𝔓
-    record 𝓕actsurj6 ⦃ _ : [𝓕actsurj6] ⦄ : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ℓ∼ ∙̂ ℓ𝔭 where
-      field factsurj6 : ∀ {m n} (P : 𝔓 m) {f g : m ∼ n} → f ≈ g → f ◃ P ≈ g ◃ P
+    module _
+      ⦃ _ : 𝓢urjectextensivity _∼_ 𝔓 ⦄
+      where
+      record 𝓕actsurj6 ⦃ _ : [𝓕actsurj6] ⦄ : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ℓ∼ ∙̂ ℓ𝔭 where
+        field factsurj6 : ∀ {m n} {f g : m ∼ n} (P : 𝔓 m) → f ≈̈ g → f ◃ P ≈̇ g ◃ P
 
   open 𝓕actsurj6 ⦃ … ⦄ public
 
