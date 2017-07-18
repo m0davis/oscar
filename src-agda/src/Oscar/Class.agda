@@ -1447,7 +1447,7 @@ module _ where
       module _
         (act : 𝓯actsurj4-act)
         where
-        𝓯actsurj4 = ∀ {a₁ a₂} (b : 𝔅 a₁) (c : ℭ a₁ a₂) → 𝔇 b → 𝔇 (act c b)
+        𝓯actsurj4 = ∀ {a₁ a₂} {b : 𝔅 a₁} (c : ℭ a₁ a₂) → 𝔇 b → 𝔇 (act c b)
       module _
         ⦃ ⌶[𝓕actsurj4] : [𝓕actsurj4] ⦄
         where
