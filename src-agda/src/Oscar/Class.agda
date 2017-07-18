@@ -1469,7 +1469,7 @@ module _ where
         ⦃ ⌶HasEquivalence𝔓 ⦄ : ∀ {x} → HasEquivalence (𝔓 x) ℓ𝔭
         ⦃ ⌶Surjextens ⦄ : 𝓢urjectextensivity _∼_ 𝔓
     record 𝓕actsurj6 ⦃ _ : [𝓕actsurj6] ⦄ : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ℓ∼ ∙̂ ℓ𝔭 where
-      field factsurj6 : ∀ {m n} (P : 𝔓 m) {f g : m ∼ n} → f ≈ g → f ◃ P ≈ g ◃ P
+      field factsurj6 : ∀ {m n} {f g : m ∼ n} (P : 𝔓 m) → f ≈ g → f ◃ P ≈ g ◃ P
 
   open 𝓕actsurj6 ⦃ … ⦄ public
 
