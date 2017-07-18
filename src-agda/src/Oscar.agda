@@ -48,9 +48,6 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
          → P ≈ i ◃ P
   fact3⋆ = factsurj3
 
-  test-fact3⋆ : 𝓯actsurj3 𝑷⁰ 𝑨
-  test-fact3⋆ = fact3⋆
-
   fact3 : ∀ {m} {P : 𝑷¹ m}
         → P ≈ i ◃ P
   fact3 = factsurj3
@@ -58,9 +55,6 @@ module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   fact4⋆ : ∀{m n} (P : 𝑷⁰ m) (f : 𝑨 _ n)
          → Nothing P → Nothing (f ◃ P)
   fact4⋆ = factsurj4
-
-  test-fact4⋆ : 𝓯actsurj4 𝑷⁰ 𝑨 Nothing surjectextensivity
-  test-fact4⋆ = factsurj4
 
   fact4 : ∀{m n} (P : 𝑷¹ m) (f : 𝑨 _ n)
         → Nothing P → Nothing (f ◃ P)
