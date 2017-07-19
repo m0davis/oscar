@@ -5,31 +5,9 @@ import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Property.Category.ExtensionProposextensequality
 import Oscar.Class.Congruity.Proposequality
+import Oscar.Class.Surjection
 
 module Oscar.Property.Functor.SubstitunctionExtensionTerm where
-
--- FIXME Anything not having to do with both Substitunction and (Extension Term) should be migrated somewhere else.
-
-module _ where
-
-  module _
-    {a}
-    where
-
-    instance
-
-      𝓡eflexivityFunction : 𝓡eflexivity Function⟦ a ⟧
-      𝓡eflexivity.reflexivity 𝓡eflexivityFunction = ¡
-
-      𝓣ransitivityFunction : 𝓣ransitivity Function⟦ a ⟧
-      𝓣ransitivity.transitivity 𝓣ransitivityFunction f g = g ∘ f
-
-module _
-  {𝔬} {𝔒 : Ø 𝔬}
-  where
-  instance
-    𝓢urjectionIdentity : 𝓢urjection 𝔒 𝔒
-    𝓢urjectionIdentity .𝓢urjection.surjection = ¡
 
 module _ {𝔭} {𝔓 : Ø 𝔭} where
 

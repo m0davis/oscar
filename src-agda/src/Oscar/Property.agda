@@ -15,6 +15,7 @@ open import Oscar.Property.Category.AListProposequality public
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Congruity.Proposextensequality
 import Oscar.Class.Transextensionality.Proposequality
+import Oscar.Class.Surjection
 
 module _ where
 

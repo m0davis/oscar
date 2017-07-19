@@ -2,6 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Property
+import Oscar.Class.Surjection
 
 module Test.Test5
   {𝔵} {𝔛 : Ø 𝔵}
