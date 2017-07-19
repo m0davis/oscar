@@ -1,12 +1,11 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
-open import Oscar.Property
-import Oscar.Class.PropId
 
-module Test.Test7 where
+module Oscar.Class.PropId where
 
-  𝓅rop-id : ∀
+instance
+  PropIdFromTransleftidentity : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -14,11 +13,9 @@ module Test.Test7 where
     {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
     ⦃ _ : 𝓣ransitivity _∼_ ⦄
     ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    {ℓ}
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-    {m n}
-    {ℓ} {f : m ∼ n} (P : ExtensionṖroperty ℓ (Arrow 𝔄 𝔅 m) _∼̇_) (let P₀ = π₀ (π₀ P))
-    → P₀ f
-    → P₀ (ε ∙ f)
-  𝓅rop-id = prop-id
+    → PropId 𝔄 𝔅 _∼̇_ ℓ
+  PropIdFromTransleftidentity .PropId.prop-id (_ , P₁) = P₁ $ symmetry transleftidentity

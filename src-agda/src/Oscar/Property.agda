@@ -25,24 +25,9 @@ import Oscar.Class.IsDecidable.Fin
 import Oscar.Class.IsDecidable.¶
 import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
 import Oscar.Class.Amgu.Term∃SubstitistMaybe
+import Oscar.Class.PropId
 
 module _ where
-
-  instance
-    PropIdFromTransleftidentity : ∀
-      {𝔵} {𝔛 : Ø 𝔵}
-      {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
-      {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-      (let _∼_ = Arrow 𝔄 𝔅)
-      {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
-      ⦃ _ : 𝓣ransitivity _∼_ ⦄
-      ⦃ _ : 𝓡eflexivity _∼_ ⦄
-      {ℓ}
-      ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
-      ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
-      ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-      → PropId 𝔄 𝔅 _∼̇_ ℓ
-    PropIdFromTransleftidentity .PropId.prop-id (_ , P₁) = P₁ $ symmetry transleftidentity
 
   𝓾nifies₀ : ∀
     {𝔵} {𝔒 : Ø 𝔵}
