@@ -2,10 +2,6 @@
 
 module Test where
 
-open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
-open import Oscar.Property
 import Test.Transassociativity
 import Test.Surjidentity
 import Test.SurjidentityI
