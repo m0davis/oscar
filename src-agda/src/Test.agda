@@ -6,8 +6,8 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 open import Oscar.Property
-open import Test.Transassociativity
-open import Test.Surjidentity using ()
+import Test.Transassociativity
+import Test.Surjidentity
 
 module TestSurjidentityI
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
