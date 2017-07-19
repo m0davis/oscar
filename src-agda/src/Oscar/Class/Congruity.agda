@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class.Transitivity
 
 module Oscar.Class.Congruity where
 
