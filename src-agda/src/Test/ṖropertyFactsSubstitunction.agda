@@ -5,6 +5,7 @@ open import Oscar.Data
 open import Oscar.Property
 open import Oscar.Data.Unifies
 import Oscar.Class.Properthing.Ṗroperty
+import Oscar.Data.ExtensionṖroperty
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (

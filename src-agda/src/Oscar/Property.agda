@@ -32,6 +32,7 @@ open import Oscar.Property.Setoid.ṖropertyEquivalence public
 import Oscar.Class.Properthing.Ṗroperty
 open import Oscar.Data.ProductIndexEquivalence public
 open import Oscar.Property.Setoid.ProductIndexEquivalence public
+import Oscar.Data.ExtensionṖroperty
 
 module _
   {𝔵} {𝔛 : Ø 𝔵}
@@ -39,11 +40,6 @@ module _
   {ℓ}
   {ℓ̇} {_↦_ : ∀ {x} → 𝔒 x → 𝔒 x → Ø ℓ̇}
   where
-
-  instance
-
-    HasEquivalenceExtendedProperty : HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-    HasEquivalenceExtendedProperty .HasEquivalence.Equivalence = _≈₀_
 
   record ProperlyExtensionNothing (P : ExtensionṖroperty ℓ 𝔒 _↦_) : Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ where
     constructor ∁

@@ -2,6 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Property
+import Oscar.Data.ExtensionṖroperty
 
 module Test.EquivalenceExtensionṖroperty
   {𝔵} {𝔛 : Ø 𝔵}
