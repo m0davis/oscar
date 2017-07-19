@@ -30,28 +30,22 @@ open import Oscar.Data.Unifies
 import Oscar.Data.ExtensionṖroperty
 open import Oscar.Property.Setoid.ṖropertyEquivalence public
 import Oscar.Class.Properthing.Ṗroperty
+open import Oscar.Data.ProductIndexEquivalence public
 
 module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄  where
 
-  record _≈₀_ (P Q : Σ 𝔒 𝔓) : Ø ℓ where
-    constructor ∁
-    field
-      π₀ : π₀ P ≈ π₀ Q
-
-  open _≈₀_ public
-
   instance
 
-    𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity _≈₀_
+    𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓡eflexivityExtensionṖropertyEquivalence .𝓡eflexivity.reflexivity .π₀ = reflexivity
 
-    𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry _≈₀_
+    𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓢ymmetryExtensionṖropertyEquivalence .𝓢ymmetry.symmetry (∁ P≈Q) .π₀ = symmetry P≈Q
 
-    𝓣ransitivityExtensionṖropertyEquivalence : 𝓣ransitivity _≈₀_
+    𝓣ransitivityExtensionṖropertyEquivalence : 𝓣ransitivity ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓣ransitivityExtensionṖropertyEquivalence .𝓣ransitivity.transitivity (∁ P≈Q) (∁ Q≈R) .π₀ = transitivity P≈Q Q≈R
 
-    IsEquivalenceExtensionṖroperty : IsEquivalence _≈₀_
+    IsEquivalenceExtensionṖroperty : IsEquivalence ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     IsEquivalenceExtensionṖroperty = ∁
 
 module _
