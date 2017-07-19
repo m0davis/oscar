@@ -1254,7 +1254,6 @@ module _ where
       Equivalence : 𝔒 → 𝔒 → Ø ℓ
       ⦃ ⌶IsEquivalence ⦄ : IsEquivalence Equivalence
     infix 4 Equivalence
-    -- syntax Equivalence x y = x ≈ y
 
   open HasEquivalence ⦃ … ⦄ public
   open HasEquivalence ⦃ … ⦄ public using () renaming (Equivalence to _≈_)
