@@ -1506,15 +1506,3 @@ module _ where
         field factsurj6 : ∀ {m n} {f g : m ∼ n} (P : 𝔓 m) → f ≈̈ g → f ◃ P ≈̇ g ◃ P
 
   open 𝓕actsurj6 ⦃ … ⦄ public
-
--- record HasËquivalence {𝔬} {𝔒 : Ø 𝔬} {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯) ℓ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ↑̂ ℓ where
---   constructor ∁
---   field
---     Ëquivalence : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ
---     ⦃ ⌶IsEquivalence ⦄ : ∀ {x y} → IsEquivalence (Ëquivalence {x} {y})
-
--- module _ where
-
---   infix 4 _≈̈_
---   _≈̈_ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {ℓ} ⦃ _ : HasËquivalence _∼_ ℓ ⦄ → ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ
---   _≈̈_ = HasËquivalence.Ëquivalence !
