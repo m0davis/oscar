@@ -24,18 +24,6 @@ import Oscar.Class.IsDecidable.Fin
 import Oscar.Class.IsDecidable.¶
 import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
 
--- A dependent eliminator.
-
-maybe : ∀ {a b} {A : Set a} {B : Maybe A → Set b} →
-        ((x : A) → B (↑ x)) → B ∅ → (x : Maybe A) → B x
-maybe j n (↑ x) = j x
-maybe j n ∅  = n
-
--- A non-dependent eliminator.
-
-maybe′ : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → B → Maybe A → B
-maybe′ = maybe
-
 module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   open Substitunction 𝔓
