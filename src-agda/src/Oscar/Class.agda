@@ -745,6 +745,26 @@ module _ where
 
   open 𝓒ongruity ⦃ … ⦄ public
 
+  module _
+    {ℓ} (_∼_ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝔒 → 𝔒 → Ø ℓ)
+    {𝔵 𝔶} (𝔛 : Ø 𝔵) (𝔜 : Ø 𝔶)
+    where
+    𝓬ongruity' = ∀ {x₁ x₂} (f : 𝔛 → 𝔜) → x₁ ∼ x₂ → f x₁ ∼ f x₂
+    record 𝓒ongruity' : Ø ℓ ∙̂ ↑̂ (𝔵 ∙̂ 𝔶) where
+      field congruity' : 𝓬ongruity'
+
+  open 𝓒ongruity' ⦃ … ⦄ public
+
+  module _
+    {ℓ} {𝔬} (_∼_ : ∀ {𝔒 : Ø 𝔬} → 𝔒 → 𝔒 → Ø ℓ)
+    (𝔛 𝔜 : Ø 𝔬)
+    where
+    𝓬ongruity'' = ∀ {x₁ x₂} (f : 𝔛 → 𝔜) → x₁ ∼ x₂ → f x₁ ∼ f x₂
+    record 𝓒ongruity'' : Ø ℓ ∙̂ 𝔬 where
+      field congruity'' : 𝓬ongruity''
+
+  open 𝓒ongruity'' ⦃ … ⦄ public
+
 -- a functional replacement of 𝓒ongruity₂ (but note the additional requirement of 𝓣ransitivity)
 congruity2 : ∀ {ℓ} {_∼_ : ∀ {x} {X : Ø x} → X → X → Ø ℓ}
     {𝔵 𝔶 𝔷}
