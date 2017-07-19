@@ -11,6 +11,9 @@ open import Oscar.Property.Setoid.Proposequality public
 open import Oscar.Property.Setoid.Proposextensequality public
 open import Oscar.Property.Category.ExtensionProposextensequality public
 open import Oscar.Property.Functor.SubstitunctionExtensionTerm public
+import Oscar.Class.Congruity.Proposequality
+import Oscar.Class.Congruity.Proposextensequality
+import Oscar.Class.Transextensionality.Proposequality
 
 -- CategoryAListProposequality
 module _ where
