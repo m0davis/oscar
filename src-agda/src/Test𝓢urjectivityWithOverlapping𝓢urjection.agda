@@ -91,3 +91,9 @@ module !2 where
 
   test-lhs-5 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
   test-lhs-5 x~A~y rewrite (Proposequality on s2) _ _ ∋ surjectivity x~A~y = ∅
+
+  test-lhs-6 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
+  test-lhs-6 x~A~y rewrite surjectivity⟦ Proposequality / s2 ⟧ x~A~y = ∅
+
+  test-lhs-7 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
+  test-lhs-7 x~A~y rewrite ≡-surjectivity⟦ s2 ⟧ x~A~y = ∅
