@@ -35,9 +35,6 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
   open Substitist 𝔓
 
-  prop-id-Substitunction : ∀ {m n ℓ} {f : Substitunction m n} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) (let P₀ = π₀ (π₀ P)) → P₀ f → P₀ (ε ∙ f)
-  prop-id-Substitunction = prop-id
-
   ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
   ≡-Unifies₀-Term = ≡-Unifies₀
 
