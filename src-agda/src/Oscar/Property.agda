@@ -20,18 +20,7 @@ import Oscar.Class.Transextensionality.Proposequality
 import Oscar.Class.Surjection
 import Oscar.Class.Injectivity.Vec
 import Oscar.Class.IsDecidable.Fin
-
-module _ where
-
-  instance
-
-    IsDecidable¶ : IsDecidable ¶
-    IsDecidable¶ .IsDecidable._≟_ ∅ ∅ = ↑ ∅
-    IsDecidable¶ .IsDecidable._≟_ ∅ (↑ _) = ↓ λ ()
-    IsDecidable¶ .IsDecidable._≟_ (↑ _) ∅ = ↓ λ ()
-    IsDecidable¶ .IsDecidable._≟_ (↑ x) (↑ y) with x ≟ y
-    … | ↑ ∅ = ↑ ∅
-    … | ↓ x≢y = ↓ λ {∅ → x≢y ∅}
+import Oscar.Class.IsDecidable.¶
 
 module _ {𝔭} {𝔓 : Ø 𝔭} where
 
