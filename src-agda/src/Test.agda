@@ -19,3 +19,4 @@ import Test.Symmetrical
 import Test.𝓢urjectivityWithOverlapping𝓢urjection
 import Test.ṖropertyFactsSubstitunction
 import Test.SubstitunctionPropId
+import Test.UnifiesSubstitunction

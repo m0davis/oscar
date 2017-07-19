@@ -29,24 +29,6 @@ import Oscar.Class.PropId
 open import Oscar.Data.Unifies
 import Oscar.Data.ExtensionṖroperty
 
-module _ {𝔭} (𝔓 : Ø 𝔭) where
-
-  open Substitunction 𝔓
-  open Term 𝔓
-  open Substitist 𝔓
-
-  ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
-  ≡-Unifies₀-Term = ≡-Unifies₀
-
-  ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty ∅̂ (Arrow Fin Term m)
-  ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
-
-  ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ArrowExtensionṖroperty ∅̂ Fin Term _≡_ m
-  ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
-
-  ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → LeftExtensionṖroperty ∅̂ (Arrow Fin Term) (Pointwise Proposequality) m
-  ≡-ExtensionalUnifies-Terms = ExtensionalUnifies _≡_
-
 module _
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
