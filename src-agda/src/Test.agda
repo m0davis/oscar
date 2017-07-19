@@ -11,16 +11,7 @@ import Test.Surjidentity
 import Test.SurjidentityI
 import Test.SurjidentityP
 import Test.Test0
-
-module Test1 where
-
-  test-functor-transextensionality : ∀
-    {𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂}
-    ⦃ functor : Functor 𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂ ⦄
-    (open Functor functor)
-    → 𝓽ransextensionality _∼₁_ _∼̇₁_
-  test-functor-transextensionality = transextensionality
-  -- test-functor-transextensionality ⦃ functor ⦄ = let open Functor ⦃ … ⦄ in transextensionality1
+import Test.Test1
 
 module Test2 where
 
