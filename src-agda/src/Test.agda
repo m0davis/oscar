@@ -19,11 +19,4 @@ import Test.Test5
 import Test.Test7
 import Test.EquivalenceṖroperty
 import Test.EquivalenceExtensionṖroperty
-
-module TestSymmetrical where
-  test-𝓢ymmetrical𝓢ymmetry : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
-    ⦃ _ : 𝓢ymmetry _∼_ ⦄
-    → 𝓼ymmetry _∼_
-  test-𝓢ymmetrical𝓢ymmetry = symmetrical _ _
+import Test.Symmetrical
