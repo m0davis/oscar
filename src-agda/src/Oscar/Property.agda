@@ -35,21 +35,18 @@ module _
   {ℓ : Ł}
   where
 
-  ṖropertyEquivalence : Ṗroperty ℓ 𝔒 → Ṗroperty ℓ 𝔒 → Ø 𝔵 ∙̂ 𝔬 ∙̂ ℓ
-  ṖropertyEquivalence (∁ P) (∁ Q) = Wrap (∀ {n f} → (P {n} f → Q f) × (Q f → P f))
-
   instance
 
-    𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence
+    𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity .π₀ = ¡ , ¡
 
-    𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence
+    𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓢ymmetryṖroperty .𝓢ymmetry.symmetry (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q
 
-    𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence
+    𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓣ransitivityṖroperty .𝓣ransitivity.transitivity (∁ P⇔Q) (∁ Q⇔R) .π₀ = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
 
-    IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence
+    IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     IsEquivalenceṖroperty = ∁
 
 instance
