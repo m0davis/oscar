@@ -6,7 +6,7 @@ open import Oscar.Data.ProductIndexEquivalence
 
 module Oscar.Property.Setoid.ProductIndexEquivalence where
 
-module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄  where
+module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ where
 
   instance
 
