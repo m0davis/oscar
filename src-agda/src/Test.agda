@@ -13,17 +13,7 @@ import Test.SurjidentityP
 import Test.Test0
 import Test.Test1
 import Test.Test2
-
-module Test3 (_ : Ø₀) where
-
-  module _
-    {𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂}
-    where
-    postulate instance functor : Functor 𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂
-    open Functor ⦃ … ⦄
-    test : asInstance `IsFunctor $ 𝓽ransextensionality _∼₁_ _∼̇₁_
-    test = asInstance `IsFunctor transextensionality
-    -- -- Test1.test-functor-transextensionality
+import Test.Test3
 
 module Test4
   {𝔵} {𝔛 : Ø 𝔵}
