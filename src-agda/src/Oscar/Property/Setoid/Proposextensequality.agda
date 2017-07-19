@@ -1,0 +1,27 @@
+
+open import Oscar.Prelude
+open import Oscar.Class
+open import Oscar.Data
+
+module Oscar.Property.Setoid.Proposextensequality where
+
+module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
+
+  instance
+
+    𝓡eflexivityProposextensequality : 𝓡eflexivity Proposextensequality⟦ 𝔓 ⟧
+    𝓡eflexivity.reflexivity 𝓡eflexivityProposextensequality _ = ∅
+
+    𝓢ymmetryProposextensequality : 𝓢ymmetry Proposextensequality⟦ 𝔓 ⟧
+    𝓢ymmetry.symmetry 𝓢ymmetryProposextensequality f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
+
+    𝓣ransitivityProposextensequality : 𝓣ransitivity Proposextensequality⟦ 𝔓 ⟧
+    𝓣ransitivity.transitivity 𝓣ransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x
+
+    IsEquivalenceProposextensequality : IsEquivalence Proposextensequality⟦ 𝔓 ⟧
+    IsEquivalenceProposextensequality = ∁
+
+module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) where
+
+  SetoidProposextensequality : Setoid _ _
+  SetoidProposextensequality = ∁ Proposextensequality⟦ 𝔓 ⟧
