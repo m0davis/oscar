@@ -3,6 +3,17 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 import Oscar.Class.Surjection
+import Oscar.Property.Setoid.ṖropertyEquivalence
+import Oscar.Data.ExtensionṖroperty
+import Oscar.Class.Surjection
+import Oscar.Data.ExtensionṖroperty
+import Oscar.Property.Setoid.ṖropertyEquivalence
+import Oscar.Class.Properthing.Ṗroperty
+open import Oscar.Data.ProductIndexEquivalence
+import Oscar.Property.Setoid.ProductIndexEquivalence
+import Oscar.Data.ExtensionṖroperty
+import Oscar.Data.ProperlyExtensionNothing
+import Oscar.Class.Properthing.ExtensionṖroperty
 
 module Oscar.Data.Unifies where
 
@@ -90,3 +101,35 @@ ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
   ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _≡_ m
 ≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _≡_ {_∼₂_ = _∼₂_} s t
+
+instance
+
+  𝓢ymmetricalUnifies₀ : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
+    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
+    {ℓ} {_≈'_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ}
+    ⦃ _ : ∀ {y} → 𝓢ymmetry (_≈'_ {y}) ⦄
+    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
+  𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
+
+  𝓢ymmetricalExtensionalUnifies : ∀
+    {𝔵} {𝔛 : Ø 𝔵}
+    {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
+    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    (let _↦_ = Arrow 𝔄 𝔅)
+    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
+    {ℓ₁} {_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
+    {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
+    ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
+    ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
+    ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
+    ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
+    ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    -- {-{ℓ}-} {_≈'_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
+    ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₁_ {y}) ⦄
+    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _∼₁_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _∼₁_ t' s')
+  𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)

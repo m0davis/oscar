@@ -1400,3 +1400,25 @@ module _ where
         field factsurj6 : ∀ {m n} {f g : m ∼ n} (P : 𝔓 m) → f ≈̈ g → f ◃ P ≈̇ g ◃ P
 
   open 𝓕actsurj6 ⦃ … ⦄ public
+
+open import Oscar.Data
+
+instance
+
+  [ExtensibleType]Proposequality : ∀ {a} {b} {A : Set a} {B : A → Set b} → [ExtensibleType] (λ {w} → Proposequality⟦ B w ⟧)
+  [ExtensibleType]Proposequality = ∁
+
+  [𝓢urjectivity]ArrowE : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ LeftExtensionṖroperty ℓ (Arrow Fin Term) _≡̇_)
+  [𝓢urjectivity]ArrowE = ∁
+
+  [𝓢urjectivity]LeftṖroperty : ∀ {ℓ} {a} {f} {¶ : Set a} {_↦_ : ¶ → ¶ → Set f} → [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_)
+  [𝓢urjectivity]LeftṖroperty = ∁
+
+instance
+
+  𝓢ymmetrical𝓢ymmetry : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
+    ⦃ _ : 𝓢ymmetry _∼_ ⦄
+    → 𝓢ymmetrical 𝔒 (λ s t t' s' → s ∼ t → t' ∼ s')
+  𝓢ymmetrical𝓢ymmetry .𝓢ymmetrical.symmetrical x y = symmetry

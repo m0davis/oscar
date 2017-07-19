@@ -8,6 +8,7 @@ import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Data.ExtensionṖroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
+import Oscar.Class.Surjection
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
