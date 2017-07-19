@@ -7,7 +7,6 @@ open import Oscar.Class
 open import Oscar.Data
 open import Oscar.Property
 open import Test
-open import Test𝓢urjectivityWithOverlapping𝓢urjection
 
 module ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (

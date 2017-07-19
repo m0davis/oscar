@@ -1,5 +1,5 @@
 
-module Test𝓢urjectivityWithOverlapping𝓢urjection where
+module Test.𝓢urjectivityWithOverlapping𝓢urjection where
 
 open import Oscar.Prelude
 open import Oscar.Data
