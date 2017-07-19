@@ -756,8 +756,6 @@ congruity2 : ∀ {ℓ} {_∼_ : ∀ {x} {X : Ø x} → X → X → Ø ℓ}
     → ∀ {𝔛 : Ø 𝔵} {𝔜 : Ø 𝔶} {ℨ : Ø 𝔷} {x₁ x₂} {y₁ y₂} (f : 𝔛 → 𝔜 → ℨ) → x₁ ∼ x₂ → y₁ ∼ y₂ → f x₁ y₁ ∼ f x₂ y₂
 congruity2 {𝔛 = 𝔛}{𝔜}{ℨ}{x₁}{x₂}{y₁}{y₂} f x₁∼x₂ y₁∼y₂ =
   let fx1=fx2 = congruity f x₁∼x₂ in
-  let g1 = λ (fx : 𝔜 → ℨ) → fx y₁ in
-  let fx1y1=fx2y1 = congruity g1 fx1=fx2 in
   let g2 = λ (fx : 𝔜 → ℨ) → fx y₂ in
   let fx1y2=fx2y2 = congruity g2 fx1=fx2 in
   let e = flip f in
