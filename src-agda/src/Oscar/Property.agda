@@ -19,18 +19,9 @@ import Oscar.Class.Congruity.Proposextensequality
 import Oscar.Class.Transextensionality.Proposequality
 import Oscar.Class.Surjection
 import Oscar.Class.Injectivity.Vec
+import Oscar.Class.IsDecidable.Fin
 
 module _ where
-
-  instance
-
-    IsDecidableFin : ∀ {n} → IsDecidable (Fin n)
-    IsDecidableFin .IsDecidable._≟_ ∅ ∅ = ↑ ∅
-    IsDecidableFin .IsDecidable._≟_ ∅ (↑ _) = ↓ λ ()
-    IsDecidableFin .IsDecidable._≟_ (↑ _) ∅ = ↓ λ ()
-    IsDecidableFin .IsDecidable._≟_ (↑ x) (↑ y) with x ≟ y
-    … | ↑ ∅ = ↑ ∅
-    … | ↓ x≢y = ↓ λ {∅ → x≢y ∅}
 
   instance
 
