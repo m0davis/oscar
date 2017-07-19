@@ -27,16 +27,7 @@ import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
 import Oscar.Class.Amgu.Term∃SubstitistMaybe
 import Oscar.Class.PropId
 open import Oscar.Data.Unifies
-
-module _ where
-
-  ≡-ExtensionṖroperty : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔬₁} ℓ (𝔒₁ : 𝔛 → Ø 𝔬₁)
-    {𝔬₂} (𝔒₂ : 𝔛 → Ø 𝔬₂)
-    → 𝔛
-    → Ø 𝔵 ∙̂ 𝔬₁ ∙̂ 𝔬₂ ∙̂ ↑̂ ℓ
-  ≡-ExtensionṖroperty ℓ 𝔒₁ 𝔒₂ x = ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _≡_ x
+import Oscar.Data.ExtensionṖroperty
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
 
