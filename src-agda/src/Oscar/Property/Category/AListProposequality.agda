@@ -1,7 +1,10 @@
+
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 import Oscar.Property.Setoid.Proposequality
+import Oscar.Class.Congruity.Proposequality
+import Oscar.Class.Transextensionality.Proposequality
 
 module Oscar.Property.Category.AListProposequality where
 

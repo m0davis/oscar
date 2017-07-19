@@ -4,40 +4,11 @@ open import Oscar.Data
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Property.Category.ExtensionProposextensequality
+import Oscar.Class.Congruity.Proposequality
 
 module Oscar.Property.Functor.SubstitunctionExtensionTerm where
 
 -- FIXME Anything not having to do with both Substitunction and (Extension Term) should be migrated somewhere else.
-
-module _ where
-
-  instance
-
-    𝓒ongruityProposequality : ∀ {a b} → 𝓒ongruity Proposequality a b
-    𝓒ongruityProposequality .𝓒ongruity.congruity _ ∅ = !
-
-    𝓒ongruity₂Proposequality : ∀ {a b c} → 𝓒ongruity₂ Proposequality a b c
-    𝓒ongruity₂Proposequality .𝓒ongruity₂.congruity₂ _ ∅ ∅ = !
-
-    [𝓣ransextensionality]Proposequality : ∀
-      {a} {A : Ø a}
-      {m} {_⊸_ : A → A → Ø m}
-      → [𝓣ransextensionality] _⊸_ Proposequality
-    [𝓣ransextensionality]Proposequality = ∁
-
-    𝓣ransextensionalityProposequality : ∀
-      {a} {A : Ø a}
-      {m} {_⊸_ : A → A → Ø m}
-      ⦃ _ : 𝓣ransitivity _⊸_ ⦄
-      → 𝓣ransextensionality _⊸_ Proposequality
-    𝓣ransextensionalityProposequality .𝓣ransextensionality.transextensionality = congruity₂ _
-
-module _ where
-
-  instance
-
-    𝓒̇ongruityProposextensequality : ∀ {a b} → 𝓒̇ongruity a b Proposextensequality
-    𝓒̇ongruity.ċongruity 𝓒̇ongruityProposextensequality _ f≡̇g x rewrite f≡̇g x = ∅
 
 module _ where
 
