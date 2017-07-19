@@ -9,6 +9,10 @@ import Oscar.Data.ExtensionṖroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Surjection
+import Oscar.Property.Propergroup.Substitunction
+import Oscar.Property.Setoid.ṖropertyEquivalence
+import Oscar.Property.Functor.SubstitunctionExtensionTerm
+import Oscar.Property.Setoid.Proposequality
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (

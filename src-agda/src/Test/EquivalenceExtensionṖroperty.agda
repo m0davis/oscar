@@ -3,6 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Property
 import Oscar.Data.ExtensionṖroperty
+import Oscar.Property.Setoid.ProductIndexEquivalence
 
 module Test.EquivalenceExtensionṖroperty
   {𝔵} {𝔛 : Ø 𝔵}

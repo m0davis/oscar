@@ -2,6 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Property
+import Oscar.Property.Setoid.ṖropertyEquivalence
 
 module Test.EquivalenceṖroperty
   {𝔵} {𝔛 : Ø 𝔵}
