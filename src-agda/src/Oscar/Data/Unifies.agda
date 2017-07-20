@@ -130,6 +130,6 @@ instance
     ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
     -- {-{ℓ}-} {_≈'_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
-    ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₁_ {y}) ⦄
+    -- ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₁_ {y}) ⦄
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _∼₁_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _∼₁_ t' s')
   𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)
