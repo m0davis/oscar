@@ -8,6 +8,7 @@ open import Oscar.Data using (_≡_; Proposequality; ∅)
 open import Oscar.Class.Reflexivity public
 open import Oscar.Class.Transitivity public
 open import Oscar.Class.Congruity public
+open import Oscar.Class.Symmetrical public
 
 module _ where
 
@@ -1239,17 +1240,6 @@ module _ where
       : Ø₀ where
     constructor ∁
     no-eta-equality
-
-module _ where
-
-  record 𝓢ymmetrical
-    {𝔞} (𝔄 : Ø 𝔞)
-    {ℓ} (_∼_↦_∼_ : 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ)
-    : Ø 𝔞 ∙̂ ℓ where
-    field
-      symmetrical : (x y : 𝔄) → x ∼ y ↦ y ∼ x
-
-  open 𝓢ymmetrical ⦃ … ⦄ public
 
 module _ where
 
