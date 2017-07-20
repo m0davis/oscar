@@ -12,7 +12,7 @@ import Oscar.Class.Surjection
 import Oscar.Property.Propergroup.Substitunction
 import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
-import Oscar.Property.Setoid.Proposequality
+--import Oscar.Property.Setoid.Proposequality
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
@@ -34,8 +34,10 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   test-epfs : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
   test-epfs c p = surjectextensivity c p
 
+  -- open import Oscar.Property.Setoid.Proposequality
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
+  -- fact1⋆ 𝓈 𝓉 = symmetrical ⦃ r = 𝓢ymmetricalUnifies₀ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ 𝓢ymmetryProposequality ⦄ ⦄ 𝓈 𝓉
 
   fact1 : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼¹ 𝓉 ≈ 𝓉 ∼¹ 𝓈
   fact1 𝓈 𝓉 = symmetrical 𝓈 𝓉
