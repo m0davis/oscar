@@ -17,6 +17,7 @@ import Oscar.Property.Functor.SubstitunctionExtensionTerm
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
     Term to 𝑩;
+    Terms to 𝑩';
     i to 𝒖;
     _fork_ to _⊛_)
   open Substitunction 𝔓 using () renaming (
@@ -39,8 +40,16 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
   -- fact1⋆ 𝓈 𝓉 = symmetrical ⦃ r = 𝓢ymmetricalUnifies₀ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ 𝓢ymmetryProposequality ⦄ ⦄ 𝓈 𝓉
 
+  instance
+    [𝓢ymmetricalExtensionalUnifies]Proposequality𝑩 :
+      [𝓢ymmetricalExtensionalUnifies] (λ {n} → Proposequality⟦ 𝑩 n ⟧)
+    [𝓢ymmetricalExtensionalUnifies]Proposequality𝑩 = ∁
+
   fact1 : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼¹ 𝓉 ≈ 𝓉 ∼¹ 𝓈
   fact1 𝓈 𝓉 = symmetrical 𝓈 𝓉
+
+  fact1s : ∀ {N 𝓃} (𝓈 𝓉 : 𝑩' N 𝓃) → 𝓈 ∼¹ 𝓉 ≈ 𝓉 ∼¹ 𝓈
+  fact1s 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
   Properties-fact1'⋆ : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ ∼⁰ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ ∼⁰ 𝓉₁ ∧ 𝓈₂ ∼⁰ 𝓉₂
   Properties-fact1'⋆ 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = properfact1 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
