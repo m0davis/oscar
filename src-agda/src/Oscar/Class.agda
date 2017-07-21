@@ -10,6 +10,7 @@ open import Oscar.Class.Transitivity public
 open import Oscar.Class.Congruity public
 open import Oscar.Class.Symmetrical public
 open import Oscar.Class.Symmetry public
+-- FIXME this won't work due to cyclic dependency: open import Oscar.Class.Surjection
 
 record IsEquivalence
   {𝔬} {𝔒 : Ø 𝔬}
