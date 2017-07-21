@@ -26,7 +26,7 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   𝑷⁰ = LeftṖroperty ℓ 𝑪
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   infix 18 _∼⁰_ _∼¹_
-  _∼⁰_ = SymUnifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧ -- FIXME "_∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧" had fewer parameters
+  _∼⁰_ = Unifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧ -- FIXME "SymUnifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧" gave us a more useful error message -- FIXME "_∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧" had fewer parameters
   _∼¹_ = ≡-ExtensionalUnifies {𝔄 = Fin}
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
