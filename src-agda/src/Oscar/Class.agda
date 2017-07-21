@@ -15,16 +15,8 @@ open import Oscar.Class.Setoid public
 open import Oscar.Class.Transextensionality public
 open import Oscar.Class.Transassociativity public
 open import Oscar.Class.IsPrecategory public
+open import Oscar.Class.Precategory public
 -- FIXME this won't work due to cyclic dependency: open import Oscar.Class.Surjection
-
-record Precategory 𝔬 𝔯 ℓ : Ø ↑̂ (𝔬 ∙̂ 𝔯 ∙̂ ℓ) where
-  constructor ∁
-  infix 4 _∼̇_
-  field
-    {𝔒} : Ø 𝔬
-    _∼_ : 𝔒 → 𝔒 → Ø 𝔯
-    _∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ
-    ⦃ `IsPrecategory ⦄ : IsPrecategory _∼_ _∼̇_
 
 module _ where
 
