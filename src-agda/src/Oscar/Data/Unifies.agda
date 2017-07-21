@@ -73,15 +73,15 @@ ExtensionalUnifies : ∀
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   (let _↦_ = Arrow 𝔄 𝔅)
   {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-  {ℓ₁} (_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁)
+  {ℓ₁} (_↦̇_ : ∀ {x y} → x ↦ y → x ↦ y → Ø ℓ₁)
   {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
   ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
   ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
   ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
   ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
-  ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-  ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-  → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _∼₁_ m
+  ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
+  ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
+  → ∀ {m} → ℭ m → ℭ m → LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m
 ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
   Unifies₀ _∼₂_ s t , λ f≐g f◃s=f◃t →
     ⟪ f≐g ⟫[ Pointwise _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise _∼₂_ ] s)
@@ -100,7 +100,7 @@ ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
   ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _≡_ m
-≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _≡_ {_∼₂_ = _∼₂_} s t
+≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} (Pointwise _≡_) {_∼₂_ = _∼₂_} s t
 
 instance
 
@@ -115,14 +115,6 @@ instance
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
   𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
 
-record [𝓢ymmetricalExtensionalUnifies]
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-    {ℓ₁} (_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁)
-    : Ø₀ where
-  no-eta-equality
-  constructor ∁
-
 instance
 
   𝓢ymmetricalExtensionalUnifies : ∀
@@ -131,15 +123,14 @@ instance
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
     (let _↦_ = Arrow 𝔄 𝔅)
     {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-    {ℓ₁} {_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
+    {ℓ₁} {_↦̇_ : ∀ {x y} → x ↦ y → x ↦ y → Ø ℓ₁}
     {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
     ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
     ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
-    ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-    ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
     -- {-{ℓ}-} {_≈'_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
-    ⦃ _ : [𝓢ymmetricalExtensionalUnifies] (λ {y} → _∼₁_ {y}) ⦄
-    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _∼₁_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _∼₁_ t' s')
+    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _↦̇_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _↦̇_ t' s')
   𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)

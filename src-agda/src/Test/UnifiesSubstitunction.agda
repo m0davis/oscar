@@ -21,4 +21,4 @@ module Test.UnifiesSubstitunction {𝔭} (𝔓 : Ø 𝔭) where
   ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
 
   ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → LeftExtensionṖroperty ∅̂ (Arrow Fin Term) (Pointwise Proposequality) m
-  ≡-ExtensionalUnifies-Terms = ExtensionalUnifies _≡_
+  ≡-ExtensionalUnifies-Terms = ExtensionalUnifies (Pointwise _≡_)
