@@ -113,7 +113,7 @@ instance
     {ℓ} {_≈'_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_≈'_ {y}) ⦄
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
-  𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
+  𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ {_} {f} = symmetry {x = {!C-c C-s here results in 𝓢urjectextensivity.surjectextensivity toSurj' f x, which looks sorta like showing the instance-resolution trail-of-breadcrumbs!}} {y = {!!}} , symmetry
 
 instance
 
