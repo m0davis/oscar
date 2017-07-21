@@ -89,6 +89,16 @@ SymUnifies₀⟦ _ ⟧ = SymUnifies₀
   → 𝓾nifies₀ ℭ 𝔄 ∅̂
 ≡-Unifies₀⟦ _ ⟧ = ≡-Unifies₀
 
+≡-SymUnifies₀⟦_⟧ : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
+  {𝔠} {ℭ : 𝔛 → Ø 𝔠}
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
+  ⦃ _ : ∀ {y} → 𝓢ymmetry (Proposequality⟦ ℭ y ⟧) ⦄
+  → 𝓾nifies₀ ℭ 𝔄 ∅̂
+≡-SymUnifies₀⟦ _ ⟧ = SymUnifies₀ _≡_
+
 ExtensionalUnifies : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
