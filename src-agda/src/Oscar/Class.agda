@@ -10,17 +10,8 @@ open import Oscar.Class.Transitivity public
 open import Oscar.Class.Congruity public
 open import Oscar.Class.Symmetrical public
 open import Oscar.Class.Symmetry public
+open import Oscar.Class.IsEquivalence public
 -- FIXME this won't work due to cyclic dependency: open import Oscar.Class.Surjection
-
-record IsEquivalence
-  {𝔬} {𝔒 : Ø 𝔬}
-  {ℓ} (_≈_ : 𝔒 → 𝔒 → Ø ℓ)
-  : Ø 𝔬 ∙̂ ℓ where
-  constructor ∁
-  field
-    ⦃ `𝓡eflexivity ⦄ : 𝓡eflexivity _≈_
-    ⦃ `𝓢ymmetry ⦄ : 𝓢ymmetry _≈_
-    ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _≈_
 
 module _ where
 
