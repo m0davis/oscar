@@ -38,11 +38,6 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
-  instance
-    [𝓢ymmetricalExtensionalUnifies]Proposequality𝑩 :
-      [𝓢ymmetricalExtensionalUnifies] (λ {n} → Proposequality⟦ 𝑩 n ⟧)
-    [𝓢ymmetricalExtensionalUnifies]Proposequality𝑩 = ∁
-
   fact1 : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼¹ 𝓉 ≈ 𝓉 ∼¹ 𝓈
   fact1 𝓈 𝓉 = symmetrical 𝓈 𝓉
 

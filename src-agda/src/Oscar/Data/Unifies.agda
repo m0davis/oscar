@@ -115,14 +115,6 @@ instance
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
   𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
 
-record [𝓢ymmetricalExtensionalUnifies]
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-    {ℓ₁} (_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁)
-    : Ø₀ where
-  no-eta-equality
-  constructor ∁
-
 instance
 
   𝓢ymmetricalExtensionalUnifies : ∀
@@ -140,6 +132,5 @@ instance
     ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
     -- {-{ℓ}-} {_≈'_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁}
-    -- ⦃ _ : [𝓢ymmetricalExtensionalUnifies] (λ {y} → _∼₁_ {y}) ⦄
     → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _↦̇_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _↦̇_ t' s')
   𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)
