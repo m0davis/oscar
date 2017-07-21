@@ -73,15 +73,15 @@ ExtensionalUnifies : ∀
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   (let _↦_ = Arrow 𝔄 𝔅)
   {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-  {ℓ₁} (_∼₁_ : ∀ {y} → 𝔅 y → 𝔅 y → Ø ℓ₁)
+  {ℓ₁} (_↦̇_ : ∀ {x y} → x ↦ y → x ↦ y → Ø ℓ₁)
   {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
   ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
   ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
   ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
   ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
-  ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-  ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _∼₁_) (Extension ℭ) (Pointwise _∼₂_) ⦄
-  → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _∼₁_ m
+  ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
+  ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
+  → ∀ {m} → ℭ m → ℭ m → LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m
 ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
   Unifies₀ _∼₂_ s t , λ f≐g f◃s=f◃t →
     ⟪ f≐g ⟫[ Pointwise _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise _∼₂_ ] s)
