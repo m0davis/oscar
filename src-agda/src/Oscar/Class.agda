@@ -27,15 +27,7 @@ open import Oscar.Class.Prefunctor public
 open import Oscar.Class.Transleftidentity public
 open import Oscar.Class.Transrightidentity public
 open import Oscar.Class.IsCategory public
-
-record Category 𝔬 𝔯 ℓ : Ø ↑̂ (𝔬 ∙̂ 𝔯 ∙̂ ℓ) where
-  constructor ∁
-  infix 4 _∼̇_
-  field
-    {𝔒} : Ø 𝔬
-    _∼_ : 𝔒 → 𝔒 → Ø 𝔯
-    _∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ
-    ⦃ `IsCategory ⦄ : IsCategory _∼_ _∼̇_
+open import Oscar.Class.Category public
 
 module _ where
 
