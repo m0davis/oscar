@@ -17,6 +17,7 @@ import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
 import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
+import Oscar.Class.Symmetrical.Unifies
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (

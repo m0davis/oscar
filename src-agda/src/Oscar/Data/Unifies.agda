@@ -136,19 +136,6 @@ ExtensionalUnifies _ {_∼₂_ = _∼₂_} s t =
 
 instance
 
-  𝓢ymmetricalUnifies₀ : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
-    {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-    ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
-    ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-    {ℓ} {_≈'_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ}
-    ⦃ _ : ∀ {y} → 𝓢ymmetry (_≈'_ {y}) ⦄
-    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
-  𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
-
-instance
-
   𝓢ymmetricalExtensionalUnifies : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
