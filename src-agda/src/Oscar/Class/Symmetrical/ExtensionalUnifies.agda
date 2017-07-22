@@ -8,6 +8,7 @@ open import Oscar.Class.Symmetrical
 open import Oscar.Class.Transitivity
 open import Oscar.Data.ProductIndexEquivalence
 open import Oscar.Data.Unifies
+import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.Surjection
 import Oscar.Data.ExtensionṖroperty
 

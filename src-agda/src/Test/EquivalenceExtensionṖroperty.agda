@@ -2,6 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Property
+import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Data.ExtensionṖroperty
 import Oscar.Property.Setoid.ProductIndexEquivalence
 

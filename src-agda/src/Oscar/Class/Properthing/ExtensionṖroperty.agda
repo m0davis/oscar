@@ -6,6 +6,7 @@ open import Oscar.Data.ProperlyExtensionNothing
 import Oscar.Data.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 open import Oscar.Data.ProductIndexEquivalence
+import Oscar.Class.HasEquivalence.ExtensionṖroperty
 
 module Oscar.Class.Properthing.ExtensionṖroperty where
 
