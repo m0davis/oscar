@@ -37,17 +37,9 @@ open import Oscar.Class.Successor₁ public
 open import Oscar.Class.Map public
 open import Oscar.Class.Fmap public
 open import Oscar.Class.Apply public
+open import Oscar.Class.Pure public
 
 module _ where
-
-  module _
-    {𝔬 𝔣}
-    (𝔉 : Ø 𝔬 → Ø 𝔣)
-    where
-    𝓹ure = ∀ {𝔒 : Ø 𝔬} → 𝔒 → 𝔉 𝔒
-    record 𝓟ure : Ø 𝔣 ∙̂ ↑̂ 𝔬 where
-      field pure : 𝓹ure
-  open 𝓟ure ⦃ … ⦄ public
 
   module _
     (𝔉 : ∀ {𝔣} → Ø 𝔣 → Ø 𝔣)
