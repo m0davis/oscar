@@ -56,11 +56,6 @@ open import Oscar.Data
 
 instance
 
-  [𝓢urjectivity]LeftṖroperty : ∀ {ℓ} {a} {f} {¶ : Set a} {_↦_ : ¶ → ¶ → Set f} → [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_)
-  [𝓢urjectivity]LeftṖroperty = ∁
-
-instance
-
   𝓢ymmetrical𝓢ymmetry : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}

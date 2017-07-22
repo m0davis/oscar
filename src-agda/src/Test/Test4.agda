@@ -3,6 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Property
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
+import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 
 module Test.Test4
   {𝔵} {𝔛 : Ø 𝔵}
