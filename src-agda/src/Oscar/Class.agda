@@ -4,7 +4,6 @@
 module Oscar.Class where
 
 open import Oscar.Prelude
-open import Oscar.Data using (_≡_; Proposequality; ∅)
 open import Oscar.Class.Reflexivity public
 open import Oscar.Class.Transitivity public
 open import Oscar.Class.Congruity public
@@ -52,13 +51,4 @@ open import Oscar.Class.Factsurj4 public
 open import Oscar.Class.Factsurj6 public
 open import Oscar.Class.[ExtensibleType] public
 open import Oscar.Class.PropId public
-open import Oscar.Data
-
-module _ where
-
-  record [IsExtensionB]
-    {a} {A : Ø a}
-    {b} (B : A → Ø b)
-    : Ø₀ where
-    constructor ∁
-    no-eta-equality
+open import Oscar.Class.[IsExtensionB] public
