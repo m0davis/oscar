@@ -31,6 +31,8 @@ import Oscar.Data.ExtensionṖroperty
 open import Oscar.Data.ProperlyExtensionNothing
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
+import Oscar.Class.Surjectivity.ExtensionṖroperty
+import Oscar.Class.[ExtensibleType].Proposequality
 
 module Oscar.Property.Propergroup.Substitunction where
 

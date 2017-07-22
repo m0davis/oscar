@@ -23,3 +23,10 @@ module _ where
     ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
     → 𝓼urjection 𝔒₁ 𝔒₂
   surjection[ _ ] = surjection
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬}
+  where
+  instance
+    𝓢urjectionIdentity : 𝓢urjection 𝔒 𝔒
+    𝓢urjectionIdentity .𝓢urjection.surjection = ¡
