@@ -12,7 +12,7 @@ import Oscar.Class.Surjection
 import Oscar.Property.Propergroup.Substitunction
 import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
---import Oscar.Property.Setoid.Proposequality
+import Oscar.Property.Setoid.Proposequality
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
@@ -30,7 +30,7 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   𝑷⁰ = LeftṖroperty ℓ 𝑪
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   infix 18 _∼⁰_ _∼¹_
-  _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧ -- FIXME "Unifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧" gives a confusing error message -- FIXME "SymUnifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧" gave us a more useful error message -- FIXME "_∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧" had fewer parameters
+  _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧
   _∼¹_ = ≡-ExtensionalUnifies
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
@@ -39,10 +39,8 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   test-epfs : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
   test-epfs c p = surjectextensivity c p
 
-  -- open import Oscar.Property.Setoid.Proposequality
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
-  -- fact1⋆ 𝓈 𝓉 = symmetrical ⦃ r = 𝓢ymmetricalUnifies₀ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ 𝓢ymmetryProposequality ⦄ ⦄ 𝓈 𝓉
 
   fact1⋆s : ∀ {N 𝓃} (𝓈 𝓉 : 𝑩' N 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆s 𝓈 𝓉 = symmetrical 𝓈 𝓉
