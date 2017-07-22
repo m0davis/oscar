@@ -7,6 +7,7 @@ import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Category.AListProposequality
 import Oscar.Property.Category.ExtensionProposextensequality
 import Oscar.Property.Thickandthin.FinFinProposequalityMaybeProposequality
+import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Surjection
 
 module Oscar.Property.Functor.SubstitistProposequalitySubstitunctionProposextensequality where

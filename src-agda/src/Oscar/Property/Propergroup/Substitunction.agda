@@ -37,6 +37,7 @@ import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
 import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
+import Oscar.Class.HasEquivalence.Substitunction
 
 module Oscar.Property.Propergroup.Substitunction where
 

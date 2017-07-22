@@ -5,6 +5,7 @@ import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Property.Category.ExtensionProposextensequality
 import Oscar.Class.Congruity.Proposequality
+import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Surjection
 
 module Oscar.Property.Functor.SubstitunctionExtensionTerm where
@@ -46,9 +47,6 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     𝓣ransitivitySubstitunction : 𝓣ransitivity Substitunction
     𝓣ransitivitySubstitunction .𝓣ransitivity.transitivity f g = surjectivity g ∘ f
-
-    HasEquivalenceSubstitunction : ∀ {x y} → HasEquivalence (Substitunction x y) _
-    HasEquivalenceSubstitunction = ∁ Proposextensequality
 
     [IsExtensionB]Term : [IsExtensionB] Term
     [IsExtensionB]Term = ∁
