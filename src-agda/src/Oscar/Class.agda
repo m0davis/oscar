@@ -38,19 +38,9 @@ open import Oscar.Class.Map public
 open import Oscar.Class.Fmap public
 open import Oscar.Class.Apply public
 open import Oscar.Class.Pure public
+open import Oscar.Class.Bind public
 
 module _ where
-
-  module _
-    (𝔉 : ∀ {𝔣} → Ø 𝔣 → Ø 𝔣)
-    𝔬₁ 𝔬₂
-    where
-    𝓫ind = ∀ {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂} → 𝔉 𝔒₁ → (𝔒₁ → 𝔉 𝔒₂) → 𝔉 𝔒₂
-    record 𝓑ind : Ø ↑̂ (𝔬₁ ∙̂ 𝔬₂) where
-      infixl 6 bind
-      field bind : 𝓫ind
-      syntax bind m f = f =<< m
-    open 𝓑ind ⦃ … ⦄ public
 
   module _
     {x} {X : Ø x} {a} (A : X → Ø a) {b} (B : X → Ø b)
