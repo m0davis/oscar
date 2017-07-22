@@ -4,9 +4,9 @@ open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Symmetrical
 open import Oscar.Data
 open import Oscar.Data.Unifies
+import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
-import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Property.Setoid.ṖropertyEquivalence
