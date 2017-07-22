@@ -23,17 +23,7 @@ open import Oscar.Class.Surjectextensivity.SurjectivityExtension public
 open import Oscar.Class.Surjtranscommutativity public
 open import Oscar.Class.Surjextensionality public
 open import Oscar.Class.IsPrefunctor public
-
-record Prefunctor 𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂ : Ø ↑̂ (𝔬₁ ∙̂ 𝔯₁ ∙̂ ℓ₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂) where
-  constructor ∁
-  field
-    {𝔒₁} : Ø 𝔬₁
-    _∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁
-    _∼̇₁_ : ∀ {x y} → x ∼₁ y → x ∼₁ y → Ø ℓ₁
-    {𝔒₂} : Ø 𝔬₂
-    _∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂
-    _∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂
-    ⦃ `IsPrefunctor ⦄ : IsPrefunctor _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_
+open import Oscar.Class.Prefunctor public
 
 module _ where
 
