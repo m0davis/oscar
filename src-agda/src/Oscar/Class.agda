@@ -47,24 +47,6 @@ open import Oscar.Class.Exotransitivity public
 
 module _ where
 
-  module _
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔞} (𝔄 : 𝔛 → Ø 𝔞)
-    {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
-    (let _∼_ = Arrow 𝔄 𝔅) (let infix 4 _∼_ ; _∼_ = _∼_)
-    {ℓ̇} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇)
-    ⦃ _ : 𝓣ransitivity _∼_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
-    ℓ
-    where
-    𝓹rop-id = ∀ {m n} {f : m ∼ n} (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
-              (let P₀ = π₀ (π₀ P)) → P₀ f → P₀ (ε ∙ f)
-    record PropId : Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ℓ̇ ∙̂ ↑̂ ℓ where field prop-id : 𝓹rop-id
-
-  open PropId ⦃ … ⦄ public
-
-module _ where
-
   record Amgu {𝔵} {X : Ø 𝔵} {𝔱} (T : X → Ø 𝔱) {𝔞} (A : X → Ø 𝔞) {𝔪} (M : Ø 𝔞 → Ø 𝔪) : Ø 𝔵 ∙̂ 𝔱 ∙̂ 𝔞 ∙̂ 𝔪 where
     field amgu : ∀ {x} → T x → T x → A x → M (A x)
 
