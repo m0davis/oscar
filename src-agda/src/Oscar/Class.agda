@@ -19,23 +19,7 @@ open import Oscar.Class.Precategory public
 open import Oscar.Class.Surjection public
 open import Oscar.Class.Surjectextensivity public
 open import Oscar.Class.Surjectivity public
-
-module _ where
-
-  module _ where -- TODO move to another file
-
-    open import Oscar.Data
-
-    instance
-
-      toSurj' : ∀
-        {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-        {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-        {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
-        ⦃ _ : [𝓢urjectivity] _∼₁_ (Extension 𝔒₂) ⦄
-        ⦃ _ : 𝓢urjectivity _∼₁_ (Extension 𝔒₂) ⦃ record { surjection = ¡ } ⦄ ⦄
-        → 𝓢urjectextensivity _∼₁_ 𝔒₂
-      toSurj' {{_}} {{x₂}} .𝓢urjectextensivity.surjectextensivity = § {{r = x₂}}
+open import Oscar.Class.Surjectextensivity.SurjectivityExtension public
 
 module _ where
 
