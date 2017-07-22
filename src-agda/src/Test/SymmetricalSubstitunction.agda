@@ -4,6 +4,7 @@ open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Symmetrical
 open import Oscar.Data
 open import Oscar.Data.Unifies
+import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Data.ExtensionṖroperty
 import Oscar.Property.Setoid.ṖropertyEquivalence
