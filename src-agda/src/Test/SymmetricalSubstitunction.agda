@@ -1,22 +1,13 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Symmetrical
 open import Oscar.Data
-open import Oscar.Property
 open import Oscar.Data.Unifies
-import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Data.ExtensionṖroperty
-import Oscar.Class.Properthing.ExtensionṖroperty
-import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
-import Oscar.Class.Surjection
-import Oscar.Property.Propergroup.Substitunction
 import Oscar.Property.Setoid.ṖropertyEquivalence
-import Oscar.Property.Functor.SubstitunctionExtensionTerm
-import Oscar.Class.[ExtensibleType].Proposequality
-import Oscar.Class.Surjectivity.ExtensionṖroperty
-import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
-import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 import Oscar.Property.Setoid.Proposequality -- FIXME (comment this out to observe confusing error messages)
+import Oscar.Property.Functor.SubstitunctionExtensionTerm
 
 module Test.SymmetricalSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
