@@ -49,25 +49,6 @@ open import Oscar.Class.Surjectextenscongruity public
 
 module _ where
 
-  record [IsExtensionB]
-    {a} {A : Ø a}
-    {b} (B : A → Ø b)
-    : Ø₀ where
-    constructor ∁
-    no-eta-equality
-
-module _ where
-
-  record [ExtensibleType]
-      {𝔵} {𝔛 : Ø 𝔵}
-      {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
-      {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
-      : Ø₀ where
-    constructor ∁
-    no-eta-equality
-
-module _ where
-
   Refl4 : ∀ {𝔞} ℓ → Ø 𝔞 → Ø 𝔞 ∙̂ ↑̂ ℓ
   Refl4 ℓ 𝔄 = 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ
 
@@ -193,6 +174,16 @@ module _ where
 
 open import Oscar.Data
 
+module _ where
+
+  record [ExtensibleType]
+      {𝔵} {𝔛 : Ø 𝔵}
+      {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
+      {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
+      : Ø₀ where
+    constructor ∁
+    no-eta-equality
+
 instance
 
   [ExtensibleType]Proposequality : ∀ {a} {b} {A : Set a} {B : A → Set b} → [ExtensibleType] (λ {w} → Proposequality⟦ B w ⟧)
@@ -237,3 +228,12 @@ instance
     ⦃ _ : [𝓢urjectivity] _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_)) ⦄
     → 𝓢urjectivity _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_))
   ExtensionṖropertySurjectivity .𝓢urjectivity.surjectivity f P = ∁ (λ g → π₀ (π₀ P) (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+
+module _ where
+
+  record [IsExtensionB]
+    {a} {A : Ø a}
+    {b} (B : A → Ø b)
+    : Ø₀ where
+    constructor ∁
+    no-eta-equality
