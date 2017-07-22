@@ -13,6 +13,10 @@ import Oscar.Property.Propergroup.Substitunction
 import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 --import Oscar.Property.Setoid.Proposequality
+import Oscar.Class.[ExtensibleType].Proposequality
+import Oscar.Class.Surjectivity.ExtensionṖroperty
+import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
+import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
@@ -27,7 +31,7 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   infix 18 _∼⁰_ _∼¹_
   _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧ -- FIXME "Unifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧" gives a confusing error message -- FIXME "SymUnifies₀⟦ 𝑪 ⟧ Proposequality⟦ 𝑩 _ ⟧" gave us a more useful error message -- FIXME "_∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧" had fewer parameters
-  _∼¹_ = ≡-ExtensionalUnifies {𝔄 = Fin}
+  _∼¹_ = ≡-ExtensionalUnifies
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = surjectextensivity c p
