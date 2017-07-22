@@ -144,7 +144,7 @@ instance
     ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
     {ℓ} {_≈'_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_≈'_ {y}) ⦄
-    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → SymUnifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ SymUnifies₀ _≈'_ t' s') -- FIXME changing Unifies₀ to SymUnifies₀ has not helped; fix or change it back
+    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → Unifies₀⟦ 𝔄 ⟧ _≈'_ s t ≈ Unifies₀ _≈'_ t' s')
   𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
 
 instance
