@@ -33,33 +33,9 @@ open import Oscar.Class.IsFunctor public
 open import Oscar.Class.Functor public
 open import Oscar.Class.Injectivity public
 open import Oscar.Class.Successor₀ public
+open import Oscar.Class.Successor₁ public
 
 module _ where
-
-  module _
-    {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭)
-    where
-    record [𝓢uccessor₁] : Ø₀ where
-      no-eta-equality
-      constructor ∁
-    module _
-      ⦃ _ : 𝓢uccessor₀ 𝔒 ⦄
-      where
-      𝓼uccessor₁ = ∀ {m} → 𝔓 m → 𝔓 (⇑₀ m)
-      record 𝓢uccessor₁ ⦃ _ : [𝓢uccessor₁] ⦄ : Ø 𝔬 ∙̂ 𝔭 where
-        field
-          successor₁ : 𝓼uccessor₁
-
-        instance
-
-          `𝓘njection₁ : ∀ {m} → 𝓘njection₁ (λ (_ : 𝔓 m) → 𝔓 (⇑₀ m))
-          `𝓘njection₁ {m} .𝓘njection₁.injection₁ = successor₁
-
-          `𝓘njection₂ : 𝓘njection₂ (λ (m : 𝔒) (n : 𝔓 m) → 𝔓 (⇑₀ m))
-          `𝓘njection₂ .𝓘njection₂.injection₂ = λ _ → successor₁
-
-  open 𝓢uccessor₁ ⦃ … ⦄ public using (successor₁)
-  open 𝓢uccessor₁ ⦃ … ⦄ public using () renaming (successor₁ to ⇑₁)
 
   module _
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
