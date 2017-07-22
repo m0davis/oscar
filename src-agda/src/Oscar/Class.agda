@@ -41,17 +41,7 @@ open import Oscar.Class.Pure public
 open import Oscar.Class.Bind public
 open import Oscar.Class.Thickandthin public
 open import Oscar.Class.HasEquivalence public
-
-module _ where
-
-  open import Oscar.Data
-
-  record IsDecidable {𝔬} (𝔒 : Ø 𝔬) : Ø 𝔬 where
-    infix 4 _≟_
-    field
-      _≟_ : (x y : 𝔒) → Decidable (x ≡ y)
-
-  open IsDecidable ⦃ … ⦄ public
+open import Oscar.Class.IsDecidable public
 
 module _ where
 
