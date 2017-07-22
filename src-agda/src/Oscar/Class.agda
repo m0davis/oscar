@@ -26,21 +26,7 @@ open import Oscar.Class.IsPrefunctor public
 open import Oscar.Class.Prefunctor public
 open import Oscar.Class.Transleftidentity public
 open import Oscar.Class.Transrightidentity public
-
-module _
-  {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ) (let infix 4 _∼̇_ ; _∼̇_ = _∼̇_)
-  where
-  record IsCategory : Ø 𝔬 ∙̂ 𝔯 ∙̂ ℓ where
-    constructor ∁
-    field
-      ⦃ `IsPrecategory ⦄ : IsPrecategory _∼_ _∼̇_
-      overlap ⦃ `[𝓣ransleftidentity] ⦄ : [𝓣ransleftidentity] _∼_ _∼̇_
-      overlap ⦃ `[𝓣ransrightidentity] ⦄ : [𝓣ransrightidentity] _∼_ _∼̇_
-      overlap ⦃ `𝓡eflexivity ⦄ : 𝓡eflexivity _∼_
-      ⦃ `𝓣ransleftidentity ⦄ : 𝓣ransleftidentity _∼_ _∼̇_
-      ⦃ `𝓣ransrightidentity ⦄ : 𝓣ransrightidentity _∼_ _∼̇_
+open import Oscar.Class.IsCategory public
 
 record Category 𝔬 𝔯 ℓ : Ø ↑̂ (𝔬 ∙̂ 𝔯 ∙̂ ℓ) where
   constructor ∁
