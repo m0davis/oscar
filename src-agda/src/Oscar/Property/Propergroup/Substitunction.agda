@@ -33,6 +33,7 @@ import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.[ExtensibleType].Proposequality
+import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
 
 module Oscar.Property.Propergroup.Substitunction where
 

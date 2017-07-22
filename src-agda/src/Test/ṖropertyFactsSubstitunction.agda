@@ -15,6 +15,7 @@ import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Class.Surjectivity.ExtensionṖroperty
+import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
