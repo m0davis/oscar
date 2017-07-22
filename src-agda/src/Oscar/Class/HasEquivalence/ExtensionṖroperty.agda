@@ -2,8 +2,8 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data.ProductIndexEquivalence
+import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Property.Setoid.ProductIndexEquivalence
-import Oscar.Property.Setoid.ṖropertyEquivalence
 
 module Oscar.Class.HasEquivalence.ExtensionṖroperty where
 

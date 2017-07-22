@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
-import Oscar.Property.Setoid.ṖropertyEquivalence
+import Oscar.Class.HasEquivalence.Ṗroperty
 
 module Oscar.Class.Properthing.Ṗroperty where
 

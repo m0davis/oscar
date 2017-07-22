@@ -24,12 +24,3 @@ module _
 
     IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     IsEquivalenceṖroperty = ∁
-
-instance
-
-  HasEquivalenceṖroperty : ∀
-    {𝔵} {𝔛 : Ø 𝔵}
-    {𝔬} {𝔒 : 𝔛 → Ø 𝔬}
-    {ℓ}
-    → HasEquivalence (Ṗroperty ℓ 𝔒) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-  HasEquivalenceṖroperty .HasEquivalence.Equivalence P Q = ṖropertyEquivalence P Q

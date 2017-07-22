@@ -5,8 +5,8 @@ open import Oscar.Class.Surjectivity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Symmetrical
 open import Oscar.Data.Unifies
+import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Surjection
-import Oscar.Property.Setoid.ṖropertyEquivalence
 
 module Oscar.Class.Symmetrical.Unifies where
 

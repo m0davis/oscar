@@ -5,6 +5,7 @@ open import Oscar.Data
 open import Oscar.Property
 open import Oscar.Data.Unifies
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
+import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Data.ExtensionṖroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
