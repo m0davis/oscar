@@ -14,9 +14,7 @@ import Oscar.Data.ExtensionṖroperty
 
 module Oscar.Class.Symmetrical.ExtensionalUnifies where
 
-instance
-
-  𝓢ymmetricalExtensionalUnifies : ∀
+module _
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -30,5 +28,12 @@ instance
     ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
     ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
-    → ∀ {m} → 𝓢ymmetrical (ℭ m) (λ s t t' s' → ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} _↦̇_ {_∼₂_ = _∼₂_} s t ≈ ExtensionalUnifies _↦̇_ t' s')
-  𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)
+  where
+
+  instance
+
+    [𝓢ymmetrical]ExtensionalUnifies : ∀ {m} → [𝓢ymmetrical] (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
+    [𝓢ymmetrical]ExtensionalUnifies .[𝓢ymmetrical]._∼_ = ExtensionalUnifies _↦̇_
+
+    𝓢ymmetricalExtensionalUnifies : ∀ {m} → 𝓢ymmetrical (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
+    𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)

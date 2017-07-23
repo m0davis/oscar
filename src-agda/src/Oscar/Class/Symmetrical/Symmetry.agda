@@ -5,11 +5,16 @@ open import Oscar.Class.Symmetrical
 
 module Oscar.Class.Symmetrical.Symmetry where
 
-instance
-
-  𝓢ymmetrical𝓢ymmetry : ∀
+module _
     {𝔬} {𝔒 : Ø 𝔬}
     {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
     ⦃ _ : 𝓢ymmetry _∼_ ⦄
-    → 𝓢ymmetrical 𝔒 (λ s t t' s' → s ∼ t → t' ∼ s')
-  𝓢ymmetrical𝓢ymmetry .𝓢ymmetrical.symmetrical x y = symmetry
+  where
+
+  instance
+
+    [𝓢ymmetrical]𝓢ymmetry : [𝓢ymmetrical] 𝔒 (Ø ℓ) (λ x∼y y∼x → x∼y → y∼x)
+    [𝓢ymmetrical]𝓢ymmetry .[𝓢ymmetrical]._∼_ = _∼_
+
+    𝓢ymmetrical𝓢ymmetry : 𝓢ymmetrical 𝔒 (Ø ℓ) (λ x∼y y∼x → x∼y → y∼x)
+    𝓢ymmetrical𝓢ymmetry .𝓢ymmetrical.symmetrical _ _ = symmetry

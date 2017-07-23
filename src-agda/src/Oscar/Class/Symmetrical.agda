@@ -3,11 +3,23 @@ open import Oscar.Prelude
 
 module Oscar.Class.Symmetrical where
 
-record 𝓢ymmetrical
+module _
   {𝔞} (𝔄 : Ø 𝔞)
-  {ℓ} (_∼_↦_∼_ : 𝔄 → 𝔄 → 𝔄 → 𝔄 → Ø ℓ)
-  : Ø 𝔞 ∙̂ ℓ where
-  field
-    symmetrical : (x y : 𝔄) → x ∼ y ↦ y ∼ x
+  {𝔟} (𝔅 : Ø 𝔟)
+  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ) (let _↦_ = _↦_ ; infix 14 _↦_)
+  where
+  record [𝓢ymmetrical] : Ø 𝔞 ∙̂ 𝔟 where
+    constructor ∁
+    infix 18 _∼_
+    field
+      _∼_ : 𝔄 → 𝔄 → 𝔅
+
+  module _
+    ⦃ ⌶[𝓢ymmetrical] : [𝓢ymmetrical] ⦄
+    where
+    record 𝓢ymmetrical : Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ where
+      open [𝓢ymmetrical] ⌶[𝓢ymmetrical]
+      field
+        symmetrical : ∀ x y → x ∼ y ↦ y ∼ x
 
 open 𝓢ymmetrical ⦃ … ⦄ public
