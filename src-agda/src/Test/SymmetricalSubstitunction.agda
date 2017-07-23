@@ -9,7 +9,6 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
-import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Property.Setoid.Proposequality -- FIXME see _∼⁰_ below; comment this out to observe confusing error messages
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 
