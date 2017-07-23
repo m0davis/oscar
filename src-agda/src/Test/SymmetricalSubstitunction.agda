@@ -6,7 +6,6 @@ open import Oscar.Data
 open import Oscar.Data.Unifies
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
-import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Property.Setoid.Proposequality -- FIXME see _∼⁰_ below; comment this out to observe confusing error messages
@@ -15,14 +14,10 @@ import Oscar.Property.Functor.SubstitunctionExtensionTerm
 module Test.SymmetricalSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
     Term to 𝑩;
-    Terms to 𝑩';
-    i to 𝒖;
-    _fork_ to _⊛_)
+    Terms to 𝑩')
   open Substitunction 𝔓 using () renaming (
     Substitunction to 𝑪)
 
-  𝑷⁰ = LeftṖroperty ℓ 𝑪
-  𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   infix 18 _∼⁰_ _∼¹_
   _∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧ -- FIXME gives a confusing error message
   -- _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧ -- FIXME gives a more useful error message
