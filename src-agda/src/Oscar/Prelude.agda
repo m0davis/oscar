@@ -143,7 +143,7 @@ _→̂²_ : ∀ {𝔞} → Ø 𝔞 → ∀ ℓ → Ø 𝔞 ∙̂ ↑̂ ℓ
 _→̂²_ 𝔒 ℓ = π̂² ℓ 𝔒
 
 record Lift {a ℓ} (A : Set a) : Set (a ∙̂ ℓ) where
-  constructor lift
+  instance constructor lift
   field lower : A
 
 open Lift public
