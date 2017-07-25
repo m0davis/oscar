@@ -179,7 +179,7 @@ module _ where
 
   infixr 5 _,_
   record Σ {𝔬} (𝔒 : Ø 𝔬) {𝔭} (𝔓 : 𝔒 → Ø 𝔭) : Ø 𝔬 ∙̂ 𝔭 where
-    constructor _,_
+    instance constructor _,_
     field
       π₀ : 𝔒
       π₁ : 𝔓 π₀
