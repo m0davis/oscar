@@ -69,19 +69,19 @@ Unifies₀⟦ 𝔄 ⟧ 𝔅̇ = Unifies₀ 𝔅̇
 ≡-Unifies₀ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
-  {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
-  ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-  → 𝓾nifies₀ ℭ 𝔄 ∅̂
+  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  → 𝓾nifies₀ 𝔅 𝔄 ∅̂
 ≡-Unifies₀ = Unifies₀ _≡_
 
 ≡-Unifies₀⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
-  {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
-  ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-  → 𝓾nifies₀ ℭ 𝔄 ∅̂
+  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  → 𝓾nifies₀ 𝔅 𝔄 ∅̂
 ≡-Unifies₀⟦ _ ⟧ = ≡-Unifies₀
 
 SymUnifies₀ : ∀
