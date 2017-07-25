@@ -18,21 +18,21 @@ import Oscar.Class.Properthing.ExtensionṖroperty
 module Oscar.Data.Unifies where
 
 𝓾nifies₀ : ∀
-  {𝔵} {𝔒 : Ø 𝔵}
-  {𝔭} (𝔓 : 𝔒 → Ø 𝔭)
-  {𝔯₁} (_↦₁_ : π̂² 𝔯₁ 𝔒)
-  𝔯₂
-  → Ø 𝔵 ∙̂ 𝔭 ∙̂ 𝔯₁ ∙̂ ↑̂ 𝔯₂
-𝓾nifies₀ 𝔓 _↦₁_ 𝔯₂ = ∀ {m} → 𝔓 m → 𝔓 m → Ṗroperty 𝔯₂ (m ↦₁_)
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
+  {𝔞} (𝔄 : π̂² 𝔞 𝔛)
+  𝔟̇
+  → Ø 𝔵 ∙̂ 𝔟 ∙̂ 𝔞 ∙̂ ↑̂ 𝔟̇
+𝓾nifies₀ 𝔅 𝔄 𝔟̇ = ∀ {m} → 𝔅 m → 𝔅 m → Ṗroperty 𝔟̇ (𝔄 m)
 
 Unifies₀ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} {𝔄 : π̂² 𝔞 𝔛}
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝒷̇} (𝔅̇ : ∀̇ π̂² 𝒷̇ 𝔅)
+  {𝔟̇} (𝔅̇ : ∀̇ π̂² 𝔟̇ 𝔅)
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
-  → 𝓾nifies₀ 𝔅 𝔄 𝒷̇
+  → 𝓾nifies₀ 𝔅 𝔄 𝔟̇
 Unifies₀ 𝔅̇ p q .π₀ x =
   let _⟿_ = 𝔅̇
       infix 4 _⟿_
@@ -42,8 +42,8 @@ Unifies₀ 𝔅̇ p q .π₀ x =
 module Surjcollation
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
-  (ℬ̇ : ∀ 𝒷̇ {𝔟} → (𝔛 → Ø 𝔟) → Ø 𝔵 ∙̂ 𝔟 ∙̂ ↑̂ 𝒷̇)
-  (𝔅̇ : ∀ {𝒷̇ 𝔟} {𝔅 : 𝔛 → Ø 𝔟} ⦃ _ : ℬ̇ 𝒷̇ 𝔅 ⦄ → ∀ {x} → 𝔅 x → 𝔅 x → Ø 𝒷̇)
+  (ℬ̇ : ∀ 𝔟̇ {𝔟} → (𝔛 → Ø 𝔟) → Ø 𝔵 ∙̂ 𝔟 ∙̂ ↑̂ 𝔟̇)
+  (𝔅̇ : ∀ {𝔟̇ 𝔟} {𝔅 : 𝔛 → Ø 𝔟} ⦃ _ : ℬ̇ 𝔟̇ 𝔅 ⦄ → ∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   {ℓ}
   (let ℭ : 𝔛 → Ø 𝔵 ∙̂ 𝔞 ∙̂ ↑̂ ℓ
@@ -70,12 +70,12 @@ SymUnifies₀ _↦₂_ = Unifies₀ _↦₂_
 Unifies₀⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
-  {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension ℭ) ⦄
-  ⦃ _ : 𝓢urjectivity 𝔄 (Extension ℭ) ⦄
-  {ℓ} (_≈_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ)
-  → 𝓾nifies₀ ℭ 𝔄 ℓ
-Unifies₀⟦ 𝔄 ⟧ _≈_ = Unifies₀ _≈_
+  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  {𝔟̇} (𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇)
+  → 𝓾nifies₀ 𝔅 𝔄 𝔟̇
+Unifies₀⟦ 𝔄 ⟧ 𝔅̇ = Unifies₀ 𝔅̇
 
 SymUnifies₀⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
