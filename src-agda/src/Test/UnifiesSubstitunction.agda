@@ -12,10 +12,10 @@ module Test.UnifiesSubstitunction {𝔭} (𝔓 : Ø 𝔭) where
   open Substitist 𝔓
 
   ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
-  ≡-Unifies₀-Term = ≡-Unifies₀
+  ≡-Unifies₀-Term = ≡-surjcollation
 
   ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty ∅̂ (Arrow Fin Term m)
-  ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
+  ≡-Unifies₀-Terms = λ x → ≡-surjcollation x
 
   ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ArrowExtensionṖroperty ∅̂ Fin Term _≡_ m
   ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
