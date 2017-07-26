@@ -142,11 +142,12 @@ module Surjextenscollation
   ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   where
 
-  infix 18 _∼_
-  _∼_ : ∀ {m} → 𝔅 m → 𝔅 m → ℭ m
-  s ∼ t =
+  infix 18 surjextenscollation
+  surjextenscollation : ∀ {m} → 𝔅 m → 𝔅 m → ℭ m
+  surjextenscollation s t =
     surjcollation⟦ 𝔄 / ∁ 𝔅̇ ⟧ s t , λ f≐g f◃s=f◃t →
       ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
+  syntax surjextenscollation p q = p ⟹ q
 
 ExtensionalUnifies : ∀
   {𝔵} {𝔛 : Ø 𝔵}
