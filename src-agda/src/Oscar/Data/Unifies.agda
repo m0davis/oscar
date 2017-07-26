@@ -150,22 +150,22 @@ module Surjextenscollation
 
 ExtensionalUnifies : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
+  {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
+  {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
+  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  (let _↦_ = Arrow 𝔄 𝔅)
-  {𝔠} {ℭ : 𝔛 → Ø 𝔠}
-  {ℓ₁} (_↦̇_ : ∀ {x y} → x ↦ y → x ↦ y → Ø ℓ₁)
-  {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
-  ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
-  ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
-  ⦃ _ : [𝓢urjectivity] _↦_ (Extension ℭ) ⦄
-  ⦃ _ : 𝓢urjectivity _↦_ (Extension ℭ) ⦄
-  ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
-  ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
-  → ∀ {m} → ℭ m → ℭ m → LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m
-ExtensionalUnifies _↦_ {_∼₂_ = _∼₂_} {m} s t =
-  surjcollation⟦ _ / ∁ _∼₂_ ⟧ s t , λ f≐g f◃s=f◃t →
-    ⟪ f≐g ⟫[ Pointwise _∼₂_ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise _∼₂_ ] s)
+  {𝔞̇} (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
+  {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
+  ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+  ⦃ _ : ∀ {y} → 𝓣ransitivity (𝔅̇ {y}) ⦄
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
+  ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
+  → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
+ExtensionalUnifies 𝔄̇ {𝔅̇ = 𝔅̇} {m} s t =
+  surjcollation⟦ _ / ∁ 𝔅̇ ⟧ s t , λ f≐g f◃s=f◃t →
+    ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
 
 ≡-ExtensionalUnifies : ∀
   {𝔵} {𝔛 : Ø 𝔵}
@@ -181,4 +181,4 @@ ExtensionalUnifies _↦_ {_∼₂_ = _∼₂_} {m} s t =
   ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   → ∀ {m} → ℭ m → ℭ m → ArrowExtensionṖroperty ℓ₂ 𝔄 𝔅 _≡_ m
-≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} (Pointwise _≡_) {_∼₂_ = _∼₂_} s t
+≡-ExtensionalUnifies {𝔄 = 𝔄} {𝔅 = 𝔅} {_∼₂_ = _∼₂_} s t = ExtensionalUnifies {𝔄₁ = 𝔄} {𝔄₂ = 𝔅} (Pointwise _≡_) {𝔅̇ = _∼₂_} s t
