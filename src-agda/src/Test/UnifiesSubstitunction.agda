@@ -18,7 +18,7 @@ module Test.UnifiesSubstitunction {𝔭} (𝔓 : Ø 𝔭) where
   ≡-Unifies₀-Terms = λ x → ≡-surjcollation x
 
   ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ArrowExtensionṖroperty ∅̂ Fin Term _≡_ m
-  ≡-ExtensionalUnifies-Term = ≡-surjextenscollation
+  ≡-ExtensionalUnifies-Term = ≡-surjextenscollation[ Substitunction ]
 
   ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → LeftExtensionṖroperty ∅̂ (Arrow Fin Term) (Pointwise Proposequality) m
   ≡-ExtensionalUnifies-Terms = surjextenscollation⟦ Pointwise _≡_ ⟧
