@@ -33,7 +33,7 @@ module _
   instance
 
     [𝓢ymmetrical]ExtensionalUnifies : ∀ {m} → [𝓢ymmetrical] (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
-    [𝓢ymmetrical]ExtensionalUnifies .[𝓢ymmetrical]._∼_ = ExtensionalUnifies _↦̇_
+    [𝓢ymmetrical]ExtensionalUnifies .[𝓢ymmetrical]._∼_ = surjextenscollation⟦ _↦̇_ ⟧
 
     𝓢ymmetricalExtensionalUnifies : ∀ {m} → 𝓢ymmetrical (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
     𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)

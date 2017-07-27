@@ -36,7 +36,7 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   infix 18 _∼⁰_ _∼¹_
   _∼⁰_ = ≡-surjcollation⟦ 𝑪 ⟧
-  _∼¹_ = ≡-ExtensionalUnifies
+  _∼¹_ = ≡-surjextenscollation
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = surjectextensivity c p

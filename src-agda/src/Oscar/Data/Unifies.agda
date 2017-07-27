@@ -146,12 +146,13 @@ module Surjextenscollation
       ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
   syntax surjextenscollation p q = p ⟹ q
 
-ExtensionalUnifies : ∀
+surjextenscollation⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
   {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
   (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
-  {𝔞̇} (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
+  {𝔞̇}
+    (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
   ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
@@ -161,16 +162,16 @@ ExtensionalUnifies : ∀
   ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
-ExtensionalUnifies 𝔄̇ {𝔅̇ = 𝔅̇} = S.surjextenscollation where
-  module S = Surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
+surjextenscollation⟦_⟧ 𝔄̇ {𝔅̇ = 𝔅̇} = Surjextenscollation.surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
 surjextenscollation⟦_/_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
   {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
-  (𝔄 : 𝔛 → 𝔛 → Ø 𝔞₁ ∙̂ 𝔞₂)
+    (𝔄 : 𝔛 → 𝔛 → Ø 𝔞₁ ∙̂ 𝔞₂)
   ⦃ _ : 𝔄 ≡ Arrow 𝔄₁ 𝔄₂ ⦄
-  {𝔞̇} (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
+  {𝔞̇}
+    (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
   ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
@@ -180,10 +181,9 @@ surjextenscollation⟦_/_⟧ : ∀
   ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
-surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = S.surjextenscollation where
-  module S = Surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
+surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = Surjextenscollation.surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
-≡-ExtensionalUnifies : ∀
+≡-surjextenscollation : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -197,4 +197,4 @@ surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = S.surjexte
   ⦃ _ : [𝓢urjextensionality] _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   ⦃ _ : 𝓢urjextensionality _↦_ (Pointwise _≡_) (Extension ℭ) (Pointwise _∼₂_) ⦄
   → ∀ {m} → ℭ m → ℭ m → LeftExtensionṖroperty ℓ₂ _↦_ (Pointwise _≡_) m
-≡-ExtensionalUnifies = ExtensionalUnifies (Pointwise _≡_)
+≡-surjextenscollation = surjextenscollation⟦ Pointwise _≡_ ⟧

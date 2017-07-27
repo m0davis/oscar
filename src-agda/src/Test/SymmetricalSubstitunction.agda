@@ -22,7 +22,7 @@ module Test.SymmetricalSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   _∼⁰_ = ≡-surjcollation⟦ 𝑪 ⟧ --  ≡-Unifies₀⟦ 𝑪 ⟧ -- FIXME gives a confusing error message
   -- _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧ -- FIXME gives a more useful error message
 
-  _∼¹_ = ≡-ExtensionalUnifies
+  _∼¹_ = ≡-surjextenscollation
 
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
