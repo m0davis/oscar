@@ -16,7 +16,9 @@ module Test.Surjcollation {𝔭} (𝔓 : Ø 𝔭) where
   open Substitunction 𝔓
 
   module 𝓢 = Surjcollation Substitunction (λ ℓ _ → Lift (ℓ ≡ ∅̂)) (λ {⦃ lift ∅ ⦄ → ∁ Proposequality} )
-  module 𝓢̇ = Surjextenscollation Substitunction Proposequality
+  module 𝓢̇ where
+    myop = surjextenscollation⟦ Substitunction / Proposextensequality ⟧
+    syntax myop p q = p ⟹ q
 
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : Term 𝓃) → 𝓈 𝓢.⟹ 𝓉 ≈ 𝓉 𝓢.⟹ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
