@@ -180,7 +180,7 @@ surjextenscollation⟦_/_⟧ : ∀
   ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
-surjextenscollation⟦_/_⟧ {𝔄₁ = 𝔄₁} {𝔄₂ = 𝔄₂} _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} {m} s t = s S.⟹ t where
+surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = S.surjextenscollation where
   module S = Surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
 ≡-ExtensionalUnifies : ∀
