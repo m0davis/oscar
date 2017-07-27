@@ -118,11 +118,12 @@ surjcollation⟦ 𝔄 ⟧ {𝔅̇ = 𝔅̇} = surjcollation⟦ 𝔄 / 𝔅̇ ⟧
   → 𝓼urjcollation ∅̂ 𝔄 𝔅
 ≡-surjcollation = ≡-surjcollation⟦_/_⟧ _ _
 
+-- A. and B.
 module Surjextenscollation
     {𝔵} {𝔛 : Ø 𝔵} {𝔞₁}
-  {𝔄₁ : 𝔛 → Ø 𝔞₁}
+    {𝔄₁ : 𝔛 → Ø 𝔞₁}
     {𝔞₂}
-  {𝔄₂ : 𝔛 → Ø 𝔞₂}
+    {𝔄₂ : 𝔛 → Ø 𝔞₂}
     (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
     {𝔞̇₂}
   (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇₂)
@@ -146,6 +147,7 @@ module Surjextenscollation
       ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
   syntax surjextenscollation p q = p ⟹ q
 
+-- A.
 surjextenscollation⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
@@ -164,6 +166,7 @@ surjextenscollation⟦_⟧ : ∀
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
 surjextenscollation⟦_⟧ 𝔄̇ {𝔅̇ = 𝔅̇} = Surjextenscollation.surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
+-- A and A.
 surjextenscollation⟦_/_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
@@ -183,7 +186,8 @@ surjextenscollation⟦_/_⟧ : ∀
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
 surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = Surjextenscollation.surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
-≡-surjextenscollation⟦_⟧ : ∀
+-- A
+≡-surjextenscollation[_] : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
   {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
@@ -199,8 +203,9 @@ surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = Surjextens
   ⦃ _ : [𝓢urjextensionality] 𝔄 (Pointwise _≡_) (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 (Pointwise _≡_) (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 (Pointwise _≡_) m
-≡-surjextenscollation⟦_⟧ 𝔄 ⦃ ∅ ⦄ {𝔅̇ = 𝔅̇} = surjextenscollation⟦ 𝔄 / Pointwise _≡_ ⟧
+≡-surjextenscollation[_] 𝔄 ⦃ ∅ ⦄ {𝔅̇ = 𝔅̇} = surjextenscollation⟦ 𝔄 / Pointwise _≡_ ⟧
 
+--
 ≡-surjextenscollation : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
