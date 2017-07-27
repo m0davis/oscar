@@ -161,7 +161,7 @@ ExtensionalUnifies : ∀
   ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
-ExtensionalUnifies {𝔄₁ = 𝔄₁} {𝔄₂ = 𝔄₂} 𝔄̇ {𝔅̇ = 𝔅̇} {m} s t = s S.⟹ t where
+ExtensionalUnifies 𝔄̇ {𝔅̇ = 𝔅̇} = S.surjextenscollation where
   module S = Surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
 surjextenscollation⟦_/_⟧ : ∀
