@@ -183,6 +183,24 @@ surjextenscollation⟦_/_⟧ : ∀
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
 surjextenscollation⟦_/_⟧ _ ⦃ ∅ ⦄ 𝔄̇ {𝔅̇ = 𝔅̇} = Surjextenscollation.surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
 
+≡-surjextenscollation⟦_⟧ : ∀
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
+  {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
+    (𝔄 : 𝔛 → 𝔛 → Ø 𝔞₁ ∙̂ 𝔞₂)
+  ⦃ _ : 𝔄 ≡ Arrow 𝔄₁ 𝔄₂ ⦄
+  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
+  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+  {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
+  ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+  ⦃ _ : ∀ {y} → 𝓣ransitivity (𝔅̇ {y}) ⦄
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : [𝓢urjextensionality] 𝔄 (Pointwise _≡_) (Extension 𝔅) (Pointwise 𝔅̇) ⦄
+  ⦃ _ : 𝓢urjextensionality 𝔄 (Pointwise _≡_) (Extension 𝔅) (Pointwise 𝔅̇) ⦄
+  → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 (Pointwise _≡_) m
+≡-surjextenscollation⟦_⟧ 𝔄 ⦃ ∅ ⦄ {𝔅̇ = 𝔅̇} = surjextenscollation⟦ 𝔄 / Pointwise _≡_ ⟧
+
 ≡-surjextenscollation : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
