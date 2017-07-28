@@ -86,11 +86,13 @@ module SurjcollationOperator
 
 surjcollation⟦_/_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} (𝔄 : π̂² 𝔞 𝔛)
+  {𝔞}
+ (𝔄 : π̂² 𝔞 𝔛)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
-  {𝔟̇} (𝔅̇ : Wrap (∀̇ π̂² 𝔟̇ 𝔅))
+  {𝔟̇}
+ (𝔅̇ : Wrap (∀̇ π̂² 𝔟̇ 𝔅))
   → 𝓼urjcollation 𝔟̇ 𝔄 𝔅
 surjcollation⟦_/_⟧ 𝔄 𝔅̇ = Surjcollation.surjcollation 𝔄 Constant (getConstant 𝔅̇)
 
@@ -107,7 +109,8 @@ module Surjcollation'
 
 surjcollation⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} (𝔄 : π̂² 𝔞 𝔛)
+  {𝔞}
+ (𝔄 : π̂² 𝔞 𝔛)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
@@ -117,8 +120,10 @@ surjcollation⟦ 𝔄 ⟧ {𝔅̇ = 𝔅̇} = surjcollation⟦ 𝔄 / 𝔅̇ ⟧
 
 ≡-surjcollation⟦_/_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} (𝔄 : π̂² 𝔞 𝔛)
-  {𝔟} (𝔅 : 𝔛 → Ø 𝔟)
+  {𝔞}
+ (𝔄 : π̂² 𝔞 𝔛)
+  {𝔟}
+ (𝔅 : 𝔛 → Ø 𝔟)
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
   → 𝓼urjcollation ∅̂ 𝔄 𝔅
@@ -126,7 +131,8 @@ surjcollation⟦ 𝔄 ⟧ {𝔅̇ = 𝔅̇} = surjcollation⟦ 𝔄 / 𝔅̇ ⟧
 
 ≡-surjcollation⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} (𝔄 : π̂² 𝔞 𝔛)
+  {𝔞}
+ (𝔄 : π̂² 𝔞 𝔛)
   {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
