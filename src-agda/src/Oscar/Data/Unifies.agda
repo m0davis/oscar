@@ -19,9 +19,9 @@ module Oscar.Data.Unifies where
 
 𝓼urjcollation : ∀
   {𝔵} {𝔛 : Ø 𝔵} {𝔟} {𝔞}
-  𝔟̇
-  (𝔄 : π̂² 𝔞 𝔛)
-  (𝔅 : 𝔛 → Ø 𝔟)
+ 𝔟̇
+ (𝔄 : π̂² 𝔞 𝔛)
+ (𝔅 : 𝔛 → Ø 𝔟)
   → Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔟̇
 𝓼urjcollation 𝔟̇ 𝔄 𝔅 = ∀ {m} → 𝔅 m → 𝔅 m → LeftṖroperty 𝔟̇ 𝔄 m
 
