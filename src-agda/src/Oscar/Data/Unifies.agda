@@ -95,6 +95,19 @@ surjcollation⟦_/_⟧ : ∀
   → 𝓼urjcollation 𝔟̇ 𝔄 𝔅
 surjcollation⟦_/_⟧ 𝔄 𝔅̇ = Surjcollation.surjcollation 𝔄 Constant (getConstant 𝔅̇)
 
+module Surjcollation'
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞} (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
+  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  {𝔟̇} {𝔅̇ : ∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇}
+  where
+  infix 18 surjcollation
+  surjcollation : 𝓼urjcollation 𝔟̇ 𝔄 𝔅
+  surjcollation = surjcollation⟦ 𝔄 / ∁ 𝔅̇ ⟧
+  syntax surjcollation p q = p ⟹ q
+
 surjcollation⟦_⟧ : ∀
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞} (𝔄 : π̂² 𝔞 𝔛)
@@ -160,6 +173,26 @@ module Surjextenscollation
     surjcollation⟦ 𝔄 / ∁ 𝔅̇ ⟧ s t , λ f≐g f◃s=f◃t →
       ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
   syntax surjextenscollation p q = p ⟹ q
+
+module Surjextenscollation'
+  {𝔵} {𝔛 : Ø 𝔵}
+  {𝔞₁} (𝔄₁ : 𝔛 → Ø 𝔞₁)
+  {𝔞₂} (𝔄₂ : 𝔛 → Ø 𝔞₂)
+  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
+  {𝔞̇}
+    (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
+  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+  {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
+  ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+  ⦃ _ : ∀ {y} → 𝓣ransitivity (𝔅̇ {y}) ⦄
+  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
+  ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
+  ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
+  where
+  surjextenscollation' : ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇ m
+  surjextenscollation' = Surjextenscollation.surjextenscollation 𝔄̇ (λ {y} → 𝔅̇ {y})
+  syntax surjextenscollation' p q = p ⟹ q
 
 -- A.
 surjextenscollation⟦_⟧ : ∀
