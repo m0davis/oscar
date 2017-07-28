@@ -73,7 +73,7 @@ module _
 
     [𝒫roperfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] S._⟹_ (_fork_ {n = n})
     [𝒫roperfact1].𝔅 [𝒫roperfact1]UnifiesSubstitunctionFork = _
-    [𝒫roperfact1]._∼_ [𝒫roperfact1]UnifiesSubstitunctionFork = S._⟹_
+    [𝒫roperfact1]._∼_ [𝒫roperfact1]UnifiesSubstitunctionFork = ≡-surjcollation⟦ Arrow Fin Term / Term ⟧
     [𝒫roperfact1].⌶Properthing [𝒫roperfact1]UnifiesSubstitunctionFork = !
     [𝒫roperfact1]._⊛_ [𝒫roperfact1]UnifiesSubstitunctionFork = _fork_
     [𝒫roperfact1].⌶CorrectProp [𝒫roperfact1]UnifiesSubstitunctionFork = !

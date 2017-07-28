@@ -67,8 +67,10 @@ module Surjcollation
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
   where
+
   surjcollation : 𝓼urjcollation 𝔟̇ 𝔄 𝔅
   surjcollation p q .π₀ x = x ◃ p ⟨𝔅̇⟩ x ◃ q
+
   infix 18 _⟹_
   _⟹_ = surjcollation
 
@@ -84,7 +86,7 @@ module SurjcollationOperator
   where
   open Surjcollation 𝔄 (λ 𝔟̇₁ x → Lift (𝔟̇₁ ≡ 𝔟̇)) (λ { {𝔅 = 𝔅'} ⦃ lift ∅ ⦄ → ∁ (λ {y} → 𝔅̇ {𝔅 = 𝔅'} {x = y})}) ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ public
 
-surjcollation⟦_/_⟧ : ∀
+module _
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞}
  (𝔄 : π̂² 𝔞 𝔛)
@@ -93,8 +95,8 @@ surjcollation⟦_/_⟧ : ∀
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
   {𝔟̇}
  (𝔅̇ : Wrap (∀̇ π̂² 𝔟̇ 𝔅))
-  → 𝓼urjcollation 𝔟̇ 𝔄 𝔅
-surjcollation⟦_/_⟧ 𝔄 𝔅̇ = Surjcollation.surjcollation 𝔄 Constant (getConstant 𝔅̇)
+  where
+  open Surjcollation 𝔄 Constant (getConstant 𝔅̇) ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ public using () renaming (surjcollation to surjcollation⟦_/_⟧)
 
 module Surjcollation'
   {𝔵} {𝔛 : Ø 𝔵}
@@ -107,18 +109,9 @@ module Surjcollation'
   where
   open Surjcollation 𝔄 Constant (getConstant (∁ (λ {x} → 𝔅̇ {x}))) public
 
-surjcollation⟦_⟧ : ∀
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : π̂² 𝔞 𝔛)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
-  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
-  {𝔟̇} {𝔅̇ : Wrap (∀̇ π̂² 𝔟̇ 𝔅)}
-  → 𝓼urjcollation 𝔟̇ 𝔄 𝔅
-surjcollation⟦ 𝔄 ⟧ {𝔅̇ = 𝔅̇} = surjcollation⟦ 𝔄 / 𝔅̇ ⟧
+open Surjcollation' public using () renaming (surjcollation to surjcollation⟦_⟧)
 
-≡-surjcollation⟦_/_⟧ : ∀
+module _
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞}
  (𝔄 : π̂² 𝔞 𝔛)
@@ -126,27 +119,22 @@ surjcollation⟦ 𝔄 ⟧ {𝔅̇ = 𝔅̇} = surjcollation⟦ 𝔄 / 𝔅̇ ⟧
  (𝔅 : 𝔛 → Ø 𝔟)
   ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
   ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
-  → 𝓼urjcollation ∅̂ 𝔄 𝔅
-≡-surjcollation⟦_/_⟧ 𝔄 𝔅 = surjcollation⟦ 𝔄 / ∁ Proposequality⟦ 𝔅 _ ⟧ ⟧
+  where
+  open Surjcollation' 𝔄 {𝔅 = 𝔅} {𝔅̇ = Proposequality} public using () renaming (surjcollation to ≡-surjcollation⟦_/_⟧)
 
-≡-surjcollation⟦_⟧ : ∀
+module _
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔞}
  (𝔄 : π̂² 𝔞 𝔛)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
-  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
-  → 𝓼urjcollation ∅̂ 𝔄 𝔅
-≡-surjcollation⟦ 𝔄 ⟧ {𝔅 = 𝔅} = ≡-surjcollation⟦ 𝔄 / 𝔅 ⟧
+  where
+  open SurjcollationOperator 𝔄 _≡_ public using () renaming (surjcollation to ≡-surjcollation⟦_⟧)
 
-≡-surjcollation : ∀
+module _
   {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞} {𝔄 : π̂² 𝔞 𝔛}
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  ⦃ _ : [𝓢urjectivity] 𝔄 (Extension 𝔅) ⦄
-  ⦃ _ : 𝓢urjectivity 𝔄 (Extension 𝔅) ⦄
-  → 𝓼urjcollation ∅̂ 𝔄 𝔅
-≡-surjcollation = ≡-surjcollation⟦_/_⟧ _ _
+  {𝔞}
+  {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
+  where
+  open SurjcollationOperator 𝔄 _≡_ public using () renaming (surjcollation to ≡-surjcollation)
 
 module Surjextenscollation
   {𝔵} {𝔛 : Ø 𝔵} {𝔞₁}
@@ -173,6 +161,7 @@ module Surjextenscollation
   surjextenscollation s t =
     surjcollation⟦ 𝔄 / ∁ 𝔅̇ ⟧ s t , λ f≐g f◃s=f◃t →
       ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
+
   infix 18 _⟹_
   _⟹_ = surjextenscollation
 
