@@ -238,4 +238,4 @@ module SurjextenscollationOperator
   ⦃ _ : [𝓢urjextensionality] 𝔄 (Pointwise _≡_) (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 (Pointwise _≡_) (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   → ∀ {m} → 𝔅 m → 𝔅 m → LeftExtensionṖroperty 𝔟̇ 𝔄 (Pointwise _≡_) m
-≡-surjextenscollation[_] 𝔄 ⦃ ∅ ⦄ {𝔅̇ = 𝔅̇} = surjextenscollation⟦ 𝔄 / Pointwise _≡_ ⟧
+≡-surjextenscollation[_] 𝔄 ⦃ ∅ ⦄ = SurjextenscollationOperator.surjextenscollationOperator 𝔄 (Pointwise _≡_)
