@@ -18,11 +18,11 @@ module Test.SymmetricalSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Substitunction 𝔓 using () renaming (
     Substitunction to 𝑪)
 
-  infix 18 _∼⁰_ _∼¹_
+  infix 18 _∼⁰_
   _∼⁰_ = ≡-surjcollation⟦ 𝑪 ⟧ --  ≡-Unifies₀⟦ 𝑪 ⟧ -- FIXME gives a confusing error message
   -- _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧ -- FIXME gives a more useful error message
 
-  _∼¹_ = ≡-surjextenscollation[ 𝑪 ] ⦃ ∅ ⦄
+  open SurjextenscollationOperator 𝑪 _≡̇_ renaming (_⟹_ to _∼¹_)
 
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
