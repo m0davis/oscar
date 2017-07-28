@@ -17,8 +17,6 @@ module Test.Surjcollation {𝔭} (𝔓 : Ø 𝔭) where
 
   module 𝓢 = SurjcollationOperator Substitunction Proposequality
   module 𝓢̇ = SurjextenscollationOperator Substitunction Proposextensequality
---  module 𝓢̇' = Surjextenscollation' _ _ (λ {x} {y} → Proposextensequality⟦ (λ (_ : Fin x) → Term y) ⟧)
---  module 𝓢̇' = Surjextenscollation' _ _ (λ {x} {y} → Pointwise {𝔄 = Fin x} Proposequality⟦ Term y ⟧)
   module 𝓢̇' = Surjextenscollation' Fin Term _≡̇_
 
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : Term 𝓃) → 𝓈 𝓢.⟹ 𝓉 ≈ 𝓉 𝓢.⟹ 𝓈
