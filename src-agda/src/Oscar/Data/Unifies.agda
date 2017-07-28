@@ -1,19 +1,13 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
+open import Oscar.Class.Surjectivity
+open import Oscar.Class.Surjection
+open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Surjextensionality
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Transitivity
+import Oscar.Class.Surjectextensivity.SurjectivityExtension
 open import Oscar.Data
-import Oscar.Class.Surjection
-import Oscar.Property.Setoid.ṖropertyEquivalence
-import Oscar.Data.ExtensionṖroperty
-import Oscar.Class.Surjection
-import Oscar.Data.ExtensionṖroperty
-import Oscar.Property.Setoid.ṖropertyEquivalence
-import Oscar.Class.Properthing.Ṗroperty
-open import Oscar.Data.ProductIndexEquivalence
-import Oscar.Property.Setoid.ProductIndexEquivalence
-import Oscar.Data.ExtensionṖroperty
-import Oscar.Data.ProperlyExtensionNothing
-import Oscar.Class.Properthing.ExtensionṖroperty
 
 module Oscar.Data.Unifies where
 
