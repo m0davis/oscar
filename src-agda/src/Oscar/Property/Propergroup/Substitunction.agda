@@ -21,7 +21,7 @@ import Oscar.Class.IsDecidable.¶
 import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
 import Oscar.Class.Amgu.Term∃SubstitistMaybe
 import Oscar.Class.PropId
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Data.ExtensionṖroperty
 open import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Class.Properthing.Ṗroperty

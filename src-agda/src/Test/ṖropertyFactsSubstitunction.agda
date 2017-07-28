@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 open import Oscar.Property
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.Ṗroperty

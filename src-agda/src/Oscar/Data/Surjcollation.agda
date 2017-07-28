@@ -9,7 +9,7 @@ open import Oscar.Class.Transitivity
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
 open import Oscar.Data
 
-module Oscar.Data.Unifies where
+module Oscar.Data.Surjcollation where
 
 Constant' : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔟} {𝔟̇} {_ : 𝔛 → Ø 𝔟} → ∀ 𝔟̇′ {𝔟′} → (𝔛 → Ø 𝔟′) → Ø 𝔵 ∙̂ 𝔟′ ∙̂ ↑̂ 𝔟̇′
 Constant' {𝔟 = 𝔟} {𝔟̇} {𝔅} 𝔟̇′ {𝔟′} 𝔅′ = Lift (Σ ((𝔟̇′ ≡ 𝔟̇) × (𝔟′ ≡ 𝔟)) λ {(∅ , ∅) → 𝔅′ ≡ 𝔅})

@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Data
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Setoid.Proposequality
 
