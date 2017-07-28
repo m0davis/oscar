@@ -7,7 +7,7 @@ open import Oscar.Class.Symmetry
 open import Oscar.Class.Symmetrical
 open import Oscar.Class.Transitivity
 open import Oscar.Data.ProductIndexEquivalence
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.Surjection
 import Oscar.Data.ExtensionṖroperty
@@ -33,7 +33,7 @@ module _
   instance
 
     [𝓢ymmetrical]ExtensionalUnifies : ∀ {m} → [𝓢ymmetrical] (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
-    [𝓢ymmetrical]ExtensionalUnifies .[𝓢ymmetrical]._∼_ = ExtensionalUnifies _↦̇_
+    [𝓢ymmetrical]ExtensionalUnifies .[𝓢ymmetrical]._∼_ = surjextenscollation⟦ _↦̇_ ⟧
 
     𝓢ymmetricalExtensionalUnifies : ∀ {m} → 𝓢ymmetrical (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
     𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)

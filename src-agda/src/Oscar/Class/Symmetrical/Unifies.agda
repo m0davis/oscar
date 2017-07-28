@@ -4,7 +4,7 @@ open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Symmetrical
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Surjection
 
@@ -23,7 +23,7 @@ module _
   instance
 
     [𝓢ymmetrical]Unifies₀ : ∀ {m} → [𝓢ymmetrical] (ℭ m) (Ṗroperty ℓ (𝔄 m)) _≈_
-    [𝓢ymmetrical]Unifies₀ .[𝓢ymmetrical]._∼_ = Unifies₀⟦ _ ⟧ _≈'_
+    [𝓢ymmetrical]Unifies₀ .[𝓢ymmetrical]._∼_ = surjcollation⟦ _ / ∁ _≈'_ ⟧
 
     𝓢ymmetricalUnifies₀ : ∀ {m} → 𝓢ymmetrical (ℭ m) (Ṗroperty ℓ (𝔄 m)) _≈_
     𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry

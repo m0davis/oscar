@@ -21,7 +21,7 @@ import Oscar.Class.IsDecidable.¶
 import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
 import Oscar.Class.Amgu.Term∃SubstitistMaybe
 import Oscar.Class.PropId
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Data.ExtensionṖroperty
 open import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Class.Properthing.Ṗroperty
@@ -66,26 +66,29 @@ module _
   where
   open Term 𝔓
 
+  module S = SurjcollationOperator (Arrow Fin Term) _≡_
+  module Ṡ = SurjextenscollationOperator (Arrow Fin Term) _≡̇_
+
   instance
 
-    [𝒫roperfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+    [𝒫roperfact1]UnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] S._⟹_ (_fork_ {n = n})
     [𝒫roperfact1].𝔅 [𝒫roperfact1]UnifiesSubstitunctionFork = _
-    [𝒫roperfact1]._∼_ [𝒫roperfact1]UnifiesSubstitunctionFork = ≡-Unifies₀⟦ Arrow Fin Term ⟧
+    [𝒫roperfact1]._∼_ [𝒫roperfact1]UnifiesSubstitunctionFork = ≡-surjcollation⟦ Arrow Fin Term / Term ⟧
     [𝒫roperfact1].⌶Properthing [𝒫roperfact1]UnifiesSubstitunctionFork = !
     [𝒫roperfact1]._⊛_ [𝒫roperfact1]UnifiesSubstitunctionFork = _fork_
     [𝒫roperfact1].⌶CorrectProp [𝒫roperfact1]UnifiesSubstitunctionFork = !
 
-    [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+    [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork : ∀ {n} → [𝓟roperfact1] surjextenscollation⟦ Arrow Fin Term / _≡̇_ ⟧ (_fork_ {n = n})
     [𝒫roperfact1].𝔅 [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = _
-    [𝒫roperfact1]._∼_ [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = ≡-ExtensionalUnifies {𝔄 = Fin}
+    [𝒫roperfact1]._∼_ [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = ≡-surjextenscollation[ Arrow Fin Term ] -- Ṡ._⟹_
     [𝒫roperfact1].⌶Properthing [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = !
     [𝒫roperfact1]._⊛_ [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = _fork_
     [𝒫roperfact1].⌶CorrectProp [𝒫roperfact1]ExtensionalUnifiesSubstitunctionFork = !
 
-    𝒫roperfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 (≡-Unifies₀⟦ Arrow Fin Term ⟧) (_fork_ {n = n})
+    𝒫roperfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 S._⟹_ (_fork_ {n = n})
     𝒫roperfact1.properfact1 𝒫roperfact1UnifiesSubstitunctionFork _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 (≡-ExtensionalUnifies {𝔄 = Fin}) (_fork_ {n = n})
+    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 Ṡ._⟹_ (_fork_ {n = n})
     𝒫roperfact1.properfact1 𝒫roperfact1ExtensionalUnifiesSubstitunctionFork _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   instance

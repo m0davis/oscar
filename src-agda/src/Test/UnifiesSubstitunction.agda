@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Data
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Setoid.Proposequality
 
@@ -12,13 +12,13 @@ module Test.UnifiesSubstitunction {𝔭} (𝔓 : Ø 𝔭) where
   open Substitist 𝔓
 
   ≡-Unifies₀-Term : ∀ {m} → Term m → Term m → Ṗroperty ∅̂ (Arrow Fin Term m)
-  ≡-Unifies₀-Term = ≡-Unifies₀
+  ≡-Unifies₀-Term = ≡-surjcollation
 
   ≡-Unifies₀-Terms : ∀ {N m} → Terms N m → Terms N m → Ṗroperty ∅̂ (Arrow Fin Term m)
-  ≡-Unifies₀-Terms = λ x → ≡-Unifies₀ x
+  ≡-Unifies₀-Terms = λ x → ≡-surjcollation x
 
   ≡-ExtensionalUnifies-Term : ∀ {m} → Term m → Term m → ArrowExtensionṖroperty ∅̂ Fin Term _≡_ m
-  ≡-ExtensionalUnifies-Term = ≡-ExtensionalUnifies
+  ≡-ExtensionalUnifies-Term = SurjextenscollationOperator.surjextenscollation Substitunction _≡̇_
 
   ≡-ExtensionalUnifies-Terms : ∀ {N m} → Terms N m → Terms N m → LeftExtensionṖroperty ∅̂ (Arrow Fin Term) (Pointwise Proposequality) m
-  ≡-ExtensionalUnifies-Terms = ExtensionalUnifies (Pointwise _≡_)
+  ≡-ExtensionalUnifies-Terms = surjextenscollation⟦ Pointwise _≡_ ⟧

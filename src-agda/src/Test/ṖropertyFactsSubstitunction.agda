@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Data
 open import Oscar.Property
-open import Oscar.Data.Unifies
+open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.Ṗroperty
@@ -34,9 +34,9 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
 
   𝑷⁰ = LeftṖroperty ℓ 𝑪
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
-  infix 18 _∼⁰_ _∼¹_
-  _∼⁰_ = ≡-Unifies₀⟦ 𝑪 ⟧
-  _∼¹_ = ≡-ExtensionalUnifies
+  infix 18 _∼⁰_
+  _∼⁰_ = ≡-surjcollation⟦ 𝑪 ⟧
+  open SurjextenscollationOperator 𝑪 _≡̇_ renaming (_⟹_ to _∼¹_)
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = surjectextensivity c p

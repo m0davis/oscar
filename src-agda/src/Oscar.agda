@@ -1,7 +1,3 @@
--- the latest developments are tested here
-{-# OPTIONS --postfix-projections #-}
-{-# OPTIONS --show-implicit #-}
---{-# OPTIONS -v30 #-}
 
 module Oscar where
 
