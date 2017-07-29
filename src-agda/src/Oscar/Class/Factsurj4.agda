@@ -1,9 +1,5 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.HasEquivalence
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Surjectextensivity
-open import Oscar.Data
 
 module Oscar.Class.Factsurj4 where
 
