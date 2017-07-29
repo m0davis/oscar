@@ -45,30 +45,37 @@ module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   module 𝓢 = SurjcollationOperator 𝑪 _≡_
   module 𝓢̇ = SurjextenscollationOperator 𝑪 _≡̇_
 
+  -- postulated instances from Oscar.Property.Propergroup.Substitunction
   postulate
-    instance _ : [𝓢urjectextenscongruity] 𝑪 𝑷⁰ _≈_
-    instance _ : 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
-    instance _ : [𝓢urjectextenscongruity] 𝑪 𝑷¹ _≈_
-    instance _ : 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
-    instance _ : ∀ {n} → [𝓟roperfact1] 𝓢._⟹_ (_⊛_ {n = n})
-    instance _ : ∀ {n} → [𝓟roperfact1] 𝓢̇._⟹_ (_⊛_ {n = n})
-    instance _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
-    instance _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
-    instance _ : [𝓕actsurj3] 𝑷⁰ 𝑪 𝔭
-    instance _ : 𝓕actsurj3 𝑷⁰ 𝑪
-    instance _ : [𝓕actsurj3] 𝑷¹ 𝑪 𝔭
-    instance _ : 𝓕actsurj3 𝑷¹ 𝑪
+
+    instance
+
+      _ : [𝓢urjectextenscongruity] 𝑪 𝑷⁰ _≈_
+      _ : 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
+      _ : [𝓢urjectextenscongruity] 𝑪 𝑷¹ _≈_
+      _ : 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+
+      _ : ∀ {n} → [𝓟roperfact1] 𝓢._⟹_ (_⊛_ {n = n})
+      _ : ∀ {n} → [𝓟roperfact1] 𝓢̇._⟹_ (_⊛_ {n = n})
+      _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
+      _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
+
+      _ : [𝓕actsurj3] 𝑷⁰ 𝑪 𝔭
+      _ : 𝓕actsurj3 𝑷⁰ 𝑪
+      _ : [𝓕actsurj3] 𝑷¹ 𝑪 𝔭
+      _ : 𝓕actsurj3 𝑷¹ 𝑪
 
   instance _ : [𝓕actsurj4] 𝑷⁰ 𝑪 Nothing
            _ = ∁ surjectextensivity
-  postulate
-    instance _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
+  postulate instance _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
   instance _ : [𝓕actsurj4] 𝑷¹ 𝑪 Nothing
            _ = ∁ surjectextensivity
+  postulate instance _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
+
   postulate
-    instance _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
-    instance _ : [𝓕actsurj6] 𝑷¹ 𝑪 _≈_ _≈_
-    instance _ : 𝓕actsurj6 𝑷¹ 𝑪 _≈_ _≈_
+    instance
+      _ : [𝓕actsurj6] 𝑷¹ 𝑪 _≈_ _≈_
+      _ : 𝓕actsurj6 𝑷¹ 𝑪 _≈_ _≈_
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = surjectextensivity c p
