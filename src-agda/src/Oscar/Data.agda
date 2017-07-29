@@ -7,14 +7,7 @@ open import Oscar.Data.ṖropertyEquivalence public
 open import Oscar.Data.¶ public
 open import Oscar.Data.List public
 open import Oscar.Data.Fin public
-
-module _ where
-
-  data ⟨_⟩¶⟨≤_⟩ {𝔭} (𝔓 : ¶ → Ø 𝔭) : ¶ → Ø 𝔭 where
-    ∅ : ⟨ 𝔓 ⟩¶⟨≤ ∅ ⟩
-    _,_ : ∀ ..{n} → 𝔓 n → ⟨ 𝔓 ⟩¶⟨≤ n ⟩ → ⟨ 𝔓 ⟩¶⟨≤ ↑ n ⟩
-
-  Vec⟨_⟩ = ⟨_⟩¶⟨≤_⟩
+open import Oscar.Data.Vec public
 
 {-
 module _ where
