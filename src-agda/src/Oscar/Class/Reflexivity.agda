@@ -9,6 +9,7 @@ module _
   where
   𝓻eflexivity = ∀ {x} → x ∼ x
   record 𝓡eflexivity : Ø 𝔬 ∙̂ 𝔯 where
+    constructor ∁
     field
       reflexivity : 𝓻eflexivity
 
