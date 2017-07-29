@@ -18,6 +18,7 @@ import Test.EquivalenceExtensionṖroperty
 import Test.Symmetrical
 import Test.𝓢urjectivityWithOverlapping𝓢urjection
 import Test.ṖropertyFactsSubstitunction
+import Test.ṖropertyFacts
 import Test.SymmetricalSubstitunction
 import Test.Surjcollation
 import Test.SubstitunctionPropId
