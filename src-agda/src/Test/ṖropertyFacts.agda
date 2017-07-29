@@ -9,10 +9,7 @@ open import Oscar.Class.Properthing
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Symmetrical
-open import Oscar.Data.Proposequality
-open import Oscar.Data.Substitunction
 open import Oscar.Data.Surjcollation
-open import Oscar.Data.Term
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
@@ -25,13 +22,17 @@ import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
+
+-- FIXME remove these dependencies
+open import Oscar.Data.Proposequality
+open import Oscar.Data.Substitunction
+open import Oscar.Data.Term
 import Oscar.Class.[ExtensibleType].Proposequality
+import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Propergroup.Substitunction
-import Oscar.Property.Setoid.Proposequality
 
 module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
-  -- FIXME generalise, removing dependency on Substitunction datatype
   open Term 𝔓 using () renaming (
     Term to 𝑩;
     Terms to 𝑩';
