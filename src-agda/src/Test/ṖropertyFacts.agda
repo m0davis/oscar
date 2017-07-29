@@ -15,6 +15,7 @@ open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
+open import Oscar.Class.[ExtensibleType]
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
@@ -31,7 +32,6 @@ import Oscar.Class.Surjection
 
 -- FIXME remove these dependencies
 open import Oscar.Data.Proposequality
-import Oscar.Class.[ExtensibleType].Proposequality
 
 module Test.ṖropertyFacts where
 
@@ -89,6 +89,10 @@ module Test.ṖropertyFacts where
   postulate
     instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓢ymmetry Proposequality⟦ 𝔒 ⟧
     instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓣ransitivity Proposequality⟦ 𝔒 ⟧
+
+  -- postulated instances from Oscar.Class.[ExtensibleType].Proposequality
+  postulate
+    instance _ : ∀ {a} {b} {A : Set a} {B : A → Set b} → [ExtensibleType] (λ {w} → Proposequality⟦ B w ⟧)
 
   -- postulated instances from Oscar.Property.Propergroup.Substitunction
   postulate
