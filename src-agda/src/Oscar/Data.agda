@@ -11,14 +11,7 @@ open import Oscar.Data.Vec public
 open import Oscar.Data.Descender public
 open import Oscar.Data.𝟘 public
 open import Oscar.Data.𝟙 public
-
-module _ where
-
-  open import Agda.Builtin.Bool public
-    using ()
-    renaming (Bool to 𝟚)
-    renaming (false to ∅)
-    renaming (true to ∅∅)
+open import Oscar.Data.𝟚 public
 
 module _ where
 
