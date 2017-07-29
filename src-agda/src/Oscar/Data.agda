@@ -6,16 +6,7 @@ open import Oscar.Data.Maybe public
 open import Oscar.Data.ṖropertyEquivalence public
 open import Oscar.Data.¶ public
 open import Oscar.Data.List public
-
-module _ where
-
-  data ¶⟨<_⟩ : ¶ → Ø₀ where
-    ∅ : ∀ ..{n} → ¶⟨< ↑ n ⟩
-    ↑_ : ∀ ..{n} → ¶⟨< n ⟩ → ¶⟨< ↑ n ⟩
-
-  Fin = ¶⟨<_⟩
-
-  module Fin = ¶⟨<_⟩
+open import Oscar.Data.Fin public
 
 module _ where
 
