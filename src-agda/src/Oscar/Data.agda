@@ -16,9 +16,4 @@ open import Oscar.Data.Proposequality public
 open import Oscar.Data.Term public
 open import Oscar.Data.Substitunction public
 open import Oscar.Data.Substitist public
-
-module _ where
-
-  data Decidable {a} (A : Ø a) : Ø a where
-    ↑_ : A → Decidable A
-    ↓_ : ¬ A → Decidable A
+open import Oscar.Data.Decidable public
