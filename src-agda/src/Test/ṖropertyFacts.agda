@@ -16,7 +16,6 @@ open import Oscar.Class.Transitivity
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
-import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
@@ -34,6 +33,7 @@ open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Setoid.Proposequality
+import Oscar.Class.HasEquivalence.Substitunction
 
 module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
