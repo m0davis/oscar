@@ -10,9 +10,9 @@ open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Symmetrical
 open import Oscar.Data.Proposequality
-open import Oscar.Data.Term
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Term
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
