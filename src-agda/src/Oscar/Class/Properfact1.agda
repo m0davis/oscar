@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class.Properthing
 open import Oscar.Class.HasEquivalence
-open import Oscar.Data
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.Properfact1 where
 

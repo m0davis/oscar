@@ -7,7 +7,7 @@ open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
-open import Oscar.Data
+open import Oscar.Data.Proposequality
 
 module Oscar.Data.Surjcollation where
 

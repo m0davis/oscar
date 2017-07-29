@@ -32,7 +32,7 @@ module _ where
   ∙[]-syntax = transitivity[_]
   syntax ∙[]-syntax _⊸_ f g = g ∙[ _⊸_ ] f
 
-  open import Oscar.Data
+  open import Oscar.Data.Proposequality
 
   ≡̇-transitivity : ∀
     {𝔬} {𝔒 : Ø 𝔬}

@@ -1,7 +1,6 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.Surjectivity
-open import Oscar.Data
 
 module Oscar.Class.Surjectivity.ExtensionLeftṖroperty where
 

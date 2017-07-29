@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjectextensivity
-open import Oscar.Data
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.Factsurj3 where
 

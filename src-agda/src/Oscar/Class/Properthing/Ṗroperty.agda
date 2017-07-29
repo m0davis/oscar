@@ -1,7 +1,8 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Data.𝟘
+open import Oscar.Data.𝟙
 import Oscar.Class.HasEquivalence.Ṗroperty
 
 module Oscar.Class.Properthing.Ṗroperty where

@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.Surjectivity
-open import Oscar.Data
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality where
 
