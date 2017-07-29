@@ -14,19 +14,7 @@ open import Oscar.Data.𝟙 public
 open import Oscar.Data.𝟚 public
 open import Oscar.Data.Proposequality public
 open import Oscar.Data.Term public
-
-module Substitunction {𝔭} (𝔓 : Ø 𝔭) where
-
-  open Term 𝔓
-
-  Substitunction : ¶ → ¶ → Ø 𝔭
-  Substitunction m n = ¶⟨< m ⟩ → Term n
-
-module SubstitunctionOperator {𝔭} (𝔓 : Ø 𝔭) where
-
-  open Substitunction 𝔓
-
-  _⊸_ = Substitunction
+open import Oscar.Data.Substitunction public
 
 module Substitist {𝔭} (𝔓 : Ø 𝔭) where
 
