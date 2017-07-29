@@ -1,3 +1,4 @@
+
 open import Oscar.Prelude
 open import Oscar.Class.Category
 open import Oscar.Class.Congruity
