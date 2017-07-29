@@ -5,16 +5,7 @@ open import Oscar.Prelude
 open import Oscar.Data.Maybe public
 open import Oscar.Data.ṖropertyEquivalence public
 open import Oscar.Data.¶ public
-
-module _ where
-
-  open import Agda.Builtin.List public
-    using ()
-    renaming ([] to ∅)
-    renaming (_∷_ to _,_)
-  ⟨_⟩¶ = Agda.Builtin.List.List
-
-  List⟨_⟩ = ⟨_⟩¶
+open import Oscar.Data.List public
 
 module _ where
 
