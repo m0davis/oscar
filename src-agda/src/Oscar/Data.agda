@@ -13,19 +13,7 @@ open import Oscar.Data.𝟘 public
 open import Oscar.Data.𝟙 public
 open import Oscar.Data.𝟚 public
 open import Oscar.Data.Proposequality public
-
-module Term {𝔭} (𝔓 : Ø 𝔭) where
-
-  mutual
-
-    Terms : ¶ → ¶ → Ø 𝔭
-    Terms N n = ⟨ Term n ∞ ⟩¶⟨≤ N ⟩
-
-    data Term (n : ¶) : Ø 𝔭 where
-      i : (x : ¶⟨< n ⟩) → Term n
-      leaf : Term n
-      _fork_ : (s t : Term n) → Term n
-      function : 𝔓 → ∀ {N} → Terms N n → Term n
+open import Oscar.Data.Term public
 
 module Substitunction {𝔭} (𝔓 : Ø 𝔭) where
 
