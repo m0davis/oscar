@@ -29,20 +29,21 @@ import Oscar.Class.Surjection
 
 -- FIXME remove these dependencies
 open import Oscar.Data.Proposequality
-open import Oscar.Data.Substitunction
-open import Oscar.Data.Term
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 
 module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
-  open Term 𝔓 using () renaming (
-    Term to 𝑩;
-    Terms to 𝑩';
-    i to 𝒖;
-    _fork_ to _⊛_)
-  open Substitunction 𝔓 using () renaming (
-    Substitunction to 𝑪)
+  open import Oscar.Data.¶
+  postulate
+    𝑩 : ¶ → Ø 𝔭
+    𝑩' : ¶ → ¶ → Ø 𝔭
+    𝑪₀ : ¶ → Ø ∅̂
+    𝑪₁ : ¶ → Ø 𝔭
+  𝑪 = Arrow 𝑪₀ 𝑩 -- FIXME why not 𝑪₁? error in 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_; see Oscar.Class.Surjectivity.ExtensionṖroperty
+  postulate
+    𝒖 : ∀ {n} → 𝑪 n n
+    _⊛_ : ∀ {n} → 𝑩 n → 𝑩 n → 𝑩 n
 
   -- instances from Oscar.Class.HasEquivalence.Substitunction
   instance _ : ∀ {x y} → HasEquivalence (𝑪 x y) _
