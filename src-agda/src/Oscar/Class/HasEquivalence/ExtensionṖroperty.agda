@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
+open import Oscar.Class.HasEquivalence
 open import Oscar.Data.ProductIndexEquivalence
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Property.Setoid.ProductIndexEquivalence

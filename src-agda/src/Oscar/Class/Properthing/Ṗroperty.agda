@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
+open import Oscar.Class.Properthing
 open import Oscar.Data.𝟘
 open import Oscar.Data.𝟙
 import Oscar.Class.HasEquivalence.Ṗroperty

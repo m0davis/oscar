@@ -1,9 +1,8 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Properthing
+open import Oscar.Data.𝟙
 open import Oscar.Data.ProperlyExtensionNothing
-import Oscar.Data.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 open import Oscar.Data.ProductIndexEquivalence
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
