@@ -10,13 +10,7 @@ open import Oscar.Data.Fin public
 open import Oscar.Data.Vec public
 open import Oscar.Data.Descender public
 open import Oscar.Data.𝟘 public
-
-module _ where
-
-  open import Agda.Builtin.Unit public
-    using ()
-    renaming (⊤ to 𝟙)
-    renaming (tt to ∅)
+open import Oscar.Data.𝟙 public
 
 module _ where
 
