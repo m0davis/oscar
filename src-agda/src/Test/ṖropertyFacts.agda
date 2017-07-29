@@ -33,7 +33,7 @@ open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Setoid.Proposequality
-import Oscar.Class.HasEquivalence.Substitunction
+import Oscar.Property.Setoid.Proposextensequality
 
 module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
@@ -43,6 +43,10 @@ module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
     _fork_ to _⊛_)
   open Substitunction 𝔓 using () renaming (
     Substitunction to 𝑪)
+
+  -- instances from Oscar.Class.HasEquivalence.Substitunction
+  instance _ : ∀ {x y} → HasEquivalence (𝑪 x y) _
+           _ = ∁ Proposextensequality
 
   𝑷⁰ = LeftṖroperty ℓ 𝑪
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
