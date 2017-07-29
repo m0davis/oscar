@@ -1,7 +1,8 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.HasEquivalence
+open import Oscar.Data.Substitunction
+open import Oscar.Data.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 
 module Oscar.Class.HasEquivalence.Substitunction where

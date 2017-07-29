@@ -1,7 +1,20 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Congruity
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Transitivity
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Transassociativity
+open import Oscar.Class.Transleftidentity
+open import Oscar.Class.Transrightidentity
+open import Oscar.Class.IsPrecategory
+open import Oscar.Class.IsCategory
+open import Oscar.Class.Precategory
+open import Oscar.Class.Category
+open import Oscar.Data.¶
+open import Oscar.Data.Descender
+open import Oscar.Data.Proposequality
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Transextensionality.Proposequality

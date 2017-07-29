@@ -1,6 +1,5 @@
 
 open import Oscar.Prelude
-open import Oscar.Data
 
 module Oscar.Class.Amgu where
 

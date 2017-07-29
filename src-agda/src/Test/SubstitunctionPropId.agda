@@ -1,8 +1,11 @@
 
 open import Oscar.Prelude
-open import Oscar.Data
+open import Oscar.Data.Proposequality
+open import Oscar.Data.Substitunction
 import Oscar.Class.PropId
-open import Oscar.Class
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Transitivity
+open import Oscar.Class.PropId
 open import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Setoid.Proposextensequality
 

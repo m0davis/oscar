@@ -1,6 +1,6 @@
 
 open import Oscar.Class.Congruity
-open import Oscar.Data
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.Congruity.Proposextensequality where
 

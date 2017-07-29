@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Property
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Symmetrical
 import Oscar.Class.Symmetrical.Symmetry
 
 module Test.Symmetrical where

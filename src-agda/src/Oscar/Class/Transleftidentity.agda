@@ -36,7 +36,7 @@ module _ where
 
 module _ where
 
-  open import Oscar.Data
+  open import Oscar.Data.Proposequality
 
   module _
     {𝔬} {𝔒 : Ø 𝔬}

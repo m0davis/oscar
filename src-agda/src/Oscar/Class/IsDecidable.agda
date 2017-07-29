@@ -1,6 +1,7 @@
 
 open import Oscar.Prelude
-open import Oscar.Data
+open import Oscar.Data.Decidable
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.IsDecidable where
 

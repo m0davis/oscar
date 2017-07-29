@@ -2,8 +2,9 @@
 module Test.Transassociativity where
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Transitivity
+open import Oscar.Class.Transassociativity
+open import Oscar.Data.Proposequality
 
 test-transassociativity-≡ : ∀
   {𝔬} {𝔒 : Ø 𝔬}

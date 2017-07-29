@@ -1,7 +1,11 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Transitivity
+open import Oscar.Class.IsEquivalence
+open import Oscar.Class.Setoid
+open import Oscar.Data.Proposequality
 
 module Oscar.Property.Setoid.Proposextensequality where
 

@@ -1,7 +1,21 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Amgu
+open import Oscar.Class.Thickandthin
+open import Oscar.Class.IsDecidable
+open import Oscar.Class.Bind
+open import Oscar.Class.Fmap
+open import Oscar.Class.Surjectivity
+open import Oscar.Data.¶
+open import Oscar.Data.Descender
+open import Oscar.Data.Substitunction
+open import Oscar.Data.Term
+open import Oscar.Data.Substitist
+open import Oscar.Data.Fin
+open import Oscar.Data.Maybe
+open import Oscar.Data.Decidable
+open import Oscar.Data.Proposequality
+open import Oscar.Data.Vec
 open import Oscar.Property.Functor.SubstitistProposequalitySubstitunctionProposextensequality
 import Oscar.Property.Thickandthin.FinFinProposequalityMaybeProposequality
 import Oscar.Property.Thickandthin.FinTermProposequalityMaybeProposequality

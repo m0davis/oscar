@@ -53,7 +53,7 @@ private
                    _ = ∁ surjection
       in surjectivity
 
-    open import Oscar.Data
+    open import Oscar.Data.Proposequality
 
     ≡-surjectivity⟦_⟧ : ∀
       {𝔬₁} {𝔒₁ : Ø 𝔬₁}

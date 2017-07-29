@@ -1,7 +1,10 @@
 
 open import Oscar.Prelude
-open import Oscar.Data
-open import Oscar.Class
+open import Oscar.Data.Maybe
+open import Oscar.Class.Fmap
+open import Oscar.Class.Pure
+open import Oscar.Class.Apply
+open import Oscar.Class.Bind
 
 module Oscar.Property.Monad.Maybe where
 

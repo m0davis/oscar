@@ -1,7 +1,23 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Surjectivity
+open import Oscar.Class.Surjextensionality
+open import Oscar.Class.Surjidentity
+open import Oscar.Class.Surjtranscommutativity
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Transitivity
+open import Oscar.Class.Thickandthin
+open import Oscar.Class.IsPrefunctor
+open import Oscar.Class.IsFunctor
+open import Oscar.Data.Maybe
+open import Oscar.Data.¶
+open import Oscar.Data.Fin
+open import Oscar.Data.Proposequality
+open import Oscar.Data.Substitunction
+open import Oscar.Data.Term
+open import Oscar.Data.Substitist
+open import Oscar.Data.Descender
 import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Category.AListProposequality

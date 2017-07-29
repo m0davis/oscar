@@ -1,7 +1,10 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Property
+open import Oscar.Class.Transitivity
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Transleftidentity
+open import Oscar.Class.Symmetry
+open import Oscar.Class.PropId
 import Oscar.Class.PropId
 
 module Test.Test7 where

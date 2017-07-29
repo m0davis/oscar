@@ -2,8 +2,10 @@
 open import Oscar.Prelude
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Symmetrical
-open import Oscar.Data
+open import Oscar.Data.Term
+open import Oscar.Data.Substitunction
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Proposequality
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies

@@ -1,7 +1,22 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Surjectextenscongruity
+open import Oscar.Class.Properfact1
+open import Oscar.Class.Injectivity
+open import Oscar.Class.Congruity
+open import Oscar.Class.Factsurj3
+open import Oscar.Class.Factsurj4
+open import Oscar.Class.Factsurj6
+open import Oscar.Class.Properthing
+open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Surjectivity
+open import Oscar.Class.Symmetry
+open import Oscar.Data.Fin
+open import Oscar.Data.Substitunction
+open import Oscar.Data.Term
+open import Oscar.Data.Surjcollation
+open import Oscar.Data.Proposequality
 open import Oscar.Property.Setoid.Proposequality
 open import Oscar.Property.Setoid.Proposextensequality
 open import Oscar.Property.Category.ExtensionProposextensequality
@@ -38,6 +53,7 @@ import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
+import Oscar.Class.Surjectextensivity.SurjectivityExtension
 
 module Oscar.Property.Propergroup.Substitunction where
 

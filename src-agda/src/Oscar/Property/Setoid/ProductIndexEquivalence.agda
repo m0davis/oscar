@@ -1,7 +1,10 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Transitivity
+open import Oscar.Class.IsEquivalence
 open import Oscar.Data.ProductIndexEquivalence
 
 module Oscar.Property.Setoid.ProductIndexEquivalence where

@@ -1,8 +1,12 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Property
+open import Oscar.Class.[ExtensibleType]
+open import Oscar.Class.Surjectivity
+open import Oscar.Class.Surjextensionality
+open import Oscar.Class.Surjectextensivity
+import Oscar.Class.Surjection
 import Oscar.Class.Surjectivity.ExtensionṖroperty
+import Oscar.Class.Surjectextensivity.SurjectivityExtension
 
 module Test.Test5
   {𝔵} {𝔛 : Ø 𝔵}

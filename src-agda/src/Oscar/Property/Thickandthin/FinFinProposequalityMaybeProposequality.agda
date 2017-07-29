@@ -1,6 +1,14 @@
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Successor₀
+open import Oscar.Class.Successor₁
+open import Oscar.Class.Injectivity
+open import Oscar.Class.Thickandthin
+open import Oscar.Class.Congruity
+open import Oscar.Class.Fmap
+open import Oscar.Data.¶
+open import Oscar.Data.Fin
+open import Oscar.Data.Proposequality
+open import Oscar.Data.Maybe
 import Oscar.Property.Monad.Maybe
 import Oscar.Class.Congruity.Proposequality
 

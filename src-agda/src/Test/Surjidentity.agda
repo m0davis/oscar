@@ -1,7 +1,10 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data -- FIXME I'm surprised that this import is needed to avoid the following error:
+open import Oscar.Class.Surjection
+open import Oscar.Class.Surjectivity
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Surjidentity
+open import Oscar.Data.Proposequality -- FIXME I'm surprised that this import is needed to avoid the following error:
 {-
 No instance of type
 .Oscar.Data.Proposequality
@@ -15,7 +18,6 @@ No instance of type
    ∼̇₂ 𝓡eflexivity.reflexivity `𝓡eflexivity₂)
 was found in scope.
 -}
-open import Oscar.Property
 
 module Test.Surjidentity where
 

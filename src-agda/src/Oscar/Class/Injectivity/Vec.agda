@@ -1,7 +1,10 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Successor₀
+open import Oscar.Class.Injectivity
+open import Oscar.Data.¶
+open import Oscar.Data.Vec
+open import Oscar.Data.Proposequality
 import Oscar.Property.Thickandthin.FinFinProposequalityMaybeProposequality
 
 module Oscar.Class.Injectivity.Vec where

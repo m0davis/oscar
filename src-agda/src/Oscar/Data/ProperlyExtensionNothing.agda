@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Data
+open import Oscar.Data.𝟘
 
 module Oscar.Data.ProperlyExtensionNothing where
 

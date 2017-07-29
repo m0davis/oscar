@@ -1,5 +1,6 @@
 
-open import Oscar.Class
+open import Oscar.Class.Functor
+open import Oscar.Class.Surjidentity
 
 module Test.Test0 where
 

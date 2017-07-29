@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.[ExtensibleType]
-open import Oscar.Data
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.[ExtensibleType].Proposequality where
 

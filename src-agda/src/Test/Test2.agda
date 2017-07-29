@@ -1,6 +1,7 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
+open import Oscar.Class.IsFunctor
+open import Oscar.Class.Transextensionality
 
 module Test.Test2 where
 

@@ -1,7 +1,8 @@
 
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Property
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Transitivity
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Data.ExtensionṖroperty
 import Oscar.Property.Setoid.ProductIndexEquivalence

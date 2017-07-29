@@ -1,2 +1,0 @@
-
-module Oscar.Property where
