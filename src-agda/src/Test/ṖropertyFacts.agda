@@ -22,18 +22,36 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
-import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 import Oscar.Class.Surjectivity.ExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Class.Surjection
-
--- FIXME remove these dependencies
-open import Oscar.Data.Proposequality
+import Oscar.Data.Proposequality
 
 module Test.ṖropertyFacts where
+
+  postulate
+    Proposequality : ∀ {𝔬} {𝔒 : Ø 𝔬} (𝓞 : 𝔒) → 𝔒 → Ø₀
+
+  infix 4 _≡_
+  _≡_ = Proposequality
+
+  Proposequality⟦_⟧ : ∀ {𝔬} (𝔒 : Ø 𝔬) → 𝔒 → 𝔒 → Ø₀
+  Proposequality⟦ _ ⟧ = Proposequality
+
+  Proposextensequality : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → ((𝓞 : 𝔒) → 𝔓 𝓞) → ((𝓞 : 𝔒) → 𝔓 𝓞) → Ø 𝔬
+  Proposextensequality 𝓟₁ 𝓟₂ = ∀ 𝓞 → Proposequality (𝓟₁ 𝓞) (𝓟₂ 𝓞)
+
+  infix 4 _≡̇_
+  _≡̇_ = Proposextensequality
+
+  Proposextensequality⟦_⟧ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) → ((𝓞 : 𝔒) → 𝔓 𝓞) → ((𝓞 : 𝔒) → 𝔓 𝓞) → Ø 𝔬
+  Proposextensequality⟦ _ ⟧ = Proposextensequality
+
+  -- postulated instance from Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
+  postulate instance _ : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ LeftExtensionṖroperty ℓ (Arrow Fin Term) _≡̇_) -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 
   postulate
     𝔞 : Ł
