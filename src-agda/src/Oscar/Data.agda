@@ -8,26 +8,7 @@ open import Oscar.Data.¶ public
 open import Oscar.Data.List public
 open import Oscar.Data.Fin public
 open import Oscar.Data.Vec public
-
-{-
-module _ where
-
-  -- m ≤ n, counting down from n-1 to m
-  data ⟨_⟩¶⟨_≤_↓⟩ {a} (A : ¶ → Ø a) (m : ¶) : ¶ → Ø a where
-    ∅ : ⟨ A ⟩¶⟨ m ≤ m ↓⟩
-    _,_ : ∀ {n} → A n → ⟨ A ⟩¶⟨ m ≤ n ↓⟩ → ⟨ A ⟩¶⟨ m ≤ ↑ n ↓⟩
-
-  AList⟨_⟩ = ⟨_⟩¶⟨_≤_↓⟩
--}
-
-module _ where
-
-  -- m ≤ n, counting down from n-1 to m
-  data Descender⟨_⟩ {a} (A : ¶ → Ø a) (m : ¶) : ¶ → Ø a where
-    ∅ : Descender⟨ A ⟩ m m
-    _,_ : ∀ {n} → A n → Descender⟨ A ⟩ m n → Descender⟨ A ⟩ m (↑ n)
-
-  Vec'⟨_⟩ = λ {a} (A : Ø a) N → Descender⟨ (λ _ → A) ⟩ 0 N
+open import Oscar.Data.Descender public
 
 module _ where
 
