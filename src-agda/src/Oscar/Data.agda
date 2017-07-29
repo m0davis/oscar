@@ -1,4 +1,4 @@
-{-# OPTIONS --postfix-projections #-}
+
 module Oscar.Data where
 
 open import Oscar.Prelude
