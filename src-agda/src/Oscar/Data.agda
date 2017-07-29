@@ -15,12 +15,7 @@ open import Oscar.Data.𝟚 public
 open import Oscar.Data.Proposequality public
 open import Oscar.Data.Term public
 open import Oscar.Data.Substitunction public
-
-module Substitist {𝔭} (𝔓 : Ø 𝔭) where
-
-  open Term 𝔓
-
-  Substitist = flip Descender⟨ (λ n-o → Fin (↑ n-o) × Term n-o) ⟩
+open import Oscar.Data.Substitist public
 
 module _ where
 
