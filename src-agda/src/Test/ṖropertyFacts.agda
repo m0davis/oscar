@@ -132,12 +132,10 @@ module Test.ṖropertyFacts where
       _ : [𝓕actsurj3] 𝑷¹ 𝑪 𝔭
       _ : 𝓕actsurj3 𝑷¹ 𝑪
 
-  instance _ : [𝓕actsurj4] 𝑷⁰ 𝑪 Nothing
-           _ = ∁ surjectextensivity
-  postulate instance _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
-  instance _ : [𝓕actsurj4] 𝑷¹ 𝑪 Nothing
-           _ = ∁ surjectextensivity
-  postulate instance _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
+      _ : [𝓕actsurj4] 𝑷⁰ 𝑪 Nothing
+      _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
+      _ : [𝓕actsurj4] 𝑷¹ 𝑪 Nothing
+      _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
 
   postulate
     instance
