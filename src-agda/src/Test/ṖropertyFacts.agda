@@ -6,9 +6,13 @@ open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
+open import Oscar.Class.Transitivity
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
@@ -16,12 +20,13 @@ import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
-import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
-import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
-import Oscar.Class.Surjectivity.ExtensionṖroperty
-import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
+import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+import Oscar.Class.Surjectivity.ExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
+import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
+import Oscar.Class.Surjection
 
 -- FIXME remove these dependencies
 open import Oscar.Data.Proposequality
@@ -29,7 +34,6 @@ open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Setoid.Proposequality
-import Oscar.Property.Functor.SubstitunctionExtensionTerm
 
 module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
@@ -44,6 +48,24 @@ module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   module 𝓢 = SurjcollationOperator 𝑪 _≡_
   module 𝓢̇ = SurjextenscollationOperator 𝑪 _≡̇_
+
+  -- postulated instances from Oscar.Property.Functor.SubstitunctionExtensionTerm
+  postulate
+
+    instance
+
+      _ : [𝓢urjectivity] 𝑪 (Extension 𝑩)
+      _ : 𝓢urjectivity 𝑪 (Extension 𝑩)
+      _ : ∀ {N} → [𝓢urjectivity] 𝑪 (Extension $ 𝑩' N)
+      _ : ∀ {N} → 𝓢urjectivity 𝑪 (Extension $ 𝑩' N)
+      _ : 𝓣ransitivity 𝑪 -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
+      _ : [𝓢urjextensionality] 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality
+      _ : 𝓢urjextensionality 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+      _ : ∀ {N} → [𝓢urjextensionality] 𝑪 Proposextensequality (Extension $ 𝑩' N) Proposextensequality
+      _ : ∀ {N} → 𝓢urjextensionality 𝑪 Proposextensequality (Extension $ 𝑩' N) Proposextensequality -- needed by 𝓢̇.⟹
+
+  instance _ : 𝓡eflexivity 𝑪 -- needed by [𝓕actsurj3] 𝑷⁰ 𝑪 𝔭
+           _ = ∁ 𝒖
 
   -- postulated instances from Oscar.Property.Propergroup.Substitunction
   postulate
