@@ -1,6 +1,30 @@
 open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Data
+open import Oscar.Class.Category
+open import Oscar.Class.Congruity
+open import Oscar.Class.Functor
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.IsCategory
+open import Oscar.Class.IsFunctor
+open import Oscar.Class.IsPrecategory
+open import Oscar.Class.IsPrefunctor
+open import Oscar.Class.Precategory
+open import Oscar.Class.Prefunctor
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Surjectivity
+open import Oscar.Class.Surjextensionality
+open import Oscar.Class.Surjidentity
+open import Oscar.Class.Surjtranscommutativity
+open import Oscar.Class.Transassociativity
+open import Oscar.Class.Transextensionality
+open import Oscar.Class.Transitivity
+open import Oscar.Class.Transleftidentity
+open import Oscar.Class.Transrightidentity
+open import Oscar.Class.[IsExtensionB]
+open import Oscar.Data.¶
+open import Oscar.Data.Proposequality
+open import Oscar.Data.Substitunction
+open import Oscar.Data.Term
+open import Oscar.Data.Vec
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Property.Category.ExtensionProposextensequality
