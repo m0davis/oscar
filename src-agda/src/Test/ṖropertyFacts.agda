@@ -33,9 +33,14 @@ import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 
-module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
-  open import Oscar.Data.¶
+module Test.ṖropertyFacts where
+
   postulate
+    𝔞 : Ł
+    ¶ : Ø 𝔞
+
+  postulate
+    𝔭 : Ł
     𝑩 : ¶ → Ø 𝔭
     𝑩' : ¶ → ¶ → Ø 𝔭
     𝑪₀ : ¶ → Ø ∅̂
@@ -49,8 +54,12 @@ module Test.ṖropertyFacts {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   instance _ : ∀ {x y} → HasEquivalence (𝑪 x y) _
            _ = ∁ Proposextensequality
 
+  -- *Ṗroperty* stuff
+  postulate
+    ℓ : Ł
   𝑷⁰ = LeftṖroperty ℓ 𝑪
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
+
   module 𝓢 = SurjcollationOperator 𝑪 _≡_
   module 𝓢̇ = SurjextenscollationOperator 𝑪 _≡̇_
 
