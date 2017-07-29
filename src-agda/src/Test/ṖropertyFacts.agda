@@ -13,6 +13,7 @@ open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
+open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
@@ -31,7 +32,6 @@ import Oscar.Class.Surjection
 -- FIXME remove these dependencies
 open import Oscar.Data.Proposequality
 import Oscar.Class.[ExtensibleType].Proposequality
-import Oscar.Property.Setoid.Proposequality
 
 module Test.ṖropertyFacts where
 
@@ -84,6 +84,11 @@ module Test.ṖropertyFacts where
 
   instance _ : 𝓡eflexivity 𝑪 -- needed by [𝓕actsurj3] 𝑷⁰ 𝑪 𝔭
            _ = ∁ 𝒖
+
+  -- postulated instances from Oscar.Property.Setoid.Proposequality
+  postulate
+    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓢ymmetry Proposequality⟦ 𝔒 ⟧
+    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓣ransitivity Proposequality⟦ 𝔒 ⟧
 
   -- postulated instances from Oscar.Property.Propergroup.Substitunction
   postulate
