@@ -9,13 +9,7 @@ open import Oscar.Data.List public
 open import Oscar.Data.Fin public
 open import Oscar.Data.Vec public
 open import Oscar.Data.Descender public
-
-module _ where
-
-  data 𝟘 : Ø₀ where
-
-  ¬_ : ∀ {a} (A : Ø a) → Ø a
-  ¬_ x = x → 𝟘
+open import Oscar.Data.𝟘 public
 
 module _ where
 
