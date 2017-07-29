@@ -4,20 +4,7 @@ module Oscar.Data where
 open import Oscar.Prelude
 open import Oscar.Data.Maybe public
 open import Oscar.Data.ṖropertyEquivalence public
-
-module _ where
-
-  data ¶ : Set where
-    ∅ : ¶
-    ↑_  : ¶ → ¶
-
-  {-# BUILTIN NATURAL ¶ #-}
-
-  Nat = ¶
-
-  record ℕ : Ø₀ where
-    constructor ↑_
-    field ⋆ : ¶
+open import Oscar.Data.¶ public
 
 module _ where
 
