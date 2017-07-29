@@ -4,6 +4,7 @@ open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
+open import Oscar.Class.IsEquivalence
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
 open import Oscar.Class.Reflexivity
@@ -31,7 +32,6 @@ import Oscar.Class.Surjection
 open import Oscar.Data.Proposequality
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Setoid.Proposequality
-import Oscar.Property.Setoid.Proposextensequality
 
 module Test.ṖropertyFacts where
 
@@ -49,6 +49,10 @@ module Test.ṖropertyFacts where
   postulate
     𝒖 : ∀ {n} → 𝑪 n n
     _⊛_ : ∀ {n} → 𝑩 n → 𝑩 n → 𝑩 n
+
+  -- postulated instances from Oscar.Property.Setoid.Proposextensequality
+  postulate
+    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → IsEquivalence Proposextensequality⟦ 𝔓 ⟧
 
   -- instances from Oscar.Class.HasEquivalence.Substitunction
   instance _ : ∀ {x y} → HasEquivalence (𝑪 x y) _
