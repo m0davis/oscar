@@ -22,9 +22,9 @@ module _
 
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̈}
-  (𝔄̇̈ : Ṗroperty 𝔞̇̈ 𝔄̇)
+  ([𝔄̇̇] : Ṗroperty 𝔞̇̈ 𝔄̇)
   where
-  𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ 𝔄̇̈ 𝒶̇
+  𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ [𝔄̇̇] 𝒶̇
   module _
     𝔞̈
     where
@@ -35,7 +35,7 @@ module _
         ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity 𝔄̈
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity 𝔄̈ 𝔄̇
         ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈
-        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̇ 𝔄̈ _≈_ ≡ 𝔄̇̈
+        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̇ 𝔄̈ _≈_ ≡ [𝔄̇̇]
     record ℱactsurj3 ⦃ _ : [ℱactsurj3] ⦄ : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̈ where
       field factsurj3 : 𝒻actsurj3
 
