@@ -14,15 +14,15 @@ module _
   ⦃ _ : 𝓡eflexivity 𝔄̈ ⦄
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
   ⦃ _ : ∀ {x} → HasEquivalence (𝔄̇ x) ℓ̇ ⦄
-  a (ȧ : 𝔄̇ a)
   where
-  [𝓯actsurj3] = ȧ ≈ ε[ 𝔄̈ ] ◃ ȧ
+  [𝓯actsurj3] : Wrap (∀ {a} (ȧ : 𝔄̇ a) → _)
+  [𝓯actsurj3] .π₀ ȧ = ȧ ≈ ε[ 𝔄̈ ] ◃ ȧ
 
 module _
   {ℓ} {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : 𝔄 → Ø 𝔟}
-  (type : ∀ a (B : 𝔅 a) → Ø ℓ)
+  (type : Wrap (∀ {a} (B : 𝔅 a) → Ø ℓ))
   where
-  𝒻actsurj3 = ∀ {a} {b : 𝔅 a} → type _ b
+  𝒻actsurj3 = ∀ {a} {b : 𝔅 a} → π₀ type b
   record [𝐹actsurj3] 𝔯 : Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔯 ∙̂ ↑̂ ℓ where
     constructor ∁
     field
