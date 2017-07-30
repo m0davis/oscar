@@ -31,7 +31,7 @@ import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Property.Category.ExtensionProposextensequality
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.HasEquivalence.Substitunction
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Property.Functor.SubstitunctionExtensionTerm where
 

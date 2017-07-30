@@ -29,7 +29,7 @@ open import Oscar.Property.Functor.SubstitistProposequalitySubstitunctionPropose
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Congruity.Proposextensequality
 import Oscar.Class.Transextensionality.Proposequality
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 import Oscar.Class.Injectivity.Vec
 import Oscar.Class.IsDecidable.Fin
 import Oscar.Class.IsDecidable.¶

@@ -1,13 +1,13 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.Surjectivity
-open import Oscar.Class.Surjection
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
 open import Oscar.Data.Proposequality
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Data.Surjcollation where
 

@@ -6,7 +6,7 @@ open import Oscar.Class.Symmetry
 open import Oscar.Class.Symmetrical
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.Ṗroperty
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Class.Symmetrical.Unifies where
 

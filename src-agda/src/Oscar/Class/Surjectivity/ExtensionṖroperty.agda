@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class.[ExtensibleType]
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjextensionality
-open import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Class.Surjectivity.ExtensionṖroperty where
 

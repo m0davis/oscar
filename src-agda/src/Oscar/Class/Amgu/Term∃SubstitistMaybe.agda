@@ -23,7 +23,7 @@ import Oscar.Property.Functor.SubstitistProposequalitySubstitunctionProposextens
 import Oscar.Property.Monad.Maybe
 import Oscar.Class.IsDecidable.¶
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Class.Amgu.Term∃SubstitistMaybe where
 

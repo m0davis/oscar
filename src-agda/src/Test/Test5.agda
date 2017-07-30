@@ -4,7 +4,7 @@ open import Oscar.Class.[ExtensibleType]
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Surjectextensivity
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
 

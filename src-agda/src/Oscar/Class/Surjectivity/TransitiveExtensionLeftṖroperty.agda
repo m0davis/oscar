@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Transitivity
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 
 module Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty where

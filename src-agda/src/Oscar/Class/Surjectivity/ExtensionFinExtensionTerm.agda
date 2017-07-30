@@ -4,7 +4,7 @@ open import Oscar.Class.Surjectivity
 open import Oscar.Data.Fin
 open import Oscar.Data.Term
 open import Oscar.Data.Vec
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Class.Surjectivity.ExtensionFinExtensionTerm where
 

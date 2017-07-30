@@ -27,7 +27,7 @@ import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectexten
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 import Oscar.Data.Proposequality
 
 module Test.ṖropertyFacts where

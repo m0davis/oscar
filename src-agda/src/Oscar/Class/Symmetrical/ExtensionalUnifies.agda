@@ -9,7 +9,7 @@ open import Oscar.Class.Transitivity
 open import Oscar.Data.ProductIndexEquivalence
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
-import Oscar.Class.Surjection
+import Oscar.Class.Surjection.⋆
 import Oscar.Data.ExtensionṖroperty
 
 module Oscar.Class.Symmetrical.ExtensionalUnifies where
