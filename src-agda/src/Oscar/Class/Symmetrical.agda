@@ -60,3 +60,13 @@ getSymmetricalContainerInstance : ∀
   ⦃ _ : Σ (SymmetricalContainer 𝔄 𝔅 _↦_) λ SC → SymmetricalContainer._∼_ SC ≡ _∼_ ⦄
   → ∀ x y → (x ∼ y) ↦ (y ∼ x)
 getSymmetricalContainerInstance _∼_ ⦃ SC , ∅ ⦄ = SymmetricalContainer.symmetrical′ SC
+
+explicit-symmetrical : ∀
+  {𝔞} {𝔄 : Ø 𝔞}
+  {𝔟} {𝔅 : Ø 𝔟}
+  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ)
+  (_∼_ : 𝔄 → 𝔄 → 𝔅)
+  -- ⦃ _ : [𝓢ymmetrical] 𝔄 𝔅 _↦_ ⦄
+  ⦃ _ : 𝓢ymmetrical 𝔄 𝔅 _↦_ ⦃ ∁ _∼_ ⦄ ⦄
+  → ∀ x y → (x ∼ y) ↦ (y ∼ x)
+explicit-symmetrical _↦_ _∼_ ⦃ I ⦄ x₁ y = symmetrical ⦃ r = I ⦄ x₁ y

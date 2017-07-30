@@ -104,7 +104,36 @@ module Test.Symmetrical where
                  _ = ∁ _∼2_ in
       -- symmetrical {_↦_ = _↦_} ⦃ ∁ _∼1_ ⦄
       -- symmetrical {_↦_ = _ {-_↦_-}} ⦃ ∁ _∼1_ ⦄ -- FIXME why does this not need _↦_ ... (because it figures out that the only 𝓢ymmetrical compatibly defined with the given [𝓢ymmetrical] has {_↦_ = _ _↦_}
-      ′symmetrical {_↦_ = _↦_} {_∼_ = _∼1_} -- FIXME ... but this one does?
+      -- ′symmetrical {_↦_ = _↦_} {_∼_ = _∼1_} -- FIXME ... but this one does?
+      explicit-symmetrical _↦_ _∼1_
+
+  lhs-test2a : ∀
+    {𝔞} {𝔄 : Ø 𝔞}
+    {𝔟} {𝔅 : Ø 𝔟}
+    {ℓ} {_↦_ : 𝔅 → 𝔅 → Ø ℓ}
+        {_↦'_ : 𝔅 → 𝔅 → Ø ℓ}
+    {_∼1_ : 𝔄 → 𝔄 → 𝔅}
+    {_∼2_ : 𝔄 → 𝔄 → 𝔅}
+    ⦃ _ : 𝓢ymmetrical 𝔄 𝔅 _↦_ ⦃ ∁ _∼1_ ⦄ ⦄
+    (let instance _ : [𝓢ymmetrical] 𝔄 𝔅 _↦'_
+                  _ = ∁ _∼1_)
+    (let instance i2 : [𝓢ymmetrical] 𝔄 𝔅 _↦_
+                  i2 = ∁ _∼2_)
+    ⦃ _ : 𝓢ymmetrical 𝔄 𝔅 _↦_ ⦃ i2 ⦄ ⦄
+    (let instance i2' : [𝓢ymmetrical] 𝔄 𝔅 _↦'_
+                  i2' = ∁ _∼2_)
+    ⦃ _ : 𝓢ymmetrical 𝔄 𝔅 _↦'_ ⦃ i2' ⦄ ⦄
+    → ∀ (x y : 𝔄) → _
+  lhs-test2a {𝔄 = 𝔄} {𝔅 = 𝔅} {_↦_ = _↦_} {_↦'_ = _↦'_} {_∼1_ = _∼1_} {_∼2_ = _∼2_} =
+    let instance _ : [𝓢ymmetrical] 𝔄 𝔅 _↦_
+                 _ = ∁ _∼1_ in
+    let instance _ : [𝓢ymmetrical] 𝔄 𝔅 _↦'_
+                 _ = ∁ _∼1_ in
+    let instance _ : [𝓢ymmetrical] 𝔄 𝔅 _↦_
+                 _ = ∁ _∼2_ in
+    let instance _ : [𝓢ymmetrical] 𝔄 𝔅 _↦'_
+                 _ = ∁ _∼2_ in
+      explicit-symmetrical _ _∼1_
 
   open import Oscar.Data.Proposequality
 
