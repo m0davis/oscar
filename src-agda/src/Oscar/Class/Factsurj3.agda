@@ -14,15 +14,15 @@ module _
   ⦃ _ : 𝓡eflexivity 𝔄̈ ⦄
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
   ⦃ _ : ∀ {x} → HasEquivalence (𝔄̇ x) ℓ̇ ⦄
-  {a} (ȧ : 𝔄̇ a)
+  a (ȧ : 𝔄̇ a)
   where
   [𝓯actsurj3] = ȧ ≈ ε[ 𝔄̈ ] ◃ ȧ
 
 module _
   {ℓ} {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : 𝔄 → Ø 𝔟}
-  (type : ∀ {a} (B : 𝔅 a) → Ø ℓ)
+  (type : ∀ a (B : 𝔅 a) → Ø ℓ)
   where
-  𝒻actsurj3 = ∀ {a} {b : 𝔅 a} → type b
+  𝒻actsurj3 = ∀ {a} {b : 𝔅 a} → type _ b
   record [𝐹actsurj3] 𝔯 : Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔯 ∙̂ ↑̂ ℓ where
     constructor ∁
     field
@@ -30,7 +30,7 @@ module _
       ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
       ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔅
       ⦃ ⌶HasEquivalence ⦄ : ∀ {x} → HasEquivalence (𝔅 x) ℓ
-      ⦃ ⌶CorrectFactsurj3 ⦄ : (λ {a} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {a}) ≡ type
+      ⦃ ⌶CorrectFactsurj3 ⦄ : ([𝓯actsurj3] _∼ᵣ_ 𝔅) ≡ type
 
   record 𝐹actsurj3 {𝔯} ⦃ _ : [𝐹actsurj3] 𝔯 ⦄ : Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ where
     field factsurj3 : 𝒻actsurj3
@@ -44,6 +44,6 @@ module _
   ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ 𝔅 ⦄
   ⦃ _ : ∀ {x} → HasEquivalence (𝔅 x) ℓ ⦄
   where
-  𝓯actsurj3 = 𝒻actsurj3 (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
-  [𝓕actsurj3] = [𝐹actsurj3] (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
-  𝓕actsurj3 = 𝐹actsurj3 (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
+  𝓯actsurj3 = 𝒻actsurj3 ([𝓯actsurj3] _∼ᵣ_ 𝔅)
+  [𝓕actsurj3] = [𝐹actsurj3] ([𝓯actsurj3] _∼ᵣ_ 𝔅)
+  𝓕actsurj3 = 𝐹actsurj3 ([𝓯actsurj3] _∼ᵣ_ 𝔅)
