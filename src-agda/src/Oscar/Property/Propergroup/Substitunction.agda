@@ -54,6 +54,7 @@ import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
+open import Oscar.Class.Reflexivity
 
 module Oscar.Property.Propergroup.Substitunction where
 
@@ -109,16 +110,16 @@ module _
 
   instance
 
-    [𝓕actsurj3]Regular : ∀ {ℓ} → [𝓕actsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) _≈_
-    [𝓕actsurj3]Regular = ∁ (Arrow Fin Term) _≈_
+    [𝓕actsurj3]Regular : ∀ {ℓ} → [𝓕actsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) ε surjectextensivity _≈_
+    [𝓕actsurj3]Regular = ∁ (Arrow Fin Term) ε surjectextensivity _≈_
 
-    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) _≈_
+    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) ε surjectextensivity _≈_
     𝓕actsurj3Regular .ℱactsurj3.factsurj3 .π₀ = ¡ , ¡
 
-    [𝓕actsurj3]Extension : ∀ {ℓ} → [𝓕actsurj3] (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) _≈_
-    [𝓕actsurj3]Extension = ∁ (Arrow Fin Term) _≈_
+    [𝓕actsurj3]Extension : ∀ {ℓ} → [𝓕actsurj3] (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) ε surjectextensivity _≈_
+    [𝓕actsurj3]Extension = ∁ (Arrow Fin Term) ε surjectextensivity _≈_
 
-    𝓕actsurj3Extension : ∀ {ℓ} → 𝓕actsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) _≈_
+    𝓕actsurj3Extension : ∀ {ℓ} → 𝓕actsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) ε surjectextensivity _≈_
     𝓕actsurj3Extension .ℱactsurj3.factsurj3 .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓
