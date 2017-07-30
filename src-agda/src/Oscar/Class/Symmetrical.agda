@@ -17,7 +17,7 @@ module _
   module _
     ⦃ ⌶[𝓢ymmetrical] : [𝓢ymmetrical] ⦄
     where
-    record 𝓢ymmetrical : Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ where
+    record 𝓢ymmetrical : Ø 𝔞 ∙̂ ℓ where
       open [𝓢ymmetrical] ⌶[𝓢ymmetrical]
       field
         symmetrical : ∀ x y → x ∼ y ↦ y ∼ x
