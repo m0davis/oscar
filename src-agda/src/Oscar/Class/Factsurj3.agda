@@ -53,3 +53,27 @@ module _
   𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈)
   [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈) 𝔞̈
   𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈) 𝔞̈
+
+record Factsurj3Container
+  𝔞 𝔞̇ 𝔞̈ 𝔞̇̈
+  : Ø ↑̂ (𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̈ ∙̂ 𝔞̇̈) where
+  constructor ∁
+  field
+    {𝔄} : Ø 𝔞
+    𝔄̇ : 𝔄 → Ø 𝔞̇
+    𝔄̈ : π̂² 𝔞̈ 𝔄
+    ε̈ : 𝓻eflexivity 𝔄̈
+    _◃_ : 𝓼urjectextensivity 𝔄̈ 𝔄̇
+    𝔄̇̈ : ∀̇ π̂² 𝔞̇̈ 𝔄̇
+
+  instance
+
+    ⌶[𝓕actsurj3] : [𝓕actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈
+    ⌶[𝓕actsurj3] = ∁ 𝔄̈ ε̈ _◃_ 𝔄̇̈
+
+  field factsurj3′ : 𝒻actsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈)
+
+  instance
+
+    ⌶𝓕actsurj3 : 𝓕actsurj3 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈
+    ⌶𝓕actsurj3 .ℱactsurj3.factsurj3 = factsurj3′

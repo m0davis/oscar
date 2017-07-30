@@ -110,11 +110,14 @@ module _
 
   instance
 
-    [𝓕actsurj3]Regular : ∀ {ℓ} → [𝓕actsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) ε surjectextensivity _≈_
-    [𝓕actsurj3]Regular = ∁ (Arrow Fin Term) ε surjectextensivity _≈_
-
-    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) ε surjectextensivity _≈_
-    𝓕actsurj3Regular .ℱactsurj3.factsurj3 .π₀ = ¡ , ¡
+    Factsurj3ContainerRegular : ∀ {ℓ} → Factsurj3Container _ _ _ _
+    Factsurj3ContainerRegular .Factsurj3Container.𝔄 = _
+    Factsurj3ContainerRegular {ℓ} .Factsurj3Container.𝔄̇ = (LeftṖroperty ℓ (Arrow Fin Term))
+    Factsurj3ContainerRegular .Factsurj3Container.𝔄̈ = (Arrow Fin Term)
+    Factsurj3ContainerRegular .Factsurj3Container.ε̈ = ε
+    Factsurj3ContainerRegular .Factsurj3Container._◃_ = surjectextensivity
+    Factsurj3ContainerRegular .Factsurj3Container.𝔄̇̈ = _≈_
+    Factsurj3ContainerRegular .Factsurj3Container.factsurj3′ .π₀ = ¡ , ¡
 
     [𝓕actsurj3]Extension : ∀ {ℓ} → [𝓕actsurj3] (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) ε surjectextensivity _≈_
     [𝓕actsurj3]Extension = ∁ (Arrow Fin Term) ε surjectextensivity _≈_
