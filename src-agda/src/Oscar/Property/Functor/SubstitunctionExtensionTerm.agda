@@ -172,13 +172,13 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   instance
 
-    [𝓢urjidentity]SubstitunctionExtensionTerm : [𝓢urjidentity] Substitunction (Extension Term) _≈_ _ _ _
+    [𝓢urjidentity]SubstitunctionExtensionTerm : [𝓢urjidentity] Substitunction (Extension Term) _≈_
     [𝓢urjidentity]SubstitunctionExtensionTerm = ∁ Substitunction (Extension Term) _≈_
 
     𝓢urjidentitySubstitunctionExtensionTerm : 𝓢urjidentity Substitunction (Extension Term) _≈_
     𝓢urjidentitySubstitunctionExtensionTerm .𝒮urjidentity.surjidentity = 𝓼urjidentitySubstitunctionExtensionTerm
 
-    [𝓢urjidentity]SubstitunctionExtensionTerms : ∀ {N} → [𝓢urjidentity] Substitunction (Extension $ Terms N) _≈_ _ _ _
+    [𝓢urjidentity]SubstitunctionExtensionTerms : ∀ {N} → [𝓢urjidentity] Substitunction (Extension $ Terms N) _≈_
     [𝓢urjidentity]SubstitunctionExtensionTerms {N} = ∁ Substitunction (Extension $ Terms N) _≈_
 
     𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjidentity Substitunction (Extension $ Terms N) _≈_

@@ -41,7 +41,7 @@ module _
   where
   instance
 
-    `[𝒮urjidentity] : [𝓢urjidentity] _∼₁_ _∼₂_ _∼̇₂_ 𝔯₁ 𝔬₂ 𝔯₂
+    `[𝒮urjidentity] : [𝓢urjidentity] _∼₁_ _∼₂_ _∼̇₂_
     `[𝒮urjidentity] = ∁ _∼₁_ _∼₂_ _∼̇₂_
 
   instance
