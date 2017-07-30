@@ -67,7 +67,7 @@ module _
   where
   𝓼urjidentity = 𝓈urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_)
   [𝓢urjidentity] = [𝒮urjidentity] ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) 𝔯₁ 𝔬₂ 𝔯₂
-  𝓢urjidentity = 𝒮urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_)
+  𝓢urjidentity = 𝒮urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) {𝔯₁} {𝔬₂} {𝔯₂}
 
 surjidentity[_,_] : ∀
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂ ℓ₂}
