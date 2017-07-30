@@ -15,8 +15,8 @@ module _
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
   ⦃ _ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈ ⦄
   where
-  [𝓯actsurj3] : Wrap ∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̈
-  [𝓯actsurj3] .π₀ 𝒶̇ = 𝒶̇ ≈ ε[ 𝔄̈ ] ◃ 𝒶̇
+  [𝒻actsurj3] : Wrap ∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̈
+  [𝒻actsurj3] .π₀ 𝒶̇ = 𝒶̇ ≈ ε[ 𝔄̈ ] ◃ 𝒶̇
 
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̇}
@@ -33,7 +33,7 @@ module _
         ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity 𝔄̈
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity 𝔄̈ 𝔄̇
         ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̇
-        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝓯actsurj3] 𝔄̈ 𝔄̇ ≡ 𝔄̇̇
+        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̈ 𝔄̇ ≡ 𝔄̇̇
   module _
     {𝔞̈}
     ⦃ _ : [ℱactsurj3] 𝔞̈ ⦄
@@ -50,6 +50,6 @@ module _
   ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ 𝔅 ⦄
   ⦃ _ : ∀ {x} → HasEquivalence (𝔅 x) ℓ ⦄
   where
-  𝓯actsurj3 = 𝒻actsurj3 ([𝓯actsurj3] _∼ᵣ_ 𝔅)
-  [𝓕actsurj3] = [ℱactsurj3] ([𝓯actsurj3] _∼ᵣ_ 𝔅)
-  𝓕actsurj3 = ℱactsurj3 ([𝓯actsurj3] _∼ᵣ_ 𝔅)
+  𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] _∼ᵣ_ 𝔅)
+  [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] _∼ᵣ_ 𝔅)
+  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] _∼ᵣ_ 𝔅)
