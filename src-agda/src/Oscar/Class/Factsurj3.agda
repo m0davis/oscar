@@ -23,17 +23,23 @@ module _
   (type : Wrap (∀ {a} (B : 𝔅 a) → Ø ℓ))
   where
   𝒻actsurj3 = ∀ {a} {b : 𝔅 a} → π₀ type b
-  record [ℱactsurj3] 𝔯 : Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔯 ∙̂ ↑̂ ℓ where
-    constructor ∁
-    field
-      _∼ᵣ_ : π̂² 𝔯 𝔄
-      ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
-      ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔅
-      ⦃ ⌶HasEquivalence ⦄ : ∀ {x} → HasEquivalence (𝔅 x) ℓ
-      ⦃ ⌶CorrectFactsurj3 ⦄ : ([𝓯actsurj3] _∼ᵣ_ 𝔅) ≡ type
-
-  record ℱactsurj3 {𝔯} ⦃ _ : [ℱactsurj3] 𝔯 ⦄ : Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ where
-    field factsurj3 : 𝒻actsurj3
+  module _
+    𝔯
+    where
+    record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔯 ∙̂ ↑̂ ℓ where
+      constructor ∁
+      field
+        _∼ᵣ_ : π̂² 𝔯 𝔄
+        ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
+        ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔅
+        ⦃ ⌶HasEquivalence ⦄ : ∀ {x} → HasEquivalence (𝔅 x) ℓ
+        ⦃ ⌶CorrectFactsurj3 ⦄ : ([𝓯actsurj3] _∼ᵣ_ 𝔅) ≡ type
+  module _
+    {𝔯}
+    ⦃ _ : [ℱactsurj3] 𝔯 ⦄
+    where
+    record ℱactsurj3 : Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ where
+      field factsurj3 : 𝒻actsurj3
 
 open ℱactsurj3 ⦃ … ⦄ public
 
