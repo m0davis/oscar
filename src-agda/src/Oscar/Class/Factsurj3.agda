@@ -8,37 +8,37 @@ open import Oscar.Data.Proposequality
 module Oscar.Class.Factsurj3 where
 
 module _
-  {𝔞} {𝔄 : Ø 𝔞} {𝔞̈ 𝔞̇ ℓ̇}
+  {𝔞} {𝔄 : Ø 𝔞} {𝔞̈ 𝔞̇ 𝔞̇̈}
   (𝔄̈ : π̂² 𝔞̈ 𝔄)
   (𝔄̇ : π̂ 𝔞̇ 𝔄)
   ⦃ _ : 𝓡eflexivity 𝔄̈ ⦄
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
-  ⦃ _ : ∀ {x} → HasEquivalence (𝔄̇ x) ℓ̇ ⦄
+  ⦃ _ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈ ⦄
   where
-  [𝓯actsurj3] : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → _)
+  [𝓯actsurj3] : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̈)
   [𝓯actsurj3] .π₀ 𝒶̇ = 𝒶̇ ≈ ε[ 𝔄̈ ] ◃ 𝒶̇
 
 module _
-  {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {ℓ}
-  (type : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → Ø ℓ))
+  {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̇}
+  (type : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̇))
   where
   𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ type 𝒶̇
   module _
-    𝔯
+    𝔞̈
     where
-    record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔯 ∙̂ ↑̂ ℓ where
+    record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔞̈ ∙̂ ↑̂ 𝔞̇̇ where
       constructor ∁
       field
-        _∼ᵣ_ : π̂² 𝔯 𝔄
+        _∼ᵣ_ : π̂² 𝔞̈ 𝔄
         ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔄̇
-        ⦃ ⌶HasEquivalence ⦄ : ∀ {x} → HasEquivalence (𝔄̇ x) ℓ
+        ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̇
         ⦃ ⌶CorrectFactsurj3 ⦄ : ([𝓯actsurj3] _∼ᵣ_ 𝔄̇) ≡ type
   module _
-    {𝔯}
-    ⦃ _ : [ℱactsurj3] 𝔯 ⦄
+    {𝔞̈}
+    ⦃ _ : [ℱactsurj3] 𝔞̈ ⦄
     where
-    record ℱactsurj3 : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ℓ where
+    record ℱactsurj3 : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̇ where
       field factsurj3 : 𝒻actsurj3
 
 open ℱactsurj3 ⦃ … ⦄ public
