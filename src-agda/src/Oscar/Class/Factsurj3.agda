@@ -15,7 +15,7 @@ module _
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
   ⦃ _ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈ ⦄
   where
-  [𝓯actsurj3] : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̈)
+  [𝓯actsurj3] : Wrap ∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̈
   [𝓯actsurj3] .π₀ 𝒶̇ = 𝒶̇ ≈ ε[ 𝔄̈ ] ◃ 𝒶̇
 
 module _
@@ -33,7 +33,7 @@ module _
         ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔄̇
         ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̇
-        ⦃ ⌶CorrectFactsurj3 ⦄ : ([𝓯actsurj3] _∼ᵣ_ 𝔄̇) ≡ type
+        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝓯actsurj3] _∼ᵣ_ 𝔄̇ ≡ type
   module _
     {𝔞̈}
     ⦃ _ : [ℱactsurj3] 𝔞̈ ⦄
