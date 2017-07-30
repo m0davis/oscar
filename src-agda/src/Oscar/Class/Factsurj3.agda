@@ -51,5 +51,5 @@ module _
   {𝔞̇̈} ⦃ _ : ∀ {x} → HasEquivalence (𝔄̇ x) 𝔞̇̈ ⦄
   where
   𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇)
-  [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̈ 𝔄̇)
-  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇)
+  [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̈ 𝔄̇) 𝔞̈
+  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇) {𝔞̈}
