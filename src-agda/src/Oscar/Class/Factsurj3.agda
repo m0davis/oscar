@@ -19,26 +19,26 @@ module _
   [𝒻actsurj3] .π₀ 𝒶̇ = 𝒶̇ ≈ ε[ 𝔄̈ ] ◃ 𝒶̇
 
 module _
-  {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̇}
-  (𝔄̇̇ : Ṗroperty 𝔞̇̇ 𝔄̇)
+  {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̈}
+  (𝔄̇̇ : Ṗroperty 𝔞̇̈ 𝔄̇)
   where
   𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ 𝔄̇̇ 𝒶̇
   module _
     𝔞̈
     where
-    record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔞̈ ∙̂ ↑̂ 𝔞̇̇ where
+    record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔞̈ ∙̂ ↑̂ 𝔞̇̈ where
       constructor ∁
       field
         𝔄̈ : π̂² 𝔞̈ 𝔄
         ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity 𝔄̈
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity 𝔄̈ 𝔄̇
-        ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̇
+        ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈
         ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̈ 𝔄̇ ≡ 𝔄̇̇
   module _
     {𝔞̈}
     ⦃ _ : [ℱactsurj3] 𝔞̈ ⦄
     where
-    record ℱactsurj3 : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̇ where
+    record ℱactsurj3 : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̈ where
       field factsurj3 : 𝒻actsurj3
 
 open ℱactsurj3 ⦃ … ⦄ public
