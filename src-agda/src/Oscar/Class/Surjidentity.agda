@@ -20,10 +20,11 @@ module _
   ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
   ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
   where
-  [𝓈urjidentity] = λ x → surjectivity (ε[ _∼₁_ ] {x}) ∼̇₂ ε
+  [𝓈urjidentity] : π̂ ℓ₂ 𝔒₁
+  [𝓈urjidentity] x = surjectivity (ε[ _∼₁_ ] {x}) ∼̇₂ ε
 
 module _
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁} {ℓ₂} (𝔓 : 𝔒₁ → Ø ℓ₂)
+  {𝔬₁} {𝔒₁ : Ø 𝔬₁} {ℓ₂} (𝔓 : π̂ ℓ₂ 𝔒₁)
   where
   𝓈urjidentity = ∀ {x} → 𝔓 x
   module _
