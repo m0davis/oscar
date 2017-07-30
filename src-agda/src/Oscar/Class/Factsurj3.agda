@@ -44,11 +44,11 @@ module _
 open ℱactsurj3 ⦃ … ⦄ public
 
 module _
-  {ℓ} {𝔞} {𝔄 : Ø 𝔞} {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
+  {𝔞} {𝔄 : Ø 𝔞} {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
   {𝔯} (_∼ᵣ_ : π̂² 𝔯 𝔄)
   ⦃ _ : 𝓡eflexivity _∼ᵣ_ ⦄
   ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ 𝔅 ⦄
-  ⦃ _ : ∀ {x} → HasEquivalence (𝔅 x) ℓ ⦄
+  {ℓ} ⦃ _ : ∀ {x} → HasEquivalence (𝔅 x) ℓ ⦄
   where
   𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] _∼ᵣ_ 𝔅)
   [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] _∼ᵣ_ 𝔅)
