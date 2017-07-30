@@ -110,24 +110,24 @@ module _
   instance
 
     [𝓕actsurj3]Regular : ∀ {ℓ} → [𝓕actsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) 𝔭
-    [𝓕actsurj3]Regular .[𝐹actsurj3]._∼ᵣ_ = Arrow Fin Term
-    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶Reflexivity = !
-    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶Surjectextensivity = !
-    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶HasEquivalence = !
-    [𝓕actsurj3]Regular .[𝐹actsurj3].⌶CorrectFactsurj3 = !
+    [𝓕actsurj3]Regular .[ℱactsurj3].𝔄̈ = Arrow Fin Term
+    [𝓕actsurj3]Regular .[ℱactsurj3].⌶Reflexivity = !
+    [𝓕actsurj3]Regular .[ℱactsurj3].⌶Surjectextensivity = !
+    [𝓕actsurj3]Regular .[ℱactsurj3].⌶HasEquivalence = !
+    [𝓕actsurj3]Regular .[ℱactsurj3].⌶CorrectFactsurj3 = !
 
     𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
-    𝓕actsurj3Regular .𝐹actsurj3.factsurj3 .π₀ = ¡ , ¡
+    𝓕actsurj3Regular .ℱactsurj3.factsurj3 .π₀ = ¡ , ¡
 
     [𝓕actsurj3]Extension : ∀ {ℓ} → [𝓕actsurj3] (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term) 𝔭
-    [𝓕actsurj3]Extension .[𝐹actsurj3]._∼ᵣ_ = Arrow Fin Term
-    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶Reflexivity = !
-    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶Surjectextensivity = !
-    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶HasEquivalence = !
-    [𝓕actsurj3]Extension .[𝐹actsurj3].⌶CorrectFactsurj3 = !
+    [𝓕actsurj3]Extension .[ℱactsurj3].𝔄̈ = Arrow Fin Term
+    [𝓕actsurj3]Extension .[ℱactsurj3].⌶Reflexivity = !
+    [𝓕actsurj3]Extension .[ℱactsurj3].⌶Surjectextensivity = !
+    [𝓕actsurj3]Extension .[ℱactsurj3].⌶HasEquivalence = !
+    [𝓕actsurj3]Extension .[ℱactsurj3].⌶CorrectFactsurj3 = !
 
     𝓕actsurj3Extension : ∀ {ℓ} → 𝓕actsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) (Arrow Fin Term)
-    𝓕actsurj3Extension .𝐹actsurj3.factsurj3 .π₀ .π₀ = ¡ , ¡
+    𝓕actsurj3Extension .ℱactsurj3.factsurj3 .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓
 
