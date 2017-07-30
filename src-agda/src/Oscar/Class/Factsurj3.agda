@@ -20,20 +20,20 @@ module _
 
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̇}
-  (type : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̇))
+  (𝔄̇̇ : Wrap (∀ {𝒶} → 𝔄̇ 𝒶 → Ø 𝔞̇̇))
   where
-  𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ type 𝒶̇
+  𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ 𝔄̇̇ 𝒶̇
   module _
     𝔞̈
     where
     record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔞̈ ∙̂ ↑̂ 𝔞̇̇ where
       constructor ∁
       field
-        _∼ᵣ_ : π̂² 𝔞̈ 𝔄
-        ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
-        ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔄̇
+        𝔄̈ : π̂² 𝔞̈ 𝔄
+        ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity 𝔄̈
+        ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity 𝔄̈ 𝔄̇
         ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̇
-        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝓯actsurj3] _∼ᵣ_ 𝔄̇ ≡ type
+        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝓯actsurj3] 𝔄̈ 𝔄̇ ≡ 𝔄̇̇
   module _
     {𝔞̈}
     ⦃ _ : [ℱactsurj3] 𝔞̈ ⦄
