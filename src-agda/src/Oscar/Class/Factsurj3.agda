@@ -8,7 +8,13 @@ open import Oscar.Data.Proposequality
 module Oscar.Class.Factsurj3 where
 
 module _
-  {𝔞} {𝔄 : Ø 𝔞} {𝔯} {𝔟} {ℓ} (_∼ᵣ_ : π̂² 𝔯 𝔄) (B : π̂ 𝔟 𝔄) ⦃ _ : 𝓡eflexivity _∼ᵣ_ ⦄ ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ B ⦄ ⦃ _ : ∀ {x} → HasEquivalence (B x) ℓ ⦄ {a} (B' : B a)
+  {𝔞} {𝔄 : Ø 𝔞} {𝔯 𝔟 ℓ}
+  (_∼ᵣ_ : π̂² 𝔯 𝔄)
+  (B : π̂ 𝔟 𝔄)
+  ⦃ _ : 𝓡eflexivity _∼ᵣ_ ⦄
+  ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ B ⦄
+  ⦃ _ : ∀ {x} → HasEquivalence (B x) ℓ ⦄
+  {a} (B' : B a)
   where
   [𝓯actsurj3] = B' ≈ ε[ _∼ᵣ_ ] ◃ B'
 
