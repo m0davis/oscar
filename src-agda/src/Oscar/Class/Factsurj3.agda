@@ -34,11 +34,7 @@ module _
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity 𝔄̈ 𝔄̇
         ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈
         ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̈ 𝔄̇ ≡ 𝔄̇̈
-  module _
-    {𝔞̈}
-    ⦃ _ : [ℱactsurj3] 𝔞̈ ⦄
-    where
-    record ℱactsurj3 : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̈ where
+    record ℱactsurj3 ⦃ _ : [ℱactsurj3] ⦄ : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̈ where
       field factsurj3 : 𝒻actsurj3
 
 open ℱactsurj3 ⦃ … ⦄ public
@@ -52,4 +48,4 @@ module _
   where
   𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇)
   [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̈ 𝔄̇) 𝔞̈
-  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇) {𝔞̈}
+  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇) 𝔞̈

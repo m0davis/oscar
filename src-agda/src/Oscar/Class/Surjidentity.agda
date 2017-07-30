@@ -43,11 +43,7 @@ module _
         ⦃ `𝓡eflexivity₁   ⦄ : 𝓡eflexivity _∼₁_
         ⦃ `𝓡eflexivity₂   ⦄ : 𝓡eflexivity _∼₂_
         ⦃ `Proposequality[𝓈urjidentity] ⦄ : [𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_ ≡ 𝔓
-  module _
-    {𝔯₁ 𝔬₂ 𝔯₂}
-    ⦃ _ : [𝒮urjidentity] 𝔯₁ 𝔬₂ 𝔯₂ ⦄
-    where
-    record 𝒮urjidentity : Ø 𝔬₁ ∙̂ ℓ₂ where
+    record 𝒮urjidentity ⦃ _ : [𝒮urjidentity] ⦄ : Ø 𝔬₁ ∙̂ ℓ₂ where
       field surjidentity : 𝓈urjidentity
 
 open 𝒮urjidentity ⦃ … ⦄ public
@@ -67,7 +63,7 @@ module _
   where
   𝓼urjidentity = 𝓈urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_)
   [𝓢urjidentity] = [𝒮urjidentity] ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) 𝔯₁ 𝔬₂ 𝔯₂
-  𝓢urjidentity = 𝒮urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) {𝔯₁} {𝔬₂} {𝔯₂}
+  𝓢urjidentity = 𝒮urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) 𝔯₁ 𝔬₂ 𝔯₂
 
 surjidentity[_,_] : ∀
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂ ℓ₂}
