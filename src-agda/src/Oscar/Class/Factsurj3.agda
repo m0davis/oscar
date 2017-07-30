@@ -9,8 +9,8 @@ module Oscar.Class.Factsurj3 where
 
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔞̈ 𝔞̇ 𝔞̇̈}
-  (𝔄̈ : π̂² 𝔞̈ 𝔄)
   (𝔄̇ : π̂ 𝔞̇ 𝔄)
+  (𝔄̈ : π̂² 𝔞̈ 𝔄)
   ⦃ _ : 𝓡eflexivity 𝔄̈ ⦄
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
   ⦃ _ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈ ⦄
@@ -33,7 +33,7 @@ module _
         ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity 𝔄̈
         ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity 𝔄̈ 𝔄̇
         ⦃ ⌶HasEquivalence ⦄ : ∀ {𝒶} → HasEquivalence (𝔄̇ 𝒶) 𝔞̇̈
-        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̈ 𝔄̇ ≡ 𝔄̇̈
+        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̇ 𝔄̈ ≡ 𝔄̇̈
     record ℱactsurj3 ⦃ _ : [ℱactsurj3] ⦄ : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̈ where
       field factsurj3 : 𝒻actsurj3
 
@@ -46,6 +46,6 @@ module _
   ⦃ _ : 𝓢urjectextensivity 𝔄̈ 𝔄̇ ⦄
   {𝔞̇̈} ⦃ _ : ∀ {x} → HasEquivalence (𝔄̇ x) 𝔞̇̈ ⦄
   where
-  𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇)
-  [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̈ 𝔄̇) 𝔞̈
-  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̈ 𝔄̇) 𝔞̈
+  𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈)
+  [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̇ 𝔄̈) 𝔞̈
+  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈) 𝔞̈
