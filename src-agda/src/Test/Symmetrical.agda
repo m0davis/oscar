@@ -95,4 +95,5 @@ module Test.Symmetrical where
                  _ = ∁ _∼2_ in
     let instance _ : [𝓢ymmetrical] 𝔄 𝔅 _↦'_
                  _ = ∁ _∼2_ in
+      -- symmetrical ⦃ ∁ _∼1_ ⦄ -- works, because Agda figures out that the only 𝓢ymmetrical compatibly defined with the given [𝓢ymmetrical] has {_↦_ = _ _↦_} -- FIXME reincarnate
       explicit-symmetrical _ _∼1_
