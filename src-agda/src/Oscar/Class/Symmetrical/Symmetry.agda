@@ -13,10 +13,6 @@ module _
 
   instance
 
-    SymmetricalContainer𝓢ymmetry : SymmetricalContainer 𝔒 (Ø ℓ) (λ x∼y y∼x → x∼y → y∼x)
-    SymmetricalContainer𝓢ymmetry .SymmetricalContainer._∼_ = _∼_
-    SymmetricalContainer𝓢ymmetry .SymmetricalContainer.symmetrical′ _ _ = symmetry
-
     [𝓢ymmetrical]𝓢ymmetry : [𝓢ymmetrical] 𝔒 (Ø ℓ) (λ x∼y y∼x → x∼y → y∼x)
     [𝓢ymmetrical]𝓢ymmetry .[𝓢ymmetrical]._∼_ = _∼_
 
