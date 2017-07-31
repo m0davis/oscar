@@ -7,40 +7,49 @@ open import Oscar.Data.Proposequality
 
 module Oscar.Class.Factsurj3 where
 
-TYPE : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} ℓ → (𝔄 → Ø 𝔟) → Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ ℓ
-TYPE ℓ 𝔅 = ∀ {a} (B : 𝔅 a) → Ø ℓ
-
-𝒻actsurj3 : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : 𝔄 → Ø 𝔟} {ℓ} → TYPE ℓ 𝔅 → Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ
-𝒻actsurj3 {𝔅 = B} C = ∀ {a} {b : B a} → C b
-
-[𝓯actsurj3] : ∀ {𝔞} {𝔄 : Ø 𝔞} {𝔯} {𝔟} {ℓ} (_∼ᵣ_ : π̂² 𝔯 𝔄) (B : π̂ 𝔟 𝔄) ⦃ _ : 𝓡eflexivity _∼ᵣ_ ⦄ ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ B ⦄ ⦃ _ : ∀ {x} → HasEquivalence (B x) ℓ ⦄ → TYPE ℓ B
-[𝓯actsurj3] _∼ᵣ_ 𝔅 B = B ≈ ε[ _∼ᵣ_ ] ◃ B
+module _
+  {𝔞} {𝔄 : Ø 𝔞} {𝔞̈ 𝔞̇ 𝔞̇̈}
+  (𝔄̇ : π̂ 𝔞̇ 𝔄)
+  (𝔄̈ : π̂² 𝔞̈ 𝔄)
+  (ε̈ : 𝓻eflexivity 𝔄̈)
+  (_◃′_ : 𝓼urjectextensivity 𝔄̈ 𝔄̇)
+  (let infix 18 _◃′_
+       _◃′_ = _◃′_)
+  (𝔄̇̈ : ∀̇ π̂² 𝔞̇̈ 𝔄̇)
+  (let infix 4 _≈_
+       _≈_ = 𝔄̇̈)
+  where
+  [𝒻actsurj3] : Ṗroperty 𝔞̇̈ 𝔄̇
+  [𝒻actsurj3] .π₀ 𝒶̇ = 𝒶̇ ≈ ε̈ ◃′ 𝒶̇
 
 module _
-  {ℓ} {𝔞} {𝔄 : Ø 𝔞} {𝔟} {𝔅 : 𝔄 → Ø 𝔟}
-  (type : TYPE ℓ 𝔅)
+  {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} {𝔄̇ : 𝔄 → Ø 𝔞̇} {𝔞̇̈}
+  ([𝔄̇̇] : Ṗroperty 𝔞̇̈ 𝔄̇)
   where
-  record [𝐹actsurj3] 𝔯 : Ø 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔯 ∙̂ ↑̂ ℓ where
-    constructor ∁
-    field
-      _∼ᵣ_ : π̂² 𝔯 𝔄
-      ⦃ ⌶Reflexivity ⦄ : 𝓡eflexivity _∼ᵣ_
-      ⦃ ⌶Surjectextensivity ⦄ : 𝓢urjectextensivity _∼ᵣ_ 𝔅
-      ⦃ ⌶HasEquivalence ⦄ : ∀ {x} → HasEquivalence (𝔅 x) ℓ
-      ⦃ ⌶CorrectFactsurj3 ⦄ : (λ {a} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {a}) ≡ type
+  𝒻actsurj3 = ∀ {𝒶} {𝒶̇ : 𝔄̇ 𝒶} → π₀ [𝔄̇̇] 𝒶̇
+  module _
+    𝔞̈
+    where
+    record [ℱactsurj3] : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔞̈ ∙̂ ↑̂ 𝔞̇̈ where
+      constructor ∁
+      field
+        𝔄̈ : π̂² 𝔞̈ 𝔄
+        ε̈ : 𝓻eflexivity 𝔄̈
+        _◃_ : 𝓼urjectextensivity 𝔄̈ 𝔄̇
+        𝔄̇̈ : ∀̇ π̂² 𝔞̇̈ 𝔄̇
+        ⦃ ⌶CorrectFactsurj3 ⦄ : [𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈ ≡ [𝔄̇̇]
+    record ℱactsurj3 ⦃ _ : [ℱactsurj3] ⦄ : Ø 𝔞 ∙̂ 𝔞̇ ∙̂ 𝔞̇̈ where
+      field factsurj3 : 𝒻actsurj3
 
-  record 𝐹actsurj3 {𝔯} ⦃ _ : [𝐹actsurj3] 𝔯 ⦄ : Ø 𝔞 ∙̂ 𝔟 ∙̂ ℓ where
-    field factsurj3 : 𝒻actsurj3 (λ {x} → type {x})
-
-open 𝐹actsurj3 ⦃ … ⦄ public
+open ℱactsurj3 ⦃ … ⦄ public
 
 module _
-  {ℓ} {𝔞} {𝔄 : Ø 𝔞} {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
-  {𝔯} (_∼ᵣ_ : π̂² 𝔯 𝔄)
-  ⦃ _ : 𝓡eflexivity _∼ᵣ_ ⦄
-  ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ 𝔅 ⦄
-  ⦃ _ : ∀ {x} → HasEquivalence (𝔅 x) ℓ ⦄
+  {𝔞} {𝔄 : Ø 𝔞} {𝔞̇} (𝔄̇ : 𝔄 → Ø 𝔞̇)
+  {𝔞̈} (𝔄̈ : π̂² 𝔞̈ 𝔄)
+  (ε̈ : 𝓻eflexivity 𝔄̈)
+  (_◃_ : 𝓼urjectextensivity 𝔄̈ 𝔄̇)
+  {𝔞̇̈} (𝔄̇̈ : ∀̇ π̂² 𝔞̇̈ 𝔄̇)
   where
-  𝓯actsurj3 = 𝒻actsurj3 (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
-  [𝓕actsurj3] = [𝐹actsurj3] (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
-  𝓕actsurj3 = 𝐹actsurj3 (λ {x} → [𝓯actsurj3] _∼ᵣ_ 𝔅 {x})
+  𝓯actsurj3 = 𝒻actsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈)
+  [𝓕actsurj3] = [ℱactsurj3] ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈) 𝔞̈
+  𝓕actsurj3 = ℱactsurj3 ([𝒻actsurj3] 𝔄̇ 𝔄̈ ε̈ _◃_ 𝔄̇̈) 𝔞̈
