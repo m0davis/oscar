@@ -127,10 +127,8 @@ module Test.ṖropertyFacts where
       _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
       _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
 
-      _ : [𝓕actsurj3] 𝑷⁰ 𝑪 𝒖 surjectextensivity _≈_
-      _ : 𝓕actsurj3 𝑷⁰ 𝑪 𝒖 surjectextensivity _≈_
-      _ : [𝓕actsurj3] 𝑷¹ 𝑪 𝒖 surjectextensivity _≈_
-      _ : 𝓕actsurj3 𝑷¹ 𝑪 𝒖 surjectextensivity _≈_
+      _ : Factsurj3 𝑷⁰ _≈_ 𝑪 𝒖 surjectextensivity
+      _ : Factsurj3 𝑷¹ _≈_ 𝑪 𝒖 surjectextensivity
 
       _ : [𝓕actsurj4] 𝑷⁰ 𝑪 Nothing
       _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
@@ -161,7 +159,7 @@ module Test.ṖropertyFacts where
   fact3⋆ = factsurj3
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
-  lhs-fact3⋆ {𝒫 = 𝒫} = factsurj3 {[𝔄̇̇] = [𝒻actsurj3] 𝑷⁰ 𝑪 𝒖 surjectextensivity _≈_} {𝒶̇ = 𝒫}
+  lhs-fact3⋆ {𝒫 = 𝒫} = factsurj3⟦ 𝑷⁰ / _≈_ / 𝑪 / 𝒖 / surjectextensivity ⟧ {p = 𝒫}
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3 = factsurj3
