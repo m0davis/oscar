@@ -14,8 +14,5 @@ module _
 
   instance
 
-    [𝓢ymmetrical]𝓢ymmetry : [𝓢ymmetrical] _∼_ (λ x∼y y∼x → x∼y → y∼x)
-    [𝓢ymmetrical]𝓢ymmetry = ∁ _∼_ (λ x∼y y∼x → x∼y → y∼x)
-
-    𝓢ymmetrical𝓢ymmetry : 𝓢ymmetrical _∼_ (λ x∼y y∼x → x∼y → y∼x)
-    𝓢ymmetrical𝓢ymmetry .𝒮ymmetrical.symmetrical _ _ = symmetry
+    Symmetrical𝓢ymmetry : Symmetrical _∼_ (λ x∼y y∼x → x∼y → y∼x)
+    Symmetrical𝓢ymmetry .𝓢ymmetrical.symmetrical _ _ = symmetry

@@ -28,7 +28,7 @@ module Test.Symmetrical where
     {_∼'_ : 𝔒 → 𝔒 → Ø ℓ}
     ⦃ _ : 𝓢ymmetry _∼'_ ⦄
     → ∀ x y → _
-  lhs-test1 {_∼_ = _∼_} = explicit-symmetrical _∼_ (λ x y → x → y)
+  lhs-test1 {_∼_ = _∼_} = symmetrical⟦ _∼_ / (λ x y → x → y) ⟧
 
   module OverlappingInstances
     {𝔞} {𝔄 : Ø 𝔞}
@@ -37,40 +37,35 @@ module Test.Symmetrical where
         {_↦'_ : 𝔅 → 𝔅 → Ø ℓ}
     {_∼1_ : 𝔄 → 𝔄 → 𝔅}
     {_∼2_ : 𝔄 → 𝔄 → 𝔅}
-    ⦃ _ : [𝓢ymmetrical] _∼1_ _↦_ ⦄
-    ⦃ _ : 𝓢ymmetrical _∼1_ _↦_ ⦄
-    ⦃ _ : [𝓢ymmetrical] _∼1_ _↦'_ ⦄
-    ⦃ _ : 𝓢ymmetrical _∼1_ _↦'_ ⦄
-    ⦃ _ : [𝓢ymmetrical] _∼2_ _↦_ ⦄
-    ⦃ _ : 𝓢ymmetrical _∼2_ _↦_ ⦄
-    ⦃ _ : [𝓢ymmetrical] _∼2_ _↦'_ ⦄
-    ⦃ _ : 𝓢ymmetrical _∼2_ _↦'_ ⦄
+    ⦃ _ : Symmetrical _∼1_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼1_ _↦'_ ⦄
+    ⦃ _ : Symmetrical _∼2_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼2_ _↦'_ ⦄
     (x y : 𝔄)
     where
 
-    test1 = symmetrical {Symmetrical = λ x y → (x ∼1 y) ↦ (y ∼1 x)} x y
+    test1 = symmetrical {_∼_ = _∼1_} {_↦_ = _↦_} x y
 
     test2 : (x ∼1 y) ↦ (y ∼1 x)
-    test2 = explicit-symmetrical _ _↦_ x y
+    test2 = symmetrical⟦ _ / _↦_ ⟧ x y
 
     test2a : (x ∼1 y) ↦ (y ∼1 x)
     test2a = symmetrical x y
 
-    test3 = explicit-symmetrical _∼1_ _↦_ x y
+    test3 = symmetrical⟦ _∼1_ / _↦_ ⟧ x y
 
   lhs-test2a : ∀
     {𝔞} {𝔄 : Ø 𝔞}
     {𝔟} {𝔅 : Ø 𝔟}
     (_∼_ : 𝔄 → 𝔄 → 𝔅)
     {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ)
-    ⦃ _ : [𝓢ymmetrical] _∼_ _↦_ ⦄
-    ⦃ _ : 𝓢ymmetrical _∼_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼_ _↦_ ⦄
     → ∀ (x y : 𝔄) → _ ↦ _
   lhs-test2a _∼_ _↦_ x y =
-    -- symmetrical x y -- works
-    explicit-symmetrical _∼_ _↦_ x y -- works
-    -- explicit-symmetrical _ _↦_ x y -- FIXME fails; explain why
-    -- explicit-symmetrical _∼_ _ x y -- FIXME fails; explain why
+    symmetrical x y -- works
+    -- symmetrical⟦ _∼_ / _↦_ ⟧ x y -- works
+    -- symmetrical⟦ _ / _↦_ ⟧ x y -- works
+    -- symmetrical⟦ _∼_ / _ ⟧ x y -- works
 
   open import Oscar.Data.Proposequality
   lhs-test2a' : ∀
@@ -78,35 +73,33 @@ module Test.Symmetrical where
     {𝔟} {𝔅 : Ø 𝔟}
     (_∼_ : 𝔄 → 𝔄 → 𝔅) {_∼'_ : 𝔄 → 𝔄 → 𝔅}
     {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ) {_↦'_ : 𝔅 → 𝔅 → Ø ℓ}
-    ⦃ _ : Symmetrical' _∼_ _↦_ (λ x y → (x ∼ y) ↦ (y ∼ x)) ⦄
-    ⦃ _ : Symmetrical' _∼'_ _↦_ (λ x y → (x ∼' y) ↦ (y ∼' x)) ⦄
-    ⦃ _ : Symmetrical' _∼_ _↦'_ (λ x y → (x ∼ y) ↦' (y ∼ x)) ⦄
-    ⦃ _ : Symmetrical' _∼'_ _↦'_ (λ x y → (x ∼' y) ↦' (y ∼' x)) ⦄
+    ⦃ _ : Symmetrical _∼_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼'_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼_ _↦'_ ⦄
+    ⦃ _ : Symmetrical _∼'_ _↦'_ ⦄
     → ∀ (x y : 𝔄) → -- _
                     _ ↦ _
                     -- (x ∼ y) ↦ (y ∼ x)
   lhs-test2a' _∼_ _↦_ x y =
-    -- implicit-symmetrical' x y
-    explicit-symmetrical' _∼_ _ x y
-    -- explicit-symmetrical' _∼_ _↦_ x y
-    -- symmetrical' {_∼_ = _∼_} {_↦_ = _↦_} {S = (λ x y → (x ∼ y) ↦ (y ∼ x))} x y
-    -- symmetrical' ⦃ ∅ ⦄ x y
-    -- symmetrical' x y
+    symmetrical⟦ _∼_ / _ ⟧ x y
+    -- symmetrical x y -- fails, as expected
+    -- symmetrical⟦ _ / _ ⟧ x y -- fails, as expected
+    -- symmetrical⟦ _ / _↦_ ⟧ x y -- fails, as expected
 
   lhs-test2a'' : ∀
     {𝔞} {𝔄 : Ø 𝔞}
     {𝔟} {𝔅 : Ø 𝔟}
     (_∼_ : 𝔄 → 𝔄 → 𝔅) {_∼'_ : 𝔄 → 𝔄 → 𝔅}
     {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ) {_↦'_ : 𝔅 → 𝔅 → Ø ℓ}
-    ⦃ _ : Symmetrical'' _∼_ _↦_ ⦄
-    ⦃ _ : Symmetrical'' _∼'_ _↦_ ⦄
-    ⦃ _ : Symmetrical'' _∼_ _↦'_ ⦄
-    ⦃ _ : Symmetrical'' _∼'_ _↦'_ ⦄
+    ⦃ _ : Symmetrical _∼_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼'_ _↦_ ⦄
+    ⦃ _ : Symmetrical _∼_ _↦'_ ⦄
+    ⦃ _ : Symmetrical _∼'_ _↦'_ ⦄
     → ∀ (x y : 𝔄) → -- _
                     -- _ ↦ _
                     (x ∼ y) ↦ (y ∼ x)
   lhs-test2a'' _∼_ _↦_ x y =
-    symmetrical'' {_∼_ = _∼_} x y
+    symmetrical {_∼_ = _∼_} x y
     -- symmetrical'' {_↦_ = _↦_} x y
     -- symmetrical'' {_∼_ = _∼_} {_↦_ = _↦_} x y
     -- symmetrical'' x y

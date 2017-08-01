@@ -188,7 +188,7 @@ module Test.ṖropertyFacts where
   fact1 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
   lhs-fact1 : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → _
-  lhs-fact1 𝓈 𝓉 = explicit-symmetrical 𝓢̇._⟹_ _≈_ 𝓈 𝓉
+  lhs-fact1 𝓈 𝓉 = symmetrical⟦ 𝓢̇._⟹_ / _≈_ ⟧ 𝓈 𝓉
 
   fact1s : ∀ {N 𝓃} (𝓈 𝓉 : 𝑩' N 𝓃) → 𝓈 𝓢̇.⟹ 𝓉 ≈ 𝓉 𝓢̇.⟹ 𝓈
   fact1s 𝓈 𝓉 = symmetrical 𝓈 𝓉

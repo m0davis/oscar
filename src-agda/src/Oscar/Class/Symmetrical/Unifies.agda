@@ -23,8 +23,5 @@ module _
 
   instance
 
-    [𝓢ymmetrical]Unifies₀ : ∀ {m} → [𝓢ymmetrical] surjcollation⟦ _ / ∁ _≈'_ ⟧ (λ x y → x ≈[ LeftṖroperty ℓ 𝔄 m ] y)
-    [𝓢ymmetrical]Unifies₀ = ∁ surjcollation⟦ _ / ∁ _≈'_ ⟧ _≈_
-
-    𝓢ymmetricalUnifies₀ : ∀ {m} → 𝓢ymmetrical surjcollation⟦ _ / ∁ _≈'_ ⟧ (λ x y → x ≈[ LeftṖroperty ℓ 𝔄 m ] y)
-    𝓢ymmetricalUnifies₀ .𝒮ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
+    𝓢ymmetricalUnifies₀ : ∀ {m} → Symmetrical surjcollation⟦ _ / ∁ _≈'_ ⟧ (λ x y → x ≈[ LeftṖroperty ℓ 𝔄 m ] y)
+    𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
