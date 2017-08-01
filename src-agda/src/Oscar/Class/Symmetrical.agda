@@ -1,35 +1,42 @@
 
 open import Oscar.Prelude
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.Symmetrical where
 
-module _
-  {𝔞} (𝔄 : Ø 𝔞)
-  {𝔟} (𝔅 : Ø 𝔟)
-  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ) (let _↦_ = _↦_ ; infix 14 _↦_)
-  where
-  record [𝓢ymmetrical] : Ø 𝔞 ∙̂ 𝔟 where
-    constructor ∁
-    infix 18 _∼_
-    field
-      _∼_ : 𝔄 → 𝔄 → 𝔅
-
-  module _
-    ⦃ ⌶[𝓢ymmetrical] : [𝓢ymmetrical] ⦄
-    where
-    record 𝓢ymmetrical : Ø 𝔞 ∙̂ ℓ where
-      open [𝓢ymmetrical] ⌶[𝓢ymmetrical]
-      field
-        symmetrical : ∀ x y → x ∼ y ↦ y ∼ x
-
-open 𝓢ymmetrical ⦃ … ⦄ public
-
-explicit-symmetrical : ∀
+record 𝓢ymmetrical
   {𝔞} {𝔄 : Ø 𝔞}
   {𝔟} {𝔅 : Ø 𝔟}
-  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ)
   (_∼_ : 𝔄 → 𝔄 → 𝔅)
-  -- ⦃ _ : [𝓢ymmetrical] 𝔄 𝔅 _↦_ ⦄
-  ⦃ _ : 𝓢ymmetrical 𝔄 𝔅 _↦_ ⦃ ∁ _∼_ ⦄ ⦄
+  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ)
+  {S : 𝔄 → 𝔄 → Ø ℓ}
+  ⦃ _ : S ≡ (λ x y → (x ∼ y) ↦ (y ∼ x)) ⦄
+  : Ø 𝔞 ∙̂ ℓ
+  where
+  field symmetrical : ∀ x y → S x y -- FIXME is there any reason to write (x ∼ y) ↦ (y ∼ x) instead of S x y?
+
+Symmetrical : ∀
+  {𝔞} {𝔄 : Ø 𝔞}
+  {𝔟} {𝔅 : Ø 𝔟}
+  (_∼_ : 𝔄 → 𝔄 → 𝔅)
+  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ)
+  → Ø 𝔞 ∙̂ ℓ
+Symmetrical _∼_ _↦_ = 𝓢ymmetrical _∼_ _↦_ ⦃ ∅ ⦄
+
+symmetrical : ∀
+  {𝔞} {𝔄 : Ø 𝔞}
+  {𝔟} {𝔅 : Ø 𝔟}
+  {_∼_ : 𝔄 → 𝔄 → 𝔅}
+  {ℓ} {_↦_ : 𝔅 → 𝔅 → Ø ℓ}
+  ⦃ _ : Symmetrical _∼_ _↦_ ⦄
   → ∀ x y → (x ∼ y) ↦ (y ∼ x)
-explicit-symmetrical _↦_ _∼_ ⦃ I ⦄ x₁ y = symmetrical ⦃ r = I ⦄ x₁ y
+symmetrical ⦃ I ⦄ = 𝓢ymmetrical.symmetrical I
+
+symmetrical⟦_/_⟧ : ∀
+  {𝔞} {𝔄 : Ø 𝔞}
+  {𝔟} {𝔅 : Ø 𝔟}
+  (_∼_ : 𝔄 → 𝔄 → 𝔅)
+  {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ)
+  ⦃ _ : Symmetrical _∼_ _↦_ ⦄
+  → ∀ x y → (x ∼ y) ↦ (y ∼ x)
+symmetrical⟦ _ / _ ⟧ = symmetrical
