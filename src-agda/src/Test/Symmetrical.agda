@@ -50,6 +50,12 @@ module Test.Symmetrical where
 
     test1 = symmetrical {Symmetrical = λ x y → (x ∼1 y) ↦ (y ∼1 x)} x y
 
+    test2 : (x ∼1 y) ↦ (y ∼1 x)
+    test2 = explicit-symmetrical _ _↦_ x y
+
+    test2a : (x ∼1 y) ↦ (y ∼1 x)
+    test2a = symmetrical x y
+
     test3 = explicit-symmetrical _∼1_ _↦_ x y
 
   lhs-test2a : ∀
