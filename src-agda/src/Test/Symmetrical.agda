@@ -71,3 +71,42 @@ module Test.Symmetrical where
     explicit-symmetrical _∼_ _↦_ x y -- works
     -- explicit-symmetrical _ _↦_ x y -- FIXME fails; explain why
     -- explicit-symmetrical _∼_ _ x y -- FIXME fails; explain why
+
+  open import Oscar.Data.Proposequality
+  lhs-test2a' : ∀
+    {𝔞} {𝔄 : Ø 𝔞}
+    {𝔟} {𝔅 : Ø 𝔟}
+    (_∼_ : 𝔄 → 𝔄 → 𝔅) {_∼'_ : 𝔄 → 𝔄 → 𝔅}
+    {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ) {_↦'_ : 𝔅 → 𝔅 → Ø ℓ}
+    ⦃ _ : Symmetrical' _∼_ _↦_ (λ x y → (x ∼ y) ↦ (y ∼ x)) ⦄
+    ⦃ _ : Symmetrical' _∼'_ _↦_ (λ x y → (x ∼' y) ↦ (y ∼' x)) ⦄
+    ⦃ _ : Symmetrical' _∼_ _↦'_ (λ x y → (x ∼ y) ↦' (y ∼ x)) ⦄
+    ⦃ _ : Symmetrical' _∼'_ _↦'_ (λ x y → (x ∼' y) ↦' (y ∼' x)) ⦄
+    → ∀ (x y : 𝔄) → -- _
+                    _ ↦ _
+                    -- (x ∼ y) ↦ (y ∼ x)
+  lhs-test2a' _∼_ _↦_ x y =
+    -- implicit-symmetrical' x y
+    explicit-symmetrical' _∼_ _ x y
+    -- explicit-symmetrical' _∼_ _↦_ x y
+    -- symmetrical' {_∼_ = _∼_} {_↦_ = _↦_} {S = (λ x y → (x ∼ y) ↦ (y ∼ x))} x y
+    -- symmetrical' ⦃ ∅ ⦄ x y
+    -- symmetrical' x y
+
+  lhs-test2a'' : ∀
+    {𝔞} {𝔄 : Ø 𝔞}
+    {𝔟} {𝔅 : Ø 𝔟}
+    (_∼_ : 𝔄 → 𝔄 → 𝔅) {_∼'_ : 𝔄 → 𝔄 → 𝔅}
+    {ℓ} (_↦_ : 𝔅 → 𝔅 → Ø ℓ) {_↦'_ : 𝔅 → 𝔅 → Ø ℓ}
+    ⦃ _ : Symmetrical'' _∼_ _↦_ ⦄
+    ⦃ _ : Symmetrical'' _∼'_ _↦_ ⦄
+    ⦃ _ : Symmetrical'' _∼_ _↦'_ ⦄
+    ⦃ _ : Symmetrical'' _∼'_ _↦'_ ⦄
+    → ∀ (x y : 𝔄) → -- _
+                    -- _ ↦ _
+                    (x ∼ y) ↦ (y ∼ x)
+  lhs-test2a'' _∼_ _↦_ x y =
+    symmetrical'' {_∼_ = _∼_} x y
+    -- symmetrical'' {_↦_ = _↦_} x y
+    -- symmetrical'' {_∼_ = _∼_} {_↦_ = _↦_} x y
+    -- symmetrical'' x y
