@@ -18,8 +18,7 @@ module _
     constructor ∁
   module _
     ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-    ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-    ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
+    ⦃ _ : Surjectivity _∼₁_ _∼₂_ surjection ⦄
     where
     𝓼urjextensionality = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂
     record 𝓢urjextensionality ⦃ _ : [𝓢urjextensionality] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ ℓ₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂ where field surjextensionality : 𝓼urjextensionality
@@ -38,8 +37,7 @@ private
       {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
       {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
       ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-      ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-      ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
+      ⦃ _ : Surjectivity _∼₁_ _∼₂_ surjection ⦄
       ⦃ _ : [𝓢urjextensionality] _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
       ⦃ _ : 𝓢urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
       → 𝓼urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_

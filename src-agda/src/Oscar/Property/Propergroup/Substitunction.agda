@@ -48,8 +48,6 @@ import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.[ExtensibleType].Proposequality
-import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
-import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction

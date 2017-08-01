@@ -20,12 +20,9 @@ module _
   where
   postulate
     instance `𝓢urjection : 𝓢urjection 𝔒₁ 𝔒₂
-    instance `[𝓢urjectivity] : [𝓢urjectivity] _∼₁_ _∼₂_
-    instance `[𝓢urjectivity]' : [𝓢urjectivity] _∼₁_ _∼₂'_
-    instance `[𝓢urjectivity]2 : [𝓢urjectivity] _∼₁_ _∼₂2_
-    instance `𝓢urjectivity : 𝓢urjectivity _∼₁_ _∼₂_
-    instance `𝓢urjectextensivity : 𝓢urjectivity _∼₁_ _∼₂'_
-    instance `𝓢urjectivity2 : 𝓢urjectivity _∼₁_ _∼₂2_
+    instance `𝓢urjectivity : 𝒮urjectivity _∼₁_ _∼₂_
+    instance `𝓢urjectextensivity : 𝒮urjectivity _∼₁_ _∼₂'_
+    instance `𝓢urjectivity2 : 𝒮urjectivity _∼₁_ _∼₂2_
     instance `𝓡eflexivity₁ : 𝓡eflexivity _∼₁_
     instance `𝓡eflexivity₂ : 𝓡eflexivity _∼₂_
     instance `𝓡eflexivity₂' : 𝓡eflexivity _∼₂'_

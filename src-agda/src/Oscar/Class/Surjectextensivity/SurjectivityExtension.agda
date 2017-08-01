@@ -11,7 +11,6 @@ instance
     {𝔬₁} {𝔒₁ : Ø 𝔬₁}
     {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {𝔬₂} {𝔒₂ : 𝔒₁ → Ø 𝔬₂}
-    ⦃ _ : [𝓢urjectivity] _∼₁_ (Extension 𝔒₂) ⦄
-    ⦃ _ : 𝓢urjectivity _∼₁_ (Extension 𝔒₂) ⦃ record { surjection = ¡ } ⦄ ⦄
+    ⦃ _ : Surjectivity _∼₁_ (Extension 𝔒₂) ¡ ⦄
     → 𝓢urjectextensivity _∼₁_ 𝔒₂
-  toSurj' {{_}} {{x₂}} .𝓢urjectextensivity.surjectextensivity = § {{r = x₂}}
+  toSurj' .𝓢urjectextensivity.surjectextensivity = §

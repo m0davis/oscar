@@ -22,7 +22,6 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
-import Oscar.Class.Surjectivity.ExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Symmetrical.ExtensionalUnifies
@@ -49,9 +48,6 @@ module Test.ṖropertyFacts where
 
   Proposextensequality⟦_⟧ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} (𝔓 : 𝔒 → Ø 𝔭) → ((𝓞 : 𝔒) → 𝔓 𝓞) → ((𝓞 : 𝔒) → 𝔓 𝓞) → Ø 𝔬
   Proposextensequality⟦ _ ⟧ = Proposextensequality
-
-  -- postulated instance from Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
-  postulate instance _ : ∀ {ℓ} {a} {f} {t} {¶ : Set a} {Fin : ¶ → Set f} {Term : ¶ → Set t} → [𝓢urjectivity] (Arrow Fin Term) (Extension $ LeftExtensionṖroperty ℓ (Arrow Fin Term) _≡̇_) -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 
   postulate
     𝔞 : Ł
@@ -90,10 +86,8 @@ module Test.ṖropertyFacts where
 
     instance
 
-      _ : [𝓢urjectivity] 𝑪 (Extension 𝑩)
-      _ : 𝓢urjectivity 𝑪 (Extension 𝑩)
-      _ : ∀ {N} → [𝓢urjectivity] 𝑪 (Extension $ 𝑩' N)
-      _ : ∀ {N} → 𝓢urjectivity 𝑪 (Extension $ 𝑩' N)
+      _ : 𝒮urjectivity 𝑪 (Extension 𝑩)
+      _ : ∀ {N} → 𝒮urjectivity 𝑪 (Extension $ 𝑩' N)
       _ : 𝓣ransitivity 𝑪 -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
       _ : [𝓢urjextensionality] 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality
       _ : 𝓢urjextensionality 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_

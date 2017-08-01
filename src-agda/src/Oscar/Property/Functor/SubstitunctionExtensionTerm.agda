@@ -11,6 +11,7 @@ open import Oscar.Class.IsPrefunctor
 open import Oscar.Class.Precategory
 open import Oscar.Class.Prefunctor
 open import Oscar.Class.Reflexivity
+open import Oscar.Class.Surjection
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Surjidentity
@@ -44,28 +45,22 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjectivitySubstitunctionExtensionTerm : 𝓼urjectivity Substitunction (Extension Term)
+      𝓼urjectivitySubstitunctionExtensionTerm : 𝓈urjectivity! Substitunction (Extension Term)
       𝓼urjectivitySubstitunctionExtensionTerm σ (i x) = σ x
       𝓼urjectivitySubstitunctionExtensionTerm σ leaf = leaf
       𝓼urjectivitySubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ₁ fork 𝓼urjectivitySubstitunctionExtensionTerm σ τ₂
       𝓼urjectivitySubstitunctionExtensionTerm σ (function p τs) = function p (𝓼urjectivitySubstitunctionExtensionTerms σ τs)
 
-      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjectivity Substitunction (Extension $ Terms N)
+      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓈urjectivity Substitunction (Extension $ Terms N) surjection
       𝓼urjectivitySubstitunctionExtensionTerms σ ∅ = ∅
       𝓼urjectivitySubstitunctionExtensionTerms σ (τ , τs) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ , 𝓼urjectivitySubstitunctionExtensionTerms σ τs
 
   instance
 
-    [𝓢urjectivity]SubstitunctionExtensionTerm : [𝓢urjectivity] Substitunction (Extension Term)
-    [𝓢urjectivity]SubstitunctionExtensionTerm = ∁
-
-    𝓢urjectivitySubstitunctionExtensionTerm : 𝓢urjectivity Substitunction (Extension Term)
+    𝓢urjectivitySubstitunctionExtensionTerm : 𝒮urjectivity Substitunction (Extension Term)
     𝓢urjectivitySubstitunctionExtensionTerm .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerm
 
-    [𝓢urjectivity]SubstitunctionExtensionTerms : ∀ {N} → [𝓢urjectivity] Substitunction (Extension $ Terms N)
-    [𝓢urjectivity]SubstitunctionExtensionTerms = ∁
-
-    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjectivity Substitunction (Extension $ Terms N)
+    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝒮urjectivity Substitunction (Extension $ Terms N)
     𝓢urjectivitySubstitunctionExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerms
 
   instance

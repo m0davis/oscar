@@ -19,8 +19,6 @@ import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Class.Surjectextensivity.SurjectivityExtension
-import Oscar.Class.Surjectivity.ExtensionArrowExtensionṖropertyProposequality
-import Oscar.Class.Surjectivity.ExtensionLeftṖroperty
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies

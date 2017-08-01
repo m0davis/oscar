@@ -1,78 +1,88 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.Surjection
+open import Oscar.Class.Surjection using (𝓼urjection; 𝓢urjection)
+open import Oscar.Data.Proposequality
 
 module Oscar.Class.Surjectivity where
 
 module _
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-  {𝔯₁} (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-  {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-  {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
   where
-  record [𝓢urjectivity] : Ø₀ where
-    no-eta-equality
-    constructor ∁
-  module _
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+  module Visible
+    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    (μ : 𝓼urjection 𝔒₁ 𝔒₂)
     where
-    𝓼urjectivity = ∀ {x y} → x ∼₁ y → surjection x ∼₂ surjection y
-    record 𝓢urjectivity ⦃ _ : [𝓢urjectivity] ⦄ : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ where
-      field
-        surjectivity : 𝓼urjectivity
+    𝓼urjectivity = λ x y → x ∼₁ y → μ x ∼₂ μ y
+    𝓈urjectivity = ∀ {x y} → 𝓼urjectivity x y
+    record 𝓢urjectivity
+      {𝓢 : 𝔒₁ → 𝔒₁ → Ø 𝔯₁ ∙̂ 𝔯₂}
+      ⦃ _ : 𝓢 ≡ 𝓼urjectivity ⦄
+      : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂
+      where
+      field surjectivity : 𝓈urjectivity
+    Surjectivity : Ø _
+    Surjectivity = 𝓢urjectivity ⦃ ∅ ⦄
+    surjectivity⟦_/_/_⟧ : ⦃ _ : Surjectivity ⦄ → 𝓈urjectivity
+    surjectivity⟦_/_/_⟧ = 𝓢urjectivity.surjectivity ⦃ ∅ ⦄ !
+  module Hidden
+    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
+    {μ : 𝓼urjection 𝔒₁ 𝔒₂}
+    where
+    open Visible _∼₁_ _∼₂_ μ
+    surjectivity : ⦃ _ : Surjectivity ⦄ → 𝓈urjectivity
+    surjectivity = surjectivity⟦_/_/_⟧
+  module Hidden0
+    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
+    ⦃ I : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    where
+    open Visible _∼₁_ _∼₂_ (𝓢urjection.surjection I)
+    surjectivity! = surjectivity⟦_/_/_⟧
+  module Partial0
+    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    ⦃ I : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    where
+    open Visible _∼₁_ _∼₂_ (𝓢urjection.surjection I)
+    𝓈urjectivity! = 𝓈urjectivity
+    𝒮urjectivity = Surjectivity
+  module Partial1
+    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    ⦃ I : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    where
+    open Visible _∼₁_ _∼₂_ (𝓢urjection.surjection I)
+    surjectivity[_] : ⦃ _ : Surjectivity ⦄ → 𝓈urjectivity
+    surjectivity[_] = surjectivity⟦_/_/_⟧
+  module Partial2
+    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    (μ : 𝓼urjection 𝔒₁ 𝔒₂)
+    where
+    open Visible _∼₁_ _∼₂_ μ
+    surjectivity⟦_/_⟧ : ⦃ _ : Surjectivity ⦄ → 𝓈urjectivity
+    surjectivity⟦_/_⟧ = surjectivity⟦_/_/_⟧
+module _
+  {𝔬₁ 𝔯₁ 𝔬₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
+  where
+  module ≡-Partial3
+    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    (μ : 𝓼urjection 𝔒₁ 𝔒₂)
+    where
+    open Visible _∼₁_ _≡_ μ
+    ≡-surjectivity⟦_⟧ : ⦃ _ : Surjectivity ⦄ → 𝓈urjectivity
+    ≡-surjectivity⟦_⟧ = surjectivity⟦_/_/_⟧
 
-private
-
-  module projection where
-    open 𝓢urjectivity ⦃ … ⦄ public
-
-    surjectivity[_] : ∀
-      {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-      {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-      {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-      {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-      ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-      ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-      ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
-      → 𝓼urjectivity _∼₁_ _∼₂_
-    surjectivity[ _ ] = surjectivity
-
-    surjectivity⟦_/_⟧ : ∀
-      {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-      {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-      {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-      {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-      (surjection : 𝔒₁ → 𝔒₂)
-      (let instance _ : 𝓢urjection 𝔒₁ 𝔒₂
-                    _ = ∁ surjection)
-      ⦃ _ : [𝓢urjectivity] _∼₁_ _∼₂_ ⦄
-      ⦃ _ : 𝓢urjectivity _∼₁_ _∼₂_ ⦄
-      → 𝓼urjectivity _∼₁_ _∼₂_
-    surjectivity⟦_/_⟧ {𝔒₁ = 𝔒₁} {𝔒₂ = 𝔒₂} _ surjection =
-      let instance _ : 𝓢urjection 𝔒₁ 𝔒₂
-                   _ = ∁ surjection
-      in surjectivity
-
-    open import Oscar.Data.Proposequality
-
-    ≡-surjectivity⟦_⟧ : ∀
-      {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-      {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-      {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-      (surjection : 𝔒₁ → 𝔒₂)
-      (let instance _ : 𝓢urjection 𝔒₁ 𝔒₂
-                    _ = ∁ surjection)
-      ⦃ _ : [𝓢urjectivity] _∼₁_ Proposequality⟦ 𝔒₂ ⟧ ⦄
-      ⦃ _ : 𝓢urjectivity _∼₁_ _≡_ ⦄
-      → 𝓼urjectivity _∼₁_ _≡_
-    ≡-surjectivity⟦_⟧ {𝔒₁ = 𝔒₁} {𝔒₂ = 𝔒₂} surjection =
-      let instance _ : 𝓢urjection 𝔒₁ 𝔒₂
-                   _ = ∁ surjection
-      in surjectivity
-
-module _ where
-  open projection public
-
-module _ where
-  open projection public using () renaming (surjectivity to §; surjectivity[_] to §[_])
-  -- TODO rename § to ⟦_⟧?
+open Visible public
+open Hidden public
+open Hidden0 public
+open Partial0 public
+open Partial1 public
+open Partial2 public
+open ≡-Partial3 public
+open Hidden public renaming (surjectivity to §)
+open Partial1 public renaming (surjectivity[_] to §[_])
+-- TODO rename § to ⟦_⟧?
+open 𝓢urjectivity ⦃ … ⦄ renaming (surjectivity to surjectivity‼) public
