@@ -23,7 +23,7 @@ private
       𝒻actsurj3 = ∀ {x} {p : 𝔓 x} → 𝓯actsurj3 p
       record 𝓕actsurj3
         {𝓕 : Ṗroperty ℓ 𝔓}
-        ⦃ _ : 𝓕 ≡ ∁ λ p → p ≈ ε ◃ p ⦄
+        ⦃ _ : 𝓕 ≡ ∁ 𝓯actsurj3 ⦄
         : Ø 𝔵 ∙̂ 𝔭 ∙̂ ℓ
         where
         field factsurj3 : 𝒻actsurj3
