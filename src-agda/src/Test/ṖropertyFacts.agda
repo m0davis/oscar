@@ -187,6 +187,9 @@ module Test.ṖropertyFacts where
   fact1 : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 𝓢̇.⟹ 𝓉 ≈ 𝓉 𝓢̇.⟹ 𝓈
   fact1 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
+  lhs-fact1 : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → _
+  lhs-fact1 𝓈 𝓉 = symmetrical {_↦_ = _{-_≈_-}} ⦃ ∁ 𝓢̇._⟹_ ⦄ 𝓈 𝓉 -- FIXME how does Agda know what _ is? what would happen if there were another instance of 𝓢ymmetrical with a different value of the parameter _↦_?
+
   fact1s : ∀ {N 𝓃} (𝓈 𝓉 : 𝑩' N 𝓃) → 𝓈 𝓢̇.⟹ 𝓉 ≈ 𝓉 𝓢̇.⟹ 𝓈
   fact1s 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
