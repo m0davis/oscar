@@ -2,6 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Symmetrical
+import Oscar.Data.Proposequality
 
 module Oscar.Class.Symmetrical.Symmetry where
 
@@ -13,8 +14,8 @@ module _
 
   instance
 
-    [𝓢ymmetrical]𝓢ymmetry : [𝓢ymmetrical] 𝔒 (Ø ℓ) (λ x∼y y∼x → x∼y → y∼x)
-    [𝓢ymmetrical]𝓢ymmetry .[𝓢ymmetrical]._∼_ = _∼_
+    [𝓢ymmetrical]𝓢ymmetry : [𝓢ymmetrical] _∼_ (λ x∼y y∼x → x∼y → y∼x)
+    [𝓢ymmetrical]𝓢ymmetry = ∁ _∼_ (λ x∼y y∼x → x∼y → y∼x)
 
-    𝓢ymmetrical𝓢ymmetry : 𝓢ymmetrical 𝔒 (Ø ℓ) (λ x∼y y∼x → x∼y → y∼x)
-    𝓢ymmetrical𝓢ymmetry .𝓢ymmetrical.symmetrical _ _ = symmetry
+    𝓢ymmetrical𝓢ymmetry : 𝓢ymmetrical _∼_ (λ x∼y y∼x → x∼y → y∼x)
+    𝓢ymmetrical𝓢ymmetry .𝒮ymmetrical.symmetrical _ _ = symmetry

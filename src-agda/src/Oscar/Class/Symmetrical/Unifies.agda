@@ -7,6 +7,7 @@ open import Oscar.Class.Symmetrical
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Surjection.⋆
+import Oscar.Data.Proposequality
 
 module Oscar.Class.Symmetrical.Unifies where
 
@@ -22,8 +23,8 @@ module _
 
   instance
 
-    [𝓢ymmetrical]Unifies₀ : ∀ {m} → [𝓢ymmetrical] (ℭ m) (Ṗroperty ℓ (𝔄 m)) _≈_
-    [𝓢ymmetrical]Unifies₀ .[𝓢ymmetrical]._∼_ = surjcollation⟦ _ / ∁ _≈'_ ⟧
+    [𝓢ymmetrical]Unifies₀ : ∀ {m} → [𝓢ymmetrical] surjcollation⟦ _ / ∁ _≈'_ ⟧ (λ x y → x ≈[ LeftṖroperty ℓ 𝔄 m ] y)
+    [𝓢ymmetrical]Unifies₀ = ∁ surjcollation⟦ _ / ∁ _≈'_ ⟧ _≈_
 
-    𝓢ymmetricalUnifies₀ : ∀ {m} → 𝓢ymmetrical (ℭ m) (Ṗroperty ℓ (𝔄 m)) _≈_
-    𝓢ymmetricalUnifies₀ .𝓢ymmetrical.symmetrical x y .π₀ = symmetry , symmetry
+    𝓢ymmetricalUnifies₀ : ∀ {m} → 𝓢ymmetrical surjcollation⟦ _ / ∁ _≈'_ ⟧ (λ x y → x ≈[ LeftṖroperty ℓ 𝔄 m ] y)
+    𝓢ymmetricalUnifies₀ .𝒮ymmetrical.symmetrical x y .π₀ = symmetry , symmetry

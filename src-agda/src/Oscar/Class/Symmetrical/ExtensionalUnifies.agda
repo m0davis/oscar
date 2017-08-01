@@ -11,6 +11,7 @@ open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.Surjection.⋆
 import Oscar.Data.ExtensionṖroperty
+import Oscar.Data.Proposequality
 
 module Oscar.Class.Symmetrical.ExtensionalUnifies where
 
@@ -32,8 +33,8 @@ module _
 
   instance
 
-    [𝓢ymmetrical]ExtensionalUnifies : ∀ {m} → [𝓢ymmetrical] (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
-    [𝓢ymmetrical]ExtensionalUnifies .[𝓢ymmetrical]._∼_ = surjextenscollation⟦ _↦̇_ ⟧
+    [𝓢ymmetrical]ExtensionalUnifies : ∀ {m} → [𝓢ymmetrical] {𝔄 = (ℭ m)} {𝔅 = (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m)} surjextenscollation⟦ _↦̇_ ⟧ _≈_
+    [𝓢ymmetrical]ExtensionalUnifies = ∁ surjextenscollation⟦ _↦̇_ ⟧ _≈_
 
-    𝓢ymmetricalExtensionalUnifies : ∀ {m} → 𝓢ymmetrical (ℭ m) (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m) _≈_
-    𝓢ymmetricalExtensionalUnifies .𝓢ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)
+    𝓢ymmetricalExtensionalUnifies : ∀ {m} → 𝓢ymmetrical {𝔄 = (ℭ m)} {𝔅 = (LeftExtensionṖroperty ℓ₂ _↦_ _↦̇_ m)} surjextenscollation⟦ _↦̇_ ⟧ _≈_
+    𝓢ymmetricalExtensionalUnifies .𝒮ymmetrical.symmetrical x y .π₀ = ∁ (symmetry , symmetry)
