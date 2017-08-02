@@ -11,9 +11,10 @@ private
     where
     module Main
       (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
-      (ε◃ : 𝔄 → 𝔄)
+      (ε : 𝔄)
+      (_◃_ : 𝔄 → 𝔄 → 𝔄)
       where
-      𝓵eftunit = λ x → ε◃ x ↦ x
+      𝓵eftunit = λ x → (ε ◃ x) ↦ x
       𝓁eftunit = ∀ {x} → 𝓵eftunit x
       record 𝓛eftunit
         {𝓛 : 𝔄 → Ø ℓ}
@@ -27,9 +28,10 @@ private
       leftunit⟦_/_⟧ = 𝓛eftunit.factsurj3 ⦃ ∅ ⦄ !
     module Hidden
       {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
-      {ε◃ : 𝔄 → 𝔄}
+      {ε : 𝔄}
+      {_◃_ : 𝔄 → 𝔄 → 𝔄}
       where
-      open Main _↦_ ε◃
+      open Main _↦_ ε _◃_
       leftunit : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
       leftunit = leftunit⟦_/_⟧
 
