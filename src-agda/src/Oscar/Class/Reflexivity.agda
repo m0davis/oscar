@@ -7,7 +7,8 @@ module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   where
-  𝓻eflexivity = ∀ {x} → x ∼ x
+  𝓇eflexivity = λ x → x ∼ x
+  𝓻eflexivity = ∀ {x} → 𝓇eflexivity x
   record 𝓡eflexivity : Ø 𝔬 ∙̂ 𝔯 where
     constructor ∁
     field
