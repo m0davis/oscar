@@ -20,11 +20,11 @@ private
         ⦃ _ : 𝓛 ≡ 𝓵eftunit ⦄
         : Ø 𝔞 ∙̂ ℓ
         where
-        field leftunit : 𝓁eftunit
+        field factsurj3 : 𝓁eftunit
       Leftunit : Ø _
       Leftunit = 𝓛eftunit ⦃ ∅ ⦄
       leftunit⟦_/_⟧ : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
-      leftunit⟦_/_⟧ = 𝓛eftunit.leftunit ⦃ ∅ ⦄ !
+      leftunit⟦_/_⟧ = 𝓛eftunit.factsurj3 ⦃ ∅ ⦄ !
     module Hidden
       {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
       {ε◃ : 𝔄 → 𝔄}

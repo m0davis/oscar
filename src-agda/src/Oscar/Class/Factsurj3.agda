@@ -5,7 +5,11 @@ open import Oscar.Class.Reflexivity using (𝓻eflexivity)
 open import Oscar.Class.Surjectextensivity using (𝓼urjectextensivity)
 open import Oscar.Data.Proposequality
 
+open import Oscar.Class.Leftunit
+
 module Oscar.Class.Factsurj3 where
+
+open import Oscar.Class.Leftunit using (𝓛eftunit) public
 
 private
 
@@ -21,16 +25,10 @@ private
       where
       𝓯actsurj3 = λ {x} (p : 𝔓 x) → p ≈ ε ◃ p
       𝒻actsurj3 = ∀ {x} {p : 𝔓 x} → 𝓯actsurj3 p
-      record 𝓕actsurj3
-        {𝓕 : Ṗroperty ℓ 𝔓}
-        ⦃ _ : 𝓕 ≡ ∁ 𝓯actsurj3 ⦄
-        : Ø 𝔵 ∙̂ 𝔭 ∙̂ ℓ
-        where
-        field factsurj3 : 𝒻actsurj3
       Factsurj3 : Ø _
-      Factsurj3 = 𝓕actsurj3 ⦃ ∅ ⦄
+      Factsurj3 = ∀ {x} → Leftunit (flip (_≈_ {x})) (ε ◃_)
       factsurj3⟦_/_/_/_/_⟧ : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
-      factsurj3⟦_/_/_/_/_⟧ ⦃ I ⦄ = 𝓕actsurj3.factsurj3 I
+      factsurj3⟦_/_/_/_/_⟧ = 𝓛eftunit.factsurj3 ⦃ ∅ ⦄ !
     module Hidden
       {𝔓 : π̂ 𝔭 𝔛}
       {_≈_ : ∀̇ π̂² ℓ 𝔓}

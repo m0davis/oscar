@@ -109,10 +109,10 @@ module _
   instance
 
     𝓕actsurj3Regular : ∀ {ℓ} → Factsurj3 (LeftṖroperty ℓ (Arrow Fin Term)) _≈_ (Arrow Fin Term) ε surjectextensivity
-    𝓕actsurj3Regular .𝓕actsurj3.factsurj3 .π₀ = ¡ , ¡
+    𝓕actsurj3Regular .𝓛eftunit.factsurj3 .π₀ = ¡ , ¡
 
     𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjectextensivity
-    𝓕actsurj3Extension .𝓕actsurj3.factsurj3 .π₀ .π₀ = ¡ , ¡
+    𝓕actsurj3Extension .𝓛eftunit.factsurj3 .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓
 
