@@ -66,11 +66,8 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrefunctorSubstitist,Substitunction : IsPrefunctor Substitist Proposequality Substitunction _≈_
     IsPrefunctorSubstitist,Substitunction = ∁
 
-    [𝓢urjidentity]Substitist,Substitunction : [𝓢urjidentity] Substitist Substitunction _≈_
-    [𝓢urjidentity]Substitist,Substitunction = ∁ Substitist Substitunction _≈_
-
     𝓢urjidentitySubstitist,Substitunction : 𝓢urjidentity Substitist Substitunction _≈_
-    𝓢urjidentitySubstitist,Substitunction .𝒮urjidentity.surjidentity _ = ∅
+    𝓢urjidentitySubstitist,Substitunction .𝒮urjidentity.surjidentity' _ = ∅
 
     IsFunctorSubstitist,Substitunction : IsFunctor Substitist Proposequality Substitunction _≈_
     IsFunctorSubstitist,Substitunction = ∁

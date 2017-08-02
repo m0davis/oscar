@@ -39,13 +39,8 @@ module _
   where
   instance
 
-    `[𝒮urjidentity] : [𝓢urjidentity] _∼₁_ _∼₂_ _∼̇₂_
-    `[𝒮urjidentity] = ∁ _∼₁_ _∼₂_ _∼̇₂_
-
-  instance
-
     `𝒮urjidentity : 𝓢urjidentity _∼₁_ _∼₂_ _∼̇₂_
-    `𝒮urjidentity .𝒮urjidentity.surjidentity = magic
+    `𝒮urjidentity .𝒮urjidentity.surjidentity' = magic
 
   test-surjidentity : 𝓼urjidentity _∼₁_ _∼₂_ _∼̇₂_
   test-surjidentity = surjidentity

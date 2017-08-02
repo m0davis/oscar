@@ -20,5 +20,4 @@ module _
       ⦃ `IsPrefunctor ⦄ : IsPrefunctor _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_
       overlap ⦃ `IsCategory₁ ⦄ : IsCategory _∼₁_ _∼̇₁_
       overlap ⦃ `IsCategory₂ ⦄ : IsCategory _∼₂_ _∼̇₂_
-      overlap ⦃ `[𝒮urjidentity] ⦄ : [𝓢urjidentity] _∼₁_ _∼₂_ _∼̇₂_
       overlap ⦃ `𝒮urjidentity ⦄ : 𝓢urjidentity _∼₁_ _∼₂_ _∼̇₂_

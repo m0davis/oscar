@@ -10,70 +10,65 @@ module Oscar.Class.Surjidentity where
 module _
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂ ℓ₂}
   {𝔒₁ : Ø 𝔬₁}
-  (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
   {𝔒₂ : Ø 𝔬₂}
-  (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-  (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-  ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-  ⦃ _ : 𝒮urjectivity _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
-  ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
   where
-  [𝓈urjidentity] : π̂ ℓ₂ 𝔒₁
-  [𝓈urjidentity] x = surjectivity (ε[ _∼₁_ ] {x}) ∼̇₂ ε
-
-module _
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁} {ℓ₂} (𝔓 : π̂ ℓ₂ 𝔒₁)
-  where
-  𝓈urjidentity = ∀ {x} → 𝔓 x
-  module _
-    𝔯₁ 𝔬₂ 𝔯₂
+  module Visible6
+    {μ : 𝓼urjection 𝔒₁ 𝔒₂}
+    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
+    (§ : 𝓈urjectivity _∼₁_ _∼₂_ μ)
+    (ε₁ : 𝓻eflexivity _∼₁_)
+    (ε₂ : 𝓻eflexivity _∼₂_)
     where
-    record [𝒮urjidentity] : Ø 𝔬₁ ∙̂ ↑̂ (𝔯₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂) where
-      constructor ∁
-      field
-        _∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁
-        {𝔒₂} : Ø 𝔬₂
-        _∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂
-        _∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂
-        ⦃ `𝓢urjection     ⦄ : 𝓢urjection 𝔒₁ 𝔒₂
-        ⦃ `𝓢urjectivity   ⦄ : 𝒮urjectivity _∼₁_ _∼₂_
-        ⦃ `𝓡eflexivity₁   ⦄ : 𝓡eflexivity _∼₁_
-        ⦃ `𝓡eflexivity₂   ⦄ : 𝓡eflexivity _∼₂_
-        ⦃ `Proposequality[𝓈urjidentity] ⦄ : [𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_ ≡ 𝔓
-    record 𝒮urjidentity ⦃ _ : [𝒮urjidentity] ⦄ : Ø 𝔬₁ ∙̂ ℓ₂ where
-      field surjidentity : 𝓈urjidentity
+    𝓼urjidentity' = λ x → § (ε₁ {x}) ∼̇₂ ε₂
+    𝓈urjidentity' = ∀ {x} → 𝓼urjidentity' x
+    record 𝒮urjidentity
+      {𝓢 : _}
+      ⦃ _ : 𝓢 ≡ 𝓼urjidentity' ⦄
+      : Ø 𝔬₁ ∙̂ ℓ₂
+      where
+      field surjidentity' : 𝓈urjidentity'
+    Surjidentity : Ø _
+    Surjidentity = 𝒮urjidentity ⦃ ∅ ⦄
+    surjidentityV6 : ⦃ _ : 𝒮urjidentity ⦄ → 𝓈urjidentity'
+    surjidentityV6 = 𝒮urjidentity.surjidentity' ⦃ ∅ ⦄ !
+  module Hidden
+    {μ : 𝓼urjection 𝔒₁ 𝔒₂}
+    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+    {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
+    {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
+    {§ : 𝓈urjectivity _∼₁_ _∼₂_ μ}
+    {ε₁ : 𝓻eflexivity _∼₁_}
+    {ε₂ : 𝓻eflexivity _∼₂_}
+    where
+    open Visible6 {μ} _∼₁_ _∼₂_ _∼̇₂_ § ε₁ ε₂
+    surjidentity = surjidentityV6
+  module Standard
+    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
+    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    ⦃ _ : 𝒮urjectivity _∼₁_ _∼₂_ ⦄
+    ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
+    ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
+    where
+    open Visible6 {surjection} _∼₁_ _∼₂_ _∼̇₂_ surjectivity ε ε
+    𝓼urjidentity = 𝓈urjidentity'
+    𝓢urjidentity = Surjidentity
+  module SubStandard
+    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
+    (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
+    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    ⦃ _ : 𝒮urjectivity _∼₁_ _∼₂_ ⦄
+    ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
+    ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
+    where
+    open Visible6 {surjection} _∼₁_ _∼₂_ _∼̇₂_ surjectivity ε ε
+    surjidentity[_,_] = surjidentityV6
 
-open 𝒮urjidentity ⦃ … ⦄ public
-
-module _
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂ ℓ₂}
-  {𝔒₁ : Ø 𝔬₁}
-  (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-  {𝔒₂ : Ø 𝔬₂}
-  (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-  (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-  ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-  ⦃ _ : 𝒮urjectivity _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
-  ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
-  where
-  𝓼urjidentity = 𝓈urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_)
-  [𝓢urjidentity] = [𝒮urjidentity] ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) 𝔯₁ 𝔬₂ 𝔯₂
-  𝓢urjidentity = 𝒮urjidentity ([𝓈urjidentity] _∼₁_ _∼₂_ _∼̇₂_) 𝔯₁ 𝔬₂ 𝔯₂
-
-surjidentity[_,_] : ∀
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂ ℓ₂}
-  {𝔒₁ : Ø 𝔬₁}
-  (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-  {𝔒₂ : Ø 𝔬₂}
-  {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
-  (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-  ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-  ⦃ _ : 𝒮urjectivity _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
-  ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
-  ⦃ _ : [𝓢urjidentity] _∼₁_ _∼₂_ _∼̇₂_ ⦄
-  ⦃ _ : 𝓢urjidentity _∼₁_ _∼₂_ _∼̇₂_ ⦄
-  → 𝓼urjidentity _∼₁_ _∼₂_ _∼̇₂_
-surjidentity[ _ , _ ] = surjidentity
+open Visible6 public
+open Hidden public
+open Standard public
+open SubStandard public
