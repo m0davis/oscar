@@ -26,7 +26,7 @@ private
       𝓯actsurj3 = λ {x} (p : 𝔓 x) → p ≈ ε ◃ p
       𝒻actsurj3 = ∀ {x} {p : 𝔓 x} → 𝓯actsurj3 p
       Factsurj3 : Ø _
-      Factsurj3 = ∀ {x} → Leftunit (flip (_≈_ {x})) {!ε {x}!} {!_◃_!}
+      Factsurj3 = ∀ {x} → Leftunit (flip (_≈_ {x})) (ε {x}) _◃_
       factsurj3⟦_/_/_/_/_⟧ : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
       factsurj3⟦_/_/_/_/_⟧ = 𝓛eftunit.factsurj3 ⦃ ∅ ⦄ !
     module Hidden
