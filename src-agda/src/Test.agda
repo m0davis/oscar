@@ -12,6 +12,7 @@ import Test.Test2
 import Test.Test3
 import Test.Test4
 import Test.Test5
+import Test.Test6
 import Test.Test7
 import Test.EquivalenceṖroperty
 import Test.EquivalenceExtensionṖroperty
