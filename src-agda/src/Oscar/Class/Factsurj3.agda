@@ -3,7 +3,7 @@ open import Oscar.Prelude
 -- open import Oscar.Class.HasEquivalence -- FIXME make similar to Reflexivity and Surjextensivity
 open import Oscar.Class.Reflexivity using (𝓻eflexivity)
 open import Oscar.Class.Surjectextensivity using (𝓼urjectextensivity)
-open import Oscar.Data.Proposequality
+open import Oscar.Data.Constraint
 
 open import Oscar.Class.Leftunit
 
@@ -28,7 +28,7 @@ private
       Factsurj3 : Ø _
       Factsurj3 = ∀ {x} → Leftunit (flip (_≈_ {x})) (ε {x}) _◃_
       factsurj3⟦_/_/_/_/_⟧ : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
-      factsurj3⟦_/_/_/_/_⟧ = 𝓛eftunit.factsurj3 ⦃ ∅ ⦄ !
+      factsurj3⟦_/_/_/_/_⟧ = leftunit
     module Hidden
       {𝔓 : π̂ 𝔭 𝔛}
       {_≈_ : ∀̇ π̂² ℓ 𝔓}
