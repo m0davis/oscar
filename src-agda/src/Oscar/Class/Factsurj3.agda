@@ -39,6 +39,21 @@ private
       open Visible 𝔓 _≈_ ℜ ε _◃_
       factsurj3 : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
       factsurj3 = factsurj3⟦_/_/_/_/_⟧
+    module _
+      where
+      open import Oscar.Class.HasEquivalence
+      open import Oscar.Class.Reflexivity
+      open import Oscar.Class.Surjectextensivity
+      module Principal
+        (𝔓 : π̂ 𝔭 𝔛)
+        ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
+        (ℜ : π̂² 𝔯 𝔛)
+        ⦃ _ : 𝓡eflexivity ℜ ⦄
+        ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
+        where
+        open Visible 𝔓 _≈_ ℜ ε surjectextensivity
+        [Factsurj3] = Factsurj3
 
 open Visible public
-open Hidden public
+-- open Hidden public
+open Principal public

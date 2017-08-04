@@ -22,11 +22,11 @@ private
         ⦃ _ : Constraint _◃_ ⦄
         : Ø 𝔞 ∙̂ ℓ
         where
-        field factsurj3 : 𝓁eftunit
+        field ⋆ : 𝓁eftunit
       Leftunit : Ø _
       Leftunit = 𝓛eftunit
       leftunit⟦_/_⟧ : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
-      leftunit⟦_/_⟧ ⦃ ⌶ ⦄ = 𝓛eftunit.factsurj3 ⌶
+      leftunit⟦_/_⟧ ⦃ ⌶ ⦄ = 𝓛eftunit.⋆ ⌶
     module Hidden
       {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
       {ε : 𝔈}
