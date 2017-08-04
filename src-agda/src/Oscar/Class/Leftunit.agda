@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Data.Proposequality
+open import Oscar.Data.Constraint
 
 module Oscar.Class.Leftunit where
 
@@ -17,15 +17,16 @@ private
       𝓵eftunit = λ x → (ε ◃ x) ↦ x
       𝓁eftunit = ∀ {x} → 𝓵eftunit x
       record 𝓛eftunit
-        {𝓛 : 𝔄 → Ø ℓ}
-        ⦃ _ : 𝓛 ≡ 𝓵eftunit ⦄
+        ⦃ _ : Constraint _↦_ ⦄
+        ⦃ _ : Constraint ε ⦄
+        ⦃ _ : Constraint _◃_ ⦄
         : Ø 𝔞 ∙̂ ℓ
         where
         field factsurj3 : 𝓁eftunit
       Leftunit : Ø _
-      Leftunit = 𝓛eftunit ⦃ ∅ ⦄
+      Leftunit = 𝓛eftunit
       leftunit⟦_/_⟧ : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
-      leftunit⟦_/_⟧ = 𝓛eftunit.factsurj3 ⦃ ∅ ⦄ !
+      leftunit⟦_/_⟧ ⦃ ⌶ ⦄ = 𝓛eftunit.factsurj3 ⌶
     module Hidden
       {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
       {ε : 𝔈}
