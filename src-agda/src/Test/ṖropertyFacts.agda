@@ -5,6 +5,7 @@ open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.IsEquivalence
+open import Oscar.Class.Leftunit
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
 open import Oscar.Class.Reflexivity
@@ -150,13 +151,13 @@ module Test.ṖropertyFacts where
   fact6 𝒫 𝒻≈ℊ = factsurj6 𝒫 𝒻≈ℊ
 
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆ = factsurj3
+  fact3⋆ = leftunit
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
   lhs-fact3⋆ {𝒫 = 𝒫} = factsurj3⟦ 𝑷⁰ / _≈_ / 𝑪 / 𝒖 / surjectextensivity ⟧ {p = 𝒫}
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3 = factsurj3
+  fact3 = leftunit
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4⋆ 𝒻 N𝒫 = factsurj4 𝒻 N𝒫

@@ -4,6 +4,7 @@ open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Leftunit
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
 open import Oscar.Class.Surjectextenscongruity
@@ -71,10 +72,10 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   Properties-fact1' 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = properfact1 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
 
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆ = factsurj3
+  fact3⋆ = leftunit
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3 = factsurj3
+  fact3 = leftunit
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4⋆ 𝒻 N𝒫 = factsurj4 𝒻 N𝒫
