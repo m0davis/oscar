@@ -35,6 +35,6 @@ private
       leftunit : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
       leftunit = leftunit⟦_/_⟧
 
-module LeftunitMain = Main
+module 𝔏eftunit = Main
 open Main public
 open Hidden public
