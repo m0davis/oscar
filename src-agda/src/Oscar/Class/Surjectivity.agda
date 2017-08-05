@@ -77,51 +77,6 @@ private
       ≡-surjectivity⟦_⟧ : ⦃ _ : Surjectivity ⦄ → 𝓈urjectivity
       ≡-surjectivity⟦_⟧ = surjectivity⟦_/_/_⟧
 
-module NewExtensional
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂} {𝔓 : 𝔒₂ → Ø 𝔯₂}
-  where
-  module _
-    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-    (μ : 𝔒₁ → 𝔒₂)
-    where
-    open Visible _∼₁_ (Extension 𝔓) μ
-    𝓢urjectextensivity = Surjectivity
-    𝓼urjectextensivity = 𝓈urjectivity
-  module _
-    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-    {μ : 𝔒₁ → 𝔒₂}
-    where
-    open Visible _∼₁_ (Extension 𝔓) μ
-    infixr 10 surjectextensivity
-    surjectextensivity = surjectivity⟦_/_/_⟧
-    syntax surjectextensivity σ τ = σ ◃ τ
-    surjectextensivity!syntax = surjectextensivity
-    infixl 10 surjectextensivity!syntax
-    syntax surjectextensivity!syntax rxy px = px ● rxy
-module OldSurjectextensional
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
-  where
-  module _
-    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-    (𝔓 : 𝔒₂ → Ø 𝔯₂)
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-    where
-    open Visible _∼₁_ (Extension 𝔓) surjection
-    𝓢urjectextensivity = Surjectivity
-    𝓼urjectextensivity = 𝓈urjectivity
-  module _
-    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-    {𝔓 : 𝔒₂ → Ø 𝔯₂}
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-    where
-    open Visible _∼₁_ (Extension 𝔓) surjection
-    infixr 10 surjectextensivity
-    surjectextensivity = surjectivity⟦_/_/_⟧
-    syntax surjectextensivity σ τ = σ ◃ τ
-    surjectextensivity!syntax = surjectextensivity
-    infixl 10 surjectextensivity!syntax
-    syntax surjectextensivity!syntax rxy px = px ● rxy
-
 open Visible public
 open Hidden public
 open Hidden0 public
@@ -133,3 +88,5 @@ open Hidden public renaming (surjectivity to §)
 open Partial1 public renaming (surjectivity[_] to §[_])
 -- TODO rename § to ⟦_⟧?
 open 𝓢urjectivity ⦃ … ⦄ renaming (surjectivity to surjectivity‼) public
+
+module 𝔖urjectivity = Visible
