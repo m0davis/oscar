@@ -14,7 +14,7 @@ module NewExtensional
     where
     open 𝔖urjectivity _∼₁_ (Extension 𝔓) μ
     𝓢urjectextensivity = Surjectivity
-    𝓼urjectextensivity = 𝓈urjectivity
+    𝒮urjectextensivity = 𝒮urjectivity
   module _
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {μ : 𝔒₁ → 𝔒₂}
@@ -37,7 +37,7 @@ module OldSurjectextensional
     where
     open 𝔖urjectivity _∼₁_ (Extension 𝔓) surjection
     𝓢urjectextensivity = Surjectivity
-    𝓼urjectextensivity = 𝓈urjectivity
+    𝓼urjectextensivity = 𝒮urjectivity
   module _
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {𝔓 : 𝔒₂ → Ø 𝔯₂}

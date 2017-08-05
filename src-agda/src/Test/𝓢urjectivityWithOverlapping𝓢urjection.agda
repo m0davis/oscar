@@ -26,10 +26,10 @@ module !1 where
     𝓢urjection2 : 𝓢urjection A B
     𝓢urjection2 = ∁ s2
 
-    𝓢urjectivity1 : 𝒮urjectivity _~A~_ _~B~_
+    𝓢urjectivity1 : 𝒮urjectivity! _~A~_ _~B~_
     𝓢urjectivity.surjectivity 𝓢urjectivity1 = f1
 
-    𝓢urjectivity2 : 𝒮urjectivity _~A~_ _~B~_
+    𝓢urjectivity2 : 𝒮urjectivity! _~A~_ _~B~_
     𝓢urjectivity.surjectivity 𝓢urjectivity2 = f2
 
   test1 : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
@@ -57,10 +57,10 @@ module !2 where
     𝓢urjection2 : 𝓢urjection A B
     𝓢urjection2 = ∁ s2
 
-    𝓢urjectivity1 : 𝒮urjectivity _~A~_ _≡_
+    𝓢urjectivity1 : 𝒮urjectivity! _~A~_ _≡_
     𝓢urjectivity.surjectivity 𝓢urjectivity1 = f1
 
-    𝓢urjectivity2 : 𝒮urjectivity _~A~_ _≡_
+    𝓢urjectivity2 : 𝒮urjectivity! _~A~_ _≡_
     𝓢urjectivity.surjectivity 𝓢urjectivity2 = f2
 
   test-rhs-1 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y

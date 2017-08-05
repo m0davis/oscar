@@ -51,16 +51,16 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
       𝓼urjectivitySubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ₁ fork 𝓼urjectivitySubstitunctionExtensionTerm σ τ₂
       𝓼urjectivitySubstitunctionExtensionTerm σ (function p τs) = function p (𝓼urjectivitySubstitunctionExtensionTerms σ τs)
 
-      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝓈urjectivity Substitunction (Extension $ Terms N) surjection
+      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝒮urjectivity Substitunction (Extension $ Terms N) surjection
       𝓼urjectivitySubstitunctionExtensionTerms σ ∅ = ∅
       𝓼urjectivitySubstitunctionExtensionTerms σ (τ , τs) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ , 𝓼urjectivitySubstitunctionExtensionTerms σ τs
 
   instance
 
-    𝓢urjectivitySubstitunctionExtensionTerm : 𝒮urjectivity Substitunction (Extension Term)
+    𝓢urjectivitySubstitunctionExtensionTerm : 𝒮urjectivity! Substitunction (Extension Term)
     𝓢urjectivitySubstitunctionExtensionTerm .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerm
 
-    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝒮urjectivity Substitunction (Extension $ Terms N)
+    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝒮urjectivity! Substitunction (Extension $ Terms N)
     𝓢urjectivitySubstitunctionExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerms
 
   instance

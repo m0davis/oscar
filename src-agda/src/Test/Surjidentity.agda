@@ -31,8 +31,8 @@ module _
   (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
   (_∼̇₂'_ : ∀ {x y} → x ∼₂' y → x ∼₂' y → Ø ℓ₂)
   ⦃ `𝓢urjection : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
-  ⦃ `𝓢urjectivity : 𝒮urjectivity _∼₁_ _∼₂_ ⦄
-  ⦃ `𝓢urjectextensivity : 𝒮urjectivity _∼₁_ _∼₂'_ ⦄
+  ⦃ `𝓢urjectivity : 𝒮urjectivity! _∼₁_ _∼₂_ ⦄
+  ⦃ `𝓢urjectextensivity : 𝒮urjectivity! _∼₁_ _∼₂'_ ⦄
   ⦃ `𝓡eflexivity₁ : 𝓡eflexivity _∼₁_ ⦄
   ⦃ `𝓡eflexivity₂ : 𝓡eflexivity _∼₂_ ⦄
   ⦃ `𝓡eflexivity₂' : 𝓡eflexivity _∼₂'_ ⦄

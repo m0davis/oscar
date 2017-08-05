@@ -88,8 +88,8 @@ module Test.ṖropertyFacts where
 
     instance
 
-      _ : 𝒮urjectivity 𝑪 (Extension 𝑩)
-      _ : ∀ {N} → 𝒮urjectivity 𝑪 (Extension $ 𝑩' N)
+      _ : 𝒮urjectivity! 𝑪 (Extension 𝑩)
+      _ : ∀ {N} → 𝒮urjectivity! 𝑪 (Extension $ 𝑩' N)
       _ : 𝓣ransitivity 𝑪 -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
       _ : 𝓢urjextensionality 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
       _ : ∀ {N} → 𝓢urjextensionality 𝑪 Proposextensequality (Extension $ 𝑩' N) Proposextensequality -- needed by 𝓢̇.⟹

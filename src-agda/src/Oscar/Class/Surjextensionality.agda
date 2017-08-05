@@ -19,7 +19,7 @@ private
       where
       module FunctionVisible
         (surjection : 𝓼urjection 𝔒₁ 𝔒₂)
-        (surjectivity : 𝓈urjectivity _∼₁_ _∼₂_ surjection)
+        (surjectivity : 𝒮urjectivity _∼₁_ _∼₂_ surjection)
         where
         𝓼urjextensionality′ = λ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂
         𝓈urjextensionality′ = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂

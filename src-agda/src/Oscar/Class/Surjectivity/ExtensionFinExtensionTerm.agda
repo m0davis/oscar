@@ -28,8 +28,8 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   instance
 
-    𝓢urjectivityExtensionFinExtensionTerm : 𝒮urjectivity (Extension Fin) (Extension Term)
+    𝓢urjectivityExtensionFinExtensionTerm : 𝒮urjectivity! (Extension Fin) (Extension Term)
     𝓢urjectivityExtensionFinExtensionTerm .𝓢urjectivity.surjectivity = 𝓼urjectivityExtensionFinExtensionTerm
 
-    𝓢urjectivityExtensionFinExtensionTerms : ∀ {N} → 𝒮urjectivity (Extension Fin) (Extension $ Terms N)
+    𝓢urjectivityExtensionFinExtensionTerms : ∀ {N} → 𝒮urjectivity! (Extension Fin) (Extension $ Terms N)
     𝓢urjectivityExtensionFinExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivityExtensionFinExtensionTerms
