@@ -22,7 +22,6 @@ import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
-import Oscar.Class.Surjectextensivity.SurjectivityExtension
 import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Symmetrical.ExtensionalUnifies

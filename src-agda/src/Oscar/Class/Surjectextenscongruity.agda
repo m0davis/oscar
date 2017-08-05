@@ -1,6 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.Surjectextensivity
+import Oscar.Class.Surjection.⋆
 
 module Oscar.Class.Surjectextenscongruity where
 
