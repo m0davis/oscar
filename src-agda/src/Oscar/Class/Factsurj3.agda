@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 -- open import Oscar.Class.HasEquivalence -- FIXME make similar to Reflexivity and Surjextensivity
 open import Oscar.Class.Reflexivity using (𝓻eflexivity)
-open import Oscar.Class.Surjectextensivity using (𝓼urjectextensivity)
+open import Oscar.Class.Surjectextensivity using (𝒮urjectextensivity)
 open import Oscar.Data.Constraint
 import Oscar.Class.Surjection.⋆
 
@@ -22,7 +22,7 @@ private
       (_≈_ : ∀̇ π̂² ℓ 𝔓) (let infix 4 _≈_; _≈_ = _≈_)
       (ℜ : π̂² 𝔯 𝔛)
       (ε : 𝓻eflexivity ℜ)
-      (_◃_ : 𝓼urjectextensivity ℜ 𝔓) (let infix 18 _◃_; _◃_ = _◃_)
+      (_◃_ : 𝒮urjectextensivity ℜ 𝔓) (let infix 18 _◃_; _◃_ = _◃_)
       where
       𝓯actsurj3 = λ {x} (p : 𝔓 x) → p ≈ ε ◃ p
       𝒻actsurj3 = ∀ {x} {p : 𝔓 x} → 𝓯actsurj3 p

@@ -37,7 +37,7 @@ module OldSurjectextensional
     where
     open 𝔖urjectivity _∼₁_ (Extension 𝔓) surjection
     𝓢urjectextensivity = Surjectivity
-    𝓼urjectextensivity = 𝒮urjectivity
+    𝒮urjectextensivity = 𝒮urjectivity
   module _
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {𝔓 : 𝔒₂ → Ø 𝔯₂}
@@ -60,7 +60,7 @@ surjectextensivity[]syntax : ∀
   {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
   {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
   ⦃ _ : 𝓢urjectextensivity _∼₁_ 𝔒₂ ⦄
-  → 𝓼urjectextensivity _∼₁_ 𝔒₂
+  → 𝒮urjectextensivity _∼₁_ 𝔒₂
 surjectextensivity[]syntax _ = surjectextensivity
 
 syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
