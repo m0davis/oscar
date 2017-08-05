@@ -19,7 +19,6 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
-import Oscar.Class.Surjectextensivity.SurjectivityExtension
 import Oscar.Class.Surjectivity.ExtensionṖroperty
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies
@@ -28,6 +27,7 @@ import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Propergroup.Substitunction
 import Oscar.Property.Setoid.Proposequality
+import Oscar.Class.Surjection.⋆
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (

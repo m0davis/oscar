@@ -5,7 +5,6 @@ open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
-import Oscar.Class.Surjectextensivity.SurjectivityExtension
 open import Oscar.Data.Proposequality
 import Oscar.Class.Surjection.⋆
 

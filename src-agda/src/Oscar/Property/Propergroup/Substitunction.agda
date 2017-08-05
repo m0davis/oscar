@@ -51,7 +51,6 @@ import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
-import Oscar.Class.Surjectextensivity.SurjectivityExtension
 open import Oscar.Class.Reflexivity
 
 module Oscar.Property.Propergroup.Substitunction where

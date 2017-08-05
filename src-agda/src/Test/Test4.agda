@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Transitivity
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
-import Oscar.Class.Surjectextensivity.SurjectivityExtension
+import Oscar.Class.Surjection.⋆
 
 module Test.Test4
   {𝔵} {𝔛 : Ø 𝔵}

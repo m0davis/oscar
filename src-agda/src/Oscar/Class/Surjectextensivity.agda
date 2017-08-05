@@ -1,26 +1,12 @@
 
 open import Oscar.Prelude
+open import Oscar.Class.Surjectivity
 
 module Oscar.Class.Surjectextensivity where
 
-module _
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-  {𝔯₁} (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-  {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
-  where
-  module _
-    where
-    𝓼urjectextensivity = ∀ {x y} → x ∼₁ y → 𝔒₂ x → 𝔒₂ y
-    record 𝓢urjectextensivity : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ 𝔬₂ where
-      field
-        surjectextensivity : 𝓼urjectextensivity
-      infixr 10 surjectextensivity
-      syntax surjectextensivity σ τ = σ ◃ τ
-      surjectextensivity!syntax = surjectextensivity
-      infixl 10 surjectextensivity!syntax
-      syntax surjectextensivity!syntax rxy px = px ● rxy
+open OldSurjectextensional public
 
-open 𝓢urjectextensivity ⦃ … ⦄ public
+open import Oscar.Class.Surjection.⋆
 
 surjectextensivity[]syntax : ∀
   {𝔬₁} {𝔒₁ : Ø 𝔬₁}

@@ -20,7 +20,6 @@ import Oscar.Class.Surjection.⋆
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Injectivity.Vec
 import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
-import Oscar.Class.Surjectextensivity.SurjectivityExtension
 
 module Oscar.Property.Thickandthin.FinTermProposequalityMaybeProposequality where
 

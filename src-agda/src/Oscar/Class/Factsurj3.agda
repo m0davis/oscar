@@ -4,6 +4,7 @@ open import Oscar.Prelude
 open import Oscar.Class.Reflexivity using (𝓻eflexivity)
 open import Oscar.Class.Surjectextensivity using (𝓼urjectextensivity)
 open import Oscar.Data.Constraint
+import Oscar.Class.Surjection.⋆
 
 open import Oscar.Class.Leftunit
 
