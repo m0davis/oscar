@@ -30,16 +30,6 @@ private
       Factsurj3 = ∀ {x} → Leftunit (flip (_≈_ {x})) (ε {x}) _◃_
       factsurj3⟦_/_/_/_/_⟧ : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
       factsurj3⟦_/_/_/_/_⟧ = leftunit
-    module Hidden
-      {𝔓 : π̂ 𝔭 𝔛}
-      {_≈_ : ∀̇ π̂² ℓ 𝔓}
-      {ℜ : π̂² 𝔯 𝔛}
-      {ε : 𝓻eflexivity ℜ}
-      {_◃_ : 𝓼urjectextensivity ℜ 𝔓}
-      where
-      open Visible 𝔓 _≈_ ℜ ε _◃_
-      factsurj3 : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
-      factsurj3 = factsurj3⟦_/_/_/_/_⟧
     module _
       where
       open import Oscar.Class.HasEquivalence
@@ -54,7 +44,8 @@ private
         where
         open Visible 𝔓 _≈_ ℜ ε surjectextensivity
         [Factsurj3] = Factsurj3
+        factsurj3⟦_/_⟧ : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
+        factsurj3⟦_/_⟧ = factsurj3⟦_/_/_/_/_⟧
 
 open Visible public
--- open Hidden public
 open Principal public

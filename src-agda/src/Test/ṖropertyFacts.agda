@@ -153,7 +153,7 @@ module Test.ṖropertyFacts where
   fact3⋆ = leftunit
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
-  lhs-fact3⋆ {𝒫 = 𝒫} = factsurj3⟦ 𝑷⁰ / _≈_ / 𝑪 / 𝒖 / surjectextensivity ⟧ {p = 𝒫}
+  lhs-fact3⋆ {𝒫 = 𝒫} = factsurj3⟦ 𝑷⁰ / 𝑪 ⟧ {p = 𝒫}
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3 = leftunit
