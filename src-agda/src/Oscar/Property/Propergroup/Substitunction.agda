@@ -52,6 +52,7 @@ import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
 open import Oscar.Class.Reflexivity
+open import Oscar.Class.Similarity
 
 module Oscar.Property.Propergroup.Substitunction where
 
@@ -63,17 +64,11 @@ module _
 
   instance
 
-    [𝓢urjectextenscongruity]ArrowṖropertySubstitunction : [𝓢urjectextenscongruity] Substitunction (LeftṖroperty ℓ Substitunction) _≈_
-    [𝓢urjectextenscongruity]ArrowṖropertySubstitunction = ∁
-
     𝓢urjectextenscongruityArrowṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftṖroperty ℓ Substitunction) _≈_
-    𝓢urjectextenscongruityArrowṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ P⇔Q) .π₀ = P⇔Q
-
-    [𝓢urjectextenscongruity]ArrowExtensionṖropertySubstitunction : [𝓢urjectextenscongruity] Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
-    [𝓢urjectextenscongruity]ArrowExtensionṖropertySubstitunction = ∁
+    𝓢urjectextenscongruityArrowṖropertySubstitunction .𝓢imilarity.⋆ _ (∁ P⇔Q) .π₀ = P⇔Q
 
     𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
-    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .𝓢urjectextenscongruity.surjectextenscongruity _ (∁ (∁ P⇔Q)) .π₀ = ∁ P⇔Q -- P⇔Q
+    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .𝓢imilarity.⋆ _ (∁ (∁ P⇔Q)) .π₀ = ∁ P⇔Q -- P⇔Q
 
 module _
   {𝔭} {𝔓 : Ø 𝔭}

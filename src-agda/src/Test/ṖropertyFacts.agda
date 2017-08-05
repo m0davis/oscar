@@ -9,6 +9,7 @@ open import Oscar.Class.Leftunit
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
 open import Oscar.Class.Reflexivity
+open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
@@ -109,9 +110,7 @@ module Test.ṖropertyFacts where
 
     instance
 
-      _ : [𝓢urjectextenscongruity] 𝑪 𝑷⁰ _≈_
       _ : 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
-      _ : [𝓢urjectextenscongruity] 𝑪 𝑷¹ _≈_
       _ : 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 
       _ : ∀ {n} → [𝓟roperfact1] 𝓢._⟹_ (_⊛_ {n = n})
@@ -139,10 +138,10 @@ module Test.ṖropertyFacts where
   test-epfs c p = surjectextensivity c p
 
   fact5⋆ : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
-  fact5⋆ 𝒻 𝒫≈𝒬 = surjectextenscongruity 𝒻 𝒫≈𝒬
+  fact5⋆ 𝒻 𝒫≈𝒬 = similarity 𝒻 𝒫≈𝒬
 
   fact5 : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷¹ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
-  fact5 𝒻 𝒫≈𝒬 = surjectextenscongruity 𝒻 𝒫≈𝒬
+  fact5 𝒻 𝒫≈𝒬 = similarity 𝒻 𝒫≈𝒬
 
   fact6 : ∀ {𝓂 𝓃} {𝒻 ℊ : 𝑪 𝓂 𝓃} (𝒫 : 𝑷¹ 𝓂) → 𝒻 ≈ ℊ → 𝒻 ◃ 𝒫 ≈ ℊ ◃ 𝒫
   fact6 𝒫 𝒻≈ℊ = factsurj6 𝒫 𝒻≈ℊ
