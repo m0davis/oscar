@@ -89,17 +89,11 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   instance
 
-    [𝓢urjextensionality]Substitunction : [𝓢urjextensionality] Substitunction Proposextensequality (Extension Term) Proposextensequality
-    [𝓢urjextensionality]Substitunction = ∁
-
     𝓢urjextensionalitySubstitunction : 𝓢urjextensionality Substitunction Proposextensequality (Extension Term) Proposextensequality
-    𝓢urjextensionalitySubstitunction .𝓢urjextensionality.surjextensionality = 𝓼urjextensionalitySubstitunctionExtensionTerm
-
-    [𝓢urjextensionality]Substitunctions : ∀ {N} → [𝓢urjextensionality] Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
-    [𝓢urjextensionality]Substitunctions = ∁
+    𝓢urjextensionalitySubstitunction .𝓢urjectivity.surjectivity = 𝓼urjextensionalitySubstitunctionExtensionTerm
 
     𝓢urjextensionalitySubstitunctions : ∀ {N} → 𝓢urjextensionality Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
-    𝓢urjextensionalitySubstitunctions .𝓢urjextensionality.surjextensionality = 𝓼urjextensionalitySubstitunctionExtensionTerms
+    𝓢urjextensionalitySubstitunctions .𝓢urjectivity.surjectivity = 𝓼urjextensionalitySubstitunctionExtensionTerms
 
   private
 

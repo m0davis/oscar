@@ -140,7 +140,6 @@ module Surjextenscollation
   ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
   ⦃ _ : ∀ {y} → 𝓣ransitivity (𝔅̇ {y}) ⦄
   ⦃ _ : 𝒮urjectivity 𝔄 (Extension 𝔅) ⦄
-  ⦃ _ : [𝓢urjextensionality] 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   ⦃ _ : 𝓢urjextensionality 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   where
 

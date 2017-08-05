@@ -26,7 +26,6 @@ module _
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
     ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
     ⦃ _ : 𝒮urjectivity _↦_ (Extension ℭ) ⦄
-    ⦃ _ : [𝓢urjextensionality] _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
     ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
   where
 

@@ -43,11 +43,8 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ = i
     𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ((x , t) , σ) = surjectivity‼ ⦃ ∅ ⦄ σ ∙ (t for x)
 
-    [𝓢urjextensionality]Substitist,Substitunction : [𝓢urjextensionality] Substitist Proposequality Substitunction _≈_
-    [𝓢urjextensionality]Substitist,Substitunction = ∁
-
     𝓢urjextensionalitySubstitist,Substitunction : 𝓢urjextensionality Substitist Proposequality Substitunction _≈_
-    𝓢urjextensionalitySubstitist,Substitunction .𝓢urjextensionality.surjextensionality ∅ _ = ∅
+    𝓢urjextensionalitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ _ = ∅
 
     [𝓢urjtranscommutativity]Substitist,Substitunction : [𝓢urjtranscommutativity] Substitist Substitunction _≈_
     [𝓢urjtranscommutativity]Substitist,Substitunction = ∁
@@ -58,7 +55,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
         (
             § g ⟪∙⟫ §[ Substitunction ] f
           ∙
-            ⟪ surjtranscommutativity {_∼̇₂_ = Proposextensequality} f g ⟫
+            ⟪ surjtranscommutativity f g ⟫[ Proposextensequality ]
         )
       ∘
         π₁ for π₀
