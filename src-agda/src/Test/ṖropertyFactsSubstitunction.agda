@@ -4,6 +4,7 @@ open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
+open import Oscar.Class.Leftstar
 open import Oscar.Class.Leftunit
 open import Oscar.Class.Properthing
 open import Oscar.Class.Quadricity
@@ -79,10 +80,10 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   fact3 = leftunit
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
-  fact4⋆ 𝒻 N𝒫 = factsurj4 𝒻 N𝒫
+  fact4⋆ 𝒻 N𝒫 = leftstar 𝒻 N𝒫
 
   fact4 : ∀ {𝓂 𝓃} {𝒫 : 𝑷¹ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
-  fact4 𝒻 N𝒫 = factsurj4 𝒻 N𝒫
+  fact4 𝒻 N𝒫 = leftstar 𝒻 N𝒫
 
   fact5⋆ : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
   fact5⋆ 𝒻 𝒫≈𝒬 = similarity 𝒻 𝒫≈𝒬

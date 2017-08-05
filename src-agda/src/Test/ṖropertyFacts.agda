@@ -5,6 +5,7 @@ open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.IsEquivalence
+open import Oscar.Class.Leftstar
 open import Oscar.Class.Leftunit
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
@@ -120,9 +121,7 @@ module Test.ṖropertyFacts where
       _ : Factsurj3 𝑷⁰ _≈_ 𝑪 𝒖 surjectextensivity
       _ : Factsurj3 𝑷¹ _≈_ 𝑪 𝒖 surjectextensivity
 
-      _ : [𝓕actsurj4] 𝑷⁰ 𝑪 Nothing
       _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
-      _ : [𝓕actsurj4] 𝑷¹ 𝑪 Nothing
       _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
 
   postulate
@@ -155,10 +154,10 @@ module Test.ṖropertyFacts where
   fact3 = leftunit
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
-  fact4⋆ 𝒻 N𝒫 = factsurj4 𝒻 N𝒫
+  fact4⋆ 𝒻 N𝒫 = leftstar 𝒻 N𝒫
 
   fact4 : ∀ {𝓂 𝓃} {𝒫 : 𝑷¹ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
-  fact4 𝒻 N𝒫 = factsurj4 𝒻 N𝒫
+  fact4 𝒻 N𝒫 = leftstar 𝒻 N𝒫
 
   left-identity-∧ : ∀ {𝓃} (𝒫 : 𝑷⁰ 𝓃) → ➊ ∧ 𝒫 ≈ 𝒫
   left-identity-∧ 𝒫 = ∧-leftIdentity 𝒫

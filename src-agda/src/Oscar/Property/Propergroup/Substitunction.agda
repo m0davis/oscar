@@ -7,6 +7,8 @@ open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
+open import Oscar.Class.Leftstar
+open 𝔏eftstar
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.Properthing
 open import Oscar.Class.Surjectextensivity
@@ -87,29 +89,25 @@ module _
     𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 Ṡ._⟹_ (_fork_ {n = n})
     𝒫roperfact1ExtensionalUnifiesSubstitunctionFork .𝓠uadricity.⋆ _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
+  open 𝓛eftunit
+
   instance
 
     𝓕actsurj3Regular : ∀ {ℓ} → [Factsurj3] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
-    𝓕actsurj3Regular .𝓛eftunit.⋆ .π₀ = ¡ , ¡
+    𝓕actsurj3Regular .⋆ .π₀ = ¡ , ¡
 
     𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3 (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjectextensivity
-    𝓕actsurj3Extension .𝓛eftunit.⋆ .π₀ .π₀ = ¡ , ¡
+    𝓕actsurj3Extension .⋆ .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓
 
   instance
 
-    [𝓕actsurj4]Regular : ∀ {ℓ} → [𝓕actsurj4] (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
-    [𝓕actsurj4]Regular = ∁
-
     𝓕actsurj4Regular : ∀ {ℓ} → 𝓕actsurj4 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
-    𝓕actsurj4Regular .𝓕actsurj4.factsurj4 _ (∁ nop) .π₀ = nop
-
-    [𝓕actsurj4]Extension : ∀ {ℓ} → [𝓕actsurj4] (ArrowExtensionṖroperty ℓ Fin Term Proposequality) Substitunction Nothing
-    [𝓕actsurj4]Extension = ∁
+    𝓕actsurj4Regular .⋆ _ (∁ nop) .π₀ = nop
 
     𝓕actsurj4Extension : ∀ {ℓ} → 𝓕actsurj4 (LeftExtensionṖroperty ℓ Substitunction (Pointwise Proposequality)) (Arrow Fin Term) Nothing
-    𝓕actsurj4Extension .𝓕actsurj4.factsurj4 _ (∁ nop) .π₀ = nop
+    𝓕actsurj4Extension .⋆ _ (∁ nop) .π₀ = nop
 
   instance
 
