@@ -17,7 +17,6 @@ private
       𝓵eftunit = λ x → (ε ◃ x) ↦ x
       𝓁eftunit = ∀ {x} → 𝓵eftunit x
       record 𝓛eftunit
-        ⦃ _ : Constraint _↦_ ⦄
         ⦃ _ : Constraint ε ⦄
         ⦃ _ : Constraint _◃_ ⦄
         : Ø 𝔞 ∙̂ ℓ
