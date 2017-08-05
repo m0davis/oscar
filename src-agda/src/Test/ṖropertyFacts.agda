@@ -8,6 +8,7 @@ open import Oscar.Class.IsEquivalence
 open import Oscar.Class.Leftunit
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
+open import Oscar.Class.Quadricity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectivity
@@ -113,8 +114,6 @@ module Test.ṖropertyFacts where
       _ : 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
       _ : 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
 
-      _ : ∀ {n} → [𝓟roperfact1] 𝓢._⟹_ (_⊛_ {n = n})
-      _ : ∀ {n} → [𝓟roperfact1] 𝓢̇._⟹_ (_⊛_ {n = n})
       _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
       _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
 
@@ -183,7 +182,7 @@ module Test.ṖropertyFacts where
   fact1s 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
   Properties-fact1'⋆ : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ 𝓢.⟹ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ 𝓢.⟹ 𝓉₁ ∧ 𝓈₂ 𝓢.⟹ 𝓉₂
-  Properties-fact1'⋆ 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = properfact1 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
+  Properties-fact1'⋆ 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = quadricity 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
 
   Properties-fact1' : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ 𝓢̇.⟹ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ 𝓢̇.⟹ 𝓉₁ ∧ 𝓈₂ 𝓢̇.⟹ 𝓉₂
-  Properties-fact1' 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = properfact1 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
+  Properties-fact1' 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = quadricity 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂

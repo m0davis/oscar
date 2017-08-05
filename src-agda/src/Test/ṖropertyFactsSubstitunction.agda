@@ -5,8 +5,8 @@ open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Leftunit
-open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
+open import Oscar.Class.Quadricity
 open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
@@ -67,10 +67,10 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   fact1s 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
   Properties-fact1'⋆ : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ ∼⁰ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ ∼⁰ 𝓉₁ ∧ 𝓈₂ ∼⁰ 𝓉₂
-  Properties-fact1'⋆ 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = properfact1 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
+  Properties-fact1'⋆ 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = quadricity 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
 
   Properties-fact1' : ∀ {𝓃} (𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ : 𝑩 𝓃) → 𝓈₁ ⊛ 𝓈₂ ∼¹ 𝓉₁ ⊛ 𝓉₂ ≈ 𝓈₁ ∼¹ 𝓉₁ ∧ 𝓈₂ ∼¹ 𝓉₂
-  Properties-fact1' 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = properfact1 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
+  Properties-fact1' 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = quadricity 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
 
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆ = leftunit
