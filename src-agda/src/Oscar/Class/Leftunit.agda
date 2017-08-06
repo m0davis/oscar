@@ -21,7 +21,6 @@ private
     : Ø ↑̂ (𝔞 ∙̂ ℓ)
     where
     constructor ∁
-    open CONSTRAINTS constraints
     field
       SET-METHOD : Ø 𝔞 ∙̂ ℓ
     record SET-CLASS
