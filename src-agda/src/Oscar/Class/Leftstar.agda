@@ -7,24 +7,24 @@ module Oscar.Class.Leftstar where
 private
 
   record CONSTRAINTS
-    {𝔞 𝔟 𝔣}
+    {𝔞 𝔣}
     (𝔄 : Ø 𝔞)
-    (𝔅 : Ø 𝔟)
+    𝔟
     (𝔉 : Ø 𝔣)
-    : Ø 𝔞 ∙̂ 𝔟 ∙̂ 𝔣
+    : Ø 𝔞 ∙̂ ↑̂ 𝔟 ∙̂ 𝔣
     where
     constructor ∁
     field
+      {𝔅} : Ø 𝔟
       _◂_ : 𝔉 → 𝔄 → 𝔅
 
   record ℭlass
     {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
     {𝔄 : Ø 𝔞}
-    {𝔅 : Ø 𝔟}
     {𝔉 : Ø 𝔣}
     (𝔄̇ : 𝔄 → Ø 𝔞̇)
-    (𝔅̇ : 𝔅 → Ø 𝔟̇)
-    (constraints : CONSTRAINTS 𝔄 𝔅 𝔉)
+    (constraints : CONSTRAINTS 𝔄 𝔟 𝔉)
+    (𝔅̇ : let open CONSTRAINTS constraints in 𝔅 → Ø 𝔟̇)
     : Ø ↑̂ (𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇)
     where
     constructor ∁
@@ -52,7 +52,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  𝔩eftstar : ℭlass 𝔄̇ 𝔅̇ (∁ _◂_)
+  𝔩eftstar : ℭlass 𝔄̇ (∁ _◂_) 𝔅̇
   𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
 
 module _
