@@ -10,7 +10,7 @@ open import Oscar.Class.Leftunit
 
 module Oscar.Class.Factsurj3 where
 
-open import Oscar.Class.Leftunit using (𝓛eftunit) public
+open import Oscar.Class.Leftunit using (⋆) public
 
 private
 
