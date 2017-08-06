@@ -6,36 +6,33 @@ module Oscar.Class.Leftunit where
 
 private
 
-  module _
+  module ℭlass
+    {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+    (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
+    (ε : 𝔈)
+    (_◃_ : 𝔈 → 𝔄 → 𝔄)
     where
-    module Main
-      {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
-      (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
-      (ε : 𝔈)
-      (_◃_ : 𝔈 → 𝔄 → 𝔄)
+    SET-METHOD = ∀ {x} → (ε ◃ x) ↦ x
+    record 𝓛eftunit
+      ⦃ _ : Constraint ε ⦄
+      ⦃ _ : Constraint _◃_ ⦄
+      : Ø 𝔞 ∙̂ ℓ
       where
-      𝓵eftunit = λ x → (ε ◃ x) ↦ x
-      𝓁eftunit = ∀ {x} → 𝓵eftunit x
-      record 𝓛eftunit
-        ⦃ _ : Constraint ε ⦄
-        ⦃ _ : Constraint _◃_ ⦄
-        : Ø 𝔞 ∙̂ ℓ
-        where
-        field ⋆ : 𝓁eftunit
-      Leftunit : Ø _
-      Leftunit = 𝓛eftunit
-      leftunit⟦_/_⟧ : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
-      leftunit⟦_/_⟧ ⦃ ⌶ ⦄ = 𝓛eftunit.⋆ ⌶
-    module Hidden
-      {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
-      {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
-      {ε : 𝔈}
-      {_◃_ : 𝔈 → 𝔄 → 𝔄}
-      where
-      open Main _↦_ ε _◃_
-      leftunit : ⦃ _ : Leftunit ⦄ → 𝓁eftunit
-      leftunit = leftunit⟦_/_⟧
+      field ⋆ : SET-METHOD
+    Leftunit : Ø _
+    Leftunit = 𝓛eftunit
+    leftunit⟦_/_⟧ : ⦃ _ : Leftunit ⦄ → SET-METHOD
+    leftunit⟦_/_⟧ ⦃ ⌶ ⦄ = 𝓛eftunit.⋆ ⌶
+  module Hidden
+    {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+    {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
+    {ε : 𝔈}
+    {_◃_ : 𝔈 → 𝔄 → 𝔄}
+    where
+    open ℭlass _↦_ ε _◃_
+    leftunit : ⦃ _ : Leftunit ⦄ → SET-METHOD
+    leftunit = leftunit⟦_/_⟧
 
-module 𝔏eftunit = Main
-open Main public
+module 𝔏eftunit = ℭlass
+open ℭlass public
 open Hidden public
