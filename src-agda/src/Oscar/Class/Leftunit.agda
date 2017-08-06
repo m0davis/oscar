@@ -6,14 +6,16 @@ module Oscar.Class.Leftunit where
 
 private
 
-  module ℭlass
+  record ℭlass
     {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
     (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
     (ε : 𝔈)
     (_◃_ : 𝔈 → 𝔄 → 𝔄)
+    : Ø ↑̂ (𝔞 ∙̂ ℓ)
     where
-    SET-METHOD : Ø 𝔞 ∙̂ ℓ
-    SET-METHOD = ∀ {x} → (ε ◃ x) ↦ x
+    constructor ∁
+    field
+      SET-METHOD : Ø 𝔞 ∙̂ ℓ
     record SET-CLASS
       ⦃ _ : Constraint (ε , _◃_) ⦄
       : Ø 𝔞 ∙̂ ℓ
@@ -33,7 +35,16 @@ module _
   (ε : 𝔈)
   (_◃_ : 𝔈 → 𝔄 → 𝔄)
   where
-  open ℭlass _↦_ ε _◃_
+  𝔩eftunit : ℭlass _↦_ ε _◃_
+  𝔩eftunit = ∁ ∀ {x} → (ε ◃ x) ↦ x
+
+module _
+  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+  (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
+  (ε : 𝔈)
+  (_◃_ : 𝔈 → 𝔄 → 𝔄)
+  where
+  open ℭlass (𝔩eftunit _↦_ ε _◃_)
   Leftunit = GET-CLASS
   leftunit⟦_/_/_⟧ : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
   leftunit⟦_/_/_⟧ = GET-METHOD
@@ -43,6 +54,6 @@ module _
   {ε : 𝔈}
   {_◃_ : 𝔈 → 𝔄 → 𝔄}
   where
-  open ℭlass _↦_ ε _◃_
+  open ℭlass (𝔩eftunit _↦_ ε _◃_)
   leftunit : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
   leftunit = GET-METHOD
