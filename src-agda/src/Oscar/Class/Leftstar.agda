@@ -28,7 +28,7 @@ private
     GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
     GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
 
-module 𝔏eftstar = ℭlass
+module 𝔏eftstar = ℭlass using (⋆)
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
   {𝔄 : Ø 𝔞}
