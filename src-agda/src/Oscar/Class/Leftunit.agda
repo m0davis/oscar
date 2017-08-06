@@ -25,7 +25,7 @@ private
     field
       SET-METHOD : Ø 𝔞 ∙̂ ℓ
     record SET-CLASS
-      ⦃ _ : Constraint (ε , _◃_) ⦄
+      ⦃ _ : Constraint constraints ⦄
       : Ø 𝔞 ∙̂ ℓ
       where
       field ⋆ : SET-METHOD
