@@ -6,45 +6,49 @@ module Oscar.Class.Leftstar where
 
 private
 
-  module _
+  module ℭlass
     {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
     {𝔄 : Ø 𝔞}
     {𝔅 : Ø 𝔟}
     {𝔉 : Ø 𝔣}
+    (𝔄̇ : 𝔄 → Ø 𝔞̇)
+    (𝔅̇ : 𝔅 → Ø 𝔟̇)
+    (_◂_ : 𝔉 → 𝔄 → 𝔅)
     where
-    module 𝔏eftstar′
-      (𝔄̇ : 𝔄 → Ø 𝔞̇)
-      (𝔅̇ : 𝔅 → Ø 𝔟̇)
-      (_◂_ : 𝔉 → 𝔄 → 𝔅)
+    SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+    SET-METHOD = ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
+    record SET-CLASS
+      ⦃ _ : Constraint _◂_ ⦄
+      : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
       where
-      SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
-      SET-METHOD = ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
-      record SET-CLASS
-        ⦃ _ : Constraint _◂_ ⦄
-        : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
-        where
-        field ⋆ : SET-METHOD
-      open SET-CLASS public
-      GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
-      GET-CLASS = SET-CLASS
-      GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-      GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
-    module 𝓛eftstar
-      (𝔄̇ : 𝔄 → Ø 𝔞̇)
-      (𝔅̇ : 𝔅 → Ø 𝔟̇)
-      (_◂_ : 𝔉 → 𝔄 → 𝔅)
-      where
-      open 𝔏eftstar′ 𝔄̇ 𝔅̇ _◂_
-      Leftstar = GET-CLASS
-      leftstar⟦_/_/_⟧ = GET-METHOD
-    module 𝓵eftstar
-      {𝔄̇ : 𝔄 → Ø 𝔞̇}
-      {𝔅̇ : 𝔅 → Ø 𝔟̇}
-      {_◂_ : 𝔉 → 𝔄 → 𝔅}
-      where
-      open 𝔏eftstar′ 𝔄̇ 𝔅̇ _◂_
-      leftstar = GET-METHOD
+      field ⋆ : SET-METHOD
+    open SET-CLASS public
+    GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+    GET-CLASS = SET-CLASS
+    GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
+    GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
 
-module 𝔏eftstar = 𝔏eftstar′
-open 𝓛eftstar public
-open 𝓵eftstar public
+module 𝔏eftstar = ℭlass
+module _
+  {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
+  {𝔄 : Ø 𝔞}
+  {𝔅 : Ø 𝔟}
+  {𝔉 : Ø 𝔣}
+  (𝔄̇ : 𝔄 → Ø 𝔞̇)
+  (𝔅̇ : 𝔅 → Ø 𝔟̇)
+  (_◂_ : 𝔉 → 𝔄 → 𝔅)
+  where
+  open ℭlass 𝔄̇ 𝔅̇ _◂_
+  Leftstar = GET-CLASS
+  leftstar⟦_/_/_⟧ = GET-METHOD
+module _
+  {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
+  {𝔄 : Ø 𝔞}
+  {𝔅 : Ø 𝔟}
+  {𝔉 : Ø 𝔣}
+  {𝔄̇ : 𝔄 → Ø 𝔞̇}
+  {𝔅̇ : 𝔅 → Ø 𝔟̇}
+  {_◂_ : 𝔉 → 𝔄 → 𝔅}
+  where
+  open ℭlass 𝔄̇ 𝔅̇ _◂_
+  leftstar = GET-METHOD
