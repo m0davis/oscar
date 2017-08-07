@@ -22,10 +22,9 @@ module _
     (ε₁ : 𝓻eflexivity _∼₁_)
     (ε₂ : 𝓻eflexivity _∼₂_)
     where
-    𝓼urjidentity' = ∀ {x} → § (ε₁ {x}) ∼̇₂ ε₂
     𝔰urjidentity : ℭlass $ (λ {x} {y} → § {x} {y}) , (λ {x} → ε₁ {x}) , (λ {x y} → _∼̇₂_ {x} {y}) , (λ {x} → ε₂ {x})
-    𝔰urjidentity = ∁ 𝓼urjidentity'
-    open ℭlass 𝔰urjidentity using () renaming (GET-CLASS to Surjidentity) public
+    𝔰urjidentity = ∁ ∀ {x} → § (ε₁ {x}) ∼̇₂ ε₂
+    open ℭlass 𝔰urjidentity using () renaming (GET-CLASS to Surjidentity; SET-METHOD to 𝓼urjidentity') public
   module _
     {μ : 𝓼urjection 𝔒₁ 𝔒₂}
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
