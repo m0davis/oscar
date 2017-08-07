@@ -15,4 +15,4 @@ module _
   {𝔡} (𝔇 : ∀ {a} → 𝔅 a → Ø 𝔡)
   ⦃ _ : 𝓢urjectextensivity ℭ 𝔅 ⦄
   where
-  𝓕actsurj4 = ∀ {a₁ a₂} → Leftstar (𝔇 {a₁}) (𝔇 {a₂}) (surjectextensivity {x = a₁} {a₂})
+  𝓕actsurj4 = ∀ {a₁ a₂} → LEFTSTAR.∁⟦ 𝔇 {a₁} / 𝔇 {a₂} / surjectextensivity {x = a₁} {a₂} ⟧

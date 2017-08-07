@@ -25,6 +25,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
+  module LEFTSTAR = ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-CLASS to ∁⟦_/_/_⟧; GET-METHOD to F⟦_/_/_⟧)
   open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-CLASS to Leftstar; GET-METHOD to leftstar⟦_/_/_⟧) public
 
 module _
