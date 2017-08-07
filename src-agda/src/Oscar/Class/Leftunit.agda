@@ -18,8 +18,8 @@ private
   record ℭlass
     {𝔞} {𝔄 : Ø 𝔞} {ℓ}
     (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
-    𝔢
-    {CONSTRAINTS : Ø 𝔞 ∙̂ ↑̂ 𝔢}
+    {𝔢}
+    {CONSTRAINTS : Ø 𝔢}
     (constraints : CONSTRAINTS)
     : Ø ↑̂ (𝔞 ∙̂ ℓ)
     where
@@ -45,7 +45,7 @@ module _
   (ε : 𝔈)
   (_◃_ : 𝔈 → 𝔄 → 𝔄)
   where
-  𝔩eftunit : ℭlass _↦_ 𝔢 (ℭONSTRAINTS.∁ ε _◃_)
+  𝔩eftunit : ℭlass _↦_ (ℭONSTRAINTS.∁ ε _◃_)
   𝔩eftunit = ∁ ∀ {x} → (ε ◃ x) ↦ x
 
 module _
