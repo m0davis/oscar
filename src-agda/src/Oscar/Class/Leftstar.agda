@@ -6,7 +6,7 @@ module Oscar.Class.Leftstar where
 
 private
 
-  record CONSTRAINTS
+  record ℭONSTRAINTS
     {𝔞 𝔣}
     (𝔄 : Ø 𝔞)
     𝔟
@@ -57,7 +57,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  𝔩eftstar : ℭlass 𝔄̇ (𝔞 ∙̂ 𝔣) CONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
+  𝔩eftstar : ℭlass 𝔄̇ (𝔞 ∙̂ 𝔣) ℭONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
   𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
 
 module _
