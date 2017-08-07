@@ -9,38 +9,36 @@ private
   record ℭONSTRAINTS
     {𝔞 𝔣}
     (𝔄 : Ø 𝔞)
-    𝔟
+    {𝔟} (𝔅 : Ø 𝔟)
     (𝔉 : Ø 𝔣)
-    : Ø 𝔞 ∙̂ ↑̂ 𝔟 ∙̂ 𝔣
+    : Ø 𝔞 ∙̂ 𝔟 ∙̂ 𝔣
     where
     constructor ∁
     field
-      {𝔅} : Ø 𝔟
       _◂_ : 𝔉 → 𝔄 → 𝔅
 
   module _
     𝔞
     {𝔟 𝔟̇}
     𝔣
-    {CONSTRAINTS : Ø ↑̂ 𝔟 ∙̂ 𝔣}
-    (CONSTRAINTS-𝔅 : CONSTRAINTS → Ø 𝔟)
-    (constraints : CONSTRAINTS)
-    (let 𝔅 = CONSTRAINTS-𝔅 constraints)
+    {𝔅 : Ø 𝔟}
     (𝔅̇ : 𝔅 → Ø 𝔟̇)
+    {CONSTRAINTS : Ø 𝔣}
+    (constraints : CONSTRAINTS)
     where
     record ℭlass
-      : Ø ↑̂ (𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇)
+      : Ø ↑̂ (𝔞)
       where
       constructor ∁
       field
-        SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇
+        SET-METHOD : Ø 𝔞
       record SET-CLASS
         ⦃ _ : Constraint constraints ⦄
-        : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇
+        : Ø 𝔞
         where
         field ⋆ : SET-METHOD
       open SET-CLASS public
-      GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇
+      GET-CLASS : Ø 𝔞
       GET-CLASS = SET-CLASS
       GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
       GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
@@ -56,8 +54,8 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  𝔩eftstar : ℭlass (𝔞 ∙̂ 𝔞̇) (𝔞 ∙̂ 𝔣) ℭONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
-  𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
+  𝔩eftstar : ℭlass (𝔞 ∙̂ 𝔞̇ ∙̂ 𝔟̇ ∙̂ 𝔣) (𝔞 ∙̂ 𝔟 ∙̂ 𝔣) 𝔅̇ (_◂_)
+  𝔩eftstar = ∁ (∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x))
 
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
