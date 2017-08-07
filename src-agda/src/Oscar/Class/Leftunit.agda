@@ -1,7 +1,6 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
-open import Oscar.Data.Constraint
 
 module Oscar.Class.Leftunit where
 
