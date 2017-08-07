@@ -19,6 +19,7 @@ open import Oscar.Data.Proposequality
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Transextensionality.Proposequality
+import Oscar.Data.Constraint
 
 module Oscar.Property.Category.AListProposequality where
 

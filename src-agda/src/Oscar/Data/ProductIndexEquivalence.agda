@@ -1,6 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.HasEquivalence
+import Oscar.Data.Constraint
 
 module Oscar.Data.ProductIndexEquivalence where
 

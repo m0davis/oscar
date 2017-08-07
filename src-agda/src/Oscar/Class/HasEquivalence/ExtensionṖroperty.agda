@@ -1,8 +1,10 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.HasEquivalence
 open import Oscar.Data.ProductIndexEquivalence
 import Oscar.Class.HasEquivalence.Ṗroperty
+import Oscar.Data.Constraint
 import Oscar.Property.Setoid.ProductIndexEquivalence
 
 module Oscar.Class.HasEquivalence.ExtensionṖroperty where
@@ -17,4 +19,4 @@ module _
   instance
 
     HasEquivalenceExtendedProperty : HasEquivalence (ExtensionṖroperty ℓ 𝔒 _↦_) (𝔵 ∙̂ 𝔬 ∙̂ ℓ)
-    HasEquivalenceExtendedProperty .HasEquivalence.Equivalence = _≈₀_
+    HasEquivalenceExtendedProperty .⋆ = _≈₀_

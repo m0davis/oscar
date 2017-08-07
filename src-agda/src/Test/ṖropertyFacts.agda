@@ -32,6 +32,7 @@ import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Class.Surjection.⋆
 import Oscar.Data.Proposequality
+import Oscar.Data.Constraint
 
 module Test.ṖropertyFacts where
 

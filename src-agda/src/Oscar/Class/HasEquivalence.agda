@@ -1,25 +1,31 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.IsEquivalence
+open import Oscar.Data.𝟙
 
 module Oscar.Class.HasEquivalence where
 
-module _ where
+module _
+  {𝔬} (𝔒 : Ø 𝔬) ℓ
+  where
+  𝔥asEquivalence : Rℭlass 𝟙
+  𝔥asEquivalence = ∁ (𝔒 → 𝔒 → Ø ℓ) IsEquivalence
+  open Rℭlass 𝔥asEquivalence using () renaming (SET-CLASS to HasEquivalence) public
 
-  record HasEquivalence {𝔬} (𝔒 : Ø 𝔬) ℓ : Ø 𝔬 ∙̂ ↑̂ ℓ where
-    constructor ∁
+module _
+  {𝔬} (𝔒 : Ø 𝔬) {ℓ}
+  where
+  open Rℭlass (𝔥asEquivalence 𝔒 ℓ) using () renaming (GET-METHOD to Equivalence[_]) public
 
-    field
-      Equivalence : 𝔒 → 𝔒 → Ø ℓ
-      ⦃ ⌶IsEquivalence ⦄ : IsEquivalence Equivalence
-    infix 4 Equivalence
+infix 4 ≈-syntax
+≈-syntax = Equivalence[_]
+syntax ≈-syntax 𝔒 x y = x ≈[ 𝔒 ] y
 
-  open HasEquivalence ⦃ … ⦄ public
-  open HasEquivalence ⦃ … ⦄ public using () renaming (Equivalence to _≈_)
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {ℓ}
+  where
+  open Rℭlass (𝔥asEquivalence 𝔒 ℓ) using () renaming (GET-METHOD to Equivalence) public
 
-  module _ where
-
-    infix 4 ≈-syntax
-    ≈-syntax : ∀ {𝔬} (𝔒 : Ø 𝔬) {ℓ} ⦃ _ : HasEquivalence 𝔒 ℓ ⦄ → 𝔒 → 𝔒 → Ø ℓ
-    ≈-syntax _ = _≈_
-    syntax ≈-syntax 𝔒 x y = x ≈[ 𝔒 ] y
+infix 4 _≈_
+_≈_ = Equivalence

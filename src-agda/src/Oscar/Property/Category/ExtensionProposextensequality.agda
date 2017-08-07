@@ -18,6 +18,7 @@ open import Oscar.Class.Precategory
 open import Oscar.Class.Category
 open import Oscar.Data.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
+import Oscar.Data.Constraint
 
 module Oscar.Property.Category.ExtensionProposextensequality where
 

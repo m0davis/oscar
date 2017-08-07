@@ -7,6 +7,7 @@ open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
 open import Oscar.Class.IsEquivalence
 open import Oscar.Data.ProductIndexEquivalence
+import Oscar.Data.Constraint
 
 module Oscar.Property.Setoid.ProductIndexEquivalence where
 

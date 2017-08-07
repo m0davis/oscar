@@ -4,6 +4,8 @@ open import Oscar.Class.HasEquivalence
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
+open import Oscar.Class
+import Oscar.Data.Constraint
 
 module Oscar.Class.HasEquivalence.Substitunction where
 
