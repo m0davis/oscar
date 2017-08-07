@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Congruity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Symmetry
@@ -28,10 +29,10 @@ module _ {a} {A : ¶ → Set a} where
   instance
 
     𝓡eflexivityAList : 𝓡eflexivity AList
-    𝓡eflexivityAList .𝓡eflexivity.reflexivity = ∅
+    𝓡eflexivityAList .⋆ = ∅
 
     𝓡eflexivityAList' : 𝓡eflexivity (flip AList)
-    𝓡eflexivityAList' .𝓡eflexivity.reflexivity = reflexivity[ AList ]
+    𝓡eflexivityAList' .⋆ = reflexivity[ AList ]
 
     𝓣ransitivityAList : 𝓣ransitivity AList
     𝓣ransitivityAList .𝓣ransitivity.transitivity f ∅ = f

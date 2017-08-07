@@ -144,7 +144,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrefunctorSubstitunctionExtensionTerms = ∁
 
     𝓡eflexivitySubstitunction : 𝓡eflexivity Substitunction
-    𝓡eflexivitySubstitunction .𝓡eflexivity.reflexivity = i
+    𝓡eflexivitySubstitunction .⋆ = i
 
   private
 

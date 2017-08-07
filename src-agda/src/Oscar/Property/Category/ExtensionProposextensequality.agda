@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
@@ -27,7 +28,7 @@ module _
   instance
 
     𝓡eflexivityExtension : 𝓡eflexivity (Extension B)
-    𝓡eflexivity.reflexivity 𝓡eflexivityExtension = ¡
+    𝓡eflexivityExtension .⋆ = ¡
 
     𝓣ransitivityExtension : 𝓣ransitivity (Extension B)
     𝓣ransitivity.transitivity 𝓣ransitivityExtension f g = g ∘ f

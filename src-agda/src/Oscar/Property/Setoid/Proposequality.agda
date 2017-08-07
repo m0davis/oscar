@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
@@ -14,7 +15,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} where
   instance
 
     𝓡eflexivityProposequality : 𝓡eflexivity Proposequality⟦ 𝔒 ⟧
-    𝓡eflexivityProposequality .𝓡eflexivity.reflexivity = !
+    𝓡eflexivityProposequality .⋆ = !
 
     𝓢ymmetryProposequality : 𝓢ymmetry Proposequality⟦ 𝔒 ⟧
     𝓢ymmetryProposequality .𝓢ymmetry.symmetry ∅ = !

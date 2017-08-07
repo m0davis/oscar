@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6

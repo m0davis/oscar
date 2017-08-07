@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
@@ -17,7 +18,7 @@ module _
   instance
 
     𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
-    𝓡eflexivityṖroperty .𝓡eflexivity.reflexivity .π₀ = ¡ , ¡
+    𝓡eflexivityṖroperty .⋆ .π₀ = ¡ , ¡
 
     𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓢ymmetryṖroperty .𝓢ymmetry.symmetry (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q

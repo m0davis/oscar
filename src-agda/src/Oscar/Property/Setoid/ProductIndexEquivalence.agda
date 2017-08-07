@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Symmetry
@@ -14,7 +15,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : 
   instance
 
     𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
-    𝓡eflexivityExtensionṖropertyEquivalence .𝓡eflexivity.reflexivity .π₀ = reflexivity
+    𝓡eflexivityExtensionṖropertyEquivalence .⋆ .π₀ = reflexivity
 
     𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓢ymmetryExtensionṖropertyEquivalence .𝓢ymmetry.symmetry (∁ P≈Q) .π₀ = symmetry P≈Q
