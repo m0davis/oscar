@@ -6,17 +6,6 @@ module Oscar.Class.Leftstar where
 
 private
 
-  record ℭONSTRAINTS
-    {𝔞 𝔣}
-    (𝔄 : Ø 𝔞)
-    {𝔟} (𝔅 : Ø 𝔟)
-    (𝔉 : Ø 𝔣)
-    : Ø 𝔞 ∙̂ 𝔟 ∙̂ 𝔣
-    where
-    constructor ∁
-    field
-      _◂_ : 𝔉 → 𝔄 → 𝔅
-
   module _
     {𝔞}
     {𝔣}

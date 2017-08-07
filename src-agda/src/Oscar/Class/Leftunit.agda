@@ -6,15 +6,6 @@ module Oscar.Class.Leftunit where
 
 private
 
-  record ℭONSTRAINTS
-    {𝔞} (𝔄 : Ø 𝔞) 𝔢
-    : Ø 𝔞 ∙̂ ↑̂ 𝔢 where
-    constructor ∁
-    field
-      {𝔈} : Ø 𝔢
-      ε : 𝔈
-      _◃_ : 𝔈 → 𝔄 → 𝔄
-
   record ℭlass
     {ℓ}
     {𝔢}
