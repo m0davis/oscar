@@ -24,6 +24,7 @@ module _
   Leftunit = GET-CLASS
   leftunit⟦_/_/_⟧ : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
   leftunit⟦_/_/_⟧ = GET-METHOD
+
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   {_↦_ : 𝔄 → 𝔄 → Ø ℓ}

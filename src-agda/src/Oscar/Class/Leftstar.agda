@@ -31,6 +31,7 @@ module _
   Leftstar = GET-CLASS
   leftstar⟦_/_/_⟧ : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
   leftstar⟦_/_/_⟧ = GET-METHOD
+
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
   {𝔄 : Ø 𝔞}
