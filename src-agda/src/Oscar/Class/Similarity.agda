@@ -37,3 +37,4 @@ module _
   {_◂_ : 𝔉 → 𝔄 → 𝔅}
   where
   open ℭlass (𝔰imilarity _∼₁_ _∼₂_ _◂_) using () renaming (GET-METHOD to similarity) public
+  module SIMILARITY = ℭlass (𝔰imilarity _∼₁_ _∼₂_ _◂_)
