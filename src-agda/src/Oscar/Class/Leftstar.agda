@@ -18,28 +18,32 @@ private
       {𝔅} : Ø 𝔟
       _◂_ : 𝔉 → 𝔄 → 𝔅
 
-  record ℭlass
+  module _
     {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
     {𝔄 : Ø 𝔞}
-    {𝔉 : Ø 𝔣}
     (𝔄̇ : 𝔄 → Ø 𝔞̇)
-    (constraints : CONSTRAINTS 𝔄 𝔟 𝔉)
-    (𝔅̇ : let open CONSTRAINTS constraints in 𝔅 → Ø 𝔟̇)
-    : Ø ↑̂ (𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇)
+    {CONSTRAINTS : Ø 𝔞 ∙̂ ↑̂ 𝔟 ∙̂ 𝔣}
+    (CONSTRAINTS-𝔅 : CONSTRAINTS → Ø 𝔟)
+    (constraints : CONSTRAINTS)
+    (let 𝔅 = CONSTRAINTS-𝔅 constraints)
+    (𝔅̇ : 𝔅 → Ø 𝔟̇)
     where
-    constructor ∁
-    field
-      SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
-    record SET-CLASS
-      ⦃ _ : Constraint constraints ⦄
-      : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+    record ℭlass
+      : Ø ↑̂ (𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇)
       where
-      field ⋆ : SET-METHOD
-    open SET-CLASS public
-    GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
-    GET-CLASS = SET-CLASS
-    GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-    GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
+      constructor ∁
+      field
+        SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+      record SET-CLASS
+        ⦃ _ : Constraint constraints ⦄
+        : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+        where
+        field ⋆ : SET-METHOD
+      open SET-CLASS public
+      GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+      GET-CLASS = SET-CLASS
+      GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
+      GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
 
 open ℭlass using (⋆) public
 
@@ -52,7 +56,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  𝔩eftstar : ℭlass 𝔄̇ (∁ _◂_) 𝔅̇
+  𝔩eftstar : ℭlass {𝔣 = 𝔣} 𝔄̇ CONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
   𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
 
 module _
