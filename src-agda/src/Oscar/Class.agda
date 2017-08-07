@@ -18,6 +18,7 @@ record ℭlass
     ⦃ _ : Constraint constraints ⦄
     : Ø ℓ
     where
+    constructor ∁
     field ⋆ : SET-METHOD
   open SET-CLASS public
   GET-CLASS : Ø _
@@ -25,4 +26,4 @@ record ℭlass
   GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
   GET-METHOD ⦃ ⌶ ⦄ = SET-CLASS.⋆ ⌶
 
-open ℭlass using (⋆) public
+open ℭlass using (⋆; ∁) public
