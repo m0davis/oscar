@@ -26,11 +26,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_)
-  Leftstar : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
-  Leftstar = GET-CLASS
-  leftstar⟦_/_/_⟧ : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-  leftstar⟦_/_/_⟧ = GET-METHOD
+  open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-CLASS to Leftstar; GET-METHOD to leftstar⟦_/_/_⟧) public
 
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
@@ -41,6 +37,4 @@ module _
   {𝔅̇ : 𝔅 → Ø 𝔟̇}
   {_◂_ : 𝔉 → 𝔄 → 𝔅}
   where
-  open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_)
-  leftstar : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-  leftstar = GET-METHOD
+  open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-METHOD to leftstar) public

@@ -20,10 +20,7 @@ module _
   (ε : 𝔈)
   (_◃_ : 𝔈 → 𝔄 → 𝔄)
   where
-  open ℭlass (𝔩eftunit _↦_ ε _◃_)
-  Leftunit = GET-CLASS
-  leftunit⟦_/_/_⟧ : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-  leftunit⟦_/_/_⟧ = GET-METHOD
+  open ℭlass (𝔩eftunit _↦_ ε _◃_) using () renaming (GET-CLASS to Leftunit; GET-METHOD to leftunit⟦_/_/_⟧) public
 
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
@@ -31,6 +28,4 @@ module _
   {ε : 𝔈}
   {_◃_ : 𝔈 → 𝔄 → 𝔄}
   where
-  open ℭlass (𝔩eftunit _↦_ ε _◃_)
-  leftunit : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-  leftunit = GET-METHOD
+  open ℭlass (𝔩eftunit _↦_ ε _◃_) using () renaming (GET-METHOD to leftunit) public
