@@ -19,9 +19,8 @@ private
       _◂_ : 𝔉 → 𝔄 → 𝔅
 
   module _
-    {𝔞 𝔟 𝔞̇ 𝔟̇}
-    {𝔄 : Ø 𝔞}
-    (𝔄̇ : 𝔄 → Ø 𝔞̇)
+    𝔞
+    {𝔟 𝔟̇}
     𝔣
     {CONSTRAINTS : Ø ↑̂ 𝔟 ∙̂ 𝔣}
     (CONSTRAINTS-𝔅 : CONSTRAINTS → Ø 𝔟)
@@ -30,18 +29,18 @@ private
     (𝔅̇ : 𝔅 → Ø 𝔟̇)
     where
     record ℭlass
-      : Ø ↑̂ (𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇)
+      : Ø ↑̂ (𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇)
       where
       constructor ∁
       field
-        SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+        SET-METHOD : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇
       record SET-CLASS
         ⦃ _ : Constraint constraints ⦄
-        : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+        : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇
         where
         field ⋆ : SET-METHOD
       open SET-CLASS public
-      GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔞̇ ∙̂ 𝔟̇
+      GET-CLASS : Ø 𝔞 ∙̂ 𝔣 ∙̂ 𝔟̇
       GET-CLASS = SET-CLASS
       GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
       GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
@@ -57,7 +56,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  𝔩eftstar : ℭlass 𝔄̇ (𝔞 ∙̂ 𝔣) ℭONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
+  𝔩eftstar : ℭlass (𝔞 ∙̂ 𝔞̇) (𝔞 ∙̂ 𝔣) ℭONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
   𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
 
 module _
