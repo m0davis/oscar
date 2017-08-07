@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Properfact1

@@ -1,35 +1,9 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Data.Constraint
 
 module Oscar.Class.Leftstar where
-
-private
-
-  module _
-    {𝔞}
-    {𝔣}
-    {CONSTRAINTS : Ø 𝔣}
-    (constraints : CONSTRAINTS)
-    where
-    record ℭlass
-      : Ø ↑̂ 𝔞
-      where
-      constructor ∁
-      field
-        SET-METHOD : Ø 𝔞
-      record SET-CLASS
-        ⦃ _ : Constraint constraints ⦄
-        : Ø 𝔞
-        where
-        field ⋆ : SET-METHOD
-      open SET-CLASS public
-      GET-CLASS : Ø 𝔞
-      GET-CLASS = SET-CLASS
-      GET-METHOD : ⦃ _ : GET-CLASS ⦄ → SET-METHOD
-      GET-METHOD ⦃ ⌶ ⦄ = ⋆ ⌶
-
-open ℭlass using (⋆) public
 
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}

@@ -10,8 +10,6 @@ open import Oscar.Class.Leftunit
 
 module Oscar.Class.Factsurj3 where
 
-open import Oscar.Class.Leftunit using (⋆) public
-
 private
 
   module _
