@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjextensionality
@@ -64,7 +65,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrefunctorSubstitist,Substitunction = ∁
 
     𝓢urjidentitySubstitist,Substitunction : 𝓢urjidentity Substitist Substitunction _≈_
-    𝓢urjidentitySubstitist,Substitunction .𝒮urjidentity.surjidentity' _ = ∅
+    𝓢urjidentitySubstitist,Substitunction .⋆ _ = ∅
 
     IsFunctorSubstitist,Substitunction : IsFunctor Substitist Proposequality Substitunction _≈_
     IsFunctorSubstitist,Substitunction = ∁

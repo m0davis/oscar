@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Surjection
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Reflexivity
@@ -40,7 +41,7 @@ module _
   instance
 
     `𝒮urjidentity : 𝓢urjidentity _∼₁_ _∼₂_ _∼̇₂_
-    `𝒮urjidentity .𝒮urjidentity.surjidentity' = magic
+    `𝒮urjidentity .⋆ = magic
 
   test-surjidentity : 𝓼urjidentity _∼₁_ _∼₂_ _∼̇₂_
   test-surjidentity = surjidentity

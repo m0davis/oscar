@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Category
 open import Oscar.Class.Congruity
 open import Oscar.Class.Functor
@@ -162,10 +163,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     𝓢urjidentitySubstitunctionExtensionTerm : 𝓢urjidentity Substitunction (Extension Term) _≈_
-    𝓢urjidentitySubstitunctionExtensionTerm .𝒮urjidentity.surjidentity' = 𝓼urjidentitySubstitunctionExtensionTerm
+    𝓢urjidentitySubstitunctionExtensionTerm .⋆ = 𝓼urjidentitySubstitunctionExtensionTerm
 
     𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjidentity Substitunction (Extension $ Terms N) _≈_
-    𝓢urjidentitySubstitunctionExtensionTerms .𝒮urjidentity.surjidentity' = 𝓼urjidentitySubstitunctionExtensionTerms
+    𝓢urjidentitySubstitunctionExtensionTerms .⋆ = 𝓼urjidentitySubstitunctionExtensionTerms
 
     [𝓣ransleftidentitySubstitunction] : [𝓣ransleftidentity] Substitunction _≈_
     [𝓣ransleftidentitySubstitunction] = ∁
