@@ -68,10 +68,10 @@ module _
   instance
 
     𝓢urjectextenscongruityArrowṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftṖroperty ℓ Substitunction) _≈_
-    𝓢urjectextenscongruityArrowṖropertySubstitunction .𝓢imilarity.⋆ _ (∁ P⇔Q) .π₀ = P⇔Q
+    𝓢urjectextenscongruityArrowṖropertySubstitunction .⋆ _ (∁ P⇔Q) .π₀ = P⇔Q
 
     𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
-    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .𝓢imilarity.⋆ _ (∁ (∁ P⇔Q)) .π₀ = ∁ P⇔Q -- P⇔Q
+    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .⋆ _ (∁ (∁ P⇔Q)) .π₀ = ∁ P⇔Q -- P⇔Q
 
 module _
   {𝔭} {𝔓 : Ø 𝔭}
