@@ -22,7 +22,6 @@ module _
       overlap ⦃ `IsPrecategory₁ ⦄ : IsPrecategory _∼₁_ _∼̇₁_
       overlap ⦃ `IsPrecategory₂ ⦄ : IsPrecategory _∼₂_ _∼̇₂_
       overlap ⦃ `𝓢urjection ⦄ : 𝓢urjection 𝔒₁ 𝔒₂
-      overlap ⦃ `[𝓢urjtranscommutativity] ⦄ : [𝓢urjtranscommutativity] _∼₁_ _∼₂_ _∼̇₂_
       overlap ⦃ `𝓢urjectivity ⦄ : 𝒮urjectivity! _∼₁_ _∼₂_
       overlap ⦃ `𝓢urjtranscommutativity ⦄ : 𝓢urjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_
       ⦃ `𝓢urjextensionality ⦄ : 𝓢urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_

@@ -47,16 +47,14 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓢urjextensionalitySubstitist,Substitunction : 𝓢urjextensionality Substitist Proposequality Substitunction _≈_
     𝓢urjextensionalitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ _ = ∅
 
-    [𝓢urjtranscommutativity]Substitist,Substitunction : [𝓢urjtranscommutativity] Substitist Substitunction _≈_
-    [𝓢urjtranscommutativity]Substitist,Substitunction = ∁
-
     𝓢urjtranscommutativitySubstitist,Substitunction : 𝓢urjtranscommutativity Substitist Substitunction _≈_
-    𝓢urjtranscommutativitySubstitist,Substitunction .𝓢urjtranscommutativity.surjtranscommutativity ∅ _ _ = ∅
-    𝓢urjtranscommutativitySubstitist,Substitunction .𝓢urjtranscommutativity.surjtranscommutativity ((π₀ , π₁) , f) g =
+    𝓢urjtranscommutativitySubstitist,Substitunction .⋆ ∅ _ _ = ∅
+    𝓢urjtranscommutativitySubstitist,Substitunction .⋆ ((π₀ , π₁) , f) g =
+      let _⟪∙⟫′_ = flip (𝓢urjtranscommutativitySubstitist,Substitunction .⋆) in -- kludge for Agda's termination checker
         (
             § g ⟪∙⟫ §[ Substitunction ] f
           ∙
-            ⟪ surjtranscommutativity f g ⟫[ Proposextensequality ]
+            ⟪ g ⟪∙⟫′ f ⟫[ Proposextensequality ]
         )
       ∘
         π₁ for π₀

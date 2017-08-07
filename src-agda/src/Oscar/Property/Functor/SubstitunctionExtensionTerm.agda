@@ -112,13 +112,11 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   instance
 
-    [𝓢urjtranscommutativity]SubstitunctionExtensionTerm = [𝓢urjtranscommutativity] Substitunction (Extension Term) Proposextensequality ∋ ∁
     𝓢urjtranscommutativitySubstitunctionExtensionTerm : 𝓢urjtranscommutativity Substitunction (Extension Term) Proposextensequality
-    𝓢urjtranscommutativitySubstitunctionExtensionTerm .𝓢urjtranscommutativity.surjtranscommutativity = 𝓼urjtranscommutativitySubstitunctionExtensionTerm
+    𝓢urjtranscommutativitySubstitunctionExtensionTerm .⋆ = 𝓼urjtranscommutativitySubstitunctionExtensionTerm
 
-    [𝓢urjtranscommutativity]SubstitunctionExtensionTerms = λ {N} → [𝓢urjtranscommutativity] Substitunction (Extension $ Terms N) Proposextensequality ∋ ∁
     𝓢urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjtranscommutativity Substitunction (Extension $ Terms N) Proposextensequality
-    𝓢urjtranscommutativitySubstitunctionExtensionTerms .𝓢urjtranscommutativity.surjtranscommutativity = 𝓼urjtranscommutativitySubstitunctionExtensionTerms
+    𝓢urjtranscommutativitySubstitunctionExtensionTerms .⋆ = 𝓼urjtranscommutativitySubstitunctionExtensionTerms
 
   instance
 
