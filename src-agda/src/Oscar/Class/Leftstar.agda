@@ -19,10 +19,11 @@ private
       _◂_ : 𝔉 → 𝔄 → 𝔅
 
   module _
-    {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
+    {𝔞 𝔟 𝔞̇ 𝔟̇}
     {𝔄 : Ø 𝔞}
     (𝔄̇ : 𝔄 → Ø 𝔞̇)
-    {CONSTRAINTS : Ø 𝔞 ∙̂ ↑̂ 𝔟 ∙̂ 𝔣}
+    𝔣
+    {CONSTRAINTS : Ø ↑̂ 𝔟 ∙̂ 𝔣}
     (CONSTRAINTS-𝔅 : CONSTRAINTS → Ø 𝔟)
     (constraints : CONSTRAINTS)
     (let 𝔅 = CONSTRAINTS-𝔅 constraints)
@@ -56,7 +57,7 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  𝔩eftstar : ℭlass {𝔣 = 𝔣} 𝔄̇ CONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
+  𝔩eftstar : ℭlass 𝔄̇ (𝔞 ∙̂ 𝔣) CONSTRAINTS.𝔅 (∁ _◂_) 𝔅̇
   𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
 
 module _
