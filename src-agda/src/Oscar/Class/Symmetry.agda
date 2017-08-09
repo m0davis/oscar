@@ -10,7 +10,7 @@ module _
   {x y}
   (x∼y : x ∼ y)
   where
-  𝔰ymmetry : ℭlass {𝔯} $ x∼y , _∼_ -- FIXME reversing does not work
+  𝔰ymmetry : ℭlass {𝔯} $ _∼_ ,, x∼y
   𝔰ymmetry = ∁ $′ y ∼ x
 
 module _
