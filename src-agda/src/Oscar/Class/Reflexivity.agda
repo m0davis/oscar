@@ -24,7 +24,7 @@ module _
   𝓡eflexivity = ∀ {x} → GET-CLASS x
   𝓻eflexivity = ∀ {x} → SET-METHOD x
   reflexivity[_] = λ ⦃ _ : 𝓡eflexivity ⦄ {x} → GET-METHOD x
-  ε[_] = λ {{_ : 𝓡eflexivity }} {x} → GET-METHOD x
+  ε[_] = λ ⦃ _ : 𝓡eflexivity ⦄ {x} → GET-METHOD x
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
