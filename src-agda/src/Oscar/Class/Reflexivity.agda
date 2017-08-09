@@ -7,15 +7,27 @@ module Oscar.Class.Reflexivity where
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+  (x : 𝔒)
   where
-  𝔯eflexivity : ℭlass _∼_
-  𝔯eflexivity = ∁ ∀ {x} → x ∼ x
-  open ℭlass 𝔯eflexivity using () renaming (SET-METHOD to 𝓻eflexivity; GET-CLASS to 𝓡eflexivity; GET-METHOD to reflexivity[_]) public
-  open ℭlass 𝔯eflexivity using () renaming (GET-METHOD to ε[_]) public
+  𝔯eflexivity : ℭlass {𝔯} _∼_
+  𝔯eflexivity = ∁ (x ∼ x)
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬}
+  {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+  where
+  𝓻eflexivity : Set (𝔯 ∙̂ 𝔬)
+  𝓻eflexivity = ∀ {x} → ℭlass.SET-METHOD (𝔯eflexivity _∼_ x)
+  𝓡eflexivity : Set (𝔯 ∙̂ 𝔬)
+  𝓡eflexivity = ∀ {x} → ℭlass.GET-CLASS (𝔯eflexivity _∼_ x)
+  reflexivity[_] : {{ _ : 𝓡eflexivity }} → 𝓻eflexivity
+  reflexivity[_] {x = x} = ℭlass.GET-METHOD (𝔯eflexivity _∼_ x)
+  ε[_] = reflexivity[_]
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
   where
-  open ℭlass (𝔯eflexivity _∼_) using () renaming (GET-METHOD to reflexivity) public
-  open ℭlass (𝔯eflexivity _∼_) using () renaming (GET-METHOD to ε) public
+  reflexivity : {{ _ : 𝓡eflexivity _∼_ }} → 𝓻eflexivity _∼_
+  reflexivity {x = x} = ℭlass.GET-METHOD (𝔯eflexivity _∼_ x)
+  ε = reflexivity
