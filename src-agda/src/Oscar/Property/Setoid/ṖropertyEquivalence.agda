@@ -21,7 +21,7 @@ module _
     𝓡eflexivityṖroperty .⋆ .π₀ = ¡ , ¡
 
     𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
-    𝓢ymmetryṖroperty .𝓢ymmetry.symmetry (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q
+    𝓢ymmetryṖroperty {x∼y = ∁ P⇔Q} .⋆ .π₀ = π₁ P⇔Q , π₀ P⇔Q
 
     𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓣ransitivityṖroperty .𝓣ransitivity.transitivity (∁ P⇔Q) (∁ Q⇔R) .π₀ = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
