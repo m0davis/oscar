@@ -10,7 +10,7 @@ module _
   (x : 𝔒)
   where
   𝔯eflexivity : ℭlass {𝔯} _∼_
-  𝔯eflexivity = ∁ (x ∼ x)
+  𝔯eflexivity = ∁ $′ x ∼ x
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
