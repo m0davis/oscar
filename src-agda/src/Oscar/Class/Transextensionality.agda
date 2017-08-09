@@ -11,7 +11,7 @@ module _
   {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ) (let infix 4 _∼̇_ ; _∼̇_ = _∼̇_)
   ⦃ tr : 𝓣ransitivity _∼_ ⦄
   where
-  𝔱ransextensionality : ℭlass $ (λ {x y} → _∼̇_ {x} {y}) , tr -- (λ {x y z} → transitivity[ _∼_ ] {x} {y} {z}) ,
+  𝔱ransextensionality : ℭlass $ (λ {x y} → _∼̇_ {x} {y}) , λ {x y z x∼y y∼z} → tr {x} {y} {z} {x∼y} {y∼z} -- FIXME what other possibilities work here?
   𝔱ransextensionality = ∁ ∀ {x y z} {f₁ f₂ : x ∼ y} {g₁ g₂ : y ∼ z} → f₁ ∼̇ f₂ → g₁ ∼̇ g₂ → g₁ ∙ f₁ ∼̇ g₂ ∙ f₂
   open ℭlass 𝔱ransextensionality using () renaming (GET-CLASS to 𝓣ransextensionality; SET-METHOD to 𝓽ransextensionality) public
 

@@ -21,7 +21,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} where
     𝓢ymmetryProposequality {x∼y = ∅} .⋆ = !
 
     𝓣ransitivityProposequality : 𝓣ransitivity Proposequality⟦ 𝔒 ⟧
-    𝓣ransitivityProposequality .𝓣ransitivity.transitivity ∅ = ¡
+    𝓣ransitivityProposequality {x∼y = ∅} {y∼z} .⋆ = y∼z
 
     IsEquivalenceProposequality : IsEquivalence Proposequality⟦ 𝔒 ⟧
     IsEquivalenceProposequality = ∁

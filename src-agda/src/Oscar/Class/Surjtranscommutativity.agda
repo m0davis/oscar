@@ -18,7 +18,7 @@ module _
   ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
   ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
   where
-  𝔰urjtranscommutativity : ℭlass $ (λ {x y} → _∼̇₂_ {x} {y}) , (λ {x y z} → transitivity[ _∼₁_ ] {x} {y} {z}) , (λ {x y z} → transitivity[ _∼₁_ ] {x} {y} {z})
+  𝔰urjtranscommutativity : ℭlass $ (λ {x y} → _∼̇₂_ {x} {y})
   𝔰urjtranscommutativity = ∁ ∀ {x y z} (f : x ∼₁ y) (g : y ∼₁ z) → surjectivity (g ∙ f) ∼̇₂ surjectivity g ∙ surjectivity f
   open ℭlass 𝔰urjtranscommutativity using () renaming (SET-METHOD to 𝓼urjtranscommutativity; GET-CLASS to 𝓢urjtranscommutativity) public
 

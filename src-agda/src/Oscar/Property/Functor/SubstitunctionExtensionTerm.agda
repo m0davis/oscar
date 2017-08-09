@@ -67,7 +67,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     𝓣ransitivitySubstitunction : 𝓣ransitivity Substitunction
-    𝓣ransitivitySubstitunction .𝓣ransitivity.transitivity f g = surjectivity g ∘ f
+    𝓣ransitivitySubstitunction {x∼y = f} {g} .⋆ = surjectivity g ∘ f
 
     [IsExtensionB]Term : [IsExtensionB] Term
     [IsExtensionB]Term = ∁

@@ -32,7 +32,7 @@ module _
     𝓡eflexivityExtension .⋆ = ¡
 
     𝓣ransitivityExtension : 𝓣ransitivity (Extension B)
-    𝓣ransitivity.transitivity 𝓣ransitivityExtension f g = g ∘ f
+    𝓣ransitivityExtension {x∼y = f} {g} .⋆ = g ∘ f
 
     [𝓣ransassociativity]ExtensionProposextensequality : [𝓣ransassociativity] (Extension B) Proposextensequality
     [𝓣ransassociativity]ExtensionProposextensequality = ∁

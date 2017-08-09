@@ -36,11 +36,13 @@ module _ {a} {A : ¶ → Set a} where
     𝓡eflexivityAList' .⋆ = reflexivity[ AList ]
 
     𝓣ransitivityAList : 𝓣ransitivity AList
-    𝓣ransitivityAList .𝓣ransitivity.transitivity f ∅ = f
-    𝓣ransitivityAList .𝓣ransitivity.transitivity f (x , g) = x , g ∙ f
+    𝓣ransitivityAList {x∼y = f} {∅} .⋆ = f
+    𝓣ransitivityAList {x∼y = f} {x , g} .⋆ =
+      let _∙'_ = λ g f → 𝓣ransitivityAList {x∼y = f} {g} .⋆ in -- FIXME needed to help Agda prove termination
+      x , g ∙' f
 
     𝓣ransitivityAList' : 𝓣ransitivity (flip AList)
-    𝓣ransitivityAList' .𝓣ransitivity.transitivity = flip transitivity
+    𝓣ransitivityAList' {x∼y = f} {g} .⋆ = transitivity g f
 
     HasEquivalenceAList : ∀ {m n} → HasEquivalence (AList m n) _
     HasEquivalenceAList = ∁ Proposequality

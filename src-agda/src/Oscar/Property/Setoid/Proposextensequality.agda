@@ -21,7 +21,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
     𝓢ymmetryProposextensequality {x∼y = f₁≡̇f₂} .⋆ x rewrite f₁≡̇f₂ x = ∅
 
     𝓣ransitivityProposextensequality : 𝓣ransitivity Proposextensequality⟦ 𝔓 ⟧
-    𝓣ransitivity.transitivity 𝓣ransitivityProposextensequality f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x
+    𝓣ransitivityProposextensequality {x∼y = f₁≡̇f₂} {y∼z = f₂≡̇f₃} .⋆ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x
 
     IsEquivalenceProposextensequality : IsEquivalence Proposextensequality⟦ 𝔓 ⟧
     IsEquivalenceProposextensequality = ∁

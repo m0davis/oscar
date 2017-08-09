@@ -24,7 +24,7 @@ module _
     𝓢ymmetryṖroperty {x∼y = ∁ P⇔Q} .⋆ .π₀ = π₁ P⇔Q , π₀ P⇔Q
 
     𝓣ransitivityṖroperty : 𝓣ransitivity ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
-    𝓣ransitivityṖroperty .𝓣ransitivity.transitivity (∁ P⇔Q) (∁ Q⇔R) .π₀ = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
+    𝓣ransitivityṖroperty {x∼y = ∁ P⇔Q} {∁ Q⇔R} .⋆ .π₀ = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R
 
     IsEquivalenceṖroperty : IsEquivalence ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     IsEquivalenceṖroperty = ∁
