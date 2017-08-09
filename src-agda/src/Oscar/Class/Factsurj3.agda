@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 -- open import Oscar.Class.HasEquivalence -- FIXME make similar to Reflexivity and Surjextensivity
 open import Oscar.Class.Reflexivity using (𝓻eflexivity)
 open import Oscar.Class.Surjectextensivity using (𝒮urjectextensivity)
@@ -22,10 +23,14 @@ private
       (ε : 𝓻eflexivity ℜ)
       (_◃_ : 𝒮urjectextensivity ℜ 𝔓) (let infix 18 _◃_; _◃_ = _◃_)
       where
-      𝓯actsurj3 = λ {x} (p : 𝔓 x) → p ≈ ε ◃ p
-      𝒻actsurj3 = ∀ {x} {p : 𝔓 x} → 𝓯actsurj3 p
-      Factsurj3 : Ø _
-      Factsurj3 = ∀ {x} {p : 𝔓 x} → Leftunit (flip (_≈_ {x})) (ε {x}) _◃_ p
+      private
+        module _
+          {x}
+          (p : 𝔓 x)
+          where
+          open ℭlass (𝔩eftunit (flip (_≈_ {x})) (ε {x}) _◃_ p) public
+      Factsurj3 = ∀ {x} {p : 𝔓 x} → GET-CLASS p
+      𝒻actsurj3 = ∀ {x} {p : 𝔓 x} → SET-METHOD p
       factsurj3⟦_/_/_/_/_⟧ : ⦃ _ : Factsurj3 ⦄ → 𝒻actsurj3
       factsurj3⟦_/_/_/_/_⟧ = leftunit
     module _
