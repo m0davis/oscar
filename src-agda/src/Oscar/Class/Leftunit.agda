@@ -17,6 +17,40 @@ module Leftunit
   open ℭLASS 𝔩eftunit public
   P𝔩eftunit = 𝔩eftunit
 
+module LeftunitAllxHiddenCtr
+  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+  (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
+  (ε : 𝔈)
+  (_◃_ : 𝔈 → 𝔄 → 𝔄)
+  where
+  private module ∁ = Leftunit _↦_ ε _◃_
+  private
+    c𝒄tr : ∀ {ℓ} → (𝔄 → Ø ℓ) → Ø 𝔞 ∙̂ ℓ
+    c𝒄tr f = ∀ {x} → f x
+    m𝒄tr : ∀ {ℓ} → (𝔄 → Ø ℓ) → Ø 𝔞 ∙̂ ℓ
+    m𝒄tr f = ∀ {x} → f x
+  𝒄lass = c𝒄tr ∁.𝒄lass
+  𝒕ype = m𝒄tr ∁.𝒕ype
+  𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝒕ype
+  𝒎ethod {x = x} = ∁.𝒎ethod x
+
+module LeftunitAllxVisibleCtr
+  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+  (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
+  (ε : 𝔈)
+  (_◃_ : 𝔈 → 𝔄 → 𝔄)
+  where
+  private module ∁ = Leftunit _↦_ ε _◃_
+  private
+    c𝒄tr : ∀ {ℓ} → (𝔄 → Ø ℓ) → Ø 𝔞 ∙̂ ℓ
+    c𝒄tr f = ∀ {x} → f x
+    m𝒄tr : ∀ {ℓ} → (𝔄 → Ø ℓ) → Ø 𝔞 ∙̂ ℓ
+    m𝒄tr f = ∀ x → f x
+  𝒄lass = c𝒄tr ∁.𝒄lass
+  𝒕ype = m𝒄tr ∁.𝒕ype
+  𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝒕ype
+  𝒎ethod x = ∁.𝒎ethod x
+
 module MLeftunit
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   where
