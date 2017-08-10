@@ -42,8 +42,11 @@ module Factsurj3Interface1
   (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
   where
   private module ∁ = Fact3Interface 𝔓 _≈_ ℜ ε _◃_
-  𝒄lass = ∀ {x} {p : 𝔓 x} → ∁.𝒄lass p
-  𝓽ype = ∀ {x} {p : 𝔓 x} → ∁.𝒕ype p
+  private
+    𝒄tr : ∀ {ℓ} → (∀ {x} → 𝔓 x → Ø ℓ) → Ø 𝔵 ∙̂ 𝔭 ∙̂ ℓ
+    𝒄tr f = ∀ {x} {p : 𝔓 x} → f p
+  𝒄lass = 𝒄tr ∁.𝒄lass
+  𝓽ype = 𝒄tr ∁.𝒕ype
   𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝓽ype
   𝒎ethod {p = p} = ∁.𝒎ethod p
 
