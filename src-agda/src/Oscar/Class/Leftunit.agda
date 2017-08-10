@@ -7,7 +7,8 @@ module Oscar.Class.Leftunit where
 module Unit
   {𝔞} (𝔄 : Ø 𝔞)
   where
-  𝔲nit : ℭlass $′ 𝔄
+  open import Oscar.Data.𝟙
+  𝔲nit : ℭlass $′ 𝟙
   𝔲nit = ∁ 𝔄
 
 module $SimplerFamily
