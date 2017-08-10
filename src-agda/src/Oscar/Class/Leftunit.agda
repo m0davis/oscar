@@ -23,6 +23,7 @@ module _
   (_◃_ : 𝔈 → 𝔄 → 𝔄)
   (x : 𝔄)
   where
+  leftunit⟦_/_/_⟧ : ⦃ _ : Leftunit.𝒄lass _↦_ ε _◃_ x ⦄ → Leftunit.𝒕ype _↦_ ε _◃_ x
   leftunit⟦_/_/_⟧ = Leftunit.𝒎ethod _↦_ ε _◃_ x
 
 module _
