@@ -18,6 +18,7 @@ module $Family
   (x : 𝔄)
   where
   family = ℭlass (ε , _◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
+  module class = ℭLASS family
 
 module $ClassSingle
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
@@ -26,10 +27,9 @@ module $ClassSingle
   (_◃_ : 𝔈 → 𝔄 → 𝔄)
   (x : 𝔄)
   where
-  private module M = ℭLASS ($Family.family _↦_ ε _◃_ x)
-  class = M.𝒄lass
-  type = M.𝒕ype
-  method = M.𝒎ethod
+  class = $Family.class.𝒄lass _↦_ ε _◃_ x
+  type = $Family.class.𝒕ype _↦_ ε _◃_ x
+  method = $Family.class.𝒎ethod _↦_ ε _◃_ x
 
 module $ClassAll
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
@@ -48,8 +48,7 @@ module $MethodSingle
   {_◃_ : 𝔈 → 𝔄 → 𝔄}
   {x : 𝔄}
   where
-  private module M = ℭLASS ($Family.family _↦_ ε _◃_ x)
-  method = M.𝒎ethod
+  method = $ClassSingle.method _↦_ ε _◃_ x
 
 module $MethodAll
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
@@ -57,21 +56,7 @@ module $MethodAll
   {ε : 𝔈}
   {_◃_ : 𝔈 → 𝔄 → 𝔄}
   where
-  private module M = $ClassAll _↦_ ε _◃_
-  method = M.method
-
-{-
-  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
-  (_↦_ : 𝔄 → 𝔄 → Ø ℓ) (let _↦_ = _↦_; infix 4 _↦_)
-  (ε : 𝔈)
-  (_◃_ : 𝔈 → 𝔄 → 𝔄) (let _◃_ = _◃_; infix 16 _◃_)
-  (x : 𝔄)
-  where
-  private module M = ℭLASS (ℭlass (ε , _◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x))
-  𝒕ype = m𝒄tr ∁.𝒕ype
-  𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝒕ype
-  𝒎ethod {x = x} = ∁.𝒎ethod x
--}
+  method = $ClassAll.method _↦_ ε _◃_
 
 module Leftunit
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
@@ -85,7 +70,6 @@ module Leftunit
     𝔩eftunit = ∁ $′ ε ◃ x ↦ x
   open ℭLASS 𝔩eftunit public
   P𝔩eftunit = 𝔩eftunit
-  𝓛eftunit = 𝒄lass
 
 module LeftunitAllUseClass
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
