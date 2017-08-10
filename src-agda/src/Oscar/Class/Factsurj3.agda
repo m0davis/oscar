@@ -11,19 +11,7 @@ open import Oscar.Class.Leftunit
 
 module Oscar.Class.Factsurj3 where
 
-module Fact3Class
-  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
-  (ℜ : π̂² 𝔯 𝔛)
-  (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
-  {x}
-  (p : 𝔓 x)
-  where
-  open Leftunit (flip (_≈_ {x})) (ε {x}) _◃_ p public
-
-module Fact3Interface
+module Factsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
   (𝔓 : π̂ 𝔭 𝔛)
   (_≈_ : ∀̇ π̂² ℓ 𝔓)
@@ -31,40 +19,25 @@ module Fact3Interface
   (ε : 𝓻eflexivity ℜ)
   (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
   where
-  open Fact3Class 𝔓 _≈_ ℜ ε _◃_ public
+  class = ∀ {x} {p : 𝔓 x} → $ClassSingle.class (flip (_≈_ {x})) (ε {x}) _◃_ p
+  type = ∀ {x} {p : 𝔓 x} → $ClassSingle.type (flip (_≈_ {x})) (ε {x}) _◃_ p
+  method = λ ⦃ _ : class ⦄ {x} {p : 𝔓 x} → $ClassSingle.method (flip (_≈_ {x})) (ε {x}) _◃_ p
 
-module Factsurj3Interface1
+module factsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
-  (ℜ : π̂² 𝔯 𝔛)
-  (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  {𝔓 : π̂ 𝔭 𝔛}
+  {_≈_ : ∀̇ π̂² ℓ 𝔓}
+  {ℜ : π̂² 𝔯 𝔛}
+  {ε : 𝓻eflexivity ℜ}
+  {_◃_ : 𝒮urjectextensivity ℜ 𝔓}
   where
-  private module ∁ = Fact3Interface 𝔓 _≈_ ℜ ε _◃_
-  private
-    𝒄tr : ∀ {ℓ} → (∀ {x} → 𝔓 x → Ø ℓ) → Ø 𝔵 ∙̂ 𝔭 ∙̂ ℓ
-    𝒄tr f = ∀ {x} {p : 𝔓 x} → f p
-  𝒄lass = 𝒄tr ∁.𝒄lass
-  𝓽ype = 𝒄tr ∁.𝒕ype
-  𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝓽ype
-  𝒎ethod {p = p} = ∁.𝒎ethod p
-
-Factsurj3Interface1NEW : ∀
-  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
-  (ℜ : π̂² 𝔯 𝔛)
-  (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
-  → ∀ {x} → 𝔓 x → ℭℭ _ _
-Factsurj3Interface1NEW 𝔓 _≈_ ℜ ε _◃_ {x} p = ∁ (Leftunit.P𝔩eftunit (flip (_≈_ {x})) (ε {x}) _◃_ p)
+  method = Factsurj3.method 𝔓 _≈_ ℜ ε _◃_
 
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjectextensivity
 
-module Factsurj3Interface2
+module 𝓕actsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
   (𝔓 : π̂ 𝔭 𝔛)
   ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
@@ -72,8 +45,16 @@ module Factsurj3Interface2
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
   where
-  private module ∁ = Factsurj3Interface1 𝔓 _≈_ ℜ ε surjectextensivity
-  𝒄lass = ∁.𝒄lass
-  𝓽ype = ∁.𝓽ype
-  𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝓽ype
-  𝒎ethod = ∁.𝒎ethod
+  class = Factsurj3.class 𝔓 _≈_ ℜ ε surjectextensivity
+  type = Factsurj3.type 𝔓 _≈_ ℜ ε surjectextensivity
+  method = Factsurj3.method 𝔓 _≈_ ℜ ε surjectextensivity
+
+module 𝓯actsurj3
+  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+  {𝔓 : π̂ 𝔭 𝔛}
+  ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
+  {ℜ : π̂² 𝔯 𝔛}
+  ⦃ _ : 𝓡eflexivity ℜ ⦄
+  ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
+  where
+  method = 𝓕actsurj3.method 𝔓 ℜ ⦃ ! ⦄ ⦃ ! ⦄

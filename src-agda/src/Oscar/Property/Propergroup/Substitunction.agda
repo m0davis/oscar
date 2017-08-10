@@ -91,10 +91,10 @@ module _
 
   instance
 
-    𝓕actsurj3Regular : ∀ {ℓ} → Factsurj3Interface2.𝒄lass (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
+    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3.class (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
     𝓕actsurj3Regular .⋆ .π₀ = ¡ , ¡
 
-    𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3Interface1.𝒄lass (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjectextensivity
+    𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3.class (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjectextensivity
     𝓕actsurj3Extension .⋆ .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓

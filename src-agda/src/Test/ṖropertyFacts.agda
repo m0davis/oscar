@@ -120,8 +120,8 @@ module Test.ṖropertyFacts where
       _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
       _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
 
-      _ : Factsurj3Interface1.𝒄lass 𝑷⁰ _≈_ 𝑪 𝒖 surjectextensivity
-      _ : Factsurj3Interface1.𝒄lass 𝑷¹ _≈_ 𝑪 𝒖 surjectextensivity
+      _ : Factsurj3.class 𝑷⁰ _≈_ 𝑪 𝒖 surjectextensivity
+      _ : Factsurj3.class 𝑷¹ _≈_ 𝑪 𝒖 surjectextensivity
 
       _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
       _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
@@ -147,13 +147,13 @@ module Test.ṖropertyFacts where
   fact6 𝒫 𝒻≈ℊ = factsurj6 𝒫 𝒻≈ℊ
 
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆ = leftunit
+  fact3⋆ = leftunit.method
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
-  lhs-fact3⋆ {𝒫 = 𝒫} = Factsurj3Interface2.𝒎ethod 𝑷⁰ 𝑪 {p = 𝒫}
+  lhs-fact3⋆ {𝒫 = 𝒫} = 𝓕actsurj3.method 𝑷⁰ 𝑪 {p = 𝒫}
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3 = leftunit
+  fact3 = leftunit.method
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4⋆ 𝒻 N𝒫 = leftstar 𝒻 N𝒫
