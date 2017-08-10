@@ -28,6 +28,18 @@ record ℭlass
 
 open ℭlass using (⋆; ∁) public
 
+module ℭLASS
+  {ℓ}
+  {𝔢}
+  {CONSTRAINTS : Ø 𝔢}
+  {constraints : CONSTRAINTS}
+  (r : ℭlass {ℓ} constraints)
+  where
+  open ℭlass r public using () renaming
+    (GET-CLASS to 𝒄lass
+    ;SET-METHOD to 𝒕ype
+    ;GET-METHOD to 𝒎ethod)
+
 record Rℭlass
   {ℓ 𝔯}
   {𝔢}
