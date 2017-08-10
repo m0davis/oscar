@@ -10,6 +10,15 @@ module Unit
   𝔲nit : ℭlass $′ 𝔄
   𝔲nit = ∁ 𝔄
 
+module $SimplerFamily
+  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+  (_↦_ : 𝔈 → 𝔄 → Ø ℓ)
+  (ε : 𝔈)
+  (x : 𝔄)
+  where
+  𝔣amily : ℭlass $′ _↦_ , x , ε
+  𝔣amily = ∁ (ε ↦ x)
+
 module $Family
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   (_↦_ : 𝔄 → 𝔄 → Ø ℓ) (let _↦_ = _↦_; infix 4 _↦_)
@@ -18,6 +27,9 @@ module $Family
   (x : 𝔄)
   where
   family = ℭlass (ε , _◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
+  -- family = ℭlass (ε , _◃_) ∋ (∁ $′ ε ◃ x ↦ x)
+  -- family = Unit.𝔲nit (ε ◃ x ↦ x)
+  -- family = $SimplerFamily.𝔣amily (λ ε x → ε ◃ x ↦ x) ε x
   module class = ℭLASS family
 
 module $ClassSingle
