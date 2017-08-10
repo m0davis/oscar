@@ -17,6 +17,27 @@ module Leftunit
   open ℭLASS 𝔩eftunit public
   P𝔩eftunit = 𝔩eftunit
 
+module MLeftunit
+  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
+  where
+  module _
+    (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
+    (ε : 𝔈)
+    (_◃_ : 𝔈 → 𝔄 → 𝔄)
+    (x : 𝔄)
+    where
+    private module M = ℭLASS (Leftunit.P𝔩eftunit _↦_ ε _◃_ x)
+    𝒄lass = M.𝒄lass
+    𝒕ype = M.𝒕ype
+  module _
+    {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
+    {ε : 𝔈}
+    {_◃_ : 𝔈 → 𝔄 → 𝔄}
+    {x : 𝔄}
+    where
+    private module M = ℭLASS (Leftunit.P𝔩eftunit _↦_ ε _◃_ x)
+    𝒎ethod = M.𝒎ethod
+
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
