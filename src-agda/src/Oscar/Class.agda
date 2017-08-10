@@ -28,6 +28,17 @@ record ℭlass
 
 open ℭlass using (⋆; ∁) public
 
+record ℭℭ ℓ 𝔢 : Ø ↑̂ (𝔢 ∙̂ ↑̂ ℓ) where
+  constructor ∁
+  field
+    {CONSTRAINTS} : Ø 𝔢
+    {constraints} : CONSTRAINTS
+    class : ℭlass {ℓ} constraints
+  open ℭlass class
+  𝒄lass = GET-CLASS
+  𝒕ype = SET-METHOD
+  𝒎ethod = GET-METHOD
+
 module ℭLASS
   {ℓ}
   {𝔢}
