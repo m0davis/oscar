@@ -50,6 +50,16 @@ module Factsurj3Interface1
   𝒎ethod : ⦃ _ : 𝒄lass ⦄ → 𝓽ype
   𝒎ethod {p = p} = ∁.𝒎ethod p
 
+Factsurj3Interface1NEW : ∀
+  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+  (𝔓 : π̂ 𝔭 𝔛)
+  (_≈_ : ∀̇ π̂² ℓ 𝔓)
+  (ℜ : π̂² 𝔯 𝔛)
+  (ε : 𝓻eflexivity ℜ)
+  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  → ∀ {x} → 𝔓 x → ℭℭ _ _
+Factsurj3Interface1NEW 𝔓 _≈_ ℜ ε _◃_ {x} p = ∁ (Leftunit.P𝔩eftunit (flip (_≈_ {x})) (ε {x}) _◃_ p)
+
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjectextensivity

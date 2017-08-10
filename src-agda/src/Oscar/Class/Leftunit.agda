@@ -15,6 +15,7 @@ module Leftunit
     𝔩eftunit : ℭlass (ε , _◃_ , _↦_)
     𝔩eftunit = ∁ $′ ε ◃ x ↦ x
   open ℭLASS 𝔩eftunit public
+  P𝔩eftunit = 𝔩eftunit
 
 module _
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
