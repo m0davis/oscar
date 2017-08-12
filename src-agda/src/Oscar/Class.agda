@@ -28,6 +28,15 @@ record ℭlass
 
 open ℭlass using (⋆; ∁) public
 
+mkClass : ∀
+  {ℓ}
+  {𝔢}
+  {CONSTRAINTS : Ø 𝔢}
+  (constraints : CONSTRAINTS)
+  → Ø ℓ
+  → ℭlass constraints
+mkClass constraints set-method = ∁ set-method
+
 module ℭLASS
   {ℓ}
   {𝔢}
