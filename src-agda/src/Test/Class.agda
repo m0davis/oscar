@@ -162,7 +162,7 @@ module Symmetric
   test-methodV ⦃ ⌶ ⦄ = V.method _
   module W {𝔬} {𝔒 : Ø 𝔬} (p : 𝔒) = ℭlass (mkClass p 𝔒)
   test-classW : ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {x : 𝔒} {y z : 𝔓 x} {p : 𝔓' 𝔓 x y z} → W.class p ⦄ → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {x : 𝔒} {y z : 𝔓 x} {p : 𝔓' 𝔓 x y z} → W.class p
-  test-classW ⦃ ⌶ ⦄ = {!!}
+  test-classW ⦃ ⌶ ⦄ = magic
   test-methodW : ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {x : 𝔒} {y z : 𝔓 x} {p : 𝔓' 𝔓 x y z} → W.class p ⦄ → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {x : 𝔒} {y z : 𝔓 x} {p : 𝔓' 𝔓 x y z} → W.type p
   test-methodW {p = p} = W.method p
 
@@ -176,7 +176,7 @@ module Prop-
     module H = Prop-Unit/Unit/Unit
     module X = Unit-Unit/Unit/Unit
     test-class' : ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → H.class 𝔓 ⦄ → {𝔓 : 𝔒 → Ø 𝔭} → H.class 𝔓
-    test-class' ⦃ ⌶ ⦄ {𝔓 = 𝔓} = {!!} -- ⌶ {𝔓 = 𝔓} -- FIXME
+    test-class' ⦃ ⌶ ⦄ {𝔓 = 𝔓} = magic -- ⌶ {𝔓 = 𝔓} -- FIXME
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type
@@ -190,7 +190,7 @@ module Prop-
     module H = Prop-PropSingle/Prop/PropSingle
     module X = PropSingle-PropSingle/Prop/PropSingle
     test-class' : ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → H.class 𝔓 ⦄ → {𝔓 : 𝔒 → Ø 𝔭} → H.class 𝔓
-    test-class' ⦃ ⌶ ⦄ = {!!!}
+    test-class' ⦃ ⌶ ⦄ = magic
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type
@@ -238,15 +238,15 @@ module Prop-Rel-
     module H = Prop-Rel-Unit/Unit/Unit
     module X = RelSingle-Unit/Unit/Unit
     test-class' : ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → H.class 𝔓 ⦄ → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → H.class 𝔓
-    test-class' ⦃ ⌶ ⦄ {ℜ} = {!!} -- ! -- FIXME
+    test-class' ⦃ ⌶ ⦄ {ℜ} = magic -- ! -- FIXME
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type
-    test-method-V ⦃ ⌶ ⦄ = {!V.method!}
+    test-method-V ⦃ ⌶ ⦄ = magic
     test-method-H : ⦃ _ : V.class ⦄ → V.type
-    test-method-H ⦃ ⌶ ⦄ = {!H.method!} -- H.method _
+    test-method-H ⦃ ⌶ ⦄ = magic -- H.method _
     test-method-X : ⦃ _ : V.class ⦄ → V.type
-    test-method-X ⦃ ⌶ ⦄ = {!X.method ℜ x!} -- X.method _ _
+    test-method-X ⦃ ⌶ ⦄ = magic -- X.method _ _
   module -RelSingle/Rel/RelSingle where
     module V = Prop-Rel-RelSingle/Rel/RelSingle 𝔓
     module H = Prop-Rel-RelSingle/Rel/RelSingle
@@ -256,11 +256,11 @@ module Prop-Rel-
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type
-    test-method-V ⦃ ⌶ ⦄ = {!V.method!} -- V.method
+    test-method-V ⦃ ⌶ ⦄ = magic -- V.method
     test-method-H : ⦃ _ : V.class ⦄ → V.type
-    test-method-H ⦃ ⌶ ⦄ = {!H.method!} -- H.method _
+    test-method-H ⦃ ⌶ ⦄ = magic -- H.method _
     test-method-X : ⦃ _ : V.class ⦄ → V.type
-    test-method-X ⦃ ⌶ ⦄ = {!X.method ℜ _!} -- FIXME
+    test-method-X ⦃ ⌶ ⦄ = magic -- FIXME
 
 module UnitLevel-
   {𝔬} (𝔒 : Ø 𝔬) ℓ
@@ -272,11 +272,11 @@ module UnitLevel-
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class ⦃ ⌶ ⦄ {ℜ} = ⌶ {ℜ} -- FIXME
     test-method-V : ⦃ _ : V.class ⦄ → V.type
-    test-method-V ⦃ ⌶ ⦄ {ℜ} = {!V.method!}
+    test-method-V ⦃ ⌶ ⦄ {ℜ} = magic
     test-method-H : ⦃ _ : V.class ⦄ → V.type
-    test-method-H ⦃ ⌶ ⦄ {ℜ} = {!H.method!} -- H.method _
+    test-method-H ⦃ ⌶ ⦄ {ℜ} = magic -- H.method _
     test-method-X : ⦃ _ : V.class ⦄ → V.type
-    test-method-X ⦃ ⌶ ⦄ {ℜ} x = {!X.method ℜ x!} -- X.method _ _
+    test-method-X ⦃ ⌶ ⦄ {ℜ} x = magic -- X.method _ _
   module -RelSingle/Rel/RelSingle where
     module V = UnitLevel-RelSingle/Rel/RelSingle 𝔒 ℓ
     module H = UnitLevel-RelSingle/Rel/RelSingle
@@ -284,9 +284,9 @@ module UnitLevel-
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type
-    test-method-V ⦃ ⌶ ⦄ {ℜ} = {!V.method!} -- V.method
+    test-method-V ⦃ ⌶ ⦄ {ℜ} = magic -- V.method
     test-method-H : ⦃ _ : V.class ⦄ → V.type
-    test-method-H ⦃ ⌶ ⦄ {ℜ} = {!H.method!} -- H.method _
+    test-method-H ⦃ ⌶ ⦄ {ℜ} = magic -- H.method _
     test-method-X : ⦃ _ : V.class ⦄ → V.type
     test-method-X ⦃ ⌶ ⦄ {ℜ} = X.method ℜ _ -- FIXME
 
@@ -300,7 +300,7 @@ module Rel-Extension
     module H = Rel-Unit/Unit/Unit
     module X = Unit-Unit/Unit/Unit
     test-class' : ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} (let ℜ = Extension 𝔓) → H.class ℜ ⦄ → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} (let ℜ = Extension 𝔓) → H.class ℜ
-    test-class' ⦃ ⌶ ⦄ {𝔓 = 𝔓} = {!!} -- ⌶ {𝔓 = 𝔓} -- FIXME
+    test-class' ⦃ ⌶ ⦄ {𝔓 = 𝔓} = magic -- ⌶ {𝔓 = 𝔓} -- FIXME
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type
@@ -314,9 +314,9 @@ module Rel-Extension
     module H = Rel-RelSingle/Rel/RelSingle
     module X = RelSingle-RelSingle/Rel/RelSingle
     test-class' : ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} (let ℜ = Extension 𝔓) → H.class ℜ ⦄ → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} (let ℜ = Extension 𝔓) → H.class ℜ
-    test-class' ⦃ ⌶ ⦄ = {!!!} -- !
+    test-class' ⦃ ⌶ ⦄ = ! -- !
     test-class'' : ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} (let ℜ = λ x _ → 𝔓 x) → H.class ℜ ⦄ → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} (let ℜ = λ x _ → 𝔓 x) → H.class ℜ
-    test-class'' ⦃ ⌶ ⦄ = {!!!} -- !
+    test-class'' ⦃ ⌶ ⦄ = ! -- !
     test-class : ⦃ _ : V.class ⦄ → V.class
     test-class = !
     test-method-V : ⦃ _ : V.class ⦄ → V.type

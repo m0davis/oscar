@@ -25,3 +25,4 @@ import Test.Surjcollation
 import Test.SubstitunctionPropId
 import Test.UnifiesSubstitunction
 import Test.Thickandthin
+import Test.Class
