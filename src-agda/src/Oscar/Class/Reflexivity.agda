@@ -7,24 +7,13 @@ module Oscar.Class.Reflexivity where
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  (x : 𝔒)
   where
-  𝔯eflexivity : ℭlass {𝔯} _∼_
-  𝔯eflexivity = ∁ $′ x ∼ x
-
-module _
-  {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  where
-  private
-    module _
-      (x : 𝔒)
-      where
-      open ℭlass (𝔯eflexivity _∼_ x) public
-  𝓡eflexivity = ∀ {x} → GET-CLASS x
-  𝓻eflexivity = ∀ {x} → SET-METHOD x
-  reflexivity[_] = λ ⦃ _ : 𝓡eflexivity ⦄ {x} → GET-METHOD x
-  ε[_] = λ ⦃ _ : 𝓡eflexivity ⦄ {x} → GET-METHOD x
+  private module M (x : 𝔒) = ℭLASS (mkClass _∼_ (x ∼ x))
+  𝓡eflexivity = ∀ {x} → M.class x
+  𝓻eflexivity = ∀ {x} → M.type x
+  reflexivity[_] : ⦃ _ : 𝓡eflexivity ⦄ → 𝓻eflexivity
+  reflexivity[_] = M.method _
+  ε[_] = reflexivity[_]
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
