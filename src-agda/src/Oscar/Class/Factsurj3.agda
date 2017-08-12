@@ -8,6 +8,7 @@ open import Oscar.Data.Constraint
 import Oscar.Class.Surjection.⋆
 
 open import Oscar.Class.Leftunit
+open import Oscar.Data.𝟙
 
 module Oscar.Class.Factsurj3 where
 
@@ -22,6 +23,78 @@ module Factsurj3
   class = ∀ {x} {p : 𝔓 x} → $ClassSingle.class (flip (_≈_ {x})) (ε {x}) _◃_ p
   type = ∀ {x} {p : 𝔓 x} → $ClassSingle.type (flip (_≈_ {x})) (ε {x}) _◃_ p
   method = λ ⦃ _ : class ⦄ {x} {p : 𝔓 x} → $ClassSingle.method (flip (_≈_ {x})) (ε {x}) _◃_ p
+
+module Factsurj3'
+  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+  (𝔓 : π̂ 𝔭 𝔛)
+  (_≈_ : ∀̇ π̂² ℓ 𝔓)
+  (ℜ : π̂² 𝔯 𝔛)
+  (ε : 𝓻eflexivity ℜ)
+  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  where
+  family : ℭlass ((λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x}))
+  family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
+  open ℭLASS family public
+
+module Factsurj3''
+  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+  (𝔓 : π̂ 𝔭 𝔛)
+  (_≈_ : ∀̇ π̂² ℓ 𝔓)
+  (ℜ : π̂² 𝔯 𝔛)
+  (ε : 𝓻eflexivity ℜ)
+  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  where
+  family : ℭlass 𝟙
+  family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
+  open ℭLASS family public
+
+private
+
+  module Test0
+    {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+    (𝔓 : π̂ 𝔭 𝔛)
+    (_≈_ : ∀̇ π̂² ℓ 𝔓)
+    (_≈'_ : ∀̇ π̂² ℓ 𝔓)
+    (ℜ : π̂² 𝔯 𝔛)
+    (ε : 𝓻eflexivity ℜ)
+    (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+    (_◃'_ : 𝒮urjectextensivity ℜ 𝔓)
+    where
+    test-class' : ⦃ _ : Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_
+    test-class' = !
+    test-method' : ⦃ _ : Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3'.type 𝔓 _≈_ ℜ ε _◃_
+    test-method' = Factsurj3'.method _ _ _ _ _
+    test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+    test-class = !
+    test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
+    test-method = Factsurj3.method 𝔓 _≈_ _ _ _◃_
+    test' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃'_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃'_
+    test' {{i}} {{j}} = magic -- ! -- FIXME
+    -- (∁ (_≈_ {.x} .p (_◃_ {.x} {.x} (ε {.x}) .p)))
+    -- (∁ (_≈_ { x}  p (_◃_  {x}  {x} (ε  {x})  p)))
+    {- _≈_ {.x} .p (_◃_ {.x} {.x} (ε {.x}) .p) = _≈_ { x}  p (_◃_  {x}  {x} (ε  {x})  p)
+
+-}
+
+  module Test1
+    {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+    (𝔓 : π̂ 𝔭 𝔛)
+    (_≈_ : ∀̇ π̂² ℓ 𝔓)
+    (ℜ : π̂² 𝔯 𝔛)
+    (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+    where
+    test : ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+    test {{i}} = magic -- ! -- FIXME
+
+  module Test2
+    {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+    (𝔓 : π̂ 𝔭 𝔛)
+    (ℜ : π̂² 𝔯 𝔛)
+    (ε : 𝓻eflexivity ℜ)
+    (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+    where
+    test : ⦃ _ : {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+    test = magic -- ! -- FIXME
 
 module factsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}

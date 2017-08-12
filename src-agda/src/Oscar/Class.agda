@@ -28,17 +28,6 @@ record ℭlass
 
 open ℭlass using (⋆; ∁) public
 
-record ℭℭ ℓ 𝔢 : Ø ↑̂ (𝔢 ∙̂ ↑̂ ℓ) where
-  constructor ∁
-  field
-    {CONSTRAINTS} : Ø 𝔢
-    {constraints} : CONSTRAINTS
-    class : ℭlass {ℓ} constraints
-  open ℭlass class
-  𝒄lass = GET-CLASS
-  𝒕ype = SET-METHOD
-  𝒎ethod = GET-METHOD
-
 module ℭLASS
   {ℓ}
   {𝔢}
@@ -46,10 +35,11 @@ module ℭLASS
   {constraints : CONSTRAINTS}
   (r : ℭlass {ℓ} constraints)
   where
+  -- family = r
   open ℭlass r public using () renaming
-    (GET-CLASS to 𝒄lass
-    ;SET-METHOD to 𝒕ype
-    ;GET-METHOD to 𝒎ethod)
+    (GET-CLASS to class
+    ;SET-METHOD to type
+    ;GET-METHOD to method)
 
 record Rℭlass
   {ℓ 𝔯}

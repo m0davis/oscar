@@ -27,9 +27,10 @@ module $Family
   (_◃_ : 𝔈 → 𝔄 → 𝔄) (let _◃_ = _◃_; infix 16 _◃_)
   (x : 𝔄)
   where
-  -- family = ℭlass (ε , _◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
-  -- family = ℭlass (ε , _◃_) ∋ (∁ $′ ε ◃ x ↦ x)
-  family = Unit.𝔲nit (ε ◃ x ↦ x)
+  family = ℭlass (ε , _◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
+  -- family = ℭlass (_◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
+  -- family = ℭlass (ε) ∋ (∁ $′ ε ◃ x ↦ x)
+  -- family = Unit.𝔲nit (ε ◃ x ↦ x)
   -- family = $SimplerFamily.𝔣amily (λ ε x → ε ◃ x ↦ x) ε x
   module class = ℭLASS family
 
@@ -37,7 +38,7 @@ module $MethodUnit
   {𝔞} {𝔄 : Ø 𝔞}
   where
   module class = ℭLASS (Unit.𝔲nit 𝔄)
-  method = class.𝒎ethod
+  method = class.method
 
 !! = $MethodUnit.method
 
@@ -48,9 +49,9 @@ module $ClassSingle
   (_◃_ : 𝔈 → 𝔄 → 𝔄)
   (x : 𝔄)
   where
-  class = $Family.class.𝒄lass _↦_ ε _◃_ x
-  type = $Family.class.𝒕ype _↦_ ε _◃_ x
-  method = $Family.class.𝒎ethod _↦_ ε _◃_ x
+  class = $Family.class.class _↦_ ε _◃_ x
+  type = $Family.class.type _↦_ ε _◃_ x
+  method = $Family.class.method _↦_ ε _◃_ x
 
 module $MethodSingle
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
