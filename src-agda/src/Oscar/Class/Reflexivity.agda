@@ -23,6 +23,34 @@ module _
   reflexivity = reflexivity[ _∼_ ]
   ε = reflexivity
 
+module Refl
+  {𝔬} {𝔒 : Ø 𝔬}
+  {𝔯}
+  where
+  module _
+    (x : 𝔒) (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    where
+    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    ⟦_/_⟧ = M.class
+    ⟨_/_⟩ = M.type
+    [_/_] = M.method
+  module _
+    {x : 𝔒} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    where
+    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    [_] = M.method
+  module _
+    (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    where
+    private module M x = ℭLASS (mkClass _∼_ (x ∼ x))
+    ⟦_⟧ = ∀ {x} → M.class x
+    ⟨_⟩ = ∀ {x} → M.type x
+  module _
+    {x : 𝔒} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+    where
+    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    [] = M.method
+
 private
 
   module _
