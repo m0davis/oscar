@@ -1,13 +1,8 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
-open import Oscar.Data.𝟙
 
 module Oscar.Class.Reflexivity where
-
-module U
-  {𝔬} {𝔒 : Ø 𝔬}
-  = ℭLASS (mkClass 𝟙 𝔒)
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
