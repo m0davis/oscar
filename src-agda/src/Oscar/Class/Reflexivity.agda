@@ -28,18 +28,18 @@ module _
   reflexivity = reflexivity[ _∼_ ]
   ε = reflexivity
 
-module _
-  {𝔬} {𝔒 : Ø 𝔬}
-  {𝔮} (𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔮)
-  (y : 𝔒)
-  where
-  private module M (x : 𝔒) = ℭLASS (mkClass 𝔔 (𝔔 y x x))
-  𝓡eflexivity' = ∀ {x} → M.class x
-  𝓻eflexivity' = ∀ {x} → M.type x
-  reflexivity'[_/_] : ⦃ _ : 𝓡eflexivity' ⦄ → 𝓻eflexivity'
-  reflexivity'[_/_] = M.method _
-
 private
+
+  module _
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔮} (𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔮)
+    (y : 𝔒)
+    where
+    private module M (x : 𝔒) = ℭLASS (mkClass 𝔔 (𝔔 y x x))
+    𝓡eflexivity' = ∀ {x} → M.class x
+    𝓻eflexivity' = ∀ {x} → M.type x
+    reflexivity'[_/_] : ⦃ _ : 𝓡eflexivity' ⦄ → 𝓻eflexivity'
+    reflexivity'[_/_] = M.method _
 
   test-method : ∀
     {𝔬} {𝔒 : Ø 𝔬}
