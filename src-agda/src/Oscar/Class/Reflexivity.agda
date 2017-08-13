@@ -27,6 +27,22 @@ private
 
   module _
     {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+    (x : 𝔒)
+    where
+    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    𝓡eflSingle = M.class
+    𝓻eflSingle = M.type
+    reflSingle[_/_] : ⦃ _ : 𝓡eflSingle ⦄ → 𝓻eflSingle
+    reflSingle[_/_] = M.method
+
+  test-class-single :
+    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} → 𝓡eflSingle _∼_ x ⦄
+    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} → 𝓡eflSingle _∼_ x
+  test-class-single ⦃ ⌶ ⦄ = !
+
+  module _
+    {𝔬} {𝔒 : Ø 𝔬}
     {𝔮} (𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔮)
     (y : 𝔒)
     where
@@ -57,12 +73,103 @@ private
     → 𝓻eflexivity (𝔔 y)
   test-method′' = reflexivity
 
+  test-method1′ : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : 𝓡eflexivity' 𝔔 y ⦄
+    → 𝓻eflexivity' 𝔔 y
+  test-method1′ = reflexivity'[ _ / _ ]
+
+  test-method1′' : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : ∀ {y} → 𝓡eflexivity' 𝔔 y ⦄
+    → ∀ {y} → 𝓻eflexivity' 𝔔 y
+  test-method1′' = reflexivity'[ _ / _ ]
+
+  test-method′2 : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {ℜ : 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : ∀ {y} {F : (𝔒 → 𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity' (F ℜ) y ⦄
+    → ∀ {y} {F : (𝔒 → 𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity' (F ℜ) y
+  test-method′2 {ℜ = ℜ} {{i}} {y = y} {F} {x} = reflexivity'[_/_] _ _ {{i {F = F}}}
+  {-
+    F R y x x = _Q _y _x _x = _F' R _y' _x' _x' reflexivity'[ F ℜ / y ]
+    _F' R = _Q
+    _Q = F R ; _y = y
+
+    F R y x x = F R _y _x _x
+    _y = y
+    _x = x
+    _F' = ?
+  -}
+
+  test-method′3 : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {F : (𝔒 → 𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : ∀ {y} {ℜ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity' (F ℜ) y ⦄
+    → ∀ {y} {ℜ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity' (F ℜ) y
+  test-method′3 {F = F} {{i}} {y = y} {ℜ} = reflexivity'[ _ / _ ]
+
+  test-method′4 : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {F : (𝔒 → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : ∀ {y} {ℜ : 𝔒 → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity' (F ℜ) y ⦄
+    → ∀ {y} {ℜ : 𝔒 → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity' (F ℜ) y
+  test-method′4 {F = F} {{i}} {y = y} {ℜ} = reflexivity'[ _ / _ ]
+
+  test-method′5 : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {F : (𝔒 → 𝔒 → 𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : ∀ {y} {ℜ : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity' ℜ y ⦄
+    → ∀ {y} {ℜ : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity' ℜ y
+  test-method′5 {F = F} {{i}} {y = y} {ℜ} = reflexivity'[ ℜ / _ ]
+  {-
+    target: R y .x .x = _Q _y _x _x = _R' _y' _x' _x'
+    constr: _Q = _R'
+    params: _Q = R
+
+    _y = _y'
+    _x = _x'
+
+    _y = y
+    _x = .x
+  -}
+
+  test-method′5' : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {F : (𝔒 → 𝔒 → 𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : ∀ {y} {ℜ : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity' (F ℜ) y ⦄
+    → ∀ {y} {ℜ : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity' (F ℜ) y
+  test-method′5' {F = F} {{i}} {y = y} {ℜ} = reflexivity'[ _ / _ ]
+  {-
+    target: F R y .x .x = _Q _y _x _x = F _R' _y' _x' _x'
+    constr: _Q = F _R'
+
+    _R' = R
+    _y' = y
+    _x' = .x
+    _Q = F R
+    _y = y
+    _x = .x
+
+    target: goal = method = instance
+    constr: methodconstraint = instanceconstraint
+  -}
+
+  test-method3 : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {F : (𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → 𝓡eflexivity (F ℜ) ⦄
+    → ∀ {ℜ : 𝔒 → Ø 𝔯} → 𝓻eflexivity (F ℜ)
+  test-method3 = reflexivity
+
   test-method′ : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯}
     ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity' 𝔔 y ⦄
     → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity' 𝔔 y
-  test-method′ {y = y} {𝔔} = reflexivity'[ 𝔔 / y ]
+  test-method′ {𝔔 = 𝔔} = reflexivity'[ 𝔔 / _ ]
 
   test-method'' : ∀
     {𝔬} {𝔒 : Ø 𝔬}
@@ -70,6 +177,14 @@ private
     ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity (𝔔 y) ⦄
     → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity (𝔔 y)
   test-method'' ⦃ ⌶ ⦄ {y = y} {𝔔} {x = x} = reflexivity ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME
+  {-
+    Q y x x = _R _x _x = _Q' _y' _x' _x'
+    _R = _Q' _y'
+    _R = Q y <-- from reflexivity[ Q y ]
+
+    Q y x x = Q y _x _x
+    _x = x
+  -}
 
   test-method-ext : ∀
     {𝔬} {𝔒 : Ø 𝔬}
