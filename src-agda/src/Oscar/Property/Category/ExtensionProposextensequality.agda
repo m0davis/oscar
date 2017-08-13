@@ -28,7 +28,7 @@ module _
 
   instance
 
-    𝓡eflexivityExtension : 𝓡eflexivity (Extension B)
+    𝓡eflexivityExtension : Refl.⟦ Extension B ⟧
     𝓡eflexivityExtension .⋆ = ¡
 
     𝓣ransitivityExtension : 𝓣ransitivity (Extension B)
