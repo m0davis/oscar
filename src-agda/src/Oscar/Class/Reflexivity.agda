@@ -96,20 +96,20 @@ private
   test-method3 : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯} {F : (𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → Ø 𝔯}
-    ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → 𝓡eflexivity (F ℜ) ⦄
-    → ∀ {ℜ : 𝔒 → Ø 𝔯} → 𝓻eflexivity (F ℜ)
-  test-method3 = reflexivity
+    ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → Refl.⟦ F ℜ ⟧ ⦄
+    → ∀ {ℜ : 𝔒 → Ø 𝔯} → Refl.⟨ F ℜ ⟩
+  test-method3 = Refl.[]
 
   test-method'' : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯}
-    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity (𝔔 y) ⦄
-    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity (𝔔 y)
-  test-method'' ⦃ ⌶ ⦄ {y = y} {𝔔} {x = x} = reflexivity ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME
+    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ 𝔔 y ⟧ ⦄
+    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ 𝔔 y ⟩
+  test-method'' ⦃ ⌶ ⦄ {y = y} {𝔔} {x = x} = Refl.[] ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME
   {-
     Q y x x = _R _x _x = _Q' _y' _x' _x'
     _R = _Q' _y'
-    _R = Q y <-- from reflexivity[ Q y ]
+    _R = Q y <-- from Refl.[ Q y ]
 
     Q y x x = Q y _x _x
     _x = x
@@ -118,64 +118,64 @@ private
   test-method-ext : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
-    ⦃ _ : 𝓡eflexivity (Extension 𝔓)  ⦄
-    → 𝓻eflexivity (Extension 𝔓)
-  test-method-ext = reflexivity
+    ⦃ _ : Refl.⟦ Extension 𝔓 ⟧  ⦄
+    → Refl.⟨ Extension 𝔓 ⟩
+  test-method-ext = Refl.[]
 
   test-method-ext' : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔭}
-    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓)  ⦄
-    → {𝔓 : 𝔒 → Ø 𝔭} → 𝓻eflexivity (Extension 𝔓)
-  test-method-ext' {𝔓 = 𝔓} = reflexivity[ Extension 𝔓 ]
+    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧  ⦄
+    → {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟨ Extension 𝔓 ⟩
+  test-method-ext' {𝔓 = 𝔓} = Refl.[ Extension 𝔓 ]
 
   test-method-ext′ : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔭}
-    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y)  ⦄
-    → {𝔓 : 𝔒 → Ø 𝔭} → 𝓻eflexivity (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y)
+    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ⟧  ⦄
+    → {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟨ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ⟩
   test-method-ext′ ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x = x} =
-    -- reflexivity ⦃ λ {x} → ⌶ {𝔓} {x = x} ⦄
-    -- reflexivity[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ] ⦃ λ {x} → ⌶ {𝔓} {x} ⦄
-    reflexivity[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ]
-    -- reflexivity -- FIXME
+    -- Refl.[] ⦃ λ {x} → ⌶ {𝔓} {x = x} ⦄
+    -- Refl.[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ] ⦃ λ {x} → ⌶ {𝔓} {x} ⦄
+    Refl.[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ]
+    -- Refl.[] -- FIXME
 
   test-method-arrow : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔭₁} {𝔓₁ : 𝔒 → Ø 𝔭₁}
     {𝔭₂} {𝔓₂ : 𝔒 → Ø 𝔭₂}
-    ⦃ _ : 𝓡eflexivity (Arrow 𝔓₁ 𝔓₂) ⦄
-    → 𝓻eflexivity (Arrow 𝔓₁ 𝔓₂)
-  test-method-arrow = reflexivity
+    ⦃ _ : Refl.⟦ Arrow 𝔓₁ 𝔓₂ ⟧ ⦄
+    → Refl.⟨ Arrow 𝔓₁ 𝔓₂ ⟩
+  test-method-arrow = Refl.[]
 
   test-method-arrow' : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭}
-    ⦃ _ : ∀ {x y} → 𝓡eflexivity (Arrow (𝔓 x) (𝔓 y))  ⦄
-    → ∀ {x y} → 𝓻eflexivity (Arrow (𝔓 x) (𝔓 y))
-  test-method-arrow' = reflexivity
+    ⦃ _ : ∀ {x y} → Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧  ⦄
+    → ∀ {x y} → Refl.⟨ Arrow (𝔓 x) (𝔓 y) ⟩
+  test-method-arrow' = Refl.[]
 
   test-method-arrow'' : ∀
     {𝔬} {𝔒 : Ø 𝔬}
-    ⦃ _ : ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → 𝓡eflexivity (Arrow (𝔓 x) (𝔓 y)) ⦄
-    → ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → 𝓻eflexivity (Arrow (𝔓 x) (𝔓 y))
-  test-method-arrow'' ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x} {y} = reflexivity[ Arrow (𝔓 x) (𝔓 y) ] ⦃ ⌶ {𝔓 = 𝔓} ⦄ -- FIXME
+    ⦃ _ : ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧ ⦄
+    → ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → Refl.⟨ Arrow (𝔓 x) (𝔓 y) ⟩
+  test-method-arrow'' ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x} {y} = Refl.[ Arrow (𝔓 x) (𝔓 y) ] ⦃ ⌶ {𝔓 = 𝔓} ⦄ -- FIXME
 
   test-class : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
-    → 𝓡eflexivity _∼_
+    ⦃ _ : Refl.⟦ _∼_ ⟧ ⦄
+    → Refl.⟦ _∼_ ⟧
   test-class = !
 
   test-class-quantified :
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity _∼_ ⦄
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity _∼_
+    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧ ⦄
+    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧
   test-class-quantified ⦃ ⌶ ⦄ = !
 
   test-class-ext :
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓) ⦄
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓)
+    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧ ⦄
+    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧
   test-class-ext ⦃ ⌶ ⦄ = !
 
 private
