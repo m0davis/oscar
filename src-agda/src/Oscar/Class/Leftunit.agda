@@ -32,12 +32,13 @@ module $Family
   -- family = ℭlass (ε) ∋ (∁ $′ ε ◃ x ↦ x)
   -- family = Unit.𝔲nit (ε ◃ x ↦ x)
   -- family = $SimplerFamily.𝔣amily (λ ε x → ε ◃ x ↦ x) ε x
-  module class = ℭLASS family
+  module class = ℭLASS (ε , _◃_ , _↦_) (ε ◃ x ↦ x)
 
 module $MethodUnit
   {𝔞} {𝔄 : Ø 𝔞}
   where
-  module class = ℭLASS (Unit.𝔲nit 𝔄)
+  open import Oscar.Data.𝟙
+  module class = ℭLASS 𝟙 𝔄
   method = class.method
 
 !! = $MethodUnit.method

@@ -8,7 +8,7 @@ module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   where
-  private module M (x : 𝔒) = ℭLASS (mkClass _∼_ (x ∼ x))
+  private module M (x : 𝔒) = ℭLASS _∼_ (x ∼ x)
   𝓡eflexivity = ∀ {x} → M.class x
   𝓻eflexivity = ∀ {x} → M.type x
   reflexivity[_] : ⦃ _ : 𝓡eflexivity ⦄ → 𝓻eflexivity
@@ -30,25 +30,25 @@ module Refl
   module _
     (x : 𝔒) (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     where
-    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    private module M = ℭLASS _∼_ (x ∼ x)
     ⟦_/_⟧ = M.class
     ⟨_/_⟩ = M.type
     [_/_] = M.method
   module _
     {x : 𝔒} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     where
-    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    private module M = ℭLASS _∼_ (x ∼ x)
     [_] = M.method
   module _
     (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     where
-    private module M x = ℭLASS (mkClass _∼_ (x ∼ x))
+    private module M x = ℭLASS _∼_ (x ∼ x)
     ⟦_⟧ = ∀ {x} → M.class x
     ⟨_⟩ = ∀ {x} → M.type x
   module _
     {x : 𝔒} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
     where
-    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    private module M = ℭLASS _∼_ (x ∼ x)
     [] = M.method
 
 private
@@ -58,7 +58,7 @@ private
     {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     (x : 𝔒)
     where
-    private module M = ℭLASS (mkClass _∼_ (x ∼ x))
+    private module M = ℭLASS _∼_ (x ∼ x)
     𝓡eflSingle = M.class
     𝓻eflSingle = M.type
     reflSingle[_/_] : ⦃ _ : 𝓡eflSingle ⦄ → 𝓻eflSingle
@@ -74,7 +74,7 @@ private
     {𝔮} (𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔮)
     (y : 𝔒)
     where
-    private module M (x : 𝔒) = ℭLASS (mkClass 𝔔 (𝔔 y x x))
+    private module M (x : 𝔒) = ℭLASS 𝔔 (𝔔 y x x)
     𝓡eflexivity' = ∀ {x} → M.class x
     𝓻eflexivity' = ∀ {x} → M.type x
     reflexivity'[_/_] : ⦃ _ : 𝓡eflexivity' ⦄ → 𝓻eflexivity'

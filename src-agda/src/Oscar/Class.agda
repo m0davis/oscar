@@ -41,14 +41,12 @@ module ℭLASS
   {ℓ}
   {𝔢}
   {CONSTRAINTS : Ø 𝔢}
-  {constraints : CONSTRAINTS}
-  (r : ℭlass {ℓ} constraints)
-  where
-  -- family = r
-  open ℭlass r public using () renaming
-    (GET-CLASS to class
-    ;SET-METHOD to type
-    ;GET-METHOD to method)
+  (constraints : CONSTRAINTS)
+  (c : Ø ℓ)
+  = ℭlass (mkClass constraints c) using ()
+          renaming (GET-CLASS to class
+                   ;SET-METHOD to type
+                   ;GET-METHOD to method)
 
 record Rℭlass
   {ℓ 𝔯}

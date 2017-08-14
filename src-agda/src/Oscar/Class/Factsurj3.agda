@@ -34,7 +34,7 @@ module Factsurj3'
   where
   family : ℭlass ((λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x}))
   family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
-  open ℭLASS family public
+  open ℭLASS ((λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x})) (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)) public
 
 module Factsurj3''
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
@@ -46,7 +46,7 @@ module Factsurj3''
   where
   family : ℭlass 𝟙
   family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
-  open ℭLASS family public
+  open ℭLASS 𝟙 (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)) public
 
 private
 
