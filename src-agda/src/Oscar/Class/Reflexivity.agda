@@ -58,17 +58,6 @@ private
     → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} → Refl.⟦ x / _∼_ ⟧
   test-class-single ⦃ ⌶ ⦄ = !
 
-  module Refl'
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔮} (𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔮)
-    (y : 𝔒)
-    where
-    private module M (x : 𝔒) = ℭLASS 𝔔 (𝔔 y x x)
-    ⟦_/_⟧ = ∀ {x} → M.class x
-    ⟨_/_⟩ = ∀ {x} → M.type x
-    [_/_] : ⦃ _ : ⟦_/_⟧ ⦄ → ⟨_/_⟩
-    [_/_] = M.method _
-
   test-method : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
@@ -103,6 +92,104 @@ private
     ⦃ _ : ∀ {y} → Refl.⟦ 𝔔 y ⟧ ⦄
     → ∀ {y} → Refl.⟨ 𝔔 y ⟩
   test-method1′'! = Refl.[]
+
+  test-method3 : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {F : (𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → 𝓡eflexivity (F ℜ) ⦄
+    → ∀ {ℜ : 𝔒 → Ø 𝔯} → 𝓻eflexivity (F ℜ)
+  test-method3 = reflexivity
+
+  test-method'' : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯}
+    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity (𝔔 y) ⦄
+    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity (𝔔 y)
+  test-method'' ⦃ ⌶ ⦄ {y = y} {𝔔} {x = x} = reflexivity ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME
+  {-
+    Q y x x = _R _x _x = _Q' _y' _x' _x'
+    _R = _Q' _y'
+    _R = Q y <-- from reflexivity[ Q y ]
+
+    Q y x x = Q y _x _x
+    _x = x
+  -}
+
+  test-method-ext : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
+    ⦃ _ : 𝓡eflexivity (Extension 𝔓)  ⦄
+    → 𝓻eflexivity (Extension 𝔓)
+  test-method-ext = reflexivity
+
+  test-method-ext' : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭}
+    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓)  ⦄
+    → {𝔓 : 𝔒 → Ø 𝔭} → 𝓻eflexivity (Extension 𝔓)
+  test-method-ext' {𝔓 = 𝔓} = reflexivity[ Extension 𝔓 ]
+
+  test-method-ext′ : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭}
+    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y)  ⦄
+    → {𝔓 : 𝔒 → Ø 𝔭} → 𝓻eflexivity (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y)
+  test-method-ext′ ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x = x} =
+    -- reflexivity ⦃ λ {x} → ⌶ {𝔓} {x = x} ⦄
+    -- reflexivity[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ] ⦃ λ {x} → ⌶ {𝔓} {x} ⦄
+    reflexivity[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ]
+    -- reflexivity -- FIXME
+
+  test-method-arrow : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭₁} {𝔓₁ : 𝔒 → Ø 𝔭₁}
+    {𝔭₂} {𝔓₂ : 𝔒 → Ø 𝔭₂}
+    ⦃ _ : 𝓡eflexivity (Arrow 𝔓₁ 𝔓₂) ⦄
+    → 𝓻eflexivity (Arrow 𝔓₁ 𝔓₂)
+  test-method-arrow = reflexivity
+
+  test-method-arrow' : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭}
+    ⦃ _ : ∀ {x y} → 𝓡eflexivity (Arrow (𝔓 x) (𝔓 y))  ⦄
+    → ∀ {x y} → 𝓻eflexivity (Arrow (𝔓 x) (𝔓 y))
+  test-method-arrow' = reflexivity
+
+  test-method-arrow'' : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    ⦃ _ : ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → 𝓡eflexivity (Arrow (𝔓 x) (𝔓 y)) ⦄
+    → ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → 𝓻eflexivity (Arrow (𝔓 x) (𝔓 y))
+  test-method-arrow'' ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x} {y} = reflexivity[ Arrow (𝔓 x) (𝔓 y) ] ⦃ ⌶ {𝔓 = 𝔓} ⦄ -- FIXME
+
+  test-class : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    → 𝓡eflexivity _∼_
+  test-class = !
+
+  test-class-quantified :
+    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity _∼_ ⦄
+    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity _∼_
+  test-class-quantified ⦃ ⌶ ⦄ = !
+
+  test-class-ext :
+    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓) ⦄
+    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓)
+  test-class-ext ⦃ ⌶ ⦄ = !
+
+private
+
+  module Refl'
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔮} (𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔮)
+    (y : 𝔒)
+    where
+    private module M (x : 𝔒) = ℭLASS 𝔔 (𝔔 y x x)
+    ⟦_/_⟧ = ∀ {x} → M.class x
+    ⟨_/_⟩ = ∀ {x} → M.type x
+    [_/_] : ⦃ _ : ⟦_/_⟧ ⦄ → ⟨_/_⟩
+    [_/_] = M.method _
 
   test-method1′ : ∀
     {𝔬} {𝔒 : Ø 𝔬}
@@ -188,94 +275,9 @@ private
     constr: methodconstraint = instanceconstraint
   -}
 
-  test-method3 : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔯} {F : (𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → Ø 𝔯}
-    ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → 𝓡eflexivity (F ℜ) ⦄
-    → ∀ {ℜ : 𝔒 → Ø 𝔯} → 𝓻eflexivity (F ℜ)
-  test-method3 = reflexivity
-
   test-method′ : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯}
     ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl'.⟦ 𝔔 / y ⟧ ⦄
     → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl'.⟨ 𝔔 / y ⟩
   test-method′ {𝔔 = 𝔔} = Refl'.[ 𝔔 / _ ]
-
-  test-method'' : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔯}
-    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity (𝔔 y) ⦄
-    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → 𝓻eflexivity (𝔔 y)
-  test-method'' ⦃ ⌶ ⦄ {y = y} {𝔔} {x = x} = reflexivity ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME
-  {-
-    Q y x x = _R _x _x = _Q' _y' _x' _x'
-    _R = _Q' _y'
-    _R = Q y <-- from reflexivity[ Q y ]
-
-    Q y x x = Q y _x _x
-    _x = x
-  -}
-
-  test-method-ext : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
-    ⦃ _ : 𝓡eflexivity (Extension 𝔓)  ⦄
-    → 𝓻eflexivity (Extension 𝔓)
-  test-method-ext = reflexivity
-
-  test-method-ext' : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔭}
-    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓)  ⦄
-    → {𝔓 : 𝔒 → Ø 𝔭} → 𝓻eflexivity (Extension 𝔓)
-  test-method-ext' {𝔓 = 𝔓} = reflexivity[ Extension 𝔓 ]
-
-  test-method-ext′ : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔭}
-    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y)  ⦄
-    → {𝔓 : 𝔒 → Ø 𝔭} → 𝓻eflexivity (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y)
-  test-method-ext′ ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x = x} =
-    -- reflexivity ⦃ λ {x} → ⌶ {𝔓} {x = x} ⦄
-    -- reflexivity[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ] ⦃ λ {x} → ⌶ {𝔓} {x} ⦄
-    reflexivity[ (λ x y → ∀ {z} → 𝔓 z → 𝔓 x → 𝔓 y) ]
-    -- reflexivity -- FIXME
-
-  test-method-arrow : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔭₁} {𝔓₁ : 𝔒 → Ø 𝔭₁}
-    {𝔭₂} {𝔓₂ : 𝔒 → Ø 𝔭₂}
-    ⦃ _ : 𝓡eflexivity (Arrow 𝔓₁ 𝔓₂) ⦄
-    → 𝓻eflexivity (Arrow 𝔓₁ 𝔓₂)
-  test-method-arrow = reflexivity
-
-  test-method-arrow' : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭}
-    ⦃ _ : ∀ {x y} → 𝓡eflexivity (Arrow (𝔓 x) (𝔓 y))  ⦄
-    → ∀ {x y} → 𝓻eflexivity (Arrow (𝔓 x) (𝔓 y))
-  test-method-arrow' = reflexivity
-
-  test-method-arrow'' : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    ⦃ _ : ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → 𝓡eflexivity (Arrow (𝔓 x) (𝔓 y)) ⦄
-    → ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → 𝓻eflexivity (Arrow (𝔓 x) (𝔓 y))
-  test-method-arrow'' ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x} {y} = reflexivity[ Arrow (𝔓 x) (𝔓 y) ] ⦃ ⌶ {𝔓 = 𝔓} ⦄ -- FIXME
-
-  test-class : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
-    → 𝓡eflexivity _∼_
-  test-class = !
-
-  test-class-quantified :
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity _∼_ ⦄
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → 𝓡eflexivity _∼_
-  test-class-quantified ⦃ ⌶ ⦄ = !
-
-  test-class-ext :
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓) ⦄
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → 𝓡eflexivity (Extension 𝔓)
-  test-class-ext ⦃ ⌶ ⦄ = !
