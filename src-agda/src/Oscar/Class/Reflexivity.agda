@@ -51,90 +51,175 @@ module Refl
     private module M = ℭLASS _∼_ (x ∼ x)
     [] = M.method
 
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒}
+  ⦃ particular : Refl.⟦ x / _∼_ ⟧ ⦄
+  ⦃ general : Refl.⟦ _∼_ ⟧ ⦄
+  ⦃ very-general : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} → Refl.⟦ x / _∼_ ⟧ ⦄
+  where
+
+  private
+
+    very-general-class : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧
+    very-general-class = !
+
+    very-general-type : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ _∼_ ⟩
+    very-general-type {_∼_ = _∼_} = Refl.[ _∼_ ]
+
+    general-class : Refl.⟦ _∼_ ⟧
+    general-class = magic -- FIXME cannot find b/c of very-general
+
+    particular-type : Refl.⟨ x / _∼_ ⟩
+    particular-type = magic -- FIXME cannot find b/c of general
+
+module _
+  ⦃ very-general : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧ ⦄
+  where
+
+  private
+
+    very-general-type : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ _∼_ ⟩
+    very-general-type {_∼_ = _∼_} = Refl.[ _∼_ ]
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {_∼'_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒}
+  ⦃ particular : Refl.⟦ x / _∼_ ⟧ ⦄
+  ⦃ general : Refl.⟦ _∼_ ⟧ ⦄
+  ⦃ general' : Refl.⟦ _∼'_ ⟧ ⦄
+  where
+
+  module _ where
+
+    private
+
+      general-class : Refl.⟦ _∼_ ⟧
+      general-class = !
+
+      general-type : Refl.⟨ _∼_ ⟩
+      general-type = Refl.[]
+
+  module _
+    ⦃ more-general : {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧ ⦄
+    where
+
+    private
+
+      general-class : Refl.⟦ _∼_ ⟧
+      general-class = magic
+
+      general-type : Refl.⟨ _∼_ ⟩
+      general-type = magic
+
+      more-general-class : {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧
+      more-general-class = !
+
+      more-general-type : {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ _∼_ ⟩
+      more-general-type {_∼_} = Refl.[ _∼_ ]
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔯} {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+  ⦃ _ : Refl.⟦ 𝔔 y ⟧ ⦄
+  where
+
+  private
+
+    class : Refl.⟦ 𝔔 y ⟧
+    class = !
+
+    type : Refl.⟨ 𝔔 y ⟩
+    type = Refl.[]
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔯} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+  ⦃ _ : ∀ {y} → Refl.⟦ 𝔔 y ⟧ ⦄
+  {y}
+  where
+
+  private
+
+    class : Refl.⟦ 𝔔 y ⟧
+    class = !
+
+    type : Refl.⟨ 𝔔 y ⟩
+    type = Refl.[]
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔯} {F : (𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → Ø 𝔯}
+  ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → Refl.⟦ F ℜ ⟧ ⦄
+  {ℜ : 𝔒 → Ø 𝔯}
+  where
+
+  private
+
+    class : Refl.⟦ F ℜ ⟧
+    class = !
+
+    type : Refl.⟨ F ℜ ⟩
+    type = Refl.[]
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔯}
+  ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ 𝔔 y ⟧ ⦄
+  {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯}
+  where
+
+  private
+
+    general-class : Refl.⟦ 𝔔 y ⟧
+    general-class = magic
+
+    general-type : Refl.⟨ 𝔔 y ⟩
+    general-type = magic
+
+    particular-class : Refl.⟦ y / 𝔔 y ⟧
+    particular-class = magic
+
+    particular-type : Refl.⟨ y / 𝔔 y ⟩
+    particular-type = magic
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
+  ⦃ particular : Refl.⟦ Extension 𝔓 ⟧  ⦄
+  where
+
+  module _ where
+
+    private
+
+      class : Refl.⟦ Extension 𝔓 ⟧
+      class = !
+
+      type : Refl.⟨ Extension 𝔓 ⟩
+      type = Refl.[]
+
+  module _
+    ⦃ general : {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧  ⦄
+    {𝔓' : 𝔒 → Ø 𝔭}
+    where
+
+    private
+
+      class : Refl.⟦ Extension 𝔓 ⟧
+      class = magic
+
+      class' : Refl.⟦ Extension 𝔓' ⟧
+      class' = !
+
+      type : Refl.⟨ Extension 𝔓 ⟩
+      type = magic -- both particular and general are candidates
+
+      type' : Refl.⟨ Extension 𝔓' ⟩
+      type' = Refl.[ Extension 𝔓' ] -- only general is candidate b/c 𝔓' does not unify with 𝔓
+
+      open import Oscar.Data.Proposequality
+
+      type'noeq : 𝔓' ≡ 𝔓 → Refl.⟨ Extension 𝔓' ⟩
+      type'noeq x = Refl.[ Extension 𝔓' ] -- still works
+
+      type'eq : 𝔓' ≡ 𝔓 → Refl.⟨ Extension 𝔓' ⟩
+      type'eq ∅ = magic -- both particular and general are candidates
+
 private
-
-  test-class-single : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} -- particulars (not used in "wanted")
-    ⦃ _ : Refl.⟦ x / _∼_ ⟧ ⦄ -- particular instance
-    ⦃ _ : {x : 𝔒} → Refl.⟦ x / _∼_ ⟧ ⦄ -- more general instance
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} → Refl.⟦ x / _∼_ ⟧ ⦄ -- very general instance
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} {x : 𝔒} → Refl.⟦ x / _∼_ ⟧ -- wanted: very general instance
-  test-class-single = !
-
-  test-method : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} -- particulars
-    ⦃ _ : Refl.⟦ _∼_ ⟧ ⦄ -- particular instance
-    → Refl.⟨ _∼_ ⟩ -- wanted: evaluation of particular instance
-  test-method = Refl.[]
-
-  test-method-gen : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} -- particulars
-    ⦃ _ : Refl.⟦ _∼_ ⟧ ⦄ -- a particular instance
-    ⦃ _ : {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧ ⦄ -- general instance
-    → Refl.⟨ _∼_ ⟩ -- wanted: evaluation of particular instance
-  test-method-gen = magic -- FIXME won't find particular instance b/c of existence of general
-
-  test-method' : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} -- particulars
-    {x : 𝔒} -- particulars (not used in "wanted")
-    ⦃ _ : {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ x / _∼_ ⟧ ⦄ -- particular instance
-    ⦃ _ : {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧ ⦄ -- general instance
-    → {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ _∼_ ⟩ -- wanted: evaluation of general instance
-  test-method' {_∼_ = _∼_} = Refl.[ _∼_ ]
-
-  test-method′' : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} -- particulars
-    ⦃ _ : Refl.⟦ 𝔔 y ⟧ ⦄ -- particular instance
-    → Refl.⟨ 𝔔 y ⟩ -- wanted: evaluation of particular instance
-  test-method′' = Refl.[]
-
-  test-class′'! : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} -- particulars
-    ⦃ _ : ∀ {y} → Refl.⟦ 𝔔 y ⟧ ⦄ -- general instance
-    → ∀ {y} → Refl.⟦ 𝔔 y ⟧ -- wanted: more general instance
-  test-class′'! = !
-
-  test-method1′'! : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} -- particulars
-    ⦃ _ : ∀ {y} → Refl.⟦ 𝔔 y ⟧ ⦄ -- general instance
-    → ∀ {y} → Refl.⟨ 𝔔 y ⟩ -- wanted: evaluation of general instance
-  test-method1′'! = Refl.[]
-
-  test-method3 : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {F : (𝔒 → Ø 𝔯) → 𝔒 → 𝔒 → Ø 𝔯} -- particulars
-    ⦃ _ : {ℜ : 𝔒 → Ø 𝔯} → Refl.⟦ F ℜ ⟧ ⦄ -- general instance
-    → ∀ {ℜ : 𝔒 → Ø 𝔯} → Refl.⟨ F ℜ ⟩ -- wanted: evaluation of general instance
-  test-method3 = Refl.[]
-
-  test-method'' : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯}
-    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ 𝔔 y ⟧ ⦄
-    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ 𝔔 y ⟩
-  test-method'' ⦃ ⌶ ⦄ {y = y} {𝔔} {x = x} = Refl.[] ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME _Q _y ≟ _Q' _y'
-
-  test-method''1 : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯}
-    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ y / 𝔔 y ⟧ ⦄ -- very very general instance
-    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟨ y / 𝔔 y ⟩ -- wanted: evaluation of very very general instance
-  test-method''1 ⦃ ⌶ ⦄ {y = y} {𝔔} = Refl.[] ⦃ ⌶ {𝔔 = 𝔔} ⦄ -- FIXME
-
-  test-class''1 : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯}
-    ⦃ _ : ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ y / 𝔔 y ⟧ ⦄ -- very very general instance
-    → ∀ {y} {𝔔 : 𝔒 → 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ y / 𝔔 y ⟧ -- wanted: very very general instance
-  test-class''1 ⦃ ⌶ ⦄ {y = y} {𝔔} = ⌶ {𝔔 = 𝔔} -- FIXME
-
-  test-method-ext : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭}
-    ⦃ _ : Refl.⟦ Extension 𝔓 ⟧  ⦄
-    → Refl.⟨ Extension 𝔓 ⟩
-  test-method-ext = Refl.[]
-
-  test-method-ext' : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔭}
-    ⦃ _ : {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧  ⦄
-    → {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟨ Extension 𝔓 ⟩
-  test-method-ext' {𝔓 = 𝔓} = Refl.[ Extension 𝔓 ]
 
   test-method-ext′ : ∀
     {𝔬} {𝔒 : Ø 𝔬} {𝔭}
@@ -168,39 +253,46 @@ private
   test-method-ext′2 ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x = x} =
     Refl.[ (λ _ y → ∀ {z} → 𝔓 y → 𝔓 z → _) ]
 
-  test-method-arrow : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔭₁} {𝔓₁ : 𝔒 → Ø 𝔭₁} {𝔭₂} {𝔓₂ : 𝔒 → Ø 𝔭₂}
-    ⦃ _ : Refl.⟦ Arrow 𝔓₁ 𝔓₂ ⟧ ⦄
-    → Refl.⟨ Arrow 𝔓₁ 𝔓₂ ⟩
-  test-method-arrow = Refl.[]
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔭₁} {𝔓₁ : 𝔒 → Ø 𝔭₁} {𝔭₂} {𝔓₂ : 𝔒 → Ø 𝔭₂}
+  ⦃ _ : Refl.⟦ Arrow 𝔓₁ 𝔓₂ ⟧ ⦄
+  where
 
-  test-method-arrow' : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭}
-    ⦃ _ : ∀ {x y} → Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧  ⦄
-    → ∀ {x y} → Refl.⟨ Arrow (𝔓 x) (𝔓 y) ⟩
-  test-method-arrow' = Refl.[]
+  private
 
-  test-method-arrow'' : ∀
-    {𝔬} {𝔒 : Ø 𝔬}
-    ⦃ _ : ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧ ⦄
-    → ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → Refl.⟨ Arrow (𝔓 x) (𝔓 y) ⟩
-  test-method-arrow'' ⦃ ⌶ ⦄ {𝔓 = 𝔓} {x} {y} = Refl.[ Arrow (𝔓 x) (𝔓 y) ] ⦃ ⌶ {𝔓 = 𝔓} ⦄ -- FIXME
+    class : Refl.⟦ Arrow 𝔓₁ 𝔓₂ ⟧
+    class = !
 
-  test-class : ∀
-    {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
-    ⦃ _ : Refl.⟦ _∼_ ⟧ ⦄
-    → Refl.⟦ _∼_ ⟧
-  test-class = !
+    type : Refl.⟨ Arrow 𝔓₁ 𝔓₂ ⟩
+    type = Refl.[]
 
-  test-class-quantified :
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧ ⦄
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯} → Refl.⟦ _∼_ ⟧
-  test-class-quantified ⦃ ⌶ ⦄ = !
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭}
+  ⦃ _ : ∀ {x y} → Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧ ⦄
+  {x y}
+  where
 
-  test-class-ext :
-    ⦃ _ : ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧ ⦄
-    → ∀ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} → Refl.⟦ Extension 𝔓 ⟧
-  test-class-ext ⦃ ⌶ ⦄ = !
+  private
+
+    class : Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧
+    class = !
+
+    type : Refl.⟨ Arrow (𝔓 x) (𝔓 y) ⟩
+    type = Refl.[]
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭}
+  ⦃ _ : ∀ {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y} → Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧ ⦄
+  {𝔭} {𝔓 : 𝔒 → 𝔒 → Ø 𝔭} {x y}
+  where
+
+  private
+
+    class : Refl.⟦ Arrow (𝔓 x) (𝔓 y) ⟧
+    class = magic
+
+    type : Refl.⟨ Arrow (𝔓 x) (𝔓 y) ⟩
+    type = magic
 
 private
 
