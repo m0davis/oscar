@@ -72,6 +72,15 @@ module Sym
     [] : ⦃ _ : ⟦ _∼_ ⟧ ⦄ → ⟨ _∼_ ⟩
     [] = M.method _ _
 
+instance
+
+  SymFrom𝓢ymmetry : ∀
+    {𝔬} {𝔒 : Ø 𝔬}
+    {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+    ⦃ _ : 𝓢ymmetry _∼_ ⦄
+    → Sym.⟦ _∼_ ⟧
+  SymFrom𝓢ymmetry .⋆ = symmetry
+
 private
 
   test-class :
