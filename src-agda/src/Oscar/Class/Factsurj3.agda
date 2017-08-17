@@ -131,3 +131,16 @@ module 𝓯actsurj3
   ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
   where
   method = 𝓕actsurj3.method 𝔓 ℜ ⦃ ! ⦄ ⦃ ! ⦄
+
+private
+
+  test-class : ∀
+    {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+    {𝔓 : π̂ 𝔭 𝔛}
+    ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
+    {ℜ : π̂² 𝔯 𝔛}
+    ⦃ _ : 𝓡eflexivity ℜ ⦄
+    ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
+    → ⦃ _ : 𝓕actsurj3.class 𝔓 ℜ ⦄
+    → 𝓕actsurj3.class 𝔓 ℜ
+  test-class = !
