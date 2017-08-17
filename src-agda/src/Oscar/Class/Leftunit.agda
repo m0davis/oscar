@@ -27,7 +27,9 @@ module $Family
   (_◃_ : 𝔈 → 𝔄 → 𝔄) (let _◃_ = _◃_; infix 16 _◃_)
   (x : 𝔄)
   where
-  module class = ℭLASS (ε , _◃_ , _↦_) (ε ◃ x ↦ x)
+  --module class = ℭLASS (ε , _◃_ , _↦_) (ε ◃ x ↦ x)
+  open import Oscar.Data.𝟙
+  module class = ℭLASS 𝟙 (ε ◃ x ↦ x)
 
 module $MethodUnit
   {𝔞} {𝔄 : Ø 𝔞}
