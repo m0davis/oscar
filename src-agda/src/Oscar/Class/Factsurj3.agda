@@ -20,9 +20,9 @@ module Factsurj3
   (ε : 𝓻eflexivity ℜ)
   (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
   where
-  class = ∀ {x} {p : 𝔓 x} → $ClassSingle.class (flip (_≈_ {x})) (ε {x}) _◃_ p
-  type = ∀ {x} {p : 𝔓 x} → $ClassSingle.type (flip (_≈_ {x})) (ε {x}) _◃_ p
-  method = λ ⦃ _ : class ⦄ {x} {p : 𝔓 x} → $ClassSingle.method (flip (_≈_ {x})) (ε {x}) _◃_ p
+  class = ∀ {x} {p : 𝔓 x} → $Family.class (flip (_≈_ {x})) (ε {x}) _◃_ p
+  type = ∀ {x} {p : 𝔓 x} → $Family.type (flip (_≈_ {x})) (ε {x}) _◃_ p
+  method = λ ⦃ _ : class ⦄ {x} {p : 𝔓 x} → $Family.method (flip (_≈_ {x})) (ε {x}) _◃_ p
 
 module Factsurj3'
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
