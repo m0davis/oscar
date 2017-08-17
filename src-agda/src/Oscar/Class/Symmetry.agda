@@ -60,7 +60,7 @@ module Sym
   module _
     (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
     where
-    private module M x y = ℭLASS _∼_ (x ∼ y → y ∼ x)
+    private module M x y = ℭLASS (_∼_ ,, x ,, y) (x ∼ y → y ∼ x)
     ⟦_⟧ = ∀ {x y} → M.class x y
     ⟨_⟩ = ∀ {x y} → M.type x y
     [_] : ⦃ _ : ⟦_⟧ ⦄ → ⟨_⟩
@@ -68,7 +68,7 @@ module Sym
   module _
     {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
     where
-    private module M x y = ℭLASS _∼_ (x ∼ y → y ∼ x)
+    private module M x y = ℭLASS (_∼_ ,, x ,, y) (x ∼ y → y ∼ x)
     [] : ⦃ _ : ⟦ _∼_ ⟧ ⦄ → ⟨ _∼_ ⟩
     [] = M.method _ _
 
