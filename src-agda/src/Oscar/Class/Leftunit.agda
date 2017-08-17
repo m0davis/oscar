@@ -27,11 +27,6 @@ module $Family
   (_◃_ : 𝔈 → 𝔄 → 𝔄) (let _◃_ = _◃_; infix 16 _◃_)
   (x : 𝔄)
   where
-  family = ℭlass (ε , _◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
-  -- family = ℭlass (_◃_ , _↦_) ∋ (∁ $′ ε ◃ x ↦ x)
-  -- family = ℭlass (ε) ∋ (∁ $′ ε ◃ x ↦ x)
-  -- family = Unit.𝔲nit (ε ◃ x ↦ x)
-  -- family = $SimplerFamily.𝔣amily (λ ε x → ε ◃ x ↦ x) ε x
   module class = ℭLASS (ε , _◃_ , _↦_) (ε ◃ x ↦ x)
 
 module $MethodUnit
