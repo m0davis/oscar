@@ -72,5 +72,7 @@ module $MethodAllH
   where
   method = $ClassAllH.method _↦_ ε _◃_
 
-module Leftunit = $ClassAll
-module leftunit = $MethodAllH
+module LeftunitV = $ClassAll
+module leftunitV = $MethodAll
+module LeftunitH = $ClassAllH
+module leftunitH = $MethodAllH
