@@ -128,7 +128,6 @@ module Test.ṖropertyFacts where
 
   postulate
     instance
-      _ : [𝓕actsurj6] 𝑷¹ 𝑪 _≈_ _≈_
       _ : 𝓕actsurj6 𝑷¹ 𝑪 _≈_ _≈_
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
