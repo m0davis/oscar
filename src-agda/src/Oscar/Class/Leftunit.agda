@@ -4,22 +4,6 @@ open import Oscar.Class
 
 module Oscar.Class.Leftunit where
 
-module Unit
-  {𝔞} (𝔄 : Ø 𝔞)
-  where
-  open import Oscar.Data.𝟙
-  𝔲nit : ℭlass $′ 𝟙
-  𝔲nit = ∁ 𝔄
-
-module $SimplerFamily
-  {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
-  (_↦_ : 𝔈 → 𝔄 → Ø ℓ)
-  (ε : 𝔈)
-  (x : 𝔄)
-  where
-  𝔣amily : ℭlass $′ _↦_ , x , ε
-  𝔣amily = ∁ (ε ↦ x)
-
 module $Family
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   (_↦_ : 𝔄 → 𝔄 → Ø ℓ) (let _↦_ = _↦_; infix 4 _↦_)
