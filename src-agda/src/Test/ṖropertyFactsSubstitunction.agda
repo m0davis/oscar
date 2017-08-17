@@ -12,6 +12,7 @@ open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Symmetrical
+open import Oscar.Class.Unit
 open import Oscar.Data.Proposequality
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Surjcollation
@@ -74,10 +75,10 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   Properties-fact1' 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂ = quadricity 𝓈₁ 𝓈₂ 𝓉₁ 𝓉₂
 
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆ = !! -- 𝓕actsurj3.method 𝑷⁰ 𝑪 -- !! -- $MethodUnit.method -- leftunit.method
+  fact3⋆ = ‼ -- 𝓕actsurj3.method 𝑷⁰ 𝑪 -- $MethodUnit.method -- leftunit.method
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3 = !! -- 𝓕actsurj3.method 𝑷¹ 𝑪 -- !! -- $MethodUnit.method -- factsurj3.method -- leftunit.method
+  fact3 = ‼ -- 𝓕actsurj3.method 𝑷¹ 𝑪 -- $MethodUnit.method -- factsurj3.method -- leftunit.method
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4⋆ 𝒻 N𝒫 = leftstar 𝒻 N𝒫

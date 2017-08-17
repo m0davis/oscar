@@ -20,6 +20,7 @@ open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity
+open import Oscar.Class.Unit
 open import Oscar.Class.[ExtensibleType]
 open import Oscar.Data.Surjcollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
@@ -146,7 +147,7 @@ module Test.ṖropertyFacts where
   fact6 𝒫 𝒻≈ℊ = factsurj6 𝒫 𝒻≈ℊ
 
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆ = !! -- leftunit.method
+  fact3⋆ = ‼ -- leftunit.method
 
   fact3⋆' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆' {𝒫 = 𝒫} = Leftunit.method (flip _≈_) 𝒖 surjectextensivity 𝒫
@@ -158,7 +159,7 @@ module Test.ṖropertyFacts where
   lhs-fact3⋆ {𝒫 = 𝒫} = 𝓕actsurj3.method 𝑷⁰ 𝑪 {p = 𝒫}
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3 = !!
+  fact3 = ‼
 
   fact4⋆ : ∀ {𝓂 𝓃} {𝒫 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 _ 𝓃) → Nothing 𝒫 → Nothing (𝒻 ◃ 𝒫)
   fact4⋆ 𝒻 N𝒫 = leftstar 𝒻 N𝒫

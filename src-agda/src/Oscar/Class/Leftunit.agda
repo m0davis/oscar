@@ -1,6 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
+open import Oscar.Class.Unit
 
 module Oscar.Class.Leftunit where
 
@@ -12,17 +13,7 @@ module $Family
   (x : 𝔄)
   where
   --module class = ℭLASS (ε , _◃_ , _↦_) (ε ◃ x ↦ x)
-  open import Oscar.Data.𝟙
-  module class = ℭLASS 𝟙 (ε ◃ x ↦ x)
-
-module $MethodUnit
-  {𝔞} {𝔄 : Ø 𝔞}
-  where
-  open import Oscar.Data.𝟙
-  module class = ℭLASS 𝟙 𝔄
-  method = class.method
-
-!! = $MethodUnit.method
+  module class = Unit (ε ◃ x ↦ x)
 
 module $ClassSingle
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}

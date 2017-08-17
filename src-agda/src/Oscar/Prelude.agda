@@ -226,8 +226,8 @@ ArrowExtensionṖroperty : ∀
 ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_ = LeftExtensionṖroperty ℓ (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_)
 
 record Instance {a} (A : Set a) : Set a where
-  constructor ‼
+  constructor ∁
   field {{x}} : A
 
 mkInstance : ∀ {a} {A : Set a} → A → Instance A
-mkInstance x = ‼ {{x}}
+mkInstance x = ∁ {{x}}
