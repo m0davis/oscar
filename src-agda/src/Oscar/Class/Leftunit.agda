@@ -36,7 +36,7 @@ module $FamilyInstance
     I : Unit.class (ε ◃ x ↦ x)
     I .⋆ = $MethodSingle.method
 
-module $ClassAll
+module LeftunitsV
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
   (ε : 𝔈)
@@ -46,15 +46,15 @@ module $ClassAll
   type = ∀ x → $Family.type _↦_ ε _◃_ x
   method = λ ⦃ _ : class ⦄ x → $Family.method _↦_ ε _◃_ x
 
-module $MethodAll
+module leftunitsV
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
   {ε : 𝔈}
   {_◃_ : 𝔈 → 𝔄 → 𝔄}
   where
-  method = $ClassAll.method _↦_ ε _◃_
+  method = LeftunitsV.method _↦_ ε _◃_
 
-module $ClassAllH
+module LeftunitsH
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   (_↦_ : 𝔄 → 𝔄 → Ø ℓ)
   (ε : 𝔈)
@@ -64,15 +64,10 @@ module $ClassAllH
   type = ∀ {x} → $Family.type _↦_ ε _◃_ x
   method = λ ⦃ _ : class ⦄ {x} → $Family.method _↦_ ε _◃_ x
 
-module $MethodAllH
+module leftunitsH
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   {_↦_ : 𝔄 → 𝔄 → Ø ℓ}
   {ε : 𝔈}
   {_◃_ : 𝔈 → 𝔄 → 𝔄}
   where
-  method = $ClassAllH.method _↦_ ε _◃_
-
-module LeftunitV = $ClassAll
-module leftunitV = $MethodAll
-module LeftunitH = $ClassAllH
-module leftunitH = $MethodAllH
+  method = LeftunitsH.method _↦_ ε _◃_
