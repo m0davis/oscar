@@ -58,7 +58,7 @@ module _ {a} {A : ¶ → Set a} where
     𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g (x , h) = congruity (x ,_) $ h ⟨∙ _ ⟨∙ _
 
     𝓣ransassociativityAList' : 𝓣ransassociativity (flip AList) Proposequality
-    𝓣ransassociativityAList' .𝓣ransassociativity.transassociativity f g h = symmetry (transassociativity h g f)
+    𝓣ransassociativityAList' .𝓣ransassociativity.transassociativity f g h = Sym.[] (transassociativity h g f)
 
     IsPrecategoryAList : IsPrecategory AList Proposequality
     IsPrecategoryAList = ∁
