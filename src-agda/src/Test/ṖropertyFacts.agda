@@ -148,6 +148,12 @@ module Test.ṖropertyFacts where
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆ = !! -- leftunit.method
 
+  fact3⋆' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
+  fact3⋆' {𝒫 = 𝒫} = Leftunit.method (flip _≈_) 𝒖 surjectextensivity 𝒫
+
+  fact3⋆'' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
+  fact3⋆'' = Factsurj3.method 𝑷⁰ _≈_ _ 𝒖 surjectextensivity
+
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
   lhs-fact3⋆ {𝒫 = 𝒫} = 𝓕actsurj3.method 𝑷⁰ 𝑪 {p = 𝒫}
 
