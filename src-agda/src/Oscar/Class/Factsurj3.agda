@@ -131,10 +131,7 @@ module 𝓕actsurj3
   (ℜ : π̂² 𝔯 𝔛)
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
-  where
-  class = Factsurj3.class 𝔓 _≈_ ℜ ε surjectextensivity
-  type = Factsurj3.type 𝔓 _≈_ ℜ ε surjectextensivity
-  method = Factsurj3.method 𝔓 _≈_ ℜ ε surjectextensivity
+  = Factsurj3 𝔓 _≈_ ℜ ε surjectextensivity
 
 module 𝓯actsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
