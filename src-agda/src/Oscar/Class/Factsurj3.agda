@@ -36,6 +36,20 @@ module Factsurj3'
   family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
   open ℭLASS ((λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x})) (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)) public
 
+module _
+  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
+  {𝔓 : π̂ 𝔭 𝔛}
+  {_≈_ : ∀̇ π̂² ℓ 𝔓}
+  {ℜ : π̂² 𝔯 𝔛}
+  {ε : 𝓻eflexivity ℜ}
+  {_◃_ : 𝒮urjectextensivity ℜ 𝔓}
+  ⦃ _ : Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_ ⦄
+  where
+  instance
+    unprimeFactsurj3 : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+    unprimeFactsurj3 .⋆ = Factsurj3'.method 𝔓 _≈_ ℜ ε _◃_
+
+
 module Factsurj3''
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
   (𝔓 : π̂ 𝔭 𝔛)
