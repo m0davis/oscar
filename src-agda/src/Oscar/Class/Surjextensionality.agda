@@ -18,7 +18,7 @@ private
       (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
       where
       module FunctionVisible
-        (surjection : 𝓼urjection 𝔒₁ 𝔒₂)
+        (surjection : Surjection.type 𝔒₁ 𝔒₂)
         (surjectivity : 𝒮urjectivity _∼₁_ _∼₂_ surjection)
         where
         𝓼urjextensionality′ = λ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂
@@ -26,7 +26,7 @@ private
         Surjextensionality : Ø _
         Surjextensionality = ∀ {x y} → Surjectivity (_∼̇₁_ {x} {y}) _∼̇₂_ surjectivity
       module FunctionInstance
-        ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+        ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
         ⦃ _ : Surjectivity _∼₁_ _∼₂_ surjection ⦄
         where
         open FunctionVisible surjection surjectivity
@@ -50,7 +50,7 @@ private
       {𝔬₂} {𝔒₂ : Ø 𝔬₂}
       {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
       {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-      ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+      ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
       ⦃ _ : Surjectivity _∼₁_ _∼₂_ surjection ⦄
       ⦃ _ : 𝓢urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
       → 𝓼urjextensionality _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_

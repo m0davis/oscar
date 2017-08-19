@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.Surjection using (𝓼urjection; 𝓢urjection; surjection)
+open import Oscar.Class.Surjection
 open import Oscar.Data.Proposequality
 
 module Oscar.Class.Surjectivity where
@@ -13,7 +13,7 @@ private
     module Visible
       (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
       (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-      (μ : 𝓼urjection 𝔒₁ 𝔒₂)
+      (μ : Surjection.type 𝔒₁ 𝔒₂)
       where
       𝓼urjectivity = λ x y → x ∼₁ y → μ x ∼₂ μ y
       𝒮urjectivity = ∀ {x y} → 𝓼urjectivity x y
@@ -30,7 +30,7 @@ private
     module Hidden
       {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
       {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
-      {μ : 𝓼urjection 𝔒₁ 𝔒₂}
+      {μ : Surjection.type 𝔒₁ 𝔒₂}
       where
       open Visible _∼₁_ _∼₂_ μ
       surjectivity : ⦃ _ : Surjectivity ⦄ → 𝒮urjectivity
@@ -38,30 +38,30 @@ private
     module Hidden0
       {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
       {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
-      ⦃ I : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+      ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
       where
-      open Visible _∼₁_ _∼₂_ (𝓢urjection.surjection I)
+      open Visible _∼₁_ _∼₂_ surjection
       surjectivity! = surjectivity⟦_/_/_⟧
     module Partial0
       (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
       (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-      ⦃ I : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+      ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
       where
-      open Visible _∼₁_ _∼₂_ (𝓢urjection.surjection I)
+      open Visible _∼₁_ _∼₂_ surjection
       𝓈urjectivity! = 𝒮urjectivity
       𝒮urjectivity! = Surjectivity
     module Partial1
       {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
       (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-      ⦃ I : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+      ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
       where
-      open Visible _∼₁_ _∼₂_ (𝓢urjection.surjection I)
+      open Visible _∼₁_ _∼₂_ surjection
       surjectivity[_] : ⦃ _ : Surjectivity ⦄ → 𝒮urjectivity
       surjectivity[_] = surjectivity⟦_/_/_⟧
     module Partial2
       {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
       (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-      (μ : 𝓼urjection 𝔒₁ 𝔒₂)
+      (μ : Surjection.type 𝔒₁ 𝔒₂)
       where
       open Visible _∼₁_ _∼₂_ μ
       surjectivity⟦_/_⟧ : ⦃ _ : Surjectivity ⦄ → 𝒮urjectivity
@@ -71,7 +71,7 @@ private
     where
     module ≡-Partial3
       {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-      (μ : 𝓼urjection 𝔒₁ 𝔒₂)
+      (μ : Surjection.type 𝔒₁ 𝔒₂)
       where
       open Visible _∼₁_ _≡_ μ
       ≡-surjectivity⟦_⟧ : ⦃ _ : Surjectivity ⦄ → 𝒮urjectivity

@@ -11,7 +11,7 @@ module _
   module _
     (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
     (𝔓 : 𝔒₂ → Ø 𝔯₂)
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
     where
     open 𝔖urjectivity _∼₁_ (Extension 𝔓) surjection
     𝓢urjectextensivity = Surjectivity
@@ -19,7 +19,7 @@ module _
   module _
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {𝔓 : 𝔒₂ → Ø 𝔯₂}
-    ⦃ _ : 𝓢urjection 𝔒₁ 𝔒₂ ⦄
+    ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
     where
     open 𝔖urjectivity _∼₁_ (Extension 𝔓) surjection
     infixr 10 surjectextensivity

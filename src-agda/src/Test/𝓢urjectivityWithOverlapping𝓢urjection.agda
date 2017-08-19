@@ -3,6 +3,7 @@ module Test.𝓢urjectivityWithOverlapping𝓢urjection where
 
 open import Oscar.Prelude
 open import Oscar.Data.Proposequality
+open import Oscar.Class
 open import Oscar.Class.Surjection
 open import Oscar.Class.Surjectivity
 
@@ -20,10 +21,10 @@ module !1 where
 
   instance
 
-    𝓢urjection1 : 𝓢urjection A B
+    𝓢urjection1 : Surjection.class A B
     𝓢urjection1 = ∁ s1
 
-    𝓢urjection2 : 𝓢urjection A B
+    𝓢urjection2 : Surjection.class A B
     𝓢urjection2 = ∁ s2
 
     𝓢urjectivity1 : 𝒮urjectivity! _~A~_ _~B~_
@@ -51,10 +52,10 @@ module !2 where
 
   instance
 
-    𝓢urjection1 : 𝓢urjection A B
+    𝓢urjection1 : Surjection.class A B
     𝓢urjection1 = ∁ s1
 
-    𝓢urjection2 : 𝓢urjection A B
+    𝓢urjection2 : Surjection.class A B
     𝓢urjection2 = ∁ s2
 
     𝓢urjectivity1 : 𝒮urjectivity! _~A~_ _≡_

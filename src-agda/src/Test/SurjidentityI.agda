@@ -19,7 +19,7 @@ module _
          (_∼̇₂2_ : ∀ {x y} → x ∼₂2 y → x ∼₂2 y → Ø ℓ₂)
   where
   postulate
-    instance `𝓢urjection : 𝓢urjection 𝔒₁ 𝔒₂
+    instance `𝓢urjection : Surjection.class 𝔒₁ 𝔒₂
     instance `𝓢urjectivity : 𝒮urjectivity! _∼₁_ _∼₂_
     instance `𝓢urjectextensivity : 𝒮urjectivity! _∼₁_ _∼₂'_
     instance `𝓢urjectivity2 : 𝒮urjectivity! _∼₁_ _∼₂2_
