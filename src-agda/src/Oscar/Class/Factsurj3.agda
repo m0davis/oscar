@@ -19,22 +19,7 @@ module Factsurj3
   (ℜ : π̂² 𝔯 𝔛)
   (ε : 𝓻eflexivity ℜ)
   (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
-  where
-  class = ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) (ε {x}) _◃_ p
-  type = ∀ {x} {p : 𝔓 x} → Leftunit.type (flip (_≈_ {x})) (ε {x}) _◃_ p
-  method = λ ⦃ _ : class ⦄ {x} {p : 𝔓 x} → Leftunit.method (flip (_≈_ {x})) (ε {x}) _◃_ p
-
-module Factsurj3'
-  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
-  (ℜ : π̂² 𝔯 𝔛)
-  (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
-  where
-  family : ℭlass ((λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x}))
-  family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
-  open ℭLASS ((λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x})) (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)) public
+  = ℭLASS ((λ {x} → ε {x}) , (λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x})) (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p))
 
 module _
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
@@ -43,24 +28,11 @@ module _
   {ℜ : π̂² 𝔯 𝔛}
   {ε : 𝓻eflexivity ℜ}
   {_◃_ : 𝒮urjectextensivity ℜ 𝔓}
-  ⦃ _ : Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_ ⦄
+  ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄
   where
   instance
-    unprimeFactsurj3 : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
-    unprimeFactsurj3 .⋆ = Factsurj3'.method 𝔓 _≈_ ℜ ε _◃_
-
-
-module Factsurj3''
-  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
-  (ℜ : π̂² 𝔯 𝔛)
-  (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
-  where
-  family : ℭlass 𝟙
-  family = ∁ ∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)
-  open ℭLASS 𝟙 (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p)) public
+    unprimeFactsurj3 : ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) ε _◃_ p
+    unprimeFactsurj3 .⋆ = Factsurj3.method 𝔓 _≈_ ℜ ε _◃_
 
 private
 
@@ -74,10 +46,10 @@ private
     (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
     (_◃'_ : 𝒮urjectextensivity ℜ 𝔓)
     where
-    test-class' : ⦃ _ : Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_
+    test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
     test-class' = !
-    test-method' : ⦃ _ : Factsurj3'.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3'.type 𝔓 _≈_ ℜ ε _◃_
-    test-method' = Factsurj3'.method _ _ _ _ _
+    test-method' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
+    test-method' = Factsurj3.method _ _ _ _ _
     test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
     test-class = !
     test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
@@ -131,7 +103,7 @@ module 𝓕actsurj3
   (ℜ : π̂² 𝔯 𝔛)
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
-  = Factsurj3' 𝔓 _≈_ ℜ ε surjectextensivity
+  = Factsurj3 𝔓 _≈_ ℜ ε surjectextensivity
 
 module 𝓯actsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
