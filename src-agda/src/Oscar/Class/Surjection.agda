@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
 
-module Oscar.Class.Surjection where -- FIXME Is it odd that here there should be an instance whereas in all other Oscar.Class.* modules, there are (only?) classes; Perhaps all instances should be in a separate tree, e.g. Oscar.Instance.Surjection, Oscar.Instance.Reflexivity.Function, Oscar.Instance.Congruity.Proposequality.
+module Oscar.Class.Surjection where
 
 module _ where
 
