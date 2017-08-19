@@ -50,17 +50,12 @@ private
     test-class' = !
     test-method' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
     test-method' = Factsurj3.method _ _ _ _ _
-    test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+    test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) ε _◃_ p
     test-class = !
     test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
-    test-method = Factsurj3.method 𝔓 _≈_ _ _ _◃_
+    test-method = leftunit.method
     test' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃'_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃'_
-    test' {{i}} {{j}} = magic -- ! -- FIXME
-    -- (∁ (_≈_ {.x} .p (_◃_ {.x} {.x} (ε {.x}) .p)))
-    -- (∁ (_≈_ { x}  p (_◃_  {x}  {x} (ε  {x})  p)))
-    {- _≈_ {.x} .p (_◃_ {.x} {.x} (ε {.x}) .p) = _≈_ { x}  p (_◃_  {x}  {x} (ε  {x})  p)
-
--}
+    test' = !
 
   module Test1
     {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
@@ -70,7 +65,7 @@ private
     (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
     where
     test : ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
-    test {{i}} = magic -- ! -- FIXME
+    test = !
 
   module Test2
     {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
@@ -80,7 +75,7 @@ private
     (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
     where
     test : ⦃ _ : {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
-    test = magic -- ! -- FIXME
+    test = !
 
 module factsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
