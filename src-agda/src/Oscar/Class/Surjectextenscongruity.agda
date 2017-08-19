@@ -15,4 +15,4 @@ module _
   ⦃ _ : 𝓢urjectextensivity _∼ᵣ_ 𝔓 ⦄
   where
   𝓢urjectextenscongruity : Ø _
-  𝓢urjectextenscongruity = ∀ {m n} → Similarity (_∼ₚ_ {m}) (_∼ₚ_ {n}) (surjectextensivity {x = m} {n})
+  𝓢urjectextenscongruity = ∀ {m n} → Similarity.class (_∼ₚ_ {m}) (_∼ₚ_ {n}) (surjectextensivity {x = m} {n})
