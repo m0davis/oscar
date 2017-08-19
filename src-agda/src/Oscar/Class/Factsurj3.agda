@@ -131,7 +131,7 @@ module 𝓕actsurj3
   (ℜ : π̂² 𝔯 𝔛)
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
-  = Factsurj3 𝔓 _≈_ ℜ ε surjectextensivity
+  = Factsurj3' 𝔓 _≈_ ℜ ε surjectextensivity
 
 module 𝓯actsurj3
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
