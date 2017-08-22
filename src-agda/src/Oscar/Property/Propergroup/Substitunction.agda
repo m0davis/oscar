@@ -8,7 +8,6 @@ open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
-open import Oscar.Class.Leftstar
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.Properthing
 open import Oscar.Class.Surjectextensivity
@@ -21,29 +20,14 @@ open import Oscar.Data.Surjcollation
 open import Oscar.Data.Proposequality
 open import Oscar.Property.Setoid.Proposequality
 open import Oscar.Property.Setoid.Proposextensequality
-open import Oscar.Property.Category.ExtensionProposextensequality
 open import Oscar.Property.Functor.SubstitunctionExtensionTerm
-open import Oscar.Property.Category.AListProposequality
-open import Oscar.Property.Monad.Maybe
-open import Oscar.Property.Thickandthin.FinFinProposequalityMaybeProposequality
 open import Oscar.Property.Thickandthin.FinTermProposequalityMaybeProposequality
-open import Oscar.Property.Functor.SubstitistProposequalitySubstitunctionProposextensequality
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Congruity.Proposextensequality
-import Oscar.Class.Transextensionality.Proposequality
 import Oscar.Class.Surjection.⋆
-import Oscar.Class.Injectivity.Vec
-import Oscar.Class.IsDecidable.Fin
-import Oscar.Class.IsDecidable.¶
-import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
-import Oscar.Class.Amgu.Term∃SubstitistMaybe
-import Oscar.Class.PropId
-open import Oscar.Data.Surjcollation
-import Oscar.Data.ExtensionṖroperty
 open import Oscar.Property.Setoid.ṖropertyEquivalence
 import Oscar.Class.Properthing.Ṗroperty
 open import Oscar.Data.ProductIndexEquivalence
-open import Oscar.Property.Setoid.ProductIndexEquivalence
 import Oscar.Data.ExtensionṖroperty
 open import Oscar.Data.ProperlyExtensionNothing
 import Oscar.Class.Properthing.ExtensionṖroperty
