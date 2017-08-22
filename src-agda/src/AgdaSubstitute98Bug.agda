@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 open import Agda.Primitive
 
 infixr 5 _,_
@@ -95,5 +97,5 @@ postulate
   myB : B b x
 
 error : myB .??
-error = Beekeeper.method _ _ _ _ _
+error = {!Beekeeper.method _ _ _ _ _!}
 -- Location of the error: src/full/Agda/TypeChecking/Substitute.hs:98

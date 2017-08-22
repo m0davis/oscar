@@ -1,3 +1,9 @@
+<!--
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+-->
+
 #### Non-unique solutions
 
 Agda finds non-unique solutions of constraints involving `eta-equality` record types when there are other solutions involving hidden arguments. My understanding is that
