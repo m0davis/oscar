@@ -17,8 +17,8 @@ module Test0
   (_≈'_ : ∀̇ π̂² ℓ 𝔓)
   (ℜ : π̂² 𝔯 𝔛)
   (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
-  (_◃'_ : 𝒮urjectextensivity ℜ 𝔓)
+  (_◃_ : Surjectextensivity.TYPE ℜ 𝔓)
+  (_◃'_ : Surjectextensivity.TYPE ℜ 𝔓)
   where
   test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
   test-class' = !
@@ -36,7 +36,7 @@ module Test1
   (𝔓 : π̂ 𝔭 𝔛)
   (_≈_ : ∀̇ π̂² ℓ 𝔓)
   (ℜ : π̂² 𝔯 𝔛)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  (_◃_ : Surjectextensivity.TYPE ℜ 𝔓)
   where
   test : ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
   test = !
@@ -46,7 +46,7 @@ module Test2
   (𝔓 : π̂ 𝔭 𝔛)
   (ℜ : π̂² 𝔯 𝔛)
   (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  (_◃_ : Surjectextensivity.TYPE ℜ 𝔓)
   where
   test : ⦃ _ : {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
   test = !
@@ -57,7 +57,7 @@ test-class : ∀
   ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
   {ℜ : π̂² 𝔯 𝔛}
   ⦃ _ : 𝓡eflexivity ℜ ⦄
-  ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
+  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
   → ⦃ _ : 𝓕actsurj3.class 𝔓 ℜ ⦄
   → 𝓕actsurj3.class 𝔓 ℜ
 test-class = !

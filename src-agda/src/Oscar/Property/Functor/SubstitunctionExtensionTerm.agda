@@ -46,23 +46,23 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjectivitySubstitunctionExtensionTerm : 𝓈urjectivity! Substitunction (Extension Term)
+      𝓼urjectivitySubstitunctionExtensionTerm : Surjectivity!.TYPE Substitunction (Extension Term)
       𝓼urjectivitySubstitunctionExtensionTerm σ (i x) = σ x
       𝓼urjectivitySubstitunctionExtensionTerm σ leaf = leaf
       𝓼urjectivitySubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ₁ fork 𝓼urjectivitySubstitunctionExtensionTerm σ τ₂
       𝓼urjectivitySubstitunctionExtensionTerm σ (function p τs) = function p (𝓼urjectivitySubstitunctionExtensionTerms σ τs)
 
-      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝒮urjectivity Substitunction (Extension $ Terms N) surjection
+      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → Surjectivity.TYPE Substitunction (Extension $ Terms N) surjection
       𝓼urjectivitySubstitunctionExtensionTerms σ ∅ = ∅
       𝓼urjectivitySubstitunctionExtensionTerms σ (τ , τs) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ , 𝓼urjectivitySubstitunctionExtensionTerms σ τs
 
   instance
 
-    𝓢urjectivitySubstitunctionExtensionTerm : 𝒮urjectivity! Substitunction (Extension Term)
-    𝓢urjectivitySubstitunctionExtensionTerm .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerm
+    𝓢urjectivitySubstitunctionExtensionTerm : Surjectivity!.class Substitunction (Extension Term)
+    𝓢urjectivitySubstitunctionExtensionTerm .⋆ _ _ = 𝓼urjectivitySubstitunctionExtensionTerm
 
-    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → 𝒮urjectivity! Substitunction (Extension $ Terms N)
-    𝓢urjectivitySubstitunctionExtensionTerms .𝓢urjectivity.surjectivity = 𝓼urjectivitySubstitunctionExtensionTerms
+    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → Surjectivity!.class Substitunction (Extension $ Terms N)
+    𝓢urjectivitySubstitunctionExtensionTerms .⋆ _ _ = 𝓼urjectivitySubstitunctionExtensionTerms
 
   instance
 
@@ -78,23 +78,23 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   private
 
     mutual
-      𝓼urjextensionalitySubstitunctionExtensionTerm : 𝓼urjextensionality Substitunction _≈_ (Extension Term) _≈_
+      𝓼urjextensionalitySubstitunctionExtensionTerm : Surjextensionality!.TYPE Substitunction _≈_ (Extension Term) _≈_
       𝓼urjextensionalitySubstitunctionExtensionTerm p (i x) = p x
       𝓼urjextensionalitySubstitunctionExtensionTerm p leaf = ∅
       𝓼urjextensionalitySubstitunctionExtensionTerm p (s fork t) = congruity₂ _fork_ (𝓼urjextensionalitySubstitunctionExtensionTerm p s) (𝓼urjextensionalitySubstitunctionExtensionTerm p t)
       𝓼urjextensionalitySubstitunctionExtensionTerm p (function fn ts) = congruity (function fn) (𝓼urjextensionalitySubstitunctionExtensionTerms p ts)
 
-      𝓼urjextensionalitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjextensionality Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
+      𝓼urjextensionalitySubstitunctionExtensionTerms : ∀ {N} → Surjextensionality!.TYPE Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
       𝓼urjextensionalitySubstitunctionExtensionTerms p ∅ = ∅
       𝓼urjextensionalitySubstitunctionExtensionTerms p (t , ts) = congruity₂ _,_ (𝓼urjextensionalitySubstitunctionExtensionTerm p t) (𝓼urjextensionalitySubstitunctionExtensionTerms p ts)
 
   instance
 
-    𝓢urjextensionalitySubstitunction : 𝓢urjextensionality Substitunction Proposextensequality (Extension Term) Proposextensequality
-    𝓢urjextensionalitySubstitunction .𝓢urjectivity.surjectivity = 𝓼urjextensionalitySubstitunctionExtensionTerm
+    𝓢urjextensionalitySubstitunction : Surjextensionality!.class Substitunction Proposextensequality (Extension Term) Proposextensequality
+    𝓢urjextensionalitySubstitunction .⋆ _ _ _ _ = 𝓼urjextensionalitySubstitunctionExtensionTerm
 
-    𝓢urjextensionalitySubstitunctions : ∀ {N} → 𝓢urjextensionality Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
-    𝓢urjextensionalitySubstitunctions .𝓢urjectivity.surjectivity = 𝓼urjextensionalitySubstitunctionExtensionTerms
+    𝓢urjextensionalitySubstitunctions : ∀ {N} → Surjextensionality!.class Substitunction Proposextensequality (Extension $ Terms N) Proposextensequality
+    𝓢urjextensionalitySubstitunctions .⋆ _ _ _ _ = 𝓼urjextensionalitySubstitunctionExtensionTerms
 
   private
 

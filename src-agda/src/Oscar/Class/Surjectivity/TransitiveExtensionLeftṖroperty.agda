@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Transitivity
 import Oscar.Class.Surjection.⋆
@@ -15,5 +16,5 @@ instance
     ⦃ _ : 𝓣ransitivity _↦_ ⦄
     -- ⦃ _ : [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_) ⦄
     -- FIXME, the above line is commented-out b/c Agda gets confused by the other [𝓢urjectivity] instance in Oscar.Class
-    → 𝒮urjectivity! _↦_ (Extension $ LeftṖroperty ℓ _↦_)
-  ṖropertySurjectivity .𝓢urjectivity.surjectivity f (∁ P) .π₀ g = P (g ∙ f)
+    → Surjectivity!.class _↦_ (Extension $ LeftṖroperty ℓ _↦_)
+  ṖropertySurjectivity .⋆ _ _ f (∁ P) .π₀ g = P (g ∙ f)

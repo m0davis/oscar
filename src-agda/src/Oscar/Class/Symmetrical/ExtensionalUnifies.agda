@@ -25,8 +25,8 @@ module _
     {ℓ₂} {_∼₂_ : ∀ {y} → ℭ y → ℭ y → Ø ℓ₂}
     ⦃ _ : ∀ {y} → 𝓢ymmetry (_∼₂_ {y}) ⦄
     ⦃ _ : ∀ {y} → 𝓣ransitivity (_∼₂_ {y}) ⦄
-    ⦃ _ : 𝒮urjectivity! _↦_ (Extension ℭ) ⦄
-    ⦃ _ : 𝓢urjextensionality _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
+    ⦃ _ : Surjectivity!.class _↦_ (Extension ℭ) ⦄
+    ⦃ _ : Surjextensionality!.class _↦_ _↦̇_ (Extension ℭ) (Pointwise _∼₂_) ⦄
   where
 
   instance

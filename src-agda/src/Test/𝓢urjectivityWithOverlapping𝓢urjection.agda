@@ -27,11 +27,11 @@ module !1 where
     𝓢urjection2 : Surjection.class A B
     𝓢urjection2 = ∁ s2
 
-    𝓢urjectivity1 : 𝒮urjectivity! _~A~_ _~B~_
-    𝓢urjectivity.surjectivity 𝓢urjectivity1 = f1
+    𝓢urjectivity1 : Surjectivity!.class _~A~_ _~B~_
+    𝓢urjectivity1 .⋆ _ _ = f1
 
-    𝓢urjectivity2 : 𝒮urjectivity! _~A~_ _~B~_
-    𝓢urjectivity.surjectivity 𝓢urjectivity2 = f2
+    𝓢urjectivity2 : Surjectivity!.class _~A~_ _~B~_
+    𝓢urjectivity2 .⋆ _ _ = f2
 
   test1 : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
   test1 = surjectivity
@@ -58,11 +58,11 @@ module !2 where
     𝓢urjection2 : Surjection.class A B
     𝓢urjection2 = ∁ s2
 
-    𝓢urjectivity1 : 𝒮urjectivity! _~A~_ _≡_
-    𝓢urjectivity.surjectivity 𝓢urjectivity1 = f1
+    𝓢urjectivity1 : Surjectivity!.class _~A~_ _≡_
+    𝓢urjectivity1 .⋆ _ _ = f1
 
-    𝓢urjectivity2 : 𝒮urjectivity! _~A~_ _≡_
-    𝓢urjectivity.surjectivity 𝓢urjectivity2 = f2
+    𝓢urjectivity2 : Surjectivity!.class _~A~_ _≡_
+    𝓢urjectivity2 .⋆ _ _ = f2
 
   test-rhs-1 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
   test-rhs-1 = surjectivity
@@ -74,10 +74,10 @@ module !2 where
   test-rhs-3 {x} {y} x~A~y = (Proposequality⟦ B ⟧ on s2) x y ∋ surjectivity x~A~y
 
   test-lhs-1 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-1 x~A~y rewrite surjectivity‼ ⦃ ∅ ⦄ ⦃ r = 𝓢urjectivity2 ⦄ x~A~y = ∅
+  test-lhs-1 x~A~y rewrite surjectivity ⦃ 𝓢urjectivity2 ⦄ x~A~y = ∅
 
   test-lhs-2 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-2 x~A~y rewrite surjectivity! {_∼₂_ = Proposequality} ⦃ 𝓢urjection2 ⦄ x~A~y = ∅
+  test-lhs-2 x~A~y rewrite surjectivity {_∼₂_ = Proposequality} { surjection ⦃ 𝓢urjection2 ⦄} x~A~y = ∅
 
   test-lhs-3 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
   test-lhs-3 x~A~y rewrite Proposequality (s1 _) _ ∋ surjectivity x~A~y = magic

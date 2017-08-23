@@ -13,7 +13,7 @@ module _
   {ℓ𝔭} (_≈̇_ : ∀ {x} → 𝔓 x → 𝔓 x → Ø ℓ𝔭) (let _≈̇_ = _≈̇_ ; infix 4 _≈̇_)
   where
   module _
-    ⦃ _ : 𝓢urjectextensivity _∼_ 𝔓 ⦄
+    ⦃ _ : Surjectextensivity.class _∼_ 𝔓 ⦄
     where
     record 𝓕actsurj6 : Ø 𝔬 ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ℓ∼ ∙̂ ℓ𝔭 where
       field factsurj6 : ∀ {m n} {f g : m ∼ n} (P : 𝔓 m) → f ≈̈ g → f ◃ P ≈̇ g ◃ P

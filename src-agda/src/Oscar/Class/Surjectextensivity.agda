@@ -1,42 +1,36 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.Surjectivity using (module 𝔖urjectivity)
+open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjection
 
 module Oscar.Class.Surjectextensivity where
 
+module Surjectextensivity
+  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
+  (∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+  (𝔓 : 𝔒₂ → Ø 𝔯₂)
+  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
+  = Surjectivity ∼₁ (Extension 𝔓) surjection
+
 module _
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
+  {∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+  {𝔓 : 𝔒₂ → Ø 𝔯₂}
+  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   where
-  module _
-    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-    (𝔓 : 𝔒₂ → Ø 𝔯₂)
-    ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-    where
-    open 𝔖urjectivity _∼₁_ (Extension 𝔓) surjection
-    𝓢urjectextensivity = Surjectivity
-    𝒮urjectextensivity = 𝒮urjectivity
-  module _
-    {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-    {𝔓 : 𝔒₂ → Ø 𝔯₂}
-    ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-    where
-    open 𝔖urjectivity _∼₁_ (Extension 𝔓) surjection
-    infixr 10 surjectextensivity
-    surjectextensivity = surjectivity⟦_/_/_⟧
-    syntax surjectextensivity σ τ = σ ◃ τ
-    surjectextensivity!syntax = surjectextensivity
-    infixl 10 surjectextensivity!syntax
-    syntax surjectextensivity!syntax rxy px = px ● rxy
+  open Surjectextensivity ∼₁ 𝔓
+  surjectextensivity : ⦃ _ : class ⦄ → TYPE
+  surjectextensivity = method _ _
+  infixr 10 _◃_
+  _◃_ = surjectextensivity
 
-open import Oscar.Class.Surjection.⋆
-
-surjectextensivity[]syntax : ∀
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-  {𝔯₁} {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-  {𝔬₂} (𝔒₂ : 𝔒₁ → Ø 𝔬₂)
-  ⦃ _ : 𝓢urjectextensivity _∼₁_ 𝔒₂ ⦄
-  → 𝒮urjectextensivity _∼₁_ 𝔒₂
-surjectextensivity[]syntax _ = surjectextensivity
-
-syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
+module _
+  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
+  {∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
+  (𝔓 : 𝔒₂ → Ø 𝔯₂)
+  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
+  where
+  open Surjectextensivity ∼₁ 𝔓
+  surjectextensivity[]syntax : ⦃ _ : class ⦄ → TYPE
+  surjectextensivity[]syntax = method _ _
+  syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx

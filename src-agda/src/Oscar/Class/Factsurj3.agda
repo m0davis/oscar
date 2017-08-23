@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 -- open import Oscar.Class.HasEquivalence -- FIXME make similar to Reflexivity and Surjextensivity
 open import Oscar.Class.Reflexivity using (𝓻eflexivity)
-open import Oscar.Class.Surjectextensivity using (𝒮urjectextensivity)
+open import Oscar.Class.Surjectextensivity using (module Surjectextensivity)
 open import Oscar.Data.Constraint
 import Oscar.Class.Surjection.⋆
 
@@ -18,7 +18,7 @@ module Factsurj3
   (_≈_ : ∀̇ π̂² ℓ 𝔓)
   (ℜ : π̂² 𝔯 𝔛)
   (ε : 𝓻eflexivity ℜ)
-  (_◃_ : 𝒮urjectextensivity ℜ 𝔓)
+  (_◃_ : Surjectextensivity.TYPE ℜ 𝔓)
   = ℭLASS ((λ {x} → ε {x}) , (λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x})) (∀ {x} {p : 𝔓 x} → p ≈ (ε ◃ p))
 
 module _
@@ -27,7 +27,7 @@ module _
   {_≈_ : ∀̇ π̂² ℓ 𝔓}
   {ℜ : π̂² 𝔯 𝔛}
   {ε : 𝓻eflexivity ℜ}
-  {_◃_ : 𝒮urjectextensivity ℜ 𝔓}
+  {_◃_ : Surjectextensivity.TYPE ℜ 𝔓}
   ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄
   where
   instance
@@ -40,7 +40,7 @@ module factsurj3
   {_≈_ : ∀̇ π̂² ℓ 𝔓}
   {ℜ : π̂² 𝔯 𝔛}
   {ε : 𝓻eflexivity ℜ}
-  {_◃_ : 𝒮urjectextensivity ℜ 𝔓}
+  {_◃_ : Surjectextensivity.TYPE ℜ 𝔓}
   where
   method = Factsurj3.method 𝔓 _≈_ ℜ ε _◃_
 
@@ -54,7 +54,7 @@ module 𝓕actsurj3
   ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
   (ℜ : π̂² 𝔯 𝔛)
   ⦃ _ : 𝓡eflexivity ℜ ⦄
-  ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
+  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
   = Factsurj3 𝔓 _≈_ ℜ ε surjectextensivity
 
 module 𝓯actsurj3
@@ -63,6 +63,6 @@ module 𝓯actsurj3
   ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
   {ℜ : π̂² 𝔯 𝔛}
   ⦃ _ : 𝓡eflexivity ℜ ⦄
-  ⦃ _ : 𝓢urjectextensivity ℜ 𝔓 ⦄
+  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
   where
   method = 𝓕actsurj3.method 𝔓 ℜ ⦃ ! ⦄ ⦃ ! ⦄
