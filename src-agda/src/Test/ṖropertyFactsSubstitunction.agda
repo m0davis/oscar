@@ -22,15 +22,16 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
-import Oscar.Class.Surjectivity.ExtensionṖroperty
+import Oscar.Class.Surjectivity.ExtensionṖroperty -- including makes test-epfs⋆' fail; excluding makes test-epfs fail
 import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Class.[ExtensibleType].Proposequality
-import Oscar.Property.Functor.SubstitunctionExtensionTerm
+import Oscar.Property.Functor.SubstitunctionExtensionTerm hiding (𝓢urjectivitySubstitunctionExtensionTerm; 𝓢urjectivitySubstitunctionExtensionTerms) -- unhiding makes test-epfs⋆' fail; hiding makes fact1⋆ fail
 import Oscar.Property.Propergroup.Substitunction
 import Oscar.Property.Setoid.Proposequality
 import Oscar.Class.Surjection.⋆
+open import Oscar.Class.Surjectivity
 
 module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (
@@ -49,6 +50,9 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = surjectextensivity c p
+
+  test-epfs⋆' : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
+  test-epfs⋆' c p = surjectivity c p
 
   test-epfs : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
   test-epfs c p = surjectextensivity c p
