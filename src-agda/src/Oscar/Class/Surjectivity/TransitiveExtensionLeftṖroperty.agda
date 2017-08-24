@@ -17,4 +17,4 @@ instance
     -- ⦃ _ : [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_) ⦄
     -- FIXME, the above line is commented-out b/c Agda gets confused by the other [𝓢urjectivity] instance in Oscar.Class
     → Surjectivity!.class _↦_ (Extension $ LeftṖroperty ℓ _↦_)
-  ṖropertySurjectivity .⋆ _ _ f (∁ P) .π₀ g = P (g ∙ f)
+  ṖropertySurjectivity .⋆ f (∁ P) .π₀ g = P (g ∙ f)

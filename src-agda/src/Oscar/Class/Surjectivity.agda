@@ -12,8 +12,7 @@ module Surjectivity
   (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
   (μ : Surjection.type 𝔒₁ 𝔒₂)
   where
-  open ℭLASS (_∼₁_ , _∼₂_ , μ) (∀ x y → x ∼₁ y → μ x ∼₂ μ y) public
-  TYPE = ∀ {x y} → x ∼₁ y → μ x ∼₂ μ y
+  open ℭLASS (_∼₁_ , _∼₂_ , μ) (∀ {x y} → x ∼₁ y → μ x ∼₂ μ y) public
 
 module _
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
@@ -22,8 +21,8 @@ module _
   {μ : Surjection.type 𝔒₁ 𝔒₂}
   where
   open Surjectivity _∼₁_ _∼₂_ μ
-  surjectivity : ⦃ _ : class ⦄ → TYPE
-  surjectivity = method _ _
+  surjectivity : ⦃ _ : class ⦄ → type
+  surjectivity = method
   § = surjectivity
 
 module _
@@ -33,7 +32,7 @@ module _
   (μ : Surjection.type 𝔒₁ 𝔒₂)
   where
   open Surjectivity _∼₁_ _∼₂_ μ
-  surjectivity⟦_/_⟧ : ⦃ _ : class ⦄ → TYPE
+  surjectivity⟦_/_⟧ : ⦃ _ : class ⦄ → type
   surjectivity⟦_/_⟧ = surjectivity
 
 module _
@@ -42,7 +41,7 @@ module _
   (μ : Surjection.type 𝔒₁ 𝔒₂)
   where
   open Surjectivity _∼₁_ _≡_ μ
-  ≡-surjectivity⟦_⟧ : ⦃ _ : class ⦄ → TYPE
+  ≡-surjectivity⟦_⟧ : ⦃ _ : class ⦄ → type
   ≡-surjectivity⟦_⟧ = surjectivity
 
 module Surjectivity!

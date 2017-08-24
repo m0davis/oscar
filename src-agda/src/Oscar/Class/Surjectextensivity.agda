@@ -19,8 +19,8 @@ module _
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   where
   open Surjectextensivity ∼₁ 𝔓
-  surjectextensivity : ⦃ _ : class ⦄ → TYPE
-  surjectextensivity = method _ _
+  surjectextensivity : ⦃ _ : class ⦄ → type
+  surjectextensivity = method
   infixr 10 _◃_
   _◃_ = surjectextensivity
 
@@ -31,6 +31,6 @@ module _
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   where
   open Surjectextensivity ∼₁ 𝔓
-  surjectextensivity[]syntax : ⦃ _ : class ⦄ → TYPE
-  surjectextensivity[]syntax = method _ _
+  surjectextensivity[]syntax : ⦃ _ : class ⦄ → type
+  surjectextensivity[]syntax = method
   syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx

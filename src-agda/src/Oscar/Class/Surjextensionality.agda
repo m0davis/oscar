@@ -14,7 +14,7 @@ module Surjextensionality
   (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
   (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
   (surjection : Surjection.type 𝔒₁ 𝔒₂)
-  (surjectivity : Surjectivity.TYPE _∼₁_ _∼₂_ surjection)
+  (surjectivity : Surjectivity.type _∼₁_ _∼₂_ surjection)
   where
   open ℭLASS (_∼₁_ ,, (λ {x y} → _∼̇₁_ {x} {y}) ,, _∼₂_ ,, (λ {x y} → _∼̇₂_ {x} {y}) ,, surjection ,, (λ {x y} → surjectivity {x} {y})) (∀ x y (f₁ f₂ : x ∼₁ y) → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂) public
   TYPE = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → surjectivity f₁ ∼̇₂ surjectivity f₂
