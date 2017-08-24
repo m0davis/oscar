@@ -1,3 +1,6 @@
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
 I had thought that, in all cases where an argument is applied to a function, any unmentioned preceding instance arguments would be filled by agda as `{{it}}`. For example, given `foo : {{_ _ : _}} -> _ -> _`, `foo x` is equivalent to `foo {{it}} x`, which in turn is equivalent to `foo {{it}} {{it}} x`. But it turns out that isn't the case, as shown below.
 ```agda
 {-# OPTIONS --instance-search-depth=10 #-}
@@ -88,7 +91,7 @@ works-2 C x d =
 fails C x d =
   let instance iC = C
                iDF = toDiagonalFunctionClass
-  in diagonalProperty _ d -- Instance search depth exhausted
+  in {!diagonalProperty _ d!} -- Instance search depth exhausted
 ```
 
 The error is
