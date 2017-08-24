@@ -13,6 +13,15 @@ module _
   {𝔒₁ : Ø 𝔬₁}
   {𝔒₂ : Ø 𝔬₂}
   where
+  module Surjidentity
+    {μ : Surjection.type 𝔒₁ 𝔒₂}
+    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
+    (§ : Surjectivity.TYPE _∼₁_ _∼₂_ μ)
+    (ε₁ : 𝓻eflexivity _∼₁_)
+    (ε₂ : 𝓻eflexivity _∼₂_)
+    = ℭLASS ((λ {x} {y} → § {x} {y}) , (λ {x} → ε₁ {x}) , (λ {x y} → _∼̇₂_ {x} {y}) , (λ {x} → ε₂ {x})) (∀ {x} → § (ε₁ {x}) ∼̇₂ ε₂)
   module _
     {μ : Surjection.type 𝔒₁ 𝔒₂}
     (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
@@ -22,9 +31,8 @@ module _
     (ε₁ : 𝓻eflexivity _∼₁_)
     (ε₂ : 𝓻eflexivity _∼₂_)
     where
-    𝔰urjidentity : ℭlass $ (λ {x} {y} → § {x} {y}) , (λ {x} → ε₁ {x}) , (λ {x y} → _∼̇₂_ {x} {y}) , (λ {x} → ε₂ {x})
-    𝔰urjidentity = ∁ ∀ {x} → § (ε₁ {x}) ∼̇₂ ε₂
-    open ℭlass 𝔰urjidentity using () renaming (GET-CLASS to Surjidentity; SET-METHOD to 𝓼urjidentity') public
+    open Surjidentity _∼₁_ _∼₂_ _∼̇₂_ (λ {x} {y} → § {x} {y}) (λ {x} → ε₁ {x}) (λ {x} → ε₂ {x}) public
+      using () renaming (class to Surjidentity; type to 𝓼urjidentity')
   module _
     {μ : Surjection.type 𝔒₁ 𝔒₂}
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
@@ -34,7 +42,8 @@ module _
     {ε₁ : 𝓻eflexivity _∼₁_}
     {ε₂ : 𝓻eflexivity _∼₂_}
     where
-    open ℭlass (𝔰urjidentity {μ} _∼₁_ _∼₂_ _∼̇₂_ § ε₁ ε₂) using () renaming (GET-METHOD to surjidentity) public
+    open Surjidentity _∼₁_ _∼₂_ _∼̇₂_ (λ {x} {y} → § {x} {y}) (λ {x} → ε₁ {x}) (λ {x} → ε₂ {x}) public
+      using () renaming (method to surjidentity) public
   module _
     (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
     (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
@@ -44,7 +53,8 @@ module _
     ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
     ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
     where
-    open ℭlass (𝔰urjidentity {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε) using () renaming (GET-CLASS to 𝓢urjidentity; SET-METHOD to 𝓼urjidentity) public
+    open Surjidentity {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε public
+      using () renaming (class to 𝓢urjidentity; type to 𝓼urjidentity) public
   module _
     (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
     {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
@@ -54,4 +64,4 @@ module _
     ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
     ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
     where
-    open ℭlass (𝔰urjidentity {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε) using () renaming (GET-METHOD to surjidentity[_,_]) public
+    open Surjidentity {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε using () renaming (method to surjidentity[_,_]) public

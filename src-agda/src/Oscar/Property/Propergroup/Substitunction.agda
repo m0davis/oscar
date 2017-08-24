@@ -68,10 +68,10 @@ module _
   instance
 
     𝒫roperfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 S._⟹_ (_fork_ {n = n})
-    𝒫roperfact1UnifiesSubstitunctionFork .𝓠uadricity.⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+    𝒫roperfact1UnifiesSubstitunctionFork .⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
     𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 Ṡ._⟹_ (_fork_ {n = n})
-    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork .𝓠uadricity.⋆ _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
+    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork .⋆ _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   instance
 

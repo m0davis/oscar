@@ -4,7 +4,7 @@ open import Oscar.Class
 
 module Oscar.Class.Leftstar where
 
-module _
+module Leftstar
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
   {𝔄 : Ø 𝔞}
   {𝔅 : Ø 𝔟}
@@ -12,9 +12,7 @@ module _
   (𝔄̇ : 𝔄 → Ø 𝔞̇)
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
-  where
-  𝔩eftstar : ℭlass (_◂_ , 𝔅̇)
-  𝔩eftstar = ∁ ∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x)
+  = ℭLASS (_◂_ , 𝔅̇) (∀ {x} f → 𝔄̇ x → 𝔅̇ (f ◂ x))
 
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
@@ -25,8 +23,8 @@ module _
   (𝔅̇ : 𝔅 → Ø 𝔟̇)
   (_◂_ : 𝔉 → 𝔄 → 𝔅)
   where
-  module LEFTSTAR = ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-CLASS to ∁⟦_/_/_⟧; GET-METHOD to F⟦_/_/_⟧)
-  open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-CLASS to Leftstar; GET-METHOD to leftstar⟦_/_/_⟧) public
+  module LEFTSTAR = Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (class to ∁⟦_/_/_⟧; method to F⟦_/_/_⟧)
+  open Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (class to Leftstar; method to leftstar⟦_/_/_⟧) public
 
 module _
   {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
@@ -37,4 +35,4 @@ module _
   {𝔅̇ : 𝔅 → Ø 𝔟̇}
   {_◂_ : 𝔉 → 𝔄 → 𝔅}
   where
-  open ℭlass (𝔩eftstar 𝔄̇ 𝔅̇ _◂_) using () renaming (GET-METHOD to leftstar) public
+  open Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (method to leftstar) public

@@ -9,24 +9,21 @@ module SymmetryClass
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   {x y}
   (x∼y : x ∼ y)
-  where
-  𝔰ymmetry : ℭlass {𝔯} $ _∼_ ,, x∼y
-  𝔰ymmetry = ∁ $′ y ∼ x
+  = ℭLASS (_∼_ ,, x∼y) (y ∼ x)
 
 module SymmetryInterface0
   {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  {x y}
-  (x∼y : x ∼ y)
-  where
-  open ℭlass (SymmetryClass.𝔰ymmetry _∼_ x∼y) public
+  {𝔯} (∼ : 𝔒 → 𝔒 → Ø 𝔯)
+  {x y : 𝔒}
+  (x∼y : ∼ x y)
+  = SymmetryClass ∼ x∼y
 
 module SymmetryInterface1
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   where
   open SymmetryInterface0 _∼_
-  𝓢ymmetry = ∀ {x y} {x∼y : x ∼ y} → GET-CLASS x∼y
+  𝓢ymmetry = ∀ {x y} {x∼y : x ∼ y} → class x∼y
 
 module SymmetryInterface2
   {𝔬} {𝔒 : Ø 𝔬}
@@ -34,11 +31,11 @@ module SymmetryInterface2
   where
   open SymmetryInterface1 _∼_
   open SymmetryInterface0 _∼_
-  𝓼ymmetry = ∀ {x y} (x∼y : x ∼ y) → SET-METHOD x∼y
+  𝓼ymmetry = ∀ {x y} (x∼y : x ∼ y) → type x∼y
   module _
     ⦃ _ : 𝓢ymmetry ⦄
     where
-    symmetry[_] = 𝓼ymmetry ∋ λ {x} {y} (x∼y : x ∼ y) → GET-METHOD x∼y
+    symmetry[_] = 𝓼ymmetry ∋ λ {x} {y} (x∼y : x ∼ y) → method x∼y
 
 module SymmetryInterface3
   {𝔬} {𝔒 : Ø 𝔬}
