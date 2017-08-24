@@ -11,7 +11,7 @@ module _
   where
   𝔥asEquivalence : Rℭlass 𝟙
   𝔥asEquivalence = ∁ (𝔒 → 𝔒 → Ø ℓ) IsEquivalence
-  open Rℭlass 𝔥asEquivalence using () renaming (SET-CLASS to HasEquivalence) public
+  open Rℭlass 𝔥asEquivalence using () renaming (GET-CLASS to HasEquivalence) public
 
 module _
   {𝔬} (𝔒 : Ø 𝔬) {ℓ}

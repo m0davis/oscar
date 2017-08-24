@@ -1,7 +1,6 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
-import Oscar.Data.Constraint
 
 module Oscar.Class.Transitivity where
 
@@ -20,7 +19,7 @@ module _
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   where
   𝓽ransitivity = ∀ {x y z} (x∼y : x ∼ y) (y∼z : y ∼ z) → ℭlass.SET-METHOD (𝔱ransitivity _∼_ x∼y y∼z)
-  𝓣ransitivity = ∀ {x y z} {x∼y : x ∼ y} {y∼z : y ∼ z} → ℭlass.SET-CLASS (𝔱ransitivity _∼_ x∼y y∼z)
+  𝓣ransitivity = ∀ {x y z} {x∼y : x ∼ y} {y∼z : y ∼ z} → ℭlass.GET-CLASS (𝔱ransitivity _∼_ x∼y y∼z)
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
