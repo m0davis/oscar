@@ -5,6 +5,7 @@ I had thought that, in all cases where an argument is applied to a function, any
 ```agda
 {-# OPTIONS --instance-search-depth=10 #-}
 {-# OPTIONS --show-implicit #-}
+-- {-# OPTIONS -v tc:30 #-} -- include to see "you shouldn't see this" in the debug output
 
 open import Agda.Primitive
 
