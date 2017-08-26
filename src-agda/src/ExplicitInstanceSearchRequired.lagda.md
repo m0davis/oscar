@@ -104,3 +104,39 @@ The error is
     {P : (x₁ : I) → R x₁ x₁ → Set p} {{C = C₁ : FunctionClass {i} I}}
     {{iDP : DiagonalPropertyClass {i} {r} {p} {I} R P C₁}} →
     DiagonalPropertyType {i} {r} {p} {I} R P
+
+A similar error arises from the following test case:
+```agda
+postulate
+  r p : Level
+  I : Set
+  R : I -> I -> Set r
+  P : ∀ x -> R x x -> Set p
+  instance C : FunctionClass I
+  instance iDP : DiagonalPropertyClass R P C
+
+instance iDF = toDiagonalFunctionClass
+
+?i : Level
+?I : Set ?i
+?R : ?I -> ?I -> Set r
+?P : ∀ x -> ?R x x -> Set p
+?C : FunctionClass ?I
+?iDP : DiagonalPropertyClass ?R ?P ?C
+
+?i = _
+?I = _
+?R = _
+?P = _
+
+-- reverse the order of the following two lines to get the "instance search depth exhausted" error
+?C = it
+?iDP = it
+```
+
+The error is:
+
+    Instance search depth exhausted (max depth: 10) for candidate
+    C : FunctionClass {lzero} I
+    when checking that the expression it has type
+    DiagonalPropertyClass {?i} {r} {p} {?I} ?R ?P ?C
