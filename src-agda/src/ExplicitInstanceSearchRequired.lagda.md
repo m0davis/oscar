@@ -112,9 +112,10 @@ postulate
   I : Set
   R : I -> I -> Set r
   P : ∀ x -> R x x -> Set p
-  instance C : FunctionClass I
+  C : FunctionClass I
   instance iDP : DiagonalPropertyClass R P C
 
+instance iC = C
 instance iDF = toDiagonalFunctionClass
 
 ?i : Level
@@ -137,6 +138,6 @@ instance iDF = toDiagonalFunctionClass
 The error is:
 
     Instance search depth exhausted (max depth: 10) for candidate
-    C : FunctionClass {lzero} I
+    iDP : DiagonalPropertyClass {lzero} {r} {p} {I} R P C
     when checking that the expression it has type
     DiagonalPropertyClass {?i} {r} {p} {?I} ?R ?P ?C
