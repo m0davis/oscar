@@ -1,5 +1,13 @@
 
-open import Oscar.Prelude
+import Oscar.Class.HasEquivalence.ExtensionṖroperty
+import Oscar.Class.HasEquivalence.Ṗroperty
+import Oscar.Class.Properthing.ExtensionṖroperty
+import Oscar.Class.Properthing.Ṗroperty
+import Oscar.Class.Surjection.⋆
+import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
+import Oscar.Class.Symmetrical.ExtensionalUnifies
+import Oscar.Class.Symmetrical.Unifies
 open import Oscar.Class
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
@@ -13,9 +21,9 @@ open import Oscar.Class.Properthing
 open import Oscar.Class.Quadricity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Similarity
-open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
 open import Oscar.Class.Symmetry
@@ -24,17 +32,7 @@ open import Oscar.Class.Unit
 open import Oscar.Class.[ExtensibleType]
 open import Oscar.Data.Surjcollation
 open import Oscar.Data.Surjextenscollation
-import Oscar.Class.HasEquivalence.ExtensionṖroperty
-import Oscar.Class.HasEquivalence.Ṗroperty
-import Oscar.Class.Properthing.ExtensionṖroperty
-import Oscar.Class.Properthing.Ṗroperty
-import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
-import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
-import Oscar.Class.Symmetrical.ExtensionalUnifies
-import Oscar.Class.Symmetrical.Unifies
-import Oscar.Class.Surjection.⋆
-import Oscar.Data.Proposequality
-import Oscar.Data.Constraint
+open import Oscar.Prelude
 
 module Test.ṖropertyFacts where
 
