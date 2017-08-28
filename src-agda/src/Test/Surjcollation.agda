@@ -7,6 +7,7 @@ open import Oscar.Data.Term
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Proposequality
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Surjextenscollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies
@@ -18,9 +19,8 @@ module Test.Surjcollation {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
   open Substitunction 𝔓
 
-  module 𝓢 = SurjcollationOperator Substitunction Proposequality
-  module 𝓢̇ = SurjextenscollationOperator Substitunction Proposextensequality
-  module 𝓢̇' = Surjextenscollation' Fin Term _≡̇_
+  module 𝓢 = Surjcollation Substitunction Proposequality
+  module 𝓢̇ = Surjextenscollation Substitunction Proposextensequality
 
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : Term 𝓃) → 𝓈 𝓢.⟹ 𝓉 ≈ 𝓉 𝓢.⟹ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉
@@ -29,8 +29,5 @@ module Test.Surjcollation {𝔭} (𝔓 : Ø 𝔭) where
   fact1⋆s : ∀ {N 𝓃} (𝓈 𝓉 : Terms N 𝓃) → 𝓈 𝓢.⟹ 𝓉 ≈ 𝓉 𝓢.⟹ 𝓈
   fact1⋆s 𝓈 𝓉 = symmetrical 𝓈 𝓉
 
-  fact1 : ∀ {𝓃} (𝓈 𝓉 : Term 𝓃) → 𝓈 𝓢̇'.⟹ 𝓉 ≈ 𝓉 𝓢̇'.⟹ 𝓈
+  fact1 : ∀ {𝓃} (𝓈 𝓉 : Term 𝓃) → 𝓈 𝓢̇.⟹ 𝓉 ≈ 𝓉 𝓢̇.⟹ 𝓈
   fact1 𝓈 𝓉 = symmetrical 𝓈 𝓉
-
-  fact1s : ∀ {N 𝓃} (𝓈 𝓉 : Terms N 𝓃) → 𝓈 𝓢̇.⟹ 𝓉 ≈ 𝓉 𝓢̇.⟹ 𝓈
-  fact1s 𝓈 𝓉 = symmetrical 𝓈 𝓉

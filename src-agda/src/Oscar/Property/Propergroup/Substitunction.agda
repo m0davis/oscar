@@ -17,6 +17,7 @@ open import Oscar.Data.Fin
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Surjextenscollation
 open import Oscar.Data.Proposequality
 open import Oscar.Property.Setoid.Proposequality
 open import Oscar.Property.Setoid.Proposextensequality
@@ -62,8 +63,8 @@ module _
   where
   open Term 𝔓
 
-  module S = SurjcollationOperator (Arrow Fin Term) _≡_
-  module Ṡ = SurjextenscollationOperator (Arrow Fin Term) _≡̇_
+  module S = Surjcollation (Arrow Fin Term) _≡_
+  module Ṡ = Surjextenscollation (Arrow Fin Term) _≡̇_
 
   instance
 

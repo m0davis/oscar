@@ -7,7 +7,7 @@ open import Oscar.Class.Symmetry
 open import Oscar.Class.Symmetrical
 open import Oscar.Class.Transitivity
 open import Oscar.Data.ProductIndexEquivalence
-open import Oscar.Data.Surjcollation
+open import Oscar.Data.Surjextenscollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.Surjection.⋆
 import Oscar.Data.ExtensionṖroperty

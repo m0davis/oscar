@@ -5,6 +5,7 @@ open import Oscar.Class.Symmetrical
 open import Oscar.Data.Term
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Surjextenscollation
 open import Oscar.Data.Proposequality
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
@@ -24,7 +25,7 @@ module Test.SymmetricalSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   _∼⁰_ = ≡-surjcollation⟦ 𝑪 ⟧ --  ≡-Unifies₀⟦ 𝑪 ⟧ -- FIXME gives a confusing error message
   -- _∼⁰_ = ≡-SymUnifies₀⟦ 𝑪 ⟧ -- FIXME gives a more useful error message
 
-  open SurjextenscollationOperator 𝑪 _≡̇_ renaming (_⟹_ to _∼¹_)
+  open Surjextenscollation 𝑪 _≡̇_ renaming (_⟹_ to _∼¹_)
 
   fact1⋆ : ∀ {𝓃} (𝓈 𝓉 : 𝑩 𝓃) → 𝓈 ∼⁰ 𝓉 ≈ 𝓉 ∼⁰ 𝓈
   fact1⋆ 𝓈 𝓉 = symmetrical 𝓈 𝓉

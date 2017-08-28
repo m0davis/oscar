@@ -1,195 +1,69 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.Surjectextensivity
-open import Oscar.Class.Surjextensionality
-open import Oscar.Class.Symmetry
-open import Oscar.Class.Transitivity
 open import Oscar.Data.Proposequality
 import Oscar.Class.Surjection.⋆
-import Oscar.Data.Constraint
-
-open import Oscar.Class.Surjection
 
 module Oscar.Data.Surjcollation where
 
-record Constant {𝔵} {𝔛 : Ø 𝔵} {𝔟} {𝔟̇ : Ł} {𝔅 : 𝔛 → Ø 𝔟} 𝔟̇′ {𝔟′} (𝔅′ : 𝔛 → Ø 𝔟′) : Ø 𝔵 ∙̂ 𝔟′ ∙̂ ↑̂ 𝔟̇′ where
-  instance constructor lift
-  field lower : Σ ((𝔟̇′ ≡ 𝔟̇) × (𝔟′ ≡ 𝔟)) λ {(∅ , ∅) → 𝔅′ ≡ 𝔅}
-
-open Constant ⦃ … ⦄
-
-getConstant : ∀
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝔟̇}
-  → ∀ {𝔟̇′ 𝔟′} {𝔅′ : 𝔛 → Ø 𝔟′}
-    ⦃ _ : Constant {𝔟̇ = 𝔟̇} {𝔅} 𝔟̇′ 𝔅′ ⦄
-  → (𝔅̇ : Wrap (∀̇ π̂² 𝔟̇ 𝔅)) → Wrap (∀̇ π̂² 𝔟̇′ 𝔅′)
-getConstant ⦃ lift ((∅ , ∅) , ∅) ⦄ = ¡
-
-𝓼urjcollation : ∀
-  {𝔵} {𝔛 : Ø 𝔵} {𝔟} {𝔞}
- 𝔟̇
- (𝔄 : π̂² 𝔞 𝔛)
- (𝔅 : 𝔛 → Ø 𝔟)
+𝓼urjcollation : ∀ {𝔵 𝔞 𝔟} {𝔛 : Ø 𝔵}
+  𝔟̇
+  (𝔅 : 𝔛 → Ø 𝔟)
+  (𝔄 : π̂² 𝔞 𝔛)
   → Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔟 ∙̂ ↑̂ 𝔟̇
-𝓼urjcollation 𝔟̇ 𝔄 𝔅 = ∀ {m} → 𝔅 m → 𝔅 m → LeftṖroperty 𝔟̇ 𝔄 m
+𝓼urjcollation 𝔟̇ 𝔅 𝔄 = ∀ {m} → 𝔅 m → 𝔅 m → LeftṖroperty 𝔟̇ 𝔄 m
 
-module Surjcollation
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
- (ℬ̇ : ∀ 𝔟̇ {𝔟} → (𝔛 → Ø 𝔟) → Ø 𝔵 ∙̂ 𝔟 ∙̂ ↑̂ 𝔟̇)
- (𝔅̇ : ∀ {𝔟̇ 𝔟} {𝔅 : 𝔛 → Ø 𝔟} ⦃ _ : ℬ̇ 𝔟̇ 𝔅 ⦄ → Wrap (∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇))
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝔟̇}
-  ⦃ _ : ℬ̇ 𝔟̇ 𝔅 ⦄
+module _ {𝔵 𝔞 𝔟 𝔟̇} {𝔛 : Ø 𝔵}
+  (𝔅 : 𝔛 → Ø 𝔟)
+  (𝔄 : π̂² 𝔞 𝔛)
+  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+  (𝔅̇ : ∀̇ π̂² 𝔟̇ 𝔅)
   (let infix 4 _⟨𝔅̇⟩_
        _⟨𝔅̇⟩_ : ∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇
-       _⟨𝔅̇⟩_ {x} p q = π₀ 𝔅̇ {x} p q)
-  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+       _⟨𝔅̇⟩_ p q = 𝔅̇ p q)
   where
+  surjcollation[_]⟦_/_⟧ : 𝓼urjcollation 𝔟̇ 𝔅 𝔄
+  surjcollation[_]⟦_/_⟧ p q .π₀ x = x ◃ p ⟨𝔅̇⟩ x ◃ q
 
-  surjcollation : 𝓼urjcollation 𝔟̇ 𝔄 𝔅
-  surjcollation p q .π₀ x = x ◃ p ⟨𝔅̇⟩ x ◃ q
+module _ {𝔵 𝔞 𝔟 𝔟̇} {𝔛 : Ø 𝔵} {𝔅 : 𝔛 → Ø 𝔟}
+  (𝔄 : π̂² 𝔞 𝔛)
+  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+  (𝔅̇ : ∀̇ π̂² 𝔟̇ 𝔅)
+  where
+  surjcollation⟦_/_⟧ = surjcollation[ 𝔅 ]⟦ 𝔄 / 𝔅̇ ⟧
+
+module _ {𝔵 𝔞} {𝔛 : Ø 𝔵}
+  (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
+    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+    {𝔟̇} {𝔅̇ : ∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇}
+  where
+  surjcollation⟦_⟧ = surjcollation[ 𝔅 ]⟦ 𝔄 / 𝔅̇ ⟧
+
+module _ {𝔵 𝔞 𝔟} {𝔛 : Ø 𝔵}
+  (𝔅 : 𝔛 → Ø 𝔟)
+  (𝔄 : π̂² 𝔞 𝔛)
+    ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+  where
+  ≡-surjcollation[_]⟦_⟧ = surjcollation[ 𝔅 ]⟦ 𝔄 / _≡_ ⟧
+
+module _ {𝔵 𝔞} {𝔛 : Ø 𝔵}
+  (𝔄 : π̂² 𝔞 𝔛)
+    {𝔟} {𝔅 : 𝔛 → Ø 𝔟} ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+  where
+  ≡-surjcollation⟦_⟧ = ≡-surjcollation[ 𝔅 ]⟦ 𝔄 ⟧
+
+module _ {𝔵 𝔞} {𝔛 : Ø 𝔵} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
+  where
+  ≡-surjcollation = ≡-surjcollation⟦ 𝔄 ⟧
+
+module Surjcollation {𝔵 𝔞 𝔟̇} {𝔛 : Ø 𝔵}
+  (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
+  (𝔅̇ : ∀ {𝔟} {𝔅 : 𝔛 → Ø 𝔟} → (∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇))
+    {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
+    ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
+  where
+  method = surjcollation[ 𝔅 ]⟦ 𝔄 / 𝔅̇ {𝔅 = 𝔅} ⟧
 
   infix 18 _⟹_
-  _⟹_ = surjcollation
-
-module SurjcollationOperator
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
-  {𝔟̇}
- (𝔅̇ : ∀ {𝔟} {𝔅 : 𝔛 → Ø 𝔟} → (∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇))
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
-  where
-  open Surjcollation 𝔄 (λ 𝔟̇₁ x → Lift (𝔟̇₁ ≡ 𝔟̇)) (λ { {𝔅 = 𝔅'} ⦃ lift ∅ ⦄ → ∁ (λ {y} → 𝔅̇ {𝔅 = 𝔅'} {x = y})}) ⦃ ! ⦄ ⦃ ! ⦄ public
-
-module _
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : π̂² 𝔞 𝔛)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
-  {𝔟̇}
- (𝔅̇ : Wrap (∀̇ π̂² 𝔟̇ 𝔅))
-  where
-  open Surjcollation 𝔄 Constant (getConstant 𝔅̇) ⦃ ! ⦄ ⦃ ! ⦄ public using () renaming (surjcollation to surjcollation⟦_/_⟧)
-
-module Surjcollation'
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : 𝔛 → 𝔛 → Ø 𝔞)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
-  {𝔟̇} {𝔅̇ : ∀ {x} → 𝔅 x → 𝔅 x → Ø 𝔟̇}
-  where
-  open Surjcollation 𝔄 Constant (getConstant (∁ (λ {x} → 𝔅̇ {x}))) public
-
-open Surjcollation' public using () renaming (surjcollation to surjcollation⟦_⟧)
-
-module _
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : π̂² 𝔞 𝔛)
-  {𝔟}
- (𝔅 : 𝔛 → Ø 𝔟)
-  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
-  where
-  open Surjcollation' 𝔄 {𝔅 = 𝔅} {𝔅̇ = Proposequality} public using () renaming (surjcollation to ≡-surjcollation⟦_/_⟧)
-
-module _
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
- (𝔄 : π̂² 𝔞 𝔛)
-  where
-  open SurjcollationOperator 𝔄 _≡_ public using () renaming (surjcollation to ≡-surjcollation⟦_⟧)
-
-module _
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞}
-  {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
-  where
-  open SurjcollationOperator 𝔄 _≡_ public using () renaming (surjcollation to ≡-surjcollation)
-
-module Surjextenscollation
-  {𝔵} {𝔛 : Ø 𝔵} {𝔞₁}
-  {𝔄₁ : 𝔛 → Ø 𝔞₁}
-  {𝔞₂}
-  {𝔄₂ : 𝔛 → Ø 𝔞₂}
-  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
-  {𝔞̇₂}
- (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇₂)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝔟̇}
-  (let ℭ : 𝔛 → Ø 𝔵 ∙̂ 𝔞₁ ∙̂ 𝔞₂ ∙̂ 𝔞̇₂ ∙̂ ↑̂ 𝔟̇
-       ℭ = LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇)
- (𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇)
-  ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
-  ⦃ _ : ∀ {y} → 𝓣ransitivity (𝔅̇ {y}) ⦄
-  ⦃ _ : Surjectextensivity.class 𝔄 𝔅 ⦄
-  ⦃ _ : Surjextensionality!.class 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
-  where
-
-  surjextenscollation : ∀ {m} → 𝔅 m → 𝔅 m → ℭ m
-  surjextenscollation s t =
-    surjcollation⟦ 𝔄 / ∁ 𝔅̇ ⟧ s t , λ f≐g f◃s=f◃t →
-      surjextensionality[ Pointwise 𝔅̇ ] ⦃ ! ⦄ f≐g t ∙ f◃s=f◃t ∙ symmetry (surjextensionality[ Pointwise 𝔅̇ ] ⦃ ! ⦄ f≐g s)
-      -- FIXME want this to work here: ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
-
-  infix 18 _⟹_
-  _⟹_ = surjextenscollation
-
-module Surjextenscollation'
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞₁} (𝔄₁ : 𝔛 → Ø 𝔞₁)
-  {𝔞₂} (𝔄₂ : 𝔛 → Ø 𝔞₂)
-  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
-  {𝔞̇}
-    (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
-  where
-  open Surjextenscollation (λ {x} {y} → 𝔄̇ {x} {y}) (λ {y} → 𝔅̇ {y}) public
-
-module _
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
-  {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
-  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
-  {𝔞̇}
- (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
-  where
-  open Surjextenscollation (λ {x} {y} → 𝔄̇ {x} {y}) (λ {y} → 𝔅̇ {y}) public using () renaming (surjextenscollation to surjextenscollation⟦_⟧)
-
-module SurjextenscollationOperator
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
-  {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
- (𝔄 : 𝔛 → 𝔛 → Ø 𝔞₁ ∙̂ 𝔞₂)
-  ⦃ _ : 𝔄 ≡ Arrow 𝔄₁ 𝔄₂ ⦄
-  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
-  {𝔞̇}
- (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
-  {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
-  {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
-  where
-  open Surjextenscollation (λ {x} {y} → 𝔄̇ {x} {y}) (λ {y} → 𝔅̇ {y}) public
-
-open SurjextenscollationOperator using () renaming (surjextenscollation to surjextenscollation⟦_/_⟧) public
-
-module ≡-SurjextenscollationOperator
-  {𝔵} {𝔛 : Ø 𝔵}
-  {𝔞₁} {𝔄₁ : 𝔛 → Ø 𝔞₁}
-  {𝔞₂} {𝔄₂ : 𝔛 → Ø 𝔞₂}
- (𝔄 : 𝔛 → 𝔛 → Ø 𝔞₁ ∙̂ 𝔞₂)
-  ⦃ _ : 𝔄 ≡ Arrow 𝔄₁ 𝔄₂ ⦄
-  (let 𝔄 = Arrow 𝔄₁ 𝔄₂)
-  where
-  open SurjextenscollationOperator 𝔄 _≡̇_ public
-
-open ≡-SurjextenscollationOperator using () renaming (surjextenscollation to ≡-surjextenscollation[_]) public
+  _⟹_ = method

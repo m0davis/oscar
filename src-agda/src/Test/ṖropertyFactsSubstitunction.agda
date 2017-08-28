@@ -16,6 +16,7 @@ open import Oscar.Class.Unit
 open import Oscar.Data.Proposequality
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Surjextenscollation
 open import Oscar.Data.Term
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
@@ -45,7 +46,7 @@ module Test.ṖropertyFactsSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) whe
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
   infix 18 _∼⁰_
   _∼⁰_ = ≡-surjcollation⟦ 𝑪 ⟧
-  open SurjextenscollationOperator 𝑪 _≡̇_ renaming (_⟹_ to _∼¹_)
+  open Surjextenscollation 𝑪 _≡̇_ renaming (_⟹_ to _∼¹_)
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = surjectextensivity c p

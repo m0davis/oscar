@@ -23,6 +23,7 @@ open import Oscar.Class.Transitivity
 open import Oscar.Class.Unit
 open import Oscar.Class.[ExtensibleType]
 open import Oscar.Data.Surjcollation
+open import Oscar.Data.Surjextenscollation
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
@@ -84,8 +85,8 @@ module Test.ṖropertyFacts where
   𝑷⁰ = LeftṖroperty ℓ 𝑪
   𝑷¹ = LeftExtensionṖroperty ℓ 𝑪 _≈_
 
-  module 𝓢 = SurjcollationOperator 𝑪 _≡_
-  module 𝓢̇ = SurjextenscollationOperator 𝑪 _≡̇_
+  module 𝓢 = Surjcollation 𝑪 _≡_
+  module 𝓢̇ = Surjextenscollation 𝑪 _≡̇_
 
   -- postulated instances from Oscar.Property.Functor.SubstitunctionExtensionTerm
   postulate
