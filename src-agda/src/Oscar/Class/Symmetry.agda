@@ -45,7 +45,6 @@ module SymmetryInterface3
   symmetry = symmetry[_]
   syntax symmetry {x} {y} x∼y = x ⟨∼ x∼y ∼⟩ y
 
-open SymmetryClass public
 open SymmetryInterface1 public
 open SymmetryInterface2 public
 open SymmetryInterface3 public
