@@ -1,9 +1,8 @@
 
-open import Oscar.Prelude
 open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectextensivity
-open import Oscar.Data.Constraint
 open import Oscar.Class.Surjection
+open import Oscar.Prelude
 
 module Oscar.Class.Surjectextenscongruity where
 
