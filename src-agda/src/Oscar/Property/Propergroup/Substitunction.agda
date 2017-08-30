@@ -41,6 +41,7 @@ import Oscar.Class.HasEquivalence.Substitunction
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Similarity
 open import Oscar.Class.Quadricity
+open import Oscar.Class.Surjection
 
 module Oscar.Property.Propergroup.Substitunction where
 
@@ -79,7 +80,7 @@ module _
     𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3.class (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
     𝓕actsurj3Regular .⋆ .π₀ = ¡ , ¡
 
-    𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3.class (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjectextensivity
+    𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3.class (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjection surjectextensivity
     𝓕actsurj3Extension .⋆ .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓

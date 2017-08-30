@@ -7,6 +7,7 @@ open import Oscar.Class.Leftunit
 open import Oscar.Class.HasEquivalence
 open import Oscar.Data.Constraint
 import Oscar.Class.Surjection.⋆
+open import Oscar.Class.Surjection
 
 module Test.Factsurj3 where
 
@@ -20,15 +21,15 @@ module Test0
   (_◃_ : Surjectextensivity.type ℜ 𝔓)
   (_◃'_ : Surjectextensivity.type ℜ 𝔓)
   where
-  test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+  test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
   test-class' = !
-  test-method' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
-  test-method' = Factsurj3.method _ _ _ _ _
-  test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) ε _◃_ p
+  test-method' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε surjection _◃_
+  test-method' = Factsurj3.method _ _ _ _ _ _
+  test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) ε _◃_ p
   test-class = !
-  test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε _◃_
+  test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε surjection _◃_
   test-method = leftunit
-  test' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃'_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃'_
+  test' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃'_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃'_
   test' = !
 
 module Test1
@@ -38,7 +39,7 @@ module Test1
   (ℜ : π̂² 𝔯 𝔛)
   (_◃_ : Surjectextensivity.type ℜ 𝔓)
   where
-  test : ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+  test : ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
   test = !
 
 module Test2
@@ -48,7 +49,7 @@ module Test2
   (ε : 𝓻eflexivity ℜ)
   (_◃_ : Surjectextensivity.type ℜ 𝔓)
   where
-  test : ⦃ _ : {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_ ⦄ → {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε _◃_
+  test : ⦃ _ : {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
   test = !
 
 test-class : ∀

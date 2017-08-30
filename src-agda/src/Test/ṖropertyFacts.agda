@@ -23,6 +23,7 @@ open import Oscar.Class.Reflexivity
 open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Surjection
 open import Oscar.Class.Surjectivity
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
@@ -188,7 +189,7 @@ module Test.ṖropertyFacts where
   fact3⋆-factsurj3 = factsurj3.method
 
   fact3⋆-Factsurj3' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-Factsurj3' = Factsurj3.method _ _ _ _ _
+  fact3⋆-Factsurj3' = Factsurj3.method _ _ _ _ _ _
 
   fact3⋆-Leftunit : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆-Leftunit {𝒫 = 𝒫} = Leftunit.method (flip _≈_) 𝒖 surjectextensivity 𝒫
@@ -197,7 +198,7 @@ module Test.ṖropertyFacts where
   fact3⋆-leftunit = leftunit
 
   fact3⋆-Factsurj3 : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-Factsurj3 = Factsurj3.method 𝑷⁰ _≈_ _ 𝒖 surjectextensivity
+  fact3⋆-Factsurj3 = Factsurj3.method 𝑷⁰ _≈_ _ 𝒖 surjection surjectextensivity
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
   lhs-fact3⋆ {𝒫 = 𝒫} = 𝓕actsurj3.method 𝑷⁰ 𝑪 {p = 𝒫}
