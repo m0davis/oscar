@@ -43,7 +43,7 @@ module SimilarityM
   (_∼₂_ : 𝔅 → 𝔅 → Ø 𝔟̇) (let _∼₂_ = _∼₂_; infix 4 _∼₂_)
   (_◃_ : 𝔉 → 𝔄 → 𝔅) (let _◃_ = _◃_; infix 16 _◃_)
   x y
-  = ℭLASS (_◃_ , _∼₁_ , _∼₂_) (∀ f → x ∼₁ y → f ◃ x ∼₂ f ◃ y)
+  = ℭLASS (_◃_ , _∼₁_ , _∼₂_ , x , y) (∀ f → x ∼₁ y → f ◃ x ∼₂ f ◃ y)
 
 module _
   {𝔞} {𝔄 : Ø 𝔞}
