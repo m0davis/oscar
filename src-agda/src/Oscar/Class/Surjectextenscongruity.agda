@@ -7,10 +7,11 @@ open import Oscar.Prelude
 module Oscar.Class.Surjectextenscongruity where
 
 module _
-  {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} (_∼ᵣ_ : π̂² 𝔯 𝔒)
-  {𝔭} (𝔓 : π̂ 𝔭 𝔒)
-  ⦃ _ : Surjection.class 𝔒 𝔒 ⦄
+  {𝔬₁} {𝔒₁ : Ø 𝔬₁}
+  {𝔬₂} {𝔒₂ : Ø 𝔬₂}
+  {𝔯} (_∼ᵣ_ : π̂² 𝔯 𝔒₁)
+  {𝔭} (𝔓 : π̂ 𝔭 𝔒₂)
+  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   {ℓ} (_∼ₚ_ : ∀̇ π̂² ℓ (𝔓 ∘ surjection))
   ⦃ _ : Surjectextensivity.class _∼ᵣ_ 𝔓 ⦄
   where
