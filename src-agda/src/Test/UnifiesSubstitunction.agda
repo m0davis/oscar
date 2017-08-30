@@ -9,6 +9,7 @@ open import Oscar.Data.Surjextenscollation
 open import Oscar.Data.Proposequality
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Setoid.Proposequality
+import Oscar.Class.Surjection.⋆
 
 module Test.UnifiesSubstitunction {𝔭} (𝔓 : Ø 𝔭) where
 

@@ -14,6 +14,7 @@ import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Property.Setoid.Proposequality -- FIXME see fact1⋆ below; comment this out to observe confusing error messages
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
+import Oscar.Class.Surjection.⋆
 
 module Test.Surjcollation {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
