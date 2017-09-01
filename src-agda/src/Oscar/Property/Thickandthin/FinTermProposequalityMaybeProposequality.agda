@@ -10,7 +10,7 @@ open import Oscar.Data.Vec
 open import Oscar.Class.Congruity
 open import Oscar.Class.Thickandthin
 open import Oscar.Class.Injectivity
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Pure
 open import Oscar.Class.Apply
@@ -19,7 +19,7 @@ import Oscar.Property.Thickandthin.FinFinProposequalityMaybeProposequality
 import Oscar.Class.Surjection.⋆
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.Injectivity.Vec
-import Oscar.Class.Surjectivity.ExtensionFinExtensionTerm
+import Oscar.Class.Smap.ExtensionFinExtensionTerm
 
 module Oscar.Property.Thickandthin.FinTermProposequalityMaybeProposequality where
 

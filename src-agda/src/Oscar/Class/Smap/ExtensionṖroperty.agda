@@ -2,11 +2,11 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Class.[ExtensibleType]
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Surjextensionality
 import Oscar.Class.Surjection.⋆
 
-module Oscar.Class.Surjectivity.ExtensionṖroperty where
+module Oscar.Class.Smap.ExtensionṖroperty where
 
 instance
 

@@ -23,8 +23,8 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
-import Oscar.Class.Surjectivity.ExtensionṖroperty
-import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
+import Oscar.Class.Smap.ExtensionṖroperty
+import Oscar.Class.Smap.TransitiveExtensionLeftṖroperty
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 import Oscar.Class.[ExtensibleType].Proposequality

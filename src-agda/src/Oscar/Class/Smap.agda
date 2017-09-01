@@ -4,7 +4,7 @@ open import Oscar.Class
 open import Oscar.Class.Surjection
 open import Oscar.Data.Proposequality
 
-module Oscar.Class.Surjectivity where
+module Oscar.Class.Smap where
 
 module Surjectivity
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}

@@ -5,7 +5,7 @@ open import Oscar.Prelude
 open import Oscar.Data.Proposequality
 open import Oscar.Class
 open import Oscar.Class.Surjection
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 
 module !1 where
 

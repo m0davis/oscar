@@ -4,8 +4,8 @@ import Oscar.Class.HasEquivalence.Ṗroperty
 import Oscar.Class.Properthing.ExtensionṖroperty
 import Oscar.Class.Properthing.Ṗroperty
 import Oscar.Class.Surjection.⋆
-import Oscar.Class.Surjectivity.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
-import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
+import Oscar.Class.Smap.ExtensionṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+import Oscar.Class.Smap.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 open import Oscar.Class
@@ -24,7 +24,7 @@ open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Surjection
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetrical
 open import Oscar.Class.Symmetry
@@ -65,7 +65,7 @@ module Test.ṖropertyFacts where
     𝑩' : ¶ → ¶ → Ø 𝔭
     𝑪₀ : ¶ → Ø ∅̂
     𝑪₁ : ¶ → Ø 𝔭
-  𝑪 = Arrow 𝑪₀ 𝑩 -- FIXME why not 𝑪₁? error in 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_; see Oscar.Class.Surjectivity.ExtensionṖroperty
+  𝑪 = Arrow 𝑪₀ 𝑩 -- FIXME why not 𝑪₁? error in 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_; see Oscar.Class.Smap.ExtensionṖroperty
   postulate
     𝒖 : ∀ {n} → 𝑪 n n
     _⊛_ : ∀ {n} → 𝑩 n → 𝑩 n → 𝑩 n

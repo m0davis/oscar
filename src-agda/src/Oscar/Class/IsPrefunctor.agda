@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class.IsPrecategory
 open import Oscar.Class.Surjection
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Surjtranscommutativity
 open import Oscar.Class.Surjextensionality
 

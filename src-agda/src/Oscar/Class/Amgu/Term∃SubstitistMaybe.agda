@@ -5,7 +5,7 @@ open import Oscar.Class.Thickandthin
 open import Oscar.Class.IsDecidable
 open import Oscar.Class.Bind
 open import Oscar.Class.Fmap
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Data.¶
 open import Oscar.Data.Descender
 open import Oscar.Data.Substitunction

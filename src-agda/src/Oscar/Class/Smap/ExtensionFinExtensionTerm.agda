@@ -1,13 +1,13 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Data.Fin
 open import Oscar.Data.Term
 open import Oscar.Data.Vec
 import Oscar.Class.Surjection.⋆
 
-module Oscar.Class.Surjectivity.ExtensionFinExtensionTerm where
+module Oscar.Class.Smap.ExtensionFinExtensionTerm where
 
 module _ {𝔭} {𝔓 : Ø 𝔭} where
 

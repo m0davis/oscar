@@ -13,7 +13,7 @@ open import Oscar.Class.Precategory
 open import Oscar.Class.Prefunctor
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjection
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Surjidentity
 open import Oscar.Class.Surjtranscommutativity

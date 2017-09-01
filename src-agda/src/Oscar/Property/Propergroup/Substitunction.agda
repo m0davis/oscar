@@ -11,7 +11,7 @@ open import Oscar.Class.Factsurj4
 open import Oscar.Class.Factsurj6
 open import Oscar.Class.Properthing
 open import Oscar.Class.Surjectextensivity
-open import Oscar.Class.Surjectivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Symmetry
 open import Oscar.Data.Fin
 open import Oscar.Data.Substitunction
@@ -32,8 +32,8 @@ open import Oscar.Data.ProductIndexEquivalence
 import Oscar.Data.ExtensionṖroperty
 open import Oscar.Data.ProperlyExtensionNothing
 import Oscar.Class.Properthing.ExtensionṖroperty
-import Oscar.Class.Surjectivity.TransitiveExtensionLeftṖroperty
-import Oscar.Class.Surjectivity.ExtensionṖroperty
+import Oscar.Class.Smap.TransitiveExtensionLeftṖroperty
+import Oscar.Class.Smap.ExtensionṖroperty
 import Oscar.Class.[ExtensibleType].Proposequality
 import Oscar.Class.HasEquivalence.ExtensionṖroperty
 import Oscar.Class.HasEquivalence.Ṗroperty
