@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class.Similarity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Surjection
 
@@ -17,26 +18,4 @@ module _
     ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
     ⦃ _ : Surjectextensivity.class _∼_ 𝔓 ⦄
     where
-    record 𝓕actsurj6 : Ø 𝔬₁ ∙̂ 𝔬₂ ∙̂ 𝔭 ∙̂ 𝔯 ∙̂ ℓ∼ ∙̂ ℓ𝔭 where
-      field factsurj6 : ∀ {m n} {f g : m ∼ n} (P : 𝔓 (surjection m)) → f ≈̈ g → f ◃ P ≈̇ g ◃ P
-
-open 𝓕actsurj6 ⦃ … ⦄ public
-
-module _
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-  {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-  {𝔭} {𝔓 : 𝔒₂ → Ø 𝔭}
-  {𝔯} {_∼_ : 𝔒₁ → 𝔒₁ → Ø 𝔯}
-  {ℓ∼} {_≈̈_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ∼}
-  {ℓ𝔭} {_≈̇_ : ∀ {x} → 𝔓 x → 𝔓 x → Ø ℓ𝔭}
-  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ _ : Surjectextensivity.class _∼_ 𝔓 ⦄
-  where
-  open import Oscar.Class
-  open import Oscar.Class.Similarity
-
-  instance
-
-    Factsurj6ToSimilarity : ∀ ⦃ _ : 𝓕actsurj6 𝔓 _∼_ _≈̈_ _≈̇_ ⦄ →
-      ∀ {m n} {f g : m ∼ n} → SimilarityM.class _≈̈_ _≈̇_ (flip _◃_) f g
-    Factsurj6ToSimilarity .⋆ = factsurj6
+    𝓕actsurj6 = ∀ {m n} → Similarity.class (_≈̈_ {m} {n}) (_≈̇_ {surjection n}) ((flip _◃_))
