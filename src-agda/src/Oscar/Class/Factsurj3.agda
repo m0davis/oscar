@@ -3,7 +3,7 @@ open import Oscar.Prelude
 open import Oscar.Class
 -- open import Oscar.Class.HasEquivalence -- FIXME make similar to Reflexivity and Surjextensivity
 open import Oscar.Class.Reflexivity using (𝓻eflexivity)
-open import Oscar.Class.Surjectextensivity using (module Surjectextensivity)
+open import Oscar.Class.Smap using (module Surjectextensivity)
 open import Oscar.Data.Constraint
 open import Oscar.Class.Surjection
 
@@ -50,7 +50,7 @@ module factsurj3
 
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Reflexivity
-open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Smap
 
 module 𝓕actsurj3
   {𝔵₁ 𝔵₂ 𝔭 𝔯 ℓ} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}

@@ -1,7 +1,7 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.Leftstar
-open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Smap
 import Oscar.Class.Surjection.⋆
 
 module Oscar.Class.Factsurj4 where

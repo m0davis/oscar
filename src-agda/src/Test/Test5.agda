@@ -3,7 +3,6 @@ open import Oscar.Prelude
 open import Oscar.Class.[ExtensibleType]
 open import Oscar.Class.Smap
 open import Oscar.Class.Surjextensionality
-open import Oscar.Class.Surjectextensivity
 import Oscar.Class.Surjection.⋆
 import Oscar.Class.Smap.ExtensionṖroperty
 

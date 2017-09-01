@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Smap
 open import Oscar.Data.Proposequality
 open import Oscar.Class.Surjection
 

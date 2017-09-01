@@ -1,6 +1,6 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Surjextensionality
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Transitivity

@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Reflexivity
-open import Oscar.Class.Surjectextensivity
+open import Oscar.Class.Smap
 open import Oscar.Class.Leftunit
 open import Oscar.Class.HasEquivalence
 open import Oscar.Data.Constraint

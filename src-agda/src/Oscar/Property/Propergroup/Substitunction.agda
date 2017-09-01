@@ -2,14 +2,12 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Class.HasEquivalence
-open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
 open import Oscar.Class.Properthing
-open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Smap
 open import Oscar.Class.Symmetry
 open import Oscar.Data.Fin

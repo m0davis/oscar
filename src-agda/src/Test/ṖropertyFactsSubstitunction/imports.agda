@@ -12,8 +12,7 @@ open import Oscar.Class.Leftunit public
 open import Oscar.Class.Properthing public
 open import Oscar.Class.Quadricity public
 open import Oscar.Class.Similarity public
-open import Oscar.Class.Surjectextenscongruity              public
-open import Oscar.Class.Surjectextensivity                  public
+open import Oscar.Class.Smap                  public
 open import Oscar.Class.Symmetrical                         public
 open import Oscar.Class.Unit                                public
 open import Oscar.Data.Proposequality                       public
