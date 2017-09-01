@@ -184,7 +184,7 @@ module Test.ṖropertyFacts where
   fact3⋆ = ‼
 
   fact3⋆-factsurj3 : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-factsurj3 = factsurj3.method
+  fact3⋆-factsurj3 = factsurj3
 
   fact3⋆-Factsurj3' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆-Factsurj3' = Factsurj3.method _ _ _ _ _ _
