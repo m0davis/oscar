@@ -6,7 +6,6 @@ module Test.ṖropertyFactsSubstitunction.imports where
 open import Oscar.Prelude public
 open import Oscar.Class.Factsurj3 public
 open import Oscar.Class.Factsurj4 public
-open import Oscar.Class.Factsurj6 public
 open import Oscar.Class.HasEquivalence public
 open import Oscar.Class.Leftstar public
 open import Oscar.Class.Leftunit public

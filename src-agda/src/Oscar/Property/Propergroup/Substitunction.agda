@@ -8,7 +8,6 @@ open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
 open import Oscar.Class.Factsurj3
 open import Oscar.Class.Factsurj4
-open import Oscar.Class.Factsurj6
 open import Oscar.Class.Properthing
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Smap
