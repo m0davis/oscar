@@ -96,4 +96,4 @@ module _
   instance
 
     𝓕actsurj6Extension : ∀ {ℓ} → 𝓕actsurj6 (ArrowExtensionṖroperty ℓ Fin Term Proposequality) Substitunction _≈_ _≈_
-    𝓕actsurj6Extension .⋆ P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (surjectivity h) ∘ f≐g) , π₁ P (Sym.[] (congruity (surjectivity h) ∘ f≐g))
+    𝓕actsurj6Extension .⋆ P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (smap h) ∘ f≐g) , π₁ P (Sym.[] (congruity (smap h) ∘ f≐g))

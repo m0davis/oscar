@@ -21,9 +21,9 @@ module _
   {μ : Surjection.type 𝔛₁ 𝔛₂}
   where
   open Smap _∼₁_ _∼₂_ μ
-  surjectivity : ⦃ _ : class ⦄ → type
-  surjectivity = method
-  § = surjectivity
+  smap : ⦃ _ : class ⦄ → type
+  smap = method
+  § = smap
 
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
@@ -32,8 +32,8 @@ module _
   (μ : Surjection.type 𝔛₁ 𝔛₂)
   where
   open Smap _∼₁_ _∼₂_ μ
-  surjectivity⟦_/_⟧ : ⦃ _ : class ⦄ → type
-  surjectivity⟦_/_⟧ = surjectivity
+  smap⟦_/_⟧ : ⦃ _ : class ⦄ → type
+  smap⟦_/_⟧ = smap
 
 module _
   {𝔵₁ 𝔯₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
@@ -41,8 +41,8 @@ module _
   (μ : Surjection.type 𝔛₁ 𝔛₂)
   where
   open Smap _∼₁_ _≡_ μ
-  ≡-surjectivity⟦_⟧ : ⦃ _ : class ⦄ → type
-  ≡-surjectivity⟦_⟧ = surjectivity
+  ≡-smap⟦_⟧ : ⦃ _ : class ⦄ → type
+  ≡-smap⟦_⟧ = smap
 
 module Smap!
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}

@@ -34,10 +34,10 @@ module !1 where
     𝓢urjectivity2 .⋆ = f2
 
   test1 : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-  test1 = surjectivity
+  test1 = smap
 
   test2 : ∀ {x y} → x ~A~ y → s2 x ~B~ s2 y
-  test2 = surjectivity
+  test2 = smap
 
 module !2 where
 
@@ -65,31 +65,31 @@ module !2 where
     𝓢urjectivity2 .⋆ = f2
 
   test-rhs-1 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-rhs-1 = surjectivity
+  test-rhs-1 = smap
 
   test-rhs-2 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-rhs-2 {x} {y} x~A~y = Proposequality⟦ B ⟧ (s2 x) (s2 y) ∋ surjectivity x~A~y
+  test-rhs-2 {x} {y} x~A~y = Proposequality⟦ B ⟧ (s2 x) (s2 y) ∋ smap x~A~y
 
   test-rhs-3 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-rhs-3 {x} {y} x~A~y = (Proposequality⟦ B ⟧ on s2) x y ∋ surjectivity x~A~y
+  test-rhs-3 {x} {y} x~A~y = (Proposequality⟦ B ⟧ on s2) x y ∋ smap x~A~y
 
   test-lhs-1 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-1 x~A~y rewrite surjectivity ⦃ 𝓢urjectivity2 ⦄ x~A~y = ∅
+  test-lhs-1 x~A~y rewrite smap ⦃ 𝓢urjectivity2 ⦄ x~A~y = ∅
 
   test-lhs-2 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-2 x~A~y rewrite surjectivity {_∼₂_ = Proposequality} { surjection ⦃ 𝓢urjection2 ⦄} x~A~y = ∅
+  test-lhs-2 x~A~y rewrite smap {_∼₂_ = Proposequality} { surjection ⦃ 𝓢urjection2 ⦄} x~A~y = ∅
 
   test-lhs-3 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-3 x~A~y rewrite Proposequality (s1 _) _ ∋ surjectivity x~A~y = magic
+  test-lhs-3 x~A~y rewrite Proposequality (s1 _) _ ∋ smap x~A~y = magic
 
   test-lhs-4 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-4 x~A~y rewrite Proposequality (s2 _) _ ∋ surjectivity x~A~y = ∅
+  test-lhs-4 x~A~y rewrite Proposequality (s2 _) _ ∋ smap x~A~y = ∅
 
   test-lhs-5 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-5 x~A~y rewrite (Proposequality on s2) _ _ ∋ surjectivity x~A~y = ∅
+  test-lhs-5 x~A~y rewrite (Proposequality on s2) _ _ ∋ smap x~A~y = ∅
 
   test-lhs-6 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-6 x~A~y rewrite surjectivity⟦ Proposequality / s2 ⟧ x~A~y = ∅
+  test-lhs-6 x~A~y rewrite smap⟦ Proposequality / s2 ⟧ x~A~y = ∅
 
   test-lhs-7 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-7 x~A~y rewrite ≡-surjectivity⟦ s2 ⟧ x~A~y = ∅
+  test-lhs-7 x~A~y rewrite ≡-smap⟦ s2 ⟧ x~A~y = ∅

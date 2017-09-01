@@ -41,11 +41,11 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     𝓢urjectivitySubstitist,Substitunction : 𝒮urjectivity! Substitist Substitunction
-    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ = i
-    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.surjectivity ((x , t) , σ) = surjectivity‼ ⦃ ∅ ⦄ σ ∙ (t for x)
+    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.smap ∅ = i
+    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.smap ((x , t) , σ) = smap‼ ⦃ ∅ ⦄ σ ∙ (t for x)
 
     𝓢urjextensionalitySubstitist,Substitunction : 𝓢urjextensionality Substitist Proposequality Substitunction _≈_
-    𝓢urjextensionalitySubstitist,Substitunction .𝓢urjectivity.surjectivity ∅ _ = ∅
+    𝓢urjextensionalitySubstitist,Substitunction .𝓢urjectivity.smap ∅ _ = ∅
 
     𝓢urjtranscommutativitySubstitist,Substitunction : 𝓢urjtranscommutativity Substitist Substitunction _≈_
     𝓢urjtranscommutativitySubstitist,Substitunction .⋆ ∅ _ _ = ∅

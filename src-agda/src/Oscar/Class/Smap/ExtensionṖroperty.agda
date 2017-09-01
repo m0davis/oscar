@@ -21,4 +21,4 @@ instance
     ⦃ _ : Smap!.class _∼_ (Extension 𝔒₂) ⦄
     ⦃ _ : Surjextensionality!.class _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
     → Smap!.class _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_))
-  ExtensionṖropertySmap .⋆ f P = ∁ (λ g → π₀ (π₀ P) (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+  ExtensionṖropertySmap .⋆ f P = ∁ (λ g → π₀ (π₀ P) (smap g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)

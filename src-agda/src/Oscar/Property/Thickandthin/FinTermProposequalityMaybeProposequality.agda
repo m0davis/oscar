@@ -46,13 +46,13 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     [𝓣hin]FinTerm = ∁
 
     𝓣hinFinTerm : 𝓣hin Fin Term
-    𝓣hinFinTerm .𝓣hin.thin = surjectivity ∘ thin
+    𝓣hinFinTerm .𝓣hin.thin = smap ∘ thin
 
     [𝓣hin]FinTerms : ∀ {N} → [𝓣hin] Fin (Terms N)
     [𝓣hin]FinTerms = ∁
 
     𝓣hinFinTerms : ∀ {N} → 𝓣hin Fin (Terms N)
-    𝓣hinFinTerms .𝓣hin.thin = surjectivity ∘ thin
+    𝓣hinFinTerms .𝓣hin.thin = smap ∘ thin
 
     [𝓘njectivity₂,₁]FinTerm : ∀ {m} → [𝓘njectivity₂,₁] (𝔱hin Fin Term m) Proposequality Proposequality
     [𝓘njectivity₂,₁]FinTerm = ∁

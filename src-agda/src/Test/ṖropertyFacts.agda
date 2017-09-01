@@ -135,13 +135,13 @@ module Test.ṖropertyFacts where
   test-epfs⋆ c p = surjectextensivity c p
 
   test-epfs⋆' : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
-  test-epfs⋆' c p = surjectivity c $ p
+  test-epfs⋆' c p = smap c $ p
 
   test-epfs : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
   test-epfs c p = surjectextensivity c p
 
   test-epfs' : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
-  test-epfs' c p = surjectivity c $ p
+  test-epfs' c p = smap c $ p
 
   fact5⋆ : ∀ {𝓂 𝓃} {𝒫 𝒬 : 𝑷⁰ 𝓂} (𝒻 : 𝑪 𝓂 𝓃) → 𝒫 ≈ 𝒬 → 𝒻 ◃ 𝒫 ≈ 𝒻 ◃ 𝒬
   fact5⋆ 𝒻 = ‼

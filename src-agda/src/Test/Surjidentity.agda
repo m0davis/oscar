@@ -10,11 +10,11 @@ open import Oscar.Data.Proposequality -- FIXME I'm surprised that this import is
 No instance of type
 .Oscar.Data.Proposequality
 (λ x →
-   𝓢urjectivity.surjectivity `𝓢urjectivity
+   𝓢urjectivity.smap `𝓢urjectivity
    (𝓡eflexivity.reflexivity `𝓡eflexivity₁)
    ∼̇₂ 𝓡eflexivity.reflexivity `𝓡eflexivity₂)
 (λ x →
-   𝓢urjectivity.surjectivity `𝓢urjectivity
+   𝓢urjectivity.smap `𝓢urjectivity
    (𝓡eflexivity.reflexivity `𝓡eflexivity₁)
    ∼̇₂ 𝓡eflexivity.reflexivity `𝓡eflexivity₂)
 was found in scope.

@@ -17,7 +17,7 @@ module Surjtranscommutativity
   ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
   ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
   ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
-  = ℭLASS (λ {x y} → _∼̇₂_ {x} {y}) (∀ {x y z} (f : x ∼₁ y) (g : y ∼₁ z) → surjectivity (g ∙ f) ∼̇₂ surjectivity g ∙ surjectivity f)
+  = ℭLASS (λ {x y} → _∼̇₂_ {x} {y}) (∀ {x y z} (f : x ∼₁ y) (g : y ∼₁ z) → smap (g ∙ f) ∼̇₂ smap g ∙ smap f)
 
 module _
   {𝔬₁} {𝔒₁ : Ø 𝔬₁}
