@@ -36,3 +36,16 @@ module _
   {_◂_ : 𝔉 → 𝔄 → 𝔅}
   where
   open Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (method to leftstar) public
+
+open import Oscar.Class.Surjection
+open import Oscar.Class.Smap
+
+module _
+  {𝔞} {𝔄 : Ø 𝔞}
+  ⦃ _ : Surjection.class 𝔄 𝔄 ⦄
+  {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
+  {𝔠} (ℭ : 𝔄 → 𝔄 → Ø 𝔠)
+  {𝔡} (𝔇 : ∀ {a} → 𝔅 (surjection a) → Ø 𝔡)
+  ⦃ _ : Surjectextensivity.class ℭ 𝔅 ⦄
+  where
+  𝓕actsurj4 = ∀ {a₁ a₂} → LEFTSTAR.∁⟦ 𝔇 {a₁} / 𝔇 {a₂} / surjectextensivity {x = a₁} {a₂} ⟧

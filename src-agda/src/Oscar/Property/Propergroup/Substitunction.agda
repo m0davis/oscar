@@ -6,7 +6,7 @@ open import Oscar.Class.Properfact1
 open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
 open import Oscar.Class.Factsurj3
-open import Oscar.Class.Factsurj4
+open import Oscar.Class.Leftstar
 open import Oscar.Class.Properthing
 open import Oscar.Class.Smap
 open import Oscar.Class.Symmetry

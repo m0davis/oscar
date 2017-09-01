@@ -10,7 +10,6 @@ import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 open import Oscar.Class
 open import Oscar.Class.Factsurj3
-open import Oscar.Class.Factsurj4
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.IsEquivalence
 open import Oscar.Class.Leftstar
