@@ -5,7 +5,6 @@ open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Properfact1
 open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
-open import Oscar.Class.Factsurj3
 open import Oscar.Class.Leftstar
 open import Oscar.Class.Properthing
 open import Oscar.Class.Smap
@@ -39,6 +38,7 @@ open import Oscar.Class.Reflexivity
 open import Oscar.Class.Similarity
 open import Oscar.Class.Quadricity
 open import Oscar.Class.Surjection
+open import Oscar.Class.Leftunit
 
 module Oscar.Property.Propergroup.Substitunction where
 

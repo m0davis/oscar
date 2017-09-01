@@ -8,12 +8,6 @@ module Test.ṖropertyFactsSubstitunction.Fact3 {𝔭} (𝔓 : Ø 𝔭) (ℓ : �
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆ = ‼ -- 𝓕actsurj3.method 𝑷⁰ 𝑪 -- $MethodUnit.method -- leftunit.method
 
-  fact3⋆' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆' = factsurj3
-
-  fact3⋆'' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆'' = Factsurj3.method _ _ _ _ _ _
-
   fact3⋆''' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆''' = leftunit
 

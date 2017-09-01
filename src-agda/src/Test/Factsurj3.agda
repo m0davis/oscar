@@ -1,6 +1,5 @@
 
 open import Oscar.Prelude
-open import Oscar.Class.Factsurj3
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Smap
 open import Oscar.Class.Leftunit
@@ -24,33 +23,11 @@ module Test0
   test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
   test-class' = !
   test-method' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε surjection _◃_
-  test-method' = Factsurj3.method _ _ _ _ _ _
+  test-method' = leftunit
   test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) ε _◃_ p
   test-class = !
   test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε surjection _◃_
   test-method = leftunit
-  test' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃'_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃'_
-  test' = !
-
-module Test1
-  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
-  (ℜ : π̂² 𝔯 𝔛)
-  (_◃_ : Surjectextensivity.type ℜ 𝔓)
-  where
-  test : ⦃ _ : {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → {ε : 𝓻eflexivity ℜ} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
-  test = !
-
-module Test2
-  {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
-  (𝔓 : π̂ 𝔭 𝔛)
-  (ℜ : π̂² 𝔯 𝔛)
-  (ε : 𝓻eflexivity ℜ)
-  (_◃_ : Surjectextensivity.type ℜ 𝔓)
-  where
-  test : ⦃ _ : {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → {_≈_ : ∀̇ π̂² ℓ 𝔓} → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
-  test = !
 
 test-class : ∀
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}

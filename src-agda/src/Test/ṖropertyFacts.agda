@@ -9,7 +9,6 @@ import Oscar.Class.Smap.TransitiveExtensionLeftṖroperty -- needed by 𝓢urjec
 import Oscar.Class.Symmetrical.ExtensionalUnifies
 import Oscar.Class.Symmetrical.Unifies
 open import Oscar.Class
-open import Oscar.Class.Factsurj3
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.IsEquivalence
 open import Oscar.Class.Leftstar
@@ -183,20 +182,11 @@ module Test.ṖropertyFacts where
   fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆ = ‼
 
-  fact3⋆-factsurj3 : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-factsurj3 = factsurj3
-
-  fact3⋆-Factsurj3' : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-Factsurj3' = Factsurj3.method _ _ _ _ _ _
-
   fact3⋆-Leftunit : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆-Leftunit {𝒫 = 𝒫} = Leftunit.method (flip _≈_) 𝒖 surjectextensivity 𝒫
 
   fact3⋆-leftunit : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆-leftunit = leftunit
-
-  fact3⋆-Factsurj3 : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-Factsurj3 = Factsurj3.method 𝑷⁰ _≈_ _ 𝒖 surjection surjectextensivity
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
   lhs-fact3⋆ {𝒫 = 𝒫} = 𝓕actsurj3.method 𝑷⁰ 𝑪 {p = 𝒫}
