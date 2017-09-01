@@ -23,6 +23,8 @@ module _
   open Smaparrow ℜ 𝔓₁ 𝔓₂ surjection
   smaparrow : ⦃ _ : class ⦄ → type
   smaparrow = method
+  infixr 10 _◃_
+  _◃_ = smaparrow
 
 module Surjectextensivity
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
@@ -40,8 +42,6 @@ module _
   open Surjectextensivity ℜ 𝔓
   surjectextensivity : ⦃ _ : class ⦄ → type
   surjectextensivity = method
-  infixr 10 _◃_
-  _◃_ = surjectextensivity
 
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
