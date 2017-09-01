@@ -6,31 +6,31 @@ open import Oscar.Class.Surjection
 module Oscar.Class.Surjectextensivity where
 
 module Surjectextensivity
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
-  (∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-  (𝔓 : 𝔒₂ → Ø 𝔯₂)
-  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  = Smap ∼₁ (Extension 𝔓) surjection
+  {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
+  (𝔓 : 𝔛₂ → Ø 𝔯₂)
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  = Smap ℜ (Extension 𝔓) surjection
 
 module _
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
-  {∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-  {𝔓 : 𝔒₂ → Ø 𝔯₂}
-  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
+  {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  {ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁}
+  {𝔓 : 𝔛₂ → Ø 𝔯₂}
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   where
-  open Surjectextensivity ∼₁ 𝔓
+  open Surjectextensivity ℜ 𝔓
   surjectextensivity : ⦃ _ : class ⦄ → type
   surjectextensivity = method
   infixr 10 _◃_
   _◃_ = surjectextensivity
 
 module _
-  {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
-  {∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
-  (𝔓 : 𝔒₂ → Ø 𝔯₂)
-  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
+  {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  {ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁}
+  (𝔓 : 𝔛₂ → Ø 𝔯₂)
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   where
-  open Surjectextensivity ∼₁ 𝔓
+  open Surjectextensivity ℜ 𝔓
   surjectextensivity[]syntax : ⦃ _ : class ⦄ → type
   surjectextensivity[]syntax = method
-  syntax surjectextensivity[]syntax 𝔒₂ x∼y fx = x∼y ◃[ 𝔒₂ ] fx
+  syntax surjectextensivity[]syntax 𝔛₂ x∼y fx = x∼y ◃[ 𝔛₂ ] fx
