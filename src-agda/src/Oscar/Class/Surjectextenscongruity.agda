@@ -7,13 +7,12 @@ open import Oscar.Prelude
 module Oscar.Class.Surjectextenscongruity where
 
 module _
-  {𝔬₁} {𝔒₁ : Ø 𝔬₁}
-  {𝔬₂} {𝔒₂ : Ø 𝔬₂}
-  {𝔯} (_∼ᵣ_ : π̂² 𝔯 𝔒₁)
-  {𝔭} (𝔓 : π̂ 𝔭 𝔒₂)
-  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  {ℓ} (_∼ₚ_ : ∀̇ π̂² ℓ (𝔓 ∘ surjection))
-  ⦃ _ : Surjectextensivity.class _∼ᵣ_ 𝔓 ⦄
+  {𝔵₁} {𝔛₁ : Ø 𝔵₁}
+  {𝔵₂} {𝔛₂ : Ø 𝔵₂}
+  {𝔯} (ℜ : π̂² 𝔯 𝔛₁)
+  {𝔭} (𝔓 : π̂ 𝔭 𝔛₂)
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  {𝔭̇} (𝔓̇ : ∀̇ π̂² 𝔭̇ (𝔓 ∘ surjection))
+  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
   where
-  𝓢urjectextenscongruity : Ø _
-  𝓢urjectextenscongruity = ∀ {m n} → Similarity.class (_∼ₚ_ {m}) (_∼ₚ_ {n}) (surjectextensivity {x = m} {n})
+  𝓢urjectextenscongruity = ∀ {m n} → Similarity.class (𝔓̇ {m}) (𝔓̇ {n}) _◃_
