@@ -21,6 +21,8 @@ open import Oscar.Class.Properthing
 open import Oscar.Class.Quadricity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Similarity
+open import Oscar.Class.SimilaritySingleton
+open import Oscar.Class.SimilarityM
 open import Oscar.Class.Surjectextenscongruity
 open import Oscar.Class.Surjectextensivity
 open import Oscar.Class.Surjection
