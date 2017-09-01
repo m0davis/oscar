@@ -20,7 +20,8 @@ module Factsurj3
   (ε : 𝓻eflexivity ℜ)
   (surjection : Surjection.type 𝔛₁ 𝔛₂)
   (_◃_ : Surjectextensivity.type ℜ 𝔓 ⦃ ∁ surjection ⦄)
-  = ℭLASS ((λ {x} → ε {x}) , (λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x})) (∀ {x} {p : 𝔓 (surjection x)} → p ≈ (ε ◃ p))
+  = ℭLASS ((λ {x} → ε {x}) , (λ {x y} → _◃_ {x} {y}) , (λ {x} → _≈_ {x}))
+          (∀ {x} {p : 𝔓 (surjection x)} → p ≈ (ε ◃ p))
 
 module _
   {𝔵₁ 𝔵₂ 𝔭 𝔯 ℓ} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
