@@ -46,22 +46,22 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjectivitySubstitunctionExtensionTerm : Surjectivity!.type Substitunction (Extension Term)
+      𝓼urjectivitySubstitunctionExtensionTerm : Smap!.type Substitunction (Extension Term)
       𝓼urjectivitySubstitunctionExtensionTerm σ (i x) = σ x
       𝓼urjectivitySubstitunctionExtensionTerm σ leaf = leaf
       𝓼urjectivitySubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ₁ fork 𝓼urjectivitySubstitunctionExtensionTerm σ τ₂
       𝓼urjectivitySubstitunctionExtensionTerm σ (function p τs) = function p (𝓼urjectivitySubstitunctionExtensionTerms σ τs)
 
-      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → Surjectivity.type Substitunction (Extension $ Terms N) surjection
+      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → Smap.type Substitunction (Extension $ Terms N) surjection
       𝓼urjectivitySubstitunctionExtensionTerms σ ∅ = ∅
       𝓼urjectivitySubstitunctionExtensionTerms σ (τ , τs) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ , 𝓼urjectivitySubstitunctionExtensionTerms σ τs
 
   instance
 
-    𝓢urjectivitySubstitunctionExtensionTerm : Surjectivity!.class Substitunction (Extension Term)
+    𝓢urjectivitySubstitunctionExtensionTerm : Smap!.class Substitunction (Extension Term)
     𝓢urjectivitySubstitunctionExtensionTerm .⋆ = 𝓼urjectivitySubstitunctionExtensionTerm
 
-    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → Surjectivity!.class Substitunction (Extension $ Terms N)
+    𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → Smap!.class Substitunction (Extension $ Terms N)
     𝓢urjectivitySubstitunctionExtensionTerms .⋆ = 𝓼urjectivitySubstitunctionExtensionTerms
 
   instance

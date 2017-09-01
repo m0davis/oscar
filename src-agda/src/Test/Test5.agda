@@ -14,7 +14,7 @@ module Test.Test5
   {ℓ}
   {ℓ̇} (_↦_ : ∀ {x} → 𝔒₂ x → 𝔒₂ x → Ø ℓ̇)
   ⦃ _ : [ExtensibleType] _↦_ ⦄
-  ⦃ _ : Surjectivity!.class (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
+  ⦃ _ : Smap!.class (Arrow 𝔒₁ 𝔒₂) (Extension 𝔒₂) ⦄
   ⦃ _ : Surjextensionality!.class (Arrow 𝔒₁ 𝔒₂) (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
   -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowExtensionṖroperty ℓ 𝔒₁ 𝔒₂ _↦_) ⦄
   where

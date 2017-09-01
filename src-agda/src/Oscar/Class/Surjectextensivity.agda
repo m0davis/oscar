@@ -10,7 +10,7 @@ module Surjectextensivity
   (∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
   (𝔓 : 𝔒₂ → Ø 𝔯₂)
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  = Surjectivity ∼₁ (Extension 𝔓) surjection
+  = Smap ∼₁ (Extension 𝔓) surjection
 
 module _
   {𝔬₁ 𝔯₁ 𝔬₂ 𝔯₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}

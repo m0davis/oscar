@@ -10,7 +10,7 @@ module Oscar.Class.Smap.ExtensionṖroperty where
 
 instance
 
-  ExtensionṖropertySurjectivity : ∀
+  ExtensionṖropertySmap : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
     {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
@@ -18,7 +18,7 @@ instance
     {ℓ}
     {ℓ̇} {_↦_ : ∀̇ π̂² ℓ̇ 𝔒₂}
     ⦃ _ : [ExtensibleType] (λ {x} → _↦_ {x}) ⦄
-    ⦃ _ : Surjectivity!.class _∼_ (Extension 𝔒₂) ⦄
+    ⦃ _ : Smap!.class _∼_ (Extension 𝔒₂) ⦄
     ⦃ _ : Surjextensionality!.class _∼_ (Pointwise _↦_) (Extension 𝔒₂) (Pointwise _↦_) ⦄
-    → Surjectivity!.class _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_))
-  ExtensionṖropertySurjectivity .⋆ f P = ∁ (λ g → π₀ (π₀ P) (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
+    → Smap!.class _∼_ (Extension $ LeftExtensionṖroperty ℓ _∼_ (Pointwise _↦_))
+  ExtensionṖropertySmap .⋆ f P = ∁ (λ g → π₀ (π₀ P) (surjectivity g ∘ f)) , (λ f≐g Pf'◇f → π₁ P (surjextensionality f≐g ∘ f) Pf'◇f)
