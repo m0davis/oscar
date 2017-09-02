@@ -5,6 +5,16 @@ open import Oscar.Class.Unit
 
 module Oscar.Class.Leftunit where
 
+module Lefty
+  {𝔞 𝔟} {𝔄 : Ø 𝔞} {𝔅 : Ø 𝔟}
+  {𝔢} {𝔈 : Ø 𝔢}
+  {𝔞𝔟}
+  (_↤_ : 𝔅 → 𝔄 → Ø 𝔞𝔟) (let _↤_ = _↤_; infix 4 _↤_)
+  (ε : 𝔈)
+  (_◃_ : 𝔈 → 𝔄 → 𝔅) (let _◃_ = _◃_; infix 16 _◃_)
+  (x : 𝔄)
+  = ℭLASS (ε , _◃_ , _↤_ , x) (ε ◃ x ↤ x)
+
 module Leftunit
   {𝔞} {𝔄 : Ø 𝔞} {𝔢} {𝔈 : Ø 𝔢} {ℓ}
   (_↦_ : 𝔄 → 𝔄 → Ø ℓ) (let _↦_ = _↦_; infix 4 _↦_)
@@ -33,6 +43,8 @@ module _
   instance
     Leftunit--Unit : Unit.class (ε ◃ x ↦ x)
     Leftunit--Unit .⋆ = leftunit
+    Leftunit--Lefty : Lefty.class _↦_ ε _◃_ x
+    Leftunit--Lefty .⋆ = leftunit
 
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjection

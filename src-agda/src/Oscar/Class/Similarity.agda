@@ -72,6 +72,19 @@ module _
   where
   𝓢urjectextenscongruity = ∀ {m n} → Similarity.class (𝔓̇ {m}) (𝔓̇ {n}) _◃_
 
+module SmaparrowleftsimilarityRaw
+  {𝔵₁} {𝔛₁ : Ø 𝔵₁}
+  {𝔵₂} {𝔛₂ : Ø 𝔵₂}
+  {𝔯} (ℜ : π̂² 𝔯 𝔛₁)
+  {𝔭₁} (𝔓₁ : π̂ 𝔭₁ 𝔛₂)
+  {𝔭₂} (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
+  (surjection : Surjection.type 𝔛₁ 𝔛₂)
+  {𝔭̇₁} (𝔓̇₁ : ∀̇ π̂² 𝔭̇₁ (𝔓₁ ∘ surjection))
+  {𝔭̇₂} (𝔓̇₂ : ∀̇ π̂² 𝔭̇₂ (𝔓₂ ∘ surjection))
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
+  where
+  class = ∀ {m n} → Similarity.class (𝔓̇₁ {m}) (𝔓̇₂ {n}) smaparrow
+
 module Smaparrowleftsimilarity
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
   {𝔵₂} {𝔛₂ : Ø 𝔵₂}
