@@ -39,7 +39,7 @@ module _
 
       -- 𝒫 ₁≈₂ 𝒖 ◃ 𝒫
       ⦃ `leftyunit ⦄ : ∀ {x} {p : 𝔓₁ (surjection x)}
-                     → Lefty.class (flip (𝔓̇₁₂ {surjection x})) ε smaparrow p
+                     → Leftunit.class (flip (𝔓̇₁₂ {surjection x})) ε smaparrow p
 
 module _
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
