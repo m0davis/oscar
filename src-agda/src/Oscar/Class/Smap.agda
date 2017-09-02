@@ -14,6 +14,8 @@ module Smap
   where
   open ℭLASS (_∼₁_ , _∼₂_ , μ) (∀ {x y} → x ∼₁ y → μ x ∼₂ μ y) public
 
+open import Oscar.Class.Map
+
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   {_∼₁_ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁}
@@ -24,6 +26,10 @@ module _
   smap : ⦃ _ : class ⦄ → type
   smap = method
   § = smap
+
+  instance
+    sMaptoMap : ⦃ _ : Smap.class _∼₁_ _∼₂_ μ ⦄ → 𝓜ap _∼₁_ (_∼₂_ on μ)
+    sMaptoMap .𝓜ap.map = smap
 
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
