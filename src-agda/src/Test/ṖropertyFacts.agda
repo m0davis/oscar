@@ -13,7 +13,6 @@ open import Oscar.Class.HasEquivalence
 open import Oscar.Class.IsEquivalence
 open import Oscar.Class.Leftstar
 open import Oscar.Class.Leftunit
-open import Oscar.Class.Properfact1
 open import Oscar.Class.Properthing
 open import Oscar.Class.Quadricity
 open import Oscar.Class.Reflexivity
@@ -115,8 +114,8 @@ module Test.ṖropertyFacts where
       _ : Similarity,smaphomarrow!.class 𝑪 𝑷⁰ _≈_
       _ : Similarity,smaphomarrow!.class 𝑪 𝑷¹ _≈_
 
-      _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
-      _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
+      _ : ∀ {n} → Properfact1.class 𝓢._⟹_ (_⊛_ {n = n})
+      _ : ∀ {n} → Properfact1.class 𝓢̇._⟹_ (_⊛_ {n = n})
 
       _ : Leftunit,equivalence,smaphomarrow!.class 𝑪 𝑷⁰
       _ : Leftunit,equivalence,smaphomarrow!.class 𝑪 𝑷¹

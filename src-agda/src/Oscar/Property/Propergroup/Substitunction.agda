@@ -2,7 +2,7 @@
 open import Oscar.Prelude
 open import Oscar.Class
 open import Oscar.Class.HasEquivalence
-open import Oscar.Class.Properfact1
+open import Oscar.Class.Quadricity
 open import Oscar.Class.Injectivity
 open import Oscar.Class.Congruity
 open import Oscar.Class.Leftstar
@@ -66,10 +66,10 @@ module _
 
   instance
 
-    𝒫roperfact1UnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 S._⟹_ (_fork_ {n = n})
+    𝒫roperfact1UnifiesSubstitunctionFork : ∀ {n} → Properfact1.class S._⟹_ (_fork_ {n = n})
     𝒫roperfact1UnifiesSubstitunctionFork .⋆ _ _ _ _ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
-    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → 𝓟roperfact1 Ṡ._⟹_ (_fork_ {n = n})
+    𝒫roperfact1ExtensionalUnifiesSubstitunctionFork : ∀ {n} → Properfact1.class Ṡ._⟹_ (_fork_ {n = n})
     𝒫roperfact1ExtensionalUnifiesSubstitunctionFork .⋆ _ _ _ _ .π₀ .π₀ = (λ s≡t → injectivity₂,₀,₁ s≡t , injectivity₂,₀,₂ s≡t) , uncurry (congruity₂ _fork_)
 
   instance
