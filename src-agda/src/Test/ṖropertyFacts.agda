@@ -112,8 +112,8 @@ module Test.ṖropertyFacts where
 
     instance
 
-      _ : 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
-      _ : 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
+      _ : Similarity,smaphomarrow!.class 𝑪 𝑷⁰ _≈_
+      _ : Similarity,smaphomarrow!.class 𝑪 𝑷¹ _≈_
 
       _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
       _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
@@ -126,7 +126,7 @@ module Test.ṖropertyFacts where
 
   postulate
     instance
-      _ : 𝓕actsurj6 𝑷¹ 𝑪 _≈_ _≈_
+      _ : Similarity,cosmaphomarrow!.class 𝑪 𝑷¹ _≈_ _≈_
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆ c p = smaparrow c p

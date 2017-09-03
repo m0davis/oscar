@@ -50,10 +50,10 @@ module _
 
   instance
 
-    𝓢urjectextenscongruityArrowṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftṖroperty ℓ Substitunction) _≈_
+    𝓢urjectextenscongruityArrowṖropertySubstitunction : Similarity,smaphomarrow!.class Substitunction (LeftṖroperty ℓ Substitunction) _≈_
     𝓢urjectextenscongruityArrowṖropertySubstitunction .⋆ _ (∁ P⇔Q) .π₀ = P⇔Q
 
-    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction : 𝓢urjectextenscongruity Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
+    𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction : Similarity,smaphomarrow!.class Substitunction (LeftExtensionṖroperty ℓ Substitunction _≈_) _≈_
     𝓢urjectextenscongruityArrowExtensionṖropertySubstitunction .⋆ _ (∁ (∁ P⇔Q)) .π₀ = ∁ P⇔Q -- P⇔Q
 
 module _
@@ -92,5 +92,5 @@ module _
 
   instance
 
-    𝓕actsurj6Extension : ∀ {ℓ} → 𝓕actsurj6 (ArrowExtensionṖroperty ℓ Fin Term Proposequality) Substitunction _≈_ _≈_
+    𝓕actsurj6Extension : ∀ {ℓ} → Similarity,cosmaphomarrow!.class Substitunction (ArrowExtensionṖroperty ℓ Fin Term Proposequality) _≈_ _≈_
     𝓕actsurj6Extension .⋆ P f≐g .π₀ .π₀ {f = h} = π₁ P (congruity (smap h) ∘ f≐g) , π₁ P (Sym.[] (congruity (smap h) ∘ f≐g))
