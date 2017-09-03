@@ -13,8 +13,6 @@ module Smap
   (μ : Surjection.type 𝔛₁ 𝔛₂)
   = ℭLASS (_∼₁_ , _∼₂_ , μ) (∀ {x y} → x ∼₁ y → μ x ∼₂ μ y)
 
-open import Oscar.Class.Map
-
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   {_∼₁_ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁}
@@ -23,6 +21,8 @@ module _
   where
   smap = Smap.method _∼₁_ _∼₂_ μ
   § = smap
+
+  open import Oscar.Class.Map
 
   instance
     sMaptoMap : ⦃ _ : Smap.class _∼₁_ _∼₂_ μ ⦄ → 𝓜ap _∼₁_ (_∼₂_ on μ)
