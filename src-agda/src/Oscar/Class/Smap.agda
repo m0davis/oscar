@@ -80,4 +80,4 @@ module Smaphomarrow!
   (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
   (𝔓 : 𝔛₂ → Ø 𝔯₂)
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
-  = Smap ℜ (Extension 𝔓) surjection
+  = Smaparrow ℜ 𝔓 𝔓 surjection
