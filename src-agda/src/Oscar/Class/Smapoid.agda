@@ -5,6 +5,7 @@ open import Oscar.Class.Surjection
 open import Oscar.Class.Leftunit
 open import Oscar.Class.Smap
 open import Oscar.Class.Symmetrical
+open import Oscar.Class.Unit
 open import Oscar.Data.Surjcollation
 open import Oscar.Prelude
 
@@ -31,7 +32,7 @@ module _
       ⦃ `Smaparrow ⦄ : Smaparrow.class ℜ 𝔓₁ 𝔓₂ surjection -- epfs, Smap
 
       -- 𝒫 ₁≈₁ 𝒬 → 𝒻 ◃ 𝒫 ₂≈₂ 𝒻 ◃ 𝒬
-      ⦃ `leftSim ⦄ : SmaparrowleftsimilarityRaw.class ℜ 𝔓₁ 𝔓₂ surjection 𝔓̇₁₁ 𝔓̇₂₂ smaparrow -- fact5, Similarity, Smaparrowleftsimilarity
+      ⦃ `leftSim ⦄ : SmaparrowleftsimilarityRaw.class ℜ 𝔓₁ 𝔓₂ ‼ 𝔓̇₁₁ 𝔓̇₂₂ smaparrow -- fact5, Similarity, Smaparrowleftsimilarity
 
 
 
