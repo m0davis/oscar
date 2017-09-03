@@ -38,6 +38,12 @@ module _
   smap⟦_/_⟧ : ⦃ _ : class ⦄ → type
   smap⟦_/_⟧ = smap
 
+module ≡-Smap
+  {𝔵₁ 𝔯₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (∼₁ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
+  (μ : Surjection.type 𝔛₁ 𝔛₂)
+  = Smap ∼₁ _≡_ μ
+
 module _
   {𝔵₁ 𝔯₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   {_∼₁_ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁}
