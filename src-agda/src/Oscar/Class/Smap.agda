@@ -91,9 +91,7 @@ module _
   {𝔓 : 𝔛₂ → Ø 𝔯₂}
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   where
-  open Surjectextensivity ℜ 𝔓
-  surjectextensivity : ⦃ _ : class ⦄ → type
-  surjectextensivity = method
+  surjectextensivity = Surjectextensivity.method ℜ 𝔓
 
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
