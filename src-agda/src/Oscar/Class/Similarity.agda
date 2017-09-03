@@ -124,6 +124,28 @@ module Similarity,cosmaparrow!
   {𝔭̇₂} (𝔓̇₂ : ∀ {x} → 𝔓₂ x → 𝔓₂ x → Ø 𝔭̇₂)
   = Similarity,cosmaparrow surjection ℜ 𝔓₁ 𝔓₂ smaparrow ℜ̇ 𝔓̇₂
 
+module Similarity,cosmaphomarrow
+  {𝔵₁} {𝔛₁ : Ø 𝔵₁}
+  {𝔵₂} {𝔛₂ : Ø 𝔵₂}
+  (surjection : Surjection.type 𝔛₁ 𝔛₂)
+  {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
+  {𝔭} (𝔓 : 𝔛₂ → Ø 𝔭)
+  (smaparrow : Smaphomarrow.type ℜ 𝔓 surjection)
+  {𝔯̇} (ℜ̇ : ∀ {x y} → ℜ x y → ℜ x y → Ø 𝔯̇)
+  {𝔭̇} (𝔓̇ : ∀ {x} → 𝔓 x → 𝔓 x → Ø 𝔭̇)
+  = Similarity,cosmaparrow surjection ℜ 𝔓 𝔓 smaparrow ℜ̇ 𝔓̇
+
+module Similarity,cosmaphomarrow!
+  {𝔵₁} {𝔛₁ : Ø 𝔵₁}
+  {𝔵₂} {𝔛₂ : Ø 𝔵₂}
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
+  {𝔭} (𝔓 : 𝔛₂ → Ø 𝔭)
+  ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
+  {𝔯̇} (ℜ̇ : ∀ {x y} → ℜ x y → ℜ x y → Ø 𝔯̇)
+  {𝔭̇} (𝔓̇ : ∀ {x} → 𝔓 x → 𝔓 x → Ø 𝔭̇)
+  = Similarity,cosmaphomarrow surjection ℜ 𝔓 smaparrow ℜ̇ 𝔓̇
+
 module Similarity,smaparrow
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
   {𝔵₂} {𝔛₂ : Ø 𝔵₂}
