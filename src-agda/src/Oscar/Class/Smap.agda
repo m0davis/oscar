@@ -85,9 +85,16 @@ module Smaparrow!
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   = Smaparrow ℜ 𝔓₁ 𝔓₂ ‼
 
+module Smaphomarrow
+  {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
+  (𝔓 : 𝔛₂ → Ø 𝔯₂)
+  (surjection : Surjection.type 𝔛₁ 𝔛₂)
+  = Smaparrow ℜ 𝔓 𝔓 surjection
+
 module Smaphomarrow!
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
   (𝔓 : 𝔛₂ → Ø 𝔯₂)
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
-  = Smaparrow ℜ 𝔓 𝔓 surjection
+  = Smaphomarrow ℜ 𝔓 surjection
