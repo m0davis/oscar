@@ -40,28 +40,60 @@ open import Oscar.Class.Reflexivity
 open import Oscar.Class.Surjection
 open import Oscar.Class.Smap
 
-module Factsurj3
-  {𝔵₁ 𝔵₂ 𝔭 𝔯 ℓ} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
-  (𝔓 : π̂ 𝔭 𝔛₂)
-  (_≈_ : ∀̇ π̂² ℓ 𝔓)
+module Leftunit,smaparrow
+  {𝔵₁ 𝔵₂ 𝔭₁ 𝔭₂ 𝔯 𝔭̇₁₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : π̂² 𝔯 𝔛₁)
+  (𝔓₁ : π̂ 𝔭₁ 𝔛₂)
+  (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
   (ε : 𝓻eflexivity ℜ)
   (surjection : Surjection.type 𝔛₁ 𝔛₂)
-  (_◃_ : Smaphomarrow!.type ℜ 𝔓 ⦃ ∁ surjection ⦄)
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
+  (𝔓̇₁₂ : ∀ {x} → 𝔓₁ (surjection x) → 𝔓₂ (surjection x) → Ø 𝔭̇₁₂)
   where
-  class = ∀ {x} {p : 𝔓 (surjection x)} → Leftunit.class (flip (_≈_ {surjection x})) ε _◃_ p
-  type = ∀ {x} {p : 𝔓 (surjection x)} → Leftunit.type (flip (_≈_ {surjection x})) ε _◃_ p
-  method : ∀ {x} {p : 𝔓 (surjection x)} → ⦃ _ : Leftunit.class (flip (_≈_ {surjection x})) ε _◃_ p ⦄ → Leftunit.type (flip (_≈_ {surjection x})) ε _◃_ p
-  method = leftunit
+  class = ∀ {x} {p : 𝔓₁ (surjection x)} → Leftunit.class (flip 𝔓̇₁₂) ε smaparrow p
+  type = ∀ {x} {p : 𝔓₁ (surjection x)} → Leftunit.type (flip 𝔓̇₁₂) ε smaparrow p
+  method : ⦃ _ : class ⦄ → type
+  method {x} {p} = Leftunit.method (flip 𝔓̇₁₂) ε smaparrow p
 
-open import Oscar.Class.HasEquivalence
-
-module 𝓕actsurj3
-  {𝔵₁ 𝔵₂ 𝔭 𝔯 ℓ} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
-  (𝔓 : π̂ 𝔭 𝔛₂)
-  ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
+module Leftunit,smaparrow!
+  {𝔵₁ 𝔵₂ 𝔭₁ 𝔭₂ 𝔯 𝔭̇₁₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : π̂² 𝔯 𝔛₁)
+  (𝔓₁ : π̂ 𝔭₁ 𝔛₂)
+  (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
+  ⦃ _ : 𝓡eflexivity ℜ ⦄
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  ⦃ _ : Smaparrow!.class ℜ 𝔓₁ 𝔓₂ ⦄
+  (𝔓̇₁₂ : ∀ {x} → 𝔓₁ (surjection x) → 𝔓₂ (surjection x) → Ø 𝔭̇₁₂)
+  = Leftunit,smaparrow ℜ 𝔓₁ 𝔓₂ ε surjection smaparrow 𝔓̇₁₂
+
+module Leftunit,smaphomarrow
+  {𝔵₁ 𝔵₂ 𝔭 𝔯 𝔭̇} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (ℜ : π̂² 𝔯 𝔛₁)
+  (𝔓 : π̂ 𝔭 𝔛₂)
+  (ε : 𝓻eflexivity ℜ)
+  (surjection : Surjection.type 𝔛₁ 𝔛₂)
+  (smaparrow : Smaphomarrow.type ℜ 𝔓 surjection)
+  (𝔓̇ : ∀ {x} → 𝔓 (surjection x) → 𝔓 (surjection x) → Ø 𝔭̇)
+  = Leftunit,smaparrow ℜ 𝔓 𝔓 ε surjection smaparrow 𝔓̇
+
+module Leftunit,smaphomarrow!
+  {𝔵₁ 𝔵₂ 𝔭 𝔯 𝔭̇} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (ℜ : π̂² 𝔯 𝔛₁)
+  (𝔓 : π̂ 𝔭 𝔛₂)
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
-  = Factsurj3 𝔓 _≈_ ℜ ε surjection smaparrow
+  (𝔓̇ : ∀ {x} → 𝔓 (surjection x) → 𝔓 (surjection x) → Ø 𝔭̇)
+  = Leftunit,smaphomarrow ℜ 𝔓 ε surjection smaparrow 𝔓̇
+
+open import Oscar.Class.HasEquivalence
+
+module Leftunit,equivalence,smaphomarrow!
+  {𝔵₁ 𝔵₂ 𝔭 𝔯 𝔭̇} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (ℜ : π̂² 𝔯 𝔛₁)
+  (𝔓 : π̂ 𝔭 𝔛₂)
+  ⦃ _ : 𝓡eflexivity ℜ ⦄
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
+  ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) 𝔭̇ ⦄
+  = Leftunit,smaphomarrow! ℜ 𝔓 _≈_

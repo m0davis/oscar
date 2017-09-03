@@ -74,10 +74,10 @@ module _
 
   instance
 
-    𝓕actsurj3Regular : ∀ {ℓ} → 𝓕actsurj3.class (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term)
+    𝓕actsurj3Regular : ∀ {ℓ} → Leftunit,equivalence,smaphomarrow!.class (Arrow Fin Term) (LeftṖroperty ℓ (Arrow Fin Term))
     𝓕actsurj3Regular .⋆ .π₀ = ¡ , ¡
 
-    𝓕actsurj3Extension : ∀ {ℓ} → Factsurj3.class (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) _≈_ (Arrow Fin Term) ε surjection smaparrow
+    𝓕actsurj3Extension : ∀ {ℓ} → Leftunit,smaphomarrow.class (Arrow Fin Term) (LeftExtensionṖroperty ℓ (Arrow Fin Term) (Pointwise Proposequality)) ε surjection smaparrow _≈_
     𝓕actsurj3Extension .⋆ .π₀ .π₀ = ¡ , ¡
 
   open Substitunction 𝔓

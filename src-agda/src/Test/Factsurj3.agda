@@ -20,14 +20,10 @@ module Test0
   (_◃_ : Smaphomarrow!.type ℜ 𝔓)
   (_◃'_ : Smaphomarrow!.type ℜ 𝔓)
   where
-  test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
+  test-class' : ⦃ _ : Leftunit,smaphomarrow.class ℜ 𝔓 ε surjection _◃_ _≈_ ⦄ → Leftunit,smaphomarrow.class ℜ 𝔓 ε surjection _◃_ _≈_
   test-class' = !
-  test-method' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε surjection _◃_
+  test-method' : ⦃ _ : Leftunit,smaphomarrow.class ℜ 𝔓 ε surjection _◃_ _≈_ ⦄ → Leftunit,smaphomarrow.type ℜ 𝔓 ε surjection _◃_ _≈_
   test-method' = leftunit
-  test-class : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → ∀ {x} {p : 𝔓 x} → Leftunit.class (flip (_≈_ {x})) ε _◃_ p
-  test-class = !
-  test-method : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.type 𝔓 _≈_ ℜ ε surjection _◃_
-  test-method = leftunit
 
 test-class : ∀
   {𝔵 𝔭 𝔯 ℓ} {𝔛 : Ø 𝔵}
@@ -36,6 +32,6 @@ test-class : ∀
   {ℜ : π̂² 𝔯 𝔛}
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
-  → ⦃ _ : 𝓕actsurj3.class 𝔓 ℜ ⦄
-  → 𝓕actsurj3.class 𝔓 ℜ
+  → ⦃ _ : Leftunit,equivalence,smaphomarrow!.class ℜ 𝔓 ⦄
+  → Leftunit,equivalence,smaphomarrow!.class ℜ 𝔓
 test-class = !

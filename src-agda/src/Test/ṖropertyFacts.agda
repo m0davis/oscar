@@ -118,8 +118,8 @@ module Test.ṖropertyFacts where
       _ : ∀ {n} → 𝓟roperfact1 𝓢._⟹_ (_⊛_ {n = n})
       _ : ∀ {n} → 𝓟roperfact1 𝓢̇._⟹_ (_⊛_ {n = n})
 
-      _ : 𝓕actsurj3.class 𝑷⁰ 𝑪
-      _ : 𝓕actsurj3.class 𝑷¹ 𝑪
+      _ : Leftunit,equivalence,smaphomarrow!.class 𝑪 𝑷⁰
+      _ : Leftunit,equivalence,smaphomarrow!.class 𝑪 𝑷¹
 
       _ : Leftstar,smaphomarrow!.class 𝑷⁰ 𝑪 Nothing
       _ : Leftstar,smaphomarrow!.class 𝑷¹ 𝑪 Nothing
@@ -189,7 +189,7 @@ module Test.ṖropertyFacts where
   fact3⋆-leftunit = leftunit
 
   lhs-fact3⋆ : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → _
-  lhs-fact3⋆ {𝒫 = 𝒫} = 𝓕actsurj3.method 𝑷⁰ 𝑪 {p = 𝒫}
+  lhs-fact3⋆ {𝒫 = 𝒫} = Leftunit,equivalence,smaphomarrow!.method 𝑪 𝑷⁰ {p = 𝒫}
 
   fact3 : ∀ {𝓃} {𝒫 : 𝑷¹ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3 = ‼
