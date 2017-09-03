@@ -23,7 +23,7 @@ module _
   {𝔅̇ : 𝔅 → Ø 𝔟̇}
   {_◂_ : 𝔉 → 𝔄 → 𝔅}
   where
-  open Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (method to leftstar) public
+  leftstar = Leftstar.method 𝔄̇ 𝔅̇ _◂_
 
 open import Oscar.Class.Surjection
 open import Oscar.Class.Smap
