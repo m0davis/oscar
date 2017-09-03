@@ -10,6 +10,8 @@ open import Oscar.Class.Leftunit public
 open import Oscar.Class.Properthing public
 open import Oscar.Class.Quadricity public
 open import Oscar.Class.Similarity public
+open import Oscar.Class.SimilarityM public
+open import Oscar.Class.SimilaritySingleton public
 open import Oscar.Class.Smap                  public
 open import Oscar.Class.Symmetrical                         public
 open import Oscar.Class.Unit                                public
