@@ -75,7 +75,7 @@ module _
   smaparrow[]syntax = _◃_
   syntax smaparrow[]syntax 𝔛₂ x∼y fx = x∼y ◃[ 𝔛₂ ] fx
 
-module Smaphomarrow
+module Smaphomarrow!
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
   (𝔓 : 𝔛₂ → Ø 𝔯₂)
