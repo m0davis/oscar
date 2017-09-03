@@ -121,8 +121,8 @@ module Test.ṖropertyFacts where
       _ : 𝓕actsurj3.class 𝑷⁰ 𝑪
       _ : 𝓕actsurj3.class 𝑷¹ 𝑪
 
-      _ : 𝓕actsurj4 𝑷⁰ 𝑪 Nothing
-      _ : 𝓕actsurj4 𝑷¹ 𝑪 Nothing
+      _ : Leftstar,smaphomarrow!.class 𝑷⁰ 𝑪 Nothing
+      _ : Leftstar,smaphomarrow!.class 𝑷¹ 𝑪 Nothing
 
   postulate
     instance

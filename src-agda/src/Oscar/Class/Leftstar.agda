@@ -28,12 +28,42 @@ module _
 open import Oscar.Class.Surjection
 open import Oscar.Class.Smap
 
-module _
-  {𝔞} {𝔄 : Ø 𝔞}
-  ⦃ _ : Surjection.class 𝔄 𝔄 ⦄
-  {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
-  {𝔠} (ℭ : 𝔄 → 𝔄 → Ø 𝔠)
-  {𝔡} (𝔇 : ∀ {a} → 𝔅 (surjection a) → Ø 𝔡)
-  ⦃ _ : Smaphomarrow!.class ℭ 𝔅 ⦄
+module Leftstar,smaparrow
+  {𝔵₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (surjection : Surjection.type 𝔛₁ 𝔛₂)
+  {𝔭₁ 𝔭₂} (𝔓₁ : 𝔛₂ → Ø 𝔭₁) (𝔓₂ : 𝔛₂ → Ø 𝔭₂)
+  {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
+  {𝔭̇₁} (𝔓̇₁ : ∀ {a} → 𝔓₁ (surjection a) → Ø 𝔭̇₁)
+  {𝔭̇₂} (𝔓̇₂ : ∀ {a} → 𝔓₂ (surjection a) → Ø 𝔭̇₂)
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
   where
-  𝓕actsurj4 = ∀ {a₁ a₂} → Leftstar.class (𝔇 {a₁}) (𝔇 {a₂}) (smaparrow {x = a₁} {a₂})
+  class = ∀ {a₁ a₂} → Leftstar.class (𝔓̇₁ {a₁}) (𝔓̇₂ {a₂}) smaparrow
+  type = ∀ {a₁ a₂} → Leftstar.type (𝔓̇₁ {a₁}) (𝔓̇₂ {a₂}) smaparrow
+
+module Leftstar,smaparrow!
+  {𝔵₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  {𝔭₁ 𝔭₂} (𝔓₁ : 𝔛₂ → Ø 𝔭₁) (𝔓₂ : 𝔛₂ → Ø 𝔭₂)
+  {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
+  {𝔭̇₁} (𝔓̇₁ : ∀ {a} → 𝔓₁ (surjection a) → Ø 𝔭̇₁)
+  {𝔭̇₂} (𝔓̇₂ : ∀ {a} → 𝔓₂ (surjection a) → Ø 𝔭̇₂)
+  ⦃ _ : Smaparrow!.class ℜ 𝔓₁ 𝔓₂ ⦄
+  = Leftstar,smaparrow surjection 𝔓₁ 𝔓₂ ℜ 𝔓̇₁ 𝔓̇₂ smaparrow
+
+module Leftstar,smaphomarrow
+  {𝔵₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  (surjection : Surjection.type 𝔛₁ 𝔛₂)
+  {𝔭} (𝔓 : 𝔛₂ → Ø 𝔭)
+  {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
+  {𝔭̇} (𝔓̇ : ∀ {a} → 𝔓 (surjection a) → Ø 𝔭̇)
+  (smaparrow : Smaphomarrow.type ℜ 𝔓 surjection)
+  = Leftstar,smaparrow surjection 𝔓 𝔓 ℜ 𝔓̇ 𝔓̇ smaparrow
+
+module Leftstar,smaphomarrow!
+  {𝔵₁ 𝔵₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
+  ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
+  {𝔭} (𝔓 : 𝔛₂ → Ø 𝔭)
+  {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
+  {𝔭̇} (𝔓̇ : ∀ {a} → 𝔓 (surjection a) → Ø 𝔭̇)
+  ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
+  = Leftstar,smaphomarrow surjection 𝔓 ℜ 𝔓̇ smaparrow

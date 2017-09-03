@@ -84,10 +84,10 @@ module _
 
   instance
 
-    𝓕actsurj4Regular : ∀ {ℓ} → 𝓕actsurj4 (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
+    𝓕actsurj4Regular : ∀ {ℓ} → Leftstar,smaphomarrow!.class (LeftṖroperty ℓ (Arrow Fin Term)) (Arrow Fin Term) Nothing
     𝓕actsurj4Regular .⋆ _ (∁ nop) .π₀ = nop
 
-    𝓕actsurj4Extension : ∀ {ℓ} → 𝓕actsurj4 (LeftExtensionṖroperty ℓ Substitunction (Pointwise Proposequality)) (Arrow Fin Term) Nothing
+    𝓕actsurj4Extension : ∀ {ℓ} → Leftstar,smaphomarrow!.class (LeftExtensionṖroperty ℓ Substitunction (Pointwise Proposequality)) (Arrow Fin Term) Nothing
     𝓕actsurj4Extension .⋆ _ (∁ nop) .π₀ = nop
 
   instance
