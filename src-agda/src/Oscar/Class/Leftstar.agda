@@ -19,18 +19,6 @@ module _
   {𝔄 : Ø 𝔞}
   {𝔅 : Ø 𝔟}
   {𝔉 : Ø 𝔣}
-  (𝔄̇ : 𝔄 → Ø 𝔞̇)
-  (𝔅̇ : 𝔅 → Ø 𝔟̇)
-  (_◂_ : 𝔉 → 𝔄 → 𝔅)
-  where
-  module LEFTSTAR = Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (class to ∁⟦_/_/_⟧; method to F⟦_/_/_⟧)
-  open Leftstar 𝔄̇ 𝔅̇ _◂_ using () renaming (class to Leftstar; method to leftstar⟦_/_/_⟧) public
-
-module _
-  {𝔞 𝔟 𝔣 𝔞̇ 𝔟̇}
-  {𝔄 : Ø 𝔞}
-  {𝔅 : Ø 𝔟}
-  {𝔉 : Ø 𝔣}
   {𝔄̇ : 𝔄 → Ø 𝔞̇}
   {𝔅̇ : 𝔅 → Ø 𝔟̇}
   {_◂_ : 𝔉 → 𝔄 → 𝔅}
@@ -48,4 +36,4 @@ module _
   {𝔡} (𝔇 : ∀ {a} → 𝔅 (surjection a) → Ø 𝔡)
   ⦃ _ : Surjectextensivity.class ℭ 𝔅 ⦄
   where
-  𝓕actsurj4 = ∀ {a₁ a₂} → LEFTSTAR.∁⟦ 𝔇 {a₁} / 𝔇 {a₂} / surjectextensivity {x = a₁} {a₂} ⟧
+  𝓕actsurj4 = ∀ {a₁ a₂} → Leftstar.class (𝔇 {a₁}) (𝔇 {a₂}) (surjectextensivity {x = a₁} {a₂})
