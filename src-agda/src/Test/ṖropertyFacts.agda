@@ -129,13 +129,13 @@ module Test.ṖropertyFacts where
       _ : 𝓕actsurj6 𝑷¹ 𝑪 _≈_ _≈_
 
   test-epfs⋆ : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
-  test-epfs⋆ c p = surjectextensivity c p
+  test-epfs⋆ c p = smaparrow c p
 
   test-epfs⋆' : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷⁰ 𝓂 → 𝑷⁰ 𝓃
   test-epfs⋆' c p = smap c $ p
 
   test-epfs : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
-  test-epfs c p = surjectextensivity c p
+  test-epfs c p = smaparrow c p
 
   test-epfs' : ∀ {𝓂 𝓃} → 𝑪 𝓂 𝓃 → 𝑷¹ 𝓂 → 𝑷¹ 𝓃
   test-epfs' c p = smap c $ p
@@ -183,7 +183,7 @@ module Test.ṖropertyFacts where
   fact3⋆ = ‼
 
   fact3⋆-Leftunit : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
-  fact3⋆-Leftunit {𝒫 = 𝒫} = Leftunit.method (flip _≈_) 𝒖 surjectextensivity 𝒫
+  fact3⋆-Leftunit {𝒫 = 𝒫} = Leftunit.method (flip _≈_) 𝒖 smaparrow 𝒫
 
   fact3⋆-leftunit : ∀ {𝓃} {𝒫 : 𝑷⁰ 𝓃} → 𝒫 ≈ 𝒖 ◃ 𝒫
   fact3⋆-leftunit = leftunit

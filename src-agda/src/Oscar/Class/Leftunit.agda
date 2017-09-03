@@ -64,4 +64,4 @@ module 𝓕actsurj3
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
-  = Factsurj3 𝔓 _≈_ ℜ ε surjection surjectextensivity
+  = Factsurj3 𝔓 _≈_ ℜ ε surjection smaparrow
