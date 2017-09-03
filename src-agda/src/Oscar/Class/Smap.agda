@@ -75,15 +75,13 @@ module _
   smaparrow[]syntax = _◃_
   syntax smaparrow[]syntax 𝔛₂ x∼y fx = x∼y ◃[ 𝔛₂ ] fx
 
-open import Oscar.Class.Unit
-
 module Smaparrow!
   {𝔵₁ 𝔵₂ 𝔯 𝔭₁ 𝔭₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
   (𝔓₁ : 𝔛₂ → Ø 𝔭₁)
   (𝔓₂ : 𝔛₂ → Ø 𝔭₂)
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
-  = Smaparrow ℜ 𝔓₁ 𝔓₂ ‼
+  = Smaparrow ℜ 𝔓₁ 𝔓₂ surjection
 
 module Smaphomarrow
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
