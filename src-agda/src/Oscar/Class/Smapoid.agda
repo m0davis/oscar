@@ -32,7 +32,7 @@ module _
       ⦃ `Smaparrow ⦄ : Smaparrow.class ℜ 𝔓₁ 𝔓₂ surjection -- epfs, Smap
 
       -- 𝒫 ₁≈₁ 𝒬 → 𝒻 ◃ 𝒫 ₂≈₂ 𝒻 ◃ 𝒬
-      ⦃ `leftSim ⦄ : SmaparrowleftsimilarityRaw.class ℜ 𝔓₁ 𝔓₂ ‼ 𝔓̇₁₁ 𝔓̇₂₂ smaparrow -- fact5, Similarity, Smaparrowleftsimilarity
+      ⦃ `leftSim ⦄ : SmaparrowleftsimilarityRaw.class ℜ 𝔓₁ 𝔓₂ ‼ 𝔓̇₁₁ 𝔓̇₂₂ smap -- fact5, Similarity, Smaparrowleftsimilarity
 
 
 
@@ -40,7 +40,7 @@ module _
 
       -- 𝒫 ₁≈₂ 𝒖 ◃ 𝒫
       ⦃ `leftyunit ⦄ : ∀ {x} {p : 𝔓₁ (surjection x)}
-                     → Leftunit.class (flip (𝔓̇₁₂ {surjection x})) ε smaparrow p
+                     → Leftunit.class (flip (𝔓̇₁₂ {surjection x})) ε smap p
 
 module _
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
@@ -60,7 +60,7 @@ module _
       ⦃ `IsSmapoid ⦄ : IsSmapoid ℜ 𝔓₁ 𝔓₂ ℜ̇ 𝔓̇₁₁ 𝔓̇₂₂ 𝔓̇₁₂
 
       -- 𝒻 ᵣ≈ᵣ ℊ → 𝒻 ◃ 𝒫 ₂≈₂ ℊ ◃ 𝒫
-      ⦃ `rightSim ⦄ : Smaparrowrightsimilarity.class 𝔓₁ 𝔓₂ ℜ ℜ̇ 𝔓̇₂₂ smaparrow -- fact6, Similarity, Smaparrowrightsimilarity
+      ⦃ `rightSim ⦄ : Smaparrowrightsimilarity.class 𝔓₁ 𝔓₂ ℜ ℜ̇ 𝔓̇₂₂ smap -- fact6, Similarity, Smaparrowrightsimilarity
 
 -- TODO add these somewhere?
 -- fact4 needs Propergroup's Nothing -- ⦃ `Leftstar ⦄ : Leftstar.class
