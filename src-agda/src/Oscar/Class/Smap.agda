@@ -22,9 +22,7 @@ module _
   {_∼₂_ : 𝔛₂ → 𝔛₂ → Ø 𝔯₂}
   {μ : Surjection.type 𝔛₁ 𝔛₂}
   where
-  open Smap _∼₁_ _∼₂_ μ
-  smap : ⦃ _ : class ⦄ → type
-  smap = method
+  smap = Smap.method _∼₁_ _∼₂_ μ
   § = smap
 
   instance
