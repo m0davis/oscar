@@ -17,8 +17,8 @@ module Test0
   (_≈'_ : ∀̇ π̂² ℓ 𝔓)
   (ℜ : π̂² 𝔯 𝔛)
   (ε : 𝓻eflexivity ℜ)
-  (_◃_ : Surjectextensivity.type ℜ 𝔓)
-  (_◃'_ : Surjectextensivity.type ℜ 𝔓)
+  (_◃_ : Smaphomarrow.type ℜ 𝔓)
+  (_◃'_ : Smaphomarrow.type ℜ 𝔓)
   where
   test-class' : ⦃ _ : Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_ ⦄ → Factsurj3.class 𝔓 _≈_ ℜ ε surjection _◃_
   test-class' = !
@@ -35,7 +35,7 @@ test-class : ∀
   ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) ℓ ⦄
   {ℜ : π̂² 𝔯 𝔛}
   ⦃ _ : 𝓡eflexivity ℜ ⦄
-  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
+  ⦃ _ : Smaphomarrow.class ℜ 𝔓 ⦄
   → ⦃ _ : 𝓕actsurj3.class 𝔓 ℜ ⦄
   → 𝓕actsurj3.class 𝔓 ℜ
 test-class = !

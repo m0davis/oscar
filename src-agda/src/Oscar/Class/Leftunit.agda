@@ -47,7 +47,7 @@ module Factsurj3
   (ℜ : π̂² 𝔯 𝔛₁)
   (ε : 𝓻eflexivity ℜ)
   (surjection : Surjection.type 𝔛₁ 𝔛₂)
-  (_◃_ : Surjectextensivity.type ℜ 𝔓 ⦃ ∁ surjection ⦄)
+  (_◃_ : Smaphomarrow.type ℜ 𝔓 ⦃ ∁ surjection ⦄)
   where
   class = ∀ {x} {p : 𝔓 (surjection x)} → Leftunit.class (flip (_≈_ {surjection x})) ε _◃_ p
   type = ∀ {x} {p : 𝔓 (surjection x)} → Leftunit.type (flip (_≈_ {surjection x})) ε _◃_ p
@@ -63,5 +63,5 @@ module 𝓕actsurj3
   (ℜ : π̂² 𝔯 𝔛₁)
   ⦃ _ : 𝓡eflexivity ℜ ⦄
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
-  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
+  ⦃ _ : Smaphomarrow.class ℜ 𝔓 ⦄
   = Factsurj3 𝔓 _≈_ ℜ ε surjection smaparrow

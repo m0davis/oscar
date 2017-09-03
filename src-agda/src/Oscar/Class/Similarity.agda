@@ -44,7 +44,7 @@ module _
   {𝔯̇} (ℜ̇ : ∀ {x y} → ℜ x y → ℜ x y → Ø 𝔯̇)
   {𝔭̇} (𝔓̇ : ∀ {x} → 𝔓 x → 𝔓 x → Ø 𝔭̇)
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
-  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
+  ⦃ _ : Smaphomarrow.class ℜ 𝔓 ⦄
   where
   𝓕actsurj6 = ∀ {m n} → Similarity.class (ℜ̇ {m} {n}) (𝔓̇ {surjection n}) (flip _◃_)
 
@@ -68,7 +68,7 @@ module _
   {𝔭} (𝔓 : π̂ 𝔭 𝔛₂)
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   {𝔭̇} (𝔓̇ : ∀̇ π̂² 𝔭̇ (𝔓 ∘ surjection))
-  ⦃ _ : Surjectextensivity.class ℜ 𝔓 ⦄
+  ⦃ _ : Smaphomarrow.class ℜ 𝔓 ⦄
   where
   𝓢urjectextenscongruity = ∀ {m n} → Similarity.class (𝔓̇ {m}) (𝔓̇ {n}) _◃_
 

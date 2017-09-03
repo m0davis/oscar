@@ -34,6 +34,6 @@ module _
   {𝔟} (𝔅 : 𝔄 → Ø 𝔟)
   {𝔠} (ℭ : 𝔄 → 𝔄 → Ø 𝔠)
   {𝔡} (𝔇 : ∀ {a} → 𝔅 (surjection a) → Ø 𝔡)
-  ⦃ _ : Surjectextensivity.class ℭ 𝔅 ⦄
+  ⦃ _ : Smaphomarrow.class ℭ 𝔅 ⦄
   where
   𝓕actsurj4 = ∀ {a₁ a₂} → Leftstar.class (𝔇 {a₁}) (𝔇 {a₂}) (smaparrow {x = a₁} {a₂})
