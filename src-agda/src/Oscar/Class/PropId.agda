@@ -13,10 +13,11 @@ module Relpropid
   {𝔵₁} (𝔛₁ : Ø 𝔵₁)
   (p₁ : 𝔛₁ → 𝔛₁)
   {𝔵₂} (𝔛₂ : Ø 𝔵₂)
+  (p₂ : 𝔛₂ → 𝔛₂)
   {𝔯₁₂} (ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂)
-  = ℭLASS (p₁ , ℜ₁₂)
+  = ℭLASS (p₁ , p₂ , ℜ₁₂)
           (∀ {P₁ : 𝔛₁} (P₂ : 𝔛₂)
-           → ℜ₁₂ P₁ P₂ → ℜ₁₂ (p₁ P₁) P₂)
+           → ℜ₁₂ P₁ P₂ → ℜ₁₂ (p₁ P₁) (p₂ P₂))
 
 instance
   Relprop'idFromTransleftidentity : ∀
@@ -35,5 +36,6 @@ instance
     → Relpropid.class (m ∼ n)
                       (λ f → transitivity f reflexivity)
                       (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
+                      ¡
                       (λ f P → π₀ (π₀ P) f)
   Relprop'idFromTransleftidentity .⋆ (_ , P₁) = P₁ $ symmetry transleftidentity
