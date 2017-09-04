@@ -12,13 +12,12 @@ open import Oscar.Class
 module Relpropid
   {𝔵} {𝔛 : Ø 𝔵}
   {𝔯} (ℜ : 𝔛 → 𝔛 → Ø 𝔯)
-  (transitivity : ∀ {x y} → ℜ x y → ℜ y y → ℜ x y)
-  (reflexivity : 𝓻eflexivity ℜ)
+  (transitivity : ∀ {x y} → ℜ x y → ℜ x y)
   {𝔭} (𝔓 : 𝔛 → Ø 𝔭)
   {𝔭𝔯} (pr : ∀ {m n} → 𝔓 m → ℜ m n → Ø 𝔭𝔯)
-  = ℭLASS (ℜ ,, (λ {x y} → transitivity {x} {y}) ,, λ {x} → reflexivity {x})
+  = ℭLASS (ℜ ,, (λ {x y} → transitivity {x} {y}))
           (∀ {m n} {f : ℜ m n} (P : 𝔓 m)
-           → pr P f → pr P (transitivity f reflexivity))
+           → pr P f → pr P (transitivity f))
 
 instance
   RelpropidFromTransleftidentity : ∀
@@ -33,5 +32,5 @@ instance
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-    → Relpropid.class _∼_ transitivity reflexivity (LeftExtensionṖroperty ℓ _∼_ _∼̇_) (λ P f → π₀ (π₀ P) f)
+    → Relpropid.class _∼_ (λ f → transitivity f reflexivity) (LeftExtensionṖroperty ℓ _∼_ _∼̇_) (λ P f → π₀ (π₀ P) f)
   RelpropidFromTransleftidentity .⋆ (_ , P₁) = P₁ $ symmetry transleftidentity
