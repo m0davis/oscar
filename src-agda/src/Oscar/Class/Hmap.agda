@@ -43,8 +43,8 @@ instance
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
     → ∀ {m n}
     → Hmap.class (m ∼ n)
-                      (λ f → transitivity f reflexivity)
-                      (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
-                      ¡
-                      (λ f P → π₀ (π₀ P) f)
+                 (λ f → transitivity f reflexivity)
+                 (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
+                 ¡
+                 (λ f P → π₀ (π₀ P) f)
   Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
