@@ -5,6 +5,7 @@ open import Oscar.Class.Reflexivity
 open import Oscar.Class.Transleftidentity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Hmap
+open import Oscar.Class.Smap
 
 module Test.Test7 where
 
@@ -23,4 +24,5 @@ module Test.Test7 where
     {ℓ} {f : m ∼ n} (P : ExtensionṖroperty ℓ (Arrow 𝔄 𝔅 m) _∼̇_) (let P₀ = π₀ (π₀ P))
     → P₀ f
     → P₀ (ε ∙ f)
-  𝓅rop-id = hmap _
+  𝓅rop-id P Pf = smap {y = P} Pf
+--  𝓅rop-id = hmap _

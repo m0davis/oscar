@@ -28,10 +28,10 @@ module !1 where
     𝓢urjection2 = ∁ s2
 
     𝓢urjectivity1 : Smap!.class _~A~_ _~B~_
-    𝓢urjectivity1 .⋆ = f1
+    𝓢urjectivity1 .⋆ _ _ = f1
 
     𝓢urjectivity2 : Smap!.class _~A~_ _~B~_
-    𝓢urjectivity2 .⋆ = f2
+    𝓢urjectivity2 .⋆ _ _ = f2
 
   test1 : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
   test1 = smap
@@ -59,10 +59,10 @@ module !2 where
     𝓢urjection2 = ∁ s2
 
     𝓢urjectivity1 : Smap!.class _~A~_ _≡_
-    𝓢urjectivity1 .⋆ = f1
+    𝓢urjectivity1 .⋆ _ _ = f1
 
     𝓢urjectivity2 : Smap!.class _~A~_ _≡_
-    𝓢urjectivity2 .⋆ = f2
+    𝓢urjectivity2 .⋆ _ _ = f2
 
   test-rhs-1 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
   test-rhs-1 = smap
