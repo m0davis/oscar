@@ -14,7 +14,7 @@ module Surjextensionality
   (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
   (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
   (surjection : Surjection.type 𝔒₁ 𝔒₂)
-  (smap : Smap.type _∼₁_ _∼₂_ surjection)
+  (smap : Smap.type _∼₁_ _∼₂_ surjection surjection)
   where
   open ℭLASS (_∼₁_ ,, (λ {x y} → _∼̇₁_ {x} {y}) ,, _∼₂_ ,, (λ {x y} → _∼̇₂_ {x} {y}) ,, surjection ,, (λ {x y} → smap {x} {y})) (∀ x y (f₁ f₂ : x ∼₁ y) → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂) public
   TYPE = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂
@@ -26,7 +26,7 @@ module Surjextensionality!
   (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
   (_∼̇₂_ : ∀ {x y} → _∼₂_ x y → _∼₂_ x y → Ø ℓ₂)
   ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ J : Smap.class _∼₁_ _∼₂_ surjection ⦄
+  ⦃ J : Smap.class _∼₁_ _∼₂_ surjection surjection ⦄
   where
   -- FIXME want to use this instead: open Surjextensionality _∼₁_ (λ {x y} → _∼̇₁_ {x} {y}) _∼₂_ (λ {x y} → _∼̇₂_ {x} {y}) surjection (λ {x y} → smap {x = x} {y}) public
   open ℭLASS (_∼₁_ ,, (λ {x y} → _∼̇₁_ {x} {y}) ,, _∼₂_ ,, (λ {x y} → _∼̇₂_ {x} {y}) ,, I ,, J) (∀ x y (f₁ f₂ : x ∼₁ y) → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂) public
@@ -42,7 +42,7 @@ module _
   -- {surjection : Surjection.type 𝔒₁ 𝔒₂}
   -- {smap : Smap.type ∼₁ ∼₂ surjection}
   ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ J : Smap.class ∼₁ ∼₂ surjection ⦄
+  ⦃ J : Smap.class ∼₁ ∼₂ surjection surjection ⦄
   where
   open Surjextensionality!
     ∼₁
@@ -65,7 +65,7 @@ module _
   -- {surjection : Surjection.type 𝔒₁ 𝔒₂}
   -- {smap : Smap.TYPE ∼₁ ∼₂ surjection}
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ _ : Smap.class ∼₁ ∼₂ surjection ⦄
+  ⦃ _ : Smap.class ∼₁ ∼₂ surjection surjection ⦄
   where
   open Surjextensionality!
     ∼₁

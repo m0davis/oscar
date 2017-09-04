@@ -43,7 +43,7 @@ module Similarity,cosmaparrow
   {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
   {𝔭₁} (𝔓₁ : 𝔛₂ → Ø 𝔭₁)
   {𝔭₂} (𝔓₂ : 𝔛₂ → Ø 𝔭₂)
-  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection surjection)
   {𝔯̇} (ℜ̇ : ∀ {x y} → ℜ x y → ℜ x y → Ø 𝔯̇)
   {𝔭̇₂} (𝔓̇₂ : ∀ {x} → 𝔓₂ x → 𝔓₂ x → Ø 𝔭̇₂)
   where
@@ -91,7 +91,7 @@ module Similarity,smaparrow
   {𝔯} (ℜ : π̂² 𝔯 𝔛₁)
   {𝔭₁} (𝔓₁ : π̂ 𝔭₁ 𝔛₂)
   {𝔭₂} (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
-  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection surjection)
   {𝔭̇₁} (𝔓̇₁ : ∀̇ π̂² 𝔭̇₁ (𝔓₁ ∘ surjection))
   {𝔭̇₂} (𝔓̇₂ : ∀̇ π̂² 𝔭̇₂ (𝔓₂ ∘ surjection))
   where

@@ -89,10 +89,10 @@ module !2 where
   test-lhs-5 x~A~y rewrite (Proposequality on s2) _ _ ∋ smap x~A~y = ∅
 
   test-lhs-6 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-6 x~A~y rewrite smap⟦ Proposequality / s2 ⟧ x~A~y = ∅
+  test-lhs-6 x~A~y rewrite smap⟦ Proposequality / s2 / s2 ⟧ x~A~y = ∅
 
   test-lhs-6' : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-6' x~A~y rewrite ≡-Smap.method _ s2 x~A~y = ∅
+  test-lhs-6' x~A~y rewrite ≡-Smap.method _ s2 s2 x~A~y = ∅
 
   test-lhs-7 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-7 x~A~y rewrite ≡-smap⟦ s2 ⟧ x~A~y = ∅
+  test-lhs-7 x~A~y rewrite ≡-smap⟦ s2 ⟧ s2 x~A~y = ∅

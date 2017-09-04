@@ -47,7 +47,7 @@ module Leftunit,smaparrow
   (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
   (ε : 𝓻eflexivity ℜ)
   (surjection : Surjection.type 𝔛₁ 𝔛₂)
-  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection surjection)
   (𝔓̇₁₂ : ∀ {x} → 𝔓₁ (surjection x) → 𝔓₂ (surjection x) → Ø 𝔭̇₁₂)
   where
   class = ∀ {x} {p : 𝔓₁ (surjection x)} → Leftunit.class (flip 𝔓̇₁₂) ε smaparrow p

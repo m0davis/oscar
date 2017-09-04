@@ -52,7 +52,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
       𝓼urjectivitySubstitunctionExtensionTerm σ (τ₁ fork τ₂) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ₁ fork 𝓼urjectivitySubstitunctionExtensionTerm σ τ₂
       𝓼urjectivitySubstitunctionExtensionTerm σ (function p τs) = function p (𝓼urjectivitySubstitunctionExtensionTerms σ τs)
 
-      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → Smap.type Substitunction (Extension $ Terms N) surjection
+      𝓼urjectivitySubstitunctionExtensionTerms : ∀ {N} → Smap.type Substitunction (Extension $ Terms N) surjection surjection
       𝓼urjectivitySubstitunctionExtensionTerms σ ∅ = ∅
       𝓼urjectivitySubstitunctionExtensionTerms σ (τ , τs) = 𝓼urjectivitySubstitunctionExtensionTerm σ τ , 𝓼urjectivitySubstitunctionExtensionTerms σ τs
 

@@ -29,7 +29,7 @@ module _
       ⦃ `Surjection ⦄ : Surjection.class 𝔛₁ 𝔛₂
 
       -- ℜ 𝓂 𝓃 → 𝔓₁ (surjection 𝓂) → 𝔓₂ (surjection 𝓃)
-      ⦃ `Smaparrow ⦄ : Smaparrow.class ℜ 𝔓₁ 𝔓₂ surjection -- epfs, Smap
+      ⦃ `Smaparrow ⦄ : Smaparrow.class ℜ 𝔓₁ 𝔓₂ surjection surjection -- epfs, Smap
 
       -- 𝒫 ₁≈₁ 𝒬 → 𝒻 ◃ 𝒫 ₂≈₂ 𝒻 ◃ 𝒬
       ⦃ `leftSim ⦄ : Similarity,smaparrow!.class ℜ 𝔓₁ 𝔓₂ 𝔓̇₁₁ 𝔓̇₂₂ -- fact5, Similarity, Smaparrowleftsimilarity

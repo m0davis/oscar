@@ -35,7 +35,7 @@ module Leftstar,smaparrow
   {𝔯} (ℜ : 𝔛₁ → 𝔛₁ → Ø 𝔯)
   {𝔭̇₁} (𝔓̇₁ : ∀ {a} → 𝔓₁ (surjection a) → Ø 𝔭̇₁)
   {𝔭̇₂} (𝔓̇₂ : ∀ {a} → 𝔓₂ (surjection a) → Ø 𝔭̇₂)
-  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection)
+  (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection surjection)
   where
   class = ∀ {a₁ a₂} → Leftstar.class (𝔓̇₁ {a₁}) (𝔓̇₂ {a₂}) smaparrow
   type = ∀ {a₁ a₂} → Leftstar.type (𝔓̇₁ {a₁}) (𝔓̇₂ {a₂}) smaparrow
