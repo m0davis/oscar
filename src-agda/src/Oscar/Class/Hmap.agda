@@ -5,11 +5,11 @@ open import Oscar.Class.Reflexivity
 open import Oscar.Class.Transleftidentity
 open import Oscar.Class.Symmetry
 
-module Oscar.Class.PropId where
+module Oscar.Class.Hmap where
 
 open import Oscar.Class
 
-module Relpropid
+module Hmap
   {𝔵₁} (𝔛₁ : Ø 𝔵₁)
   (p₁ : 𝔛₁ → 𝔛₁)
   {𝔵₂} (𝔛₂ : Ø 𝔵₂)
@@ -33,7 +33,7 @@ instance
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
     → ∀ {m n}
-    → Relpropid.class (m ∼ n)
+    → Hmap.class (m ∼ n)
                       (λ f → transitivity f reflexivity)
                       (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
                       ¡
