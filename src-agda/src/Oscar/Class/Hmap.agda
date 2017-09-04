@@ -1,13 +1,12 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Transitivity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Transleftidentity
 open import Oscar.Class.Symmetry
 
 module Oscar.Class.Hmap where
-
-open import Oscar.Class
 
 module Hmap
   {𝔵₁ 𝔵₁'} {𝔛₁ : Ø 𝔵₁} {𝔛₁' : Ø 𝔵₁'}

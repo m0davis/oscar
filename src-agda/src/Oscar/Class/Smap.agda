@@ -1,12 +1,11 @@
 
 open import Oscar.Prelude
 open import Oscar.Class
+open import Oscar.Class.Hmap
 open import Oscar.Class.Surjection
 open import Oscar.Data.Proposequality
 
 module Oscar.Class.Smap where
-
-open import Oscar.Class.Hmap
 
 module Smap
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
