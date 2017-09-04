@@ -16,7 +16,7 @@ module Hmap
   (p₂ : 𝔛₂ → 𝔛₂)
   {𝔯₁₂} (ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂)
   = ℭLASS (p₁ , p₂ , ℜ₁₂)
-          (∀ {P₁} P₂
+          (∀ P₁ P₂
            → ℜ₁₂ P₁ P₂ → ℜ₁₂ (p₁ P₁) (p₂ P₂))
 
 instance
@@ -38,4 +38,4 @@ instance
                       (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
                       ¡
                       (λ f P → π₀ (π₀ P) f)
-  Relprop'idFromTransleftidentity .⋆ (_ , P₁) = P₁ $ symmetry transleftidentity
+  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
