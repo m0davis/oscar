@@ -16,8 +16,8 @@ module Relpropid
   {𝔭₂} (𝔓₂ : 𝔛 → Ø 𝔭₂)
   {𝔭̇₁₂} (𝔓̇₁₂ : ∀ {m} → 𝔓₂ m → 𝔓₁ m → Ø 𝔭̇₁₂)
   = ℭLASS (𝔓₁ ,, (λ {x} → p₁ {x}))
-          (∀ {m} {f : 𝔓₁ m} (P : 𝔓₂ m)
-           → 𝔓̇₁₂ P f → 𝔓̇₁₂ P (p₁ f))
+          (∀ {m} {P₁ : 𝔓₁ m} (P₂ : 𝔓₂ m)
+           → 𝔓̇₁₂ P₂ P₁ → 𝔓̇₁₂ P₂ (p₁ P₁))
 
 instance
   RelpropidFromTransleftidentity : ∀
