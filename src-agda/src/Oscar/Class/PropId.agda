@@ -10,13 +10,13 @@ module Oscar.Class.PropId where
 open import Oscar.Class
 
 module Relpropid
-  {𝔭₁} (𝔓₁ : Ø 𝔭₁)
-  (p₁ : 𝔓₁ → 𝔓₁)
-  {𝔭₂} (𝔓₂ : Ø 𝔭₂)
-  {𝔭̇₁₂} (𝔓̇₁₂ : 𝔓₁ → 𝔓₂ → Ø 𝔭̇₁₂)
-  = ℭLASS (𝔓₁ ,, p₁)
-          (∀ {P₁ : 𝔓₁} (P₂ : 𝔓₂)
-           → 𝔓̇₁₂ P₁ P₂ → 𝔓̇₁₂ (p₁ P₁) P₂)
+  {𝔵₁} (𝔛₁ : Ø 𝔵₁)
+  (p₁ : 𝔛₁ → 𝔛₁)
+  {𝔵₂} (𝔛₂ : Ø 𝔵₂)
+  {𝔯₁₂} (ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂)
+  = ℭLASS (p₁ , ℜ₁₂)
+          (∀ {P₁ : 𝔛₁} (P₂ : 𝔛₂)
+           → ℜ₁₂ P₁ P₂ → ℜ₁₂ (p₁ P₁) P₂)
 
 instance
   Relprop'idFromTransleftidentity : ∀
@@ -31,5 +31,9 @@ instance
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-    → ∀ {m n} → Relpropid.class (m ∼ n) (λ f → transitivity f reflexivity) (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) (λ f P → π₀ (π₀ P) f)
+    → ∀ {m n}
+    → Relpropid.class (m ∼ n)
+                      (λ f → transitivity f reflexivity)
+                      (LeftExtensionṖroperty ℓ _∼_ _∼̇_ m)
+                      (λ f P → π₀ (π₀ P) f)
   Relprop'idFromTransleftidentity .⋆ (_ , P₁) = P₁ $ symmetry transleftidentity
