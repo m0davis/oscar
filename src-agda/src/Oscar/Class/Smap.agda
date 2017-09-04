@@ -14,7 +14,7 @@ module Smap
   (_∼₂_ : 𝔛₂ → 𝔛₂ → Ø 𝔯₂)
   (μ₁ μ₂ : Surjection.type 𝔛₁ 𝔛₂)
   where
-  class = Hmap.class 𝔛₁ 𝔛₂ μ₁ 𝔛₁ 𝔛₂ μ₂ _∼₁_ _∼₂_
+  class = Hmap.class μ₁ μ₂ _∼₁_ _∼₂_
   type = ∀ {x y} → x ∼₁ y → μ₁ x ∼₂ μ₂ y
   method : ⦃ _ : class ⦄ → type
   method = hhmap _ _
