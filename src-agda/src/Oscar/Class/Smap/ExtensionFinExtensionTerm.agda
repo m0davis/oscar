@@ -30,7 +30,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     𝓢urjectivityExtensionFinExtensionTerm : Smap!.class (Extension Fin) (Extension Term)
-    𝓢urjectivityExtensionFinExtensionTerm .⋆ = 𝓼urjectivityExtensionFinExtensionTerm
+    𝓢urjectivityExtensionFinExtensionTerm .⋆ _ _ = 𝓼urjectivityExtensionFinExtensionTerm
 
     𝓢urjectivityExtensionFinExtensionTerms : ∀ {N} → Smap!.class (Extension Fin) (Extension $ Terms N)
-    𝓢urjectivityExtensionFinExtensionTerms .⋆ = 𝓼urjectivityExtensionFinExtensionTerms
+    𝓢urjectivityExtensionFinExtensionTerms .⋆ _ _ = 𝓼urjectivityExtensionFinExtensionTerms

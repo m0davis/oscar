@@ -6,12 +6,18 @@ open import Oscar.Data.Proposequality
 
 module Oscar.Class.Smap where
 
+open import Oscar.Class.Hmap
+
 module Smap
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (_∼₁_ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁)
   (_∼₂_ : 𝔛₂ → 𝔛₂ → Ø 𝔯₂)
   (μ₁ μ₂ : Surjection.type 𝔛₁ 𝔛₂)
-  = ℭLASS (_∼₁_ , _∼₂_ , μ₁ , μ₂) (∀ {x y} → x ∼₁ y → μ₁ x ∼₂ μ₂ y)
+  where
+  class = Hmap.class 𝔛₁ 𝔛₂ μ₁ 𝔛₁ 𝔛₂ μ₂ _∼₁_ _∼₂_
+  type = ∀ {x y} → x ∼₁ y → μ₁ x ∼₂ μ₂ y
+  method : ⦃ _ : class ⦄ → type
+  method = hhmap _ _
 
 module _
   {𝔵₁ 𝔯₁ 𝔵₂ 𝔯₂} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
