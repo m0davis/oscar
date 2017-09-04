@@ -17,4 +17,4 @@ instance
     -- ⦃ _ : [𝓢urjectivity] _↦_ (Extension $ LeftṖroperty ℓ _↦_) ⦄
     -- FIXME, the above line is commented-out b/c Agda gets confused by the other [𝓢urjectivity] instance in Oscar.Class
     → Smap!.class _↦_ (Extension $ LeftṖroperty ℓ _↦_)
-  ṖropertySmap .⋆ _ _ f (∁ P) .π₀ g = P (g ∙ f)
+  ṖropertySmap .⋆ f (∁ P) .π₀ g = P (g ∙ f)

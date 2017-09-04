@@ -59,10 +59,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     𝓢urjectivitySubstitunctionExtensionTerm : Smap!.class Substitunction (Extension Term)
-    𝓢urjectivitySubstitunctionExtensionTerm .⋆ _ _ = 𝓼urjectivitySubstitunctionExtensionTerm
+    𝓢urjectivitySubstitunctionExtensionTerm .⋆ = 𝓼urjectivitySubstitunctionExtensionTerm
 
     𝓢urjectivitySubstitunctionExtensionTerms : ∀ {N} → Smap!.class Substitunction (Extension $ Terms N)
-    𝓢urjectivitySubstitunctionExtensionTerms .⋆ _ _ = 𝓼urjectivitySubstitunctionExtensionTerms
+    𝓢urjectivitySubstitunctionExtensionTerms .⋆ = 𝓼urjectivitySubstitunctionExtensionTerms
 
   instance
 
