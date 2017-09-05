@@ -15,16 +15,8 @@ module Transextensionality
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
-  {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ) (let infix 4 _∼̇_ ; _∼̇_ = _∼̇_)
-  ⦃ tr : 𝓣ransitivity _∼_ ⦄
-  where
-  open Transextensionality _∼_ _∼̇_ ⦃ ! ⦄ using () renaming (class to 𝓣ransextensionality; type to 𝓽ransextensionality) public
-
-module _
-  {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
   {ℓ} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ}
   ⦃ _ : 𝓣ransitivity _∼_ ⦄
   where
-  open Transextensionality _∼_ _∼̇_ ⦃ ! ⦄ using () renaming (method to transextensionality) public
+  transextensionality = Transextensionality.method _∼_ _∼̇_ ⦃ ! ⦄

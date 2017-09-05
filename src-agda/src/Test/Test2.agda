@@ -14,5 +14,5 @@ module Test.Test2 where
     {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
     ⦃ _ : IsFunctor _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
     ⦃ _ : IsFunctor _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ ⦄
-    → 𝓽ransextensionality _∼₁_ _∼̇₁_
+    → Transextensionality.type _∼₁_ _∼̇₁_
   test-functor-transextensionality = transextensionality

@@ -16,5 +16,5 @@ module _
     field
       overlap ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _∼_
       overlap ⦃ `[𝓣ransassociativity] ⦄ : [𝓣ransassociativity] _∼_ _∼̇_
-      ⦃ `𝓣ransextensionality ⦄ : 𝓣ransextensionality _∼_ _∼̇_
+      ⦃ `𝓣ransextensionality ⦄ : Transextensionality.class _∼_ _∼̇_
       ⦃ `𝓣ransassociativity ⦄ : 𝓣ransassociativity _∼_ _∼̇_
