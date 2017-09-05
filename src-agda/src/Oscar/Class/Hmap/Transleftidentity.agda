@@ -1,16 +1,16 @@
 
 open import Oscar.Prelude
+open import Oscar.Class
 open import Oscar.Class.Transitivity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Transleftidentity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Hmap
-open import Oscar.Class.Smap
-import Oscar.Class.Hmap.Transleftidentity
 
-module Test.Test7 where
+module Oscar.Class.Hmap.Transleftidentity where
 
-  𝓅rop-id-1 𝓅rop-id-2 : ∀
+instance
+  Relprop'idFromTransleftidentity : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -18,13 +18,13 @@ module Test.Test7 where
     {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
     ⦃ _ : Transitivity.class _∼_ ⦄
     ⦃ _ : Reflexivity.class _∼_ ⦄
+    {ℓ}
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
-    {m n}
-    {ℓ} {f : m ∼ n} (P : ExtensionṖroperty ℓ (Arrow 𝔄 𝔅 m) _∼̇_) (let P₀ = π₀ (π₀ P))
-    → P₀ f
-    → P₀ (ε ∙ f)
-
-  𝓅rop-id-1 P Pf = smap {y = P} Pf
-  𝓅rop-id-2 P Pf = hmap _ P Pf
+    → ∀ {m n}
+    → Hmap.class (λ (f : m ∼ n) → transitivity f reflexivity)
+                 (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
+                 (λ f P → π₀ (π₀ P) f)
+                 (λ f P → π₀ (π₀ P) f)
+  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity

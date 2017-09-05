@@ -8,6 +8,7 @@ open import Oscar.Class.Transitivity
 open import Oscar.Class.Hmap
 open import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Property.Setoid.Proposextensequality
+import Oscar.Class.Hmap.Transleftidentity
 
 module Test.SubstitunctionPropId {𝔭} (𝔓 : Ø 𝔭) where
 
