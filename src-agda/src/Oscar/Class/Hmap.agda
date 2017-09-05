@@ -46,7 +46,7 @@ instance
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
     (let _∼_ = Arrow 𝔄 𝔅)
     {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
-    ⦃ _ : 𝓣ransitivity _∼_ ⦄
+    ⦃ _ : Transitivity.class _∼_ ⦄
     ⦃ _ : 𝓡eflexivity _∼_ ⦄
     {ℓ}
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄

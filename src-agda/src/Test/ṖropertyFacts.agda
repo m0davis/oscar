@@ -90,7 +90,7 @@ module Test.ṖropertyFacts where
 
       _ : Smap!.class 𝑪 (Extension 𝑩)
       _ : ∀ {N} → Smap!.class 𝑪 (Extension $ 𝑩' N)
-      _ : 𝓣ransitivity 𝑪 -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
+      _ : Transitivity.class 𝑪 -- needed by 𝓢urjectextenscongruity 𝑪 𝑷⁰ _≈_
       _ : Surjextensionality!.class 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
       _ : ∀ {N} → Surjextensionality!.class 𝑪 Proposextensequality (Extension $ 𝑩' N) Proposextensequality -- needed by 𝓢̇.⟹
 
@@ -100,7 +100,7 @@ module Test.ṖropertyFacts where
   -- postulated instances from Oscar.Property.Setoid.Proposequality
   postulate
     instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓢ymmetry Proposequality⟦ 𝔒 ⟧
-    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓣ransitivity Proposequality⟦ 𝔒 ⟧
+    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → Transitivity.class Proposequality⟦ 𝔒 ⟧
 
   -- postulated instances from Oscar.Class.[ExtensibleType].Proposequality
   postulate

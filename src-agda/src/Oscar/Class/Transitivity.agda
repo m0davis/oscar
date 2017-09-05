@@ -4,7 +4,7 @@ open import Oscar.Class
 
 module Oscar.Class.Transitivity where
 
-module Transitivity
+module Transitivity'
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   {x y z}
@@ -12,17 +12,25 @@ module Transitivity
   (y∼z : y ∼ z)
   = ℭLASS (x∼y , y∼z , _∼_) (x ∼ z)
 
-module _
+module Transitivity
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   where
-  𝓽ransitivity = ∀ {x y z} (x∼y : x ∼ y) (y∼z : y ∼ z) → Transitivity.type _∼_ x∼y y∼z
-  𝓣ransitivity = ∀ {x y z} {x∼y : x ∼ y} {y∼z : y ∼ z} → Transitivity.class _∼_ x∼y y∼z
+  class = ∀ {x y z} {x∼y : x ∼ y} {y∼z : y ∼ z} → Transitivity'.class _∼_ x∼y y∼z
+  type = ∀ {x y z} (x∼y : x ∼ y) (y∼z : y ∼ z) → Transitivity'.type _∼_ x∼y y∼z
+  method : ⦃ _ : class ⦄ → type
+  method x∼y y∼z = Transitivity'.method _∼_ x∼y y∼z
+
+module _
+  {𝔬} {𝔒 : Ø 𝔬}
+  {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+  where
+  transitivity = Transitivity.method _∼_
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  ⦃ _ : 𝓣ransitivity _∼_ ⦄
+  ⦃ _ : Transitivity.class _∼_ ⦄
   where
   transitivity[_] = λ {x y z} (x∼y : x ∼ y) (y∼z : y ∼ z) → Transitivity.method _∼_ x∼y y∼z
   infixr 9 ∙[]-syntax
@@ -32,10 +40,11 @@ module _
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
+  ⦃ _ : Transitivity.class _∼_ ⦄
   where
-  transitivity = transitivity[ _∼_ ]
-  infixr 9 transitivity
-  syntax transitivity f g = g ∙ f
+  infixr 9 _∙_
+  _∙_ : ∀ {x y z} (y∼z : y ∼ z) (x∼y : x ∼ y) → x ∼ z
+  g ∙ f = transitivity f g
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}

@@ -14,6 +14,6 @@ instance
   𝓣ransextensionalityProposequality : ∀
     {a} {A : Ø a}
     {m} {_⊸_ : A → A → Ø m}
-    ⦃ _ : 𝓣ransitivity _⊸_ ⦄
+    ⦃ _ : Transitivity.class _⊸_ ⦄
     → 𝓣ransextensionality _⊸_ Proposequality
   𝓣ransextensionalityProposequality .⋆ = congruity₂ _

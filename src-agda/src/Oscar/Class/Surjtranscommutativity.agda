@@ -15,8 +15,8 @@ module Surjtranscommutativity
   {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂) (let infix 4 _∼̇₂_ ; _∼̇₂_ = _∼̇₂_)
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
+  ⦃ _ : Transitivity.class _∼₁_ ⦄
+  ⦃ _ : Transitivity.class _∼₂_ ⦄
   = ℭLASS (λ {x y} → _∼̇₂_ {x} {y}) (∀ {x y z} (f : x ∼₁ y) (g : y ∼₁ z) → smap (g ∙ f) ∼̇₂ smap g ∙ smap f)
 
 module _
@@ -27,8 +27,8 @@ module _
   {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂) (let infix 4 _∼̇₂_ ; _∼̇₂_ = _∼̇₂_)
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
+  ⦃ _ : Transitivity.class _∼₁_ ⦄
+  ⦃ _ : Transitivity.class _∼₂_ ⦄
   where
   open Surjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ using () renaming (type to 𝓼urjtranscommutativity; class to 𝓢urjtranscommutativity) public
 
@@ -40,8 +40,8 @@ module _
   {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
+  ⦃ _ : Transitivity.class _∼₁_ ⦄
+  ⦃ _ : Transitivity.class _∼₂_ ⦄
   where
   open Surjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ using () renaming (method to surjtranscommutativity) public
   ⟪∙⟫-surjtranscommutativity-syntax = surjtranscommutativity
@@ -55,8 +55,8 @@ module _
   {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
   ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
   ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₁_ ⦄
-  ⦃ _ : 𝓣ransitivity _∼₂_ ⦄
+  ⦃ _ : Transitivity.class _∼₁_ ⦄
+  ⦃ _ : Transitivity.class _∼₂_ ⦄
   where
   open Surjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ ⦃ ! ⦄ using () renaming (method to surjtranscommutativity[_]) public
   ⟪∙⟫-surjtranscommutativity[]-syntax = surjtranscommutativity[_]

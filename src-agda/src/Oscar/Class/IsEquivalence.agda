@@ -14,4 +14,4 @@ record IsEquivalence
   field
     ⦃ `𝓡eflexivity ⦄ : Refl.⟦ _≈_ ⟧
     ⦃ `𝓢ymmetry ⦄ : 𝓢ymmetry _≈_
-    ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _≈_
+    ⦃ `𝓣ransitivity  ⦄ : Transitivity.class _≈_

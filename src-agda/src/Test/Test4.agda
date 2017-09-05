@@ -10,7 +10,7 @@ module Test.Test4
   {𝔞} {𝔒₁ : 𝔛 → Ø 𝔞}
   {𝔟} {𝔒₂ : 𝔛 → Ø 𝔟}
   {ℓ : Ł}
-  ⦃ _ : 𝓣ransitivity (Arrow 𝔒₁ 𝔒₂) ⦄
+  ⦃ _ : Transitivity.class (Arrow 𝔒₁ 𝔒₂) ⦄
   -- ⦃ _ : [𝓢urjectivity] (Arrow 𝔒₁ 𝔒₂) (Extension $ ArrowṖroperty ℓ 𝔒₁ 𝔒₂) ⦄
   where
   test[∙] : ∀ {x y} → ArrowṖroperty ℓ 𝔒₁ 𝔒₂ x → Arrow 𝔒₁ 𝔒₂ x y → ArrowṖroperty ℓ 𝔒₁ 𝔒₂ y

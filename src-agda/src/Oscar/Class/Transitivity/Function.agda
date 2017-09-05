@@ -10,5 +10,5 @@ module _
 
   instance
 
-    𝓣ransitivityFunction : 𝓣ransitivity Function⟦ a ⟧
+    𝓣ransitivityFunction : Transitivity.class Function⟦ a ⟧
     𝓣ransitivity.transitivity 𝓣ransitivityFunction f g = g ∘ f

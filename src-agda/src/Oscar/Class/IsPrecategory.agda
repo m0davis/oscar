@@ -14,7 +14,7 @@ module _
   record IsPrecategory : Ø 𝔬 ∙̂ 𝔯 ∙̂ ℓ where
     constructor ∁
     field
-      overlap ⦃ `𝓣ransitivity ⦄ : 𝓣ransitivity _∼_
+      overlap ⦃ `𝓣ransitivity ⦄ : Transitivity.class _∼_
       overlap ⦃ `[𝓣ransassociativity] ⦄ : [𝓣ransassociativity] _∼_ _∼̇_
       ⦃ `𝓣ransextensionality ⦄ : Transextensionality.class _∼_ _∼̇_
       ⦃ `𝓣ransassociativity ⦄ : 𝓣ransassociativity _∼_ _∼̇_

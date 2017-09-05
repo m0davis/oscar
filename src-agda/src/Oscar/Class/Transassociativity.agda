@@ -13,7 +13,7 @@ module _
     no-eta-equality
     constructor ∁
   module _
-    ⦃ _ : 𝓣ransitivity _∼_ ⦄
+    ⦃ _ : Transitivity.class _∼_ ⦄
     where
     𝓽ransassociativity = ∀ {w x y z} (f : w ∼ x) (g : x ∼ y) (h : y ∼ z) → (h ∙ g) ∙ f ∼̇ h ∙ g ∙ f
     record 𝓣ransassociativity ⦃ _ : [𝓣ransassociativity] ⦄ : Ø 𝔬 ∙̂ 𝔯 ∙̂ ℓ where
@@ -25,7 +25,7 @@ transassociativity[_] : ∀
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
   {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ)
-  ⦃ _ : 𝓣ransitivity _∼_ ⦄
+  ⦃ _ : Transitivity.class _∼_ ⦄
   ⦃ _ : [𝓣ransassociativity] _∼_ _∼̇_ ⦄
   ⦃ _ : 𝓣ransassociativity _∼_ _∼̇_ ⦄
   → 𝓽ransassociativity _∼_ _∼̇_
