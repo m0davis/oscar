@@ -24,8 +24,6 @@ open import Oscar.Prelude
 
 List = List⟨_⟩
 
-suc = ¶.↑_
-
 module _
   {a b} {A : Set a} {B : Set b}
   where
@@ -34,55 +32,16 @@ module _
   map-list f ∅ = ∅
   map-list f (x , xs) = f x , map-list f xs
 
-module _
+module Fmap
   {a b}
-  where
-  hmap-list :
-    Hmap.class {𝔛₁ = Ø a} {𝔛₁' = Ø a}
-               {𝔛₂ = Ø b} {𝔛₂' = Ø b}
-               ¡
-               ¡
-               (λ x y → x → y)
-               (λ x y → List x → List y)
-  hmap-list .⋆ _ _ = map-list
+  (F : Ø a → Ø b)
+  = Hmap ¡ ¡ (λ x y → x → y) (λ x y → F x → F y)
 
-module _
-  {ℓ ℓ′} (F : Ø ℓ → Ø ℓ′)
-  where
-  smap!-list :
-    Smap.class (λ (x y : Ø ℓ) → x → y)
-               (λ (x y : {!!}) → F x → F y)
-               {!!} {!!}
-  smap!-list .⋆ _ _ = {!!}
+instance
+  HmapList : ∀ {ℓ} → Fmap.class (List {ℓ})
+  HmapList .⋆ _ _ = map-list
 
-module _
-  {ℓ ℓ′} (F : Ø ℓ → Ø ℓ′)
-  where
-
-  isFunctorF : IsFunctor (λ (x y : Ø ℓ) → x → y)
-                         Proposextensequality
-                         (λ (x y : Ø ℓ′) → x → y)
-                         Proposextensequality
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ .IsPrecategory.`𝓣ransitivity {_} {_} {_} {f} {g} .⋆ = g ∘ f
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ .IsPrecategory.`[𝓣ransassociativity] = {!!}
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ .IsPrecategory.`𝓣ransextensionality .⋆ = {!!}
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ .IsPrecategory.`𝓣ransassociativity = {!!}
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = {!!}
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆ = F
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjectivity .⋆ _ _ = {!!}
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = {!!}
-  isFunctorF .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality .⋆ = {!!}
-  isFunctorF .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory = {!!}
-  isFunctorF .IsFunctor.`IsCategory₁ .IsCategory.`[𝓣ransleftidentity] = {!!}
-  isFunctorF .IsFunctor.`IsCategory₁ .IsCategory.`[𝓣ransrightidentity] = {!!}
-  isFunctorF .IsFunctor.`IsCategory₁ .IsCategory.`𝓡eflexivity = {!!}
-  isFunctorF .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransleftidentity = {!!}
-  isFunctorF .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransrightidentity = {!!}
-  isFunctorF .IsFunctor.`IsCategory₂ = {!!}
-  isFunctorF .IsFunctor.`𝒮urjidentity = {!!}
-
-module _
-  where
+instance
 
   isFunctorList : ∀ {ℓ} → IsFunctor (λ (x y : Ø ℓ) → x → y)
                                     Proposextensequality
@@ -91,9 +50,34 @@ module _
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection = !
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjectivity .⋆ _ _ = map-list
+  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjectivity = !
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality = {!!}
   isFunctorList .IsFunctor.`IsCategory₁ = {!!}
   isFunctorList .IsFunctor.`IsCategory₂ = {!!}
   isFunctorList .IsFunctor.`𝒮urjidentity = {!!}
+
+module _
+  {a b}
+  {F : Ø a → Ø b}
+  where
+  fmap-works : ⦃ _ : Fmap.class F ⦄
+               ⦃ _ : IsFunctor (λ (x y : Ø a) → x → y)
+                               Proposextensequality
+                               (λ x y → F x → F y)
+                               Proposextensequality ⦄
+             → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
+  fmap-works = smap
+
+  fmap : ⦃ _ : IsFunctor (λ (x y : Ø a) → x → y)
+                         Proposextensequality
+                         (λ x y → F x → F y)
+                         Proposextensequality ⦄
+       → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
+  fmap ⦃ I ⦄ {x} {y} = {!I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjectivity .⋆ x y!} -- FIXME this can't work b/c the surjection from (x : Ø a) to (x' : Ø b) is underdefined by the type-signature of IsFunctor
+
+module _
+  {a} {A : Set a} {B : Set a}
+  where
+  test-map-list : (A → B) → List A → List B
+  test-map-list = fmap-works
