@@ -160,17 +160,11 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity!.class Substitunction (Extension $ Terms N) _≈_
     𝓢urjidentitySubstitunctionExtensionTerms .⋆ = 𝓼urjidentitySubstitunctionExtensionTerms
 
-    [𝓣ransleftidentitySubstitunction] : [𝓣ransleftidentity] Substitunction _≈_
-    [𝓣ransleftidentitySubstitunction] = ∁
+    𝓣ransleftidentitySubstitunction : Transleftidentity!.class Substitunction _≈_
+    𝓣ransleftidentitySubstitunction .⋆ {f = f} = surjidentity ∘ f
 
-    𝓣ransleftidentitySubstitunction : 𝓣ransleftidentity Substitunction _≈_
-    𝓣ransleftidentitySubstitunction .𝓣ransleftidentity.transleftidentity {f = f} = surjidentity ∘ f
-
-    [𝓣ransrightidentitySubstitunction] : [𝓣ransrightidentity] Substitunction _≈_
-    [𝓣ransrightidentitySubstitunction] = ∁
-
-    𝓣ransrightidentitySubstitunction : 𝓣ransrightidentity Substitunction _≈_
-    𝓣ransrightidentitySubstitunction .𝓣ransrightidentity.transrightidentity _ = !
+    𝓣ransrightidentitySubstitunction : Transrightidentity!.class Substitunction _≈_
+    𝓣ransrightidentitySubstitunction .⋆ _ = !
 
     IsCategorySubstitunction : IsCategory Substitunction _≈_
     IsCategorySubstitunction = ∁

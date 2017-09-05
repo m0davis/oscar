@@ -39,17 +39,11 @@ module _
     𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality
     𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
 
-    [𝓣ransleftidentity]ExtensionProposextensequality : [𝓣ransleftidentity] (Extension B) Proposextensequality
-    [𝓣ransleftidentity]ExtensionProposextensequality = ∁
+    𝓣ransleftidentityExtensionProposextensequality : Transleftidentity!.class (Extension B) Proposextensequality
+    𝓣ransleftidentityExtensionProposextensequality .⋆ _ = !
 
-    𝓣ransleftidentityExtensionProposextensequality : 𝓣ransleftidentity (Extension B) Proposextensequality
-    𝓣ransleftidentityExtensionProposextensequality .𝓣ransleftidentity.transleftidentity _ = !
-
-    [𝓣ransrightidentity]ExtensionProposextensequality : [𝓣ransrightidentity] (Extension B) Proposextensequality
-    [𝓣ransrightidentity]ExtensionProposextensequality = ∁
-
-    𝓣ransrightidentityExtensionProposextensequality : 𝓣ransrightidentity (Extension B) Proposextensequality
-    𝓣ransrightidentityExtensionProposextensequality .𝓣ransrightidentity.transrightidentity _ = !
+    𝓣ransrightidentityExtensionProposextensequality : Transrightidentity!.class (Extension B) Proposextensequality
+    𝓣ransrightidentityExtensionProposextensequality .⋆ _ = !
 
     HasEquivalenceExtension : ∀ {x y : A} ⦃ _ : [IsExtensionB] B ⦄ → HasEquivalence (Extension B x y) _
     HasEquivalenceExtension = ∁ Proposextensequality

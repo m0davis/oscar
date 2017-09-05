@@ -4,8 +4,10 @@ open import Oscar.Class
 open import Oscar.Class.Transitivity
 open import Oscar.Class.Reflexivity
 open import Oscar.Class.Transleftidentity
+open import Oscar.Class.Transrightidentity
 open import Oscar.Class.Symmetry
 open import Oscar.Class.Hmap
+open import Oscar.Class.Leftunit
 
 module Oscar.Class.Hmap.Transleftidentity where
 
@@ -19,12 +21,11 @@ instance
     ⦃ _ : Transitivity.class _∼_ ⦄
     ⦃ _ : Reflexivity.class _∼_ ⦄
     {ℓ}
-    ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
-    ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
+    ⦃ _ : Transleftidentity!.class _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
     → ∀ {m n}
     → Hmap.class (λ (f : m ∼ n) → transitivity f reflexivity)
                  (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
                  (λ f P → π₀ (π₀ P) f)
                  (λ f P → π₀ (π₀ P) f)
-  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
+  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry leftunit
