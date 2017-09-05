@@ -14,7 +14,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} where
 
   instance
 
-    𝓡eflexivityProposequality : 𝓡eflexivity Proposequality⟦ 𝔒 ⟧
+    𝓡eflexivityProposequality : Reflexivity.class Proposequality⟦ 𝔒 ⟧
     𝓡eflexivityProposequality .⋆ = !
 
     𝓢ymmetryProposequality : 𝓢ymmetry Proposequality⟦ 𝔒 ⟧

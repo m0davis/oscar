@@ -16,7 +16,7 @@ module Test.Test7 where
     (let _∼_ = Arrow 𝔄 𝔅)
     {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
     ⦃ _ : Transitivity.class _∼_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    ⦃ _ : Reflexivity.class _∼_ ⦄
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄

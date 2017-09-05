@@ -45,7 +45,7 @@ module Leftunit,smaparrow
   (ℜ : π̂² 𝔯 𝔛₁)
   (𝔓₁ : π̂ 𝔭₁ 𝔛₂)
   (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
-  (ε : 𝓻eflexivity ℜ)
+  (ε : Reflexivity.type ℜ)
   (surjection : Surjection.type 𝔛₁ 𝔛₂)
   (smaparrow : Smaparrow.type ℜ 𝔓₁ 𝔓₂ surjection surjection)
   (𝔓̇₁₂ : ∀ {x} → 𝔓₁ (surjection x) → 𝔓₂ (surjection x) → Ø 𝔭̇₁₂)
@@ -60,7 +60,7 @@ module Leftunit,smaparrow!
   (ℜ : π̂² 𝔯 𝔛₁)
   (𝔓₁ : π̂ 𝔭₁ 𝔛₂)
   (𝔓₂ : π̂ 𝔭₂ 𝔛₂)
-  ⦃ _ : 𝓡eflexivity ℜ ⦄
+  ⦃ _ : Reflexivity.class ℜ ⦄
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   ⦃ _ : Smaparrow!.class ℜ 𝔓₁ 𝔓₂ ⦄
   (𝔓̇₁₂ : ∀ {x} → 𝔓₁ (surjection x) → 𝔓₂ (surjection x) → Ø 𝔭̇₁₂)
@@ -70,7 +70,7 @@ module Leftunit,smaphomarrow
   {𝔵₁ 𝔵₂ 𝔭 𝔯 𝔭̇} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : π̂² 𝔯 𝔛₁)
   (𝔓 : π̂ 𝔭 𝔛₂)
-  (ε : 𝓻eflexivity ℜ)
+  (ε : Reflexivity.type ℜ)
   (surjection : Surjection.type 𝔛₁ 𝔛₂)
   (smaparrow : Smaphomarrow.type ℜ 𝔓 surjection)
   (𝔓̇ : ∀ {x} → 𝔓 (surjection x) → 𝔓 (surjection x) → Ø 𝔭̇)
@@ -80,7 +80,7 @@ module Leftunit,smaphomarrow!
   {𝔵₁ 𝔵₂ 𝔭 𝔯 𝔭̇} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : π̂² 𝔯 𝔛₁)
   (𝔓 : π̂ 𝔭 𝔛₂)
-  ⦃ _ : 𝓡eflexivity ℜ ⦄
+  ⦃ _ : Reflexivity.class ℜ ⦄
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
   (𝔓̇ : ∀ {x} → 𝔓 (surjection x) → 𝔓 (surjection x) → Ø 𝔭̇)
@@ -92,7 +92,7 @@ module Leftunit,equivalence,smaphomarrow!
   {𝔵₁ 𝔵₂ 𝔭 𝔯 𝔭̇} {𝔛₁ : Ø 𝔵₁} {𝔛₂ : Ø 𝔵₂}
   (ℜ : π̂² 𝔯 𝔛₁)
   (𝔓 : π̂ 𝔭 𝔛₂)
-  ⦃ _ : 𝓡eflexivity ℜ ⦄
+  ⦃ _ : Reflexivity.class ℜ ⦄
   ⦃ _ : Surjection.class 𝔛₁ 𝔛₂ ⦄
   ⦃ _ : Smaphomarrow!.class ℜ 𝔓 ⦄
   ⦃ _ : ∀ {x} → HasEquivalence (𝔓 x) 𝔭̇ ⦄

@@ -18,6 +18,6 @@ module _
       ⦃ `IsPrecategory ⦄ : IsPrecategory _∼_ _∼̇_
       overlap ⦃ `[𝓣ransleftidentity] ⦄ : [𝓣ransleftidentity] _∼_ _∼̇_
       overlap ⦃ `[𝓣ransrightidentity] ⦄ : [𝓣ransrightidentity] _∼_ _∼̇_
-      overlap ⦃ `𝓡eflexivity ⦄ : 𝓡eflexivity _∼_
+      overlap ⦃ `𝓡eflexivity ⦄ : Reflexivity.class _∼_
       ⦃ `𝓣ransleftidentity ⦄ : 𝓣ransleftidentity _∼_ _∼̇_
       ⦃ `𝓣ransrightidentity ⦄ : 𝓣ransrightidentity _∼_ _∼̇_

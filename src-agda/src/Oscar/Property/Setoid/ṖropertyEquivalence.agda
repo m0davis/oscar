@@ -17,7 +17,7 @@ module _
 
   instance
 
-    𝓡eflexivityṖroperty : 𝓡eflexivity ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
+    𝓡eflexivityṖroperty : Reflexivity.class ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓡eflexivityṖroperty .⋆ .π₀ = ¡ , ¡
 
     𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧

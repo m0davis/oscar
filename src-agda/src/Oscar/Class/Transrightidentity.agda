@@ -14,7 +14,7 @@ module _
     no-eta-equality
     constructor ∁
   module _
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    ⦃ _ : Reflexivity.class _∼_ ⦄
     ⦃ _ : Transitivity.class _∼_ ⦄
     where
     𝓽ransrightidentity = ∀ {x y} {f : x ∼ y} → f ∙ ε ∼̇ f
@@ -25,7 +25,7 @@ transrightidentity[_] : ∀
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
   {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ)
-  ⦃ _ : 𝓡eflexivity _∼_ ⦄
+  ⦃ _ : Reflexivity.class _∼_ ⦄
   ⦃ _ : Transitivity.class _∼_ ⦄
   ⦃ _ : [𝓣ransrightidentity] _∼_ _∼̇_ ⦄
   ⦃ _ : 𝓣ransrightidentity _∼_ _∼̇_ ⦄

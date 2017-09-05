@@ -11,5 +11,5 @@ module _
 
   instance
 
-    𝓡eflexivityFunction : 𝓡eflexivity Function⟦ a ⟧
+    𝓡eflexivityFunction : Reflexivity.class Function⟦ a ⟧
     𝓡eflexivityFunction .⋆ = ¡

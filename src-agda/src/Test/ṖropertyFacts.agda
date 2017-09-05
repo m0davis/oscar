@@ -94,7 +94,7 @@ module Test.ṖropertyFacts where
       _ : Surjextensionality!.class 𝑪 Proposextensequality (Extension 𝑩) Proposextensequality -- needed by 𝓢urjectextenscongruity 𝑪 𝑷¹ _≈_
       _ : ∀ {N} → Surjextensionality!.class 𝑪 Proposextensequality (Extension $ 𝑩' N) Proposextensequality -- needed by 𝓢̇.⟹
 
-  instance _ : 𝓡eflexivity 𝑪 -- needed by [𝓕actsurj3] 𝑷⁰ 𝑪 𝔭
+  instance _ : Reflexivity.class 𝑪 -- needed by [𝓕actsurj3] 𝑷⁰ 𝑪 𝔭
            _ = ∁ 𝒖
 
   -- postulated instances from Oscar.Property.Setoid.Proposequality

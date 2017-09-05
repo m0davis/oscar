@@ -23,10 +23,10 @@ module _
     instance `𝓢urjectivity : Smap!.class _∼₁_ _∼₂_
     instance `𝓢urjectextensivity : Smap!.class _∼₁_ _∼₂'_
     instance `𝓢urjectivity2 : Smap!.class _∼₁_ _∼₂2_
-    instance `𝓡eflexivity₁ : 𝓡eflexivity _∼₁_
-    instance `𝓡eflexivity₂ : 𝓡eflexivity _∼₂_
-    instance `𝓡eflexivity₂' : 𝓡eflexivity _∼₂'_
-    instance `𝓡eflexivity₂2 : 𝓡eflexivity _∼₂2_
+    instance `𝓡eflexivity₁ : Reflexivity.class _∼₁_
+    instance `𝓡eflexivity₂ : Reflexivity.class _∼₂_
+    instance `𝓡eflexivity₂' : Reflexivity.class _∼₂'_
+    instance `𝓡eflexivity₂2 : Reflexivity.class _∼₂2_
     instance `𝒮urjidentity : Surjidentity!.class _∼₁_ _∼₂_ _∼̇₂_
     instance `𝒮urjidentity' : Surjidentity!.class _∼₁_ _∼₂'_ _∼̇₂'_
     instance `𝒮urjidentity2 : Surjidentity!.class _∼₁_ _∼₂2_ _∼̇₂2_

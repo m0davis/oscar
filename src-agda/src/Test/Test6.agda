@@ -5,13 +5,13 @@ open import Oscar.Class.Reflexivity
 module Test.Test6 where
 
 
-module Reflexivity where
+module TestReflexivity where
 
   postulate
 
     X : Set
     F : X → X → Set
-    instance ReflexivityF : 𝓡eflexivity F
+    instance ReflexivityF : Reflexivity.class F
 
   test : ∀ {y} → F y y
   test {y = y} = reflexivity

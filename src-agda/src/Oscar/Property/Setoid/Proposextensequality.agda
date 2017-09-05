@@ -14,7 +14,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
 
   instance
 
-    𝓡eflexivityProposextensequality : 𝓡eflexivity Proposextensequality⟦ 𝔓 ⟧
+    𝓡eflexivityProposextensequality : Reflexivity.class Proposextensequality⟦ 𝔓 ⟧
     𝓡eflexivityProposextensequality .⋆ _ = ∅
 
     𝓢ymmetryProposextensequality : 𝓢ymmetry Proposextensequality⟦ 𝔓 ⟧

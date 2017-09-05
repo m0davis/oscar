@@ -135,7 +135,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ (Extension $ Terms N) _≈_
     IsPrefunctorSubstitunctionExtensionTerms = ∁
 
-    𝓡eflexivitySubstitunction : 𝓡eflexivity Substitunction
+    𝓡eflexivitySubstitunction : Reflexivity.class Substitunction
     𝓡eflexivitySubstitunction .⋆ = i
 
   private

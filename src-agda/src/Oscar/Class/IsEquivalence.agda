@@ -12,6 +12,6 @@ record IsEquivalence
   : Ø 𝔬 ∙̂ ℓ where
   constructor ∁
   field
-    ⦃ `𝓡eflexivity ⦄ : Refl.⟦ _≈_ ⟧
+    ⦃ `𝓡eflexivity ⦄ : Reflexivity.class _≈_
     ⦃ `𝓢ymmetry ⦄ : 𝓢ymmetry _≈_
     ⦃ `𝓣ransitivity  ⦄ : Transitivity.class _≈_

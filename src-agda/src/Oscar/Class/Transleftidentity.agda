@@ -16,7 +16,7 @@ module _ where
       no-eta-equality
       constructor ∁
     module _
-      ⦃ _ : 𝓡eflexivity _∼_ ⦄
+      ⦃ _ : Reflexivity.class _∼_ ⦄
       ⦃ _ : Transitivity.class _∼_ ⦄
       where
       𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ∼̇ f
@@ -27,7 +27,7 @@ module _ where
     {𝔬} {𝔒 : Ø 𝔬}
     {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}
     {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ)
-    ⦃ _ : 𝓡eflexivity _∼_ ⦄
+    ⦃ _ : Reflexivity.class _∼_ ⦄
     ⦃ _ : Transitivity.class _∼_ ⦄
     ⦃ _ : [𝓣ransleftidentity] _∼_ _∼̇_ ⦄
     ⦃ _ : 𝓣ransleftidentity _∼_ _∼̇_ ⦄
@@ -49,7 +49,7 @@ module _ where
       no-eta-equality
       constructor ∁
     module _
-      ⦃ _ : 𝓡eflexivity _∼_ ⦄
+      ⦃ _ : Reflexivity.class _∼_ ⦄
       ⦃ _ : Transitivity.class _∼_ ⦄
       where
       ≡̇-𝓽ransleftidentity = ∀ {x y} {f : x ∼ y} → ε ∙ f ≡̇ f
@@ -71,7 +71,7 @@ module _ where
 
       `≡̇-𝓣ransleftidentity :
         ⦃ _ : [𝓣ransleftidentity] _∼_ _≡̇_ ⦄
-        ⦃ _ : 𝓡eflexivity _∼_ ⦄
+        ⦃ _ : Reflexivity.class _∼_ ⦄
         ⦃ _ : Transitivity.class _∼_ ⦄
         ⦃ _ : 𝓣ransleftidentity _∼_ _≡̇_ ⦄
         → ≡̇-𝓣ransleftidentity F T

@@ -15,7 +15,7 @@ module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : 
 
   instance
 
-    𝓡eflexivityExtensionṖropertyEquivalence : 𝓡eflexivity ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
+    𝓡eflexivityExtensionṖropertyEquivalence : Reflexivity.class ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓡eflexivityExtensionṖropertyEquivalence .⋆ .π₀ = reflexivity
 
     𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧

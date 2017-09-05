@@ -19,8 +19,8 @@ module _
     (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
     (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
     (§ : Smap.type _∼₁_ _∼₂_ μ μ)
-    (ε₁ : 𝓻eflexivity _∼₁_)
-    (ε₂ : 𝓻eflexivity _∼₂_)
+    (ε₁ : Reflexivity.type _∼₁_)
+    (ε₂ : Reflexivity.type _∼₂_)
     = ℭLASS ((λ {x} {y} → § {x} {y}) , (λ {x} → ε₁ {x}) , (λ {x y} → _∼̇₂_ {x} {y}) , (λ {x} → ε₂ {x})) (∀ {x} → § (ε₁ {x}) ∼̇₂ ε₂)
   module _
     {μ : Surjection.type 𝔒₁ 𝔒₂}
@@ -28,8 +28,8 @@ module _
     {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
     {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
     {§ : Smap.type _∼₁_ _∼₂_ μ μ}
-    {ε₁ : 𝓻eflexivity _∼₁_}
-    {ε₂ : 𝓻eflexivity _∼₂_}
+    {ε₁ : Reflexivity.type _∼₁_}
+    {ε₂ : Reflexivity.type _∼₂_}
     where
     surjidentity = Surjidentity.method _∼₁_ _∼₂_ _∼̇₂_ (λ {x} {y} → § {x} {y}) (λ {x} → ε₁ {x}) (λ {x} → ε₂ {x})
   module Surjidentity!
@@ -38,8 +38,8 @@ module _
     (∼̇₂ : ∀ {x y} → ∼₂ x y → ∼₂ x y → Ø ℓ₂)
     ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
     ⦃ _ : Smap!.class ∼₁ ∼₂ ⦄
-    ⦃ _ : 𝓡eflexivity ∼₁ ⦄
-    ⦃ _ : 𝓡eflexivity ∼₂ ⦄
+    ⦃ _ : Reflexivity.class ∼₁ ⦄
+    ⦃ _ : Reflexivity.class ∼₂ ⦄
     = Surjidentity {surjection} ∼₁ ∼₂ ∼̇₂ § ε ε
   module _
     (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
@@ -47,7 +47,7 @@ module _
     (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
     ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
     ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
+    ⦃ _ : Reflexivity.class _∼₁_ ⦄
+    ⦃ _ : Reflexivity.class _∼₂_ ⦄
     where
     surjidentity[_,_] = Surjidentity.method {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε

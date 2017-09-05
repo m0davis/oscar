@@ -36,7 +36,7 @@ module _
 
 
 
-      ⦃ `𝓡eflexivity ⦄ : 𝓡eflexivity ℜ
+      ⦃ `𝓡eflexivity ⦄ : Reflexivity.class ℜ
 
       -- 𝒫 ₁≈₂ 𝒖 ◃ 𝒫
       ⦃ `leftyunit ⦄ : ∀ {x} {p : 𝔓₁ (surjection x)}

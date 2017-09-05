@@ -21,10 +21,10 @@ module _
     ⦃ _ : Smap!.class _∼₁_ _∼₂_                         ⦄
     ⦃ _ : Smap!.class _∼₁_ _∼₂'_                        ⦄
     ⦃ _ : Smap!.class _∼₁_ _∼₂2_                        ⦄
-    ⦃ _ : 𝓡eflexivity _∼₁_                               ⦄
-    ⦃ _ : 𝓡eflexivity _∼₂_                               ⦄
-    ⦃ _ : 𝓡eflexivity _∼₂'_                                ⦄
-    ⦃ _ : 𝓡eflexivity _∼₂2_                                ⦄
+    ⦃ _ : Reflexivity.class _∼₁_                               ⦄
+    ⦃ _ : Reflexivity.class _∼₂_                               ⦄
+    ⦃ _ : Reflexivity.class _∼₂'_                                ⦄
+    ⦃ _ : Reflexivity.class _∼₂2_                                ⦄
     ⦃ _ : Surjidentity!.class _∼₁_ _∼₂_ _∼̇₂_                        ⦄
     ⦃ _ : Surjidentity!.class _∼₁_ _∼₂'_ _∼̇₂'_                     ⦄
     ⦃ _ : Surjidentity!.class _∼₁_ _∼₂2_ _∼̇₂2_                     ⦄

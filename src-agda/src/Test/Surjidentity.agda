@@ -34,9 +34,9 @@ module _
   ⦃ `𝓢urjection : Surjection.class 𝔒₁ 𝔒₂ ⦄
   ⦃ `𝓢urjectivity : Smap!.class _∼₁_ _∼₂_ ⦄
   ⦃ `𝓢urjectextensivity : Smap!.class _∼₁_ _∼₂'_ ⦄
-  ⦃ `𝓡eflexivity₁ : 𝓡eflexivity _∼₁_ ⦄
-  ⦃ `𝓡eflexivity₂ : 𝓡eflexivity _∼₂_ ⦄
-  ⦃ `𝓡eflexivity₂' : 𝓡eflexivity _∼₂'_ ⦄
+  ⦃ `𝓡eflexivity₁ : Reflexivity.class _∼₁_ ⦄
+  ⦃ `𝓡eflexivity₂ : Reflexivity.class _∼₂_ ⦄
+  ⦃ `𝓡eflexivity₂' : Reflexivity.class _∼₂'_ ⦄
   where
   instance
 
