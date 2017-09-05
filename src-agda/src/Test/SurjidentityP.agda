@@ -25,13 +25,13 @@ module _
     ⦃ _ : 𝓡eflexivity _∼₂_                               ⦄
     ⦃ _ : 𝓡eflexivity _∼₂'_                                ⦄
     ⦃ _ : 𝓡eflexivity _∼₂2_                                ⦄
-    ⦃ _ : 𝓢urjidentity _∼₁_ _∼₂_ _∼̇₂_                        ⦄
-    ⦃ _ : 𝓢urjidentity _∼₁_ _∼₂'_ _∼̇₂'_                     ⦄
-    ⦃ _ : 𝓢urjidentity _∼₁_ _∼₂2_ _∼̇₂2_                     ⦄
+    ⦃ _ : Surjidentity!.class _∼₁_ _∼₂_ _∼̇₂_                        ⦄
+    ⦃ _ : Surjidentity!.class _∼₁_ _∼₂'_ _∼̇₂'_                     ⦄
+    ⦃ _ : Surjidentity!.class _∼₁_ _∼₂2_ _∼̇₂2_                     ⦄
     where
 
-  test-surj : 𝓼urjidentity _∼₁_ _∼₂_ _∼̇₂_
+  test-surj : Surjidentity!.type _∼₁_ _∼₂_ _∼̇₂_
   test-surj = surjidentity
 
-  test-surj[] : 𝓼urjidentity _∼₁_ _∼₂_ _∼̇₂_
+  test-surj[] : Surjidentity!.type _∼₁_ _∼₂_ _∼̇₂_
   test-surj[] = surjidentity[ _∼₁_ , _∼̇₂_ ]

@@ -24,17 +24,6 @@ module _
     = ℭLASS ((λ {x} {y} → § {x} {y}) , (λ {x} → ε₁ {x}) , (λ {x y} → _∼̇₂_ {x} {y}) , (λ {x} → ε₂ {x})) (∀ {x} → § (ε₁ {x}) ∼̇₂ ε₂)
   module _
     {μ : Surjection.type 𝔒₁ 𝔒₂}
-    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-    (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
-    (§ : Smap.type _∼₁_ _∼₂_ μ μ)
-    (ε₁ : 𝓻eflexivity _∼₁_)
-    (ε₂ : 𝓻eflexivity _∼₂_)
-    where
-    open Surjidentity _∼₁_ _∼₂_ _∼̇₂_ (λ {x} {y} → § {x} {y}) (λ {x} → ε₁ {x}) (λ {x} → ε₂ {x}) public
-      using () renaming (class to Surjidentity; type to 𝓼urjidentity')
-  module _
-    {μ : Surjection.type 𝔒₁ 𝔒₂}
     {_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁}
     {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
     {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
@@ -42,19 +31,16 @@ module _
     {ε₁ : 𝓻eflexivity _∼₁_}
     {ε₂ : 𝓻eflexivity _∼₂_}
     where
-    open Surjidentity _∼₁_ _∼₂_ _∼̇₂_ (λ {x} {y} → § {x} {y}) (λ {x} → ε₁ {x}) (λ {x} → ε₂ {x}) public
-      using () renaming (method to surjidentity) public
-  module _
-    (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
-    (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
-    (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
+    surjidentity = Surjidentity.method _∼₁_ _∼₂_ _∼̇₂_ (λ {x} {y} → § {x} {y}) (λ {x} → ε₁ {x}) (λ {x} → ε₂ {x})
+  module Surjidentity!
+    (∼₁ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
+    (∼₂ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
+    (∼̇₂ : ∀ {x y} → ∼₂ x y → ∼₂ x y → Ø ℓ₂)
     ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-    ⦃ _ : Smap!.class _∼₁_ _∼₂_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
-    ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
-    where
-    open Surjidentity {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε public
-      using () renaming (class to 𝓢urjidentity; type to 𝓼urjidentity) public
+    ⦃ _ : Smap!.class ∼₁ ∼₂ ⦄
+    ⦃ _ : 𝓡eflexivity ∼₁ ⦄
+    ⦃ _ : 𝓡eflexivity ∼₂ ⦄
+    = Surjidentity {surjection} ∼₁ ∼₂ ∼̇₂ § ε ε
   module _
     (_∼₁_ : 𝔒₁ → 𝔒₁ → Ø 𝔯₁)
     {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
@@ -64,4 +50,4 @@ module _
     ⦃ _ : 𝓡eflexivity _∼₁_ ⦄
     ⦃ _ : 𝓡eflexivity _∼₂_ ⦄
     where
-    open Surjidentity {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε using () renaming (method to surjidentity[_,_]) public
+    surjidentity[_,_] = Surjidentity.method {surjection} _∼₁_ _∼₂_ _∼̇₂_ § ε ε

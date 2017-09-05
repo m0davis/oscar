@@ -40,8 +40,8 @@ module _
   where
   instance
 
-    `𝒮urjidentity : 𝓢urjidentity _∼₁_ _∼₂_ _∼̇₂_
+    `𝒮urjidentity : Surjidentity!.class _∼₁_ _∼₂_ _∼̇₂_
     `𝒮urjidentity .⋆ = magic
 
-  test-surjidentity : 𝓼urjidentity _∼₁_ _∼₂_ _∼̇₂_
+  test-surjidentity : Surjidentity!.type _∼₁_ _∼₂_ _∼̇₂_
   test-surjidentity = surjidentity

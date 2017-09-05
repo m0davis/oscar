@@ -145,22 +145,22 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjidentitySubstitunctionExtensionTerm : 𝓼urjidentity Substitunction (Extension Term) _≈_
+      𝓼urjidentitySubstitunctionExtensionTerm : Surjidentity!.type Substitunction (Extension Term) _≈_
       𝓼urjidentitySubstitunctionExtensionTerm (i x) = ∅
       𝓼urjidentitySubstitunctionExtensionTerm leaf = ∅
       𝓼urjidentitySubstitunctionExtensionTerm (s fork t) = congruity₂ _fork_ (𝓼urjidentitySubstitunctionExtensionTerm s) (𝓼urjidentitySubstitunctionExtensionTerm t)
       𝓼urjidentitySubstitunctionExtensionTerm (function fn ts) = congruity (function fn) (𝓼urjidentitySubstitunctionExtensionTerms ts)
 
-      𝓼urjidentitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjidentity Substitunction (Extension $ Terms N) _≈_
+      𝓼urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity!.type Substitunction (Extension $ Terms N) _≈_
       𝓼urjidentitySubstitunctionExtensionTerms ∅ = ∅
       𝓼urjidentitySubstitunctionExtensionTerms (t , ts) = congruity₂ _,_ (𝓼urjidentitySubstitunctionExtensionTerm t) (𝓼urjidentitySubstitunctionExtensionTerms ts)
 
   instance
 
-    𝓢urjidentitySubstitunctionExtensionTerm : 𝓢urjidentity Substitunction (Extension Term) _≈_
+    𝓢urjidentitySubstitunctionExtensionTerm : Surjidentity!.class Substitunction (Extension Term) _≈_
     𝓢urjidentitySubstitunctionExtensionTerm .⋆ = 𝓼urjidentitySubstitunctionExtensionTerm
 
-    𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjidentity Substitunction (Extension $ Terms N) _≈_
+    𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity!.class Substitunction (Extension $ Terms N) _≈_
     𝓢urjidentitySubstitunctionExtensionTerms .⋆ = 𝓼urjidentitySubstitunctionExtensionTerms
 
     [𝓣ransleftidentitySubstitunction] : [𝓣ransleftidentity] Substitunction _≈_
