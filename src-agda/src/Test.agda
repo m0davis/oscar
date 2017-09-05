@@ -27,3 +27,4 @@ import Test.UnifiesSubstitunction
 import Test.Thickandthin
 import Test.Class
 import Test.Factsurj3
+import Test.Functor
