@@ -33,11 +33,8 @@ module _
     𝓣ransitivityExtension : Transitivity.class (Extension B)
     𝓣ransitivityExtension {x∼y = f} {g} .⋆ = g ∘ f
 
-    [𝓣ransassociativity]ExtensionProposextensequality : [𝓣ransassociativity] (Extension B) Proposextensequality
-    [𝓣ransassociativity]ExtensionProposextensequality = ∁
-
-    𝓣ransassociativityExtensionProposextensequality : 𝓣ransassociativity (Extension B) Proposextensequality
-    𝓣ransassociativityExtensionProposextensequality .𝓣ransassociativity.transassociativity _ _ _ _ = !
+    𝓣ransassociativityExtensionProposextensequality : Transassociativity!.class (Extension B) Proposextensequality
+    𝓣ransassociativityExtensionProposextensequality .⋆ _ _ _ _ = !
 
     𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality
     𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)

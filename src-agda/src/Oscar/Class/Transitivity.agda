@@ -37,6 +37,15 @@ module _
   ∙[]-syntax = transitivity[_]
   syntax ∙[]-syntax _⊸_ f g = g ∙[ _⊸_ ] f
 
+module FlipTransitivity
+  {𝔬} {𝔒 : Ø 𝔬}
+  {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
+  where
+  class = Transitivity.class _∼_
+  type = ∀ {x y z} → y ∼ z → x ∼ y → x ∼ z
+  method : ⦃ _ : class ⦄ → type
+  method = flip transitivity
+
 module _
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} {_∼_ : 𝔒 → 𝔒 → Ø 𝔯}

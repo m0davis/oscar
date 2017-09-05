@@ -15,6 +15,5 @@ module _
     constructor ∁
     field
       overlap ⦃ `𝓣ransitivity ⦄ : Transitivity.class _∼_
-      overlap ⦃ `[𝓣ransassociativity] ⦄ : [𝓣ransassociativity] _∼_ _∼̇_
       ⦃ `𝓣ransextensionality ⦄ : Transextensionality.class _∼_ _∼̇_
-      ⦃ `𝓣ransassociativity ⦄ : 𝓣ransassociativity _∼_ _∼̇_
+      ⦃ `𝓣ransassociativity ⦄ : Transassociativity!.class _∼_ _∼̇_
