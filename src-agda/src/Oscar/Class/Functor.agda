@@ -14,4 +14,3 @@ record Functor 𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂ : Ø ↑̂ (𝔬₁
     _∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂
     _∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂
     ⦃ `IsFunctor ⦄ : IsFunctor _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_
-  open IsFunctor `IsFunctor public
