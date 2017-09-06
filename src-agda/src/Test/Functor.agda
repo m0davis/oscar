@@ -61,23 +61,17 @@ module _
   {a b}
   {F : Ø a → Ø b}
   where
-  fmap-works : ⦃ _ : Fmap.class F ⦄
-               ⦃ _ : IsFunctor (λ (x y : Ø a) → x → y)
+  fmap : ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
                                Proposextensequality
                                (λ x y → F x → F y)
                                Proposextensequality ⦄
-             → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
-  fmap-works = smap
-
-  fmap : ⦃ _ : IsFunctor (λ (x y : Ø a) → x → y)
-                         Proposextensequality
-                         (λ x y → F x → F y)
-                         Proposextensequality ⦄
-       → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
-  fmap ⦃ I ⦄ {x} {y} = {!I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjectivity .⋆ x y!} -- FIXME this can't work b/c the surjection from (x : Ø a) to (x' : Ø b) is underdefined by the type-signature of IsFunctor
+             → Smap.type (λ x y → x → y) (λ x y → F x → F y)
+               (I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆)
+               (I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆)
+  fmap = smap
 
 module _
   {a} {A : Set a} {B : Set a}
   where
   test-map-list : (A → B) → List A → List B
-  test-map-list = fmap-works
+  test-map-list = fmap
