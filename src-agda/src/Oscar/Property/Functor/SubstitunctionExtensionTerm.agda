@@ -100,22 +100,22 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjtranscommutativitySubstitunctionExtensionTerm : 𝓼urjtranscommutativity Substitunction (Extension Term) Proposextensequality
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm : Surjtranscommutativity!.type Substitunction (Extension Term) Proposextensequality
       𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ (i _) = !
       𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ leaf = !
       𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ (τ₁ fork τ₂) = congruity₂ _fork_ (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ₁) (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ₂)
       𝓼urjtranscommutativitySubstitunctionExtensionTerm f g (function fn ts) = congruity (function fn) (𝓼urjtranscommutativitySubstitunctionExtensionTerms f g ts)
 
-      𝓼urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → 𝓼urjtranscommutativity Substitunction (Extension $ Terms N) Proposextensequality
+      𝓼urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → Surjtranscommutativity!.type Substitunction (Extension $ Terms N) Proposextensequality
       𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ ∅ = !
       𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ (τ , τs) = congruity₂ _,_ (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ) (𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ τs)
 
   instance
 
-    𝓢urjtranscommutativitySubstitunctionExtensionTerm : 𝓢urjtranscommutativity Substitunction (Extension Term) Proposextensequality
+    𝓢urjtranscommutativitySubstitunctionExtensionTerm : Surjtranscommutativity!.class Substitunction (Extension Term) Proposextensequality
     𝓢urjtranscommutativitySubstitunctionExtensionTerm .⋆ = 𝓼urjtranscommutativitySubstitunctionExtensionTerm
 
-    𝓢urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → 𝓢urjtranscommutativity Substitunction (Extension $ Terms N) Proposextensequality
+    𝓢urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → Surjtranscommutativity!.class Substitunction (Extension $ Terms N) Proposextensequality
     𝓢urjtranscommutativitySubstitunctionExtensionTerms .⋆ = 𝓼urjtranscommutativitySubstitunctionExtensionTerms
 
   instance

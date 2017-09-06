@@ -23,5 +23,5 @@ module _
       overlap ⦃ `IsPrecategory₂ ⦄ : IsPrecategory _∼₂_ _∼̇₂_
       overlap ⦃ `𝓢urjection ⦄ : Surjection.class 𝔒₁ 𝔒₂
       overlap ⦃ `𝓢urjectivity ⦄ : Smap!.class _∼₁_ _∼₂_
-      overlap ⦃ `𝓢urjtranscommutativity ⦄ : 𝓢urjtranscommutativity _∼₁_ _∼₂_ _∼̇₂_
+      overlap ⦃ `𝓢urjtranscommutativity ⦄ : Surjtranscommutativity!.class _∼₁_ _∼₂_ _∼̇₂_
       ⦃ `𝓢urjextensionality ⦄ : Surjextensionality!.class _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_
