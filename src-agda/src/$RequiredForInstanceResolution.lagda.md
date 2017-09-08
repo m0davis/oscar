@@ -142,3 +142,13 @@ module 3b where
   solve : ?S m n → P n
   solve s = surjectivity {S = ?S} {{?iSC}} p
 ```
+
+Let's examine modules `2b` and `3b` to see why the former works and but latter does not.
+
+From `module 2b`, we get the following problem:
+
+  _S : I → I → Set
+  _a : Level
+  _A : Set _a
+
+... but what do I write for `it`?
