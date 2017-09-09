@@ -1,3 +1,4 @@
+{-# OPTIONS --instance-search-depth=5 --show-implicit #-}
 
 open import Oscar.Prelude
 open import Oscar.Class.Smap
@@ -26,8 +27,8 @@ module _ {𝔵 𝔞 𝔞̇ 𝔟 𝔟̇} {𝔛 : Ø 𝔵}
   surjextenscollation[_/_]⟦_/_⟧ : ∀ {m} → 𝔅 m → 𝔅 m → ℭ m
   surjextenscollation[_/_]⟦_/_⟧ s t =
     surjcollation⟦ 𝔄 / 𝔅̇ ⟧ s t , λ f≐g f◃s=f◃t →
-      surjextensionality[ Pointwise 𝔅̇ ] ⦃ ! ⦄ f≐g t ∙ f◃s=f◃t ∙ symmetry (surjextensionality[ Pointwise 𝔅̇ ] ⦃ ! ⦄ f≐g s)
-      -- FIXME want this to work here: ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
+      -- FIXME this (`surjextensionality[ Pointwise 𝔅̇ ] ⦃ ! ⦄ f≐g t ∙ f◃s=f◃t ∙ symmetry (surjextensionality[ Pointwise 𝔅̇ ] ⦃ ! ⦄ f≐g s)`) used to be a workaround for "instance search depth exhausted", but now does not seem to help. See the FIXME note in Oscar.Class.Surjextensionality.
+      ⟪ f≐g ⟫[ Pointwise 𝔅̇ ] t ∙ f◃s=f◃t ∙ symmetry (⟪ f≐g ⟫[ Pointwise 𝔅̇ ] s)
 
 module _ {𝔵 𝔞 𝔞̇} {𝔛 : Ø 𝔵} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
   (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)

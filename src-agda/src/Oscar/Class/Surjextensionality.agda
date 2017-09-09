@@ -16,7 +16,7 @@ module Surjextensionality
   (surjection : Surjection.type 𝔒₁ 𝔒₂)
   (smap : Smap.type _∼₁_ _∼₂_ surjection surjection)
   where
-  open ℭLASS (_∼₁_ ,, (λ {x y} → _∼̇₁_ {x} {y}) ,, _∼₂_ ,, (λ {x y} → _∼̇₂_ {x} {y}) ,, surjection ,, (λ {x y} → smap {x} {y})) (∀ x y (f₁ f₂ : x ∼₁ y) → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂) public
+  open ℭLASS (_∼₁_ ,, {- FIXME including `(λ {x y} → _∼̇₁_ {x} {y}) ,, ` leads to instance search depth exhausted in Oscar.Data.Surjextenscollation -} _∼₂_ ,, (λ {x y} → _∼̇₂_ {x} {y}) ,, surjection ,, (λ {x y} → smap {x} {y})) (∀ x y (f₁ f₂ : x ∼₁ y) → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂) public
   TYPE = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂
 
 module Surjextensionality!
@@ -25,12 +25,9 @@ module Surjextensionality!
   (_∼̇₁_ : ∀ {x y} → _∼₁_ x y → _∼₁_ x y → Ø ℓ₁)
   (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
   (_∼̇₂_ : ∀ {x y} → _∼₂_ x y → _∼₂_ x y → Ø ℓ₂)
-  ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ J : Smap.class _∼₁_ _∼₂_ surjection surjection ⦄
-  where
-  -- FIXME want to use this instead: open Surjextensionality _∼₁_ (λ {x y} → _∼̇₁_ {x} {y}) _∼₂_ (λ {x y} → _∼̇₂_ {x} {y}) surjection (λ {x y} → smap {x = x} {y}) public
-  open ℭLASS (_∼₁_ ,, (λ {x y} → _∼̇₁_ {x} {y}) ,, _∼₂_ ,, (λ {x y} → _∼̇₂_ {x} {y}) ,, I ,, J) (∀ x y (f₁ f₂ : x ∼₁ y) → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂) public
-  TYPE = ∀ {x y} {f₁ f₂ : x ∼₁ y} → f₁ ∼̇₁ f₂ → smap f₁ ∼̇₂ smap f₂
+  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
+  ⦃ _ : Smap.class _∼₁_ _∼₂_ surjection surjection ⦄
+  = Surjextensionality (_∼₁_) (λ {x y} → _∼̇₁_ {x} {y}) (_∼₂_) (λ {x y} → _∼̇₂_ {x} {y}) surjection (λ {x y} → smap {x = x} {y})
 
 module _
   {𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂} {𝔒₁ : Ø 𝔬₁} {𝔒₂ : Ø 𝔬₂}
@@ -38,20 +35,16 @@ module _
   {∼̇₁ : ∀ {x y} → ∼₁ x y → ∼₁ x y → Ø ℓ₁}
   {∼₂ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
   {∼̇₂ : ∀ {x y} → ∼₂ x y → ∼₂ x y → Ø ℓ₂}
-  -- FIXME why not use hidden (non-instance) arguments?
-  -- {surjection : Surjection.type 𝔒₁ 𝔒₂}
-  -- {smap : Smap.type ∼₁ ∼₂ surjection}
-  ⦃ I : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ J : Smap.class ∼₁ ∼₂ surjection surjection ⦄
+  {surjection : Surjection.type 𝔒₁ 𝔒₂}
+  {smap : Smap.type ∼₁ ∼₂ surjection surjection}
   where
-  open Surjextensionality!
+  open Surjextensionality
     ∼₁
     (λ {x y} → ∼̇₁ {x} {y})
     ∼₂
     (λ {x y} → ∼̇₂ {x} {y})
-    -- FIXME see above
-    -- surjection
-    -- (λ {x y} → smap {x = x} {y})
+    surjection
+    (λ {x y} → smap {x = x} {y})
   surjextensionality : ⦃ _ : class ⦄ → TYPE
   surjextensionality = method _ _ _ _
 
@@ -61,20 +54,16 @@ module _
   {∼̇₁ : ∀ {x y} → ∼₁ x y → ∼₁ x y → Ø ℓ₁}
   {∼₂ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
   (∼̇₂ : ∀ {x y} → ∼₂ x y → ∼₂ x y → Ø ℓ₂)
-  -- FIXME see above
-  -- {surjection : Surjection.type 𝔒₁ 𝔒₂}
-  -- {smap : Smap.TYPE ∼₁ ∼₂ surjection}
-  ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄
-  ⦃ _ : Smap.class ∼₁ ∼₂ surjection surjection ⦄
+  {surjection : Surjection.type 𝔒₁ 𝔒₂}
+  {smap : Smap.type ∼₁ ∼₂ surjection surjection}
   where
-  open Surjextensionality!
+  open Surjextensionality
     ∼₁
     (λ {x y} → ∼̇₁ {x} {y})
     ∼₂
     (λ {x y} → ∼̇₂ {x} {y})
-    -- FIXME see above
-    -- surjection
-    -- (λ {x y} → smap {x = x} {y})
+    surjection
+    (λ {x y} → smap {x = x} {y})
   surjextensionality[_] : ⦃ _ : class ⦄ → TYPE
   surjextensionality[_] = surjextensionality
   ⟪⟫-surjextensionality[]-syntax = surjextensionality[_]
