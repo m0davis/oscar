@@ -36,7 +36,7 @@ module _
     𝓣ransassociativityExtensionProposextensequality : Transassociativity!.class (Extension B) Proposextensequality
     𝓣ransassociativityExtensionProposextensequality .⋆ _ _ _ _ = !
 
-    𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality
+    𝓣ransextensionalityExtensionProposextensequality : Transextensionality!.class (Extension B) Proposextensequality
     𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
 
     𝓣ransleftidentityExtensionProposextensequality : Transleftidentity!.class (Extension B) Proposextensequality

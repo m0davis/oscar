@@ -123,7 +123,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓣ransassociativitySubstitunction : Transassociativity!.class Substitunction _≈_
     𝓣ransassociativitySubstitunction .⋆ f g h = surjtranscommutativity g h ∘ f
 
-    𝓣ransextensionalitySubstitunction : Transextensionality.class Substitunction _≈_
+    𝓣ransextensionalitySubstitunction : Transextensionality!.class Substitunction _≈_
     𝓣ransextensionalitySubstitunction .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = surjextensionality g₁≡̇g₂ $ f₂ x
 
     IsPrecategorySubstitunction : IsPrecategory Substitunction _≈_
