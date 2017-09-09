@@ -87,4 +87,32 @@ module _
   {a} {A : Set a} {B : Set a}
   where
   test-map-list : (A → B) → List A → List B
-  test-map-list = fmap -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`.
+  test-map-list = fmap -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`. Perhaps the below shows how to solve this problem
+
+record FMAP {a b} (F : Ø a → Ø b) : Ø ↑̂ (↑̂ a ∙̂ b) where
+  field
+    theSmap : {x y : Set a} → (x → y) → F x → F y
+    ⦃ theFunctor ⦄ :
+      IsFunctor (λ (x y : Ø a) → x → y)
+                Proposextensequality
+                ε
+                (flip _∘′_)
+                (λ x y → F x → F y)
+                Proposextensequality
+                ε
+                (flip _∘′_)
+                theSmap
+
+open FMAP ⦃ … ⦄ using (theSmap)
+
+instance
+
+  FMAPinst : ∀ {a} → FMAP {a} List
+  FMAPinst .FMAP.theSmap = smap
+  FMAPinst .FMAP.theFunctor = !
+
+module _
+  {a} {A : Set a} {B : Set a}
+  where
+  test-map-list' : (A → B) → List A → List B
+  test-map-list' = theSmap
