@@ -18,6 +18,7 @@ open import Oscar.Class.Category
 open import Oscar.Data.Proposequality
 import Oscar.Property.Setoid.Proposextensequality
 import Oscar.Data.Constraint
+import Oscar.Class.Reflexivity.Function
 
 module Oscar.Property.Category.ExtensionProposextensequality where
 
@@ -26,9 +27,6 @@ module _
   where
 
   instance
-
-    𝓡eflexivityExtension : Reflexivity.class (Extension B)
-    𝓡eflexivityExtension .⋆ = ¡
 
     𝓣ransitivityExtension : Transitivity.class (Extension B)
     𝓣ransitivityExtension {x∼y = f} {g} .⋆ = g ∘ f
@@ -39,10 +37,10 @@ module _
     𝓣ransextensionalityExtensionProposextensequality : Transextensionality!.class (Extension B) Proposextensequality
     𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
 
-    𝓣ransleftidentityExtensionProposextensequality : Transleftidentity!.class (Extension B) Proposextensequality
+    𝓣ransleftidentityExtensionProposextensequality : Transleftidentity.class (Extension B) Proposextensequality ε transitivity
     𝓣ransleftidentityExtensionProposextensequality .⋆ _ = !
 
-    𝓣ransrightidentityExtensionProposextensequality : Transrightidentity!.class (Extension B) Proposextensequality
+    𝓣ransrightidentityExtensionProposextensequality : Transrightidentity.class (Extension B) Proposextensequality ε transitivity
     𝓣ransrightidentityExtensionProposextensequality .⋆ _ = !
 
     HasEquivalenceExtension : ∀ {x y : A} ⦃ _ : [IsExtensionB] B ⦄ → HasEquivalence (Extension B x y) _
@@ -57,7 +55,7 @@ module _
     IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality transitivity[ Extension B ]
     IsPrecategoryExtension = ∁
 
-    IsCategoryExtension : IsCategory (Extension B) Proposextensequality transitivity[ Extension B ]
+    IsCategoryExtension : IsCategory (Extension B) Proposextensequality ε transitivity[ Extension B ]
     IsCategoryExtension = ∁
 
 module _
@@ -68,4 +66,4 @@ module _
   PrecategoryExtension = ∁ (Extension B) Proposextensequality transitivity[ Extension B ]
 
   CategoryExtension : Category _ _ _
-  CategoryExtension = ∁ (Extension B) Proposextensequality transitivity[ Extension B ]
+  CategoryExtension = ∁ (Extension B) Proposextensequality ε transitivity[ Extension B ]

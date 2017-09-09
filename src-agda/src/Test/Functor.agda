@@ -41,13 +41,17 @@ instance
   HmapList : ∀ {ℓ} → Fmap.class (List {ℓ})
   HmapList .⋆ _ _ = map-list
 
+import Oscar.Class.Reflexivity.Function
+
 instance
 
   isFunctorList : ∀ {ℓ} → IsFunctor (λ (x y : Ø ℓ) → x → y)
                                     Proposextensequality
+                                    ε
                                     (flip _∘′_)
                                     (λ (x y : Ø ℓ) → List x → List y)
                                     Proposextensequality
+                                    ε
                                     (flip _∘′_)
                                     smap
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ = {!!}
@@ -55,11 +59,9 @@ instance
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality = {!!}
   isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory = {!!}
-  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓡eflexivity .⋆ = {!!}
   isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransleftidentity = {!!}
   isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransrightidentity = {!!}
   isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory = {!!}
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓡eflexivity .⋆ = {!!}
   isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity = {!!}
   isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity = {!!}
   isFunctorList .IsFunctor.`𝒮urjidentity .⋆ = {!!}
@@ -71,9 +73,11 @@ module _
   fmap : {smap : {x y : Set a} → (x → y) → F x → F y}
          ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
                                Proposextensequality
+                               ε
                                (flip _∘′_)
                                (λ x y → F x → F y)
                                Proposextensequality
+                               ε
                                (flip _∘′_)
                                smap ⦄
              → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
@@ -83,4 +87,4 @@ module _
   {a} {A : Set a} {B : Set a}
   where
   test-map-list : (A → B) → List A → List B
-  test-map-list = fmap -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`. A trouble with this intention (which perhaps explains the yellow) is that ε₁ and ε₂ are not uniquely determined here.
+  test-map-list = fmap -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`.

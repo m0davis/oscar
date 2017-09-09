@@ -1,5 +1,6 @@
 
 open import Oscar.Prelude
+open import Oscar.Class.Reflexivity
 open import Oscar.Class.Transitivity
 open import Oscar.Class.Transextensionality
 open import Oscar.Class.Transassociativity

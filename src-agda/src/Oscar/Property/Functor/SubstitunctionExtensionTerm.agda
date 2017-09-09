@@ -34,6 +34,7 @@ import Oscar.Property.Category.ExtensionProposextensequality
 import Oscar.Class.Congruity.Proposequality
 import Oscar.Class.HasEquivalence.Substitunction
 import Oscar.Class.Surjection.⋆
+import Oscar.Class.Reflexivity.Function
 
 module Oscar.Property.Functor.SubstitunctionExtensionTerm where
 
@@ -142,22 +143,22 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjidentitySubstitunctionExtensionTerm : Surjidentity!.type Substitunction (Extension Term) _≈_
+      𝓼urjidentitySubstitunctionExtensionTerm : Surjidentity.type Substitunction (Extension Term) _≈_ smap ε ε
       𝓼urjidentitySubstitunctionExtensionTerm (i x) = ∅
       𝓼urjidentitySubstitunctionExtensionTerm leaf = ∅
       𝓼urjidentitySubstitunctionExtensionTerm (s fork t) = congruity₂ _fork_ (𝓼urjidentitySubstitunctionExtensionTerm s) (𝓼urjidentitySubstitunctionExtensionTerm t)
       𝓼urjidentitySubstitunctionExtensionTerm (function fn ts) = congruity (function fn) (𝓼urjidentitySubstitunctionExtensionTerms ts)
 
-      𝓼urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity!.type Substitunction (Extension $ Terms N) _≈_
+      𝓼urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity.type Substitunction (Extension $ Terms N) _≈_ smap ε ε
       𝓼urjidentitySubstitunctionExtensionTerms ∅ = ∅
       𝓼urjidentitySubstitunctionExtensionTerms (t , ts) = congruity₂ _,_ (𝓼urjidentitySubstitunctionExtensionTerm t) (𝓼urjidentitySubstitunctionExtensionTerms ts)
 
   instance
 
-    𝓢urjidentitySubstitunctionExtensionTerm : Surjidentity!.class Substitunction (Extension Term) _≈_
+    𝓢urjidentitySubstitunctionExtensionTerm : Surjidentity.class Substitunction (Extension Term) _≈_ smap ε ε
     𝓢urjidentitySubstitunctionExtensionTerm .⋆ = 𝓼urjidentitySubstitunctionExtensionTerm
 
-    𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity!.class Substitunction (Extension $ Terms N) _≈_
+    𝓢urjidentitySubstitunctionExtensionTerms : ∀ {N} → Surjidentity.class Substitunction (Extension $ Terms N) _≈_ smap ε ε
     𝓢urjidentitySubstitunctionExtensionTerms .⋆ = 𝓼urjidentitySubstitunctionExtensionTerms
 
     𝓣ransleftidentitySubstitunction : Transleftidentity!.class Substitunction _≈_
@@ -166,13 +167,13 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓣ransrightidentitySubstitunction : Transrightidentity!.class Substitunction _≈_
     𝓣ransrightidentitySubstitunction .⋆ _ = !
 
-    IsCategorySubstitunction : IsCategory Substitunction _≈_ transitivity[ Substitunction ]
+    IsCategorySubstitunction : IsCategory Substitunction _≈_ ε transitivity[ Substitunction ]
     IsCategorySubstitunction = ∁
 
-    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
+    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ ε transitivity[ Substitunction ] (Extension Term) _≈_ ε transitivity[ Extension Term ] smap
     IsFunctorSubstitunctionExtensionTerm = ∁
 
-    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ] smap
+    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ ε transitivity[ Substitunction ] (Extension $ Terms N) _≈_ ε transitivity[ Extension $ Terms N ] smap
     IsFunctorSubstitunctionExtensionTerms = ∁
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
@@ -187,12 +188,12 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
 
   CategorySubstitunction : Category _ _ _
-  CategorySubstitunction = ∁ Substitunction _≈_ transitivity[ Substitunction ]
+  CategorySubstitunction = ∁ Substitunction _≈_ ε transitivity[ Substitunction ]
 
   FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
-  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
+  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ ε transitivity[ Substitunction ] (Extension Term) _≈_ ε transitivity[ Extension Term ] smap
 
   module _ (N : ¶) where
 
     FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
-    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ] smap
+    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ ε transitivity[ Substitunction ] (Extension $ Terms N) _≈_ ε transitivity[ Extension $ Terms N ] smap
