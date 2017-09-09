@@ -126,13 +126,13 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓣ransextensionalitySubstitunction : Transextensionality!.class Substitunction _≈_
     𝓣ransextensionalitySubstitunction .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = surjextensionality g₁≡̇g₂ $ f₂ x
 
-    IsPrecategorySubstitunction : IsPrecategory Substitunction _≈_
+    IsPrecategorySubstitunction : IsPrecategory Substitunction _≈_ transitivity[ Substitunction ]
     IsPrecategorySubstitunction = ∁
 
-    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ (Extension Term) _≈_
+    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
     IsPrefunctorSubstitunctionExtensionTerm = ∁
 
-    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ (Extension $ Terms N) _≈_
+    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ]
     IsPrefunctorSubstitunctionExtensionTerms = ∁
 
     𝓡eflexivitySubstitunction : Reflexivity.class Substitunction
@@ -166,13 +166,13 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     𝓣ransrightidentitySubstitunction : Transrightidentity!.class Substitunction _≈_
     𝓣ransrightidentitySubstitunction .⋆ _ = !
 
-    IsCategorySubstitunction : IsCategory Substitunction _≈_
+    IsCategorySubstitunction : IsCategory Substitunction _≈_ transitivity[ Substitunction ]
     IsCategorySubstitunction = ∁
 
-    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ (Extension Term) _≈_
+    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
     IsFunctorSubstitunctionExtensionTerm = ∁
 
-    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ (Extension $ Terms N) _≈_
+    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ]
     IsFunctorSubstitunctionExtensionTerms = ∁
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
@@ -181,18 +181,18 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
 
   PrecategorySubstitunction : Precategory _ _ _
-  PrecategorySubstitunction = ∁ Substitunction _≈_
+  PrecategorySubstitunction = ∁ Substitunction _≈_ transitivity[ Substitunction ]
 
   PrefunctorSubstitunctionExtensionTerm : Prefunctor _ _ _ _ _ _
-  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ (Extension Term) _≈_
+  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
 
   CategorySubstitunction : Category _ _ _
-  CategorySubstitunction = ∁ Substitunction _≈_
+  CategorySubstitunction = ∁ Substitunction _≈_ transitivity[ Substitunction ]
 
   FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
-  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ (Extension Term) _≈_
+  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
 
   module _ (N : ¶) where
 
     FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
-    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ (Extension $ Terms N) _≈_
+    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ]

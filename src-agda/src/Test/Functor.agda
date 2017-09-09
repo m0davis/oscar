@@ -45,8 +45,10 @@ instance
 
   isFunctorList : ∀ {ℓ} → IsFunctor (λ (x y : Ø ℓ) → x → y)
                                     Proposextensequality
+                                    (flip _∘′_)
                                     (λ (x y : Ø ℓ) → List x → List y)
                                     Proposextensequality
+                                    (flip _∘′_)
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection = !
@@ -63,8 +65,10 @@ module _
   where
   fmap : ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
                                Proposextensequality
+                               (flip _∘′_)
                                (λ x y → F x → F y)
-                               Proposextensequality ⦄
+                               Proposextensequality
+                               (flip _∘′_) ⦄
              → Smap.type (λ x y → x → y) (λ x y → F x → F y)
                (I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆)
                (I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆)

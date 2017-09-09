@@ -54,10 +54,10 @@ module _
 
   instance
 
-    IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality
+    IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality transitivity[ Extension B ]
     IsPrecategoryExtension = ∁
 
-    IsCategoryExtension : IsCategory (Extension B) Proposextensequality
+    IsCategoryExtension : IsCategory (Extension B) Proposextensequality transitivity[ Extension B ]
     IsCategoryExtension = ∁
 
 module _
@@ -65,7 +65,7 @@ module _
   where
 
   PrecategoryExtension : Precategory _ _ _
-  PrecategoryExtension = ∁ (Extension B) Proposextensequality
+  PrecategoryExtension = ∁ (Extension B) Proposextensequality transitivity[ Extension B ]
 
   CategoryExtension : Category _ _ _
-  CategoryExtension = ∁ (Extension B) Proposextensequality
+  CategoryExtension = ∁ (Extension B) Proposextensequality transitivity[ Extension B ]
