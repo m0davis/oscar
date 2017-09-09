@@ -1,6 +1,8 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.IsPrefunctor
+open import Oscar.Class.Smap
+open import Oscar.Class.Surjection
 open import Oscar.Class.Transitivity
 
 module Oscar.Class.Prefunctor where
@@ -16,4 +18,6 @@ record Prefunctor 𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂ : Ø ↑̂ (𝔬
     _∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂
     _∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂
     _↦₂_ : Transitivity.type _∼₂_
-    ⦃ `IsPrefunctor ⦄ : IsPrefunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_
+    {μ} : Surjection.type 𝔒₁ 𝔒₂
+    prefunctor-smap : Smap.type _∼₁_ _∼₂_ μ μ
+    ⦃ `IsPrefunctor ⦄ : IsPrefunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ prefunctor-smap

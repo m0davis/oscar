@@ -129,10 +129,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrecategorySubstitunction : IsPrecategory Substitunction _≈_ transitivity[ Substitunction ]
     IsPrecategorySubstitunction = ∁
 
-    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
+    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
     IsPrefunctorSubstitunctionExtensionTerm = ∁
 
-    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ]
+    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ] smap
     IsPrefunctorSubstitunctionExtensionTerms = ∁
 
     𝓡eflexivitySubstitunction : Reflexivity.class Substitunction
@@ -169,10 +169,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsCategorySubstitunction : IsCategory Substitunction _≈_ transitivity[ Substitunction ]
     IsCategorySubstitunction = ∁
 
-    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
+    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
     IsFunctorSubstitunctionExtensionTerm = ∁
 
-    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ]
+    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ] smap
     IsFunctorSubstitunctionExtensionTerms = ∁
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
@@ -184,15 +184,15 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   PrecategorySubstitunction = ∁ Substitunction _≈_ transitivity[ Substitunction ]
 
   PrefunctorSubstitunctionExtensionTerm : Prefunctor _ _ _ _ _ _
-  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
+  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
 
   CategorySubstitunction : Category _ _ _
   CategorySubstitunction = ∁ Substitunction _≈_ transitivity[ Substitunction ]
 
   FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
-  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ]
+  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension Term) _≈_ transitivity[ Extension Term ] smap
 
   module _ (N : ¶) where
 
     FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
-    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ]
+    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ transitivity[ Substitunction ] (Extension $ Terms N) _≈_ transitivity[ Extension $ Terms N ] smap

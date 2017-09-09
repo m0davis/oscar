@@ -4,6 +4,8 @@ open import Oscar.Prelude
 open import Oscar.Class.IsCategory
 open import Oscar.Class.IsFunctor
 open import Oscar.Class.IsPrecategory
+open import Oscar.Class.Surjection
+open import Oscar.Class.Smap
 open import Oscar.Class.Transextensionality
 open import Oscar.Class.Transitivity
 
@@ -18,10 +20,12 @@ module Test.Test2 where
     {𝔯₂} {_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂}
     {ℓ₂} {_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂}
     {_↦₂_ : Transitivity.type _∼₂_}
-    ⦃ I : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ ⦄
-    ⦃ J : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ ⦄
+    {surjection : Surjection.type 𝔒₁ 𝔒₂}
+    {smap : Smap.type _∼₁_ _∼₂_ surjection surjection}
+    ⦃ I : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ smap ⦄
+    ⦃ J : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ smap ⦄
     → Transextensionality.type _∼₁_ _∼̇₁_ _↦₁_
 
-  test-functor-transextensionality {_∼₁_ = _∼₁_} {_∼̇₁_ = _∼̇₁_} {_↦₁_ = _↦₁_} {{I}} = transextensionality {_∼_ = λ z z₁ → z ∼₁ z₁} {_∼̇_ = λ {x} {y} → _∼̇₁_ {x} {y}} {transitivity = λ {x y z} → _↦₁_ {x} {y} {z}} {{I .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory .IsPrecategory.`𝓣ransextensionality}}
+  test-functor-transextensionality {_∼₁_ = _∼₁_} {_∼̇₁_ = _∼̇₁_} {_↦₁_ = _↦₁_} {{I}} = transextensionality {_∼_ = λ z z₁ → z ∼₁ z₁} {_∼̇_ = λ {x} {y} → _∼̇₁_ {x} {y}} {transitivity = λ {x y z} → _↦₁_ {x} {y} {z}} {{I .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory .IsPrecategory.`𝓣ransextensionality}} -- FIXME can this be simplified?
 
   test-the-test {_∼₁_ = _∼₁_} {_∼̇₁_ = _∼̇₁_} {_↦₁_ = _↦₁_} = test-functor-transextensionality {_∼₁_ = _∼₁_} {_∼̇₁_ = _∼̇₁_} {_↦₁_ = _↦₁_}

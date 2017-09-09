@@ -18,13 +18,13 @@ module _
   {𝔯₂} (_∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂)
   {ℓ₂} (_∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂)
   (_↦₂_ : Transitivity.type _∼₂_)
+  {surjection : Surjection.type 𝔒₁ 𝔒₂}
+  (smap : Smap.type _∼₁_ _∼₂_ surjection surjection)
   where
   record IsPrefunctor : Ø 𝔬₁ ∙̂ 𝔯₁ ∙̂ ℓ₁ ∙̂ 𝔬₂ ∙̂ 𝔯₂ ∙̂ ℓ₂ where
     constructor ∁
     field
       overlap ⦃ `IsPrecategory₁ ⦄ : IsPrecategory _∼₁_ _∼̇₁_ _↦₁_
       overlap ⦃ `IsPrecategory₂ ⦄ : IsPrecategory _∼₂_ _∼̇₂_ _↦₂_
-      overlap ⦃ `𝓢urjection ⦄ : Surjection.class 𝔒₁ 𝔒₂
-      overlap ⦃ `𝓢urjectivity ⦄ : Smap.class _∼₁_ _∼₂_ surjection surjection
       overlap ⦃ `𝓢urjtranscommutativity ⦄ : Surjtranscommutativity.class _∼₁_ _∼₂_ _∼̇₂_ smap _↦₁_ _↦₂_
       ⦃ `𝓢urjextensionality ⦄ : Surjextensionality.class _∼₁_ _∼̇₁_ _∼₂_ _∼̇₂_ surjection smap

@@ -1,6 +1,8 @@
 
 open import Oscar.Prelude
 open import Oscar.Class.IsFunctor
+open import Oscar.Class.Smap
+open import Oscar.Class.Surjection
 open import Oscar.Class.Transitivity
 
 module Oscar.Class.Functor where
@@ -16,4 +18,6 @@ record Functor 𝔬₁ 𝔯₁ ℓ₁ 𝔬₂ 𝔯₂ ℓ₂ : Ø ↑̂ (𝔬₁
     _∼₂_ : 𝔒₂ → 𝔒₂ → Ø 𝔯₂
     _∼̇₂_ : ∀ {x y} → x ∼₂ y → x ∼₂ y → Ø ℓ₂
     _↦₂_ : Transitivity.type _∼₂_
-    ⦃ `IsFunctor ⦄ : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_
+    {μ} : Surjection.type 𝔒₁ 𝔒₂
+    functor-smap : Smap.type _∼₁_ _∼₂_ μ μ -- FIXME cannot name this § or smap b/c of namespace conflict
+    ⦃ `IsFunctor ⦄ : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ functor-smap

@@ -37,11 +37,23 @@ module _
   (_↦₂_ : Transitivity.type _∼₂_)
   {ℓ₁} (_∼̇₁_ : ∀ {x y} → x ∼₁ y → x ∼₁ y → Ø ℓ₁)
   {ℓ₁'} (_∼̇₁'_ : ∀ {x y} → x ∼₁ y → x ∼₁ y → Ø ℓ₁')
-  ⦃ I1 : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ ⦄ -- FIXME using top-level instances does not work b/c then there is not instance found for smap, etc.
-  ⦃ I2 : IsFunctor _∼₂_ _∼̇₂_ _↦₂_ _∼₂_ _∼̇₂_ _↦₂_ ⦄
-  ⦃ I3 : IsFunctor _∼₁_ _∼̇₁'_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ ⦄
+  (μ₁₂ : Surjection.type _ _)
+  (μ₂₂ : Surjection.type _ _)
+  {smap₁₂ : Smap.type _∼₁_ _∼₂_ μ₁₂ μ₁₂}
+  {smap₂₂ : Smap.type _∼₂_ _∼₂_ μ₂₂ μ₂₂}
+  ⦃ I1 : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ smap₁₂ ⦄ -- FIXME using top-level instances does not work b/c then there is not instance found for reflexivity.
+  ⦃ I2 : IsFunctor _∼₂_ _∼̇₂_ _↦₂_ _∼₂_ _∼̇₂_ _↦₂_ smap₂₂ ⦄
+  ⦃ I3 : IsFunctor _∼₁_ _∼̇₁'_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ smap₁₂ ⦄
   where
-  test-surjidentity-from-IsFunctor : Surjidentity.type _∼₁_ _∼₂_ _∼̇₂_ smap ε ε
+  {- FIXME would like to try this instead of instance arguments
+  postulate
+    instance
+      I1 : IsFunctor _∼₁_ _∼̇₁_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ smap₁₂
+      I2 : IsFunctor _∼₂_ _∼̇₂_ _↦₂_ _∼₂_ _∼̇₂_ _↦₂_ smap₂₂
+      I3 : IsFunctor _∼₁_ _∼̇₁'_ _↦₁_ _∼₂_ _∼̇₂_ _↦₂_ smap₁₂
+  -}
+
+  test-surjidentity-from-IsFunctor : Surjidentity.type _∼₁_ _∼₂_ _∼̇₂_ smap₁₂ ε ε
   test-surjidentity-from-IsFunctor = surjidentity -- FIXME this works only b/c of overlap (the Surjidentity instance found is I1, not I3)
 
 module _

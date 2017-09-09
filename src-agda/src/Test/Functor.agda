@@ -49,33 +49,38 @@ instance
                                     (λ (x y : Ø ℓ) → List x → List y)
                                     Proposextensequality
                                     (flip _∘′_)
+                                    smap
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = {!!}
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection = !
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjectivity = !
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = {!!}
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality = {!!}
-  isFunctorList .IsFunctor.`IsCategory₁ = {!!}
-  isFunctorList .IsFunctor.`IsCategory₂ = {!!}
-  isFunctorList .IsFunctor.`𝒮urjidentity = {!!}
+  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory = {!!}
+  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓡eflexivity .⋆ = {!!}
+  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransleftidentity = {!!}
+  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransrightidentity = {!!}
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory = {!!}
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓡eflexivity .⋆ = {!!}
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity = {!!}
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity = {!!}
+  isFunctorList .IsFunctor.`𝒮urjidentity .⋆ = {!!}
 
 module _
   {a b}
   {F : Ø a → Ø b}
   where
-  fmap : ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
+  fmap : {smap : {x y : Set a} → (x → y) → F x → F y}
+         ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
                                Proposextensequality
                                (flip _∘′_)
                                (λ x y → F x → F y)
                                Proposextensequality
-                               (flip _∘′_) ⦄
-             → Smap.type (λ x y → x → y) (λ x y → F x → F y)
-               (I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆)
-               (I .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjection .⋆)
-  fmap = smap
+                               (flip _∘′_)
+                               smap ⦄
+             → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
+  fmap {smap} = smap
 
 module _
   {a} {A : Set a} {B : Set a}
   where
   test-map-list : (A → B) → List A → List B
-  test-map-list = fmap
+  test-map-list = fmap -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`. A trouble with this intention (which perhaps explains the yellow) is that ε₁ and ε₂ are not uniquely determined here.
