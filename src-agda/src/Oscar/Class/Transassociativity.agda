@@ -10,7 +10,7 @@ module Transassociativity
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   {ℓ} (_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ) (let infix 4 _∼̇_ ; _∼̇_ = _∼̇_)
   (transitivity : Transitivity.type _∼_) (let infixr 9 _∙_ ; _∙_ : FlipTransitivity.type _∼_; _∙_ g f = transitivity f g)
-  = ℭLASS (λ {x y} → _∼̇_ {x} {y})
+  = ℭLASS (λ {x y} → _∼̇_ {x} {y} , (λ {x y z} → transitivity {x} {y} {z}))
           (∀ {w x y z} (f : w ∼ x) (g : x ∼ y) (h : y ∼ z) → (h ∙ g) ∙ f ∼̇ h ∙ g ∙ f)
 
 module _

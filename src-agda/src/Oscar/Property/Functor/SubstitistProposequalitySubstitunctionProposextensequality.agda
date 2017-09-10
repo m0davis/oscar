@@ -40,17 +40,18 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
   instance
 
-    𝓢urjectivitySubstitist,Substitunction : 𝒮urjectivity! Substitist Substitunction
-    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.smap ∅ = i
-    𝓢urjectivitySubstitist,Substitunction .𝓢urjectivity.smap ((x , t) , σ) = smap‼ ⦃ ∅ ⦄ σ ∙ (t for x)
+    𝓢urjectivitySubstitist,Substitunction : Smap.class Substitist Substitunction ¡ ¡
+    𝓢urjectivitySubstitist,Substitunction .⋆ _ _ ∅ = i
+    𝓢urjectivitySubstitist,Substitunction .⋆ _ _ ((x , t) , σ) = 𝓢urjectivitySubstitist,Substitunction .⋆ _ _ σ ∙ (t for x)
 
-    𝓢urjextensionalitySubstitist,Substitunction : 𝓢urjextensionality Substitist Proposequality Substitunction _≈_
-    𝓢urjextensionalitySubstitist,Substitunction .𝓢urjectivity.smap ∅ _ = ∅
+    𝓢urjextensionalitySubstitist,Substitunction : Surjextensionality.class Substitist Proposequality Substitunction _≈_ ¡ smap
+    𝓢urjextensionalitySubstitist,Substitunction .⋆ _ _ _ _ ∅ _ = ∅
 
-    𝓢urjtranscommutativitySubstitist,Substitunction : 𝓢urjtranscommutativity Substitist Substitunction _≈_
+    𝓢urjtranscommutativitySubstitist,Substitunction : Surjtranscommutativity.class Substitist Substitunction _≈_ smap transitivity transitivity
     𝓢urjtranscommutativitySubstitist,Substitunction .⋆ ∅ _ _ = ∅
     𝓢urjtranscommutativitySubstitist,Substitunction .⋆ ((π₀ , π₁) , f) g =
       let _⟪∙⟫′_ = flip (𝓢urjtranscommutativitySubstitist,Substitunction .⋆) in -- kludge for Agda's termination checker
+
         (
             § g ⟪∙⟫ §[ Substitunction ] f
           ∙
@@ -59,11 +60,12 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
       ∘
         π₁ for π₀
 
-    IsPrefunctorSubstitist,Substitunction : IsPrefunctor Substitist Proposequality Substitunction _≈_
+
+    IsPrefunctorSubstitist,Substitunction : IsPrefunctor Substitist Proposequality transitivity Substitunction _≈_ transitivity smap
     IsPrefunctorSubstitist,Substitunction = ∁
 
-    𝓢urjidentitySubstitist,Substitunction : Surjidentity.class Substitist Substitunction _≈_
+    𝓢urjidentitySubstitist,Substitunction : Surjidentity.class Substitist Substitunction _≈_ smap ε ε
     𝓢urjidentitySubstitist,Substitunction .⋆ _ = ∅
 
-    IsFunctorSubstitist,Substitunction : IsFunctor Substitist Proposequality Substitunction _≈_
+    IsFunctorSubstitist,Substitunction : IsFunctor Substitist Proposequality ε transitivity Substitunction _≈_ ε transitivity smap
     IsFunctorSubstitist,Substitunction = ∁

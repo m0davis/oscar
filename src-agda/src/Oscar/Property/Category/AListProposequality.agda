@@ -29,11 +29,8 @@ module _ {a} {A : ¶ → Set a} where
 
   instance
 
-    𝓡eflexivityAList : 𝓡eflexivity AList
+    𝓡eflexivityAList : Reflexivity.class AList
     𝓡eflexivityAList .⋆ = ∅
-
-    𝓡eflexivityAList' : 𝓡eflexivity (flip AList)
-    𝓡eflexivityAList' .⋆ = reflexivity[ AList ]
 
     𝓣ransitivityAList : Transitivity.class AList
     𝓣ransitivityAList {x∼y = f} {∅} .⋆ = f
@@ -47,56 +44,38 @@ module _ {a} {A : ¶ → Set a} where
     HasEquivalenceAList : ∀ {m n} → HasEquivalence (AList m n) _
     HasEquivalenceAList = ∁ Proposequality
 
-    [𝓣ransassociativity]AList : [𝓣ransassociativity] AList Proposequality
-    [𝓣ransassociativity]AList = ∁
+    𝓣ransassociativityAList : Transassociativity.class AList Proposequality transitivity
+    𝓣ransassociativityAList .⋆ f g ∅ = ∅
+    𝓣ransassociativityAList .⋆ f g (x , h) = congruity (x ,_) $ 𝓣ransassociativityAList .⋆ _ _ h -- h ⟨∙ _ ⟨∙ _
 
-    [𝓣ransassociativity]AList' : [𝓣ransassociativity] (flip AList) Proposequality
-    [𝓣ransassociativity]AList' = ∁
+    𝓣ransassociativityAList' : Transassociativity.class (flip AList) Proposequality transitivity
+    𝓣ransassociativityAList' .⋆ f g h = Sym.[] (transassociativity h g f)
 
-    𝓣ransassociativityAList : 𝓣ransassociativity AList Proposequality
-    𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g ∅ = ∅
-    𝓣ransassociativityAList .𝓣ransassociativity.transassociativity f g (x , h) = congruity (x ,_) $ h ⟨∙ _ ⟨∙ _
-
-    𝓣ransassociativityAList' : 𝓣ransassociativity (flip AList) Proposequality
-    𝓣ransassociativityAList' .𝓣ransassociativity.transassociativity f g h = Sym.[] (transassociativity h g f)
-
-    IsPrecategoryAList : IsPrecategory AList Proposequality
+    IsPrecategoryAList : IsPrecategory AList Proposequality transitivity
     IsPrecategoryAList = ∁
 
-    IsPrecategoryAList' : IsPrecategory (flip AList) Proposequality
+    IsPrecategoryAList' : IsPrecategory (flip AList) Proposequality transitivity
     IsPrecategoryAList' = ∁
 
-    [𝓣ransleftidentity]AList : [𝓣ransleftidentity] AList Proposequality
-    [𝓣ransleftidentity]AList = ∁
+    𝓣ransleftidentityAList : Transleftidentity.class AList Proposequality ε transitivity
+    𝓣ransleftidentityAList .⋆ = ∅
 
-    [𝓣ransleftidentity]AList' : [𝓣ransleftidentity] (flip AList) Proposequality
-    [𝓣ransleftidentity]AList' = ∁
+    𝓣ransrightidentityAList : Transrightidentity.class AList Proposequality ε transitivity
+    𝓣ransrightidentityAList .⋆ {f = ∅} = ∅
+    𝓣ransrightidentityAList .⋆ {f = x , f} rewrite 𝓣ransrightidentityAList .⋆ {f = f} = ∅
+    -- 𝓣ransrightidentityAList .⋆ {f = x , f} = congruity (x ,_) (transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality})
+    -- 𝓣ransrightidentityAList .⋆ {f = x , f} rewrite (f ∙ ε[ AList ] ≡ f) ∋ transrightidentity {_∼_ = AList} = ∅
 
-    𝓣ransleftidentityAList : 𝓣ransleftidentity AList Proposequality
-    𝓣ransleftidentityAList .𝓣ransleftidentity.transleftidentity = ∅
+    𝓣ransleftidentityAList' : Transleftidentity.class (flip AList) Proposequality ε transitivity
+    𝓣ransleftidentityAList' .⋆ = transrightidentity {_∼_ = AList}
 
-    [𝓣ransrightidentity]AList : [𝓣ransrightidentity] AList Proposequality
-    [𝓣ransrightidentity]AList = ∁
+    𝓣ransrightidentityAList' : Transrightidentity.class (flip AList) Proposequality ε transitivity
+    𝓣ransrightidentityAList' .⋆ = transleftidentity {_∼_ = AList}
 
-    [𝓣ransrightidentity]AList' : [𝓣ransrightidentity] (flip AList) Proposequality
-    [𝓣ransrightidentity]AList' = ∁
-
-    𝓣ransrightidentityAList : 𝓣ransrightidentity AList Proposequality
-    𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = ∅} = ∅
-    𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} rewrite transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality} {f = f} = ∅
-    --𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} = congruity (x ,_) (transrightidentity {_∼_ = AList} {_∼̇_ = Proposequality})
-    --𝓣ransrightidentityAList .𝓣ransrightidentity.transrightidentity {f = x , f} rewrite (f ∙ ε[ AList ] ≡ f) ∋ transrightidentity {_∼_ = AList} = ∅
-
-    𝓣ransleftidentityAList' : 𝓣ransleftidentity (flip AList) Proposequality
-    𝓣ransleftidentityAList' .𝓣ransleftidentity.transleftidentity = transrightidentity {_∼_ = AList}
-
-    𝓣ransrightidentityAList' : 𝓣ransrightidentity (flip AList) Proposequality
-    𝓣ransrightidentityAList' .𝓣ransrightidentity.transrightidentity = transleftidentity {_∼_ = AList}
-
-    IsCategoryAList : IsCategory AList Proposequality
+    IsCategoryAList : IsCategory AList Proposequality ε transitivity
     IsCategoryAList = ∁
 
-    IsCategoryAList' : IsCategory (flip AList) Proposequality
+    IsCategoryAList' : IsCategory (flip AList) Proposequality ε transitivity
     IsCategoryAList' = ∁
 
 module _ {a} (A : ¶ → Ø a) where
@@ -104,13 +83,13 @@ module _ {a} (A : ¶ → Ø a) where
   private AList = Descender⟨ A ⟩
 
   PrecategoryAListProposequality : Precategory _ _ _
-  PrecategoryAListProposequality = ∁ AList Proposequality
+  PrecategoryAListProposequality = ∁ AList Proposequality transitivity
 
   CategoryAListProposequality : Category _ _ _
-  CategoryAListProposequality = ∁ AList Proposequality
+  CategoryAListProposequality = ∁ AList Proposequality ε transitivity
 
   PrecategoryAList'Proposequality : Precategory _ _ _
-  PrecategoryAList'Proposequality = ∁ (flip AList) Proposequality
+  PrecategoryAList'Proposequality = ∁ (flip AList) Proposequality transitivity
 
   CategoryAList'Proposequality : Category _ _ _
-  CategoryAList'Proposequality = ∁ (flip AList) Proposequality
+  CategoryAList'Proposequality = ∁ (flip AList) Proposequality ε transitivity
