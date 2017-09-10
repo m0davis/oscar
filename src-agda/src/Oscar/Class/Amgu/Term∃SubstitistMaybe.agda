@@ -76,7 +76,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
         ⋆amguTerm .Amgu.amgu (i x) (i y) (m , ∅) = ↑ flexFlex x y
         ⋆amguTerm .Amgu.amgu (i x) t     (m , ∅) = flexRigid x t
         ⋆amguTerm .Amgu.amgu t     (i x) (m , ∅) = flexRigid x t
-        ⋆amguTerm .Amgu.amgu s     t  (n , _,_ {n = m} (z , r) σ) = fmap (λ {(n' , σ') → n' , (z , r) , σ'}) (amgu {x = m} (§ (r for z) $ s) (§ (r for z) $ t) (n Σ., σ))
+        ⋆amguTerm .Amgu.amgu s     t  (n , _,_ {n = m} (z , r) σ) = fmap′ (λ {(n' , σ') → n' , (z , r) , σ'}) (amgu {x = m} (§ (r for z) $ s) (§ (r for z) $ t) (n Σ., σ))
 
         ⋆amguVecTerm : ∀ {N} → Amgu (Terms N) (∃_ ∘ Substitist) Maybe
         ⋆amguVecTerm .Amgu.amgu ∅ ∅ acc = ↑ acc

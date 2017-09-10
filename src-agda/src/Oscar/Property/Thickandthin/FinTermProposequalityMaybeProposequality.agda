@@ -161,6 +161,9 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     [𝓒heck]FinTermsMaybe : ∀ {N} → [𝓒heck] Fin (Terms N) Maybe
     [𝓒heck]FinTermsMaybe = ∁
 
+  open import Oscar.Class.Smap
+  open import Oscar.Class.Fmap
+
   mutual
 
     instance

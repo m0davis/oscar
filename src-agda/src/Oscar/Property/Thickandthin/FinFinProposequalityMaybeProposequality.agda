@@ -66,7 +66,7 @@ instance
   𝓒heckFinFinMaybe .𝓒heck.check ∅ (↑ y) = ↑ y
   𝓒heckFinFinMaybe .𝓒heck.check {∅} (↑ ()) _
   𝓒heckFinFinMaybe .𝓒heck.check {↑ _} (↑ x) ∅ = ↑ ∅
-  𝓒heckFinFinMaybe .𝓒heck.check {↑ _} (↑ x) (↑ y) = fmap ¶⟨<_⟩.↑_ $ check x y
+  𝓒heckFinFinMaybe .𝓒heck.check {↑ _} (↑ x) (↑ y) = fmap′ ¶⟨<_⟩.↑_ $ check x y
 
   [𝓣hick/thin=1]FinFin : [𝓣hick/thin=1] Fin Fin Proposequality
   [𝓣hick/thin=1]FinFin = ∁

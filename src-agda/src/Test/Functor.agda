@@ -70,7 +70,7 @@ module _
   {a b}
   {F : Ø a → Ø b}
   where
-  fmap : {smap : {x y : Set a} → (x → y) → F x → F y}
+  fmap′ : {smap : {x y : Set a} → (x → y) → F x → F y}
          ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
                                Proposextensequality
                                ε
@@ -81,13 +81,13 @@ module _
                                (flip _∘′_)
                                smap ⦄
              → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
-  fmap {smap} = smap
+  fmap′ {smap} = smap
 
 module _
   {a} {A : Set a} {B : Set a}
   where
   test-map-list : (A → B) → List A → List B
-  test-map-list = fmap -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`. Perhaps the below shows how to solve this problem
+  test-map-list = fmap′ -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`. Perhaps the below shows how to solve this problem. The moral of the story is that level-polymorphic functors cannot be represented by `Functor` or any other type in universe < ω.
 
 record FMAP {a b} (F : Ø a → Ø b) : Ø ↑̂ (↑̂ a ∙̂ b) where
   field
