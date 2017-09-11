@@ -1,7 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Data.Constraint
-open import Oscar.Data.𝟙
+open import Everything
 
 module Test.Class where
 

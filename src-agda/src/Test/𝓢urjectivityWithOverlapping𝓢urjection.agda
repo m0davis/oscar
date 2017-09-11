@@ -6,6 +6,7 @@ open import Oscar.Data.Proposequality
 open import Oscar.Class
 open import Oscar.Class.Surjection
 open import Oscar.Class.Smap
+-- import Everything -- FIXME
 
 module !1 where
 

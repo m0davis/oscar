@@ -1,14 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Data.Proposequality
-open import Oscar.Data.Substitunction
-import Oscar.Class.Hmap
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Transitivity
-open import Oscar.Class.Hmap
-open import Oscar.Property.Functor.SubstitunctionExtensionTerm
-import Oscar.Property.Setoid.Proposextensequality
-import Oscar.Class.Hmap.Transleftidentity
+open import Everything
 
 module Test.SubstitunctionPropId {𝔭} (𝔓 : Ø 𝔭) where
 

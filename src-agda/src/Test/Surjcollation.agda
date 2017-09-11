@@ -1,4 +1,6 @@
 
+open import Everything
+{-
 open import Oscar.Prelude
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Symmetrical
@@ -15,7 +17,7 @@ import Oscar.Class.Symmetrical.Unifies
 import Oscar.Property.Setoid.Proposequality -- FIXME see fact1⋆ below; comment this out to observe confusing error messages
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Class.Surjection.⋆
-
+-}
 module Test.Surjcollation {𝔭} (𝔓 : Ø 𝔭) where
   open Term 𝔓
   open Substitunction 𝔓

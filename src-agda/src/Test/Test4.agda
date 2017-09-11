@@ -1,9 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.Smap
-open import Oscar.Class.Transitivity
-import Oscar.Class.Smap.TransitiveExtensionLeftṖroperty
-import Oscar.Class.Surjection.⋆
+open import Everything
 
 module Test.Test4
   {𝔵} {𝔛 : Ø 𝔵}

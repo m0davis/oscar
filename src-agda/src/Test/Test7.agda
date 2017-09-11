@@ -1,12 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.Transitivity
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Transleftidentity
-open import Oscar.Class.Symmetry
-open import Oscar.Class.Hmap
-open import Oscar.Class.Smap
-import Oscar.Class.Hmap.Transleftidentity
+open import Everything
 
 module Test.Test7 where
 

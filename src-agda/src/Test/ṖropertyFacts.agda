@@ -31,6 +31,8 @@ open import Oscar.Data.Surjcollation
 open import Oscar.Data.Surjextenscollation
 open import Oscar.Prelude
 
+import Everything -- FIXME doesn't work with open
+
 module Test.ṖropertyFacts where
 
   postulate

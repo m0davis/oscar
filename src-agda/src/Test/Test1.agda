@@ -1,7 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-} -- FIXME
 
-open import Oscar.Class.Functor
-open import Oscar.Class.Transextensionality
+open import Everything
 
 module Test.Test1 where
 

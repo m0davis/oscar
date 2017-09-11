@@ -1,42 +1,7 @@
 
-open import Oscar.Prelude
-
 module Test.ṖropertyFactsSubstitunction.imports where
 
-open import Oscar.Prelude public
-open import Oscar.Class.HasEquivalence public
-open import Oscar.Class.Leftstar public
-open import Oscar.Class.Leftunit public
-open import Oscar.Class.Properthing public
-open import Oscar.Class.Quadricity public
-open import Oscar.Class.Similarity public
-open import Oscar.Class.SimilarityM public
-open import Oscar.Class.SimilaritySingleton public
-open import Oscar.Class.Smap                  public
-open import Oscar.Class.Symmetrical                         public
-open import Oscar.Class.Unit                                public
-open import Oscar.Data.Proposequality                       public
-open import Oscar.Data.Substitunction                       public
-open import Oscar.Data.Surjcollation                        public
-open import Oscar.Data.Surjextenscollation                  public
-open import Oscar.Data.Term                                 public
-
-open import Oscar.Class.HasEquivalence.ExtensionṖroperty public
-open import Oscar.Class.HasEquivalence.Ṗroperty                  public
-open import Oscar.Class.HasEquivalence.Substitunction            public
-open import Oscar.Class.Properthing.ExtensionṖroperty            public
-open import Oscar.Class.Properthing.Ṗroperty                     public
-open import Oscar.Class.Smap.ExtensionṖroperty                   public
-open import Oscar.Class.Smap.TransitiveExtensionLeftṖroperty     public
-open import Oscar.Class.Symmetrical.ExtensionalUnifies           public
-open import Oscar.Class.Symmetrical.Unifies                      public
-open import Oscar.Class.[ExtensibleType].Proposequality          public
-open import Oscar.Property.Functor.SubstitunctionExtensionTerm   public
-open import Oscar.Property.Propergroup.Substitunction            public
-open import Oscar.Property.Setoid.Proposequality                 public
-open import Oscar.Class.Surjection.⋆                             public
-
-open import Oscar.Class.Smapoid public
+open import Everything public
 
 module Data {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
 

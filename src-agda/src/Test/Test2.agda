@@ -1,14 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-} -- FIXME
 
-open import Oscar.Prelude
-open import Oscar.Class.IsCategory
-open import Oscar.Class.IsFunctor
-open import Oscar.Class.IsPrecategory
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Surjection
-open import Oscar.Class.Smap
-open import Oscar.Class.Transextensionality
-open import Oscar.Class.Transitivity
+open import Everything
 
 module Test.Test2 where
 

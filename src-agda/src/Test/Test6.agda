@@ -1,9 +1,7 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.Reflexivity
+open import Everything
 
 module Test.Test6 where
-
 
 module TestReflexivity where
 

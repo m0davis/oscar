@@ -1,4 +1,7 @@
 
+open import Everything
+
+{-
 open import Oscar.Prelude
 open import Oscar.Class.HasEquivalence
 open import Oscar.Class.Symmetrical
@@ -14,6 +17,7 @@ import Oscar.Class.Symmetrical.Unifies
 import Oscar.Property.Setoid.Proposequality -- FIXME see _∼⁰_ below; comment this out to observe confusing error messages
 import Oscar.Property.Functor.SubstitunctionExtensionTerm
 import Oscar.Class.Surjection.⋆
+-}
 
 module Test.SymmetricalSubstitunction {𝔭} (𝔓 : Ø 𝔭) (ℓ : Ł) where
   open Term 𝔓 using () renaming (

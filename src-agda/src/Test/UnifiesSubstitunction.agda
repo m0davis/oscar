@@ -1,15 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Data.Substitunction
-open import Oscar.Data.Term
-open import Oscar.Data.Fin
-open import Oscar.Data.Substitist
-open import Oscar.Data.Surjcollation
-open import Oscar.Data.Surjextenscollation
-open import Oscar.Data.Proposequality
-import Oscar.Property.Functor.SubstitunctionExtensionTerm
-import Oscar.Property.Setoid.Proposequality
-import Oscar.Class.Surjection.⋆
+open import Everything
 
 module Test.UnifiesSubstitunction {𝔭} (𝔓 : Ø 𝔭) where
 

@@ -1,26 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class
-open import Oscar.Class.Surjection
-open import Oscar.Class.Smap
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Surjidentity
-open import Oscar.Data.Proposequality -- FIXME I'm surprised that this import is needed to avoid the following error:
-{-
-No instance of type
-.Oscar.Data.Proposequality
-(λ x →
-   𝓢urjectivity.smap `𝓢urjectivity
-   (𝓡eflexivity.reflexivity `𝓡eflexivity₁)
-   ∼̇₂ 𝓡eflexivity.reflexivity `𝓡eflexivity₂)
-(λ x →
-   𝓢urjectivity.smap `𝓢urjectivity
-   (𝓡eflexivity.reflexivity `𝓡eflexivity₁)
-   ∼̇₂ 𝓡eflexivity.reflexivity `𝓡eflexivity₂)
-was found in scope.
--}
-open import Oscar.Class.Transitivity
-open import Oscar.Class.IsFunctor
+open import Everything
 
 module Test.Surjidentity where
 
@@ -82,7 +61,3 @@ module _
 
   test-surjidentity : Surjidentity!.type _∼₁_ _∼₂_ _∼̇₂_
   test-surjidentity = surjidentity
-
-module _
-
-  where

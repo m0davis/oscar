@@ -1,9 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.Symmetry
-open import Oscar.Class.Symmetrical
-import Oscar.Class.Symmetrical.Symmetry
-import Oscar.Data.Proposequality
+open import Everything
 
 module Test.Symmetrical where
 

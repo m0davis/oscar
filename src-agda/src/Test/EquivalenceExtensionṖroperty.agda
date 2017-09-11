@@ -1,11 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.HasEquivalence
-open import Oscar.Class.Symmetry
-open import Oscar.Class.Transitivity
-import Oscar.Class.HasEquivalence.ExtensionṖroperty
-import Oscar.Data.ExtensionṖroperty
-import Oscar.Property.Setoid.ProductIndexEquivalence
+open import Everything
 
 module Test.EquivalenceExtensionṖroperty
   {𝔵} {𝔛 : Ø 𝔵}

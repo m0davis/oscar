@@ -1,9 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.Successor₀
-open import Oscar.Class.Map
-open import Oscar.Class.Injectivity
-open import Oscar.Class.Thickandthin
+open import Everything
 
 module Test.Thickandthin where
 

@@ -1,7 +1,5 @@
 
-open import Oscar.Class.Functor
-open import Oscar.Class.Surjidentity
-open import Oscar.Class.Reflexivity
+open import Everything
 
 module Test.Test0 where
 

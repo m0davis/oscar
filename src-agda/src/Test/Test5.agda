@@ -1,10 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.[ExtensibleType]
-open import Oscar.Class.Smap
-open import Oscar.Class.Surjextensionality
-import Oscar.Class.Surjection.⋆
-import Oscar.Class.Smap.ExtensionṖroperty
+open import Everything
 
 module Test.Test5
   {𝔵} {𝔛 : Ø 𝔵}

@@ -1,12 +1,5 @@
 
-open import Oscar.Prelude
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Smap
-open import Oscar.Class.Leftunit
-open import Oscar.Class.HasEquivalence
-open import Oscar.Data.Constraint
-import Oscar.Class.Surjection.⋆
-open import Oscar.Class.Surjection
+open import Everything
 
 module Test.Factsurj3 where
 
