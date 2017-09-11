@@ -8,6 +8,7 @@ import Test.EquivalenceṖroperty
 import Test.Factsurj3
 import Test.Functor -- FIXME doesn't work with import Everything
 import Test.ProblemWithDerivation
+import Test.ProblemWithLevelZero
 import Test.ṖropertyFacts -- FIXME doesn't work with open import Everything
 import Test.ṖropertyFactsSubstitunction
 import Test.SubstitunctionPropId
