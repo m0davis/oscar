@@ -68,7 +68,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     𝓣ransitivitySubstitunction : Transitivity.class Substitunction
-    𝓣ransitivitySubstitunction {x∼y = f} {g} .⋆ = smap g ∘ f
+    𝓣ransitivitySubstitunction .⋆ f g = smap g ∘ f
 
     [IsExtensionB]Term : [IsExtensionB] Term
     [IsExtensionB]Term = ∁

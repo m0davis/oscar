@@ -33,13 +33,13 @@ module _ {a} {A : ¶ → Set a} where
     𝓡eflexivityAList .⋆ = ∅
 
     𝓣ransitivityAList : Transitivity.class AList
-    𝓣ransitivityAList {x∼y = f} {∅} .⋆ = f
-    𝓣ransitivityAList {x∼y = f} {x , g} .⋆ =
-      let _∙'_ = λ g f → 𝓣ransitivityAList {x∼y = f} {g} .⋆ in -- FIXME needed to help Agda prove termination
+    𝓣ransitivityAList .⋆ f ∅ = f
+    𝓣ransitivityAList .⋆ f (x , g) =
+      let _∙'_ = λ g f → 𝓣ransitivityAList .⋆ f g in -- FIXME needed to help Agda prove termination
       x , g ∙' f
 
     𝓣ransitivityAList' : Transitivity.class (flip AList)
-    𝓣ransitivityAList' {x∼y = f} {g} .⋆ = transitivity g f
+    𝓣ransitivityAList' .⋆ f g = transitivity g f
 
     HasEquivalenceAList : ∀ {m n} → HasEquivalence (AList m n) _
     HasEquivalenceAList = ∁ Proposequality
@@ -49,7 +49,7 @@ module _ {a} {A : ¶ → Set a} where
     𝓣ransassociativityAList .⋆ f g (x , h) = congruity (x ,_) $ 𝓣ransassociativityAList .⋆ _ _ h -- h ⟨∙ _ ⟨∙ _
 
     𝓣ransassociativityAList' : Transassociativity.class (flip AList) Proposequality transitivity
-    𝓣ransassociativityAList' .⋆ f g h = Sym.[] (transassociativity h g f)
+    𝓣ransassociativityAList' .⋆ f g h = symmetry (transassociativity h g f) -- Sym.[] {!!}
 
     IsPrecategoryAList : IsPrecategory AList Proposequality transitivity
     IsPrecategoryAList = ∁

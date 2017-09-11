@@ -7,19 +7,17 @@ module Oscar.Class.Transitivity where
 module Transitivity'
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
-  {x y z}
-  (x∼y : x ∼ y)
-  (y∼z : y ∼ z)
-  = ℭLASS (x ,, y ,, z ,, x∼y ,, y∼z ,, _∼_) (x ∼ z)
+  x y z
+  = ℭLASS (x ,, y ,, z ,, _∼_) (x ∼ y → y ∼ z → x ∼ z)
 
 module Transitivity
   {𝔬} {𝔒 : Ø 𝔬}
   {𝔯} (_∼_ : 𝔒 → 𝔒 → Ø 𝔯)
   where
-  class = ∀ {x y z} {x∼y : x ∼ y} {y∼z : y ∼ z} → Transitivity'.class _∼_ x∼y y∼z
-  type = ∀ {x y z} (x∼y : x ∼ y) (y∼z : y ∼ z) → Transitivity'.type _∼_ x∼y y∼z
+  class = ∀ {x y z} → Transitivity'.class _∼_ x y z
+  type = ∀ {x y z} → Transitivity'.type _∼_ x y z
   method : ⦃ _ : class ⦄ → type
-  method x∼y y∼z = Transitivity'.method _∼_ x∼y y∼z
+  method {x = x} {y} {z} = Transitivity'.method _∼_ x y z
 
 module _
   {𝔬} {𝔒 : Ø 𝔬}
