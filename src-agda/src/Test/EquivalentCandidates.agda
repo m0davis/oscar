@@ -20,10 +20,10 @@ module _
   instance
 
     𝓣ransitivityFunction₁ : Transitivity.class Function⟦ a ⟧
-    𝓣ransitivityFunction₁ {x∼y = f} {g} .⋆ = g ∘ f
+    𝓣ransitivityFunction₁ .⋆ f g = g ∘ f
 
     𝓣ransitivityFunction₂ : Transitivity.class Function⟦ a ⟧
-    𝓣ransitivityFunction₂ {x∼y = f} {g} .⋆ = g ∘ f
+    𝓣ransitivityFunction₂ .⋆ f g = g ∘ f
 
 module _ (𝔓 : Ø₀) where
 

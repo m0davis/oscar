@@ -48,7 +48,7 @@ module _
   {transitivity₁ : Transitivity.type _∼₁_}
   {transitivity₂ : Transitivity.type _∼₂_}
   where
-  surjtranscommutativity = Surjtranscommutativity!.method _∼₁_ _∼₂_ _∼̇₂_ ⦃ ∁ surjection ⦄ ⦃ ∁ (λ _ _ → smap) ⦄ ⦃ λ {_ _ _ x∼y y∼z} → ∁ (transitivity₁ x∼y y∼z) ⦄ ⦃ λ {_ _ _ x∼y y∼z} → ∁ (transitivity₂ x∼y y∼z) ⦄
+  surjtranscommutativity = Surjtranscommutativity!.method _∼₁_ _∼₂_ _∼̇₂_ ⦃ ∁ surjection ⦄ ⦃ ∁ (λ _ _ → smap) ⦄ ⦃ λ {_ _ _} → ∁ transitivity₁ ⦄ ⦃ λ {_ _ _} → ∁ transitivity₂ ⦄
   ⟪∙⟫-surjtranscommutativity-syntax = surjtranscommutativity
   syntax ⟪∙⟫-surjtranscommutativity-syntax f g = g ⟪∙⟫ f
 
@@ -78,7 +78,7 @@ module _
   {transitivity₁ : Transitivity.type _∼₁_}
   {transitivity₂ : Transitivity.type _∼₂_}
   where
-  surjtranscommutativity[_] = Surjtranscommutativity!.method _∼₁_ _∼₂_ _∼̇₂_ ⦃ ∁ surjection ⦄ ⦃ ∁ (λ _ _ → smap) ⦄ ⦃ λ {_ _ _ x∼y y∼z} → ∁ (transitivity₁ x∼y y∼z) ⦄ ⦃ λ {_ _ _ x∼y y∼z} → ∁ (transitivity₂ x∼y y∼z) ⦄
+  surjtranscommutativity[_] = Surjtranscommutativity!.method _∼₁_ _∼₂_ _∼̇₂_ ⦃ ∁ surjection ⦄ ⦃ ∁ (λ _ _ → smap) ⦄ ⦃ λ {_ _ _} → ∁ transitivity₁ ⦄ ⦃ λ {_ _ _} → ∁ transitivity₂ ⦄
   ⟪∙⟫-surjtranscommutativity[]-syntax = surjtranscommutativity[_]
   syntax ⟪∙⟫-surjtranscommutativity[]-syntax t f g = g ⟪∙⟫[ t ] f
 

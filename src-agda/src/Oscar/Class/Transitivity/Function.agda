@@ -12,4 +12,4 @@ module _
   instance
 
     𝓣ransitivityFunction : Transitivity.class Function⟦ a ⟧
-    𝓣ransitivityFunction {x∼y = f} {g} .⋆ = g ∘ f
+    𝓣ransitivityFunction .⋆ f g = g ∘ f

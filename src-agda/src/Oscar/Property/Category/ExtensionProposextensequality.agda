@@ -28,7 +28,7 @@ module _ {𝔬 : Ł} where
   instance
 
     TransitivityFunction : Transitivity.class Function⟦ 𝔬 ⟧
-    TransitivityFunction {x∼y = f} {g} .⋆ = g ∘ f
+    TransitivityFunction .⋆ f g = g ∘ f
 
 module _
   {a} {A : Ø a} {b} {B : A → Ø b}
