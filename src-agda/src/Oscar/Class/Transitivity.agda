@@ -10,7 +10,7 @@ module Transitivity'
   {x y z}
   (x∼y : x ∼ y)
   (y∼z : y ∼ z)
-  = ℭLASS (x∼y , y∼z , _∼_) (x ∼ z)
+  = ℭLASS (x ,, y ,, z ,, x∼y ,, y∼z ,, _∼_) (x ∼ z)
 
 module Transitivity
   {𝔬} {𝔒 : Ø 𝔬}

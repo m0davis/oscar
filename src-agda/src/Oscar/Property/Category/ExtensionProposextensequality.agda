@@ -22,26 +22,55 @@ import Oscar.Class.Reflexivity.Function
 
 module Oscar.Property.Category.ExtensionProposextensequality where
 
+
+module _ {𝔬 : Ł} where
+
+  instance
+
+    TransitivityFunction : Transitivity.class Function⟦ 𝔬 ⟧
+    TransitivityFunction {x∼y = f} {g} .⋆ = g ∘ f
+
 module _
   {a} {A : Ø a} {b} {B : A → Ø b}
   where
 
   instance
 
-    𝓣ransitivityExtension : Transitivity.class (Extension B)
-    𝓣ransitivityExtension {x∼y = f} {g} .⋆ = g ∘ f
-
-    𝓣ransassociativityExtensionProposextensequality : Transassociativity!.class (Extension B) Proposextensequality
+    𝓣ransassociativityExtensionProposextensequality : Transassociativity.class (Extension B) Proposextensequality transitivity
     𝓣ransassociativityExtensionProposextensequality .⋆ _ _ _ _ = !
 
-    𝓣ransextensionalityExtensionProposextensequality : Transextensionality!.class (Extension B) Proposextensequality
+module _
+  {a} {A : Ø a} {b} {B : A → Ø b}
+  where
+
+  instance
+
+    𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality transitivity
     𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
+
+module _
+  {a} {A : Ø a} {b} {B : A → Ø b}
+  where
+
+  instance
 
     𝓣ransleftidentityExtensionProposextensequality : Transleftidentity.class (Extension B) Proposextensequality ε transitivity
     𝓣ransleftidentityExtensionProposextensequality .⋆ _ = !
 
+module _
+  {a} {A : Ø a} {b} {B : A → Ø b}
+  where
+
+  instance
+
     𝓣ransrightidentityExtensionProposextensequality : Transrightidentity.class (Extension B) Proposextensequality ε transitivity
     𝓣ransrightidentityExtensionProposextensequality .⋆ _ = !
+
+module _
+  {a} {A : Ø a} {b} {B : A → Ø b}
+  where
+
+  instance
 
     HasEquivalenceExtension : ∀ {x y : A} ⦃ _ : [IsExtensionB] B ⦄ → HasEquivalence (Extension B x y) _
     HasEquivalenceExtension = ∁ Proposextensequality
@@ -52,10 +81,10 @@ module _
 
   instance
 
-    IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality transitivity[ Extension B ]
+    IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality transitivity
     IsPrecategoryExtension = ∁
 
-    IsCategoryExtension : IsCategory (Extension B) Proposextensequality ε transitivity[ Extension B ]
+    IsCategoryExtension : IsCategory (Extension B) Proposextensequality ε transitivity
     IsCategoryExtension = ∁
 
 module _
@@ -63,7 +92,7 @@ module _
   where
 
   PrecategoryExtension : Precategory _ _ _
-  PrecategoryExtension = ∁ (Extension B) Proposextensequality transitivity[ Extension B ]
+  PrecategoryExtension = ∁ (Extension B) Proposextensequality transitivity
 
   CategoryExtension : Category _ _ _
-  CategoryExtension = ∁ (Extension B) Proposextensequality ε transitivity[ Extension B ]
+  CategoryExtension = ∁ (Extension B) Proposextensequality ε transitivity
