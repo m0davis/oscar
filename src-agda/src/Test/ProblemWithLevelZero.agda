@@ -30,3 +30,10 @@ module _ (𝔓 : Ø₀) where
         ⦄
       f
       {!!}
+    {-
+      Candidates
+        TransitivityFunction : {𝔬 : Ł} → Transitivity.class Function⟦ 𝔬 ⟧
+        𝓣ransitivitySubstitunction :
+          {𝔭 : Ł} {𝔓 = 𝔓₁ : Ø 𝔭} →
+          Transitivity.class (Substitunction.Substitunction 𝔓₁)
+    -}
