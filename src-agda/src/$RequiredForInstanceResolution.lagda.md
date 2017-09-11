@@ -1,4 +1,5 @@
 ```agda
+{-# OPTIONS --allow-unsolved-metas #-}
 {-# OPTIONS -v 1 #-}
 {-# OPTIONS --show-implicit #-}
 

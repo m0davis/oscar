@@ -1,3 +1,7 @@
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
 Given the below function `g`, I'd like to get Agda to infer the type-constructor `B` when invoking `g`, such as in the expression `g _ x`.
 
 ```agda
@@ -117,7 +121,9 @@ closer-look-non-unique-x1 B1 = λ x1 → g (λ x2 → B1 x1) x1 -- h (λ x2 → 
 closer-look-non-unique-x2 : (B : A → Set) (x : A) → B x → B x
 closer-look-non-unique-x2 B1 = λ x1 → g (λ x2 → B1 x2) x1 -- h (λ x2 → B1 {!!}) x1
 
-open import Agda.Builtin.Equality
+infix 4 _≡_
+data _≡_ {a} {A : Set a} (x : A) : A → Set a where
+  instance refl : x ≡ x
 
 closer-look-same : closer-look-non-unique-x1 ≡ closer-look-non-unique-x2
 closer-look-same = refl

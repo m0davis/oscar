@@ -1,7 +1,10 @@
 {-# OPTIONS --show-implicit #-}
+
 module AgdaFeatureTerminationViaExplicitness where
 
-open import Agda.Builtin.Nat
+data Nat : Set where
+  zero : Nat
+  suc  : (n : Nat) → Nat
 
 id : {A : Set} → A → A
 id = λ x → x
@@ -23,6 +26,7 @@ test-works1 : ∀ {n} → Pat n → Cat n → Cat n
 test-works1 (psuc t) acc = down (up (test-works1 t))
 test-works1 t cat = up (test-works1 (rectify-works t))
 
+{-# TERMINATING #-}
 test-fails2 : ∀ {n} → Pat n → Cat n → Cat n
 test-fails2 (psuc t) acc = down (up (test-fails2 t))
 test-fails2 t cat = up (test-fails2 (rectify-fails t))

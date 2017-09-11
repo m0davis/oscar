@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 {-
   The moral of the story is best told by comparing RegularVsConstructedMoreSimpler and RegularVsConstructed-EnhancedReg:
   * aliased type constructors can lose information about their dependencies, leading to some inconvenience when using a function which takes those dependencies implicitly

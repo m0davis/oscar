@@ -16,5 +16,5 @@ module _
   where
   surjection = Surjection.method 𝔒₁ 𝔒₂
   instance
-    toUnit : ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄ → Unit.class (Surjection.type 𝔒₁ 𝔒₂)
-    toUnit .⋆ = surjection
+    Surjection-toUnit : ⦃ _ : Surjection.class 𝔒₁ 𝔒₂ ⦄ → Unit.class (Surjection.type 𝔒₁ 𝔒₂)
+    Surjection-toUnit .⋆ = surjection

@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 
 module AgdaIssue2557 where
 
@@ -32,10 +33,10 @@ Subclass.iSuperclass test-3 = SuperclassA -- (could also put "it" here)
 Subclass.sub test-3 = function-A -- works
 
 test-4 : Subclass
-Subclass.sub test-4 = function-A -- fails
+Subclass.sub test-4 = {!function-A!} -- fails
 
-test-5 : Subclass
-Subclass.sub test-5 x = {!!} -- fails
+-- test-5 : Subclass
+-- Subclass.sub test-5 x = {!!} -- fails
 
 test-6 : Subclass
-Subclass.sub test-6 = λ x → {!!} -- fails
+Subclass.sub test-6 = {!λ x → {!!}!} -- fails

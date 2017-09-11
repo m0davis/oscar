@@ -9,5 +9,5 @@ module works-with-parens (mix_fix : Set → Set) = M (mix_fix)
 
 module works-without-= (mix_fix : Set → Set) where open M mix_fix public
 
-module fails (mix_fix : Set → Set) = M mix_fix
+-- module fails (mix_fix : Set → Set) = M mix_fix
 ```

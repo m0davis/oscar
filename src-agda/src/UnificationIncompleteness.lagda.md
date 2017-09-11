@@ -1,3 +1,7 @@
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
 failure to solve b/c undecidable? custom meta solvers?
 
 The below code type-checks if the hole is filled with `x1`. I believe that this is the unique solution (which Agda fails to solve).

@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 
 module AgdaFeatureNeedHiddenVariableTypeConstructorWrapper where
 

@@ -1,7 +1,7 @@
 You can't fool the positivity-checker by using abstractions. It turns out that's a good thing.
 
 ```agda
--- {-# OPTIONS --no-positivity-check #-}
+{-# OPTIONS --no-positivity-check #-}
 
 data ⊥ : Set where
 

@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 
 module AgdaFeatureNoInstanceFromHidden where
 
@@ -28,4 +29,9 @@ works4 : ∀ {x y} → R x y → Alrighty x → Alrighty y
 works4 r ax = foo r (λ {v} → ax {v})
 
 fails : ∀ {x y} → R x y → Alrighty x → Alrighty y
-fails r ax = foo r ax
+fails r ax = {!foo r ax!}
+{-
+No instance of type Foo (λ v → R v _r_81 → Set) was found in scope.
+when checking that r ax are valid arguments to a function of type
+{Q : A → Set₁} {{r = r₁ : Foo Q}} {x y : A} → R x y → Q x → Q y
+-}

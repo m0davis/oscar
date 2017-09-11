@@ -1,3 +1,7 @@
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
 Why aren't let-bound variables and top-level definitions (in an instance block) eta-expanded when finding candidates for instance search?
 
 In the code below, I realise that by declaring the `foo` field as `instance`, the test would go through, but generalising that as a solution is fraught with other problems.

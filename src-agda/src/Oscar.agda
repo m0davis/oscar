@@ -1,16 +1,26 @@
 
 module Oscar where
 
-import Oscar.Prelude
+import Everything
 import Test
-import Oscar.Class.Reflexivity.Function
-import NonuniqueUnification
+
+-- journals
+import $RequiredForInstanceResolution
+import AbstractStrictlyPositive
+import AgdaErrorDisplayForm197
+import AgdaFeatureInstanceResolutionViaConstraint
+import AgdaFeatureNeedHiddenVariableTypeConstructorWrapper
+import AgdaFeatureNoInstanceFromHidden
+import AgdaFeaturePitfallInstanceResolution
+import AgdaFeatureTerminationViaExplicitness
+import AgdaIssue2557
+import AgdaModuleEqualsSyntaxProblem
 import AgdaSubstitute98Bug
 import ExplicitInstanceSearchRequired
-import Oscar.Class.Transextensionality.Proposequality
-import Oscar.Class.Transitivity.Function
-import Oscar.Class.IsDecidable.¶
-import Oscar.Class.IsDecidable.Fin
-import Oscar.Property.Category.AListProposequality
-import Oscar.Property.Functor.SubstitistProposequalitySubstitunctionProposextensequality
-import Oscar.Class.Amgu.Term∃SubstitistMaybe
+import MutualLevel
+import NoEtaExpandedInstanceFromSuperclass
+import NonuniqueUnification
+import ReflexivityInFlexibility
+import TroubleUnifyingExtensionalReflection
+import UnificationIncompleteness
+import UnificationRant

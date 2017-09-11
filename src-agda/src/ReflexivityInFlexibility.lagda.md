@@ -219,7 +219,9 @@ First, let's verify that Substitunction still works as expected.
   test-substitunction : ∀ {x} → Substitunction x x
   test-substitunction = reflexivity
 
-  open import Agda.Builtin.Equality
+  infix 4 _≡_
+  data _≡_ {a} {A : Set a} (x : A) : A → Set a where
+    instance refl : x ≡ x
 
   test-substitunction-correct : ∀ {x} → test-substitunction {x} ≡ unitSubstitunction {x}
   test-substitunction-correct = refl

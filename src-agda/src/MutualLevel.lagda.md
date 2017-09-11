@@ -1,3 +1,7 @@
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
 The order of definitions in a mutual block is not supposed to matter, but the below demonstrates that it does (at least with respect to levels).
 
 ```agda
@@ -28,7 +32,7 @@ mutual -- works
   a2 = _ -- yellow
 
   FA2 : F A
-  FA2 = it {a2} {A2} {{it}} -- no instance of type A2
+  FA2 = {!it {a2} {A2} {{it}}!} -- no instance of type A2
 
   A2 : Set a2
   A2 = _
