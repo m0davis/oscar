@@ -28,3 +28,4 @@ import Test.Thickandthin
 import Test.Class
 import Test.Factsurj3
 import Test.Functor -- FIXME doesn't work with import Everything
+import Test.ProblemWithDerivation
