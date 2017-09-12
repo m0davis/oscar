@@ -101,22 +101,22 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     mutual
 
-      𝓼urjtranscommutativitySubstitunctionExtensionTerm : Surjtranscommutativity.type Substitunction (Extension Term) Proposextensequality smap transitivity transitivity
+      𝓼urjtranscommutativitySubstitunctionExtensionTerm : Surjtranscommutativity.type Substitunction (Extension Term) Proposextensequality smap (transitivity {{{!it!}}}) {- FIXME C-c C-; errors -} (flip _∘′_)
       𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ (i _) = !
       𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ leaf = !
       𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ (τ₁ fork τ₂) = congruity₂ _fork_ (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ₁) (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ₂)
       𝓼urjtranscommutativitySubstitunctionExtensionTerm f g (function fn ts) = congruity (function fn) (𝓼urjtranscommutativitySubstitunctionExtensionTerms f g ts)
 
-      𝓼urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → Surjtranscommutativity.type Substitunction (Extension $ Terms N) Proposextensequality smap transitivity transitivity
+      𝓼urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → Surjtranscommutativity.type Substitunction (Extension $ Terms N) Proposextensequality smap transitivity {!!}
       𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ ∅ = !
       𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ (τ , τs) = congruity₂ _,_ (𝓼urjtranscommutativitySubstitunctionExtensionTerm _ _ τ) (𝓼urjtranscommutativitySubstitunctionExtensionTerms _ _ τs)
 
   instance
 
-    𝓢urjtranscommutativitySubstitunctionExtensionTerm : Surjtranscommutativity.class Substitunction (Extension Term) Proposextensequality smap transitivity transitivity
+    𝓢urjtranscommutativitySubstitunctionExtensionTerm : Surjtranscommutativity.class Substitunction (Extension Term) Proposextensequality smap transitivity {!!}
     𝓢urjtranscommutativitySubstitunctionExtensionTerm .⋆ = 𝓼urjtranscommutativitySubstitunctionExtensionTerm
 
-    𝓢urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → Surjtranscommutativity.class Substitunction (Extension $ Terms N) Proposextensequality smap transitivity transitivity
+    𝓢urjtranscommutativitySubstitunctionExtensionTerms : ∀ {N} → Surjtranscommutativity.class Substitunction (Extension $ Terms N) Proposextensequality smap transitivity {!!}
     𝓢urjtranscommutativitySubstitunctionExtensionTerms .⋆ = 𝓼urjtranscommutativitySubstitunctionExtensionTerms
 
   instance
@@ -130,10 +130,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrecategorySubstitunction : IsPrecategory Substitunction _≈_ transitivity
     IsPrecategorySubstitunction = ∁
 
-    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ transitivity (Extension Term) _≈_ transitivity smap
+    IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ transitivity (Extension Term) _≈_ {!!} smap
     IsPrefunctorSubstitunctionExtensionTerm = ∁
 
-    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ transitivity (Extension $ Terms N) _≈_ transitivity smap
+    IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ transitivity (Extension $ Terms N) _≈_ {!!} smap
     IsPrefunctorSubstitunctionExtensionTerms = ∁
 
     𝓡eflexivitySubstitunction : Reflexivity.class Substitunction
@@ -170,10 +170,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsCategorySubstitunction : IsCategory Substitunction _≈_ ε transitivity
     IsCategorySubstitunction = ∁
 
-    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ ε transitivity (Extension Term) _≈_ ε transitivity smap
+    IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ ε transitivity (Extension Term) _≈_ ε {!!} smap
     IsFunctorSubstitunctionExtensionTerm = ∁
 
-    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ ε transitivity (Extension $ Terms N) _≈_ ε transitivity smap
+    IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ ε transitivity (Extension $ Terms N) _≈_ ε {!!} smap
     IsFunctorSubstitunctionExtensionTerms = ∁
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
@@ -185,15 +185,15 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
   PrecategorySubstitunction = ∁ Substitunction _≈_ transitivity
 
   PrefunctorSubstitunctionExtensionTerm : Prefunctor _ _ _ _ _ _
-  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity (Extension Term) _≈_ transitivity smap
+  PrefunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ transitivity (Extension Term) _≈_ {!!} smap
 
   CategorySubstitunction : Category _ _ _
   CategorySubstitunction = ∁ Substitunction _≈_ ε transitivity
 
   FunctorSubstitunctionExtensionTerm : Functor _ _ _ _ _ _
-  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ ε transitivity (Extension Term) _≈_ ε transitivity smap
+  FunctorSubstitunctionExtensionTerm = ∁ Substitunction _≈_ ε transitivity (Extension Term) _≈_ ε {!!} smap
 
   module _ (N : ¶) where
 
     FunctorSubstitunctionExtensionTerms : Functor _ _ _ _ _ _
-    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ ε transitivity (Extension $ Terms N) _≈_ ε transitivity smap
+    FunctorSubstitunctionExtensionTerms = ∁ Substitunction _≈_ ε transitivity (Extension $ Terms N) _≈_ ε {!!} smap

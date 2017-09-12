@@ -32,23 +32,23 @@ module _ {𝔬 : Ł} where
 
   instance
 
-    TransassociativityFunction : Transassociativity.class Function⟦ 𝔬 ⟧ _≡̇_ transitivity
+    TransassociativityFunction : Transassociativity.class Function⟦ 𝔬 ⟧ _≡̇_ (flip _∘′_)
     TransassociativityFunction .⋆ _ _ _ _ = ∅
 
   instance
 
-    IsPrecategoryFunction : IsPrecategory Function⟦ 𝔬 ⟧ _≡̇_ transitivity
+    IsPrecategoryFunction : IsPrecategory Function⟦ 𝔬 ⟧ _≡̇_ (flip _∘′_)
     IsPrecategoryFunction = ∁
 
   instance
 
-    TransleftidentityFunction : Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ε transitivity
+    TransleftidentityFunction : Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ε (flip _∘′_)
     TransleftidentityFunction .⋆ _ = ∅
 
-    TransrightidentityFunction : Transrightidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ε transitivity
+    TransrightidentityFunction : Transrightidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ε (flip _∘′_)
     TransrightidentityFunction .⋆ _ = ∅
 
   instance
 
-    IsCategoryFunction : IsCategory Function⟦ 𝔬 ⟧ _≡̇_ ε transitivity
+    IsCategoryFunction : IsCategory Function⟦ 𝔬 ⟧ _≡̇_ ε (flip _∘′_)
     IsCategoryFunction = ∁
