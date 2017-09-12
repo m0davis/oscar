@@ -5,6 +5,7 @@ module Test where
 import Test.Class
 import Test.EquivalenceExtensionṖroperty
 import Test.EquivalenceṖroperty
+import Test.EquivalentCandidates
 import Test.Factsurj3
 import Test.Functor -- FIXME doesn't work with import Everything
 import Test.ProblemWithDerivation
