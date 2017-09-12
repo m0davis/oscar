@@ -106,11 +106,14 @@ module _ where -- Function
   h on f = λ x y → h (f x) (f y)
   {-# INLINE _on_ #-}
 
-Function : ∀ {a} (A B : Ø a) → Ø a
+Function : ∀ {a} → Ø a → Ø a → Ø a
 Function A B = A → B
 
-Function⟦_⟧ : ∀ a (A B : Ø a) → Ø a
+Function⟦_⟧ : ∀ a → Ø a → Ø a → Ø a
 Function⟦ a ⟧ = Function {a = a}
+
+MFunction : ∀ {a b} (M : Ø a → Ø b) → Ø a → Ø a → Ø b
+MFunction M A B = M A → M B
 
 Arrow : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔞} {𝔟} → (𝔛 → Ø 𝔞) → (𝔛 → Ø 𝔟) → 𝔛 → 𝔛 → Ø 𝔞 ∙̂ 𝔟
 Arrow 𝔄 𝔅 x y = 𝔄 x → 𝔅 y

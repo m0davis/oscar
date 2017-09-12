@@ -97,7 +97,7 @@ record FMAP {a b} (F : Ø a → Ø b) : Ø ↑̂ (↑̂ a ∙̂ b) where
                 Proposextensequality
                 ε
                 (flip _∘′_)
-                (λ x y → F x → F y)
+                (MFunction F)
                 Proposextensequality
                 ε
                 (flip _∘′_)
@@ -110,6 +110,14 @@ instance
   FMAPinst : ∀ {a} → FMAP {a} List
   FMAPinst .FMAP.theSmap = smap
   FMAPinst .FMAP.theFunctor = !
+
+open import Oscar.Class.Fmap
+
+instance
+
+  FmapList : ∀ {a} → Fmap {a} List
+  FmapList .Fmap.fmap = smap
+  FmapList .Fmap.isFunctor = {! it !} -- C-c C-; ==> Fmap {.a} {.a} (List {.a}) should be a function type
 
 module _
   {a} {A : Set a} {B : Set a}
