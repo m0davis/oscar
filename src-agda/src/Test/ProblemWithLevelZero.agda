@@ -20,13 +20,13 @@ module _ (𝔓 : Ø₀) where
 
   solution-1o f = transitivity {𝔒 = ¶} f ε
   solution-1a f = transitivity[ Substitunction ] f ε
-  solution-2o f = transitivity {𝔒 = Ø₀} f ε
-  solution-2a f = transitivity[ Function ] f ε
+  solution-2o f = {!transitivity {𝔒 = Ø₀} f ε!}
+  solution-2a f = {!transitivity[ Function ] f ε!}
 
   transitivity-hole : ∀ {m n} (f : Substitunction m n) → Substitunction m n
   transitivity-hole f =
     transitivity
-      ⦃ {!!!} -- FIXME does not resolve instance
+      ⦃ ! -- FIXME does not resolve instance
         ⦄
       f
       {!!}

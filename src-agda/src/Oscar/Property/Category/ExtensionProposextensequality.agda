@@ -30,7 +30,7 @@ module _
 
   instance
 
-    𝓣ransassociativityExtensionProposextensequality : Transassociativity.class (Extension B) Proposextensequality transitivity
+    𝓣ransassociativityExtensionProposextensequality : Transassociativity.class (Extension B) Proposextensequality (flip _∘′_)
     𝓣ransassociativityExtensionProposextensequality .⋆ _ _ _ _ = !
 
 module _
@@ -39,7 +39,7 @@ module _
 
   instance
 
-    𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality transitivity
+    𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality (flip _∘′_)
     𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
 
 module _
@@ -48,7 +48,7 @@ module _
 
   instance
 
-    𝓣ransleftidentityExtensionProposextensequality : Transleftidentity.class (Extension B) Proposextensequality ε transitivity
+    𝓣ransleftidentityExtensionProposextensequality : Transleftidentity.class (Extension B) Proposextensequality ε (flip _∘′_)
     𝓣ransleftidentityExtensionProposextensequality .⋆ _ = !
 
 module _
@@ -57,7 +57,7 @@ module _
 
   instance
 
-    𝓣ransrightidentityExtensionProposextensequality : Transrightidentity.class (Extension B) Proposextensequality ε transitivity
+    𝓣ransrightidentityExtensionProposextensequality : Transrightidentity.class (Extension B) Proposextensequality ε (flip _∘′_)
     𝓣ransrightidentityExtensionProposextensequality .⋆ _ = !
 
 module _
@@ -75,10 +75,10 @@ module _
 
   instance
 
-    IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality transitivity
+    IsPrecategoryExtension : IsPrecategory (Extension B) Proposextensequality (flip _∘′_)
     IsPrecategoryExtension = ∁
 
-    IsCategoryExtension : IsCategory (Extension B) Proposextensequality ε transitivity
+    IsCategoryExtension : IsCategory (Extension B) Proposextensequality ε (flip _∘′_)
     IsCategoryExtension = ∁
 
 module _
@@ -86,7 +86,7 @@ module _
   where
 
   PrecategoryExtension : Precategory _ _ _
-  PrecategoryExtension = ∁ (Extension B) Proposextensequality transitivity
+  PrecategoryExtension = ∁ (Extension B) Proposextensequality (flip _∘′_)
 
   CategoryExtension : Category _ _ _
-  CategoryExtension = ∁ (Extension B) Proposextensequality ε transitivity
+  CategoryExtension = ∁ (Extension B) Proposextensequality ε (flip _∘′_)
