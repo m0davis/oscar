@@ -1,18 +1,20 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
 open import Oscar.Class
-open import Oscar.Class.Smap
-open import Oscar.Class.Transitivity
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Transleftidentity
-open import Oscar.Class.Symmetry
 open import Oscar.Class.Hmap
+open import Oscar.Class.Leftunit
+open import Oscar.Class.Reflexivity
+open import Oscar.Class.Smap
+open import Oscar.Class.Symmetry
+open import Oscar.Class.Transextensionality
+open import Oscar.Class.Transitivity
+open import Oscar.Class.Transleftidentity
 open import Oscar.Data.Proposequality
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 open import Oscar.Prelude
 
-module Test.ProblemWithDerivation-3 where
+module Test.ProblemWithDerivation-4 where
 
 postulate
   A : Set
@@ -27,17 +29,13 @@ instance
   𝓢urjectivity1 : Smap.class _~A~_ _~B~_ s1 s1
   𝓢urjectivity1 .⋆ _ _ = f1
 
-module _ {𝔭} {𝔓 : Ø 𝔭} where
+test-before : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
+test-before = smap
 
-  open Substitunction 𝔓
-  open Term 𝔓
-
-test-1-before : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test-1-before {x} {y} = smap
-
+-- Oscar.Class.Hmap.Transleftidentity
 instance
 
-  HmapFromTransleftidentitySymmetry : ∀
+  Relprop'idFromTransleftidentity : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -53,19 +51,30 @@ instance
                  (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
                  (λ f P → π₀ (π₀ P) f)
                  (λ f P → π₀ (π₀ P) f)
-  HmapFromTransleftidentitySymmetry .⋆ P₁ (π₂ , π₃) = π₃ $ symmetry transleftidentity
+  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
 
-instance
+-- Oscar.Property.Category.Function
+module _ {𝔬 : Ł} where
 
-    𝓣ransleftidentityExtension :
-      ∀ {a} {A : Ø a} {b} {B : A → Ø b}
-      → Transleftidentity.class (Extension B) _≡̇_ ¡ (flip _∘′_)
-    𝓣ransleftidentityExtension .⋆ _ = ∅
+  instance
 
-    TransleftidentityFunction :
-      ∀ {𝔬}
-      → Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ¡ (flip _∘′_)
+    TransleftidentityFunction : Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ¡ (flip _∘′_)
     TransleftidentityFunction .⋆ _ = ∅
 
-test-1-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test-1-after {x} {y} = smap -- FIXME confusion somehow due to 𝓣ransleftidentityExtension, which is somewhat redundant (i.e. we don't need it as an instance given TransleftidentityFunction). needs explanation.
+-- Oscar.Property.Functor.SubstitunctionExtensionTerm
+module _ {𝔭} {𝔓 : Ø 𝔭} where
+
+  open Substitunction 𝔓
+  open Term 𝔓
+
+  instance
+
+    postulate 𝓢urjectivitySubstitunctionExtensionTerm : Smap.class Substitunction (Extension Term) ¡ ¡
+
+    𝓣ransitivitySubstitunction : Transitivity.class Substitunction
+    𝓣ransitivitySubstitunction .⋆ f g = smap g ∘ f
+
+    postulate 𝓣ransleftidentitySubstitunction : Transleftidentity.class Substitunction _≡̇_ i transitivity
+
+test-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
+test-after = smap

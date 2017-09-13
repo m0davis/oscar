@@ -118,3 +118,8 @@ open import Oscar.Data.¶                                 public
 open import Oscar.Data.𝟘                                 public
 open import Oscar.Data.𝟙                                 public
 open import Oscar.Data.𝟚                                 public
+
+-- class derivations
+open import Oscar.Class.Leftunit.ToUnit                  public
+open import Oscar.Class.Symmetry.ToSym                   public
+open import Oscar.Class.Transleftidentity.ToLeftunit     public

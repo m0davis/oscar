@@ -28,4 +28,4 @@ instance
                  (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
                  (λ f P → π₀ (π₀ P) f)
                  (λ f P → π₀ (π₀ P) f)
-  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry leftunit
+  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity

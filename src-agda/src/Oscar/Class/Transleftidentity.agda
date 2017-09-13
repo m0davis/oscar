@@ -24,11 +24,6 @@ module _
   {transitivity : Transitivity.type _∼_}
   where
   transleftidentity = Transleftidentity.method _∼_ _∼̇_ ε transitivity
-  instance
-    toLeftunitFromTransleftidentity :
-      ⦃ _ : Transleftidentity.class _∼_ _∼̇_ ε transitivity ⦄
-      → ∀ {x y} {f : x ∼ y} → Leftunit.class _∼̇_ ε (flip transitivity) f
-    toLeftunitFromTransleftidentity .⋆ = transleftidentity
 
 module Transleftidentity!
   {𝔬} {𝔒 : Ø 𝔬}

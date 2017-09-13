@@ -30,6 +30,7 @@ open import Oscar.Class.[ExtensibleType]
 open import Oscar.Data.Surjcollation
 open import Oscar.Data.Surjextenscollation
 open import Oscar.Prelude
+import Oscar.Class.Leftunit.ToUnit
 
 import Everything -- FIXME doesn't work with open
 
