@@ -13,23 +13,11 @@ module Map
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
   {𝔵₂} {𝔛₂ : Ø 𝔵₂}
   {𝔯₁₂} {𝔯₁₂'}
-  (p₁ : 𝔛₁ → 𝔛₁)
-  (p₂ : 𝔛₂ → 𝔛₂)
   (ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂)
   (ℜ₁₂' : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂')
-  = ℭLASS (p₁ , p₂ , ℜ₁₂ , ℜ₁₂')
+  = ℭLASS (ℜ₁₂ , ℜ₁₂')
           (∀ P₁ P₂
-           → ℜ₁₂ P₁ P₂ → ℜ₁₂' (p₁ P₁) (p₂ P₂))
-
-module _
-  {𝔵₁} {𝔛₁ : Ø 𝔵₁}
-  {p₁ : 𝔛₁ → 𝔛₁}
-  {𝔵₂} {𝔛₂ : Ø 𝔵₂}
-  {p₂ : 𝔛₂ → 𝔛₂}
-  {𝔯₁₂} {ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂}
-  {𝔯₁₂'} {ℜ₁₂' : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂'}
-  where
-  map = Map.method p₁ p₂ ℜ₁₂ ℜ₁₂'
+           → ℜ₁₂ P₁ P₂ → ℜ₁₂' P₁ P₂)
 
 module _
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
@@ -37,16 +25,21 @@ module _
   {𝔯₁₂} {ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂}
   {𝔯₁₂'} {ℜ₁₂' : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂'}
   where
-  imap = Map.method ¡ ¡ ℜ₁₂ ℜ₁₂'
+  map = Map.method ℜ₁₂ ℜ₁₂'
 
 module _
   {𝔵₁} {𝔛₁ : Ø 𝔵₁}
-  {p₁ : 𝔛₁ → 𝔛₁}
+  {𝔯₁₂} {ℜ₁₂ : 𝔛₁ → 𝔛₁ → Ø 𝔯₁₂}
+  {𝔯₁₂'} {ℜ₁₂' : 𝔛₁ → 𝔛₁ → Ø 𝔯₁₂'}
+  where
+  smap = Map.method ℜ₁₂ ℜ₁₂' -- FIXME this looks like a viable solution; but what if `-MapFromTransleftidentity` builds something addressable by smap (i.e., where 𝔛₁ ≡ 𝔛₂)?
+
+module _
+  {𝔵₁} {𝔛₁ : Ø 𝔵₁}
   {𝔵₂} {𝔛₂ : Ø 𝔵₂}
-  {p₂ : 𝔛₂ → 𝔛₂}
   {𝔯₁₂} {ℜ₁₂ : 𝔛₁ → 𝔛₂ → Ø 𝔯₁₂}
   where
-  hmap = Map.method p₁ p₂ ℜ₁₂ ℜ₁₂
+  hmap = Map.method ℜ₁₂ ℜ₁₂
 
 postulate
   A : Set
@@ -60,7 +53,7 @@ instance
   𝓢urjectivity1 : Map.class
                     {𝔛₁ = A}
                     {𝔛₂ = A}
-                    ¡ ¡ _~A~_ (λ x y → s1 x ~B~ s1 y)
+                    _~A~_ (λ x y → s1 x ~B~ s1 y)
   𝓢urjectivity1 .⋆ _ _ = f1
 
 -- Oscar.Class.Hmap.Transleftidentity
@@ -79,8 +72,6 @@ instance
       → ∀ {m n}
       → Map.class {𝔛₁ = Arrow 𝔄 𝔅 m n}
                   {𝔛₂ = LeftExtensionṖroperty ℓ (Arrow 𝔄 𝔅) _∼̇_ m}
-                  ¡
-                  ¡
                   (λ f P → π₀ (π₀ P) f)
                   (λ f P → π₀ (π₀ P) (transitivity f reflexivity))
 
@@ -97,7 +88,10 @@ instance
     -transleftidentity : Transleftidentity.class (Arrow BB BB) EQ (λ x₁ → magic) (λ x₁ x₂ x₃ → magic)
 
 test-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test-after {x} {y} = imap _ _ -- FIXME
+test-after {x} {y} = map _ _ -- FIXME yellow
+
+test-after-s : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
+test-after-s {x} {y} = smap _ _
 
 testr : ∀ {m n ℓ}
           (P₁ : Arrow BB BB m n)
