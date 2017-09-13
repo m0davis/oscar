@@ -12,6 +12,7 @@ open import Oscar.Data.Proposequality
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 open import Oscar.Prelude
+-- open import Oscar.Class.Symmetry.ToSym -- FIXME including this makes test-after fail
 
 module Test.ProblemWithDerivation-4 where
 
@@ -71,4 +72,4 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     postulate 𝓣ransleftidentitySubstitunction : Transleftidentity.class Substitunction _≡̇_ i (λ f g → smap g ∘ f)
 
 test-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test-after = smap
+test-after = smap -- FIXME this was yellow when we used Symmetry instead of Sym. why?

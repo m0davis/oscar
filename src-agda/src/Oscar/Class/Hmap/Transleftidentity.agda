@@ -22,10 +22,10 @@ instance
     {reflexivity : Reflexivity.type _∼_}
     {ℓ}
     ⦃ _ : Transleftidentity.class _∼_ _∼̇_ reflexivity transitivity ⦄
-    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
+    ⦃ _ : ∀ {x y} → Sym.⟦ (_∼̇_ {x} {y}) ⟧ ⦄
     → ∀ {m n}
     → Hmap.class (λ (f : m ∼ n) → transitivity f reflexivity)
                  (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
                  (λ f P → π₀ (π₀ P) f)
                  (λ f P → π₀ (π₀ P) f)
-  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
+  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ Sym.[] transleftidentity
