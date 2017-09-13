@@ -9,7 +9,7 @@ module Oscar.Class.Symmetrical.Symmetry where
 module _
     {𝔬} {𝔒 : Ø 𝔬}
     {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
-    ⦃ _ : 𝓢ymmetry _∼_ ⦄
+    ⦃ _ : Symmetry.class _∼_ ⦄
   where
 
   instance

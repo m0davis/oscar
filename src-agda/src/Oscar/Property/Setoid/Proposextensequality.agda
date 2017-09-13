@@ -17,8 +17,8 @@ module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
     𝓡eflexivityProposextensequality : Reflexivity.class Proposextensequality⟦ 𝔓 ⟧
     𝓡eflexivityProposextensequality .⋆ _ = ∅
 
-    𝓢ymmetryProposextensequality : 𝓢ymmetry Proposextensequality⟦ 𝔓 ⟧
-    𝓢ymmetryProposextensequality {x∼y = f₁≡̇f₂} .⋆ x rewrite f₁≡̇f₂ x = ∅
+    𝓢ymmetryProposextensequality : Symmetry.class Proposextensequality⟦ 𝔓 ⟧
+    𝓢ymmetryProposextensequality .⋆ f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
 
     𝓣ransitivityProposextensequality : Transitivity.class Proposextensequality⟦ 𝔓 ⟧
     𝓣ransitivityProposextensequality .⋆ f₁≡̇f₂ f₂≡̇f₃ x rewrite f₁≡̇f₂ x = f₂≡̇f₃ x

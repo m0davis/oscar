@@ -19,7 +19,7 @@ module _ {𝔵 𝔞 𝔞̇ 𝔟 𝔟̇} {𝔛 : Ø 𝔵}
   (let ℭ : 𝔛 → Ø 𝔵 ∙̂ 𝔞 ∙̂ 𝔞̇ ∙̂ ↑̂ 𝔟̇
        ℭ = LeftExtensionṖroperty 𝔟̇ 𝔄 𝔄̇)
   (𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇)
-    ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+    ⦃ _ : ∀ {y} → Symmetry.class (𝔅̇ {y}) ⦄
     ⦃ _ : ∀ {y} → Transitivity.class (𝔅̇ {y}) ⦄
     ⦃ _ : Surjextensionality!.class 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   where
@@ -35,7 +35,7 @@ module _ {𝔵 𝔞 𝔞̇} {𝔛 : Ø 𝔵} {𝔄 : 𝔛 → 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
     {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
     ⦃ _ : Smaphomarrow!.class 𝔄 𝔅 ⦄
-    ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+    ⦃ _ : ∀ {y} → Symmetry.class (𝔅̇ {y}) ⦄
     ⦃ _ : ∀ {y} → Transitivity.class (𝔅̇ {y}) ⦄
     ⦃ _ : Surjextensionality!.class 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   where
@@ -45,7 +45,7 @@ module _ {𝔵 𝔞 𝔞̇ 𝔟 𝔟̇} {𝔛 : Ø 𝔵} {𝔄 : 𝔛 → 𝔛 �
   (𝔄̇ : ∀ {x y} → 𝔄 x y → 𝔄 x y → Ø 𝔞̇)
   (𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇)
     ⦃ _ : Smaphomarrow!.class 𝔄 𝔅 ⦄
-    ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+    ⦃ _ : ∀ {y} → Symmetry.class (𝔅̇ {y}) ⦄
     ⦃ _ : ∀ {y} → Transitivity.class (𝔅̇ {y}) ⦄
     ⦃ _ : Surjextensionality!.class 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   where
@@ -58,7 +58,7 @@ module Surjextenscollation
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
     {𝔟̇} {𝔅̇ : ∀ {y} → 𝔅 y → 𝔅 y → Ø 𝔟̇}
     ⦃ _ : Smaphomarrow!.class 𝔄 𝔅 ⦄
-    ⦃ _ : ∀ {y} → 𝓢ymmetry (𝔅̇ {y}) ⦄
+    ⦃ _ : ∀ {y} → Symmetry.class (𝔅̇ {y}) ⦄
     ⦃ _ : ∀ {y} → Transitivity.class (𝔅̇ {y}) ⦄
     ⦃ _ : Surjextensionality!.class 𝔄 𝔄̇ (Extension 𝔅) (Pointwise 𝔅̇) ⦄
   where

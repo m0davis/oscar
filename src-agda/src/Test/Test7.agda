@@ -12,7 +12,7 @@ module Test.Test7 where
     ⦃ _ : Transitivity.class _∼_ ⦄
     ⦃ _ : Reflexivity.class _∼_ ⦄
     ⦃ _ : Transleftidentity!.class _∼_ _∼̇_ ⦄
-    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
+    ⦃ _ : ∀ {x y} → Symmetry.class (_∼̇_ {x} {y}) ⦄
     {m n}
     {ℓ} {f : m ∼ n} (P : ExtensionṖroperty ℓ (Arrow 𝔄 𝔅 m) _∼̇_) (let P₀ = π₀ (π₀ P))
     → P₀ f

@@ -17,8 +17,8 @@ module _ {𝔬} {𝔒 : Ø 𝔬} where
     𝓡eflexivityProposequality : Reflexivity.class Proposequality⟦ 𝔒 ⟧
     𝓡eflexivityProposequality .⋆ = !
 
-    𝓢ymmetryProposequality : 𝓢ymmetry Proposequality⟦ 𝔒 ⟧
-    𝓢ymmetryProposequality {x∼y = ∅} .⋆ = !
+    𝓢ymmetryProposequality : Symmetry.class Proposequality⟦ 𝔒 ⟧
+    𝓢ymmetryProposequality .⋆ ∅ = !
 
     𝓣ransitivityProposequality : Transitivity.class Proposequality⟦ 𝔒 ⟧
     𝓣ransitivityProposequality .⋆ ∅ y∼z = y∼z

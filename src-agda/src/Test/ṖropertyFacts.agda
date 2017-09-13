@@ -102,7 +102,7 @@ module Test.ṖropertyFacts where
 
   -- postulated instances from Oscar.Property.Setoid.Proposequality
   postulate
-    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → 𝓢ymmetry Proposequality⟦ 𝔒 ⟧
+    instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → Symmetry.class Proposequality⟦ 𝔒 ⟧
     instance _ : ∀ {𝔬} {𝔒 : Ø 𝔬} → Transitivity.class Proposequality⟦ 𝔒 ⟧
 
   -- postulated instances from Oscar.Class.[ExtensibleType].Proposequality

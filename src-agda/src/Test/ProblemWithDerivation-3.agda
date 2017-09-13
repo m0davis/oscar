@@ -1,4 +1,3 @@
-{-# OPTIONS --allow-unsolved-metas #-}
 
 open import Oscar.Class
 open import Oscar.Class.Smap
@@ -47,7 +46,7 @@ instance
     {reflexivity : Reflexivity.type _∼_}
     {ℓ}
     ⦃ _ : Transleftidentity.class _∼_ _∼̇_ reflexivity transitivity ⦄
-    ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
+    ⦃ _ : ∀ {x y} → Symmetry.class (_∼̇_ {x} {y}) ⦄
     → ∀ {m n}
     → Hmap.class (λ (f : m ∼ n) → transitivity f reflexivity)
                  (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
@@ -68,4 +67,4 @@ instance
     TransleftidentityFunction .⋆ _ = ∅
 
 test-1-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test-1-after {x} {y} = smap -- FIXME confusion somehow due to 𝓣ransleftidentityExtension, which is somewhat redundant (i.e. we don't need it as an instance given TransleftidentityFunction). needs explanation.
+test-1-after {x} {y} = smap -- FIXME confusion somehow due to 𝓣ransleftidentityExtension, which is somewhat redundant (i.e. we don't need it as an instance given TransleftidentityFunction). needs explanation. -- FIXME ah ha! this is fixed by modification of Symmetry.class (or maybe is it b/c we don't have a Symmetry instance). -- FIXME we still need to see why this doesn't work when we use import Everything.

@@ -18,8 +18,8 @@ module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} {ℓ} ⦃ _ : 
     𝓡eflexivityExtensionṖropertyEquivalence : Reflexivity.class ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓡eflexivityExtensionṖropertyEquivalence .⋆ .π₀ = reflexivity
 
-    𝓢ymmetryExtensionṖropertyEquivalence : 𝓢ymmetry ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
-    𝓢ymmetryExtensionṖropertyEquivalence {x∼y = ∁ P≈Q} .⋆ .π₀ = symmetry P≈Q
+    𝓢ymmetryExtensionṖropertyEquivalence : Symmetry.class ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
+    𝓢ymmetryExtensionṖropertyEquivalence .⋆ (∁ P≈Q) .π₀ = symmetry P≈Q
 
     𝓣ransitivityExtensionṖropertyEquivalence : Transitivity.class ProductIndexEquivalence⟦ 𝔒 / 𝔓 ⟧
     𝓣ransitivityExtensionṖropertyEquivalence .⋆ (∁ P≈Q) (∁ Q≈R) .π₀ = transitivity P≈Q Q≈R

@@ -20,8 +20,8 @@ module _
     𝓡eflexivityṖroperty : Reflexivity.class ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓡eflexivityṖroperty .⋆ .π₀ = ¡ , ¡
 
-    𝓢ymmetryṖroperty : 𝓢ymmetry ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
-    𝓢ymmetryṖroperty {x∼y = ∁ P⇔Q} .⋆ .π₀ = π₁ P⇔Q , π₀ P⇔Q
+    𝓢ymmetryṖroperty : Symmetry.class ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
+    𝓢ymmetryṖroperty .⋆ (∁ P⇔Q) .π₀ = π₁ P⇔Q , π₀ P⇔Q
 
     𝓣ransitivityṖroperty : Transitivity.class ṖropertyEquivalence⟦ 𝔒 / ℓ ⟧
     𝓣ransitivityṖroperty .⋆ (∁ P⇔Q) (∁ Q⇔R) .π₀ = π₀ Q⇔R ∘ π₀ P⇔Q , π₁ P⇔Q ∘ π₁ Q⇔R

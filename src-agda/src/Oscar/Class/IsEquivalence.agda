@@ -13,5 +13,5 @@ record IsEquivalence
   constructor ∁
   field
     ⦃ `𝓡eflexivity ⦄ : Reflexivity.class _≈_
-    ⦃ `𝓢ymmetry ⦄ : 𝓢ymmetry _≈_
+    ⦃ `𝓢ymmetry ⦄ : Symmetry.class _≈_
     ⦃ `𝓣ransitivity  ⦄ : Transitivity.class _≈_

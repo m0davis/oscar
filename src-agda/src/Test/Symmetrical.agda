@@ -6,23 +6,23 @@ module Test.Symmetrical where
   test-𝓢ymmetrical𝓢ymmetry : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
-    ⦃ _ : 𝓢ymmetry _∼_ ⦄
-    → 𝓼ymmetry _∼_
+    ⦃ _ : Symmetry.class _∼_ ⦄
+    → Symmetry.type _∼_
   -- test-𝓢ymmetrical𝓢ymmetry = symmetrical _ _ -- FIXME no longer works after 𝓢ymmetrical𝓢ymmetry was "rationalised"
   test-𝓢ymmetrical𝓢ymmetry {𝔒 = 𝔒} = symmetrical {𝔄 = 𝔒} _ _
 
   test-𝓢ymmetrical𝓢ymmetry-alternate : ∀
     {𝔬} {𝔒 : Ø 𝔬}
     {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
-    ⦃ _ : 𝓢ymmetry _∼_ ⦄
-    → 𝓼ymmetry _∼_
+    ⦃ _ : Symmetry.class _∼_ ⦄
+    → Symmetry.type _∼_
   test-𝓢ymmetrical𝓢ymmetry-alternate {x = x} = symmetrical x _
 
   lhs-test1 : ∀ {𝔬} {𝔒 : Ø 𝔬}
     {ℓ} {_∼_ : 𝔒 → 𝔒 → Ø ℓ}
-    ⦃ _ : 𝓢ymmetry _∼_ ⦄
+    ⦃ _ : Symmetry.class _∼_ ⦄
     {_∼'_ : 𝔒 → 𝔒 → Ø ℓ}
-    ⦃ _ : 𝓢ymmetry _∼'_ ⦄
+    ⦃ _ : Symmetry.class _∼'_ ⦄
     → ∀ x y → _
   lhs-test1 {_∼_ = _∼_} = symmetrical⟦ _∼_ / (λ x y → x → y) ⟧
 
