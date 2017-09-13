@@ -8,7 +8,7 @@ import Test.EquivalenceṖroperty
 import Test.EquivalentCandidates
 import Test.EquivalentCandidates-2
 import Test.Factsurj3
-import Test.Functor -- FIXME doesn't work with import Everything
+import Test.Functor -- FIXME doesn't work with open import Everything
 import Test.ProblemWithDerivation
 import Test.ProblemWithDerivation-2
 import Test.ProblemWithDerivation-3
@@ -36,4 +36,4 @@ import Test.Test7
 import Test.Thickandthin
 import Test.Transassociativity
 import Test.UnifiesSubstitunction
-import Test.𝓢urjectivityWithOverlapping𝓢urjection -- FIXME doesn't work with import Everything
+import Test.𝓢urjectivityWithOverlapping𝓢urjection

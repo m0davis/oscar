@@ -21,6 +21,7 @@ open import Oscar.Data.Proposequality
 open import Oscar.Data.¶
 open import Oscar.Data.𝟙
 open import Oscar.Prelude
+import Everything -- FIXME doesn't work with open
 
 List = List⟨_⟩
 
@@ -35,7 +36,7 @@ module _
 module Fmap
   {a b}
   (F : Ø a → Ø b)
-  = Hmap ¡ ¡ (λ x y → x → y) (λ x y → F x → F y)
+  = Hmap (λ x y → x → y) (λ x y → F x → F y)
 
 instance
   HmapList : ∀ {ℓ} → Fmap.class (List {ℓ})

@@ -1,12 +1,7 @@
 
-module Test.𝓢urjectivityWithOverlapping𝓢urjection where
+open import Everything
 
-open import Oscar.Prelude
-open import Oscar.Data.Proposequality
-open import Oscar.Class
-open import Oscar.Class.Surjection
-open import Oscar.Class.Smap
--- import Everything -- FIXME
+module Test.𝓢urjectivityWithOverlapping𝓢urjection where
 
 module !1 where
 
@@ -78,7 +73,7 @@ module !2 where
   test-lhs-1 x~A~y rewrite smap ⦃ 𝓢urjectivity2 ⦄ x~A~y = ∅
 
   test-lhs-2 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
-  test-lhs-2 x~A~y rewrite smap {_∼₂_ = Proposequality} { surjection ⦃ 𝓢urjection2 ⦄} x~A~y = ∅
+  test-lhs-2 x~A~y rewrite smap[ Proposequality on surjection ⦃ 𝓢urjection2 ⦄ ] x~A~y = ∅
 
   test-lhs-3 : ∀ {x y} → x ~A~ y → s2 x ≡ s2 y
   test-lhs-3 x~A~y rewrite Proposequality (s1 _) _ ∋ smap x~A~y = magic

@@ -3,7 +3,7 @@ open import Everything
 
 module Test.Test7 where
 
-  𝓅rop-id-1 𝓅rop-id-2 : ∀
+  𝓅rop-id : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -18,5 +18,4 @@ module Test.Test7 where
     → P₀ f
     → P₀ (ε ∙ f)
 
-  𝓅rop-id-1 P Pf = smap {y = P} Pf
-  𝓅rop-id-2 P Pf = hmap _ P Pf
+  𝓅rop-id P Pf = hmap _ P Pf
