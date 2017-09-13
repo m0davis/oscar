@@ -11,6 +11,7 @@ import Test.Factsurj3
 import Test.Functor -- FIXME doesn't work with import Everything
 import Test.ProblemWithDerivation
 import Test.ProblemWithDerivation-2
+import Test.ProblemWithDerivation-3
 import Test.ProblemWithLevelZero
 import Test.ProblemWithSym
 import Test.ṖropertyFacts -- FIXME doesn't work with open import Everything

@@ -1,4 +1,3 @@
-{-# OPTIONS --allow-unsolved-metas #-}
 
 open import Oscar.Prelude
 
@@ -32,4 +31,4 @@ instance
   𝓢urjectivity1 .⋆ _ _ = f1
 
 test : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test {x} {y} = smap -- FIXME confused by Oscar.Class.Hmap.Transleftidentity.Relprop'idFromTransleftidentity
+test {x} {y} = smap -- FIXME this works now. why?

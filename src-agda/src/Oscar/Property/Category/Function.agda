@@ -11,16 +11,24 @@ open import Oscar.Class.Transassociativity
 open import Oscar.Class.Transleftidentity
 open import Oscar.Class.Transrightidentity
 open import Oscar.Class.Transitivity
+open import Oscar.Class.Precategory
+open import Oscar.Class.Category
 open import Oscar.Property.Setoid.Proposequality
 open import Oscar.Property.Setoid.Proposextensequality
 open import Oscar.Data.Proposequality
 import Oscar.Class.Reflexivity.Function
 import Oscar.Class.Transextensionality.Proposequality
-import Oscar.Property.Category.ExtensionProposextensequality
 
 module Oscar.Property.Category.Function where
 
 module _ where
+
+module _ {𝔬 : Ł} where
+
+  instance
+
+    TransitivityFunction : Transitivity.class Function⟦ 𝔬 ⟧
+    TransitivityFunction .⋆ f g = g ∘ f
 
 module _ {𝔬 : Ł} where
 
@@ -34,6 +42,11 @@ module _ {𝔬 : Ł} where
 
     TransassociativityFunction : Transassociativity.class Function⟦ 𝔬 ⟧ _≡̇_ transitivity
     TransassociativityFunction .⋆ _ _ _ _ = ∅
+
+  instance
+
+    𝓣ransextensionalityFunctionProposextensequality : Transextensionality.class Function⟦ 𝔬 ⟧ Proposextensequality transitivity
+    𝓣ransextensionalityFunctionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
 
   instance
 
@@ -52,3 +65,9 @@ module _ {𝔬 : Ł} where
 
     IsCategoryFunction : IsCategory Function⟦ 𝔬 ⟧ _≡̇_ ε transitivity
     IsCategoryFunction = ∁
+
+  PrecategoryFunction : Precategory _ _ _
+  PrecategoryFunction = ∁ Function⟦ 𝔬 ⟧ Proposextensequality transitivity
+
+  CategoryFunction : Category _ _ _
+  CategoryFunction = ∁ Function⟦ 𝔬 ⟧ Proposextensequality ε transitivity
