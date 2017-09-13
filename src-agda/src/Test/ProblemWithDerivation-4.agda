@@ -9,7 +9,6 @@ open import Oscar.Class.Symmetry
 open import Oscar.Class.Transextensionality
 open import Oscar.Class.Transitivity
 open import Oscar.Class.Transleftidentity
-open import Oscar.Data.Proposequality
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 open import Oscar.Prelude
@@ -29,13 +28,10 @@ instance
   𝓢urjectivity1 : Smap.class _~A~_ _~B~_ s1 s1
   𝓢urjectivity1 .⋆ _ _ = f1
 
-test-before : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-test-before = smap
-
 -- Oscar.Class.Hmap.Transleftidentity
 instance
 
-  Relprop'idFromTransleftidentity : ∀
+  -HmapFromTransleftidentitySymmetry : ∀
     {𝔵} {𝔛 : Ø 𝔵}
     {𝔞} {𝔄 : 𝔛 → Ø 𝔞}
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
@@ -51,33 +47,21 @@ instance
                  (λ (P : LeftExtensionṖroperty ℓ _∼_ _∼̇_ m) → P)
                  (λ f P → π₀ (π₀ P) f)
                  (λ f P → π₀ (π₀ P) f)
-  Relprop'idFromTransleftidentity .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
+  -HmapFromTransleftidentitySymmetry .⋆ _ (_ , P₁) = P₁ $ symmetry transleftidentity
 
--- Oscar.Property.Category.Function
-module _ {𝔬 : Ł} where
+test-before : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
+test-before = smap
 
-  instance
+postulate
+  XX : Set
+  BB : XX → Set
+  CC : XX → Set
+  EQ : ∀ {x y} → Arrow BB BB x y → Arrow BB BB x y → Set
 
-    postulate TransleftidentityFunction : Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ¡ (flip _∘′_)
-
--- Oscar.Property.Functor.SubstitunctionExtensionTerm
-module _ {𝔭} {𝔓 : Ø 𝔭} where
-
-  open Substitunction 𝔓
-  open Term 𝔓
-
-  instance
-
-    postulate 𝓢urjectivitySubstitunctionExtensionTerm : Smap.class Substitunction (Extension Term) ¡ ¡
-    postulate 𝓣ransleftidentitySubstitunction : Transleftidentity.class Substitunction _≡̇_ i (λ f g → smap g ∘ f)
-
--- Oscar.Property.Setoid.Proposextensequality
-module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
-
-  instance
-
-    𝓢ymmetryProposextensequality : Symmetry.class Proposextensequality⟦ 𝔓 ⟧
-    𝓢ymmetryProposextensequality .⋆ f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
+instance
+  postulate
+    -transleftidentity : Transleftidentity.class (Arrow BB BB) EQ magic magic
+    -symmetry : ∀ {x y} → Symmetry.class (EQ {x} {y})
 
 test-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
 test-after = smap -- FIXME this was yellow when we used Symmetry instead of Sym. why?
