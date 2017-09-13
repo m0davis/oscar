@@ -1,4 +1,3 @@
-{-# OPTIONS --allow-unsolved-metas #-}
 
 open import Everything
 
@@ -25,7 +24,7 @@ module _ {𝔭} (𝔓 : Ø 𝔭) where
     𝓢urjectivity1 .⋆ _ _ = f1
 
   test : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
-  test {x} {y} = smap -- FIXME confused by Oscar.Class.Hmap.Transleftidentity.Relprop'idFromTransleftidentity
+  test {x} {y} = smap
 
   test-after : ∀ {m n ℓ} {f : Substitunction m n} (P : LeftExtensionṖroperty ℓ Substitunction Proposextensequality m) (let P₀ = π₀ (π₀ P)) → P₀ f → P₀ (ε ∙ f)
   test-after P pf = hmap _ P pf
