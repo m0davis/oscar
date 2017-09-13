@@ -9,3 +9,4 @@ import Test.ṖropertyFactsSubstitunction.Fact5
 import Test.ṖropertyFactsSubstitunction.Fact6
 import Test.ṖropertyFactsSubstitunction.LeftIdentity∧
 import Test.ṖropertyFactsSubstitunction.PropertiesFact1
+import Test.ṖropertyFactsSubstitunction.PropId
