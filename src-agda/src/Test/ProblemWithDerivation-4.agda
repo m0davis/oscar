@@ -58,8 +58,7 @@ module _ {𝔬 : Ł} where
 
   instance
 
-    TransleftidentityFunction : Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ¡ (flip _∘′_)
-    TransleftidentityFunction .⋆ _ = ∅
+    postulate TransleftidentityFunction : Transleftidentity.class Function⟦ 𝔬 ⟧ _≡̇_ ¡ (flip _∘′_)
 
 -- Oscar.Property.Functor.SubstitunctionExtensionTerm
 module _ {𝔭} {𝔓 : Ø 𝔭} where
@@ -70,11 +69,7 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
   instance
 
     postulate 𝓢urjectivitySubstitunctionExtensionTerm : Smap.class Substitunction (Extension Term) ¡ ¡
-
-    𝓣ransitivitySubstitunction : Transitivity.class Substitunction
-    𝓣ransitivitySubstitunction .⋆ f g = smap g ∘ f
-
-    postulate 𝓣ransleftidentitySubstitunction : Transleftidentity.class Substitunction _≡̇_ i transitivity
+    postulate 𝓣ransleftidentitySubstitunction : Transleftidentity.class Substitunction _≡̇_ i (λ f g → smap g ∘ f)
 
 test-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
 test-after = smap
