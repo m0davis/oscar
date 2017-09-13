@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 
 open import Oscar.Class
 open import Oscar.Class.Hmap
@@ -12,7 +13,6 @@ open import Oscar.Data.Proposequality
 open import Oscar.Data.Substitunction
 open import Oscar.Data.Term
 open import Oscar.Prelude
--- open import Oscar.Class.Symmetry.ToSym -- FIXME including this makes test-after fail
 
 module Test.ProblemWithDerivation-4 where
 
@@ -70,6 +70,14 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
 
     postulate 𝓢urjectivitySubstitunctionExtensionTerm : Smap.class Substitunction (Extension Term) ¡ ¡
     postulate 𝓣ransleftidentitySubstitunction : Transleftidentity.class Substitunction _≡̇_ i (λ f g → smap g ∘ f)
+
+-- Oscar.Property.Setoid.Proposextensequality
+module _ {𝔬} {𝔒 : Ø 𝔬} {𝔭} {𝔓 : 𝔒 → Ø 𝔭} where
+
+  instance
+
+    𝓢ymmetryProposextensequality : Symmetry.class Proposextensequality⟦ 𝔓 ⟧
+    𝓢ymmetryProposextensequality .⋆ f₁≡̇f₂ x rewrite f₁≡̇f₂ x = ∅
 
 test-after : ∀ {x y} → x ~A~ y → s1 x ~B~ s1 y
 test-after = smap -- FIXME this was yellow when we used Symmetry instead of Sym. why?
