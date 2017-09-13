@@ -18,10 +18,10 @@ instance
     {𝔟} {𝔅 : 𝔛 → Ø 𝔟}
     (let _∼_ = Arrow 𝔄 𝔅)
     {ℓ̇} {_∼̇_ : ∀ {x y} → x ∼ y → x ∼ y → Ø ℓ̇}
-    ⦃ _ : Transitivity.class _∼_ ⦄
-    ⦃ _ : Reflexivity.class _∼_ ⦄
+    {transitivity : Transitivity.type _∼_}
+    {reflexivity : Reflexivity.type _∼_}
     {ℓ}
-    ⦃ _ : Transleftidentity!.class _∼_ _∼̇_ ⦄
+    ⦃ _ : Transleftidentity.class _∼_ _∼̇_ reflexivity transitivity ⦄
     ⦃ _ : ∀ {x y} → 𝓢ymmetry (_∼̇_ {x} {y}) ⦄
     → ∀ {m n}
     → Hmap.class (λ (f : m ∼ n) → transitivity f reflexivity)
