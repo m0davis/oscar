@@ -132,19 +132,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsPrecategorySubstitunction = ∁
 
     IsPrefunctorSubstitunctionExtensionTerm : IsPrefunctor Substitunction _≈_ transitivity (Extension Term) _≈_ transitivity smap
-    IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.`IsPrecategory₁ = !
-    IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.`IsPrecategory₂ .IsPrecategory.`𝓣ransextensionality .⋆ = transextensionality
-
-    IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.`IsPrecategory₂ .IsPrecategory.`𝓣ransassociativity .⋆ = transassociativity
-    IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.`𝓢urjtranscommutativity = !
-    IsPrefunctorSubstitunctionExtensionTerm .IsPrefunctor.`𝓢urjextensionality = !
+    IsPrefunctorSubstitunctionExtensionTerm = ∁
 
     IsPrefunctorSubstitunctionExtensionTerms : ∀ {N} → IsPrefunctor Substitunction _≈_ transitivity (Extension $ Terms N) _≈_ transitivity smap
-    IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.`IsPrecategory₁ = !
-    IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.`IsPrecategory₂ .IsPrecategory.`𝓣ransextensionality .⋆ = transextensionality
-    IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.`IsPrecategory₂ .IsPrecategory.`𝓣ransassociativity .⋆ = transassociativity
-    IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.`𝓢urjtranscommutativity = !
-    IsPrefunctorSubstitunctionExtensionTerms .IsPrefunctor.`𝓢urjextensionality = !
+    IsPrefunctorSubstitunctionExtensionTerms = ∁
 
     𝓡eflexivitySubstitunction : Reflexivity.class Substitunction
     𝓡eflexivitySubstitunction .⋆ = i
@@ -181,22 +172,10 @@ module _ {𝔭} {𝔓 : Ø 𝔭} where
     IsCategorySubstitunction = ∁
 
     IsFunctorSubstitunctionExtensionTerm : IsFunctor Substitunction _≈_ ε transitivity (Extension Term) _≈_ ε transitivity smap
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`IsPrefunctor = !
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`IsCategory₁ = !
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory .IsPrecategory.`𝓣ransextensionality .⋆ = transextensionality
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory .IsPrecategory.`𝓣ransassociativity .⋆ = transassociativity
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity .⋆ = transleftidentity
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity .⋆ = transrightidentity
-    IsFunctorSubstitunctionExtensionTerm .IsFunctor.`𝒮urjidentity = !
+    IsFunctorSubstitunctionExtensionTerm = ∁
 
     IsFunctorSubstitunctionExtensionTerms : ∀ {N} → IsFunctor Substitunction _≈_ ε transitivity (Extension $ Terms N) _≈_ ε transitivity smap
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`IsPrefunctor = !
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`IsCategory₁ = !
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory .IsPrecategory.`𝓣ransextensionality .⋆ = transextensionality
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory .IsPrecategory.`𝓣ransassociativity .⋆ = transassociativity
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity .⋆ = transleftidentity
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity .⋆ = transrightidentity
-    IsFunctorSubstitunctionExtensionTerms .IsFunctor.`𝒮urjidentity = !
+    IsFunctorSubstitunctionExtensionTerms = ∁
 
 module _ {𝔭} (𝔓 : Ø 𝔭) where
 
