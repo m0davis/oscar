@@ -27,11 +27,23 @@ instance
   SurjidentityList .⋆ ∅ = ∅
   SurjidentityList .⋆ (x , xs) rewrite SurjidentityList .⋆ xs = ∅
 
-test-isprecategory-1 : ∀ {ℓ} → IsPrecategory Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
+test-isprecategory-1 : ∀ {ℓ} → IsPrecategory {𝔒 = Ø ℓ} Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
 test-isprecategory-1 {ℓ} = IsPrecategoryExtension {A = Ø ℓ} {B = ¡}
 
-test-isprecategory-2 : ∀ {ℓ} → IsPrecategory Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
+test-isprecategory-2 : ∀ {ℓ} → IsPrecategory {𝔒 = Ø ℓ} Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
 test-isprecategory-2 {ℓ} = IsPrecategoryFunction {𝔬 = ℓ}
+
+test-isprecategory-1a : ∀ {ℓ} → IsPrecategory {𝔒 = Ø ℓ} (Extension (¡ {𝔒 = Ø ℓ})) _≡̇_ (flip _∘′_)
+test-isprecategory-1a {ℓ} = IsPrecategoryExtension {A = Ø ℓ} {B = ¡}
+
+test-isprecategory-2a : ∀ {ℓ} → IsPrecategory {𝔒 = Ø ℓ} (Extension (¡ {𝔒 = Ø ℓ})) _≡̇_ (flip _∘′_)
+test-isprecategory-2a {ℓ} = IsPrecategoryFunction {𝔬 = ℓ}
+
+test-isprecategory-1b : IsPrecategory {𝔒 = ¶} (Extension (Term.Term ¶)) _≡̇_ (flip _∘′_)
+test-isprecategory-1b = IsPrecategoryExtension {A = ¶} {B = Term.Term ¶}
+
+-- test-isprecategory-2b : IsPrecategory {𝔒 = ¶} (Extension (Term.Term ¶)) _≡̇_ (flip _∘′_)
+-- test-isprecategory-2b = {!!} -- IsPrecategoryFunction {𝔬 = ?}
 
 instance
 
