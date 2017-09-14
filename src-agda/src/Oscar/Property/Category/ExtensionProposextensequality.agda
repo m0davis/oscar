@@ -1,28 +1,25 @@
 
-open import Oscar.Prelude
+import Oscar.Class.Reflexivity.Function
+import Oscar.Class.Transextensionality.Proposequality -- FIXME why not use the instance here?
 open import Oscar.Class
+open import Oscar.Class.Category
+open import Oscar.Class.HasEquivalence
+open import Oscar.Class.IsCategory
+open import Oscar.Class.IsPrecategory
+open import Oscar.Class.Precategory
 open import Oscar.Class.Reflexivity
-open import Oscar.Class.Transitivity
-open import Oscar.Class.IsEquivalence
-open import Oscar.Class.Setoid
 open import Oscar.Class.Transassociativity
 open import Oscar.Class.Transextensionality
+open import Oscar.Class.Transitivity
 open import Oscar.Class.Transleftidentity
 open import Oscar.Class.Transrightidentity
 open import Oscar.Class.[IsExtensionB]
-open import Oscar.Class.HasEquivalence
-open import Oscar.Class.IsPrecategory
-open import Oscar.Class.IsCategory
-open import Oscar.Class.Precategory
-open import Oscar.Class.Category
 open import Oscar.Data.Proposequality
-import Oscar.Property.Setoid.Proposextensequality
-import Oscar.Data.Constraint
-import Oscar.Class.Reflexivity.Function
+open import Oscar.Prelude
+open import Oscar.Property.Category.Function
+open import Oscar.Property.Setoid.Proposextensequality
 
 module Oscar.Property.Category.ExtensionProposextensequality where
-
-open import Oscar.Property.Category.Function public
 
 module _
   {a} {A : Ø a} {b} {B : A → Ø b}
@@ -40,7 +37,8 @@ module _
   instance
 
     𝓣ransextensionalityExtensionProposextensequality : Transextensionality.class (Extension B) Proposextensequality transitivity
-    𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x)
+    𝓣ransextensionalityExtensionProposextensequality .⋆ = 𝓣ransextensionalityFunctionProposextensequality .⋆
+    -- 𝓣ransextensionalityExtensionProposextensequality .⋆ {f₂ = f₂} f₁≡̇f₂ g₁≡̇g₂ x rewrite f₁≡̇f₂ x = g₁≡̇g₂ (f₂ x) -- FIXME using this causes problems in Test.Functor
 
 module _
   {a} {A : Ø a} {b} {B : A → Ø b}

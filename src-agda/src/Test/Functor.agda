@@ -1,4 +1,3 @@
-{-# OPTIONS --allow-unsolved-metas #-}
 
 open import Everything
 
@@ -29,43 +28,42 @@ instance
   SurjidentityList .⋆ (x , xs) rewrite SurjidentityList .⋆ xs = ∅
 
 test-isprecategory-1 : ∀ {ℓ} → IsPrecategory Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
-test-isprecategory-1 = IsPrecategoryExtension
+test-isprecategory-1 {ℓ} = IsPrecategoryExtension {A = Ø ℓ} {B = ¡}
 
 test-isprecategory-2 : ∀ {ℓ} → IsPrecategory Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
-test-isprecategory-2 = IsPrecategoryFunction
-
--- FIXME confused between Function and Extension
+test-isprecategory-2 {ℓ} = IsPrecategoryFunction {𝔬 = ℓ}
 
 instance
+
+  HmapList : ∀ {a} → Hmap.class Function⟦ a ⟧ (MFunction List)
+  HmapList = ∁ λ _ _ → map-list
+
+instance
+
+  isPrefunctorList : ∀ {ℓ} → IsPrefunctor (λ (x y : Ø ℓ) → x → y)
+                                          Proposextensequality
+                                          transitivity
+                                          (λ (x y : Ø ℓ) → List x → List y)
+                                          Proposextensequality
+                                          transitivity
+                                          smap
+  isPrefunctorList = ∁
 
   isFunctorList : ∀ {ℓ} → IsFunctor (λ (x y : Ø ℓ) → x → y)
                                     Proposextensequality
                                     ε
-                                    (flip _∘′_)
+                                    transitivity
                                     (λ (x y : Ø ℓ) → List x → List y)
                                     Proposextensequality
                                     ε
-                                    (flip _∘′_)
-                                    map-list
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ = {!!}
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = !
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = !
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality = !
-  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory = {!!}
-  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransleftidentity = !
-  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransrightidentity = !
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory = !
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity = !
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity = !
-  isFunctorList .IsFunctor.`𝒮urjidentity = !
+                                    transitivity
+                                    smap
+  isFunctorList = ∁
 
 instance
 
   FmapList : ∀ {ℓ} → Fmap (List {ℓ})
-  FmapList = ∁ map-list
-
-  HmapList : ∀ {a} → Hmap.class Function⟦ a ⟧ (MFunction List)
-  HmapList = ∁ (λ x y → map-list {A = x} {B = y})
+  FmapList = ∁ smap
 
 module _
   {a} {A : Set a} {B : Set a}
