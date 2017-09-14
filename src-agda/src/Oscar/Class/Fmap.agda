@@ -12,7 +12,7 @@ module _ where
   record Fmap {𝔬₁ 𝔬₂} (𝓕 : Ø 𝔬₁ → Ø 𝔬₂) : Ø (↑̂ (↑̂ 𝔬₁ ∙̂ 𝔬₂)) where
     constructor ∁
     field
-      fmap : ∀ {𝔄 𝔅} → (𝔄 → 𝔅) → 𝓕 𝔄 → 𝓕 𝔅
+      fmap : ∀ {𝔄 𝔅} → (𝔄 → 𝔅) → 𝓕 𝔄 → 𝓕 𝔅 -- level-polymorphic functors cannot be represented by `Functor` or any other type in universe < ω.
       ⦃ isFunctor ⦄ : IsFunctor
                          Function⟦ 𝔬₁ ⟧
                            Proposextensequality ε (flip _∘′_)
