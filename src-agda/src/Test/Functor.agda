@@ -1,27 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module Test.Functor where
+open import Everything
 
-import Oscar.Class.Surjection.⋆
-open import Oscar.Class
-open import Oscar.Class.Functor
-open import Oscar.Class.Hmap
-open import Oscar.Class.IsCategory
-open import Oscar.Class.IsFunctor
-open import Oscar.Class.IsPrecategory
-open import Oscar.Class.IsPrefunctor
-open import Oscar.Class.Reflexivity
-open import Oscar.Class.Smap
-open import Oscar.Class.Surjection
-open import Oscar.Class.Transitivity
-open import Oscar.Class.Transleftidentity
-open import Oscar.Class.Transrightidentity
-open import Oscar.Data.List
-open import Oscar.Data.Proposequality
-open import Oscar.Data.¶
-open import Oscar.Data.𝟙
-open import Oscar.Prelude
-import Everything -- FIXME doesn't work with open
+module Test.Functor where
 
 List = List⟨_⟩
 
@@ -33,16 +14,27 @@ module _
   map-list f ∅ = ∅
   map-list f (x , xs) = f x , map-list f xs
 
-module Fmap
-  {a b}
-  (F : Ø a → Ø b)
-  = Hmap (λ x y → x → y) (λ x y → F x → F y)
-
 instance
-  HmapList : ∀ {ℓ} → Fmap.class (List {ℓ})
-  HmapList .⋆ _ _ = map-list
 
-import Oscar.Class.Reflexivity.Function
+  SurjtranscommutativityList : ∀ {ℓ} → Surjtranscommutativity.class Function⟦ ℓ ⟧ (MFunction List) _≡̇_ map-list transitivity transitivity
+  SurjtranscommutativityList .⋆ f g ∅ = ∅
+  SurjtranscommutativityList .⋆ f g (x , xs) rewrite SurjtranscommutativityList .⋆ f g xs = ∅
+
+  SurjextensionalityList : ∀ {ℓ} → Surjextensionality.class Function⟦ ℓ ⟧ _≡̇_ (MFunction List) _≡̇_ _ map-list
+  SurjextensionalityList .⋆ _ _ f₁ f₂ f₁≡̇f₂ ∅ = ∅
+  SurjextensionalityList .⋆ _ _ f₁ f₂ f₁≡̇f₂ (x , xs) rewrite SurjextensionalityList .⋆ _ _ f₁ f₂ f₁≡̇f₂ xs | f₁≡̇f₂ x = ∅
+
+  SurjidentityList : ∀ {ℓ} → Surjidentity.class Function⟦ ℓ ⟧ (MFunction List) _≡̇_ map-list ε ε
+  SurjidentityList .⋆ ∅ = ∅
+  SurjidentityList .⋆ (x , xs) rewrite SurjidentityList .⋆ xs = ∅
+
+test-isprecategory-1 : ∀ {ℓ} → IsPrecategory Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
+test-isprecategory-1 = IsPrecategoryExtension
+
+test-isprecategory-2 : ∀ {ℓ} → IsPrecategory Function⟦ ℓ ⟧ _≡̇_ (flip _∘′_)
+test-isprecategory-2 = IsPrecategoryFunction
+
+-- FIXME confused between Function and Extension
 
 instance
 
@@ -54,51 +46,35 @@ instance
                                     Proposextensequality
                                     ε
                                     (flip _∘′_)
-                                    smap
+                                    map-list
   isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₁ = {!!}
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = {!!}
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = {!!}
-  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality = {!!}
+  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`IsPrecategory₂ = !
+  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjtranscommutativity = !
+  isFunctorList .IsFunctor.`IsPrefunctor .IsPrefunctor.`𝓢urjextensionality = !
   isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`IsPrecategory = {!!}
-  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransleftidentity = {!!}
-  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransrightidentity = {!!}
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory = {!!}
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity = {!!}
-  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity = {!!}
-  isFunctorList .IsFunctor.`𝒮urjidentity .⋆ = {!!}
-
-module _
-  {a b}
-  {F : Ø a → Ø b}
-  where
-  fmap′ : {smap : {x y : Set a} → (x → y) → F x → F y}
-         ⦃ I : IsFunctor (λ (x y : Ø a) → x → y)
-                               Proposextensequality
-                               ε
-                               (flip _∘′_)
-                               (λ x y → F x → F y)
-                               Proposextensequality
-                               ε
-                               (flip _∘′_)
-                               smap ⦄
-             → Smap.type (λ x y → x → y) (λ x y → F x → F y) ¡ ¡
-  fmap′ {smap} = smap
-
-module _
-  {a} {A : Set a} {B : Set a}
-  where
-  test-map-list : (A → B) → List A → List B
-  test-map-list = fmap′ -- FIXME yellow; the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`. Perhaps the below shows how to solve this problem. The moral of the story is that level-polymorphic functors cannot be represented by `Functor` or any other type in universe < ω.
-
-open import Oscar.Class.Fmap
+  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransleftidentity = !
+  isFunctorList .IsFunctor.`IsCategory₁ .IsCategory.`𝓣ransrightidentity = !
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`IsPrecategory = !
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransleftidentity = !
+  isFunctorList .IsFunctor.`IsCategory₂ .IsCategory.`𝓣ransrightidentity = !
+  isFunctorList .IsFunctor.`𝒮urjidentity = !
 
 instance
 
-  FmapList : ∀ {a} → Fmap {a} List
-  FmapList = ∁ smap
+  FmapList : ∀ {ℓ} → Fmap (List {ℓ})
+  FmapList = ∁ map-list
+
+  HmapList : ∀ {a} → Hmap.class Function⟦ a ⟧ (MFunction List)
+  HmapList = ∁ (λ x y → map-list {A = x} {B = y})
 
 module _
   {a} {A : Set a} {B : Set a}
   where
-  test-map-list' : (A → B) → List A → List B
-  test-map-list' = fmap
+  test-smap-list : (A → B) → List A → List B
+  test-smap-list = smap
+
+module _
+  {a} {A : Set a} {B : Set a}
+  where
+  test-fmap-list : (A → B) → List A → List B
+  test-fmap-list = fmap -- the intention here is to try to say "I want to invoke a functoral mapping, so that I can be sure that, for example, that `test-map-list ε₁ ≡ ε₂`.
