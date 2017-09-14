@@ -21,8 +21,6 @@ import Oscar.Class.Transextensionality.Proposequality
 
 module Oscar.Property.Category.Function where
 
-module _ where
-
 module _ {𝔬 : Ł} where
 
   instance
