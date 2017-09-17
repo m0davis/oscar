@@ -40,6 +40,9 @@ module _ where -- Function
   infixl -10 ¡
   syntax ¡ {𝔒 = A} x = x ofType A
 
+  ¡[_] : ∀ {𝔬} (𝔒 : Ø 𝔬) → 𝔒 → 𝔒
+  ¡[ _ ] = ¡
+
   _∋_ : ∀ {a} (A : Set a) → A → A
   A ∋ x = x
 
