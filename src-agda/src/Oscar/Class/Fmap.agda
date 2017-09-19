@@ -8,6 +8,7 @@ module _ where
   open import Oscar.Class.IsFunctor
   open import Oscar.Class.Reflexivity
   import Oscar.Class.Reflexivity.Function
+  open import Oscar.Class.Surjidentity
 
   record Fmap {𝔬₁ 𝔬₂} (𝓕 : Ø 𝔬₁ → Ø 𝔬₂) : Ø (↑̂ (↑̂ 𝔬₁ ∙̂ 𝔬₂)) where
     constructor ∁
@@ -19,6 +20,8 @@ module _ where
                          (MFunction 𝓕)
                            Proposextensequality ε (flip _∘′_)
                          fmap
+    fmap-id-law : ∀ {𝔄} → fmap ¡[ 𝔄 ] ≡̇ ¡
+    fmap-id-law = surjidentity
 
   open Fmap ⦃ … ⦄ public using (fmap)
 
