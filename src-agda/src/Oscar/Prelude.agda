@@ -216,6 +216,14 @@ module _ where
               (∀ x (y : B x) → C x y) → (p : Σ A B) → C (π₀ p) (π₁ p)
   uncurry f (x , y) = f x y
 
+  uncurry′ : ∀ {a b c} {A : Set a} {B : A → Set b} {C : Set c} →
+              (∀ x → B x → C) → Σ A B → C
+  uncurry′ f (x , y) = f x y
+
+  curry : ∀ {a b c} {A : Set a} {B : A → Set b} {C : Σ A B → Set c} →
+            (∀ p → C p) → ∀ x (y : B x) → C (x , y)
+  curry f x y = f (x , y)
+
 ExtensionṖroperty : ∀ {𝔵} {𝔛 : Ø 𝔵} {𝔬} {ℓ̇}
   ℓ (𝔒 : 𝔛 → Ø 𝔬) (_↦_ : ∀̇ π̂² ℓ̇ 𝔒)
   → Ø 𝔵 ∙̂ 𝔬 ∙̂ ↑̂ ℓ ∙̂ ℓ̇
