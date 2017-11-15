@@ -208,6 +208,9 @@ module FormalTypeTheory where
   -- Γ ⊢ a : A ⋖ χ = a proves A given Γ, with complexity χ
   data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) : Term N → Term N → Complexity → Set
 
+
+  data _⊢_≝_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) : Term N → Term N → Term N → Complexity → Set
+
   -- Γ ⊢ a : A = a is a proof of A given Γ
   _⊢_∶_ : ∀ {N χ} (Γ : N ctx⋖ χ) → Term N → Term N → Set
   Γ ⊢ a ∶ A = ∃ (Γ ⊢ a ∶ A ⋖_)
@@ -355,10 +358,22 @@ module FormalTypeTheory where
                                   (weakenTermFrom zero
                                     (weakenTermFrom zero p)) C)) ⋖ c (δC ∷ δc' ∷ δa ∷ δb ∷ δp ∷ [])
 
+    ≡-replace :
+      ∀ {ℓ a δa A B δA≡B} →
+      Γ ⊢ a ∶ A ⋖ δa →
+      Γ ⊢ A ≝ B ∶ 𝒰 ℓ ⋖ δA≡B →
+      Γ ⊢ a ∶ B ⋖ c (δa ∷ δA≡B ∷ [])
+
     Vble :
       ∀ {n A} →
       Γ at n ≡ A →
       Γ ⊢ 𝓋 n ∶ A ⋖ c []
+
+  data _⊢_≝_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
+    ≡-reflexivity :
+      ∀ {a δa A} →
+      Γ ⊢ a ∶ A ⋖ δa →
+      Γ ⊢ a ≝ a ∶ A ⋖ c (δa ∷ [])
 
   module Test where
 
