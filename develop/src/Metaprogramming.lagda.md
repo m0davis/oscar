@@ -306,4 +306,68 @@ module Softcore-2 where
 
 Well, I can see that this is not going to work either: I have no way to recurse through the Alphabet structure without a macro.
 
-To continue development, I may need to review McBride's work, Dependently Type Metaprogramming (in Agda).
+To continue development, I may need to review McBride's work, Dependently Typed Metaprogramming (in Agda).
+
+...
+
+Yes, I definitely need to seriously study that work. After that, hopefully a solution will be presented in a section below.
+
+### A serious study of Dependently Typed Metaprogramming (in Agda)
+
+#### Chapter 1
+
+```agda
+module DependentlyTypedMetaprogramming-Chapter1 where
+```
+
+(this section not yet written)
+
+#### Chapter 2
+
+```agda
+module DependentlyTypedMetaprogramming-Chapter2 where
+```
+
+(this section not yet written)
+
+#### Chapter 3
+
+```agda
+module DependentlyTypedMetaprogramming-Chapter3 where
+```
+
+(this section not yet written)
+
+#### Chapter 4
+
+```agda
+module DependentlyTypedMetaprogramming-Chapter4 where
+```
+
+(this section not yet written)
+
+#### Chapter 5
+
+```agda
+module DependentlyTypedMetaprogramming-Chapter5 where
+```
+
+(this section not yet written)
+
+#### Chapter 6
+
+```agda
+module DependentlyTypedMetaprogramming-Chapter6 where
+```
+
+(this section not yet written)
+
+### The Metaprogrammatic "softcore" Solution to the `Hardcore.Alphabet` problem
+
+```agda
+module Softcore-3 where
+  open Preliminary
+  open Hardcore using (Universe)
+```
+
+(this section not yet written)
