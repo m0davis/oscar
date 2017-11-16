@@ -282,3 +282,5 @@ postulate
 
 (n : ℕ) → (p p' : Point n) → p ≢ p' → Edge n p p' × Point (suc n)
 -}
+
+So the idea hit me (or vice versa) that what was lacking in the `alphabet` try above was a `data` structure to help keep an anchor for recursive calls.
