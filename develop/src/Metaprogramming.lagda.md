@@ -523,8 +523,6 @@ module DependentlyTypedMetaprogramming-Chapter4 where
 
 ```agda
   open import Prelude
-  postulate N : Nat
-  postulate F : Set → Set
 
   record _▷_ (I J : Set) : Set₁ where
     constructor _◁_$_
