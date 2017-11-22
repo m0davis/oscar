@@ -487,6 +487,21 @@ I have not convinced Agda that the weakening function terminates. I guess that I
 
 So, I definitely need to seriously study that work. After that, hopefully a solution will be presented in a section below.
 
+...
+
+After realising that sometimes it is easier to prove a stronger theorem than a weaker one, I thought of trying again. First, I'll review where I get stuck in `WeakenAlphabetFrom`.
+
+```agda
+  WAF' : ∀ (ea : Σ Grammar Symbol) → ∀ {N} → Fin (suc N) → ITree alphabetContainer (ea , N) → ITree alphabetContainer (ea , suc N)
+  WAF' (universe , _) _ ⟨ ℓ , _ ⟩ = ⟨ ℓ , (λ ()) ⟩
+  WAF' (variable , _) from ⟨ v , _ ⟩ = ⟨ weakenFinFrom from v , (λ ()) ⟩
+  WAF' (recursive bs , _) from ⟨ gys , r ⟩ = ⟨ gys , (λ p → WAF' (indexVec gys p) (weakenFinFromBy zero from (indexVec bs p)) (r p)) ⟩
+```
+
+...and magically, with no explanation whatsoever, the solution falls into my lap. I guess I just got better at doing proofs by induction.
+
+I ought to be able to prove a version of the above that works not just for alphabetContainer (which is based on a particular symbol-set, `Symbol`, but for any symbol-set indexed by `Grammar` (i.e. for any (Symbol : Grammar → Set).
+
 ### A serious study of Dependently Typed Metaprogramming (in Agda)
 
 #### Chapter 1
@@ -536,67 +551,73 @@ module DependentlyTypedMetaprogramming-Chapter2 where
   infix 3 _⊢_
 ```
 
+##### A naive approach to weakening
+
+```agda
+  module NaiveWeakening where
+```
+
 I wonder if I can "weaken" a well-typed term.
 
 ```agda
-  module WeakenTry1 where
-    weaken⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
-    weaken⊢ (var τ∈Γ) = var (suc τ∈Γ)
-    weaken⊢ {ε} {δ = δ} (lam {_} (var zero)) = lam (var zero)
-    weaken⊢ {ε} {δ = δ} (lam {σ} (var (suc ())))
-    weaken⊢ {ε} {δ = δ} (lam {σ} (lam {ρ} Γ,σ⊢τ)) = {!!} -- I am stuck here
-    weaken⊢ {ε} {δ = δ} (lam {σ} (app Γ,σ⊢τ Γ,σ⊢τ₁)) = {!!}
-    weaken⊢ {Γ ,, x} {δ = δ} (lam {σ} Γ,σ⊢τ) = {!!}
-    weaken⊢ (app Γ⊢σ▶τ Γ⊢σ) = {!!}
+    module WeakenTry1 where
+      weaken⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
+      weaken⊢ (var τ∈Γ) = var (suc τ∈Γ)
+      weaken⊢ {ε} {δ = δ} (lam {_} (var zero)) = lam (var zero)
+      weaken⊢ {ε} {δ = δ} (lam {σ} (var (suc ())))
+      weaken⊢ {ε} {δ = δ} (lam {σ} (lam {ρ} Γ,σ⊢τ)) = {!!} -- I am stuck here
+      weaken⊢ {ε} {δ = δ} (lam {σ} (app Γ,σ⊢τ Γ,σ⊢τ₁)) = {!!}
+      weaken⊢ {Γ ,, x} {δ = δ} (lam {σ} Γ,σ⊢τ) = {!!}
+      weaken⊢ (app Γ⊢σ▶τ Γ⊢σ) = {!!}
 ```
 
 *That* strategy doesn't give me much hope. Maybe a different one?
 
 ```agda
-  module WeakenTry2 where
-    weaken⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
-    weaken⊢ (var τ∈Γ) = var (suc τ∈Γ)
-    weaken⊢ {ε} {δ = ι} (lam {ι} {ι} (var zero)) = lam (var zero)
-    weaken⊢ {ε} {δ = ι} (lam {ι} {ι} (var (suc x))) = lam (var zero)
-    weaken⊢ {ε} {δ = ι} (lam {ι} {ι} (app {σ} x x₁)) = lam (var zero)
-    weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {ι} {ι} x) = lam (var zero)
-    weaken⊢ {ε} {δ = ι} (lam {σ ▶ σ₁} {ι} x) = lam (var (suc zero))
-    weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {σ ▶ σ₁} {ι} (var (suc ())))
-    weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {σ ▶ σ₁} {ι} (app {ι} σ▶σ₁⊢ι▶ι σ▶σ₁⊢ι)) = {!!} -- I am stuck here
-    weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {σ ▶ σ₁} {ι} (app {σ₂ ▶ σ₃} x x₁)) = {!!}
-    weaken⊢ {ε} {δ = δ} (lam {σ} {τ ▶ τ₁} x) = {!!}
-    weaken⊢ {Γ ,, x₁} (lam x) = {!!}
-    weaken⊢ (app x x₁) = {!!}
+    module WeakenTry2 where
+      weaken⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
+      weaken⊢ (var τ∈Γ) = var (suc τ∈Γ)
+      weaken⊢ {ε} {δ = ι} (lam {ι} {ι} (var zero)) = lam (var zero)
+      weaken⊢ {ε} {δ = ι} (lam {ι} {ι} (var (suc x))) = lam (var zero)
+      weaken⊢ {ε} {δ = ι} (lam {ι} {ι} (app {σ} x x₁)) = lam (var zero)
+      weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {ι} {ι} x) = lam (var zero)
+      weaken⊢ {ε} {δ = ι} (lam {σ ▶ σ₁} {ι} x) = lam (var (suc zero))
+      weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {σ ▶ σ₁} {ι} (var (suc ())))
+      weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {σ ▶ σ₁} {ι} (app {ι} σ▶σ₁⊢ι▶ι σ▶σ₁⊢ι)) = {!!} -- I am stuck here
+      weaken⊢ {ε} {δ = δ ▶ δ₁} (lam {σ ▶ σ₁} {ι} (app {σ₂ ▶ σ₃} x x₁)) = {!!}
+      weaken⊢ {ε} {δ = δ} (lam {σ} {τ ▶ τ₁} x) = {!!}
+      weaken⊢ {Γ ,, x₁} (lam x) = {!!}
+      weaken⊢ (app x x₁) = {!!}
 ```
 
 Let me now check that what I'm thinking is even possible. Consider a term that is constructed via `lam`.
 
 ```agda
-  module CheckThinking where
-    lam-conned = (ι ▶ ι) ▶ ((ι ▶ ι) ▶ ι) ▶ ι
+    module CheckThinking where
+      lam-conned = (ι ▶ ι) ▶ ((ι ▶ ι) ▶ ι) ▶ ι
 
-    proof-in-ε : ε ⊢ lam-conned
-    proof-in-ε = lam (lam (app (var zero) (var (suc zero))))
+      proof-in-ε : ε ⊢ lam-conned
+      proof-in-ε = lam (lam (app (var zero) (var (suc zero))))
 ```
 
 Now check that I can add any term to the context and get a proof of the same term
 
 ```agda
-    proof-in-ε,δ : ∀ δ → ε ,, δ ⊢ lam-conned
-    proof-in-ε,δ δ = lam (lam (app (var zero) (var (suc zero))))
+      proof-in-ε,δ : ∀ δ → ε ,, δ ⊢ lam-conned
+      proof-in-ε,δ δ = lam (lam (app (var zero) (var (suc zero))))
 ```
 
 Returning now to `weaken⊢`, I conjecture that, at least in the case where we start with a null context, and try to throw in another arbitrary supposition, the structure of the new proof should be the same as the given one. I shall now try to prove it just in the case of a null context.
 
 ```agda
-  module WeakenTry3-null-context where
-    weakenε⊢ : ∀ {τ δ} → ε ⊢ τ → ε ,, δ ⊢ τ
-    weakenε⊢ (var x) = var (suc x)
-    weakenε⊢ (lam (var zero)) = lam (var zero)
-    weakenε⊢ (lam (var (suc x))) = lam (var (suc (suc x))) -- nope, the structures differ!
-    weakenε⊢ (lam (lam x)) = lam (lam {!!}) -- I get stuck here
-    weakenε⊢ (lam (app x x₁)) = lam {!!}
-    weakenε⊢ (app x x₁) = {!!}
+    module WeakenTry3-null-context where
+      weakenε⊢ : ∀ {τ δ} → ε ⊢ τ → ε ,, δ ⊢ τ
+      weakenε⊢ (var x) = var (suc x)
+      weakenε⊢ (lam (var zero)) = lam (var zero)
+      weakenε⊢ (lam (var (suc x))) = lam (var (suc (suc x))) -- nope, the structures differ!
+      weakenε⊢ (lam (lam x)) = lam (lam {!!}) -- I get stuck here
+      weakenε⊢ (lam (app x x₁)) = lam {!!}
+      weakenε⊢ (app x x₁) = {!!}
 ```
 
 In the place where I get stuck, I want to have proved a stronger theorem. In this case, a theorem (S1) that says that if I've proved Γ ⊢ τ, then I can also prove δ ++ Γ ⊢ τ. Perhaps then the real solution is to say (S2) what I *really* mean: given any Γ ⊢ τ, and any G generated by taking, in any order, every element of Γ and any number of other terms, I can also prove G ⊢ τ.
@@ -604,172 +625,172 @@ In the place where I get stuck, I want to have proved a stronger theorem. In thi
 I'll try S1 as a start. First, I will need to define what it means to prepend to a context.
 
 ```agda
-  module WeakenTry4-stronger-theorem-S1 where
-    infixr 21 _∙_
-    _∙_ : ⋆ → Cx ⋆ → Cx ⋆
-    δ ∙ ε = ε ,, δ
-    δ ∙ (Γ ,, γ) = (δ ∙ Γ) ,, γ
+    module WeakenTry4-stronger-theorem-S1 where
+      infixr 21 _∙_
+      _∙_ : ⋆ → Cx ⋆ → Cx ⋆
+      δ ∙ ε = ε ,, δ
+      δ ∙ (Γ ,, γ) = (δ ∙ Γ) ,, γ
 ```
 
 And the (successful) proof (which should be reorganised to extract the lemma?):
 
 ```agda
-    weaken∙⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → δ ∙ Γ ⊢ τ
-    weaken∙⊢ {ε} (var τ∈δ) = var (suc τ∈δ)
-    weaken∙⊢ {Γ ,, x₁} (var zero) = var zero
-    weaken∙⊢ {Γ ,, x₁} (var (suc τ∈Γ)) = var (suc (lemma τ∈Γ)) where
-      lemma : ∀ {Γ δ τ} → τ ∈ Γ → τ ∈ (δ ∙ Γ)
-      lemma {ε} ()
-      lemma {Γ ,, γ} zero = zero
-      lemma {Γ ,, γ} (suc τ∈Γ) = suc (lemma τ∈Γ)
-    weaken∙⊢ (lam Γ,σ⊢τ) = lam (weaken∙⊢ Γ,σ⊢τ)
-    weaken∙⊢ (app Γ⊢σ▶τ Γ⊢σ) = app (weaken∙⊢ Γ⊢σ▶τ) (weaken∙⊢ Γ⊢σ)
+      weaken∙⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → δ ∙ Γ ⊢ τ
+      weaken∙⊢ {ε} (var τ∈δ) = var (suc τ∈δ)
+      weaken∙⊢ {Γ ,, x₁} (var zero) = var zero
+      weaken∙⊢ {Γ ,, x₁} (var (suc τ∈Γ)) = var (suc (lemma τ∈Γ)) where
+        lemma : ∀ {Γ δ τ} → τ ∈ Γ → τ ∈ (δ ∙ Γ)
+        lemma {ε} ()
+        lemma {Γ ,, γ} zero = zero
+        lemma {Γ ,, γ} (suc τ∈Γ) = suc (lemma τ∈Γ)
+      weaken∙⊢ (lam Γ,σ⊢τ) = lam (weaken∙⊢ Γ,σ⊢τ)
+      weaken∙⊢ (app Γ⊢σ▶τ Γ⊢σ) = app (weaken∙⊢ Γ⊢σ▶τ) (weaken∙⊢ Γ⊢σ)
 ```
 
 Next perhaps is to show that I can swap any two consecutive elements of a context. But for that, I will need a more robust version of append.
 
 ```agda
-    _+++_ : Cx ⋆ → Cx ⋆ → Cx ⋆
-    ε +++ Δ = Δ
-    (Γ ,, δ) +++ Δ = Γ +++ (δ ∙ Δ)
+      _+++_ : Cx ⋆ → Cx ⋆ → Cx ⋆
+      ε +++ Δ = Δ
+      (Γ ,, δ) +++ Δ = Γ +++ (δ ∙ Δ)
 ```
 
 The following is very more messy than need be.
 
 ```agda
-    +++=∙ : ∀ {δ Γ} → (δ ∙ Γ) ≡ (ε ,, δ) +++ Γ
-    +++=∙ {Γ = Γ} = refl
+      +++=∙ : ∀ {δ Γ} → (δ ∙ Γ) ≡ (ε ,, δ) +++ Γ
+      +++=∙ {Γ = Γ} = refl
 
-    stable-left-∈∙ : ∀ {τ Γ δ} → τ ∈ Γ → τ ∈ δ ∙ Γ
-    stable-left-∈∙ {Γ = ε} ()
-    stable-left-∈∙ {Γ = Γ ,, γ} zero = zero
-    stable-left-∈∙ {Γ = Γ ,, γ} (suc τ∈Γ) = suc (stable-left-∈∙ τ∈Γ)
+      stable-left-∈∙ : ∀ {τ Γ δ} → τ ∈ Γ → τ ∈ δ ∙ Γ
+      stable-left-∈∙ {Γ = ε} ()
+      stable-left-∈∙ {Γ = Γ ,, γ} zero = zero
+      stable-left-∈∙ {Γ = Γ ,, γ} (suc τ∈Γ) = suc (stable-left-∈∙ τ∈Γ)
 
-    allow : ∀ {Γ Δ γ} → γ ∈ Γ +++ (Δ ,, γ)
-    allow {ε} {Δ} = zero
-    allow {Γ ,, x} {Δ} = allow {Γ} {x ∙ Δ}
+      allow : ∀ {Γ Δ γ} → γ ∈ Γ +++ (Δ ,, γ)
+      allow {ε} {Δ} = zero
+      allow {Γ ,, x} {Δ} = allow {Γ} {x ∙ Δ}
 
-    very-okay : ∀ {τ Γ Δ ρ} → τ ∈ Γ +++ Δ → τ ∈ Γ +++ (Δ ,, ρ)
-    very-okay {Γ = ε} {ε} ()
-    very-okay {Γ = Γ ,, x₁} {ε} x = very-okay {Γ = Γ} x
-    very-okay {Γ = ε} {Δ ,, x₁} zero = suc zero
-    very-okay {Γ = ε} {Δ ,, x₁} (suc x) = suc (suc x)
-    very-okay {Γ = Γ ,, x₂} {Δ ,, x₁} x = very-okay {_} {Γ} {x₂ ∙ Δ ,, x₁} x
+      very-okay : ∀ {τ Γ Δ ρ} → τ ∈ Γ +++ Δ → τ ∈ Γ +++ (Δ ,, ρ)
+      very-okay {Γ = ε} {ε} ()
+      very-okay {Γ = Γ ,, x₁} {ε} x = very-okay {Γ = Γ} x
+      very-okay {Γ = ε} {Δ ,, x₁} zero = suc zero
+      very-okay {Γ = ε} {Δ ,, x₁} (suc x) = suc (suc x)
+      very-okay {Γ = Γ ,, x₂} {Δ ,, x₁} x = very-okay {_} {Γ} {x₂ ∙ Δ ,, x₁} x
 
-    split∙ : ∀ {τ γ Δ} → τ ∈ γ ∙ Δ → Either (τ ∈ ε ,, γ) (τ ∈ Δ)
-    split∙ {Δ = ε} = left
-    split∙ {Δ = Δ ,, δ} zero = right zero
-    split∙ {γ = γ} {Δ = Δ ,, δ} (suc τ∈γΔ) with split∙ {Δ = Δ} τ∈γΔ
-    split∙ {γ = γ} {Δ ,, δ} (suc τ∈γΔ) | left zero = left zero
-    split∙ {γ = γ} {Δ ,, δ} (suc τ∈γΔ) | left (suc ())
-    split∙ {γ = γ} {Δ ,, δ} (suc τ∈γΔ) | right τ∈Δ = right (suc τ∈Δ)
+      split∙ : ∀ {τ γ Δ} → τ ∈ γ ∙ Δ → Either (τ ∈ ε ,, γ) (τ ∈ Δ)
+      split∙ {Δ = ε} = left
+      split∙ {Δ = Δ ,, δ} zero = right zero
+      split∙ {γ = γ} {Δ = Δ ,, δ} (suc τ∈γΔ) with split∙ {Δ = Δ} τ∈γΔ
+      split∙ {γ = γ} {Δ ,, δ} (suc τ∈γΔ) | left zero = left zero
+      split∙ {γ = γ} {Δ ,, δ} (suc τ∈γΔ) | left (suc ())
+      split∙ {γ = γ} {Δ ,, δ} (suc τ∈γΔ) | right τ∈Δ = right (suc τ∈Δ)
 
-    split : ∀ {Γ Δ τ} → τ ∈ Γ +++ Δ → Either (τ ∈ Γ) (τ ∈ Δ)
-    split {ε} τ∈Δ = right τ∈Δ
-    split {Γ ,, γ} {ε} τ∈Γγ with split {Γ = Γ} τ∈Γγ
-    split {Γ ,, γ} {ε} τ∈Γγ | left τ∈Γ = left (suc τ∈Γ)
-    split {Γ ,, γ} {ε} τ∈Γγ | right zero = left zero
-    split {Γ ,, γ} {ε} τ∈Γγ | right (suc ())
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ with split {Γ = Γ} τ∈ΓγΔδ
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | left τ∈Γ = left (suc τ∈Γ)
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right zero = right zero
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) with split∙ {Δ = Δ} τ∈γΔ where
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) | left zero = left zero
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) | left (suc ())
-    split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) | right τ∈Δ = right (suc τ∈Δ)
+      split : ∀ {Γ Δ τ} → τ ∈ Γ +++ Δ → Either (τ ∈ Γ) (τ ∈ Δ)
+      split {ε} τ∈Δ = right τ∈Δ
+      split {Γ ,, γ} {ε} τ∈Γγ with split {Γ = Γ} τ∈Γγ
+      split {Γ ,, γ} {ε} τ∈Γγ | left τ∈Γ = left (suc τ∈Γ)
+      split {Γ ,, γ} {ε} τ∈Γγ | right zero = left zero
+      split {Γ ,, γ} {ε} τ∈Γγ | right (suc ())
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ with split {Γ = Γ} τ∈ΓγΔδ
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | left τ∈Γ = left (suc τ∈Γ)
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right zero = right zero
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) with split∙ {Δ = Δ} τ∈γΔ where
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) | left zero = left zero
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) | left (suc ())
+      split {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc τ∈γΔ) | right τ∈Δ = right (suc τ∈Δ)
 
-    stable-left-∈+++ : ∀ {τ Γ Δ} → τ ∈ Δ → τ ∈ Γ +++ Δ
-    stable-left-∈+++ {Γ = ε} {Δ} τ∈Δ = τ∈Δ
-    stable-left-∈+++ {Γ = Γ ,, x} {Δ} τ∈Δ = stable-left-∈+++ {Γ = Γ} (stable-left-∈∙ τ∈Δ)
+      stable-left-∈+++ : ∀ {τ Γ Δ} → τ ∈ Δ → τ ∈ Γ +++ Δ
+      stable-left-∈+++ {Γ = ε} {Δ} τ∈Δ = τ∈Δ
+      stable-left-∈+++ {Γ = Γ ,, x} {Δ} τ∈Δ = stable-left-∈+++ {Γ = Γ} (stable-left-∈∙ τ∈Δ)
 
-    prepend-stable : ∀ {Δ} δ → δ ∈ δ ∙ Δ
-    prepend-stable {ε} δ = zero
-    prepend-stable {Δ ,, x} δ = suc (prepend-stable {Δ} δ)
+      prepend-stable : ∀ {Δ} δ → δ ∈ δ ∙ Δ
+      prepend-stable {ε} δ = zero
+      prepend-stable {Δ ,, x} δ = suc (prepend-stable {Δ} δ)
 
-    stable-right-∈+++' : ∀ {τ Γ Δ} → τ ∈ Γ → τ ∈ Γ +++ Δ
-    stable-right-∈+++' {τ} {ε ,, .τ} {ε} zero = zero
-    stable-right-∈+++' {τ} {Γ ,, x ,, .τ} {ε} zero = stable-left-∈+++ {Γ = Γ} {Δ = ε ,, x ,, τ} zero
-    stable-right-∈+++' {Γ = .(_ ,, _)} {ε} (suc τ∈Γ) = stable-right-∈+++' {Δ = ε ,, _} τ∈Γ
-    stable-right-∈+++' {Γ = ε} {Δ ,, x} ()
-    stable-right-∈+++' {Γ = Γ ,, x₁} {Δ ,, x} zero = stable-left-∈+++ {x₁} {Γ = Γ} {Δ = x₁ ∙ Δ ,, x} (suc (prepend-stable {Δ} x₁))
-    stable-right-∈+++' {τ} {Γ = Γ ,, x₁} {Δ ,, x} (suc τ∈Γ) = stable-right-∈+++' {τ} {Γ} {x₁ ∙ Δ ,, x} τ∈Γ
+      stable-right-∈+++' : ∀ {τ Γ Δ} → τ ∈ Γ → τ ∈ Γ +++ Δ
+      stable-right-∈+++' {τ} {ε ,, .τ} {ε} zero = zero
+      stable-right-∈+++' {τ} {Γ ,, x ,, .τ} {ε} zero = stable-left-∈+++ {Γ = Γ} {Δ = ε ,, x ,, τ} zero
+      stable-right-∈+++' {Γ = .(_ ,, _)} {ε} (suc τ∈Γ) = stable-right-∈+++' {Δ = ε ,, _} τ∈Γ
+      stable-right-∈+++' {Γ = ε} {Δ ,, x} ()
+      stable-right-∈+++' {Γ = Γ ,, x₁} {Δ ,, x} zero = stable-left-∈+++ {x₁} {Γ = Γ} {Δ = x₁ ∙ Δ ,, x} (suc (prepend-stable {Δ} x₁))
+      stable-right-∈+++' {τ} {Γ = Γ ,, x₁} {Δ ,, x} (suc τ∈Γ) = stable-right-∈+++' {τ} {Γ} {x₁ ∙ Δ ,, x} τ∈Γ
 
-    superduper-okay : ∀ {τ Γ Δ γ ρ} → τ ∈ Γ +++ (γ ∙ Δ) → τ ∈ Γ +++ (ρ ∙ γ ∙ Δ)
-    superduper-okay {τ} {Γ} {Δ} {γ} {ρ} x with split {Γ} {γ ∙ Δ} x
-    superduper-okay {τ} {Γ} {Δ} {γ} {ρ} x | left x₁ = stable-right-∈+++' {Δ = (ρ ∙ γ ∙ Δ)} x₁
-    superduper-okay {τ} {Γ} {Δ} {γ} {ρ} x | right x₁ = stable-left-∈+++ {Γ = Γ} (stable-left-∈∙ {τ} {γ ∙ Δ} x₁)
+      superduper-okay : ∀ {τ Γ Δ γ ρ} → τ ∈ Γ +++ (γ ∙ Δ) → τ ∈ Γ +++ (ρ ∙ γ ∙ Δ)
+      superduper-okay {τ} {Γ} {Δ} {γ} {ρ} x with split {Γ} {γ ∙ Δ} x
+      superduper-okay {τ} {Γ} {Δ} {γ} {ρ} x | left x₁ = stable-right-∈+++' {Δ = (ρ ∙ γ ∙ Δ)} x₁
+      superduper-okay {τ} {Γ} {Δ} {γ} {ρ} x | right x₁ = stable-left-∈+++ {Γ = Γ} (stable-left-∈∙ {τ} {γ ∙ Δ} x₁)
 
-    still-good : ∀ {τ Γ Δ ρ} → τ ∈ Γ +++ Δ → τ ∈ Γ +++ (ρ ∙ Δ)
-    still-good {Γ = ε} {ε} ()
-    still-good {Γ = ε} {Δ ,, δ} zero = zero
-    still-good {Γ = ε} {Δ ,, δ} (suc τ∈Δ) = suc (still-good {Γ = ε} τ∈Δ)
-    still-good {Γ = Γ ,, γ} {ε} τ∈Γγ = very-okay {Γ = Γ} τ∈Γγ
-    still-good {Γ = Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ with split {Γ = Γ} τ∈ΓγΔδ
-    still-good {_} {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | left x = stable-right-∈+++' {Δ = (γ ∙ _ ∙ Δ ,, δ)} x
-    still-good {_} {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right zero = allow {Γ = Γ} {Δ = γ ∙ _ ∙ Δ} {δ}
-    still-good {τ} {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc x) = stable-left-∈+++ {Γ = Γ} (suc (still-good {τ} {ε ,, γ} {Δ} {_} x ))
+      still-good : ∀ {τ Γ Δ ρ} → τ ∈ Γ +++ Δ → τ ∈ Γ +++ (ρ ∙ Δ)
+      still-good {Γ = ε} {ε} ()
+      still-good {Γ = ε} {Δ ,, δ} zero = zero
+      still-good {Γ = ε} {Δ ,, δ} (suc τ∈Δ) = suc (still-good {Γ = ε} τ∈Δ)
+      still-good {Γ = Γ ,, γ} {ε} τ∈Γγ = very-okay {Γ = Γ} τ∈Γγ
+      still-good {Γ = Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ with split {Γ = Γ} τ∈ΓγΔδ
+      still-good {_} {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | left x = stable-right-∈+++' {Δ = (γ ∙ _ ∙ Δ ,, δ)} x
+      still-good {_} {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right zero = allow {Γ = Γ} {Δ = γ ∙ _ ∙ Δ} {δ}
+      still-good {τ} {Γ ,, γ} {Δ ,, δ} τ∈ΓγΔδ | right (suc x) = stable-left-∈+++ {Γ = Γ} (suc (still-good {τ} {ε ,, γ} {Δ} {_} x ))
 
-    insert∈ : ∀ {Γ γ Δ} → γ ∈ (Γ +++ (γ ∙ Δ))
-    insert∈ {ε} {γ} {ε} = zero
-    insert∈ {ε} {γ} {Δ ,, x} = suc (insert∈ {ε} {γ} {Δ})
-    insert∈ {Γ ,, γ'} {γ} {ε} = allow {Γ} {ε ,, γ'} -- insert∈ {Γ} {γ} {{!!}}
-    insert∈ {Γ ,, γ'} {γ} {Δ ,, δ'} =
-      let γ∈ΓγΔδ' = insert∈ {Γ} {γ} {Δ ,, δ'}
-      in
-      very-okay {Γ = Γ} (stable-left-∈+++ {Γ = Γ} {Δ = γ' ∙ γ ∙ Δ} (stable-left-∈∙ {Γ = γ ∙ Δ} (prepend-stable {Δ = Δ} γ)))
+      insert∈ : ∀ {Γ γ Δ} → γ ∈ (Γ +++ (γ ∙ Δ))
+      insert∈ {ε} {γ} {ε} = zero
+      insert∈ {ε} {γ} {Δ ,, x} = suc (insert∈ {ε} {γ} {Δ})
+      insert∈ {Γ ,, γ'} {γ} {ε} = allow {Γ} {ε ,, γ'} -- insert∈ {Γ} {γ} {{!!}}
+      insert∈ {Γ ,, γ'} {γ} {Δ ,, δ'} =
+        let γ∈ΓγΔδ' = insert∈ {Γ} {γ} {Δ ,, δ'}
+        in
+        very-okay {Γ = Γ} (stable-left-∈+++ {Γ = Γ} {Δ = γ' ∙ γ ∙ Δ} (stable-left-∈∙ {Γ = γ ∙ Δ} (prepend-stable {Δ = Δ} γ)))
 
-    stable-right-∈+++ : ∀ {τ Γ Δ} → τ ∈ Γ → τ ∈ Γ +++ Δ
-    stable-right-∈+++ {Γ = ε} ()
-    stable-right-∈+++ {Γ = Γ ,, γ} {ε} zero = insert∈ {Γ} {γ} {ε}
-    stable-right-∈+++ {Γ = Γ ,, γ} {Δ ,, x} zero = insert∈ {Γ} {γ} {Δ ,, x}
-    stable-right-∈+++ {Γ = Γ ,, γ} {Δ} (suc τ∈Γ) = stable-right-∈+++ {_} {Γ} τ∈Γ
+      stable-right-∈+++ : ∀ {τ Γ Δ} → τ ∈ Γ → τ ∈ Γ +++ Δ
+      stable-right-∈+++ {Γ = ε} ()
+      stable-right-∈+++ {Γ = Γ ,, γ} {ε} zero = insert∈ {Γ} {γ} {ε}
+      stable-right-∈+++ {Γ = Γ ,, γ} {Δ ,, x} zero = insert∈ {Γ} {γ} {Δ ,, x}
+      stable-right-∈+++ {Γ = Γ ,, γ} {Δ} (suc τ∈Γ) = stable-right-∈+++ {_} {Γ} τ∈Γ
 
-    appendRight∈ : ∀ {Γ Δ τ} → τ ∈ Γ → τ ∈ Γ +++ Δ
-    appendRight∈ {ε} {ε} ()
-    appendRight∈ {Γ ,, γ} {ε} zero = insert∈ {Γ} {_} {ε}
-    appendRight∈ {Γ ,, γ} {ε} (suc τ∈Γ) = appendRight∈ τ∈Γ
-    appendRight∈ {ε} {Δ ,, δ} ()
-    appendRight∈ {Γ ,, γ} {Δ ,, δ} zero = insert∈ {Γ = Γ} {γ} {Δ ,, δ}
-    appendRight∈ {Γ ,, γ} {Δ ,, δ} (suc τ∈Γ) = appendRight∈ τ∈Γ
+      appendRight∈ : ∀ {Γ Δ τ} → τ ∈ Γ → τ ∈ Γ +++ Δ
+      appendRight∈ {ε} {ε} ()
+      appendRight∈ {Γ ,, γ} {ε} zero = insert∈ {Γ} {_} {ε}
+      appendRight∈ {Γ ,, γ} {ε} (suc τ∈Γ) = appendRight∈ τ∈Γ
+      appendRight∈ {ε} {Δ ,, δ} ()
+      appendRight∈ {Γ ,, γ} {Δ ,, δ} zero = insert∈ {Γ = Γ} {γ} {Δ ,, δ}
+      appendRight∈ {Γ ,, γ} {Δ ,, δ} (suc τ∈Γ) = appendRight∈ τ∈Γ
 
-    swaplemma : ∀ {Γ Δ δ₁ δ₂ τ} → τ ∈ (Γ ,, δ₁ ,, δ₂) +++ Δ → τ ∈ (Γ ,, δ₂ ,, δ₁) +++ Δ
-    swaplemma {ε} {ε} zero = suc zero
-    swaplemma {ε} {ε} (suc zero) = zero
-    swaplemma {ε} {ε} (suc (suc ()))
-    swaplemma {ε} {_ ,, _} zero = zero
-    swaplemma {ε} {Δ ,, _} (suc τ∈δ₁δ₂Δ) = suc (subswaplemma {Δ = Δ} τ∈δ₁δ₂Δ) where
-      subswaplemma : ∀ {δ₁ δ₂ Δ τ} → τ ∈ δ₁ ∙ δ₂ ∙ Δ → τ ∈ δ₂ ∙ δ₁ ∙ Δ
-      subswaplemma {Δ = ε} zero = suc zero
-      subswaplemma {Δ = ε} (suc zero) = zero
-      subswaplemma {Δ = ε} (suc (suc ()))
-      subswaplemma {Δ = Δ ,, δ} zero = zero
-      subswaplemma {δ₁} {δ₂} {Δ = Δ ,, δ} (suc τ∈δ₁δ₂Δ) = suc (subswaplemma {Δ = Δ} τ∈δ₁δ₂Δ)
-    swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ with split {Γ = Γ} τ∈Γεγδ₁δ₂ module L where
-    swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | left τ∈Γ = appendRight∈ τ∈Γ where
-    swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right zero = stable-left-∈+++ {Γ = Γ} (suc zero)
-    swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right (suc zero) = stable-left-∈+++ {Γ = Γ} zero
-    swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right (suc (suc zero)) = stable-left-∈+++ {Γ = Γ} (suc (suc zero))
-    swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right (suc (suc (suc ())))
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ with split {Γ = Γ} x₁
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | left x = stable-right-∈+++ {Δ = γ ∙ δ₂ ∙ δ₁ ∙ Δ ,, δ} x
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right zero = stable-left-∈+++ {Γ = Γ} zero
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) with split∙ {Δ = δ₁ ∙ δ₂ ∙ Δ} x
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | left zero = stable-left-∈+++ {Γ = Γ} (suc (prepend-stable {Δ = δ₂ ∙ δ₁ ∙ Δ} γ))
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | left (suc ())
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ with split∙ {Δ = δ₂ ∙ Δ} x₂
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | left zero = stable-left-∈+++ {Γ = Γ} (suc (stable-left-∈∙ {Γ = δ₂ ∙ δ₁ ∙ Δ} (stable-left-∈∙ {Γ = δ₁ ∙ Δ} (prepend-stable {Δ = Δ} δ₁))))
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | left (suc ())
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ with split∙ {Δ = Δ} x₃
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ | left zero = {!!}
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ | left (suc ())
-    swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ | right x₄ = {!!} -- stable-left-∈+++ {Γ = Γ} (suc ({!split∙ x!}))
+      swaplemma : ∀ {Γ Δ δ₁ δ₂ τ} → τ ∈ (Γ ,, δ₁ ,, δ₂) +++ Δ → τ ∈ (Γ ,, δ₂ ,, δ₁) +++ Δ
+      swaplemma {ε} {ε} zero = suc zero
+      swaplemma {ε} {ε} (suc zero) = zero
+      swaplemma {ε} {ε} (suc (suc ()))
+      swaplemma {ε} {_ ,, _} zero = zero
+      swaplemma {ε} {Δ ,, _} (suc τ∈δ₁δ₂Δ) = suc (subswaplemma {Δ = Δ} τ∈δ₁δ₂Δ) where
+        subswaplemma : ∀ {δ₁ δ₂ Δ τ} → τ ∈ δ₁ ∙ δ₂ ∙ Δ → τ ∈ δ₂ ∙ δ₁ ∙ Δ
+        subswaplemma {Δ = ε} zero = suc zero
+        subswaplemma {Δ = ε} (suc zero) = zero
+        subswaplemma {Δ = ε} (suc (suc ()))
+        subswaplemma {Δ = Δ ,, δ} zero = zero
+        subswaplemma {δ₁} {δ₂} {Δ = Δ ,, δ} (suc τ∈δ₁δ₂Δ) = suc (subswaplemma {Δ = Δ} τ∈δ₁δ₂Δ)
+      swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ with split {Γ = Γ} τ∈Γεγδ₁δ₂ module L where
+      swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | left τ∈Γ = appendRight∈ τ∈Γ where
+      swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right zero = stable-left-∈+++ {Γ = Γ} (suc zero)
+      swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right (suc zero) = stable-left-∈+++ {Γ = Γ} zero
+      swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right (suc (suc zero)) = stable-left-∈+++ {Γ = Γ} (suc (suc zero))
+      swaplemma {Γ ,, γ} {ε} {δ₁} {δ₂} τ∈Γεγδ₁δ₂ | right (suc (suc (suc ())))
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ with split {Γ = Γ} x₁
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | left x = stable-right-∈+++ {Δ = γ ∙ δ₂ ∙ δ₁ ∙ Δ ,, δ} x
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right zero = stable-left-∈+++ {Γ = Γ} zero
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) with split∙ {Δ = δ₁ ∙ δ₂ ∙ Δ} x
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | left zero = stable-left-∈+++ {Γ = Γ} (suc (prepend-stable {Δ = δ₂ ∙ δ₁ ∙ Δ} γ))
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | left (suc ())
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ with split∙ {Δ = δ₂ ∙ Δ} x₂
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | left zero = stable-left-∈+++ {Γ = Γ} (suc (stable-left-∈∙ {Γ = δ₂ ∙ δ₁ ∙ Δ} (stable-left-∈∙ {Γ = δ₁ ∙ Δ} (prepend-stable {Δ = Δ} δ₁))))
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | left (suc ())
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ with split∙ {Δ = Δ} x₃
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ | left zero = {!!}
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ | left (suc ())
+      swaplemma {Γ ,, γ} {Δ ,, δ} {δ₁} {δ₂} x₁ | right (suc x) | right x₂ | right x₃ | right x₄ = {!!} -- stable-left-∈+++ {Γ = Γ} (suc ({!split∙ x!}))
 
-    swapΓ⊢ : ∀ {Γ Δ δ₁ δ₂ τ} → (Γ ,, δ₁ ,, δ₂) +++ Δ ⊢ τ → (Γ ,, δ₂ ,, δ₁) +++ Δ ⊢ τ
-    swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} {τ} (var x) = var (swaplemma {Γ = Γ} {Δ = Δ} {δ₁ = δ₁} {δ₂ = δ₂} x)
-    swapΓ⊢ {Γ} {ε} {δ₁} {δ₂} {.(σ ▶ _)} (lam {σ} Γδ₁δ₂Δσ⊢τ) = lam {!swapΓ⊢ {Γ} {ε} {δ₁} {δ₂} !}
-    swapΓ⊢ {ε} {Δ ,, x} {δ₁} {δ₂} {.(σ ▶ _)} (lam {σ} Γδ₁δ₂Δσ⊢τ) = lam {!!}
-    swapΓ⊢ {Γ ,, x₁} {Δ ,, x} {δ₁} {δ₂} {.(σ ▶ _)} (lam {σ} Γδ₁δ₂Δσ⊢τ) = lam {!!} -- lam {!!}
-    swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} {τ} (app x x₁) = app (swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} x) (swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} x₁)
+      swapΓ⊢ : ∀ {Γ Δ δ₁ δ₂ τ} → (Γ ,, δ₁ ,, δ₂) +++ Δ ⊢ τ → (Γ ,, δ₂ ,, δ₁) +++ Δ ⊢ τ
+      swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} {τ} (var x) = var (swaplemma {Γ = Γ} {Δ = Δ} {δ₁ = δ₁} {δ₂ = δ₂} x)
+      swapΓ⊢ {Γ} {ε} {δ₁} {δ₂} {.(σ ▶ _)} (lam {σ} Γδ₁δ₂Δσ⊢τ) = lam {!swapΓ⊢ {Γ} {ε} {δ₁} {δ₂} !}
+      swapΓ⊢ {ε} {Δ ,, x} {δ₁} {δ₂} {.(σ ▶ _)} (lam {σ} Γδ₁δ₂Δσ⊢τ) = lam {!!}
+      swapΓ⊢ {Γ ,, x₁} {Δ ,, x} {δ₁} {δ₂} {.(σ ▶ _)} (lam {σ} Γδ₁δ₂Δσ⊢τ) = lam {!!} -- lam {!!}
+      swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} {τ} (app x x₁) = app (swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} x) (swapΓ⊢ {Γ} {Δ} {δ₁} {δ₂} x₁)
 ```
 
 swapΓ⊢ seems not powerful enough to recursively prove itself in the case of `lam`. I am still getting stuck trying to prove that a certain reordering of prependings to Δ makes no difference *when followed by conses*.
@@ -791,52 +812,313 @@ I am guessing that such a proof by induction works much better (read: at all) by
 Let me see if that holds up. First, let's see that such a thing is hard with Lists:
 
 ```agda
-  module HardWithLists where
-    open Preliminary
-    postulate
-      X : Set
-      P : List X → Set
-      s0 : ∀ Δ γ → P Δ → P (Δ ++ [ γ ])
-      s* : ∀ Δ γ₁ γ₂ Γ → P (Δ ++ (γ₁ ∷ γ₂ ∷ Γ)) → P (Δ ++ (γ₂ ∷ γ₁ ∷ Γ))
-    car-P : ∀ γ Γ → P Γ → P (γ ∷ Γ)
-    car-P γ [] = s0 [] γ
-    car-P γ [ γ₁ ] Pγ₁Γ = s* [] _ _ [] (s0 [ γ₁ ] γ Pγ₁Γ)
-    car-P γ (γ₁ ∷ γ₂ ∷ Γ) Pγ₁γ₂Γ = {!!}
+    module HardWithLists where
+      open Preliminary
+      postulate
+        X : Set
+        P : List X → Set
+        s0 : ∀ Δ γ → P Δ → P (Δ ++ [ γ ])
+        s* : ∀ Δ γ₁ γ₂ Γ → P (Δ ++ (γ₁ ∷ γ₂ ∷ Γ)) → P (Δ ++ (γ₂ ∷ γ₁ ∷ Γ))
+      car-P : ∀ γ Γ → P Γ → P (γ ∷ Γ)
+      car-P γ [] = s0 [] γ
+      car-P γ [ γ₁ ] Pγ₁Γ = s* [] _ _ [] (s0 [ γ₁ ] γ Pγ₁Γ)
+      car-P γ (γ₁ ∷ γ₂ ∷ Γ) Pγ₁γ₂Γ = {!!}
 ```
 
 Yut, it's pretty hard. But maybe if I had taken `with length Γ` or something, it might have worked out. But let's do the equivalent with vectors and see if it's easier.
 
 ```agda
-  module EasierWithVectors where
-    open Preliminary
-    v[_] : ∀ {X : Set} → X → Vec X 1
-    v[ x ] = pure x
-    postulate
-      X : Set
-      P : ∀ {N} → Vec X N → Set
-      s0 : ∀ {N} (Δ : Vec X N) γ → P Δ → P (Δ v++ v[ γ ])
-      s* : ∀ {N M} (Δ : Vec X N) γ₂ γ₁ (Γ : Vec X M) → P (Δ v++ (γ₁ ∷ γ₂ ∷ Γ)) → P (Δ v++ (γ₂ ∷ γ₁ ∷ Γ))
-    car-P : ∀ {M} γ (Γ : Vec X M) → P Γ → P (γ ∷ Γ)
-    car-P γ [] PΓ = s0 [] γ PΓ
-    car-P γ (γ₁ ∷ []) Pγ₁Γ = s* [] γ γ₁ [] (s0 v[ γ₁ ] γ Pγ₁Γ)
-    car-P {.2} γ (γ₁ ∷ _∷_ {.0} γ₂ []) Pγ₁γ₂Γ = s* [] γ γ₁ v[ γ₂ ] (s* v[ γ₁ ] γ γ₂ [] (s0 (γ₁ ∷ γ₂ ∷ []) γ Pγ₁γ₂Γ))
-    car-P {.(suc (suc (suc _)))} γ (γ₁ ∷ _∷_ {.(suc _)} γ₂ (γ₃ ∷ Γ)) Pγ₁γ₂γ₃Γ = s* [] γ γ₁ (γ₂ ∷ γ₃ ∷ Γ) (s* v[ γ₁ ] γ γ₂ (γ₃ ∷ Γ) (s* (γ₁ ∷ γ₂ ∷ []) γ γ₃ Γ {!!}))
+    module EasierWithVectors where
+      open Preliminary
+      v[_] : ∀ {X : Set} → X → Vec X 1
+      v[ x ] = pure x
+      postulate
+        X : Set
+        P : ∀ {N} → Vec X N → Set
+        s0 : ∀ {N} (Δ : Vec X N) γ → P Δ → P (Δ v++ v[ γ ])
+        s* : ∀ {N M} (Δ : Vec X N) γ₂ γ₁ (Γ : Vec X M) → P (Δ v++ (γ₁ ∷ γ₂ ∷ Γ)) → P (Δ v++ (γ₂ ∷ γ₁ ∷ Γ))
+      car-P : ∀ {M} γ (Γ : Vec X M) → P Γ → P (γ ∷ Γ)
+      car-P γ [] PΓ = s0 [] γ PΓ
+      car-P γ (γ₁ ∷ []) Pγ₁Γ = s* [] γ γ₁ [] (s0 v[ γ₁ ] γ Pγ₁Γ)
+      car-P {.2} γ (γ₁ ∷ _∷_ {.0} γ₂ []) Pγ₁γ₂Γ = s* [] γ γ₁ v[ γ₂ ] (s* v[ γ₁ ] γ γ₂ [] (s0 (γ₁ ∷ γ₂ ∷ []) γ Pγ₁γ₂Γ))
+      car-P {.(suc (suc (suc _)))} γ (γ₁ ∷ _∷_ {.(suc _)} γ₂ (γ₃ ∷ Γ)) Pγ₁γ₂γ₃Γ = s* [] γ γ₁ (γ₂ ∷ γ₃ ∷ Γ) (s* v[ γ₁ ] γ γ₂ (γ₃ ∷ Γ) (s* (γ₁ ∷ γ₂ ∷ []) γ γ₃ Γ {!!}))
 ```
 
 No, that's looking just as hard. Perhaps the problem was needing a stronger induction hypothesis.
 
 ```agda
-  module StrongerInductionHypothesis where
-    open Preliminary
-    open HardWithLists
-    stronger-P : ∀ Δ γ Γ → P (Δ ++ Γ) → P (Δ ++ γ ∷ Γ)
-    stronger-P [] γ [] x = s0 [] γ x
-    stronger-P (d ∷ Δ) γ [] x = transport P {!!} (s0 (d ∷ Δ ++ []) γ x)
-    stronger-P Δ γ (x₁ ∷ Γ) x = s* Δ x₁ γ Γ (transport P {!!} (stronger-P (Δ ++ [ x₁ ]) γ Γ (transport P {!!} x)))
+    module StrongerInductionHypothesis where
+      open Preliminary
+      open HardWithLists
+      stronger-P : ∀ Δ γ Γ → P (Δ ++ Γ) → P (Δ ++ γ ∷ Γ)
+      stronger-P [] γ [] x = s0 [] γ x
+      stronger-P (d ∷ Δ) γ [] x = transport P {!!} (s0 (d ∷ Δ ++ []) γ x)
+      stronger-P Δ γ (x₁ ∷ Γ) x = s* Δ x₁ γ Γ (transport P {!!} (stronger-P (Δ ++ [ x₁ ]) γ Γ (transport P {!!} x)))
 ```
 
 The above would maybe work if only Agda knew a few equivalences, such as d ∷ (Δ ++ []) ++ [ γ ] ≡ d ∷ Δ ++ [ γ ]. That should be relatively easy, as it is orthogonal to `P`. Did we even need the stronger induction hypothesis? (I think we did.)
 
+##### McBride's approach to weakening
+
+Boy oh boy was the above tough. I am astonished that McBride has found a solution in just a few lines.
+
+```agda
+  -- Ren Γ Δ = Γ ⊆ Δ ; subsetting of contexts
+  Ren : Cx ⋆ → Cx ⋆ → Set
+  Ren Γ Δ = ∀ {τ} → τ ∈ Γ → τ ∈ Δ
+
+  -- wkr = Γ ⊆ Δ → Γ,σ ⊆ Δ,σ ; subsetting invariance under one-at-a-time prefixing
+  wkr : ∀ {Γ Δ σ} → Ren Γ Δ → Ren (Γ ,, σ) (Δ ,, σ)
+  wkr r zero = zero
+  wkr r (suc i) = suc (r i)
+
+  -- Γ <>< Ξ = Γ,Ξ
+  _<><_ : Cx ⋆ → List ⋆ → Cx ⋆
+  xz <>< [] = xz
+  xz <>< (x ∷ xs) = xz ,, x <>< xs
+  infixl 4 _<><_
+
+  -- weak = Γ ⊆ Γ,Ξ ; subsetting identity?
+  weak : ∀ {Γ} Ξ → Ren Γ (Γ <>< Ξ)
+  weak [] i = i
+  weak (_ ∷ Ξ) i = weak Ξ (suc i)
+
+  -- Sub Γ Δ = Δ ≼ Γ ; subproperty relation ; Δ makes as least as many claims as Γ ; theories of Γ are at least as strong (or stronger) as Δ.
+  -- Δ ⊢ Γ
+  Sub : Cx ⋆ → Cx ⋆ → Set
+  Sub Γ Δ = ∀ {τ} → τ ∈ Γ → Δ ⊢ τ
+
+  -- Shub Γ Δ = ∀ Ξ . Δ,Ξ ≼ Γ,Ξ ; Δ ⋆≼⋆ Γ
+  -- Δ ⊢Ξ Γ
+  Shub : Cx ⋆ → Cx ⋆ → Set
+  Shub Γ Δ = ∀ Ξ → Sub (Γ <>< Ξ) (Δ <>< Ξ)
+
+  -- ren = Γ ⊆ Δ → Δ ⋆≼⋆ Γ
+  -- Γ ⊆ Δ → Δ ⊢Ξ Γ
+  ren : ∀ {Γ Δ} → Ren Γ Δ → Shub Γ Δ
+  ren r [] = var ∘ r
+  ren r (_ ∷ Ξ) = ren (wkr r) Ξ
+
+  -- θ //   -- Δ ⋆≼⋆ Γ → Δ ≼ Γ
+  -- Δ ⊢Ξ Γ → Δ ≼ Γ
+  _//_ : ∀ {Γ Δ} (θ : Shub Γ Δ) {τ} → Γ ⊢ τ → Δ ⊢ τ
+  θ // var i = θ [] i
+  θ // lam t = lam ((θ ∘ _∷_ _) // t)
+  θ // app f s = app (θ // f) (θ // s)
+```
+
+So, we obtain:
+
+```agda
+  module McBrideWeakening where
+    weaken⊢ : ∀ {Γ τ δ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
+    weaken⊢ {Γ} {τ} {δ} Γ⊢τ = ren (weak (δ ∷ [])) // Γ⊢τ
+```
+
+The furthest I will go with reverse-engineering this is to say:
+
+```agda
+    weaken⊢₁ : ∀ {Γ τ δ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
+    weaken⊢₁ = ren suc //_
+```
+
+Here is the general form of McBride's weakening theorem:
+
+```agda
+    weaken⊢⋆ : ∀ {Γ τ Ξ} → Γ ⊢ τ → Γ <>< Ξ ⊢ τ
+    weaken⊢⋆ {Ξ = Ξ} = ren (weak Ξ) //_
+```
+
+I wonder if the ease with which McBride solved this problem comes down to the difference in our functions for expanding contexts. That is, my adder `_+++_` vs his fish `_<><_`. Here is a go at proving the above `swaplemma` with the friendly fish.
+
+```agda
+  module FishesForSnakes where
+    swaplemma : ∀ {Γ δ₁ δ₂ τ} Δ → τ ∈ (Γ ,, δ₁ ,, δ₂) <>< Δ → τ ∈ (Γ ,, δ₂ ,, δ₁) <>< Δ
+    swaplemma [] zero = suc zero
+    swaplemma [] (suc zero) = zero
+    swaplemma [] (suc (suc i)) = suc (suc i)
+    swaplemma {Γ} {δ₁} {δ₂} {τ} (δ ∷ Δ) i = {!!} -- I get stuck here
+```
+
+At the point where I get stuck, my instinct is to write a function that decides membership in a list,
+
+  _∈L?_ : ∀ τ Δ → Dec (τ ∈ ε <>< Δ)
+
+and then another that shows that membership is stable under suffixing:
+
+  stable : ∀ τ Γ Δ → τ ∈ ε <>< Δ → τ ∈ Γ <>< Δ
+
+...and as I keep thinking about this I realise there are more and more functions I will need. Maybe the trouble is that I am approaching the problem as a matter of how to make a deduction or make an argument that something is so, rather than... well, something else ... I have the intuition that it would be something "more constructive", in a way. This reminds me of what it's like to learn to use mathematical induction, except in some way this is harder for the very fact that I can see an alternative solution (or anyway, I have a mirage of a simple solution, which turns out to be a monster).
+
+Trying another idea... Suppose I had tried a stronger version of the weakening theorem. To start, here's the weak one:
+
+```agda
+  module FishesForSnakes-2 where
+    weaken-weak : ∀ {Γ δ τ} → Γ ⊢ τ → Γ ,, δ ⊢ τ
+    weaken-weak (var i) = var (suc i)
+    weaken-weak (lam Γ,σ⊢τ) = lam {!!} -- I get stuck here
+    weaken-weak (app x x₁) = {!!}
+```
+
+The goal is Γ,δ,σ⊢τ and I'm given Γ,σ⊢τ. I'm unable to use weaken-weak to prove this, but if I had a stronger theorem capable of proving that Γ,δ,σ⊢τ given Γ,σ⊢τ, then it might work out.
+
+```agda
+    ∈-lemma : ∀ {Γ Δ Ξ τ} → τ ∈ Γ <>< Δ → τ ∈ Γ <>< Ξ <>< Δ
+    ∈-lemma = {!!}
+
+    weaken-stronger : ∀ {Γ Δ Ξ τ} → Γ <>< Δ ⊢ τ → Γ <>< Ξ <>< Δ ⊢ τ
+    weaken-stronger {Γ} {Δ} {[]} ΓΔ⊢τ = ΓΔ⊢τ
+    weaken-stronger {ε} {[]} {ξ ∷ Ξ} (var ())
+    weaken-stronger {ε} {[]} {ξ ∷ Ξ} (lam {σ = σ} ΓΔ⊢τ) = lam (weaken-stronger {ε ,, ξ} {σ ∷ []} {Ξ} (weaken-stronger {ε} {σ ∷ []} {ξ ∷ []} ΓΔ⊢τ))
+    weaken-stronger {ε} {[]} {ξ ∷ Ξ} {τ} (app {σ} ΓΔ⊢σ▶τ ΓΔ⊢σ) = app {Γ = ε ,, ξ <>< Ξ} {σ = σ} (weaken-stronger {ε} {[]} {ξ ∷ Ξ} {σ ▶ τ} ΓΔ⊢σ▶τ) (weaken-stronger {ε} {[]} {ξ ∷ Ξ} {σ} ΓΔ⊢σ)
+    weaken-stronger {Γ ,, γ} {[]} {ξ ∷ Ξ} (var x) = var (∈-lemma {Γ ,, γ} {[]} {ξ ∷ Ξ} x) where
+    weaken-stronger {Γ ,, γ} {[]} {ξ ∷ Ξ} (lam ΓΔ⊢τ) = lam (weaken-stronger {Γ ,, γ} {_ ∷ []} {ξ ∷ Ξ} ΓΔ⊢τ)
+    weaken-stronger {Γ ,, γ} {[]} {ξ ∷ Ξ} (app ΓΔ⊢τ ΓΔ⊢τ₁) = {!!}
+    weaken-stronger {Γ} {δ ∷ Δ} {ξ ∷ Ξ} (var x) = var (∈-lemma {Γ} {δ ∷ Δ} {ξ ∷ Ξ} x)
+    weaken-stronger {ε} {δ ∷ Δ} {ξ ∷ Ξ} (lam {σ} ΓΔ⊢τ) = lam {!!}
+    weaken-stronger {Γ ,, γ} {δ ∷ Δ} {ξ ∷ Ξ} (lam {σ} ΓΔ⊢τ) = lam {!weaken-stronger {Γ ,, γ} {ε ,, δ} {ξ ∷ Ξ}!} -- I get stuck here
+    -- ((ε ,, δ) <>< Δ) ,, σ
+    weaken-stronger {Γ} {δ ∷ Δ} {ξ ∷ Ξ} (app ΓΔ⊢τ ΓΔ⊢τ₁) = {!!}
+```
+
+Where I get stuck, I would need to append a σ to the end of Δ, which is what the `lam` adds to the context, but I can't without adding another level of recursion, because Δ is a list. How about adding yet another condition to the theorem, making it even stronger?
+
+```agda
+    even-stronger : ∀ Γ Δ Ξ Ψ τ → Γ <>< Δ ⊢ τ → Γ <>< Ξ <>< Δ <>< Ψ ⊢ τ
+    even-stronger Γ Δ Ξ Ψ τ (var x) = {!!}
+    even-stronger Γ Δ Ξ [] .(_ ▶ _) (lam x) = lam {!!}
+    even-stronger Γ Δ Ξ (ψ ∷ Ψ) .(_ ▶ _) (lam {σ} x) = lam {!!} -- stuck here
+    even-stronger Γ Δ Ξ Ψ τ (app x x₁) = {!!}
+```
+
+Nope, the problem again is that the thing I want to add to the part in the Δ position is to be added to the end of the list.
+
+In my search for how I could have come up with McBride's solution on my own, I now return to the idea of (S2). Roughly speaking, I want to state that, given Γ ⊢ τ, and any Δ such that Γ ⊆ Δ, Δ ⊢ τ. For the weakening theorem, in particular, I would want to prove that Γ ⊆ Γ ,, δ. When I first had the notion of S2, I did not consider that I could state "⊆" with something like McBride's "Ren". A couple of paths to take:
+
+(P1) What did I have in mind to say "⊆"? And would that have worked?
+
+(P2) How would I state (S2) in McBride's terms?
+
+Starting with latter, the stronger statement S2 would be:
+
+```agda
+  module StrongerAlaMcBride where
+    S2 : ∀ Γ Δ → (∀ τ → τ ∈ Γ → τ ∈ Δ) → ∀ {τ} → Γ ⊢ τ → Δ ⊢ τ
+    S2 Γ Δ Γ⊆Δ (var τ∈Γ) = var (Γ⊆Δ _ τ∈Γ)
+    S2 Γ Δ Γ⊆Δ {.(σ ▶ τ)} (lam {σ} {τ} Γσ⊢τ) =
+      let Δσ⊢τ : Δ ,, σ ⊢ τ
+          Δσ⊢τ = S2 (Γ ,, σ) (Δ ,, σ) (λ t t∈Γσ → case t∈Γσ of λ { zero → zero ; (suc t∈Γ) → suc (Γ⊆Δ _ t∈Γ)}) Γσ⊢τ
+      in lam Δσ⊢τ
+    S2 Γ Δ Γ⊆Δ {.τ} (app {σ} {τ} Γ⊢σ▶τ Γ⊢σ) =
+      let Δ⊢σ▶τ : Δ ⊢ σ ▶ τ
+          Δ⊢σ▶τ = S2 Γ Δ Γ⊆Δ Γ⊢σ▶τ
+          Δ⊢σ : Δ ⊢ σ
+          Δ⊢σ = S2 Γ Δ Γ⊆Δ Γ⊢σ
+      in app Δ⊢σ▶τ Δ⊢σ
+```
+
+Well that was easy. A solution in three (long) lines. Maybe the `case_of_` counts as an extra two lines, so five lines. That leads me to think of another path to take:
+
+(P2a) How would I refine the `StrongerAlaMcBride` solution to be more elegant? How close does this come to McBride's solution?
+
+Continuing directly,
+
+```agda
+    infix 3 _⊆_
+    _⊆_ : Cx ⋆ → Cx ⋆ → Set
+    Γ ⊆ Δ = ∀ {τ} → τ ∈ Γ → τ ∈ Δ
+
+    wk⊆ : ∀ {Γ Δ} → Γ ⊆ Δ → ∀ {σ} → Γ ,, σ ⊆ Δ ,, σ
+    wk⊆ Γ⊆Δ zero = zero
+    wk⊆ Γ⊆Δ (suc τ∈Γ) = suc (Γ⊆Δ τ∈Γ)
+
+    infix 3 _≽_
+    _≽_ : Cx ⋆ → Cx ⋆ → Set
+    Γ ≽ Δ = ∀ {τ} → Γ ⊢ τ → Δ ⊢ τ
+
+    wk⊢ : ∀ {Γ Δ} → Γ ⊆ Δ → Γ ≽ Δ
+    wk⊢ Γ⊆Δ (var τ∈Γ) = var (Γ⊆Δ τ∈Γ)
+    wk⊢ Γ⊆Δ (lam Γσ⊢τ) = lam (wk⊢ (wk⊆ Γ⊆Δ) Γσ⊢τ)
+    wk⊢ Γ⊆Δ (app Γ⊢σ▶τ Γ⊢σ) = app (wk⊢ Γ⊆Δ Γ⊢σ▶τ) (wk⊢ Γ⊆Δ Γ⊢σ)
+
+    wk⊢₁ : ∀ {Γ δ} → Γ ≽ Γ ,, δ
+    wk⊢₁ = wk⊢ suc
+```
+
+* It's interesting that `_∈_.suc` can be read as a kind of weakening: Γ ⊆ Γ ,, δ.
+
+In the above refinement, the subsetting notion `_⊆_` amounts to McBride's notion of renaming `Ren`, whereas the subproperty notion `_≽_` doesn't correspond to particular named notion in his work. Perhaps I will discover why certain other ideas (e.g. substitution) were introduced later on.
+
+Returning to (P1), my idea had been to consider all arrangements of supersets of a context. I would have built a data structure describing this notion in the following manner.
+
+Assume M and N are natural numbers, M ≤ N. Assume Ξ is any ordered sequence of M - N elements. Let the length of Γ be M and the length of Δ (as desired) be N. Consider all functions f : Fin M → Fin N such that f x = f y only if x = y. Construct a quasi-inverse f⁻¹ : Fin N → Maybe (Fin M) such that . Let Δ₀ be empty. Let Ξ₀ = Ξ. We can construct Δ in N steps. At step n, if f (n - 1) = nothing, let Δₙ = Δₙ₋₁ ,, ξ, where ξ is the first element of Ξₙ₋₁, and let Ξₙ be the remainder. But if f (n - 1) = just γ, then let Δₙ = Δₙ₋₁ ,, γ and let Ξₙ = Ξₙ₋₁. Finally, declare Δ = Δ_N.
+
+I will now try to translate that somehow into real constructive mathematics.
+
+[snip]
+
+Actually, no, trying to do that directly gets hairy.
+
+Another approach I might consider would be to consider all surjective functions from Fin N to Maybe (Fin M).
+
+```agda
+{-
+  IsSurjective : ∀ {A B} → (A → B) → Set
+  IsSurjective f = ∀ y → ∃ λ x → f x ≡ y
+
+  Vx = Cx , but with an index for length
+
+  BuildΔ : ∀ {N M} → (Σ (Fin N → Maybe (Fin M)) IsSurjective) → Vx ⋆ M → Vx ⋆ (M - N) → Vx ⋆ N
+  BuildΔ = ?
+
+  data ConstructSurjective : ∀ {N M} → (Σ (Fin N → Maybe (Fin M)) IsSurjective) → Set where
+-}
+```
+
+```agda
+{-
+  module StrongerAlaMe where
+    LCx : Cx ⋆ → Nat
+    LCx = ?
+
+    Injective : Nat → Nat → Set
+    Injective M N = Σ (Fin M → Fin N) λ f → ∀ {x} → f x ≡ f y → x ≡ y
+
+    data Inverse
+
+    constructΔ : (Γ : Fin M → ⋆) (Ξ : Fin M-N → ⋆) → Cx ⋆
+
+    M N : Nat
+    _ : M ≤ N
+    Γ : Cx ⋆
+    _ : LCx Γ ≡ M
+    Ξ : Vec ⋆ (M-N)
+    f : Fin M → Fin N
+
+    _ : ∀ {x} → f x ≡ f y → x ≡ y
+
+
+
+    data ConstructionOfΔ (Γ : Cx ⋆) {M} (_ : LCx Γ ≡ M) ( :
+
+    data Inj {M N : Nat}
+    infix 3 _⊆_
+    data _⊆_ : Cx ⋆ → Cx ⋆ → Set where
+      zz : ε ⊆ ε
+      zs : ∀ {Γ Δ δ} → Γ ⊆ Δ → Γ ⊆ Δ ,, δ
+      ss : ∀ {Γ Δ δ} → Γ ⊆ Δ → Γ ,, δ ⊆ Δ ,, δ
+-}
+```
+
+In a previous attempt at swaplemma, I said I got stuck, but was I really? I didn't try induction on Γ. I'll try again and see if I can therefore find a stronger version of a lemma.
+
+```
+    swaplemma : ∀ {Γ δ₁ δ₂ τ} Δ → τ ∈ (Γ ,, δ₁ ,, δ₂) <>< Δ → τ ∈ (Γ ,, δ₂ ,, δ₁) <>< Δ
+    swaplemma [] zero = suc zero
+    swaplemma [] (suc zero) = zero
+    swaplemma [] (suc (suc i)) = suc (suc i)
+    swaplemma {Γ} {δ₁} {δ₂} {τ} (δ ∷ Δ) i = {!!} -- I get stuck here
+```
 
 
 #### Chapter 3
