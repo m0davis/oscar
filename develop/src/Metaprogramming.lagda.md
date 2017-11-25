@@ -1538,6 +1538,102 @@ module ExperimentWithCustomMeta where
 -}
 ```
 
+#### Trying again, but turning parameters into indices
+
+This will hopefully solve the problem with termination. Related agda issue: #2527
+
+```agda
+module IndexedAllTheWay where
+  open Preliminary-Experiment
+
+  module _
+    (Target : Nat → Set)
+    where
+
+    data FunctionBinders
+
+      : (N : Nat) {#FA : Nat} → Vec Nat #FA → Set where
+      [] : {N : Nat} → FunctionBinders N []
+      _∷_ : ∀ {N : Nat} {#fa binding} {bindings : Vec Nat #fa}
+          → Target (binding + N)
+          → FunctionBinders N bindings
+          → FunctionBinders N (binding ∷ bindings)
+
+    Variable : Set
+    Variable = {N : Nat} → Fin N → Target N
+
+    infix 2 _↠_
+    record Function : Set where
+      constructor _↠_
+      field
+        {#FA} : Nat
+        binding : Vec Nat #FA
+        function : {N : Nat} → FunctionBinders N binding → Target N
+
+    record NatModel : Set where
+      field
+        vari : Variable
+        {#F} : Nat
+        funs : Vec Function #F
+      getFunction : Fin #F → Function
+      getFunction #f = indexVec funs #f
+
+    module _ (m : NatModel) where
+
+      data AsData : (N : Nat) → Set
+      data AsBound : (N : Nat) → {#arity : Nat} → Vec Nat #arity → Set
+
+      data AsData {-(N : Nat)-} where
+        var : {N : Nat} → Fin N → AsData N
+        uni : {N : Nat} → Nat → AsData N
+        fun : {N : Nat} → (#f : Fin (NatModel.#F m))
+            → (let thefun = NatModel.getFunction m #f)
+            → (let #fa = Function.#FA thefun)
+            → (let binding = Function.binding thefun)
+            → AsBound N binding
+            → AsData N
+
+      data AsBound {-(N : Nat)-} where
+        [] : {N : Nat} → AsBound N []
+        _∷_ : {N : Nat} → ∀ {n binding} → AsData (binding + N) → {bindings : Vec Nat n} → AsBound N bindings → AsBound N (binding ∷ bindings)
+
+      weakenTargetByFrom : (by : Nat) {N : Nat} → (from : Fin (suc N)) → AsData N → AsData (by + N)
+      weakenBindingsByFrom : {#fa : Nat} (binding : Vec Nat #fa) → (by : Nat)  {N : Nat} → (from : Fin (suc N)) → AsBound N binding → AsBound (by + N) binding
+
+      weakenTargetByFrom by from (var x) = var (wkFinByFrom by from x)
+      weakenTargetByFrom by from (uni x) = uni x
+      weakenTargetByFrom by from (fun z x) = fun z (weakenBindingsByFrom _ by from x)
+
+      weakenBindingsByFrom [] by from x = []
+      weakenBindingsByFrom (binding ∷ bindings) by {N} from (d ∷ ib) =
+        let
+          from' : Fin (suc (binding + N))
+          from' = transport Fin auto $ wkFinByFrom binding zero from
+        in (transport AsData auto $ weakenTargetByFrom by from' d) ∷ weakenBindingsByFrom _ by from ib
+
+      {-# TERMINATING #-}
+      instantiateVariableAt : ∀ {N} → Fin (suc N) → AsData N → AsData (suc N) → AsData N
+      instantiateBindingsAt : ∀ {N} → Fin (suc N) → {#fa : Nat} {binding : Vec Nat #fa}
+        → AsData N
+        → AsBound (suc N) binding
+        → AsBound N binding
+
+      instantiateVariableAt at ρ (var x) with at == x
+      ... | yes _ = ρ
+      ... | no at≢x = var (sbFin at≢x)
+      instantiateVariableAt at ρ (uni x) = uni x
+      instantiateVariableAt at ρ (fun #f x) = fun #f (instantiateBindingsAt at ρ x)
+
+      instantiateBindingsAt at {binding = []} ρ b = []
+      instantiateBindingsAt at {binding = binding ∷ bindings} ρ (d ∷ ibs) = instantiateVariableAt (transport Fin auto (wkFinByFrom binding zero at)) (weakenTargetByFrom binding zero ρ) (transport AsData auto d) ∷ instantiateBindingsAt at ρ ibs
+```
+
+Well, it doesn't solve it. So, on to debugging: the following will try to replicate the problem in simplified form.
+
+```agda
+module SimplifiedTerminationProblem where
+```
+
 #### just some scribbles
 
 ```agda
