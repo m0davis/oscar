@@ -1260,3 +1260,526 @@ module DependentlyTypedMetaprogramming-Chapter6 where
 ### The Metaprogrammatic "softcore" Solution to the `Hardcore.Alphabet` problem
 
 (this section not yet written)
+
+### Some more experiments and scribblings
+
+#### A fresh "Preliminary"
+
+```agda
+module Preliminary-Experiment where
+
+  open import Prelude public
+  open import Tactic.Nat public
+
+  add-zero : ∀ n → n ≡ n +N 0
+  add-zero zero = refl
+  add-zero (suc n) = cong suc (add-zero n)
+
+  add-suc : ∀ n m → n +N suc m ≡ suc n +N m
+  add-suc zero m = refl
+  add-suc (suc n) m = cong suc (add-suc n m)
+
+  ∃_ : ∀ {a b} {A : Set a} (B : A → Set b) → Set (a ⊔ b)
+  ∃_ = Σ _
+
+  record _▷_ (I J : Set) : Set₁ where
+    constructor _◁_$_
+    field
+      ShIx : J → Set
+      PoIx : (j : J) → ShIx j → Set
+      riIx : (j : J) (s : ShIx j) → PoIx j s → I
+    ⟦_⟧ᵢ : (I → Set) → J → Set
+    ⟦_⟧ᵢ X j = Σ (ShIx j) λ s → (p : PoIx j s) → X (riIx j s p)
+  open _▷_ public using (⟦_⟧ᵢ)
+
+  wkFinFrom : ∀ {N} → Fin (suc N) → Fin N → Fin (suc N)
+  wkFinFrom zero x = suc x
+  wkFinFrom (suc from) zero = zero
+  wkFinFrom (suc from) (suc x) = suc (wkFinFrom from x)
+
+  wkFinByFrom : ∀ {N} (by : Nat) → Fin (suc N) → Fin N → Fin (by + N)
+  wkFinByFrom zero from x = x
+  wkFinByFrom (suc by) from x = transport Fin (add-suc by _) (wkFinByFrom by (suc from) (wkFinFrom from x))
+
+
+  -- eliminate an occurrence of iₓ within iᵥ, shifting down everything above iₓ
+  -- given a (v : var iₓ), returns the index of v[iᵥ/iₓ]
+  sbFin : ∀ {N} {iₓ iᵥ : Fin (suc N)} → (iₓ ≡ iᵥ → ⊥) → Fin N
+  sbFin         {iₓ = zero  } {zero}   z≢z     = ⊥-elim (z≢z refl)
+  sbFin         {iₓ = zero  } {suc iᵥ} _       = iᵥ
+  sbFin {zero}  {     suc ()} {zero}   _
+  sbFin {suc N} {     suc iₓ} {zero}   _       = zero
+  sbFin {zero}  {     suc ()} {suc iᵥ} _
+  sbFin {suc N} {     suc iₓ} {suc iᵥ} siₓ≢siᵥ = suc (sbFin {iₓ = iₓ} {iᵥ} λ {refl → siₓ≢siᵥ refl})
+
+  _⟶̇_ : ∀ {k l} {I : Set k} → (I → Set l) → (I → Set l) → Set (l ⊔ k)
+  X ⟶̇ Y = ∀ i → X i → Y i
+
+  ixMap : ∀ {I J} {C : I ▷ J} {X Y} → (X ⟶̇ Y) → ⟦ C ⟧ᵢ X ⟶̇ ⟦ C ⟧ᵢ Y
+  ixMap f j xs = fst xs , f _ ∘ snd xs
+
+  data ITree {J : Set} (C : J ▷ J) (j : J) : Set where
+    ⟨_⟩ : ⟦ C ⟧ᵢ (ITree C) j → ITree C j
+
+  data Desc {l} (I : Set l) : Set (lsuc l) where
+    var : I → Desc I
+    σ π : (A : Set l) (D : A → Desc I) → Desc I
+    _×ᴰ_ : Desc I → Desc I → Desc I
+    κ : Set l → Desc I
+  infixr 4 _×ᴰ_
+
+  ⟦_⟧ᴰ : ∀ {l} {I : Set l} → Desc I → (I → Set l) → Set l
+  ⟦ var i ⟧ᴰ X = X i
+  ⟦ σ A D ⟧ᴰ X = Σ A λ a → ⟦ D a ⟧ᴰ X
+  ⟦ π A D ⟧ᴰ X = (a : A) → ⟦ D a ⟧ᴰ X
+  ⟦ D ×ᴰ E ⟧ᴰ X = ⟦ D ⟧ᴰ X × ⟦ E ⟧ᴰ X
+  ⟦ κ A ⟧ᴰ X = A
+
+  data Data {l} {J : Set l} (F : J → Desc J) (j : J) : Set l where
+    ⟨_⟩ : ⟦ F j ⟧ᴰ (Data F) → Data F j
+```
+
+#### A go at trying to solve the problem "from scratch" with some custom meta-programming
+
+It turns out I still have a problem with proving termination, even with a vastly different approach.
+
+```agda
+module ExperimentWithCustomMeta where
+  open Preliminary-Experiment
+
+  -- the thing I want to model
+  data MyTerm (N : Nat) : Set where
+    var : Fin N → MyTerm N -- there can be only one of these (Variable)
+    universe : Nat → MyTerm N -- there can be only one of these (Universe)
+    -- here are a few of these (Function)
+    ΠF : MyTerm N → MyTerm (suc N) → MyTerm N
+    ΠI : MyTerm (suc N) → MyTerm N
+    ΠE : MyTerm N → MyTerm N → MyTerm N
+    -- ... and there are possibly many other such constructors
+
+  data FunctionBinders
+    (Nat' : Set) (add' : Nat' → Nat' → Nat') -- a monoid
+    (Target : Nat' → Set) -- indexed by the monoid
+    (N : Nat') -- current index
+    : {#FA : Nat} → Vec Nat' #FA → Set where
+    [] : FunctionBinders Nat' add' Target N []
+    _∷_ : ∀ {#fa binding} {bindings : Vec Nat' #fa}
+        → Target (add' binding N)
+        → FunctionBinders Nat' add' Target N bindings
+        → FunctionBinders Nat' add' Target N (binding ∷ bindings)
+
+  module _
+    (Target : Nat → Set)
+    where
+
+    Variable : Set
+    Variable = {N : Nat} → Fin N → Target N
+
+    Universe : Set
+    Universe = {N : Nat} → Nat → Target N
+
+    infix 2 _↠_
+    record Function : Set where
+      constructor _↠_
+      field
+        {#FA} : Nat
+        binding : Vec Nat #FA
+        function : {N : Nat} → FunctionBinders Nat _+_ Target N binding → Target N
+
+    infix 1 _/_∣_
+    record NatModel : Set where
+      constructor _/_∣_
+      field
+        vari : Variable
+        univ : Universe
+        {#F} : Nat
+        funs : Vec Function #F
+      getFunction : Fin #F → Function
+      getFunction #f = indexVec funs #f
+
+
+    data AsData (m : NatModel) (N : Nat) : Set
+    data AsBound (m : NatModel) (N : Nat) : {#arity : Nat} → Vec Nat #arity → Set
+
+    data AsData (m : NatModel) (N : Nat) where
+      var : Fin N → AsData m N
+      uni : Nat → AsData m N
+      fun : (#f : Fin (NatModel.#F m))
+          → (let thefun = NatModel.getFunction m #f)
+          → (let #fa = Function.#FA thefun)
+          → (let binding = Function.binding thefun)
+          → AsBound m N binding -- interpretBindings (AsData m) binding N
+          → AsData m N
+
+    data AsBound (m : NatModel) (N : Nat) where
+      [] : AsBound m N []
+      _∷_ : ∀ {n binding} → AsData m (binding + N) → {bindings : Vec Nat n} → AsBound m N bindings → AsBound m N (binding ∷ bindings)
+
+{-
+    interpretBindings :
+      (X : Nat → Set)
+      {#fa : Nat}
+      (binding : Vec Nat #fa)
+      (N : Nat)
+      → Set
+    interpretBindings X [] _ = ⊤
+    interpretBindings X (binding ∷ bindings) N = X (binding + N) × interpretBindings X bindings N
+-}
+{-
+    data AsData (m : NatModel) (N : Nat) : Set where
+      var : Fin N → AsData m N
+      uni : Nat → AsData m N
+      fun : (#f : Fin (NatModel.#F m))
+          → (let thefun = NatModel.getFunction m #f)
+          → (let #fa = Function.#FA thefun)
+          → (let binding = Function.binding thefun)
+          → interpretBindings (AsData m) binding N
+          → AsData m N
+-}
+    realiseData : (m : NatModel) {N : Nat} → AsData m N → Target N
+    realiseFunctionBinders : ∀ {N} (m : NatModel)
+                               {#FA : Nat} (binding : Vec Nat #FA) →
+                             AsBound m N binding →
+                             FunctionBinders Nat _+_ Target N binding
+
+    realiseData (vari / univ ∣ funs) (var x) = vari x
+    realiseData (vari / univ ∣ funs) (uni x) = univ x
+    realiseData m@(vari / univ ∣ funs) (fun #f x) = Function.function (indexVec funs #f) (realiseFunctionBinders m (indexVec funs #f .Function.binding) x)
+
+    realiseFunctionBinders (vari / univ ∣ funs) [] x = []
+    realiseFunctionBinders m (binding ∷ bindings) (d ∷ x) = realiseData m d ∷ realiseFunctionBinders m bindings x
+
+    weakenTargetByFrom : (m : NatModel) → (by : Nat) {N : Nat} → (from : Fin (suc N)) → AsData m N → AsData m (by + N)
+    weakenBindingsByFrom : (m : NatModel) {#fa : Nat} (binding : Vec Nat #fa) → (by : Nat)  {N : Nat} → (from : Fin (suc N)) → AsBound m N binding → AsBound m (by + N) binding
+
+    weakenTargetByFrom (vari / univ ∣ funs) by from (var x) = var (wkFinByFrom by from x)
+    weakenTargetByFrom (vari / univ ∣ funs) by from (uni x) = uni x
+    weakenTargetByFrom m@(vari / univ ∣ funs) by from (fun z x) = fun z (weakenBindingsByFrom m _ by from x)
+
+    weakenBindingsByFrom m [] by from x = []
+    weakenBindingsByFrom m (binding ∷ bindings) by {N} from (d ∷ ib) =
+      let
+        from' : Fin (suc (binding + N))
+        from' = transport Fin auto $ wkFinByFrom binding zero from
+      in (transport (AsData m) auto $ weakenTargetByFrom m by from' d) ∷ weakenBindingsByFrom m _ by from ib
+
+    {-# TERMINATING #-}
+    instantiateVariableAt : (m : NatModel)
+      → ∀ {N} → Fin (suc N) → AsData m N → AsData m (suc N) → AsData m N
+    instantiateBindingsAt : (m : NatModel)
+      → ∀ {N} → Fin (suc N) → {#fa : Nat} {binding : Vec Nat #fa}
+      → AsData m N
+      → AsBound m (suc N) binding
+      → AsBound m N binding
+
+
+    instantiateVariableAt m at ρ (var x) with at == x
+    ... | yes _ = ρ
+    ... | no at≢x = var (sbFin at≢x)
+    instantiateVariableAt m at ρ (uni x) = uni x
+    instantiateVariableAt m at ρ (fun #f x) = fun #f (instantiateBindingsAt m at ρ x)
+
+    instantiateBindingsAt m at {binding = []} ρ b = []
+    instantiateBindingsAt m at {binding = binding ∷ bindings} ρ (d ∷ ibs) = instantiateVariableAt m (transport Fin auto (wkFinByFrom binding zero at)) (weakenTargetByFrom m binding zero ρ) (transport (AsData m) auto d) ∷ instantiateBindingsAt m at ρ ibs
+
+    cVar : NatModel → {N : Nat} → Fin N → Target N
+    cVar = NatModel.vari
+
+    -- data InhabitantOfNatModel : Set where
+
+  modeled : NatModel MyTerm
+  modeled =
+    var /
+    universe ∣
+    (0 ∷ 1 ∷ [] ↠ λ { (x₁ ∷ x₂ ∷ []) → ΠF x₁ x₂}) ∷
+    (    1 ∷ [] ↠ λ { (x₁ ∷      []) → ΠI x₁   }) ∷
+    (0 ∷ 0 ∷ [] ↠ λ { (x₁ ∷ x₂ ∷ []) → ΠE x₁ x₂}) ∷
+    []
+
+  test1 : AsData MyTerm modeled 3
+  test1 = fun 0 (uni 27 ∷ fun 0 (var 1 ∷ var 3 ∷ []) ∷ [])
+
+  test1-weakened : AsData MyTerm modeled 4
+  test1-weakened = weakenTargetByFrom MyTerm modeled 1 1 test1
+
+  realised : MyTerm _
+  realised = realiseData MyTerm modeled test1-weakened
+
+  substituted : AsData MyTerm modeled 3
+  substituted = instantiateVariableAt MyTerm modeled 0 test1 test1-weakened
+
+  data Grammar : Set where
+    variable : Grammar
+    universe : Grammar
+    term : ∀ {arity} → Vec Nat arity → Grammar
+
+{-
+  recursor : (Languages : List LANGUAGE) → Nat → (Nat → Set) → Set
+  recursor' : (Languages : List Nat) → Nat → (Nat → Set) → Set
+-}
+{-
+  recursor [] N X = ⊤
+  recursor (universe ∷ Languages) N X = Either Nat (recursor Languages N X)
+  recursor (variable ∷ Languages) N X = Either (Fin N) (recursor Languages N X)
+  recursor (term bs ∷ Languages) N X = Either (recursor' bs N X) (recursor Languages N X)
+
+  recursor' [] N X = ⊤
+  recursor' (b ∷ bs) N X = X (b + N) × recursor' bs N X
+
+  data TERM (Languages : List LANGUAGE) (N : Nat) : Set where
+    recurse : recursor Languages N (TERM Languages) → TERM Languages N
+
+  wkTERM : {Languages : List LANGUAGE} {N : Nat} → (by : Nat) (from : Fin (suc N)) → TERM Languages N → TERM Languages (by + N)
+  wkTERM {[]} by from (recurse x) = recurse x
+  wkTERM {universe ∷ Languages} by from (recurse (left x)) = recurse (left x)
+  wkTERM {universe ∷ Languages} by from (recurse (right x)) = wkTERM by from {!!}
+  wkTERM {variable ∷ Languages} by from (recurse x) = {!!}
+  wkTERM {term x₁ ∷ Languages} by from (recurse x) = {!!}
+-}
+```
+
+#### just some scribbles
+
+```agda
+module Outline2 where
+  open Preliminary-Experiment
+
+  #Binder = Nat
+  #FV = Nat
+
+  data Grammar : Set where
+    universe variable : Grammar
+    function : ∀ {N} → Vec #Binder N → Grammar
+
+  Language : Set₁
+  Language = Grammar → Set
+
+  Symbol : Language → Set
+  Symbol l = Σ Grammar l
+
+  Context = Nat
+```
+
+How to talk about variables?
+
+() ⊢ ΠF (𝒰 ℓ) (𝓋 0) is valid because 0 refers to a variable in context (in this case, it's the one bound by ΠF's first component.
+
+(x : Anything) ⊢ ΠF (𝒰 ℓ) (𝓋 1) is valid because 1 refers to the variable x.
+
+I want to perform operations on well-scoped terms involving variables, such as weakening and substitution, *and* be guaranteed that ... what? It's easy enough to guarantee that the terms are well-scoped, if we parameterise by the number of contextual elements. When we weaken a term τ by prefixing one place to it, we want if Γ ⊢ τ, then Γ , σ ⊢ τ. for some context Γ : Context N
+
+Perhaps we want to say
+
+weaken :
+  Γ ⊢ τ ∶ Τ → Γ ,,  ⊢
+
+τ : WellScopedInContextOfSize N
+------------------------------------------------------
+wk τ : WellScopedInContextOfSize (suc N)
+
+τ : WellScopedInContextOfSize (suc N)    ρ : WellScopedInContextOfSize N    n : Nat< N
+---------------------------------------------------------------------------------------
+sub ρ n τ : WellScopedInContextOfSize N
+
+i.e. build up WellScoped N similar to Term N but by including renaming and substitution as constructors.
+
+But then we need a way to convert WellScoped N to Term N, with some guarantee about it being done correctly.
+
+#### scribbling about variables
+
+```agda
+module Scratch2 where
+  open Preliminary-Experiment
+  data Cx : Set where
+    ε : Cx
+    _,,_ : Cx → Nat → Cx
+  infixl 5 _,,_
+  infix 3 _∈_
+  data _∈_ (τ : Nat) : Cx → Set where
+    zero : ∀ {Γ} → τ ∈ Γ ,, τ
+    suc : ∀ {Γ σ} → τ ∈ Γ → τ ∈ Γ ,, σ
+  infix 3 _⊢_
+  data _⊢_ (Γ : Cx) : Nat → Set where
+    var : ∀ {τ} → τ ∈ Γ → Γ ⊢ τ
+    -- lam : ∀ {σ τ} → Γ ,, suc τ ⊢ τ → Γ ⊢ τ -- ????????
+```
+
+#### A go at using indexed containers to solve the problem, but finding an issue with termination
+
+```agda
+module Outline where
+  open Preliminary-Experiment
+
+  #Binder = Nat
+  #FV = Nat
+
+  data Grammar : Set where
+    universe variable : Grammar
+    term : ∀ {N} → Vec #Binder N → Grammar
+
+  Symbol : Set₁
+  Symbol = Grammar → Set
+
+  Letter : Symbol → Set
+  Letter symbol = Σ Grammar symbol
+
+  Clause : Symbol → Set
+  Clause symbol = Letter symbol × #FV
+
+  data Universe : Set where
+    ⋆ : Universe
+    ↑ : Universe → Universe
+
+  termD : {S : Symbol} → Clause S → Desc (Clause S)
+  termD ((universe , 𝓊) , #fv) = κ Universe
+  termD ((variable , 𝓋) , #fv) = κ (Fin #fv)
+  termD {S} ((term {#arity} binders , 𝓉) , #fv) = σ (Vec (∃ S) #arity) λ s → π (Fin #arity) λ p → var (indexVec s p , indexVec binders p + #fv)
+
+  termC : (S : Symbol) → Clause S ▷ Clause S
+
+  termC _ ._▷_.ShIx ((universe        , _) , _  ) = Universe
+  termC _ ._▷_.ShIx ((variable        , _) , #fv) = Fin #fv
+  termC S ._▷_.ShIx ((term {#arity} _ , _) , _  ) = Vec (∃ S) #arity
+
+  termC _ ._▷_.PoIx ((universe        , _) , _  ) _ = ⊥
+  termC _ ._▷_.PoIx ((variable        , _) , _  ) _ = ⊥
+  termC _ ._▷_.PoIx ((term {#arity} _ , _) , _  ) _ = Fin #arity
+
+  termC _ ._▷_.riIx ((universe        , _) , _  ) _   ()
+  termC _ ._▷_.riIx ((variable        , _) , _  ) _   ()
+  termC _ ._▷_.riIx ((term binders    , y) , #fv) gys i  = indexVec gys i , indexVec binders i + #fv
+
+  wkFin : ∀ {N} → Fin N → Fin (suc N)
+  wkFin = suc
+
+  wkClause : {S : Symbol} → Clause S → Clause S
+  wkClause (gy , #fv) = gy , 1 + #fv
+
+  wkClauseBy : {S : Symbol} → Nat → Clause S → Clause S
+  wkClauseBy by (gy , #fv) = gy , by + #fv
+
+  wkITermByFrom : {S : Symbol} {c : Clause S} (by : Nat) (from : Fin (suc (snd c))) → ITree (termC S) c → ITree (termC S) (wkClauseBy by c)
+  wkITermByFrom {c = (universe , _) , _} _ _ ⟨ ℓ , _ ⟩ = ⟨ ℓ , (λ ()) ⟩
+  wkITermByFrom {c = (variable , s) , #fv} by from ⟨ v , _ ⟩ = ⟨ wkFinByFrom by from v , (λ ()) ⟩
+  wkITermByFrom {c = (term binders , s) , #fv} by from ⟨ gys , r ⟩ = ⟨ gys , (λ p → transport (λ z → ITree (termC _) (indexVec gys p , z)) auto (wkITermByFrom by (transport Fin (add-suc (indexVec binders p) #fv) (wkFinByFrom (indexVec binders p) zero from)) (r p))) ⟩
+
+  Term : Symbol → #FV → Set
+  Term S #fv = Σ (Letter S) λ l → ITree (termC S) (l , #fv)
+
+  wkTermByFrom : {S : Symbol} {#fv : #FV} (by : Nat) (from : Fin (suc #fv)) → Term S #fv → Term S (by + #fv)
+  wkTermByFrom by from (l , τ) = l , wkITermByFrom by from τ
+
+  wkTerm : {S : Symbol} {#fv : #FV} → Term S #fv → Term S (suc #fv)
+  wkTerm t = wkTermByFrom 1 0 t
+
+  module SampleTest where -- to see that we can convert the indexed representation back to a "normal" form
+
+    data SampleSymbol : Symbol where
+      𝒰 : SampleSymbol universe
+      𝓋 : SampleSymbol variable
+      Π : SampleSymbol (term (0 ∷ 1 ∷ []))
+
+    sampleTermD : Data (termD {SampleSymbol}) ((_ , Π) , 1)
+    sampleTermD = ⟨ (_ , 𝓋) ∷ (_ , 𝓋) ∷ [] , (λ { zero → ⟨ 0 ⟩ ; (suc zero) → ⟨ 0 ⟩ ; (suc (suc ()))}) ⟩
+
+    sampleTerm : Term SampleSymbol 1
+    sampleTerm = (_ , Π) , ⟨ (_ , 𝓋) ∷ (_ , 𝓋) ∷ [] , (λ { zero → ⟨ 0 , (λ ()) ⟩ ; (suc zero) → ⟨ 1 , (λ ()) ⟩ ; (suc (suc ()))}) ⟩
+
+    sampleWeaken : Term SampleSymbol 3
+    sampleWeaken = wkTerm (wkTerm sampleTerm)
+
+    data SampleReal (#fv : #FV) : Set where
+      𝒰 : Universe → SampleReal #fv
+      𝓋 : Fin #fv → SampleReal #fv
+      Π : SampleReal #fv → SampleReal (suc #fv) → SampleReal #fv
+
+    normalise' : ∀ {#fv : #FV} → (π : Σ Grammar SampleSymbol) → ITree (termC SampleSymbol) (π , #fv) → SampleReal #fv
+    normalise' (universe , _) ⟨ ℓ , _ ⟩ = 𝒰 ℓ
+    normalise' (variable , _) ⟨ v , _ ⟩ = 𝓋 v
+    normalise' (term .(0 ∷ 1 ∷ []) , Π) ⟨ π₁ ∷ π₂ ∷ [] , r ⟩ = Π (normalise' π₁ (r zero)) ((normalise' π₂ (r (suc zero))))
+
+    normalise : ∀ {#fv : #FV} → Term SampleSymbol #fv → SampleReal #fv
+    normalise (g , y) = normalise' g y
+
+    test : normalise sampleWeaken ≡ Π (𝓋 (suc (suc zero))) (𝓋 (suc (suc (suc zero))))
+    test = refl
+
+{-
+  substitution
+
+  given N is a number of free variables, substitute the variable v (from 0 to N - 1) in the right-hand term (which has N + 1 free variables) for the left-hand term (which has N free variables) resulting in a term having N free variables.
+-}
+
+  module _ {S : Symbol} where
+
+    sbLetter : ∀ {#fv : #FV}
+               → (σₗ : Letter S)
+               → Fin (suc #fv)
+               → (τₗ : Letter S) → ITree (termC S) (τₗ , (suc #fv))
+               → Letter S
+    sbLetter σₗ iₓ (universe , 𝓊) _ = _ , 𝓊
+    sbLetter σₗ iₓ (variable , 𝓋) ⟨ iᵥ , _ ⟩ = ifYes iₓ == iᵥ then σₗ else (_ , 𝓋)
+    sbLetter σₗ iₓ (term binders , s) τ = _ , s
+
+    weakened-iₓ : ∀ {#fv} (binder : Nat) → Fin (suc #fv) → Fin (suc (binder + #fv))
+    weakened-iₓ binder iₓ = transport Fin auto (wkFinByFrom binder zero iₓ)
+
+    sbLetters : ∀ {#fv N} (σₗ : Σ Grammar S) →
+                Fin (suc #fv) →
+                (binders : Vec Nat N) (ls : Vec (Σ Grammar S) N) →
+                ((p : Fin N) →
+                 ITree (termC S) (indexVec ls p , indexVec binders p + suc #fv)) →
+                Vec (Σ Grammar S) N
+    sbLetters {#fv} σₗ iₓ binders ls r = tabulate λ p →
+      let binder = indexVec binders p
+          iₓ = weakened-iₓ binder iₓ
+          l = indexVec ls p
+          τ : ITree (termC S) (l , suc (indexVec binders p + #fv))
+          τ = transport (ITree (termC S) ∘ (l ,_)) auto (r p)
+      in
+        sbLetter σₗ iₓ l τ
+
+    {-# TERMINATING #-}
+    sbITreeIx : ∀ {#fv} (σₗ : Σ Grammar S) (σ : ITree (termC S) (σₗ , #fv))
+            (iₓ : Fin (suc #fv)) → ∀ {N}
+            (binders : Vec Nat N) (ls : Vec (Σ Grammar S) N)
+            (r
+             : (p : Fin N) →
+               ITree (termC S) (indexVec ls p , indexVec binders p + suc #fv))
+            (p : Fin N)
+          → ITree (termC S)
+                  ( indexVec (sbLetters σₗ iₓ binders ls r) p
+                  , indexVec binders p + #fv)
+    sbITree : ∀ {#fv} (s : Σ Grammar S) →
+              ITree (termC S) (s , #fv) →
+              (iₓ : Fin (suc #fv)) (t : Σ Grammar S)
+              (τ : ITree (termC S) (t , suc #fv)) →
+              ITree (termC S) (sbLetter s iₓ t τ , #fv)
+
+    sbITree 𝑠ₗ 𝑠 iₓ (universe , 𝓊) ⟨ ℓ , _ ⟩ = ⟨ ℓ , (λ ()) ⟩
+    sbITree 𝑠ₗ 𝑠 iₓ (variable , 𝓋) ⟨ iᵥ , _ ⟩ with iₓ == iᵥ
+    ... | yes refl = 𝑠
+    ... | no iₓ≢iᵥ = ⟨ sbFin iₓ≢iᵥ , (λ ()) ⟩
+    sbITree 𝑠ₗ 𝑠 iₓ (term binders , 𝓉) ⟨ ls , r ⟩ = ⟨ sbLetters 𝑠ₗ iₓ binders ls r , sbITreeIx 𝑠ₗ 𝑠 iₓ binders ls r ⟩
+
+    sbITreeIx 𝑠ₗ 𝑠 iₓ [] ls r ()
+    sbITreeIx {#fv} 𝑠ₗ 𝑠 iₓ (binder ∷ _) (l ∷ ls) r zero =
+      let 𝑠 = wkITermByFrom binder zero 𝑠
+          iₓ : Fin (suc (binder + #fv))
+          iₓ = transport Fin auto (wkFinByFrom binder zero iₓ)
+          τ : ITree (termC S) (l , suc (binder + #fv))
+          τ = transport (ITree (termC S) ∘ (l ,_)) auto (r zero)
+          -- l = sbLetter 𝑠ₗ iₓ l τ
+      in
+       sbITree 𝑠ₗ 𝑠 iₓ l τ
+    sbITreeIx 𝑠ₗ 𝑠 iₓ (_ ∷ binders) (_ ∷ ls) r (suc p) = sbITreeIx 𝑠ₗ 𝑠 iₓ binders ls (r ∘ suc) p
+
+    sbTerm : ∀ {#fv : #FV}
+             → Term S #fv -- the substituted thing, 𝑠
+             → Fin (suc #fv) -- which variable it replaces, x
+             → Term S (suc #fv) -- the term in which to do the replacement, τ
+             → Term S #fv -- the term after substitution, τ[𝑠/x]
+    sbTerm (𝑠ₗ , 𝑠) iₓ (τₗ , τ) = sbLetter 𝑠ₗ iₓ τₗ τ , sbITree 𝑠ₗ 𝑠 iₓ τₗ τ
+```
+
+Substitution in Petersson-Synek trees is hard. Let's try with `Desc`.
