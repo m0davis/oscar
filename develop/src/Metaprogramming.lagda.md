@@ -2178,4 +2178,4 @@ module Outline where
     sbTerm (𝑠ₗ , 𝑠) iₓ (τₗ , τ) = sbLetter 𝑠ₗ iₓ τₗ τ , sbITree 𝑠ₗ 𝑠 iₓ τₗ τ
 ```
 
-Substitution in Petersson-Synek trees is hard. Let's try with `Desc`.
+Substitution in Petersson-Synek trees is hard. Let's try with `Desc`. ... actually, that works no better. The trouble has to do with not being able to convince Agda's termination checker.
