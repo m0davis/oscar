@@ -1632,6 +1632,306 @@ Well, it doesn't solve it. So, on to debugging: the following will try to replic
 
 ```agda
 module SimplifiedTerminationProblem where
+  open Preliminary-Experiment
+
+  module _
+    (Target : Nat → Set)
+    where
+
+    data FunctionBinders
+
+      : (N : Nat) (#FA : Nat) → Set where
+      [] : {N : Nat} → FunctionBinders N 0
+      _∷_ : ∀ {N : Nat} {#fa}
+          → Target N
+          → FunctionBinders N #fa
+          → FunctionBinders N (suc #fa)
+
+    Variable : Set
+    Variable = {N : Nat} → Fin N → Target N
+
+    infix 2 _↠_
+    record Function : Set where
+      constructor _↠_
+      field
+        #FA : Nat
+        function : {N : Nat} → FunctionBinders N #FA → Target N
+
+    record NatModel : Set where
+      field
+        vari : Variable
+        {#F} : Nat
+        funs : Vec Function #F
+      getFunction : Fin #F → Function
+      getFunction #f = indexVec funs #f
+
+    module _ (m : NatModel) where
+
+      data AsData : (N : Nat) → Set
+      data AsBound : (N : Nat) → (#arity : Nat) → Set
+
+      data AsData where
+        var : {N : Nat} → Fin N → AsData N
+        uni : {N : Nat} → Nat → AsData N
+        fun : {N : Nat} → (#f : Fin (NatModel.#F m))
+            → (let thefun = NatModel.getFunction m #f)
+            → (let #fa = Function.#FA thefun)
+            → AsBound N #fa
+            → AsData N
+
+      data AsBound where
+        [] : {N : Nat} → AsBound N 0
+        _∷_ : {N : Nat} → ∀ {n} → AsData N → AsBound N n → AsBound N (suc n)
+
+      postulate
+        weakenTargetByFrom : {N : Nat} → (from : Fin (suc N)) → AsData N → AsData N
+
+      {-# TERMINATING #-}
+      instantiateVariableAt : ∀ {N} → Fin (suc N) → AsData N → AsData (suc N) → AsData N
+      instantiateBindingsAt : ∀ {N} → Fin (suc N) → {#fa : Nat}
+        → AsData N
+        → AsBound (suc N) #fa
+        → AsBound N #fa
+
+      instantiateVariableAt at ρ (var x) with at == x
+      ... | yes _ = ρ
+      ... | no at≢x = var (sbFin at≢x)
+      instantiateVariableAt at ρ (uni x) = uni x
+      instantiateVariableAt at ρ (fun #f x) = fun #f (instantiateBindingsAt at ρ x)
+
+      instantiateBindingsAt at {0} ρ b = []
+      instantiateBindingsAt at {suc n} ρ (d ∷ ibs) = instantiateVariableAt ((wkFinByFrom zero zero at)) (weakenTargetByFrom zero ρ)
+        (transport AsData refl d) -- change this to `d` and there is no termination problem
+        ∷ instantiateBindingsAt at ρ ibs
+```
+
+From the above, I see that the use of `transport` is causing the termination check to fail.
+
+The next step goes back to the version where I used indexes instead of parameters and tries to fix the problem by using rewrite instead of transport.
+
+```agda
+module RewriteInsteadOfTransport where
+  open Preliminary-Experiment
+
+  module _
+    (Target : Nat → Set)
+    where
+
+    data FunctionBinders
+
+      : (N : Nat) {#FA : Nat} → Vec Nat #FA → Set where
+      [] : {N : Nat} → FunctionBinders N []
+      _∷_ : ∀ {N : Nat} {#fa binding} {bindings : Vec Nat #fa}
+          → Target (binding + N)
+          → FunctionBinders N bindings
+          → FunctionBinders N (binding ∷ bindings)
+
+    Variable : Set
+    Variable = {N : Nat} → Fin N → Target N
+
+    infix 2 _↠_
+    record Function : Set where
+      constructor _↠_
+      field
+        {#FA} : Nat
+        binding : Vec Nat #FA
+        function : {N : Nat} → FunctionBinders N binding → Target N
+
+    record NatModel : Set where
+      field
+        vari : Variable
+        {#F} : Nat
+        funs : Vec Function #F
+      getFunction : Fin #F → Function
+      getFunction #f = indexVec funs #f
+
+    module _ (m : NatModel) where
+
+      data AsData : (N : Nat) → Set
+      data AsBound : (N : Nat) → {#arity : Nat} → Vec Nat #arity → Set
+
+      data AsData {-(N : Nat)-} where
+        var : {N : Nat} → Fin N → AsData N
+        uni : {N : Nat} → Nat → AsData N
+        fun : {N : Nat} → (#f : Fin (NatModel.#F m))
+            → (let thefun = NatModel.getFunction m #f)
+            → (let #fa = Function.#FA thefun)
+            → (let binding = Function.binding thefun)
+            → AsBound N binding
+            → AsData N
+
+      data AsBound {-(N : Nat)-} where
+        [] : {N : Nat} → AsBound N []
+        _∷_ : {N : Nat} → ∀ {n binding} → AsData (binding + N) → {bindings : Vec Nat n} → AsBound N bindings → AsBound N (binding ∷ bindings)
+
+      weakenTargetByFrom : (by : Nat) {N : Nat} → (from : Fin (suc N)) → AsData N → AsData (by + N)
+      weakenBindingsByFrom : {#fa : Nat} (binding : Vec Nat #fa) → (by : Nat)  {N : Nat} → (from : Fin (suc N)) → AsBound N binding → AsBound (by + N) binding
+
+      weakenTargetByFrom by from (var x) = var (wkFinByFrom by from x)
+      weakenTargetByFrom by from (uni x) = uni x
+      weakenTargetByFrom by from (fun z x) = fun z (weakenBindingsByFrom _ by from x)
+
+      weakenBindingsByFrom [] by from x = []
+      weakenBindingsByFrom (binding ∷ bindings) by {N} from (d ∷ ib) =
+        let
+          from' : Fin (suc (binding + N))
+          from' = transport Fin auto $ wkFinByFrom binding zero from
+        in (transport AsData auto $ weakenTargetByFrom by from' d) ∷ weakenBindingsByFrom _ by from ib
+
+      instantiateVariableAt : ∀ {N} → Fin (suc N) → AsData N → AsData (suc N) → AsData N
+      instantiateBindingsAt : ∀ {N} → Fin (suc N) → {#fa : Nat} {binding : Vec Nat #fa}
+        → AsData N
+        → AsBound (suc N) binding
+        → AsBound N binding
+
+      instantiateVariableAt at ρ (var x) with at == x
+      ... | yes _ = ρ
+      ... | no at≢x = var (sbFin at≢x)
+      instantiateVariableAt at ρ (uni x) = uni x
+      instantiateVariableAt at ρ (fun #f x) = fun #f (instantiateBindingsAt at ρ x)
+
+      instantiateBindingsAt at {binding = []} ρ b = []
+      instantiateBindingsAt {N} at {binding = binding ∷ bindings} ρ (d ∷ ibs) rewrite (auto ofType binding + suc N ≡ suc (binding + N)) = instantiateVariableAt (transport Fin auto (wkFinByFrom binding zero at)) (weakenTargetByFrom binding zero ρ) d ∷ instantiateBindingsAt at ρ ibs
+```
+
+Yup, that fixes it. Now, back to the parameterised version.
+
+```agda
+module ParameterisedWithRewrite where
+  open Preliminary-Experiment
+
+  -- the thing I want to model
+  data MyTerm (N : Nat) : Set where
+    var : Fin N → MyTerm N -- there can be only one of these (Variable)
+    universe : Nat → MyTerm N -- there can be only one of these (Universe)
+    -- here are a few of these (Function)
+    ΠF : MyTerm N → MyTerm (suc N) → MyTerm N
+    ΠI : MyTerm (suc N) → MyTerm N
+    ΠE : MyTerm N → MyTerm N → MyTerm N
+    -- ... and there are possibly many other such constructors
+
+  data FunctionBinders
+    (Nat' : Set) (add' : Nat' → Nat' → Nat') -- a monoid
+    (Target : Nat' → Set) -- indexed by the monoid
+    (N : Nat') -- current index
+    : {#FA : Nat} → Vec Nat' #FA → Set where
+    [] : FunctionBinders Nat' add' Target N []
+    _∷_ : ∀ {#fa binding} {bindings : Vec Nat' #fa}
+        → Target (add' binding N)
+        → FunctionBinders Nat' add' Target N bindings
+        → FunctionBinders Nat' add' Target N (binding ∷ bindings)
+
+  module _
+    (Target : Nat → Set)
+    where
+
+    Variable : Set
+    Variable = {N : Nat} → Fin N → Target N
+
+    Universe : Set
+    Universe = {N : Nat} → Nat → Target N
+
+    infix 2 _↠_
+    record Function : Set where
+      constructor _↠_
+      field
+        {#FA} : Nat
+        binding : Vec Nat #FA
+        function : {N : Nat} → FunctionBinders Nat _+_ Target N binding → Target N
+
+    infix 1 _/_∣_
+    record NatModel : Set where
+      constructor _/_∣_
+      field
+        vari : Variable
+        univ : Universe
+        {#F} : Nat
+        funs : Vec Function #F
+      getFunction : Fin #F → Function
+      getFunction #f = indexVec funs #f
+
+    data AsData (m : NatModel) (N : Nat) : Set
+    data AsBound (m : NatModel) (N : Nat) : {#arity : Nat} → Vec Nat #arity → Set
+
+    data AsData (m : NatModel) (N : Nat) where
+      var : Fin N → AsData m N
+      uni : Nat → AsData m N
+      fun : (#f : Fin (NatModel.#F m))
+          → (let thefun = NatModel.getFunction m #f)
+          → (let #fa = Function.#FA thefun)
+          → (let binding = Function.binding thefun)
+          → AsBound m N binding
+          → AsData m N
+
+    data AsBound (m : NatModel) (N : Nat) where
+      [] : AsBound m N []
+      _∷_ : ∀ {n binding} → AsData m (binding + N) → {bindings : Vec Nat n} → AsBound m N bindings → AsBound m N (binding ∷ bindings)
+
+    realiseData : (m : NatModel) {N : Nat} → AsData m N → Target N
+    realiseFunctionBinders : ∀ {N} (m : NatModel)
+                               {#FA : Nat} (binding : Vec Nat #FA) →
+                             AsBound m N binding →
+                             FunctionBinders Nat _+_ Target N binding
+
+    realiseData (vari / univ ∣ funs) (var x) = vari x
+    realiseData (vari / univ ∣ funs) (uni x) = univ x
+    realiseData m@(vari / univ ∣ funs) (fun #f x) = Function.function (indexVec funs #f) (realiseFunctionBinders m (indexVec funs #f .Function.binding) x)
+
+    realiseFunctionBinders (vari / univ ∣ funs) [] x = []
+    realiseFunctionBinders m (binding ∷ bindings) (d ∷ x) = realiseData m d ∷ realiseFunctionBinders m bindings x
+
+    weakenTargetByFrom : (m : NatModel) → (by : Nat) {N : Nat} → (from : Fin (suc N)) → AsData m N → AsData m (by + N)
+    weakenBindingsByFrom : (m : NatModel) {#fa : Nat} (binding : Vec Nat #fa) → (by : Nat)  {N : Nat} → (from : Fin (suc N)) → AsBound m N binding → AsBound m (by + N) binding
+
+    weakenTargetByFrom (vari / univ ∣ funs) by from (var x) = var (wkFinByFrom by from x)
+    weakenTargetByFrom (vari / univ ∣ funs) by from (uni x) = uni x
+    weakenTargetByFrom m@(vari / univ ∣ funs) by from (fun z x) = fun z (weakenBindingsByFrom m _ by from x)
+
+    weakenBindingsByFrom m [] by from x = []
+    weakenBindingsByFrom m (binding ∷ bindings) by {N} from (d ∷ ib) =
+      let
+        from' : Fin (suc (binding + N))
+        from' = transport Fin auto $ wkFinByFrom binding zero from
+      in (transport (AsData m) auto $ weakenTargetByFrom m by from' d) ∷ weakenBindingsByFrom m _ by from ib
+
+    instantiateVariableAt : (m : NatModel)
+      → ∀ {N} → Fin (suc N) → AsData m N → AsData m (suc N) → AsData m N
+    instantiateBindingsAt : (m : NatModel)
+      → ∀ {N} → Fin (suc N) → {#fa : Nat} {binding : Vec Nat #fa}
+      → AsData m N
+      → AsBound m (suc N) binding
+      → AsBound m N binding
+
+
+    instantiateVariableAt m at ρ (var x) with at == x
+    ... | yes _ = ρ
+    ... | no at≢x = var (sbFin at≢x)
+    instantiateVariableAt m at ρ (uni x) = uni x
+    instantiateVariableAt m at ρ (fun #f x) = fun #f (instantiateBindingsAt m at ρ x)
+
+    instantiateBindingsAt m at {binding = []} ρ b = []
+    instantiateBindingsAt m {N} at {binding = binding ∷ bindings} ρ (d ∷ ibs) rewrite (auto ofType binding + suc N ≡ suc (binding + N)) = instantiateVariableAt m (transport Fin auto (wkFinByFrom binding zero at)) (weakenTargetByFrom m binding zero ρ) d ∷ instantiateBindingsAt m at ρ ibs
+
+  modeled : NatModel MyTerm
+  modeled =
+    var /
+    universe ∣
+    (0 ∷ 1 ∷ [] ↠ λ { (x₁ ∷ x₂ ∷ []) → ΠF x₁ x₂}) ∷
+    (    1 ∷ [] ↠ λ { (x₁ ∷      []) → ΠI x₁   }) ∷
+    (0 ∷ 0 ∷ [] ↠ λ { (x₁ ∷ x₂ ∷ []) → ΠE x₁ x₂}) ∷
+    []
+
+  test1 : AsData MyTerm modeled 3
+  test1 = fun 0 (uni 27 ∷ fun 0 (var 1 ∷ var 3 ∷ []) ∷ [])
+
+  test1-weakened : AsData MyTerm modeled 4
+  test1-weakened = weakenTargetByFrom MyTerm modeled 1 1 test1
+
+  realised : MyTerm _
+  realised = realiseData MyTerm modeled test1-weakened
+
+  substituted : AsData MyTerm modeled 3
+  substituted = instantiateVariableAt MyTerm modeled 0 test1 test1-weakened
 ```
 
 #### just some scribbles
