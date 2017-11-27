@@ -221,3 +221,5 @@ module Trivially,Weaker⇒Stronger
   Alphabet record { # = # } .Stronger.Alphabet.# = 0
   Alphabet record { functions = functions } .Stronger.Alphabet.functions = []
 ```
+
+The construction of `Weaker⇒Stronger.Alphabet` is *equivalent* (in some sense) to its input, whereas its trivial counterpart is not.
