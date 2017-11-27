@@ -1,11 +1,16 @@
 
+(There is some unsolved business herein.)
+
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
 # Alphabet: models of term-like languages
 
 ```agda
 module Alphabet where
 ```
 
-I characterise term-like languages and prove that a certain model is isomorphic to a particular toy language. The resulting machinery turns out to be insufficient to describe weakening or substitution.
+I characterise term-like languages and show that a certain model is isomorphic to a particular toy language. The resulting machinery turns out to be insufficient to describe weakening or substitution.
 
 ```agda
 open import Prelude
@@ -131,7 +136,28 @@ In the model, I can construct arbitrary statements of `MyLanguage`, and, in `MyL
     alphabet-to-language = reifyTerm
 ```
 
+Such conversions are inverses of one another, and so characterise an isomorphism. The proof is a little tricky and I have not finished it. But here is an unfinished half-proof which suggests that a full proof is possible.
+
+```agda
+    language-to-language : ∀ {N} (l : MyLanguage N)
+                             (a : Term N) → language-to-alphabet l ≡ a →
+                             (l' : MyLanguage N) → alphabet-to-language a ≡ l' →
+                             l' ≡ l
+    language-to-language {.1} (υ (zero {zero})) .(υ zero) refl .(υ zero) refl = refl
+    language-to-language (υ (zero {suc zero})) _ refl _ refl = refl
+    language-to-language (υ (zero {suc (suc n)})) _ refl _ refl = {!!}
+    language-to-language (υ (suc {.1} (zero {zero}))) _ refl _ refl = refl
+    language-to-language (υ (suc {.(suc (suc n))} (zero {suc n}))) _ refl _ refl = {!!}
+    language-to-language (υ (suc {.(suc _)} (suc x))) _ refl _ refl = {!!}
+    language-to-language (κ x) .(κ x) refl .(κ x) refl = refl
+    language-to-language (ΠF l l₁) _ refl _ refl = cong₂ ΠF (language-to-language l _ refl _ refl) (language-to-language l₁ _ refl _ refl)
+    language-to-language (ΠI l) _ refl _ refl = cong ΠI (language-to-language l _ refl _ refl)
+    language-to-language (ΠE l l₁) _ refl _ refl = cong₂ ΠE (language-to-language l _ refl _ refl) (language-to-language l₁ _ refl _ refl)
+```
+
 # Further research
+
+The proof of isomorphism is straightforward and should be completed. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
 
 The concepts of contextual weakening or variable-for-term substitution are not expressible from an `Alphabet` because, at least in part, there is nothing in its type signature that allows one to characterise a position in the context from which to weaken or at which to substitute, nor is there a way to characterise the contextual reduction as a result of substitution.
 
