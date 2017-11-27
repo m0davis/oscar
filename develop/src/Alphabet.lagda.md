@@ -47,19 +47,64 @@ record Recon {I J : Set} (X : I → Set) (r : I → J → I) : Set where
 `Alphabet` describes the symbol-set that makes up a term-like language. Such a language must feature a symbol for variables and for constants, as well as some number of defined functions.
 
 ```agda
-record Alphabet {Γ Δ : Set}
-                (X : Γ → Set) -- terms, indexed by a context (an environment, as viewed from the outside)
-                (V : Δ → Set) -- variables, indexed as DeBruijn would have (an environment, as viewed from the inside)
-                (γ₀ : Γ) -- nullary context
-                (K : Set)
-                (r : Γ → Δ → Γ) -- addition to a context
-       : Set where
+record Alphabet
+```
+
+### Parameterisation
+
+`Γ` is intended to represent a context as viewed from the outside of the represented term, whereas `Δ` is similar but meant to be as viewed from the inside (like a DeBruijn index). In the toy model I have in mind, `Γ` would be a `Nat` representing the number of free variables in the term, and `Δ` would also be a `Nat` representing the number of variables available in the context at a given place within the term (that is, the bound variables).
+
+```agda
+  {Γ Δ : Set}
+```
+
+`X` is a family of terms, with members distinguished by the number of free variables, and `V` is a family of bound variables, with members distinguished by the size of the context.
+
+```agda
+  (X : Γ → Set)
+  (V : Δ → Set)
+```
+
+`γ₀` represents a nullary number of free variabes, so `X γ₀` is a closed term.
+
+```agda
+  (γ₀ : Γ)
+```
+
+The term-like language I model here has one constant symbol carrying a value as represented by `K`.
+
+```agda
+  (K : Set)
+```
+
+`r` represents the expansion of a context by additional bound variables.
+
+```agda
+  (r : Γ → Δ → Γ)
+```
+
+```agda
+  : Set where
+```
+
+### Manifestation
+
+```agda
   field
+```
+
+The model is populated by a `variable` and `constant` symbol, as well as a number of symbols for defined `functions`.
+
+```agda
     variable : ∀ {δ} → V δ → ∀ {γ} ⦃ _ : γ ≡ r γ₀ δ ⦄ → X γ
     constant : ∀ {γ} → K → X γ
     {#} : Nat
     functions : Vec (Recon X r) #
+```
 
+The model semantics demands that the terms be representable in a certain way according to the given symbols.
+
+```agda
   data Term (γ : Γ) : Set
   data Function (γ : Γ) : ∀ {#} → Vec Δ # → Set
 
