@@ -65,16 +65,16 @@ record Alphabet
   (V : Δ → Set)
 ```
 
-`γ₀` represents a nullary number of free variabes, so `X γ₀` is a closed term.
-
-```agda
-  (γ₀ : Γ)
-```
-
 The term-like language I model here has one constant symbol carrying a value as represented by `K`.
 
 ```agda
   (K : Set)
+```
+
+`γ₀` represents a nullary number of free variabes, so `X γ₀` is a closed term.
+
+```agda
+  (γ₀ : Γ)
 ```
 
 `r` represents the expansion of a context by additional bound variables.
@@ -153,7 +153,7 @@ Thus far, the above is enough to model a target language such as the following.
 Here is a model of `MyLanguage`:
 
 ```agda
-  myAlphabet : Alphabet MyLanguage Fin 0 Nat (flip _+_)
+  myAlphabet : Alphabet MyLanguage Fin Nat 0 (flip _+_)
   myAlphabet .Alphabet.variable v ⦃ refl ⦄ = υ (transport Fin auto v)
   myAlphabet .Alphabet.constant k = κ k
   myAlphabet .Alphabet.# = 3
@@ -239,7 +239,7 @@ A solution might include the addition of a position type, `Ψ : Γ → Set`, and
     : Set
     where
     field
-      alphabet : Alphabet X V γ₀ K r
+      alphabet : Alphabet X V K γ₀ r
     open Alphabet alphabet
 
     weakenTerm
