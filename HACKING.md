@@ -10,3 +10,5 @@ In addition to `master` branch, active development will proceed in `develop`. Th
 - bugfind--interactive-checked-error-2
 - develop--add-all-arguments-to-transitivity
 - develop--remove-transitivity-function-instances
+
+Comments in git commits shall usually begin with a [file-or-folder-name].
