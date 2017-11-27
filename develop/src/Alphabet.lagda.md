@@ -179,17 +179,39 @@ In the case of `MyLanguage`, such functions would be described as follows:
       → MyLanguage N
 ```
 
-<scribbling>
+A solution might include the addition of a position type, `Ψ : Γ → Set`, and a contextual expansion function, `↑ : Γ → Γ`. In the below, I add those and discover what else I might need.
 
-  module _ (Ψ : Γ → Set) -- Ψ γ is inhabited by a position in the context γ (a member of γ?)
-           {-
-           (s : Γ → Δ)
-           (vble : ∀ {γ} → X γ → Γ) -- expanding a context by a term
-           -}
+```agda
+  record SyntacticAlphabet
+    {Γ Δ : Set}
+    (X : Γ → Set)
+    (V : Δ → Set)
+    (γ₀ : Γ)
+    (K : Set)
+    (r : Γ → Δ → Γ)
+    (Ψ : Γ → Set)
+    (↑ : Γ → Γ)
+    : Set
     where
-    weakenTerm : (δ : Δ) {γ : Γ} (ψ : Ψ γ) → Term γ → Term (r γ δ)
-    weakenTerm δ {γ} ψ (υ {δ'} ⦃ ref ⦄ v) = υ {_} {{!s (r γ δ)!}} {{ {!!} }} {!weaken δ ψ v!}
-    weakenTerm δ ψ (κ k) = κ k
-    weakenTerm δ ψ (φ f Φ) = {!!}
+    field
+      alphabet : Alphabet X V γ₀ K r
+    open Alphabet alphabet
 
-</scribbling>
+    weakenTerm
+      : (δ : Δ)
+      → ∀ {γ} → Ψ γ
+      → Term γ
+      → Term (r γ δ)
+    weakenTerm δ {γ} ψ (υ {δ'} ⦃ refl ⦄ v) = υ {δ = {!weakenΔ δ' δ {-ofType Δ-}!}} ⦃ {!refl {-ofType r (r γ₀ δ') δ ≡ r γ₀ (weakenΔ δ' δ)-}!} ⦄ {!weakenV δ ψ v {-ofType V (weakenΔ δ' δ)-}!}
+    weakenTerm δ ψ (κ k) = κ k
+    weakenTerm δ {γ} ψ (φ f Φ) = φ f {!weakenFunction δ ψ (indexVec functions f .Recon.js) Φ!}
+
+    substituteTerm
+      : ∀ {γ} → Ψ γ
+      → Term γ
+      → Term (↑ γ)
+      → Term γ
+    substituteTerm {γ} ψ ρ τ@(υ {δ'} v) = {!substituteV ψ ρ v!} -- υ {δ = {!substituteΔ!}} ⦃ {!refl!} ⦄ {!substituteV ψ ρ v!}
+    substituteTerm ψ ρ (κ k) = κ k
+    substituteTerm ψ ρ (φ f Φ) = φ f {!substituteFunction ψ ρ (indexVec functions f .Recon.js) Φ!}
+```
