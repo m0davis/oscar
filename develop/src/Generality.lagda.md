@@ -222,4 +222,4 @@ module Trivially,Weaker⇒Stronger
   Alphabet record { functions = functions } .Stronger.Alphabet.functions = []
 ```
 
-The construction of `Weaker⇒Stronger.Alphabet` is *equivalent* (in some sense) to its input, whereas its trivial counterpart is not.
+The construction of `Weaker⇒Stronger.Alphabet` is *equivalent* (in some sense) to its input, whereas its trivial counterpart is not. I have an idea (not a new one) of how to spell this out: there is a 1-1 map between the inhabitants of Weaker.Alphabet and a subset of the inhabitants of Stronger.Alphabet; I conjecture that `Weaker⇒Stronger.Alphabet` can be proven to be 1-1 while its trivial counterpart can be proven not to be.
