@@ -181,7 +181,7 @@ In the model, I can construct arbitrary statements of `MyLanguage`, and, in `MyL
     alphabet-to-language = reifyTerm
 ```
 
-Such conversions are inverses of one another, and so characterise an isomorphism. Here is a messy half-proof.
+Such conversions are inverses of one another, and so characterise an isomorphism. Here is an unfinished proof.
 
 ```agda
     transportation-eq :
@@ -189,35 +189,25 @@ Such conversions are inverses of one another, and so characterise an isomorphism
       → transport B eq bx ≡ transport B eq' bx
     transportation-eq B refl refl bx = refl
 
-    transportation-drop : ∀ {a b} {A : Set a} (B : A → Set b) {x} → (eq : x ≡ x) → (bx : B x) → transport B eq bx ≡ bx
-    transportation-drop B refl bx = refl
-
-    varfact : ∀ {δ} → (vv : Fin δ) → ∀ {γ} ⦃ eq : γ ≡ _+_ δ 0 ⦄ → Σ _ λ z → variable vv ⦃ eq ⦄ ≡ υ z
-    varfact vv ⦃ eq ⦄ with variable vv ⦃ eq ⦄ | graphAt (λ z → variable z ⦃ eq ⦄) vv
-    varfact vv {{eq = refl}} | .(υ (transport Fin auto vv)) | ingraph refl = transport Fin auto vv , refl
-
-    inj-variable : ∀ {δ} → (vv : Fin δ) → ∀ {γ} ⦃ eq : γ ≡ _+_ δ 0 ⦄ → variable vv ⦃ eq ⦄ ≡ υ (transport Fin (trans auto (sym eq)) vv)
-    inj-variable vv ⦃ eq ⦄ with variable vv ⦃ eq ⦄ | graphAt (λ z → variable z ⦃ eq ⦄) vv
-    inj-variable vv {{eq = refl}} | .(υ (transport Fin auto vv)) | ingraph refl = cong υ (transportation-eq Fin auto (trans auto refl) vv)
-
-    v2v : ∀ N (x : Fin N) (an : _≡_ {lzero} {Nat} N (N + 0)) →
-          _≡_ {lzero} {MyLanguage N} (variable {N} x {N} {{an}}) (υ x)
-    v2v N x an with mkInstance an | transport (λ v → N ≡ v) an refl | graphAt (transport (λ v → N ≡ v) an) refl | variable {N} x {N} {{an}} | graphAt (λ v → variable {N} x {N} {{v}}) an | varfact x ⦃ an ⦄
-    v2v N x' an | ! {{x = x}} | .(transport {lzero} {lzero} {Nat} (_≡_ {lzero} {Nat} N) {N} {N + 0} an refl) | ingraph refl | .(myAlphabet .Alphabet.variable {N} x' {N} {{an}}) | ingraph refl | fst₁ , snd₁ rewrite snd₁ = trans (sym snd₁) (trans (inj-variable x' {{an}}) (cong υ (transportation-drop Fin (trans auto (sym an)) x')))
+    variable-alphabet-to-language : ∀ {δ} → (v : Fin δ) → ∀ {γ} ⦃ _ : γ ≡ _+_ δ 0 ⦄ (δ≡γ : δ ≡ γ) → variable v ≡ υ (transport Fin δ≡γ v)
+    variable-alphabet-to-language v ⦃ refl ⦄ δ≡γ = cong υ (transportation-eq Fin auto δ≡γ v)
 
     language-to-language : ∀ {N} (l : MyLanguage N) → alphabet-to-language (language-to-alphabet l) ≡ l
-    language-to-language l with language-to-alphabet l | graphAt language-to-alphabet l
-    language-to-language {N} (υ x) | (υ {δ} {{.auto}} .x) | ingraph refl with auto ofType N ≡ N + zero | graphAt (λ n → auto ofType n ≡ n + zero) N
-    language-to-language {N} (υ x) | (υ {δ} {{.auto}} .x) | ingraph refl | an | ingraph gat = v2v N x an
-    language-to-language {N} (κ _) | _ | ingraph refl = refl
-    language-to-language {N} (ΠF l₁ l₂) | _ | ingraph refl = cong₂ ΠF (language-to-language l₁) (language-to-language l₂)
-    language-to-language {N} (ΠI l₁) | _ | ingraph refl = cong ΠI (language-to-language l₁)
-    language-to-language {N} (ΠE l₁ l₂) | _ | ingraph refl = cong₂ ΠE (language-to-language l₁) (language-to-language l₂)
+    language-to-language (υ v)      = variable-alphabet-to-language v ⦃ auto ⦄ refl
+    language-to-language (κ _)      = refl
+    language-to-language (ΠF l₁ l₂) = cong₂ ΠF (language-to-language l₁) (language-to-language l₂)
+    language-to-language (ΠI l₁)    = cong  ΠI (language-to-language l₁)
+    language-to-language (ΠE l₁ l₂) = cong₂ ΠE (language-to-language l₁) (language-to-language l₂)
+
+    alphabet-to-alphabet : ∀ {N} (t : Term N) → language-to-alphabet (alphabet-to-language t) ≡ t
+    alphabet-to-alphabet (υ {δ} ⦃ refl ⦄ v) = {!!}
+    alphabet-to-alphabet (κ _) = refl
+    alphabet-to-alphabet (φ f Φ) = {!!}
 ```
 
 # Further research
 
-The (messy, half) proof of isomorphism should be cleaned-up and completed. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
+The proof of isomorphism should be finished. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
 
 The parameterisation `γ₀ : Γ` and `r : Γ → Δ → Γ` feels ad-hoc to me. `γ₀` is only used in combination with `r`, so a stronger parameterisation would discard `γ₀` but include `r` and `r₀ : Δ → Γ`, where `r₀ = r γ₀`.
 
