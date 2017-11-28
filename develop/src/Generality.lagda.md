@@ -225,3 +225,32 @@ module Trivially,Weaker⇒Stronger
 ```
 
 The construction of `Weaker⇒Stronger.Alphabet` is *equivalent* (in some sense) to its input, whereas its trivial counterpart is not. I have an idea (not a new one) of how to spell this out: there is a 1-1 map between the inhabitants of Weaker.Alphabet and a subset of the inhabitants of Stronger.Alphabet; I conjecture that `Weaker⇒Stronger.Alphabet` can be proven to be 1-1 while its trivial counterpart can be proven not to be.
+
+```agda
+module Weaker⇒Stronger-1-1
+  {Γ Δ : Set}
+  (X : Γ → Set)
+  (V : Δ → Set)
+  (K : Set)
+  (γ₀ : Γ)
+  (r : Γ → Δ → Γ)
+  where
+  open Weaker⇒Stronger X V K γ₀ r
+  W = Weaker.Alphabet X V K γ₀ r
+
+  1-1 : ∀ (w w' : W) → Alphabet w ≡ Alphabet w' → w ≡ w'
+  1-1 (variable Weaker.// constant // functions) (variable' Weaker.// constant' // functions') s≡s' rewrite cong Stronger.Alphabet.variable s≡s' | cong Stronger.Alphabet.constant s≡s' = {!!}
+  {- Goal: _≡_ {lzero} {Weaker.Alphabet {Γ} {Δ} X V K γ₀ r}
+           (Weaker._//_//_ variable' constant' {.#} functions)
+           (Weaker._//_//_ variable' constant' {.#₁} functions')
+     ————————————————————————————————————————————————————————————
+     ...
+     functions'
+               : Vec {lzero} (Weaker.Recon {Γ} {Δ} X r) .#₁
+     .#₁       : Nat
+     functions : Vec {lzero} (Weaker.Recon {Γ} {Δ} X r) .#
+     .#        : Nat
+     ...
+  -}
+  {- The trick of `rewrite`ing using `cong` does not work quite so easily when dependent variables are involved (in this case, the type of `functions` depends on `.#`. -}
+```
