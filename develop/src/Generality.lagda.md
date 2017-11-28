@@ -10,7 +10,7 @@ open import Prelude
 open import Tactic.Nat
 ```
 
-I had defined the following system and remarked:
+In a development of [Alphabet](Alphabet.lagda.md), I defined the following system and remarked:
 
 > The parameterisation `γ₀ : Γ` and `r : Γ → Δ → Γ` feels ad-hoc to me. `γ₀` is only used in combination with `r`, so a stronger parameterisation would discard `γ₀` but include `r` and `r₀ : Δ → Γ`, where `r₀ = r γ₀`.
 
@@ -254,3 +254,135 @@ module Weaker⇒Stronger-1-1
   -}
   {- The trick of `rewrite`ing using `cong` does not work quite so easily when dependent variables are involved (in this case, the type of `functions` depends on `.#`. -}
 ```
+
+In the same development later on, I continued to worry about ad-hoc-ness of the parameterisation:
+
+> Is there any gain to be had from having separate types `Γ` and `Δ`? Considering that both `variable` and `Term.υ` demand that `γ ≡ r₀ δ`, and that `r₀` is not used in any other way, I have my suspicions.
+
+I now explore whether this claim can be given further justification. To start, I define a new system where `Γ` and `Δ` are collapsed.
+
+```agda
+module Collapsed where
+
+  data IVec {I : Set} (X : I → Set) : ∀ {#} → Vec I # → Set where
+    [] : IVec X []
+    _∷_ : ∀ {i} → X i
+        → ∀ {#is} {is : Vec I #is} → IVec X is
+        → IVec X (i ∷ is)
+
+  record Recon {I J : Set} (X : I → Set) (r : I → J → I) : Set where
+    constructor _▶_
+    field
+      {#} : Nat
+      js : Vec J #
+      con : ∀ {i}
+          → IVec (X ∘ r i) js
+          → X i
+
+  record Alphabet
+    {Γ : Set}
+    (X : Γ → Set)
+    (V : Γ → Set)
+    (K : Set)
+    (r : Γ → Γ → Γ)
+    : Set where
+    constructor _//_//_
+    field
+      variable : ∀ {γ} → V γ → X γ
+      constant : ∀ {γ} → K → X γ
+      {#} : Nat
+      functions : Vec (Recon X r) #
+
+    data Term (γ : Γ) : Set
+    data Function (γ : Γ) : ∀ {#} → Vec Γ # → Set
+
+    data Term (γ : Γ) where
+      υ : V γ → Term γ
+      κ : K → Term γ
+      φ : (f : Fin #)
+        → Function γ (Recon.js (indexVec functions f))
+        → Term γ
+
+    data Function (γ : Γ) where
+      [] : Function γ []
+      _∷_ : ∀ {δ} → Term (r γ δ)
+          → ∀ {#δs} {δs : Vec Γ #δs} → Function γ δs
+          → Function γ (δ ∷ δs)
+
+    reifyTerm : ∀ {γ} → Term γ → X γ
+    reifyFunction : ∀ {γ} {#δs} {δs : Vec Γ #δs}
+               → Function γ δs
+               → IVec (X ∘ r γ) δs
+
+    reifyTerm (υ v) = variable v
+    reifyTerm (κ k) = constant k
+    reifyTerm (φ f Φ) = Recon.con (indexVec functions f) (reifyFunction Φ)
+    reifyFunction {δs = []} _ = []
+    reifyFunction {δs = δ ∷ δs} (τ ∷ Φ) = reifyTerm τ ∷ reifyFunction Φ
+```
+
+Next, a mapping from `Stronger.Alphabet` to `Collapsed.Alphabet`. The trouble is, it can't be done in a way that isn't obviously not 1-1. In `Stronger`, `X` and `V` are families indexed on two different types, whereas they are the same in `Collapsed`. We can account for this via the projection `r₀ : Δ → Γ` such that inhabitants of `Collapsed`'s `Γ` are no more than the inhabitants of `Stronger`'s `Δ`. However, when it comes to defining `r` in `Collapsed`, we need a way of projecting from two inhabitants of `Stronger`'s `Δ` back into `Stronger`'s `Δ`, but nothing from `Stronger` can help with that. The obvious candidate, `r`, projects into `Γ`. You can see my predicament here:
+
+```agda
+module Stronger⇒Collapsed
+  {Γ Δ : Set}
+  (X : Γ → Set)
+  (V : Δ → Set)
+  (K : Set)
+  (r₀ : Δ → Γ)
+  (r : Γ → Δ → Γ)
+  where
+  postulate
+    Alphabet : Stronger.Alphabet X V K r₀ r
+             → Collapsed.Alphabet (X ∘ r₀) V K (λ γ δ → {!!})
+```
+
+On the other hand, is there a 1-1 mapping from `Collapsed` to a subset of `Stronger`? This unfinished proof of a mapping (not necessarily 1-1) suggests to me that there is one.
+
+```agda
+module Collapsed⇒Stronger
+  {Γ : Set}
+  (X : Γ → Set)
+  (V : Γ → Set)
+  (K : Set)
+  (r : Γ → Γ → Γ)
+  where
+  Alphabet : Collapsed.Alphabet X V K r
+           → Stronger.Alphabet X V K id r
+  Alphabet (Collapsed._//_//_ variable constant {#} functions) .Stronger.Alphabet.variable v ⦃ refl ⦄ = variable v
+  Alphabet (Collapsed._//_//_ variable constant {#} functions) .Stronger.Alphabet.constant = constant
+  Alphabet (Collapsed._//_//_ variable constant {#} functions) .Stronger.Alphabet.# = #
+  Alphabet (Collapsed._//_//_ variable constant {zero} []) .Stronger.Alphabet.functions = []
+  Alphabet (Collapsed._//_//_ variable constant {suc #} (function ∷ functions)) .Stronger.Alphabet.functions = {!function!} ∷ {!!}
+```
+
+Given the above, I reverse my previous suspicion that there was nothing to be gained from having separate types `Γ` and `Δ`. The obvious question is, what have we gained?
+
+In the failed attempt to map `Stronger` to `Collapsed`, I could have gone further had if there had been an available mapping `collapse : Γ → Δ`. Certainly if `Δ = ⊥` and `Γ` is any inhabited type, there would be no such mapping. Suppose we have it then that, for some constant R,
+
+    Δ = ⊥
+    Γ = Nat
+    X = λ γ → Fin γ
+    V = λ _ → Nat
+    r₀ = λ _ → R
+    r = λ γ _ → suc γ
+
+What sort of `Alphabet` could this be? Recall our model of `variable` constructors:
+
+    variable : ∀ {δ} → V δ → ∀ {γ} ⦃ _ : γ ≡ r₀ δ ⦄ → X γ
+
+Following the equations, the type that `variable` projects to is Fin R. So, there are R variables. If `R = zero`, there are no variables! So, to say very little, we have gained, with the separation of types `Γ` and `Δ`, the ability to describe languages that have few variables.
+
+To say a little more, I imagine a modeling a finite state machine, such as a digital computer with a certain fixed number of binary registers. Such a language might be useful in describing its states and functions.
+
+# Further research
+
+* Complete and clean-up the proof `Collapsed⇒Stronger.Alphabet`.
+
+* Formalise a definition of a "1-1 mapping" with an eye towards defining what it means to be "more generally useful than".
+
+* Illustrate the the language imagined for modeling a finite state machine and prove that `Collapsed` cannot describe it.
+
+* Discover *why* we have gained by separating types `Γ` and `Δ`. Can we gain still further? How about making one dependent on the other?
+
+* What then to say about the relation between "ad-hoc", "more generally useful than", and "1-1"? I seem to confirm fears about ad-hoc-ness of a given system by proving there is another system for which there is a 1-1 map "into it" from the alleged ad-hoc system. But how to put such fears to rest? Is there a certain respect in which I can say that a system is "most generally useful"?
