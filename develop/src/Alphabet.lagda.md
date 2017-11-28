@@ -4,13 +4,13 @@
 ```agda
 {-# OPTIONS --allow-unsolved-metas #-}
 ```
-# Alphabet: models of term-like languages
+# Alphabet: models of (untyped?) term-like languages
 
 ```agda
 module Alphabet where
 ```
 
-I characterise term-like languages and show that a certain model is isomorphic to a particular toy language. The resulting machinery turns out to be insufficient to describe weakening or substitution.
+I characterise term-like languages and show that a certain model is isomorphic to a particular toy language. The resulting machinery turns out to be insufficient to describe weakening or substitution. I suspect that the model is sufficient to describe the terms of an untyped (but not a typed) language.
 
 ```agda
 open import Prelude
@@ -71,10 +71,10 @@ The term-like language I model here has one constant symbol carrying a value as 
   (K : Set)
 ```
 
-`γ₀` represents a nullary number of free variabes, so `X γ₀` is a closed term.
+`r₀` represents a shift from viewing the context inside-out to outside-in. At one time, I had `γ₀ : Γ` instead, but that parameterisation, where `γ₀` was only used in combination with `r` such that `r₀ ≔ r γ₀`, felt ad-hoc to me. In [Generality](Generality.lagda.md), I give a justification for this change in parameterisation.
 
 ```agda
-  (γ₀ : Γ)
+  (r₀ : Δ → Γ)
 ```
 
 `r` represents the expansion of a context by additional bound variables.
@@ -96,7 +96,7 @@ The term-like language I model here has one constant symbol carrying a value as 
 The model is populated by a `variable` and `constant` symbol, as well as a number of symbols for defined `functions`.
 
 ```agda
-    variable : ∀ {δ} → V δ → ∀ {γ} ⦃ _ : γ ≡ r γ₀ δ ⦄ → X γ
+    variable : ∀ {δ} → V δ → ∀ {γ} ⦃ _ : γ ≡ r₀ δ ⦄ → X γ
     constant : ∀ {γ} → K → X γ
     {#} : Nat
     functions : Vec (Recon X r) #
@@ -109,7 +109,7 @@ The model semantics demands that the terms be representable in a certain way acc
   data Function (γ : Γ) : ∀ {#} → Vec Δ # → Set
 
   data Term (γ : Γ) where
-    υ : ∀ {δ} ⦃ _ : γ ≡ r γ₀ δ ⦄ → V δ → Term γ
+    υ : ∀ {δ} ⦃ _ : γ ≡ r₀ δ ⦄ → V δ → Term γ
     κ : K → Term γ
     φ : (f : Fin #)
       → Function γ (Recon.js (indexVec functions f))
@@ -153,7 +153,7 @@ Thus far, the above is enough to model a target language such as the following.
 Here is a model of `MyLanguage`:
 
 ```agda
-  myAlphabet : Alphabet MyLanguage Fin Nat 0 (flip _+_)
+  myAlphabet : Alphabet MyLanguage Fin Nat id (flip _+_)
   myAlphabet .Alphabet.variable v ⦃ refl ⦄ = υ (transport Fin auto v)
   myAlphabet .Alphabet.constant k = κ k
   myAlphabet .Alphabet.# = 3
@@ -189,7 +189,7 @@ Such conversions are inverses of one another, and so characterise an isomorphism
       → transport B eq bx ≡ transport B eq' bx
     transportation-eq B refl refl bx = refl
 
-    variable-alphabet-to-language : ∀ {δ} → (v : Fin δ) → ∀ {γ} ⦃ _ : γ ≡ _+_ δ 0 ⦄ (δ≡γ : δ ≡ γ) → variable v ≡ υ (transport Fin δ≡γ v)
+    variable-alphabet-to-language : ∀ {δ} → (v : Fin δ) → ∀ {γ} ⦃ _ : γ ≡ δ ⦄ (δ≡γ : δ ≡ γ) → variable v ≡ υ (transport Fin δ≡γ v)
     variable-alphabet-to-language v ⦃ refl ⦄ δ≡γ = cong υ (transportation-eq Fin auto δ≡γ v)
 
     language-to-language : ∀ {N} (l : MyLanguage N) → alphabet-to-language (language-to-alphabet l) ≡ l
@@ -200,16 +200,20 @@ Such conversions are inverses of one another, and so characterise an isomorphism
     language-to-language (ΠE l₁ l₂) = cong₂ ΠE (language-to-language l₁) (language-to-language l₂)
 
     alphabet-to-alphabet : ∀ {N} (t : Term N) → language-to-alphabet (alphabet-to-language t) ≡ t
-    alphabet-to-alphabet (υ {δ} ⦃ refl ⦄ v) = {!!}
+    alphabet-to-alphabet (υ {δ} ⦃ refl ⦄ v) = refl -- * this proof is far easier after the change in parameterisation from `γ₀` to `r₀`.
     alphabet-to-alphabet (κ _) = refl
     alphabet-to-alphabet (φ f Φ) = {!!}
 ```
 
 # Further research
 
-The proof of isomorphism should be finished. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
+I would like to complete the the proof of isomorphism. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
 
-The parameterisation `γ₀ : Γ` and `r : Γ → Δ → Γ` feels ad-hoc to me. `γ₀` is only used in combination with `r`, so a stronger parameterisation would discard `γ₀` but include `r` and `r₀ : Δ → Γ`, where `r₀ = r γ₀`.
+I worry that the above model would not fit a simply-typed lamda calculus (STLC). In Conor McBride's presentation of STLC, a term is indexed by the context of types in which it resides, `Cx ⋆`, and the type it inhabits, `⋆`. Thus an instance of my `Γ` would need to be something like `Cx ⋆ × ⋆`. His constructor of variable terms requires a type, such that my `V δ` would need to serve as context membership evidence of `δ` in `Γ`. I see now that I have, at best, a model of the untyped lamda calculus. I need to verify this, and in further research, I would like to create a model that covers both the untyped and simply-typed versions.
+
+I also worry that there is still something ad-hoc about the parameterisation. Is there any gain to be had from having separate types `Γ` and `Δ`? Considering that both `variable` and `Term.υ` demand that `γ ≡ r₀ δ`, and that `r₀` is not used in any other way, I have my suspicions.
+
+The case for variables in the proof of `alphabet-to-alphabet` became far easier, as noted, after the change in parameterisation. I would like to study why this is, especially in connection with my other worries about ad-hoc-ness.
 
 The concepts of contextual weakening or variable-for-term substitution are not expressible from an `Alphabet` because, at least in part, there is nothing in its type signature that allows one to characterise a position in the context from which to weaken or at which to substitute, nor is there a way to characterise the contextual reduction as a result of substitution.
 
@@ -236,15 +240,15 @@ A solution might include the addition of a position type, `Ψ : Γ → Set`, and
     {Γ Δ : Set}
     (X : Γ → Set)
     (V : Δ → Set)
-    (γ₀ : Γ)
     (K : Set)
+    (r₀ : Δ → Γ)
     (r : Γ → Δ → Γ)
     (Ψ : Γ → Set)
     (↑ : Γ → Γ)
     : Set
     where
     field
-      alphabet : Alphabet X V K γ₀ r
+      alphabet : Alphabet X V K r₀ r
     open Alphabet alphabet
 
     weakenTerm
@@ -252,7 +256,7 @@ A solution might include the addition of a position type, `Ψ : Γ → Set`, and
       → ∀ {γ} → Ψ γ
       → Term γ
       → Term (r γ δ)
-    weakenTerm δ {γ} ψ (υ {δ'} ⦃ refl ⦄ v) = υ {δ = {!weakenΔ δ' δ {-ofType Δ-}!}} ⦃ {!refl {-ofType r (r γ₀ δ') δ ≡ r γ₀ (weakenΔ δ' δ)-}!} ⦄ {!weakenV δ ψ v {-ofType V (weakenΔ δ' δ)-}!}
+    weakenTerm δ {γ} ψ (υ {δ'} ⦃ refl ⦄ v) = υ {δ = {!weakenΔ δ' δ {-ofType Δ-}!}} ⦃ {!refl {-ofType r (r₀ δ') δ ≡ r₀ (weakenΔ δ' δ)-}!} ⦄ {!weakenV δ ψ v {-ofType V (weakenΔ δ' δ)-}!}
     weakenTerm δ ψ (κ k) = κ k
     weakenTerm δ {γ} ψ (φ f Φ) = φ f {!weakenFunction δ ψ (indexVec functions f .Recon.js) Φ!}
 
