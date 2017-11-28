@@ -1,9 +1,4 @@
 
-(There is some unsolved business herein.)
-
-```agda
-{-# OPTIONS --allow-unsolved-metas #-}
-```
 # Alphabet: models of (untyped?) term-like languages
 
 ```agda
