@@ -40,6 +40,7 @@ module Weaker where
     (γ₀ : Γ)
     (r : Γ → Δ → Γ)
     : Set where
+    constructor _//_//_
     field
       variable : ∀ {δ} → V δ → ∀ {γ} ⦃ _ : γ ≡ r γ₀ δ ⦄ → X γ
       constant : ∀ {γ} → K → X γ
@@ -102,6 +103,7 @@ module Stronger where
     (r₀ : Δ → Γ)
     (r : Γ → Δ → Γ)
     : Set where
+    constructor _//_//_
     field
       variable : ∀ {δ} → V δ → ∀ {γ} ⦃ _ : γ ≡ r₀ δ ⦄ → X γ
       constant : ∀ {γ} → K → X γ
