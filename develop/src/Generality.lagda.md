@@ -26,11 +26,11 @@ module Weaker where
   record Recon {I J : Set} (X : I → Set) (r : I → J → I) : Set where
     constructor _▶_
     field
-      {#} : Nat -- number of arguments
-      js : Vec J # -- recursive bindings for each argument position
+      {#} : Nat
+      js : Vec J #
       con : ∀ {i}
-          → IVec (X ∘ r i) js -- evaluated arguments
-          → X i -- constructed
+          → IVec (X ∘ r i) js
+          → X i
 
   record Alphabet
     {Γ Δ : Set}
