@@ -442,6 +442,13 @@ data _⊢_≝_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB → -- is this line necessary?
     Γ ,, ⊢A ⊢ b ≝ b' ∶ B ⋖ δb=b' →
     Γ ⊢ ΠI b ≝ ΠI b' ∶ ΠF A B ⋖ c (δA ∷ δB ∷ δb=b' ∷ [])
+  Σ-intro-eq :
+    ∀ {ℓ A δA B δB a a' δa=a' b b' δb=b'} →
+    (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
+    Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
+    Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
+    Γ ⊢ b ≝ b' ∶ instantiateTerm zero a B ⋖ δb=b' →
+    Γ ⊢ ΣI a b ≝ ΣI a' b' ∶ ΣF A B ⋖ c (δA ∷ δB ∷ δa=a' ∷ δb=b' ∷ [])
   -- TODO add other rules stating that each constructor preserves definitional equality in each of its arguments
   -- TODO add computation rules
 ```
