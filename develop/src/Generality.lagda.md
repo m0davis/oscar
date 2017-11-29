@@ -360,9 +360,15 @@ module Collapsed⇒Stronger
   Alphabet (Collapsed._//_//_ variable constant {suc #} (function ∷ functions)) .Stronger.Alphabet.functions = {!function!} ∷ {!!}
 ```
 
+## Reflections (or Diversions?)
+
 Given the above, I reverse my previous suspicion that there was nothing to be gained from having separate types `Γ` and `Δ`. The obvious question is, what have we gained?
 
-In the failed attempt to map `Stronger` to `Collapsed`, I could have gone further had if there had been an available mapping `collapse : Γ → Δ`. Certainly if `Δ = ⊥` and `Γ` is any inhabited type, there would be no such mapping. Suppose we have it then that, for some constant R,
+I would like to find a language that `Stronger` can describe but `Collapsed` cannot. In the failed attempt to map `Stronger` to `Collapsed`, I could have gone further had if there had been an available mapping `collapse : Γ → Δ`. Certainly if `Δ = ⊥` and `Γ` is any inhabited type, there would be no such mapping.
+
+### a diversion
+
+Suppose we have it then that, for some constant R,
 
     Δ = ⊥
     Γ = Nat
@@ -379,14 +385,46 @@ Following the equations, the type that `variable` projects to is Fin R. So, ther
 
 To say a little more, I imagine a modeling a finite state machine, such as a digital computer with a certain fixed number of binary registers. Such a language might be useful in describing its states and functions.
 
+* Illustrate the the language imagined for modeling a finite state machine and prove that `Collapsed` cannot describe it.
+
+I can see that the above is mistaken because if `Δ = ⊥`, then we cannot have `r₀ = λ _ → R` but only `r₀ = λ ()`.
+
+### to continue, going nowhere?
+
+...and by implication, there would be no variables either, since `V : Δ → Set`. But `Collapsed` could model this aspect by setting `V ≔ λ _ → ⊥`. With `Δ = ⊥`, the `Recon.js` field of a `Recon X r` is `Vec ⊥ #`, so such a `record` would need `Recon.# = zero`, so then `Recon.js = []`, and the type of `Recon.con` becomes `∀ {i} → IVec (X ∘ r i) [] → X i`, where the first visible argument is trivially inhabited by `IVec.[]`, so the type of `Alphabet.functions` becomes equivalent to `Vec X #` (importantly, this is `Alphabet.#`, which is not necessarily `zero`). I am describing the following class of `Alphabet`s.
+
+```agda
+module Δ=⊥
+  {Γ : Set}
+  (X : Γ → Set)
+  (K : Set)
+  (constant : ∀ {γ} → K → X γ)
+  (# : Nat)
+  (functions : Vec (Stronger.Recon {Γ} {⊥} X λ _ ()) #)
+  where
+  stronger : Stronger.Alphabet {Δ = ⊥} X (λ ()) K (λ ()) (λ _ ())
+  stronger .Stronger.Alphabet.variable {()} x
+  stronger .Stronger.Alphabet.constant k = constant k
+  stronger .Stronger.Alphabet.# = #
+  stronger .Stronger.Alphabet.functions = functions
+```
+
+Here is a particular member of that class:
+
+```agda
+module Member = Δ=⊥ (Fin ∘ suc) Nat (λ { {γ} x → zero }) 2 (([] Stronger.▶ λ x → zero) ∷ ([] Stronger.▶ λ x → zero) ∷ [])
+```
+
+But it is now that I realise that I do not have a clear idea of what it means to "find a language that `Stronger` can describe but `Collapsed` cannot".
+
 # Further research
+
+* Say more precisely what it means "to find a language that `Stronger` can describe but `Collapsed` cannot". It may be helpful to consider what was discovered from `¬Γ⇒¬Weaker` and `¬[¬Γ⇒¬Stronger]`.
+
+* Assuming that we indeed have, discover *why* we have gained by separating types `Γ` and `Δ`. Can we gain still further? Following an intuition I have, could it help to making one dependent on the other? Or to index each on a common type?
 
 * Complete and clean-up the proof `Collapsed⇒Stronger.Alphabet`.
 
 * Formalise a definition of a "1-1 mapping" with an eye towards defining what it means to be "more generally useful than".
-
-* Illustrate the the language imagined for modeling a finite state machine and prove that `Collapsed` cannot describe it.
-
-* Discover *why* we have gained by separating types `Γ` and `Δ`. Can we gain still further? How about making one dependent on the other?
 
 * What then to say about the relation between "ad-hoc", "more generally useful than", and "1-1"? I seem to confirm fears about ad-hoc-ness of a given system by proving there is another system for which there is a 1-1 map "into it" from the alleged ad-hoc system. But how to put such fears to rest? Is there a certain respect in which I can say that a system is "most generally useful"?
