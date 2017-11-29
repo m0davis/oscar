@@ -200,15 +200,7 @@ Such conversions are inverses of one another, and so characterise an isomorphism
     alphabet-to-alphabet (φ f Φ) = {!!}
 ```
 
-# Further research
-
-The research in [Generality](Generality.lagda.md) is interleaved with the development of this work. I worry that the connections between these works will become frayed over time if not cut cleanly (separating concerns) or braided nicely (forming dependencies).
-
-I would like to complete the the proof of isomorphism. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
-
-I worry that the above model would not fit a simply-typed lamda calculus (STLC). In Conor McBride's presentation of STLC, a term is indexed by the context of types in which it resides, `Cx ⋆`, and the type it inhabits, `⋆`. Thus an instance of my `Γ` would need to be something like `Cx ⋆ × ⋆`. His constructor of variable terms requires a type, such that my `V δ` would need to serve as context membership evidence of `δ` in `Γ`. I see now that I have, at best, a model of the untyped lamda calculus. I need to verify this, and in further research, I would like to create a model that covers both the untyped and simply-typed versions.
-
-The case for variables in the proof of `alphabet-to-alphabet` became far easier, as noted, after the change in parameterisation. I would like to study why this is, especially in connection with my other worries about ad-hoc-ness.
+# Conclusion
 
 The concepts of contextual weakening or variable-for-term substitution are not expressible from an `Alphabet` because, at least in part, there is nothing in its type signature that allows one to characterise a position in the context from which to weaken or at which to substitute, nor is there a way to characterise the contextual reduction as a result of substitution.
 
@@ -227,6 +219,8 @@ In the case of `MyLanguage`, such functions would be described as follows:
       → MyLanguage (suc N)  -- within this statement
       → MyLanguage N
 ```
+
+## part-way towards a solution
 
 A solution might include the addition of a position type, `Ψ : Γ → Set`, and a contextual expansion function, `↑ : Γ → Γ`. In the below, I add those and discover what else I might need.
 
@@ -264,3 +258,13 @@ A solution might include the addition of a position type, `Ψ : Γ → Set`, and
     substituteTerm ψ ρ (κ k) = κ k
     substituteTerm ψ ρ (φ f Φ) = φ f {!substituteFunction ψ ρ (indexVec functions f .Recon.js) Φ!}
 ```
+
+# Further research
+
+The research in [Generality](Generality.lagda.md) is interleaved with the development of this work. I worry that the connections between these works will become frayed over time if not cut cleanly (separating concerns) or braided nicely (forming dependencies).
+
+I would like to complete the the proof of isomorphism. Beyond that, `Alphabet` could be extended to demand that there is an encoding, similar to `language-to-alphabet`, of the terms to be modeled into the modeled `Alphabet.Term`, and that such a thing is an inverse of `Alphabet.reifyTerm`. (Because Agda does not, as of version 2.6.0-9496f75, allow `field` after `data` declarations within a `record`, such an extension would require a separate `record` type.)
+
+I worry that the above model would not fit a simply-typed lamda calculus (STLC). In Conor McBride's presentation of STLC, a term is indexed by the context of types in which it resides, `Cx ⋆`, and the type it inhabits, `⋆`. Thus an instance of my `Γ` would need to be something like `Cx ⋆ × ⋆`. His constructor of variable terms requires a type, such that my `V δ` would need to serve as context membership evidence of `δ` in `Γ`. I see now that I have, at best, a model of the untyped lamda calculus. I need to verify this, and in further research, I would like to create a model that covers both the untyped and simply-typed versions.
+
+The case for variables in the proof of `alphabet-to-alphabet` became far easier, as noted, after the change in parameterisation. I would like to study why this is, especially in connection with my other worries about ad-hoc-ness.
