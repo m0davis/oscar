@@ -416,15 +416,3 @@ module Member = Δ=⊥ (Fin ∘ suc) Nat (λ { {γ} x → zero }) 2 (([] Stronge
 ```
 
 But it is now that I realise that I do not have a clear idea of what it means to "find a language that `Stronger` can describe but `Collapsed` cannot".
-
-# Further research
-
-* Say more precisely what it means "to find a language that `Stronger` can describe but `Collapsed` cannot". It may be helpful to consider what was discovered from `¬Γ⇒¬Weaker` and `¬[¬Γ⇒¬Stronger]`.
-
-* Assuming that we indeed have, discover *why* we have gained by separating types `Γ` and `Δ`. Can we gain still further? Following an intuition I have, could it help to making one dependent on the other? Or to index each on a common type?
-
-* Complete and clean-up the proof `Collapsed⇒Stronger.Alphabet`.
-
-* Formalise a definition of a "1-1 mapping" with an eye towards defining what it means to be "more generally useful than".
-
-* What then to say about the relation between "ad-hoc", "more generally useful than", and "1-1"? I seem to confirm fears about ad-hoc-ness of a given system by proving there is another system for which there is a 1-1 map "into it" from the alleged ad-hoc system. But how to put such fears to rest? Is there a certain respect in which I can say that a system is "most generally useful"?
