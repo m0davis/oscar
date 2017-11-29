@@ -10,6 +10,8 @@ open import Prelude
 open import Tactic.Nat
 ```
 
+## replacing a type with a family of types
+
 In a development of [Alphabet](Alphabet.lagda.md), I defined the following system and remarked:
 
 > The parameterisation `γ₀ : Γ` and `r : Γ → Δ → Γ` feels ad-hoc to me. `γ₀` is only used in combination with `r`, so a stronger parameterisation would discard `γ₀` but include `r` and `r₀ : Δ → Γ`, where `r₀ = r γ₀`.
@@ -254,6 +256,8 @@ module Weaker⇒Stronger-1-1
   -}
   {- The trick of `rewrite`ing using `cong` does not work quite so easily when dependent variables are involved (in this case, the type of `functions` depends on `.#`. -}
 ```
+
+## collapsing parameter types
 
 In the same development later on, I continued to worry about ad-hoc-ness of the parameterisation:
 
