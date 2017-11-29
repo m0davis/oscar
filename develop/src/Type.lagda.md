@@ -418,7 +418,6 @@ data _⊢_≝_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     ∀ {a δa A} →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ a ≝ a ∶ A ⋖ c (δa ∷ [])
-  -- TODO define these
   ≡-symmetry :
     ∀ {a b A δa=b} →
     Γ ⊢ a ≝ b ∶ A ⋖ δa=b →
