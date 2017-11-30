@@ -459,23 +459,23 @@ The HoTT book takes `Π-intro-eq` to require `Γ , x:A ⊢ B : 𝒰ᵢ`. However
 On the other hand, the requirement `Γ ⊢ A : 𝒰ᵢ` is needed as part of the construction of another premise, so it stays.
 
 ```agda
-  Π-intro-eq :
+  ΠI :
     ∀ {ℓ A δA B b b' δb=b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
     Γ ,, ⊢A ⊢ b ≝ b' ∶ B ⋖ δb=b' →
     Γ ⊢ ΠI b ≝ ΠI b' ∶ ΠF A B ⋖ c (δA ∷ δb=b' ∷ [])
-  Σ-intro-eq :
+  ΣI :
     ∀ {ℓ A δA B δB a a' δa=a' b b' δb=b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
     Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
     Γ ⊢ b ≝ b' ∶ instantiateTerm zero a B ⋖ δb=b' →
     Γ ⊢ ΣI a b ≝ ΣI a' b' ∶ ΣF A B ⋖ c (δA ∷ δB ∷ δa=a' ∷ δb=b' ∷ [])
-  +IL-intro-eq :
+  +IL :
     ∀ {A a a' δa=a' B} →
     Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
     Γ ⊢ +IL a ≝ +IL a' ∶ +F A B ⋖ δa=a'
-  +IR-intro-eq :
+  +IR :
     ∀ {A B b b' δb=b'} →
     Γ ⊢ b ≝ b' ∶ B ⋖ δb=b' →
     Γ ⊢ +IR b ≝ +IR b' ∶ +F A B ⋖ δb=b'
