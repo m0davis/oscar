@@ -491,7 +491,66 @@ This definitional equality is not obvious from Appendix 2.
   =I : ∀ {A a a' δa=a'} →
     Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
     Γ ⊢ =I a ≝ =I a' ∶ =F A a a' ⋖ c (δa=a' ∷ [])
-  -- TODO add computation rules
+```
+
+Computation rules:
+
+```agda
+  ΠE : ∀ {ℓ A δA B b δb a δa}
+    (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
+    Γ ,, ⊢A ⊢ b ∶ B ⋖ δb →
+    Γ ⊢ a ∶ A ⋖ δa →
+    Γ ⊢ ΠE (ΠI b) a ≝ instantiateTerm zero a b ∶ instantiateTerm zero a B ⋖ c (δA ∷ δb ∷ δa ∷ [])
+  ΣE : ∀ {ℓ δΠAB A δA B δB C δC g δg a δa b δb} →
+    (⊢ΠAB : Γ ⊢ ΠF A B ∶ 𝒰 ℓ ⋖ δΠAB) →
+    Γ ,, ⊢ΠAB ⊢ C ∶ 𝒰 ℓ ⋖ δC →
+    (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
+    (⊢B : Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
+    Γ ,, ⊢A ,, ⊢B ⊢ g ∶ instantiateTerm (suc (suc zero)) (ΣI (𝓋 (suc zero)) (𝓋 (suc zero))) (weakenTermFrom zero (weakenTermFrom zero C)) ⋖ δg →
+    Γ ⊢ a ∶ A ⋖ δa →
+    Γ ⊢ b ∶ instantiateTerm zero a B ⋖ δb →
+    Γ ⊢ ΣE C g (ΣI a b) ≝ instantiateTerm zero a (instantiateTerm zero (weakenTermFrom zero b) g) ∶ instantiateTerm zero (ΣI a b) C ⋖ c (δΠAB ∷ δA ∷ δB ∷ δC ∷ δg ∷ δa ∷ δb ∷ [])
+  +LE : ∀ {ℓ δ+FAB C δC A δA B δB c' δc' d δd a δa} →
+    (⊢+FAB : Γ ⊢ +F A B ∶ 𝒰 ℓ ⋖ δ+FAB) →
+    Γ ,, ⊢+FAB ⊢ C ∶ 𝒰 ℓ ⋖ δC →
+    (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
+    Γ ,, ⊢A ⊢ c' ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) ⋖ δc' →
+    (⊢B : Γ ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
+    Γ ,, ⊢B ⊢ d ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) ⋖ δd →
+    Γ ⊢ a ∶ A ⋖ δa →
+    Γ ⊢ +E C c' d (+IL a) ≝ instantiateTerm zero a c' ∶ instantiateTerm zero (+IL a) C ⋖ c (δ+FAB ∷ δC ∷ δA ∷ δB ∷ δc' ∷ δd ∷ δa ∷ [])
+```
+
+Instead of something like the above, could simpler computation rules like these work?
+
+```agda
+  +RE : ∀ {b δb B C C[+IRb] c' d d[b]} →
+    Γ ⊢ b ∶ B ⋖ δb →
+    instantiateTerm zero (+IR b) C ≡ C[+IRb] →
+    instantiateTerm zero b d ≡ d[b] →
+    Γ ⊢ +E C c' d (+IR b) ≝ d[b] ∶ C[+IRb] ⋖ c (δb ∷ [])
+  𝟙E : ∀ {C c' C[𝟙I]} →
+    instantiateTerm zero 𝟙I C ≡ C[𝟙I] →
+    Γ ⊢ 𝟙E C c' 𝟙I ≝ c' ∶ C[𝟙I] ⋖ c []
+  ℕEZ : ∀ {n C c₀ cₛ C[ℕIZ] δn} →
+    Γ ⊢ n ∶ ℕF ⋖ δn →
+    instantiateTerm zero ℕIZ C ≡ C[ℕIZ] →
+    Γ ⊢ ℕE C c₀ cₛ ℕIZ ≝ c₀ ∶ C[ℕIZ] ⋖ c (δn ∷ [])
+  ℕES : ∀ {n C c₀ cₛ cₛ[n,ℕEn] C[ℕISn] δn} →
+    Γ ⊢ n ∶ ℕF ⋖ δn →
+    instantiateTerm zero n ((instantiateTerm zero (weakenTermFrom zero (Term.ℕE C c₀ cₛ n)) cₛ)) ≡ cₛ[n,ℕEn] →
+    instantiateTerm zero (ℕIS n) C ≡ C[ℕISn] →
+    Γ ⊢ ℕE C c₀ cₛ (ℕIS n) ≝ cₛ[n,ℕEn] ∶ C[ℕISn] ⋖ c (δn ∷ [])
+  =E : ∀ {a c' c[a] C C[a,a,=Ia]} →
+    instantiateTerm zero a c' ≡ c[a] →
+    instantiateTerm zero a
+      (instantiateTerm zero
+        (weakenTermFrom zero a)
+        ((instantiateTerm zero
+          (weakenTermFrom zero
+            (weakenTermFrom zero
+              (=I a))) C))) ≡ C[a,a,=Ia] →
+    Γ ⊢ =E C c' a a (=I a) ≝ c[a] ∶ C[a,a,=Ia] ⋖ c []
 ```
 
 ## test drive
