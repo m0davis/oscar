@@ -449,6 +449,10 @@ data _⊢_≝_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
     Γ ⊢ b ≝ b' ∶ instantiateTerm zero a B ⋖ δb=b' →
     Γ ⊢ ΣI a b ≝ ΣI a' b' ∶ ΣF A B ⋖ c (δA ∷ δB ∷ δa=a' ∷ δb=b' ∷ [])
+  +IL-intro-eq :
+    ∀ {A a a' δa=a' B} →
+    Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
+    Γ ⊢ +IL a ≝ +IL a' ∶ +F A B ⋖ δa=a'
   -- TODO add other rules stating that each constructor preserves definitional equality in each of its arguments
   -- TODO add computation rules
 ```
