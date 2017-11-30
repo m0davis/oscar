@@ -411,7 +411,19 @@ The HoTT book has no name for this.
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ A ≝ B ∶ 𝒰 ℓ ⋖ δA≡B →
     Γ ⊢ a ∶ B ⋖ c (δa ∷ δA≡B ∷ [])
+```
 
+I was surprised to find this missing from the HoTT book. I do not see how to make use of computational equalities without it.
+
+```agda
+  ≡-term-substitution :
+    ∀ {a δa b A δa≡b} →
+    Γ ⊢ a ∶ A ⋖ δa →
+    Γ ⊢ a ≝ b ∶ A ⋖ δa≡b →
+    Γ ⊢ b ∶ A ⋖ c (δa ∷ δa≡b ∷ [])
+```
+
+```agda
   Vble :
     ∀ {n A} →
     Γ at n ≡ A →
