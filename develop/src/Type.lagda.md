@@ -401,8 +401,12 @@ data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
                               (instantiateTerm zero
                                 (weakenTermFrom zero
                                   (weakenTermFrom zero p)) C)) ⋖ c (δC ∷ δc' ∷ δa ∷ δb ∷ δp ∷ [])
+```
 
-  ≡-replace :
+The HoTT book has no name for this.
+
+```agda
+  ≡-type-substitution :
     ∀ {ℓ a δa A B δA≡B} →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ A ≝ B ∶ 𝒰 ℓ ⋖ δA≡B →
