@@ -177,7 +177,13 @@ weakenTermFrom from (=E t₁ t₂ t₃ t₄ t₅) =
                         (weakenTermFrom from t₃)
                         (weakenTermFrom from t₄)
                         (weakenTermFrom from t₅)
+```
 
+`instantiateTerm` functions as a simple form of substitution. Given a term ρ in a context(*) of N elements, γ₀ , γ₁ , ... γ_N-1, and a term τ in the same context except for an additional element inserted before the element γₙ, for some 0 ≤ n ≤ N-1, `instantiateTerm {N} n ρ τ` yields τ[ρ/γₙ], a term in the same context as ρ where every referent to γₙ in τ has been replaced by ρ.
+
+[*] It is a bit loose to say that these scope-checked terms are "in a context" because there is nothing about `Term.𝓋 : Fin N → Term N` that demands that its argument denote an element of a context.
+
+```agda
 instantiateTerm : ∀ {N} → Fin (suc N) → Term N → Term (suc N) → Term N
 instantiateTerm at ρ (𝒰 ℓ) =
                       𝒰 ℓ
