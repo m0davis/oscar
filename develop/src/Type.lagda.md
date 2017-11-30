@@ -436,12 +436,18 @@ data _⊢_≝_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     ∀ f δf A B →
     Γ ⊢ f ∶ ΠF A B ⋖ δf →
     Γ ⊢ f ≝ ΠI (ΠE (weakenTermFrom zero f) (𝓋 zero)) ∶ ΠF A B ⋖ c (δf ∷ [])
+```
+
+The HoTT book takes `Π-intro-eq` to require `Γ , x:A ⊢ B : 𝒰ᵢ`. However, I conjecture that such a judgement would already have been made in order to conclude another of its requirements, `Γ , x:A ⊢ b ≡ b' : B`, so I leave it out.
+
+On the other hand, the requirement `Γ ⊢ A : 𝒰ᵢ` is needed as part of the construction of another premise, so it stays.
+
+```agda
   Π-intro-eq :
-    ∀ {ℓ A δA B δB b b' δb=b'} →
+    ∀ {ℓ A δA B b b' δb=b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB → -- is this line necessary?
     Γ ,, ⊢A ⊢ b ≝ b' ∶ B ⋖ δb=b' →
-    Γ ⊢ ΠI b ≝ ΠI b' ∶ ΠF A B ⋖ c (δA ∷ δB ∷ δb=b' ∷ [])
+    Γ ⊢ ΠI b ≝ ΠI b' ∶ ΠF A B ⋖ c (δA ∷ δb=b' ∷ [])
   Σ-intro-eq :
     ∀ {ℓ A δA B δB a a' δa=a' b b' δb=b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
