@@ -483,6 +483,14 @@ On the other hand, the requirement `Γ ⊢ A : 𝒰ᵢ` is needed as part of the
     ∀ {n n' δn=n'} →
     Γ ⊢ n ≝ n' ∶ ℕF ⋖ δn=n' →
     Γ ⊢ ℕIS n ≝ ℕIS n' ∶ ℕF ⋖ δn=n'
+```
+
+This definitional equality is not obvious from Appendix 2.
+
+```agda
+  =I : ∀ {A a a' δa=a'} →
+    Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
+    Γ ⊢ =I a ≝ =I a' ∶ =F A a a' ⋖ c (δa=a' ∷ [])
   -- TODO add other rules stating that each constructor preserves definitional equality in each of its arguments
   -- TODO add computation rules
 ```
