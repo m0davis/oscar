@@ -491,7 +491,6 @@ This definitional equality is not obvious from Appendix 2.
   =I : ∀ {A a a' δa=a'} →
     Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
     Γ ⊢ =I a ≝ =I a' ∶ =F A a a' ⋖ c (δa=a' ∷ [])
-  -- TODO add other rules stating that each constructor preserves definitional equality in each of its arguments
   -- TODO add computation rules
 ```
 
