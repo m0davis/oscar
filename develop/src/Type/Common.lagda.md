@@ -7,6 +7,7 @@ module Type.Common where
 
 ```agda
 open import Prelude
+open import Tactic.Nat
 ```
 
 ## some conveniences that are here, inconveniently
@@ -256,4 +257,19 @@ instantiateTerm at ρ (=E t₁ t₂ t₃ t₄ t₅) =
                          (instantiateTerm at ρ t₃)
                          (instantiateTerm at ρ t₄)
                          (instantiateTerm at ρ t₅)
+```
+
+## Complex Substitutions
+
+```agda
+applyTerm : ∀ {N} → Term (suc N) → Term N → Term N
+applyTerm f x = instantiateTerm zero x f
+
+weakenTermByFrom : ∀ {N} → (M : Nat) → Fin (suc N) → Term N → Term (M + N)
+weakenTermByFrom zero from τ = τ
+weakenTermByFrom (suc by) from τ = transport Term auto $ weakenTermByFrom by (weakenFinFrom zero from) (weakenTermFrom from τ)
+
+
+substituteTerm : ∀ {M N} → Term (suc (M + N)) → Term N → Term (M + N)
+substituteTerm {M} {N} f x = applyTerm f $ weakenTermByFrom M zero x
 ```
