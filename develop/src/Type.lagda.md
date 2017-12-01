@@ -12,6 +12,7 @@ open import Prelude
 open import Type.Common
 import Type.First as F
 import Type.Mutual as M
+import Type.Named as N
 ```
 
 ```agda
@@ -108,4 +109,32 @@ module Sandbox-M where
 
   check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
   check-upsetting = {!!} , {!!}
+```
+
+```
+module Sandbox-N where
+  open N
+  check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)
+  check-𝟙→𝟙 = {!!}
+
+  infer-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F
+  infer-𝟙→𝟙 = {!!}
+
+  {- commented-out until I develop the API
+  check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
+  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
+
+  infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
+  infer-𝟎+𝟎=𝟎 = =I ℕIZ , c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
+
+  check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
+  check-𝟎+𝟏=𝟏 = {!!} , {!!}
+
+  infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
+                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
+  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) , {!!} , {!!}
+
+  check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
+  check-upsetting = {!!} , {!!}
+  -}
 ```
