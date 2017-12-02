@@ -269,7 +269,6 @@ weakenTermByFrom : ∀ {N} → (M : Nat) → Fin (suc N) → Term N → Term (M 
 weakenTermByFrom zero from τ = τ
 weakenTermByFrom (suc by) from τ = transport Term auto $ weakenTermByFrom by (weakenFinFrom zero from) (weakenTermFrom from τ)
 
-
 substituteTerm : ∀ {M N} → Term (suc (M + N)) → Term N → Term (M + N)
 substituteTerm {M} {N} f x = applyTerm f $ weakenTermByFrom M zero x
 ```
