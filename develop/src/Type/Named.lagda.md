@@ -112,35 +112,42 @@ _at_ : ∀ {N} → (Γ : N ctx) → Fin N → ⊣ Γ
 _ , γ at zero = ⟨ suppose γ (γ .type) ⟩
 Γ , γ at suc x = ⟨ suppose γ ((Γ at x) .type) ⟩
 
+{-
 -- named variables
 data _∶_ {N} {Γ : (suc N) ctx} : (x : Fin (suc N)) → ∀ {γ : STerm (suc N)} {ℓ} → Γ ⊢ γ ∈ ℓ → Set where
   ⟨_⟩ : ∀ (x : Fin (suc N)) → x ∶ type (Γ at x)
 
 -- application
-[_$_] : ∀ {N} {Γ : N ctx} {γ₀ : ⊣ Γ} {γ₁ : ⊣ Γ , γ₀}
+[_$$_] : ∀ {N} {Γ : N ctx} {γ₀ : ⊣ Γ} {γ₁ : ⊣ Γ , γ₀}
        → (τ₁ : Γ , γ₀ ⊢ γ₁ .sterm)
        → (τ₀ : Γ ⊢ γ₀ .sterm)
        → Σ (STerm N) λ τ → Γ ⊢ applyTerm (γ₁ .sterm) (γ₀ .sterm) ∋ τ
-[_$_] τ₁ τ₀ = applyTerm (τ₁ .sterm) (τ₀ .sterm) ,, {!!}
+[_$$_] τ₁ τ₀ = applyTerm (τ₁ .sterm) (τ₀ .sterm) ,, {!!}
 
 -- substitution
-data _xtc_ : Nat → ∀ {N} → N ctx → Set where
-  [] : ∀ {N} {Γ : N ctx} → zero xtc Γ
-  _∷_ : ∀ {N} {Γ : N ctx} → (γ : ⊣ Γ) → ∀ {N} → N xtc Γ → suc N xtc Γ , γ
---  _,_ : ∀ {N} → (Γ : N ctx) → ⊣ Γ → suc N ctx
-
+data _xtc_ {N} (Γ : N ctx) : Nat → Set where
+  [] : Γ xtc zero
+  _∷_ : (γ : ⊣ Γ) → ∀ {M} → Γ , γ xtc M → Γ xtc suc M
 
 infixl 25 _<><_ -- h/t Conor McBride
-_<><_ : ∀ {N} (Γ : N ctx) → ∀ {M} → M xtc Γ → (M + N) ctx
-Γ <>< x = {!x!}
-
-[_↤_] : ∀ {N} {Γ : N ctx} {M} {γ₀ : ⊣ Γ} {Δ : M xtc Γ , γ₀} {γ₁ : ⊣ Γ , γ₀ <>< Δ}
+_<><_ : ∀ {N} (Γ : N ctx) → ∀ {M} → Γ xtc M → (M + N) ctx
+Γ <>< [] = Γ
+Γ <>< (γ ∷ Δ) = transport _ctx auto (Γ , γ <>< Δ)
+{-
+sub : ∀ {N} {Γ : N ctx} {M} (γ : ⊣ Γ) → Γ , γ xtc M → Γ xtc M
+sub _ [] = []
+sub γ (δ ∷ Δ) = {!δ!} ∷ {!!}
+-}
+[_↤_] : ∀ {N} {Γ : N ctx} {M} {γ₀ : ⊣ Γ} {Δ : Γ , γ₀ xtc M} {γ₁ : ⊣ Γ , γ₀ <>< Δ}
        → (τ₁ : Γ , γ₀ <>< Δ ⊢ γ₁ .sterm)
        → (τ₀ : Γ ⊢ γ₀ .sterm)
-       → Σ (STerm (M + N)) λ τ → Γ <>< {!Δ!} ⊢ substituteTerm {M = M} (transport STerm auto (γ₁ .sterm)) (γ₀ .sterm) ∋ τ
-[_↤_] {M = M} τ₁ τ₀ = substituteTerm {M = M} (transport STerm auto (τ₁ .sterm)) ((τ₀ .sterm)) ,, {!!} --  ,, {!!}
+       → {-Σ-} (STerm (M + N)) -- λ τ → Γ <>< {!Δ!} ⊢ substituteTerm {M = M} (transport STerm auto (γ₁ .sterm)) (γ₀ .sterm) ∋ τ
+[_↤_] {M = M} τ₁ τ₀ = substituteTerm {M = M} (transport STerm auto (τ₁ .sterm)) ((τ₀ .sterm)) -- ,, {!!} --  ,, {!!}
+-}
 
 data _⊢_∋_ {N} (Γ : N ctx) where
+  variable : (x : Fin N)
+           → Γ ⊢ (Γ at x) .sterm ∋ 𝓋 x
   ⟨_⟩ : ∀ {𝑨 ℓ}
       → Γ ⊢ 𝑨 ∈ ℓ
       → Γ ⊢ 𝒰 ℓ ∋ 𝑨
@@ -151,27 +158,20 @@ data _⊢_∋_ {N} (Γ : N ctx) where
   ΠE : ∀ {𝑨 𝑩}
      → (f : Γ ⊢ ΠF 𝑨 𝑩)
      → (a : Γ ⊢ 𝑨)
-     → Γ ⊢ {!instantiateTerm zero (a .sterm) 𝑩!} ∋ ΠE (f .sterm) (a .sterm)
+     → Γ ⊢ applyTerm 𝑩 (a .sterm) ∋ ΠE (f .sterm) (a .sterm)
   ΣI : ∀ {ℓ}
      → (A : ℓ ⊣ Γ)
      → (B : ℓ ⊣ Γ , ⟨ A .type ⟩)
      → (a : Γ ⊢ A .sterm)
-     → (b : Γ ⊢ instantiateTerm zero (a .sterm) (B .sterm))
+     → (b : Γ ⊢ applyTerm (B .sterm) (a .sterm))
      → Γ ⊢ ΣF (A .sterm) (B .sterm) ∋ ΣI (a .sterm) (b .sterm)
   ΣE : ∀ {ℓ}
      → (A : ℓ ⊣ Γ)
      → (B : ℓ ⊣ Γ , ⟨ A .type ⟩)
      → (C : ⊣ Γ , ⟨ ΣF (A .type) (B .type) ⟩)
-     → (z : zero ∶ C .type)
-     -- → (C[a,b] : {!!})
-     → (g : Γ , ⟨ A .type ⟩ , ⟨ B .type ⟩ ⊢
-          let C'' = {!C!}
-          in
-          {!(⟨ {!_⊢_∋_.⟨ C .type ⟩!} ⟩ [ {!!} ↤ {!!} ])!})
-     -- _⊢_.⟨ _⊢_∋_.⟨ C .type ⟩ ⟩
-     -- ⟨ {!⟨ C .type ⟩!} ⟩
+     → (g : Γ , ⟨ A .type ⟩ , ⟨ B .type ⟩ ⊢ applyTerm (weakenTermByFrom 2 1 (C .sterm)) (ΣI (𝓋 1) (𝓋 0)))
      → (p : Γ ⊢ ΣF (A .sterm) (B .sterm))
-     → Γ ⊢ {!C!} ∋ {!ΣE {!C!} {!g!} {!p!}!}
+     → Γ ⊢ applyTerm (C .sterm) (p .sterm) ∋ ΣE (C .sterm) (g .sterm) (p .sterm)
   𝟙I : Γ ⊢ 𝟙F ∋ 𝟙I
 
 data _⊢_≝_∶_ {N} (Γ : N ctx) : STerm N → STerm N → STerm N → Set where
