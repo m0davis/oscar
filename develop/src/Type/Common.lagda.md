@@ -259,6 +259,42 @@ instantiateTerm at ρ (=E t₁ t₂ t₃ t₄ t₅) =
                          (instantiateTerm at ρ t₅)
 ```
 
+## Fundamental Theorem
+
+It seems of fundamental importance, similar to the Fundamental Theorem of Calculus, to have a correspondence between weakening and substitution. In particular, there is a certain way in which `weakenTermFrom` and `instantiateTerm` are inverses of one another.
+
+Just how to say this? Instantiating a term with anything at all at a position p that has been weakened at that same position should result in the same term prior to instantiation or weakening.
+
+Can I say something stronger? There is the swapping of variables. Swapping variables and then swapping back again also results in the same term. How do we swap variables with the above machinery? Suppose the term contains slots for variables p and q (thus N ≤ suc (max p q)). To be definite, let's say p = 3 and q = 7.
+
+0 1 2 p=3 4 5 6 q=7 8
+
+weaken from 3, imagining we are creating a slot for the new q
+
+0 1 2 *=3 p=4 5 6 7 q=8 9
+
+instantiate at 8 with 𝓋 3, now resulting in renaming all references to q with references to q'
+
+0 1 2 q=3 p=4 5 6 7 8
+
+weaken from 7, imagining we are creating a slot for the new p
+
+0 1 2 q=3 p=4 5 6 *=7 8 9
+
+instantiate at 4 with 𝓋 7
+
+0 1 2 q=3 4 5 6 p=7 8
+
+That process swapped p with q. Repeat this process and we end up where we started.
+
+But the identities don't end there, because we can swap p with q, q with r, p with q, and then r with p, resulting in something like
+
+p q r -0/1-> q p r -0/2-> r p q -1/2-> r q p -0/2-> p q r
+
+On the other hand, there are also ways to instantiate in a term so that no amount of weakening or instantiating will ever return it to its original state. For example, if the term is 𝓋 0, and we instantiate 0 with 𝒰 0, there is no going back. Instantiating with any non-variable at position p in a term that refers to p results in a no-go-back situation because, in that case, the number of non-variable subterms grows, and neither weakening nor instantiation can ever reduce that number.
+
+Another way to get to a no-go-back situation is to instantiating a variable q at position p in a term that refers to both q and p. This "muddies the water" now providing no way to tell which places originally referred to p and which referred to q. The action reduces the number of used variables without reducing the number of non-variable subterms and results in a no-go-back because weakening never changes the number of used variables or non-variable subterms and instantiation never increases the number of used variables without increasing the number of non-variable subterms.
+
 ## Complex Substitutions
 
 ```agda
