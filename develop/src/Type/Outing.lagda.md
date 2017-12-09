@@ -390,9 +390,28 @@ data _⊢_≝_∶_ (Γ : Context) where
      → Γ ⊢ =E (x , y , p ↦₃ C) (z ↦₁ c) a a (=I a) ≝ c[a] ∶ C[a,a,=Ia]
 ```
 
-admissable rules
+admissible rules
 
 ```agda
+-- uniqueness principle for Σ (possibly not correctly stated)
+ΣU : ∀ {Γ A x B c y z}
+   → Γ ⊢ c ∶ ΣF A (x ↦₁ B)
+   → Γ ⊢ c ≝ ΣE (z ↦₁ 𝓋 z) (x , y ↦₂ ΣI (𝓋 x) (𝓋 y)) c ∶ ΣF A (x ↦₁ B)
+ΣU x₁ = ≝-symmetry {!!}
+
+-- TODO fromterm and fromctx deserve to be renamed and/or refactored
+
+fromterm : ∀ {Γ c C}
+         → Γ ⊢ c ∶ C
+         → ∃ λ ℓ → Γ ⊢ C ∶ 𝒰 ℓ
+fromterm x = {!!}
+
+fromctx : ∀ {Γ x A c C}
+        → Γ , x ∶ A ⊢ c ∶ C
+        → ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ
+fromctx x₁ = fromterm (var {!!} {!!} {!!})
+
+
 ≝-project₁ : ∀ {Γ a b A}
           → Γ ⊢ a ≝ b ∶ A
           → Γ ⊢ a ∶ A
@@ -402,13 +421,13 @@ admissable rules
 
 ≝-project₁ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₁ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₂ Γ⊢b≝a∶A
-≝-project₁ (≝-transitivity Γ⊢a≝b∶A Γ⊢b≝c∶A) = {!!}
-≝-project₁ (≝-subst Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
-≝-project₁ (ΠI Γ⊢a≝b∶A) = {!!}
-≝-project₁ (ΠE x₁ x₂ x₃ x₄) = {!!}
-≝-project₁ (ΠU x₁) = {!!}
-≝-project₁ (ΣI x₁ Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
-≝-project₁ (ΣE x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
+≝-project₁ (≝-transitivity Γ⊢a≝b∶A _) = ≝-project₁ Γ⊢a≝b∶A
+≝-project₁ (≝-subst Γ⊢a≝b∶B Γ⊢B≝A∶𝒰) = ≝-subst (≝-project₁ Γ⊢a≝b∶B) Γ⊢B≝A∶𝒰
+≝-project₁ (ΠI Γ,x∶A⊢b≝b'∶B) = ΠI (≝-project₁ Γ,x∶A⊢b≝b'∶B)
+≝-project₁ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = ΠE (ΠI Γ,x∶A⊢b∶B) Γ⊢a∶A B[a]≡B'
+≝-project₁ (ΠU Γ⊢f∶ΠFAB) = Γ⊢f∶ΠFAB
+≝-project₁ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI Γ⊢x∶A⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A) (≝-project₁ Γ⊢b≝b'∶B[a])
+≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ x₃ x₄ x₅ x₆) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ (ΣI (snd (fromctx x₂)) x₃ x₄) x₅
 ≝-project₁ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}
 ≝-project₁ (+Iʳ x x₁ Γ⊢a≝b∶A) = {!!}
 ≝-project₁ (+Eˡ x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
@@ -420,14 +439,14 @@ admissable rules
 ≝-project₁ (=I Γ⊢a≝b∶A) = {!!}
 ≝-project₁ (=E x₁ x₂ x₃ x₄ x₅) = {!!}
 
-≝-project₂ (≝-reflexivity x) = {!!}
+≝-project₂ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₂ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₁ Γ⊢b≝a∶A
 ≝-project₂ (≝-transitivity Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
 ≝-project₂ (≝-subst Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
 ≝-project₂ (ΠI Γ⊢a≝b∶A) = {!!}
 ≝-project₂ (ΠE x₁ x₂ x₃ x₄) = {!!}
 ≝-project₂ (ΠU x₁) = {!!}
-≝-project₂ (ΣI x₁ Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
+≝-project₂ (ΣI x₁ Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = ΣI {!!} {!!} {!!}
 ≝-project₂ (ΣE x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
 ≝-project₂ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}
 ≝-project₂ (+Iʳ x x₁ Γ⊢a≝b∶A) = {!!}
