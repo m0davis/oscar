@@ -4,6 +4,7 @@ Of particular interest:
 
 Also hereon:
 
+- [Agdasugarmedo](Agdasugarmedo.lagda.md), an investigation into how Agda led me down the garden path with absurd lambdas and un-dropped datatype parameters.
 - [Alphabet](Alphabet.lagda.md), a development of a model of term-like languages, but insufficient to describe weakening and substitution.
 - [BurnAfterReading](BurnAfterReading.lagda.md), thoughts collected while trying to metaprogram my way to a type theory; as the name suggests, the file is slated for "retirement".
 - [Generality](Generality.lagda.md), an exploration of what it means to be "more generally useful than".
