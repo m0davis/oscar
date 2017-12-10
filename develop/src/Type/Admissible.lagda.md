@@ -57,18 +57,15 @@ wfctx₁ (=F Γ⊢ _ _) = wfctx₁ Γ⊢
 wfctx₁ (=I Γ⊢) = wfctx₁ Γ⊢
 wfctx₁ (=E _ _ Γ⊢ _ _ _) = wfctx₁ Γ⊢
 
--- TODO fromterm and fromctx deserve to be renamed and/or refactored
-
-fromterm : ∀ {Γ c C}
+typed₁ : ∀ {Γ c C}
          → Γ ⊢ c ∶ C
-         → ∃ λ ℓ → Γ ⊢ C ∶ 𝒰 ℓ
-fromterm x = {!!}
+         → Γ ⊩ C
+typed₁ x = {!!}
 
-fromctx : ∀ {Γ x A c C}
-        → Γ , x ∶ A ⊢ c ∶ C
-        → ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ
-fromctx x₁ = fromterm (var {!!} {!!} {!!})
-
+ctxHead⊩ : ∀ {Γ x A}
+         → Γ , x ∶ A ctx
+         → Γ ⊩ A
+ctxHead⊩ = {!!}
 
 ≝-project₁ : ∀ {Γ a b A}
           → Γ ⊢ a ≝ b ∶ A
@@ -85,7 +82,7 @@ fromctx x₁ = fromterm (var {!!} {!!} {!!})
 ≝-project₁ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = ΠE (ΠI Γ,x∶A⊢b∶B) Γ⊢a∶A B[a]≡B'
 ≝-project₁ (ΠU Γ⊢f∶ΠFAB) = Γ⊢f∶ΠFAB
 ≝-project₁ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI Γ⊢x∶A⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A) (≝-project₁ Γ⊢b≝b'∶B[a])
-≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ x₃ x₄ x₅ x₆) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ (ΣI (snd (fromctx x₂)) x₃ x₄) x₅
+≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ x₃ x₄ x₅ x₆) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ (ΣI (ctxHead⊩ (wfctx₁ x₂) .proof) x₃ x₄) x₅
 ≝-project₁ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}
 ≝-project₁ (+Iʳ x x₁ Γ⊢a≝b∶A) = {!!}
 ≝-project₁ (+Eˡ x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
