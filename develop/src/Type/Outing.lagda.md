@@ -273,8 +273,19 @@ data _⊢_≝_∶_ (Γ : Context) where
 ```agda
 infix 5 _⊨_
 record _⊨_ (Γ : Context) (type : Formula) : Set where
-  constructor ⟨_≈_⟩
+  constructor ⟨_∶_⟩
   field
     term : Formula
     proof : Γ ⊢ term ∶ type
+open _⊨_ public
+```
+
+```agda
+infix 5 _⊩_
+record _⊩_ (Γ : Context) (type : Formula) : Set where
+  constructor ⟨_∋_⟩
+  field
+    universe : Universe
+    proof : Γ ⊢ type ∶ 𝒰 universe
+open _⊩_ public
 ```
