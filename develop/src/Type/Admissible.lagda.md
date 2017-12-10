@@ -1,5 +1,9 @@
 
 ```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
+```agda
 module Type.Admissible where
 ```
 
