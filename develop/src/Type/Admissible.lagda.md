@@ -112,7 +112,14 @@ subst₂ = {!!}
 
 typed₁ x = {!!}
 
-ctxHead⊩ = {!!}
+ctxHead⊩ (ctx-EXT Γ⊢A∶𝒰 x∉Γ) = ⟨ _ ∋ Γ⊢A∶𝒰 ⟩
+
+lift⊩ : ∀ {Γ A ℓ ℓ'}
+      → ℓ' ≥ ℓ
+      → Γ ⊢ A ∶ 𝒰 ℓ
+      → Γ ⊢ A ∶ 𝒰 ℓ'
+lift⊩ (diff! zero) Γ⊢A∶𝒰ℓ = Γ⊢A∶𝒰ℓ
+lift⊩ (diff! (suc k)) Γ⊢A∶𝒰ℓ = 𝒰C (lift⊩ auto Γ⊢A∶𝒰ℓ)
 
 ≝-project₁ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₁ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₂ Γ⊢b≝a∶A
@@ -122,10 +129,20 @@ ctxHead⊩ = {!!}
 ≝-project₁ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = ΠE (ΠI Γ,x∶A⊢b∶B) Γ⊢a∶A B[a]≡B'
 ≝-project₁ (ΠU Γ⊢f∶ΠFAB) = Γ⊢f∶ΠFAB
 ≝-project₁ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI Γ⊢x∶A⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A) (≝-project₁ Γ⊢b≝b'∶B[a])
-≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ x₃ x₄ x₅ x₆) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 x₂ (ΣI (ctxHead⊩ (wfctx₁ x₂) .proof) x₃ x₄) x₅
-≝-project₁ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}
-≝-project₁ (+Iʳ x x₁ Γ⊢a≝b∶A) = {!!}
-≝-project₁ (+Eˡ x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
+≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 Γ,x∶A,y∶B⊢g∶C[ΣIxy] Γ⊢a∶A Γ⊢b∶B[a] C[ΣIab]≡A _) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 Γ,x∶A,y∶B⊢g∶C[ΣIxy] (ΣI (ctxHead⊩ (wfctx₁ Γ,x∶A,y∶B⊢g∶C[ΣIxy]) .proof) Γ⊢a∶A Γ⊢b∶B[a]) C[ΣIab]≡A
+≝-project₁ (+Iˡ Γ⊢A∶𝒰 Γ⊢B∶𝒰 Γ⊢a≝a'∶A) = +Iˡ Γ⊢A∶𝒰 Γ⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A)
+≝-project₁ (+Iʳ Γ⊢A∶𝒰 Γ⊢B∶𝒰 Γ⊢b≝b'∶A) = +Iʳ Γ⊢A∶𝒰 Γ⊢B∶𝒰 (≝-project₁ Γ⊢b≝b'∶A)
+≝-project₁ (+Eˡ Γ,z∶+FAB⊢C∶𝒰 Γ,x∶A⊢l∶C[+Iˡx] Γ,y∶B⊢r∶C[+Iʳy] Γ⊢a∶A l[a]≡b C[+Iˡa]≡D) =
+  let Γ⊩A = ctxHead⊩ (wfctx₁ Γ,x∶A⊢l∶C[+Iˡx])
+      Γ⊩B = ctxHead⊩ (wfctx₁ Γ,y∶B⊢r∶C[+Iʳy])
+      ℓᴬ = Γ⊩A .universe
+      ℓᴮ = Γ⊩B .universe
+  in
+  +E Γ,z∶+FAB⊢C∶𝒰 Γ,x∶A⊢l∶C[+Iˡx] Γ,y∶B⊢r∶C[+Iʳy]
+     (+Iˡ (lift⊩ (max≥₁ ℓᴬ ℓᴮ) (Γ⊩A .proof))
+          (lift⊩ (max≥₂ ℓᴬ ℓᴮ) (Γ⊩B .proof))
+          Γ⊢a∶A)
+     C[+Iˡa]≡D
 ≝-project₁ (+Eʳ x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
 ≝-project₁ (𝟙E x x₁ x₂) = {!!}
 ≝-project₁ (ℕIˢ Γ⊢a≝b∶A) = {!!}
@@ -136,12 +153,12 @@ ctxHead⊩ = {!!}
 
 ≝-project₂ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₂ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₁ Γ⊢b≝a∶A
-≝-project₂ (≝-transitivity Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
+≝-project₂ (≝-transitivity Γ⊢a≝b∶A Γ⊢b≝c∶A₁) = ≝-project₂ Γ⊢b≝c∶A₁
 ≝-project₂ (≝-subst Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = {!!}
-≝-project₂ (ΠI Γ⊢a≝b∶A) = {!!}
-≝-project₂ (ΠE x₁ x₂ x₃ x₄) = {!!}
-≝-project₂ (ΠU x₁) = {!!}
-≝-project₂ (ΣI x₁ Γ⊢a≝b∶A Γ⊢a≝b∶A₁) = ΣI {!!} {!!} {!!}
+≝-project₂ (ΠI Γ,x∶A⊢b≝b'∶B) = {!!}
+≝-project₂ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = {!!}
+≝-project₂ (ΠU Γ⊢f∶ΠFAB) = {!!}
+≝-project₂ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI {!!} {!!} {!!}
 ≝-project₂ (ΣE x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
 ≝-project₂ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}
 ≝-project₂ (+Iʳ x x₁ Γ⊢a≝b∶A) = {!!}
