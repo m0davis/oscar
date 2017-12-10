@@ -442,7 +442,7 @@ module Sandbox-O where
   infer-𝟙→𝟙 = ⟨ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ≈ ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl) ⟩
 
   check-𝟎=𝟎 : ε ⊢ =I 𝟎 ∶ 𝟎 =ℕ 𝟎
-  check-𝟎=𝟎 = =I ℕIᶻ
+  check-𝟎=𝟎 = =I (ℕIᶻ ctx-EMP)
 
   infer-𝟎+𝟎=𝟎 : ε ⊨ 𝟎 +ℕ 𝟎 =ℕ 𝟎
   infer-𝟎+𝟎=𝟎 = ⟨ {!!} ≈ {!!} ⟩

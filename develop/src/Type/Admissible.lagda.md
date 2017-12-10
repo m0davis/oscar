@@ -21,6 +21,38 @@ admissible rules
    → Γ ⊢ c ≝ ΣE (z ↦₁ 𝓋 z) (x , y ↦₂ ΣI (𝓋 x) (𝓋 y)) c ∶ ΣF A (x ↦₁ B)
 ΣU x₁ = ≝-symmetry {!!}
 
+-- typing judgements are of well-formed contexts
+typed⟶ctx : ∀ {Γ c C}
+          → Γ ⊢ c ∶ C
+          → Γ ctx
+typed⟶ctx (var Γctx _ _) = Γctx
+typed⟶ctx (≝-subst Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (𝒰I Γctx) = Γctx
+typed⟶ctx (𝒰C Γ⊢) = typed⟶ctx Γ⊢
+typed⟶ctx (ΠF Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (ΠI Γ,x∶A⊢) with typed⟶ctx Γ,x∶A⊢
+… | ctx-EXT Γ⊢ _ = typed⟶ctx Γ⊢
+typed⟶ctx (ΠE Γ⊢ _ _) = typed⟶ctx Γ⊢
+typed⟶ctx (ΣF Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (ΣI _ Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (ΣE _ _ Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (+F Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (+Iˡ _ _ Γ⊢) = typed⟶ctx Γ⊢
+typed⟶ctx (+Iʳ _ _ Γ⊢) = typed⟶ctx Γ⊢
+typed⟶ctx (+E _ _ _ Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (𝟘F Γctx) = Γctx
+typed⟶ctx (𝟘E _ Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (𝟙F Γctx) = Γctx
+typed⟶ctx (𝟙I Γctx) = Γctx
+typed⟶ctx (𝟙E _ _ Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (ℕF Γctx) = Γctx
+typed⟶ctx (ℕIᶻ Γctx) = Γctx
+typed⟶ctx (ℕIˢ Γ⊢) = typed⟶ctx Γ⊢
+typed⟶ctx (ℕE _ _ _ Γ⊢ _) = typed⟶ctx Γ⊢
+typed⟶ctx (=F Γ⊢ _ _) = typed⟶ctx Γ⊢
+typed⟶ctx (=I Γ⊢) = typed⟶ctx Γ⊢
+typed⟶ctx (=E _ _ Γ⊢ _ _ _) = typed⟶ctx Γ⊢
+
 -- TODO fromterm and fromctx deserve to be renamed and/or refactored
 
 fromterm : ∀ {Γ c C}
