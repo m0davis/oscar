@@ -9,10 +9,10 @@ module Type.Outing where
 
 ```agda
 open import Type.Prelude
+open import Type.Universe
 ```
 
 ```agda
-Universe = Nat
 Variable = Nat
 ```
 
