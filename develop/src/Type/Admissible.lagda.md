@@ -22,36 +22,36 @@ admissible rules
 ΣU x₁ = ≝-symmetry {!!}
 
 -- typing judgements are of well-formed contexts
-typed⟶ctx : ∀ {Γ c C}
+wfctx₁ : ∀ {Γ c C}
           → Γ ⊢ c ∶ C
           → Γ ctx
-typed⟶ctx (var Γctx _ _) = Γctx
-typed⟶ctx (≝-subst Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (𝒰I Γctx) = Γctx
-typed⟶ctx (𝒰C Γ⊢) = typed⟶ctx Γ⊢
-typed⟶ctx (ΠF Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (ΠI Γ,x∶A⊢) with typed⟶ctx Γ,x∶A⊢
-… | ctx-EXT Γ⊢ _ = typed⟶ctx Γ⊢
-typed⟶ctx (ΠE Γ⊢ _ _) = typed⟶ctx Γ⊢
-typed⟶ctx (ΣF Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (ΣI _ Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (ΣE _ _ Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (+F Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (+Iˡ _ _ Γ⊢) = typed⟶ctx Γ⊢
-typed⟶ctx (+Iʳ _ _ Γ⊢) = typed⟶ctx Γ⊢
-typed⟶ctx (+E _ _ _ Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (𝟘F Γctx) = Γctx
-typed⟶ctx (𝟘E _ Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (𝟙F Γctx) = Γctx
-typed⟶ctx (𝟙I Γctx) = Γctx
-typed⟶ctx (𝟙E _ _ Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (ℕF Γctx) = Γctx
-typed⟶ctx (ℕIᶻ Γctx) = Γctx
-typed⟶ctx (ℕIˢ Γ⊢) = typed⟶ctx Γ⊢
-typed⟶ctx (ℕE _ _ _ Γ⊢ _) = typed⟶ctx Γ⊢
-typed⟶ctx (=F Γ⊢ _ _) = typed⟶ctx Γ⊢
-typed⟶ctx (=I Γ⊢) = typed⟶ctx Γ⊢
-typed⟶ctx (=E _ _ Γ⊢ _ _ _) = typed⟶ctx Γ⊢
+wfctx₁ (var Γctx _ _) = Γctx
+wfctx₁ (≝-subst Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (𝒰I Γctx) = Γctx
+wfctx₁ (𝒰C Γ⊢) = wfctx₁ Γ⊢
+wfctx₁ (ΠF Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (ΠI Γ,x∶A⊢) with wfctx₁ Γ,x∶A⊢
+… | ctx-EXT Γ⊢ _ = wfctx₁ Γ⊢
+wfctx₁ (ΠE Γ⊢ _ _) = wfctx₁ Γ⊢
+wfctx₁ (ΣF Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (ΣI _ Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (ΣE _ _ Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (+F Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (+Iˡ _ _ Γ⊢) = wfctx₁ Γ⊢
+wfctx₁ (+Iʳ _ _ Γ⊢) = wfctx₁ Γ⊢
+wfctx₁ (+E _ _ _ Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (𝟘F Γctx) = Γctx
+wfctx₁ (𝟘E _ Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (𝟙F Γctx) = Γctx
+wfctx₁ (𝟙I Γctx) = Γctx
+wfctx₁ (𝟙E _ _ Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (ℕF Γctx) = Γctx
+wfctx₁ (ℕIᶻ Γctx) = Γctx
+wfctx₁ (ℕIˢ Γ⊢) = wfctx₁ Γ⊢
+wfctx₁ (ℕE _ _ _ Γ⊢ _) = wfctx₁ Γ⊢
+wfctx₁ (=F Γ⊢ _ _) = wfctx₁ Γ⊢
+wfctx₁ (=I Γ⊢) = wfctx₁ Γ⊢
+wfctx₁ (=E _ _ Γ⊢ _ _ _) = wfctx₁ Γ⊢
 
 -- TODO fromterm and fromctx deserve to be renamed and/or refactored
 
