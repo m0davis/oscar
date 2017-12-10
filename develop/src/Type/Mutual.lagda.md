@@ -10,8 +10,10 @@ module Type.Mutual where
 ```
 
 ```agda
-open import Prelude
-open import Type.Common
+open import Type.Prelude
+open import Type.Complexity
+open import Type.SCTerm
+open import Type.Universe
 ```
 
 ## type-checked terms
@@ -37,17 +39,17 @@ _⊢_ : ∀ {N χ} (Γ : N ctx⋖ χ) → Term N → Set
 _⊢_≼_ : ∀ {N χ} (Γ : N ctx⋖ χ) → Term N → Nat → Set
 Γ ⊢ A ≼ δ = ∃ λ a → ∃ λ χ → χ-measure χ ≤ δ × Γ ⊢ a ∶ A ⋖ χ
 
-infixl 25 _,,_
+infixl 25 _,_
 
 data _ctx⋖_ where
   [] : zero ctx⋖ c []
-  _,,_ : ∀ {N ℓ A δΓ δA} →
+  _,_ : ∀ {N ℓ A δΓ δA} →
               (Γ : N ctx⋖ δΓ) → Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA →
             suc N ctx⋖ c (δΓ ∷ δA ∷ [])
 
 _at_ : ∀ {N χ} → N ctx⋖ χ → Fin N → Term N
-_,,_ {A = A} Γ γ at zero = weakenTermFrom zero A
-(Γ ,, _) at suc n = weakenTermFrom zero (Γ at n)
+_,_ {A = A} Γ γ at zero = weakenTermFrom zero A
+(Γ , _) at suc n = weakenTermFrom zero (Γ at n)
 
 wk⊢ : ∀ {N χ} {Γ : N ctx⋖ χ} {ℓ G δG}
     → (Δ : Γ ⊢ G ∶ 𝒰 ℓ ⋖ δG)
@@ -56,7 +58,7 @@ wk⊢ : ∀ {N χ} {Γ : N ctx⋖ χ} {ℓ G δG}
     → ∀ {wka wkA}
     → weakenTermFrom zero a ≡ wka
     → weakenTermFrom zero A ≡ wkA
-    → Γ ,, Δ ⊢ wka ∶ wkA
+    → Γ , Δ ⊢ wka ∶ wkA
 
 data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
   Vble :
@@ -71,11 +73,11 @@ data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     Γ ⊢ A ∶ 𝒰 (suc ℓ) ⋖ c (δA ∷ [])
   ΠF : ∀ {ℓ A B δA δB} →
       (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-      Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
+      Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ ΠF A B ∶ 𝒰 ℓ ⋖ c (δA ∷ δB ∷ [])
   ΠI : ∀ ℓ {A B b δA δb} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ b ∶ B ⋖ δb →
+    Γ , ⊢A ⊢ b ∶ B ⋖ δb →
     Γ ⊢ ΠI b ∶ ΠF A B ⋖ c (δA ∷ δb ∷ [])
   ΠE : ∀ A B {B[a] f a δf δa} →
     Γ ⊢ f ∶ ΠF A B ⋖ δf →
@@ -84,19 +86,19 @@ data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     Γ ⊢ ΠE f a ∶ B[a] ⋖ c (δf ∷ δa ∷ [])
   ΣF : ∀ {ℓ A B δA δB} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
+    Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ ΣF A B ∶ 𝒰 ℓ ⋖ c (δA ∷ δB ∷ [])
   ΣI : ∀ ℓ {A B a b δA δB δa δb} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
+    Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ b ∶ instantiateTerm zero a B ⋖ δb →
     Γ ⊢ ΣI a b ∶ ΣF A B ⋖ c (δA ∷ δB ∷ δa ∷ δb ∷ [])
   ΣE : ∀ ℓ A B {C[p] C g p δA δB δC δg δp} →
       (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-      (⊢B : Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
-      Γ ,, ΣF ⊢A ⊢B ⊢ C ∶ 𝒰 ℓ ⋖ δC →
-      Γ ,, ⊢A ,, ⊢B ⊢ g ∶ instantiateTerm (suc (suc zero))
+      (⊢B : Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
+      Γ , ΣF ⊢A ⊢B ⊢ C ∶ 𝒰 ℓ ⋖ δC →
+      Γ , ⊢A , ⊢B ⊢ g ∶ instantiateTerm (suc (suc zero))
                                           (ΣI (𝓋 (suc zero)) (𝓋 zero))
                                           (weakenTermFrom zero (weakenTermFrom zero C)) ⋖ δg →
       Γ ⊢ p ∶ ΣF A B ⋖ δp →
@@ -126,11 +128,11 @@ Note that in the HoTT book, `+IL` demands that both arguments to `+F` be well-fo
   +E : ∀ ℓ A B {N[a+b] N na nb a+b δA δB δN δna δnb δa+b} →
       (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
       (⊢B : Γ ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
-      Γ ,, +F ⊢A ⊢B ⊢ N ∶ 𝒰 ℓ ⋖ δN →
-      Γ ,, ⊢A ⊢ na ∶ instantiateTerm (suc zero)
+      Γ , +F ⊢A ⊢B ⊢ N ∶ 𝒰 ℓ ⋖ δN →
+      Γ , ⊢A ⊢ na ∶ instantiateTerm (suc zero)
                                      (+IL (𝓋 zero))
                                      (weakenTermFrom zero N) ⋖ δna →
-      Γ ,, ⊢B ⊢ nb ∶ instantiateTerm (suc zero)
+      Γ , ⊢B ⊢ nb ∶ instantiateTerm (suc zero)
                                      (+IR (𝓋 zero))
                                      (weakenTermFrom zero N) ⋖ δnb →
       Γ ⊢ a+b ∶ +F A B ⋖ δa+b →
@@ -146,7 +148,7 @@ Similar to the above, unlike the HoTT book, I allow one to prove absolutely anyt
 
 ```agda
   𝟘E : ∀ ℓ {N[a] N a δN δa} →
-    Γ ,, 𝟘F {ℓ = ℓ} ⊢ N ∶ 𝒰 ℓ ⋖ δN →
+    Γ , 𝟘F {ℓ = ℓ} ⊢ N ∶ 𝒰 ℓ ⋖ δN →
     Γ ⊢ a ∶ 𝟘F ⋖ δa →
     instantiateTerm zero a N ≡ N[a] →
     Γ ⊢ 𝟘E N a ∶ N[a] ⋖ c (δN ∷ δa ∷ [])
@@ -162,7 +164,7 @@ Here, by eliminating the requirement that N be well-formed, I fear to be treadin
 
 ```agda
   𝟙E : ∀ ℓ {N[a] N n1 a δN δn1 δa} →
-    Γ ,, 𝟙F {ℓ = ℓ} ⊢ N ∶ 𝒰 ℓ ⋖ δN →
+    Γ , 𝟙F {ℓ = ℓ} ⊢ N ∶ 𝒰 ℓ ⋖ δN →
     Γ ⊢ n1 ∶ instantiateTerm zero 𝟙I N ⋖ δn1 →
     Γ ⊢ a ∶ 𝟙F ⋖ δa →
     instantiateTerm zero a N ≡ N[a] →
@@ -178,9 +180,9 @@ Here, by eliminating the requirement that N be well-formed, I fear to be treadin
 
 ```agda
   ℕE : ∀ ℓ {X[n] X x₀  xₛ n δX δx₀ δxₛ δn} →
-    (⊢X : Γ ,, ℕF {ℓ = ℓ} ⊢ X ∶ 𝒰 ℓ ⋖ δX) →
+    (⊢X : Γ , ℕF {ℓ = ℓ} ⊢ X ∶ 𝒰 ℓ ⋖ δX) →
     Γ ⊢ x₀ ∶ instantiateTerm zero ℕIZ X ⋖ δx₀ →
-    Γ ,, ℕF {ℓ = ℓ} ,, ⊢X ⊢ xₛ ∶ weakenTermFrom zero
+    Γ , ℕF {ℓ = ℓ} , ⊢X ⊢ xₛ ∶ weakenTermFrom zero
                                    (instantiateTerm (suc zero)
                                      (ℕIS (𝓋 zero))
                                      (weakenTermFrom zero X)) ⋖ δxₛ →
@@ -203,15 +205,15 @@ Here I am experimenting with
 ```agda
   =E : ∀ ℓ {X[a,b,p] X c' A a b p δC δc' δA δA' δa δb δp} →
       (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-      (⊢A' : Γ ,, ⊢A ⊢ weakenTermFrom zero A ∶ 𝒰 ℓ ⋖ δA') →
-      (⊢p : Γ ,, ⊢A ,, ⊢A' ⊢ =F (weakenTermFrom zero (weakenTermFrom zero A))
+      (⊢A' : Γ , ⊢A ⊢ weakenTermFrom zero A ∶ 𝒰 ℓ ⋖ δA') →
+      (⊢p : Γ , ⊢A , ⊢A' ⊢ =F (weakenTermFrom zero (weakenTermFrom zero A))
                                 ((𝓋 (suc zero)))
                                 ((𝓋 zero))
                            ∶ 𝒰 ℓ
                            ⋖ δp) →
-      (⊢C : Γ ,, ⊢A ,, snd (wk⊢ _ ⊢A refl refl) ,, =F (snd (wk⊢ _ (snd (wk⊢ _ ⊢A refl refl)) refl refl)) (Vble {n = suc zero} refl) (Vble {n = zero} refl) ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
-      -- (⊢C : Γ ,, ⊢A ,, ⊢A' ,, ⊢p ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
-      Γ ,, ⊢A ⊢ c' ∶ instantiateTerm (suc zero) (𝓋 zero)
+      (⊢C : Γ , ⊢A , snd (wk⊢ _ ⊢A refl refl) , =F (snd (wk⊢ _ (snd (wk⊢ _ ⊢A refl refl)) refl refl)) (Vble {n = suc zero} refl) (Vble {n = zero} refl) ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
+      -- (⊢C : Γ , ⊢A , ⊢A' , ⊢p ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
+      Γ , ⊢A ⊢ c' ∶ instantiateTerm (suc zero) (𝓋 zero)
                        (instantiateTerm (suc zero) (𝓋 zero)
                                       (instantiateTerm (suc zero) (=I (𝓋 zero))
                                         (weakenTermFrom zero X))) →
@@ -280,12 +282,12 @@ On the other hand, the requirement `Γ ⊢ A : 𝒰ᵢ` is needed as part of the
   ΠI :
     ∀ ℓ {A δA B b b' δb=b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ b ≝ b' ∶ B ⋖ δb=b' →
+    Γ , ⊢A ⊢ b ≝ b' ∶ B ⋖ δb=b' →
     Γ ⊢ ΠI b ≝ ΠI b' ∶ ΠF A B ⋖ c (δA ∷ δb=b' ∷ [])
   ΣI :
     ∀ {ℓ A δA B δB a a' δa=a' b b' δb=b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
+    Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ a ≝ a' ∶ A ⋖ δa=a' →
     Γ ⊢ b ≝ b' ∶ instantiateTerm zero a B ⋖ δb=b' →
     Γ ⊢ ΣI a b ≝ ΣI a' b' ∶ ΣF A B ⋖ c (δA ∷ δB ∷ δa=a' ∷ δb=b' ∷ [])
@@ -316,25 +318,25 @@ Computation rules:
 ```agda
   ΠE : ∀ {ℓ A δA B b δb a δa}
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ b ∶ B ⋖ δb →
+    Γ , ⊢A ⊢ b ∶ B ⋖ δb →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ ΠE (ΠI b) a ≝ instantiateTerm zero a b ∶ instantiateTerm zero a B ⋖ c (δA ∷ δb ∷ δa ∷ [])
   ΣE : ∀ {ℓ δΠAB A δA B δB C δC g δg a δa b δb} →
     (⊢ΠAB : Γ ⊢ ΠF A B ∶ 𝒰 ℓ ⋖ δΠAB) →
-    Γ ,, ⊢ΠAB ⊢ C ∶ 𝒰 ℓ ⋖ δC →
+    Γ , ⊢ΠAB ⊢ C ∶ 𝒰 ℓ ⋖ δC →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    (⊢B : Γ ,, ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
-    Γ ,, ⊢A ,, ⊢B ⊢ g ∶ instantiateTerm (suc (suc zero)) (ΣI (𝓋 (suc zero)) (𝓋 (suc zero))) (weakenTermFrom zero (weakenTermFrom zero C)) ⋖ δg →
+    (⊢B : Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
+    Γ , ⊢A , ⊢B ⊢ g ∶ instantiateTerm (suc (suc zero)) (ΣI (𝓋 (suc zero)) (𝓋 (suc zero))) (weakenTermFrom zero (weakenTermFrom zero C)) ⋖ δg →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ b ∶ instantiateTerm zero a B ⋖ δb →
     Γ ⊢ ΣE C g (ΣI a b) ≝ instantiateTerm zero a (instantiateTerm zero (weakenTermFrom zero b) g) ∶ instantiateTerm zero (ΣI a b) C ⋖ c (δΠAB ∷ δA ∷ δB ∷ δC ∷ δg ∷ δa ∷ δb ∷ [])
   +LE : ∀ {ℓ δ+FAB C δC A δA B δB c' δc' d δd a δa} →
     (⊢+FAB : Γ ⊢ +F A B ∶ 𝒰 ℓ ⋖ δ+FAB) →
-    Γ ,, ⊢+FAB ⊢ C ∶ 𝒰 ℓ ⋖ δC →
+    Γ , ⊢+FAB ⊢ C ∶ 𝒰 ℓ ⋖ δC →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
-    Γ ,, ⊢A ⊢ c' ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) ⋖ δc' →
+    Γ , ⊢A ⊢ c' ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) ⋖ δc' →
     (⊢B : Γ ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
-    Γ ,, ⊢B ⊢ d ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) ⋖ δd →
+    Γ , ⊢B ⊢ d ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) ⋖ δd →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ +E C c' d (+IL a) ≝ instantiateTerm zero a c' ∶ instantiateTerm zero (+IL a) C ⋖ c (δ+FAB ∷ δC ∷ δA ∷ δB ∷ δc' ∷ δd ∷ δa ∷ [])
 ```

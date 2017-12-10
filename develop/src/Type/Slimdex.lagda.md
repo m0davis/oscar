@@ -8,20 +8,12 @@ module Type.Slimdex where
 ```
 
 ```agda
--- I will repurpose _,_
-open import Prelude renaming (_,_ to _,,_)
+open import Type.Prelude
 ```
 
 ```agda
-open import Tactic.Nat
-```
-
-```agda
-open import Type.Common hiding (Term)
-```
-
-```agda
-open import Type.Common using () renaming (Term to STerm)
+open import Type.SCTerm renaming (Term to STerm)
+open import Type.Universe
 ```
 
 ```agda

@@ -15,5 +15,17 @@ I will repurpose _,_.
 ```
 
 ```agda
-open import Type.Common using (∃_; _≢_) public
+open import Tactic.Nat public using (auto)
+```
+
+## some conveniences that are here, inconveniently
+
+```agda
+∃_ : ∀ {a b} {A : Set a} (B : A → Set b) → Set (a ⊔ b)
+∃_ = Σ _
+```
+
+```agda
+_≢_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
+a ≢ b = ¬ (a ≡ b)
 ```

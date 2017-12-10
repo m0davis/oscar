@@ -1,81 +1,10 @@
 
-#
-
 ```agda
-module Type.Common where
-```
+module Type.SCTerm where
 
-```agda
-open import Prelude
-open import Tactic.Nat
-```
-
-## some conveniences that are here, inconveniently
-
-```agda
-∃_ : ∀ {a b} {A : Set a} (B : A → Set b) → Set (a ⊔ b)
-∃_ = Σ _
-```
-
-```agda
-_≢_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
-a ≢ b = ¬ (a ≡ b)
-```
-
-## some necessities that are unnecessarily here
-
-I use DeBruijn indexing to describe parts of a context. A context has a size represented by a natural number. A DeBruijn index on a context of some size N is a number between 0 and N-1, and is meant to represent a signifier of one of the contextual elements. We will sometimes want to talk about a context expanded by the insertion of some element. When we do so, we will also want to carry along an index that points to the same element in the expanded context as it was prior to expansion. In a context of size N there are N + 1 places at which to insert a new element. I say that an index i in a context Γ of size N is weakened from a place f yielding an index i'. That is, `weakenFinFrom {N} p i = i'`.
-
-```agda
-weakenFinFrom : ∀ {N} → Fin (suc N) → Fin N → Fin (suc N)
-weakenFinFrom zero x = suc x
-weakenFinFrom (suc from) zero = zero
-weakenFinFrom (suc from) (suc x) = suc (weakenFinFrom from x)
-```
-
-Similarly, we may also want to talk about contractions of a context. Or we may want to talk about pidgeons. You are a pigeon. There are some pigeon holes labeled 0,1,...,N. You are given a particular pigeon hole, i. One of the holes that you are not given, labeled h, is removed, and the pigeon holes are relabeled 0,1,...,N-1. What is the new label on your pigeon hole?
-
-```agda
-instantiateFinAt : ∀ {N} {h i : Fin (suc N)} → h ≢ i → Fin N
-instantiateFinAt {zero} {zero} {zero} h≢i = ⊥-elim (h≢i refl)
-instantiateFinAt {zero} {zero} {suc ()} _
-instantiateFinAt {zero} {suc ()} {_} _
-instantiateFinAt {suc _} {_} {zero} _ = zero -- my label stays at 0
-instantiateFinAt {suc _} {zero} {suc i} _ = i -- my label shifts down
-instantiateFinAt {suc _} {suc h} {suc i} sh≢si =
-  let h≢i : h ≢ i -- the hole lower than mine is not the same as the hole lower than the one removed
-      h≢i = λ {refl → sh≢si refl}
-  in
-  suc (instantiateFinAt h≢i) -- my label is one more then the one lower than me after the change
-```
-
-# Specification of Type Theory (from the HoTT book, mostly)
-
-This is inspired mainly from Appendix A.2, though I have taken a liberty or two.
-
-The postulated multiverse.
-
-```agda
-Universe = Nat
-```
-
-We may also view `Complexity` as the shape of a proof.
-
-```agda
-data Complexity : Set where
-  c : ∀ {N} → Vec Complexity N → Complexity
-```
-
-These are measures of the size of the shape of a proof. they are not to be confused with how long it takes to prove something. although they could be if a given proof system searches monotonically over sizes.
-
-```agda
-χ-measure : Complexity → Nat
-δ-measure : ∀ {N} → Vec Complexity N → Nat
-
-χ-measure (c {N} δ) = δ-measure δ
-
-δ-measure {.0} [] = zero
-δ-measure {.(suc _)} (χ ∷ δ) = suc (χ-measure χ + δ-measure δ)
+open import Type.Prelude
+open import Type.Universe
+open import Type.DeBruijn
 ```
 
 ## scope-checked terms

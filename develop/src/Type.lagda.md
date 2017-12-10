@@ -7,9 +7,12 @@ module Type where
 
 I develop a partial (or maybe a full) implementation of a particular type theory and then turn back to re-develop it as an instance of a general (metaprogrammed) type theory.
 
+# Specification of Type Theory (from the HoTT book, mostly)
+
+This is inspired mainly from Appendix A.2, though I have taken a liberty or two.
+
 ```agda
-open import Prelude
-open import Type.Common
+open import Type.Prelude
 ```
 
 My first attempt at implementing a type theory was to represent that from the HoTT book, Appendix 2. I added a notion of complexity on the idea that it would help in proving that type inference (finding a term that witnesses a given type) is semi-decidable (that eventually, in some sense, any type capable of being witnessed will in fact be witnessed). I ran into trouble with cumbersome substitutions of DeBruijn-indexed variables.
@@ -246,6 +249,7 @@ Some definitions for scope-checked terms.
 
 ```agda
 module ScopeCheckedDefinitions where
+  open import Type.SCTerm
 
   𝟎 𝟏 𝟐 𝟑 𝟒 : ∀ {N} → Term N
   𝟎 = ℕIZ
@@ -290,6 +294,8 @@ module ScopeCheckedDefinitions where
 
 ```
 module Sandbox-F where
+  open import Type.SCTerm
+  open import Type.Complexity
   open ScopeCheckedDefinitions
   open F
 
@@ -297,27 +303,29 @@ module Sandbox-F where
   check-𝟙→𝟙 = ΠI zero 𝟙F (Vble refl)
 
   infer-𝟙→𝟙 : [] ⊢ ΠF 𝟙F 𝟙F
-  infer-𝟙→𝟙 = ΠI (𝓋 zero) , c (c [] ∷ c [] ∷ []) , ΠI zero 𝟙F (Vble refl)
+  infer-𝟙→𝟙 = ΠI (𝓋 zero) ,, c (c [] ∷ c [] ∷ []) ,, ΠI zero 𝟙F (Vble refl)
 
   check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
-  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
+  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
 
   infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
-  infer-𝟎+𝟎=𝟎 = =I ℕIZ , c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
+  infer-𝟎+𝟎=𝟎 = =I ℕIZ ,, c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
 
   check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
-  check-𝟎+𝟏=𝟏 = {!!} , {!!}
+  check-𝟎+𝟏=𝟏 = {!!} ,, {!!}
 
   infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
                                  let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
-  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) , {!!} , {!!}
+  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) ,, {!!} ,, {!!}
 
   check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
-  check-upsetting = {!!} , {!!}
+  check-upsetting = {!!} ,, {!!}
 ```
 
 ```
 module Sandbox-M where
+  open import Type.SCTerm
+  open import Type.Complexity
   open ScopeCheckedDefinitions
   open M
 
@@ -325,27 +333,28 @@ module Sandbox-M where
   check-𝟙→𝟙 = ΠI zero 𝟙F (Vble refl)
 
   infer-𝟙→𝟙 : [] ⊢ ΠF 𝟙F 𝟙F
-  infer-𝟙→𝟙 = ΠI (𝓋 zero) , c (c [] ∷ c [] ∷ []) , ΠI zero 𝟙F (Vble refl)
+  infer-𝟙→𝟙 = ΠI (𝓋 zero) ,, c (c [] ∷ c [] ∷ []) ,, ΠI zero 𝟙F (Vble refl)
 
   check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
-  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
+  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
 
   infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
-  infer-𝟎+𝟎=𝟎 = =I ℕIZ , c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
+  infer-𝟎+𝟎=𝟎 = =I ℕIZ ,, c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
 
   check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
-  check-𝟎+𝟏=𝟏 = {!!} , {!!}
+  check-𝟎+𝟏=𝟏 = {!!} ,, {!!}
 
   infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
                                  let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
-  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) , {!!} , {!!}
+  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) ,, {!!} ,, {!!}
 
   check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
-  check-upsetting = {!!} , {!!}
+  check-upsetting = {!!} ,, {!!}
 ```
 
 ```
 module Sandbox-N where
+  open import Type.SCTerm
   open ScopeCheckedDefinitions
   open N
   check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)

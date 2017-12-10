@@ -152,7 +152,7 @@ module AnotherGoAtIt where
 ```
 
 ```agda
-  open import Type.Common
+  open import Type.SCTerm
   infixr 10 _▷_
   data Kind (N : Nat) : Set where
     ⟦_⟧ : Term N → Kind N

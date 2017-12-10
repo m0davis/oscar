@@ -12,16 +12,11 @@ module Type.Named where
 I would like to use the type-checker to prevent mistakes when renaming and substituting DeBruijn-indexed variables.
 
 ```agda
--- I will repurpose _,_
-open import Prelude renaming (_,_ to _,,_)
+open import Type.Prelude
 ```
 
 ```agda
-open import Tactic.Nat
-```
-
-```agda
-open import Type.Common hiding (Term)
+open import Type.Universe
 ```
 
 I shall take the notion of a symbol to be a primitive concept, except insofar as I think of a symbol as something that can be written down, strung together, moved around. A term is an arrangement of symbols that have been given meta-theoretic semantics. A term is called lexically-checked if it is guaranteed to be in a suitable arrangement to have some meta-theoretically-denoted meaning. A term is called scope-checked if ...
@@ -29,7 +24,7 @@ I shall take the notion of a symbol to be a primitive concept, except insofar as
 An `STerm` is a scope-checked term, indexed by the number of elements in its (meta-theoretic) context.
 
 ```agda
-open import Type.Common using () renaming (Term to STerm)
+open import Type.SCTerm renaming (Term to STerm)
 ```
 
 ```agda
