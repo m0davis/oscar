@@ -1,5 +1,9 @@
 
 ```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
+```agda
 module Type.Prelude where
 ```
 
@@ -28,4 +32,12 @@ open import Tactic.Nat public using (auto)
 ```agda
 _≢_ : ∀ {ℓ} {A : Set ℓ} → A → A → Set ℓ
 a ≢ b = ¬ (a ≡ b)
+```
+
+```agda
+max≥₁ : (a b : Nat) → max a b ≥ a
+max≥₁ = {!!}
+
+max≥₂ : (a b : Nat) → max a b ≥ b
+max≥₂ = {!!}
 ```
