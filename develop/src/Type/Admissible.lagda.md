@@ -42,6 +42,7 @@ wfctx₁ (ΣI _ Γ⊢ _) = wfctx₁ Γ⊢
 wfctx₁ (ΣE _ _ Γ⊢ _) = wfctx₁ Γ⊢
 wfctx₁ (+F Γ⊢ _) = wfctx₁ Γ⊢
 wfctx₁ (+Iˡ _ _ Γ⊢) = wfctx₁ Γ⊢
+-- wfctx₁ (+Iˡ Γ⊢ _ _) = wfctx₁ Γ⊢ -- TODO investigate why this leads to termination-check failure
 wfctx₁ (+Iʳ _ _ Γ⊢) = wfctx₁ Γ⊢
 wfctx₁ (+E _ _ _ Γ⊢ _) = wfctx₁ Γ⊢
 wfctx₁ (𝟘F Γctx) = Γctx
