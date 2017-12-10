@@ -1,6 +1,6 @@
 
 ```agda
-{-# OPTIONS --allow-unsolved-metas #-}
+-- {-# OPTIONS --allow-unsolved-metas #-}
 ```
 
 ```agda
@@ -132,7 +132,7 @@ lift⊩ (diff! (suc k)) Γ⊢A∶𝒰ℓ = 𝒰C (lift⊩ auto Γ⊢A∶𝒰ℓ)
 ≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 Γ,x∶A,y∶B⊢g∶C[ΣIxy] Γ⊢a∶A Γ⊢b∶B[a] C[ΣIab]≡A _) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 Γ,x∶A,y∶B⊢g∶C[ΣIxy] (ΣI (ctxHead⊩ (wfctx₁ Γ,x∶A,y∶B⊢g∶C[ΣIxy]) .proof) Γ⊢a∶A Γ⊢b∶B[a]) C[ΣIab]≡A
 ≝-project₁ (+Iˡ Γ⊢A∶𝒰 Γ⊢B∶𝒰 Γ⊢a≝a'∶A) = +Iˡ Γ⊢A∶𝒰 Γ⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A)
 ≝-project₁ (+Iʳ Γ⊢A∶𝒰 Γ⊢B∶𝒰 Γ⊢b≝b'∶A) = +Iʳ Γ⊢A∶𝒰 Γ⊢B∶𝒰 (≝-project₁ Γ⊢b≝b'∶A)
-≝-project₁ (+Eˡ Γ,z∶+FAB⊢C∶𝒰 Γ,x∶A⊢l∶C[+Iˡx] Γ,y∶B⊢r∶C[+Iʳy] Γ⊢a∶A l[a]≡b C[+Iˡa]≡D) =
+≝-project₁ (+Eˡ Γ,z∶+FAB⊢C∶𝒰 Γ,x∶A⊢l∶C[+Iˡx] Γ,y∶B⊢r∶C[+Iʳy] Γ⊢a∶A _ C[+Iˡa]≡D) =
   let Γ⊩A = ctxHead⊩ (wfctx₁ Γ,x∶A⊢l∶C[+Iˡx])
       Γ⊩B = ctxHead⊩ (wfctx₁ Γ,y∶B⊢r∶C[+Iʳy])
       ℓᴬ = Γ⊩A .universe
@@ -143,13 +143,23 @@ lift⊩ (diff! (suc k)) Γ⊢A∶𝒰ℓ = 𝒰C (lift⊩ auto Γ⊢A∶𝒰ℓ)
           (lift⊩ (max≥₂ ℓᴬ ℓᴮ) (Γ⊩B .proof))
           Γ⊢a∶A)
      C[+Iˡa]≡D
-≝-project₁ (+Eʳ x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
-≝-project₁ (𝟙E x x₁ x₂) = {!!}
-≝-project₁ (ℕIˢ Γ⊢a≝b∶A) = {!!}
-≝-project₁ (ℕEᶻ x x₁ x₂ x₃) = {!!}
-≝-project₁ (ℕEˢ x x₁ x₂ x₃ x₄ x₅) = {!!}
-≝-project₁ (=I Γ⊢a≝b∶A) = {!!}
-≝-project₁ (=E x₁ x₂ x₃ x₄ x₅) = {!!}
+≝-project₁ (+Eʳ Γ,z∶+FAB⊢C∶𝒰 Γ,x∶A⊢l∶C[+Iˡx] Γ,y∶B⊢r∶C[+Iʳy] Γ⊢b∶B _ C[+Iʳb]≡D) =
+  let Γ⊩A = ctxHead⊩ (wfctx₁ Γ,x∶A⊢l∶C[+Iˡx])
+      Γ⊩B = ctxHead⊩ (wfctx₁ Γ,y∶B⊢r∶C[+Iʳy])
+      ℓᴬ = Γ⊩A .universe
+      ℓᴮ = Γ⊩B .universe
+  in
+  +E Γ,z∶+FAB⊢C∶𝒰 Γ,x∶A⊢l∶C[+Iˡx] Γ,y∶B⊢r∶C[+Iʳy]
+     (+Iʳ (lift⊩ (max≥₁ ℓᴬ ℓᴮ) (Γ⊩A .proof))
+          (lift⊩ (max≥₂ ℓᴬ ℓᴮ) (Γ⊩B .proof))
+          Γ⊢b∶B)
+     C[+Iʳb]≡D
+≝-project₁ (𝟙E Γ,z∶𝟙F⊢C∶𝒰 Γ⊢b∶C[𝟙I] C[𝟙I]≡A) = 𝟙E Γ,z∶𝟙F⊢C∶𝒰 Γ⊢b∶C[𝟙I] (𝟙I (wfctx₁ Γ⊢b∶C[𝟙I])) C[𝟙I]≡A
+≝-project₁ (ℕIˢ Γ⊢a≝b∶A) = ℕIˢ (≝-project₁ Γ⊢a≝b∶A)
+≝-project₁ (ℕEᶻ Γ,z∶ℕF⊢C∶𝒰 Γ⊢cᶻ∶C[ℕIᶻ] Γ,z∶ℕF,f∶C⊢cˢ∶C[ℕIˢz] C[ℕIᶻ]≡A) = ℕE Γ,z∶ℕF⊢C∶𝒰 Γ⊢cᶻ∶C[ℕIᶻ] Γ,z∶ℕF,f∶C⊢cˢ∶C[ℕIˢz] (ℕIᶻ (wfctx₁ Γ⊢cᶻ∶C[ℕIᶻ])) C[ℕIᶻ]≡A
+≝-project₁ (ℕEˢ Γ,z∶ℕF⊢C∶𝒰 Γ⊢cᶻ∶C[ℕIᶻ] Γ,z∶ℕF,f∶C⊢cˢ∶C[ℕIˢz] Γ⊢n∶ℕF _ C[ℕIˢn]≡A) = ℕE Γ,z∶ℕF⊢C∶𝒰 Γ⊢cᶻ∶C[ℕIᶻ] Γ,z∶ℕF,f∶C⊢cˢ∶C[ℕIˢz] (ℕIˢ Γ⊢n∶ℕF) C[ℕIˢn]≡A
+≝-project₁ (=I Γ⊢a≝a'∶A) = =I (≝-project₁ Γ⊢a≝a'∶A)
+≝-project₁ (=E C c a c[a]≡b C[a,a,=I]≡A) = =E C c a a (=I a) C[a,a,=I]≡A
 
 ≝-project₂ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₂ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₁ Γ⊢b≝a∶A
