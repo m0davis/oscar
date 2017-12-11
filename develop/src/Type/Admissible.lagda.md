@@ -161,6 +161,13 @@ lift⊩ (diff! (suc k)) Γ⊢A∶𝒰ℓ = 𝒰C (lift⊩ auto Γ⊢A∶𝒰ℓ)
 ≝-project₁ (=I Γ⊢a≝a'∶A) = =I (≝-project₁ Γ⊢a≝a'∶A)
 ≝-project₁ (=E C c a c[a]≡b C[a,a,=I]≡A) = =E C c a a (=I a) C[a,a,=I]≡A
 
+ap : ∀ {Γ x a A b B b' B'}
+   → Γ ⊢ a ∶ A
+   → Γ , x ∶ A ⊢ b ∶ B
+   → b [ a ←₁ x ] ≡ b'
+   → B [ a ←₁ x ] ≡ B'
+   → Γ ⊢ b' ∶ B'
+
 ≝-project₂ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₂ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₁ Γ⊢b≝a∶A
 ≝-project₂ (≝-transitivity Γ⊢a≝b∶A Γ⊢b≝c∶A₁) = ≝-project₂ Γ⊢b≝c∶A₁
@@ -180,4 +187,6 @@ lift⊩ (diff! (suc k)) Γ⊢A∶𝒰ℓ = 𝒰C (lift⊩ auto Γ⊢A∶𝒰ℓ)
 ≝-project₂ (ℕEˢ x x₁ x₂ x₃ x₄ x₅) = {!!}
 ≝-project₂ (=I Γ⊢a≝b∶A) = {!!}
 ≝-project₂ (=E x₁ x₂ x₃ x₄ x₅) = {!!}
+
+ap Γ⊢a∶A Γ,x∶A⊢b∶B b[a]≡b' B[a]≡B' = {!!}
 ```
