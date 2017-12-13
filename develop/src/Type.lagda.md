@@ -18,14 +18,14 @@ open import Type.Prelude
 My first attempt at implementing a type theory was to represent that from the HoTT book, Appendix 2. I added a notion of complexity on the idea that it would help in proving that type inference (finding a term that witnesses a given type) is semi-decidable (that eventually, in some sense, any type capable of being witnessed will in fact be witnessed). I ran into trouble with cumbersome substitutions of DeBruijn-indexed variables. An idea to streamline the process was to use a mutually-defined weakening function for terms.
 
 ```agda
-import Type.Mutual as M
+import Type.Theory.Mutual as M
 ```
 
 Then another idea was to come-up with a method for referring to variables by their names.
 
 ```agda
-import Type.oldname -- this is some previous development of `Named`?
-import Type.Named as N
+import Type.Theory.oldname -- this is some previous development of `Named`?
+import Type.Theory.Named as N
 ```
 
 While trying to define a type-checked notion of substitution of a variable defined in one context for a term in a different (but, somehow, compatible) context, I discovered that representing type membership in a linear context would require representing the dependency structure. This is unlike in STLC, where a type can be identified by its encoding. In a dependent type, the encoding of the same type may be different, depending on the postitions of the types depended upon in the context. This reminded me of the tree-like structure of an argument from several premises to a conclusion.

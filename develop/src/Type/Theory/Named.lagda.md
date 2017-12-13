@@ -6,7 +6,7 @@
 # Type theory with named variables
 
 ```agda
-module Type.Named where
+module Type.Theory.Named where
 ```
 
 I would like to use the type-checker to prevent mistakes when renaming and substituting DeBruijn-indexed variables.
