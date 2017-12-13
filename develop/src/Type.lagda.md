@@ -91,7 +91,7 @@ which still has green slime, but least is relegated to a single constructor.
 I try this out in:
 
 ```agda
-import Type.Slimdex
+import Type.Theory.Slimdex
 ```
 
 I also had another idea, thinking maybe I could just build much more information into the indices of the type. I tested it out here:

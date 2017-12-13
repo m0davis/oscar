@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Slimdex where
+module Type.Theory.Slimdex where
 ```
 
 ```agda
