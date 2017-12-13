@@ -1,5 +1,5 @@
 
-In the HoTT book, in Appendix 2 (Formal Type Theory), the Π-UNIQ rule is given as:
+In the HoTT book, in Appendix A.2 (Formal Type Theory), the Π-UNIQ rule is given as:
 
         Γ ⊢ f : Π (x : A) B
     -------------------------------
@@ -140,7 +140,7 @@ Definitional equality.
 
 ```agda
 data _⊢_≝_∶_ (Γ : Context) where
-  ΠU
+  Π-UNIQ
     : ∀ {x A B f}
     → Γ ⊢ f ∶ ΠF A (x ↦₁ B)
     → Γ ⊢ f ≝ ΠI A (x ↦₁ ΠE f (var x)) ∶ ΠF A (x ↦₁ B)
@@ -159,16 +159,19 @@ Given the above, I can construct
 
     (x₀ : U₀ ⟶ U₀) ⊢ (λ (x₀ : U₀) . x₀ (x₀)) : U₀ ⟶ U₀
 
-which is weird, as it involves applying a member of U₀ to itself.
+which is `weird`, as it involves applying a member of U₀ to itself.
 
 ```agda
+U₀→U₀ : ε ⊢ ΠF (U 0) (0 ↦₁ U 0) ∶ U 1
+U₀→U₀ = (Π-FORM (U-INTRO ctx-EMP)
+                (U-INTRO (ctx-EXT (U-INTRO ctx-EMP)
+                                  tt)))
+
 weird : ε , 0 ∶ ΠF (U 0) (0 ↦₁ U 0)
       ⊢ ΠI (U 0) (0 ↦₁ ΠE (var 0) (var 0))
       ∶ ΠF (U 0) (0 ↦₁ U 0)
-weird = ≝-project₂ (ΠU (vble (ctx-EXT (Π-FORM (U-INTRO ctx-EMP)
-                                              (U-INTRO (ctx-EXT (U-INTRO ctx-EMP)
-                                                                tt)))
-                                      tt)
-                             zero
-                             refl))
+weird = ≝-project₂ (Π-UNIQ (vble (ctx-EXT U₀→U₀
+                                          tt)
+                                 zero
+                                 refl))
 ```
