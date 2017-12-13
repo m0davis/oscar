@@ -35,7 +35,52 @@ data Term (N : Nat) : Set where
   =F : Term N → Term N → Term N → Term N
   =I : Term N → Term N
   =E : Term (suc (suc (suc N))) → Term (suc N) → Term N → Term N → Term N → Term N
+```
 
+Some definitions for scope-checked terms.
+
+```agda
+module DefinedFunctions where
+  𝟎 𝟏 𝟐 𝟑 𝟒 : ∀ {N} → Term N
+  𝟎 = ℕIZ
+  𝟏 = ℕIS 𝟎
+  𝟐 = ℕIS 𝟏
+  𝟑 = ℕIS 𝟐
+  𝟒 = ℕIS 𝟑
+
+  -- add x represents a function that adds x to a given input
+  add : ∀ {N} → Term N → Term N
+  add x = ℕE (ΠF ℕF ℕF) -- form a function f : ℕ → ℕ
+             -- case x = ℕIZ
+             -- λ y → y
+             (ΠI (𝓋 zero))
+             -- case x = ℕIS x₋₁
+             -- λ x₋₁ f →
+                -- λ y → suc (f y)
+                (ΠI (ℕIS (ΠE (𝓋 (suc zero)) (𝓋 zero))))
+             x
+
+  _+ℕ_ : ∀ {N} → Term N → Term N → Term N
+  x +ℕ y = ΠE (add x) y
+
+  double : ∀ {N} → Term N → Term N
+  double x = ΠE (ΠI (add (𝓋 zero))) x
+
+  multiply : ∀ {N} → Term N → Term N
+  multiply x = ℕE (ΠF ℕF ℕF)
+                  (ΠI ℕIZ)
+                  (ΠI let x₋₁ = 𝓋 (suc (suc zero)) ; f = 𝓋 (suc zero) ; y = 𝓋 zero in
+                      y +ℕ (ΠE f x₋₁))
+                  x
+
+  _*ℕ_ : ∀ {N} → Term N → Term N → Term N
+  x *ℕ y = ΠE (multiply x) y
+
+  _=ℕ_ : ∀ {N} → Term N → Term N → Term N
+  x =ℕ y = =F ℕF x y
+```
+
+```agda
 weakenTermFrom : ∀ {N} → Fin (suc N) → Term N → Term (suc N)
 weakenTermFrom from (𝒰 ℓ) =
                      𝒰 ℓ

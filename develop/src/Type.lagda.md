@@ -241,58 +241,13 @@ import Type.Theory.Outing as O
 import Type.Theory.Outing.Admissible as OA
 ```
 
-Some definitions for scope-checked terms.
-
-```agda
-module ScopeCheckedDefinitions where
-  open import Type.SCTerm
-
-  𝟎 𝟏 𝟐 𝟑 𝟒 : ∀ {N} → Term N
-  𝟎 = ℕIZ
-  𝟏 = ℕIS 𝟎
-  𝟐 = ℕIS 𝟏
-  𝟑 = ℕIS 𝟐
-  𝟒 = ℕIS 𝟑
-
-  -- add x represents a function that adds x to a given input
-  add : ∀ {N} → Term N → Term N
-  add x = ℕE (ΠF ℕF ℕF) -- form a function f : ℕ → ℕ
-             -- case x = ℕIZ
-             -- λ y → y
-             (ΠI (𝓋 zero))
-             -- case x = ℕIS x₋₁
-             -- λ x₋₁ f →
-                -- λ y → suc (f y)
-                (ΠI (ℕIS (ΠE (𝓋 (suc zero)) (𝓋 zero))))
-             x
-
-  _+ℕ_ : ∀ {N} → Term N → Term N → Term N
-  x +ℕ y = ΠE (add x) y
-
-  double : ∀ {N} → Term N → Term N
-  double x = ΠE (ΠI (add (𝓋 zero))) x
-
-  multiply : ∀ {N} → Term N → Term N
-  multiply x = ℕE (ΠF ℕF ℕF)
-                  (ΠI ℕIZ)
-                  (ΠI let x₋₁ = 𝓋 (suc (suc zero)) ; f = 𝓋 (suc zero) ; y = 𝓋 zero in
-                      y +ℕ (ΠE f x₋₁))
-                  x
-
-  _*ℕ_ : ∀ {N} → Term N → Term N → Term N
-  x *ℕ y = ΠE (multiply x) y
-
-  _=ℕ_ : ∀ {N} → Term N → Term N → Term N
-  x =ℕ y = =F ℕF x y
-```
-
 ## test drive(s)
 
 ```
 module Sandbox-M where
   open import Type.SCTerm
   open import Type.Complexity
-  open ScopeCheckedDefinitions
+  open DefinedFunctions
   open M
 
   check-𝟙→𝟙 : [] ⊢ ΠI (𝓋 zero) ∶ ΠF 𝟙F 𝟙F ⋖ c (c [] ∷ c [] ∷ [])
@@ -321,7 +276,7 @@ module Sandbox-M where
 ```
 module Sandbox-N where
   open import Type.SCTerm
-  open ScopeCheckedDefinitions
+  open DefinedFunctions
   open N
   check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)
   check-𝟙→𝟙 = {!!}
