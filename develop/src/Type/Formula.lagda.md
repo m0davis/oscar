@@ -166,3 +166,38 @@ _[_,_←₂_,_] : Formula → Formula → Formula → Variable → Variable → 
 _[_,_,_←₃_,_,_] : Formula → Formula → Formula → Formula → Variable → Variable → Variable → Formula
 φ [ σx , σy , σz ←₃ x , y , z ] = φ [ σx ∷ σy ∷ σz ∷ [] ⋆←⋆ x ∷ y ∷ z ∷ [] ]
 ```
+
+Checking that a variable is not free in a formula.
+
+```agda
+instance
+
+  DistinctnessFormula : Distinctness Formula
+  DistinctnessAbstraction : ∀ {N} → Distinctness (Abstraction N)
+
+  DistinctnessFormula .Distinctness._∉_ v (𝒰 x) = ⊤
+  DistinctnessFormula .Distinctness._∉_ v (𝓋 x) = v ≢ x
+  DistinctnessFormula .Distinctness._∉_ v (ΠF φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v (ΠI φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v (ΠE φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v (ΣF φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v (ΣI φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v (ΣE φ₁ φ₂ φ₃) = v ∉ φ₁ × v ∉ φ₂ × v ∉ φ₃
+  DistinctnessFormula .Distinctness._∉_ v (+F φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v (+Iˡ φ₁) = v ∉ φ₁
+  DistinctnessFormula .Distinctness._∉_ v (+Iʳ φ₁) = v ∉ φ₁
+  DistinctnessFormula .Distinctness._∉_ v (+E φ₁ φ₂ φ₃ φ₄) = v ∉ φ₁ × v ∉ φ₂ × v ∉ φ₃ × v ∉ φ₄
+  DistinctnessFormula .Distinctness._∉_ v 𝟘F = ⊤
+  DistinctnessFormula .Distinctness._∉_ v (𝟘E φ₁ φ₂) = v ∉ φ₁ × v ∉ φ₂
+  DistinctnessFormula .Distinctness._∉_ v 𝟙F = ⊤
+  DistinctnessFormula .Distinctness._∉_ v 𝟙I = ⊤
+  DistinctnessFormula .Distinctness._∉_ v (𝟙E φ₁ φ₂ φ₃) = v ∉ φ₁ × v ∉ φ₂ × v ∉ φ₃
+  DistinctnessFormula .Distinctness._∉_ v ℕF = ⊤
+  DistinctnessFormula .Distinctness._∉_ v ℕIᶻ = ⊤
+  DistinctnessFormula .Distinctness._∉_ v (ℕIˢ φ₁) = v ∉ φ₁
+  DistinctnessFormula .Distinctness._∉_ v (ℕE φ₁ φ₂ φ₃ φ₄) = v ∉ φ₁ × v ∉ φ₂ × v ∉ φ₃ × v ∉ φ₄
+  DistinctnessFormula .Distinctness._∉_ v (=F φ₁ φ₂ φ₃) = v ∉ φ₁ × v ∉ φ₂ × v ∉ φ₃
+  DistinctnessFormula .Distinctness._∉_ v (=I φ₁) = v ∉ φ₁
+  DistinctnessFormula .Distinctness._∉_ v (=E φ₁ φ₂ φ₃ φ₄ φ₅) = v ∉ φ₁ × v ∉ φ₂ × v ∉ φ₃ × v ∉ φ₄ × v ∉ φ₅
+
+  DistinctnessAbstraction .Distinctness._∉_ v (binders ⋆↦ φ) = ifYes v ∈? binders then ⊤ else v ∉ φ
