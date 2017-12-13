@@ -303,57 +303,11 @@ module Sandbox-N where
   -}
 ```
 
-Definitions for formulas.
-
-```agda
-module FormulaDefinitions where
-  open import Type.Formula
-  open import Type.Context
-  open O
-
-  𝟎 𝟏 𝟐 𝟑 𝟒 : Formula
-  𝟎 = ℕIᶻ
-  𝟏 = ℕIˢ 𝟎
-  𝟐 = ℕIˢ 𝟏
-  𝟑 = ℕIˢ 𝟐
-  𝟒 = ℕIˢ 𝟑
-
-  -- add x represents a function that adds x to a given input
-  add : Formula → Formula
-  add = ℕE (zero ↦₁ ΠF ℕF (zero ↦₁ ℕF)) -- form a function f : ℕ → ℕ
-           -- case x = ℕIZ
-           -- λ y → y
-           (ΠI ℕF (zero ↦₁ 𝓋 zero))
-           -- case x = ℕIS x₋₁
-           -- λ x₋₁ f →
-              -- λ y → suc (f y)
-           (0 , 1 ↦₂ ΠI ℕF (2 ↦₁ ℕIˢ (ΠE (𝓋 1) (𝓋 2))))
-
-  _+ℕ_ : Formula → Formula → Formula
-  x +ℕ y = ΠE (add x) y
-
-  double : Formula → Formula
-  double = ℕE (0 ↦₁ ℕF) ℕIᶻ (0 , 1 ↦₂ ℕIˢ (ℕIˢ (𝓋 1)))
-
-  multiply : Formula → Formula
-  multiply = ℕE (zero ↦₁ ΠF ℕF (zero ↦₁ ℕF))
-                (ΠI ℕF (zero ↦₁ ℕIᶻ))
-                (let x₋₁ = 0 ; f = 1 ; y = 2 in
-                  x₋₁ , f ↦₂ ΠI ℕF (y ↦₁ 𝓋 y +ℕ (ΠE (𝓋 f) (𝓋 x₋₁))))
-
-  _*ℕ_ : Formula → Formula → Formula
-  x *ℕ y = ΠE (multiply x) y
-
-  infix 14 _=ℕ_
-  _=ℕ_ : Formula → Formula → Formula
-  x =ℕ y = =F ℕF x y
-```
-
 ```
 module Sandbox-O where
   open import Type.Formula
   open import Type.Context
-  open FormulaDefinitions
+  open DefinedFunctions
   open O
 
   check-𝟙→𝟙 : ε ⊢ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠF 𝟙F (zero ↦₁ 𝟙F)
