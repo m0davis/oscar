@@ -1,4 +1,8 @@
 
+```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
 # failure to unify absurd lambdas when function declared mutually with datatype
 
 ```agda
