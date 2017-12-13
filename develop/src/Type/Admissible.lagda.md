@@ -1,6 +1,6 @@
 
 ```agda
--- {-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas #-}
 ```
 
 ```agda
@@ -189,4 +189,11 @@ ap : ∀ {Γ x a A b B b' B'}
 ≝-project₂ (=E x₁ x₂ x₃ x₄ x₅) = {!!}
 
 ap Γ⊢a∶A Γ,x∶A⊢b∶B b[a]≡b' B[a]≡B' = {!!}
+```
+
+There are at least two problems here: (1) it seems impossible to complete ≝-project₂ especially because of case ΠU, and (2) I have no definitional equality for α-equivalence. For example, it's not obvious to me that this can be proved (in fact it may be refutable).
+
+```agda
+these-are-α-equivalent : ε ⊢ ΠF (𝒰 0) (0 ↦₁ 𝒰 0) ≝ ΠF (𝒰 0) (1 ↦₁ 𝒰 0) ∶ 𝒰 1
+these-are-α-equivalent = ?
 ```
