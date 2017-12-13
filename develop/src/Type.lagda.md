@@ -238,7 +238,7 @@ It turns out that the problem experienced about is caused by absurd lambdas inhe
 
 ```agda
 import Type.Outing as O
-import Type.Admissible as OA
+import Type.Outing.Admissible as OA
 ```
 
 Some definitions for scope-checked terms.

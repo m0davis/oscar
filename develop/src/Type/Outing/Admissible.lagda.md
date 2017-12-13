@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Admissible where
+module Type.Outing.Admissible where
 ```
 
 ```agda
@@ -195,5 +195,5 @@ There are at least two problems here: (1) it seems impossible to complete ≝-pr
 
 ```agda
 these-are-α-equivalent : ε ⊢ ΠF (𝒰 0) (0 ↦₁ 𝒰 0) ≝ ΠF (𝒰 0) (1 ↦₁ 𝒰 0) ∶ 𝒰 1
-these-are-α-equivalent = ?
+these-are-α-equivalent = {!!}
 ```
