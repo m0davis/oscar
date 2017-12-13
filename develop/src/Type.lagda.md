@@ -226,7 +226,7 @@ weakened[ τ ]≈ τ' at[ from ] = weakenTermFrom from 𝒙 ≡ 𝒙'
 
 Idea #4
 
-Waay back at `Type.First`, I had something like this (plus some complexity stuff)
+Waay back at `Type.Theory.Mutual`, I had something like this (plus some complexity stuff)
 
     ΣF : ∀ {ℓ 𝑨 𝑩}
        → (A : Γ ⊢ 𝑨 ∶ 𝒰 ℓ)
@@ -268,7 +268,7 @@ Now, I'd like to build-up the defining argument for `g` like so:
 
 Idea #5
 
-Carry out what I had barely started in `Type.Mutual` and implement proofs of Subst₁ and Wkg₁ (and also their definitional-equality counterparts). But the trick will be in even stating the theorems because the context, as I have so far defined it, is itself a proof that the context consists of (type-checked) universe inhabitants. Perhaps an easier way to go will be to take the context over which the typing judgement applies to be a (snoc?) list of `Term _`, then have a separate judgement that validates the context for those rules (such as 𝒰-intro) that call for such a thing. This will more closely represent what's formalised in Appendix A.2 of the HoTT book.
+Carry out what I had barely started in `Type.Theory.Mutual` and implement proofs of Subst₁ and Wkg₁ (and also their definitional-equality counterparts). But the trick will be in even stating the theorems because the context, as I have so far defined it, is itself a proof that the context consists of (type-checked) universe inhabitants. Perhaps an easier way to go will be to take the context over which the typing judgement applies to be a (snoc?) list of `Term _`, then have a separate judgement that validates the context for those rules (such as 𝒰-intro) that call for such a thing. This will more closely represent what's formalised in Appendix A.2 of the HoTT book.
 
 ```agda
 import Type.HoTTer
