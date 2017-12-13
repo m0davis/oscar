@@ -7,7 +7,7 @@ In the HoTT book, in Appendix 2 (Formal Type Theory), the Π-UNIQ rule is given 
 
 I believe a side-condition should be added, saying that `x` does not occur free in `f`. In the below I demonstrate that, without this condition, I can construct the perverse judgement:
 
-    (x₀ : 𝒰₀ ⟶ 𝒰₀) ⊢ (λ (x₀ : 𝒰₀) . x₀ (x₀)) : 𝒰₀ ⟶ 𝒰₀
+    (x₀ : U₀ ⟶ U₀) ⊢ (λ (x₀ : U₀) . x₀ (x₀)) : U₀ ⟶ U₀
 
 ```agda
 module BadHoTTPiUniq where
@@ -34,7 +34,7 @@ Variable = ℕ
 record Abstraction (N : ℕ) : Set
 
 data Expression : Set where
-  𝒰 : Universe → Expression
+  U : Universe → Expression
   var : Variable → Expression
   -- Π formation
   ΠF : Expression → Abstraction 1 → Expression
@@ -112,7 +112,7 @@ infix 10 _ctx
 data _ctx where
   ctx-EMP : ε ctx
   ctx-EXT : ∀ {Γ : Context} {Aₙ : Expression} {ℓ}
-          → Γ ⊢ Aₙ ∶ 𝒰 ℓ
+          → Γ ⊢ Aₙ ∶ U ℓ
           → ∀ {xₙ}
           → xₙ ∉C Γ
           → Γ , xₙ ∶ Aₙ ctx
@@ -127,22 +127,19 @@ data _⊢_∶_ (Γ : Context) where
        → ∀ {binder}
        → indexContext Γ i ≡ binder
        → Γ ⊢ var (variable binder) ∶ expression binder
-  𝒰I : Γ ctx
-     → ∀ {ℓ}
-     → Γ ⊢ 𝒰 ℓ ∶ 𝒰 (suc ℓ)
-  ΠF : ∀ {A x B ℓ}
-     → Γ ⊢ A ∶ 𝒰 ℓ
-     → Γ , x ∶ A ⊢ B ∶ 𝒰 ℓ
-     → Γ ⊢ ΠF A (x ↦₁ B) ∶ 𝒰 ℓ
+  U-INTRO : Γ ctx
+          → ∀ {ℓ}
+          → Γ ⊢ U ℓ ∶ U (suc ℓ)
+  Π-FORM : ∀ {A x B ℓ}
+         → Γ ⊢ A ∶ U ℓ
+         → Γ , x ∶ A ⊢ B ∶ U ℓ
+         → Γ ⊢ ΠF A (x ↦₁ B) ∶ U ℓ
 ```
 
 Definitional equality.
 
 ```agda
 data _⊢_≝_∶_ (Γ : Context) where
-  ΠI : ∀ {x A B b b'}
-     → Γ , x ∶ A ⊢ b ≝ b' ∶ B
-     → Γ ⊢ ΠI A (x ↦₁ b) ≝ ΠI A (x ↦₁ b') ∶ ΠF A (x ↦₁ B)
   ΠU
     : ∀ {x A B f}
     → Γ ⊢ f ∶ ΠF A (x ↦₁ B)
@@ -160,17 +157,17 @@ postulate
 
 Given the above, I can construct
 
-    (x₀ : 𝒰₀ ⟶ 𝒰₀) ⊢ (λ (x₀ : 𝒰₀) . x₀ (x₀)) : 𝒰₀ ⟶ 𝒰₀
+    (x₀ : U₀ ⟶ U₀) ⊢ (λ (x₀ : U₀) . x₀ (x₀)) : U₀ ⟶ U₀
 
-which is weird, as it involves applying a member of 𝒰₀ to itself.
+which is weird, as it involves applying a member of U₀ to itself.
 
 ```agda
-weird : ε , 0 ∶ ΠF (𝒰 0) (0 ↦₁ 𝒰 0)
-      ⊢ ΠI (𝒰 0) (0 ↦₁ ΠE (var 0) (var 0))
-      ∶ ΠF (𝒰 0) (0 ↦₁ 𝒰 0)
-weird = ≝-project₂ (ΠU (vble (ctx-EXT (ΠF (𝒰I ctx-EMP)
-                                          (𝒰I (ctx-EXT (𝒰I ctx-EMP)
-                                                       tt)))
+weird : ε , 0 ∶ ΠF (U 0) (0 ↦₁ U 0)
+      ⊢ ΠI (U 0) (0 ↦₁ ΠE (var 0) (var 0))
+      ∶ ΠF (U 0) (0 ↦₁ U 0)
+weird = ≝-project₂ (ΠU (vble (ctx-EXT (Π-FORM (U-INTRO ctx-EMP)
+                                              (U-INTRO (ctx-EXT (U-INTRO ctx-EMP)
+                                                                tt)))
                                       tt)
                              zero
                              refl))
