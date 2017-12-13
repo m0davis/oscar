@@ -30,6 +30,7 @@ import Type.Mutual as M
 Then another idea was to come-up with a method for referring to variables by their names.
 
 ```agda
+import Type.oldname -- this is some previous development of `Named`?
 import Type.Named as N
 ```
 
