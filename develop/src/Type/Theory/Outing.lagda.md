@@ -193,10 +193,19 @@ data _⊢_≝_∶_ (Γ : Context) where
     → b [ a ←₁ x ] ≡ b'
     → B [ a ←₁ x ] ≡ B'
     → Γ ⊢ ΠE (ΠI A (x ↦₁ b)) a ≝ b' ∶ B'
+```
+
+By requiring that the lambda-bound variable not be free in the term to be η-expanded, we avoid variable name-clashes.
+
+```agda
   ΠU
     : ∀ {x A B f}
     → Γ ⊢ f ∶ ΠF A (x ↦₁ B)
+    → x ∉ f
     → Γ ⊢ f ≝ ΠI A (x ↦₁ ΠE f (𝓋 x)) ∶ ΠF A (x ↦₁ B)
+```
+
+```agda
   ΣI : ∀ {x A a a' b b' B ℓ}
      → Γ , x ∶ A ⊢ B ∶ 𝒰 ℓ
      → Γ ⊢ a ≝ a' ∶ A

@@ -127,7 +127,7 @@ lift⊩ (diff! (suc k)) Γ⊢A∶𝒰ℓ = 𝒰C (lift⊩ auto Γ⊢A∶𝒰ℓ)
 ≝-project₁ (≝-subst Γ⊢a≝b∶B Γ⊢B≝A∶𝒰) = ≝-subst (≝-project₁ Γ⊢a≝b∶B) Γ⊢B≝A∶𝒰
 ≝-project₁ (ΠI Γ,x∶A⊢b≝b'∶B) = ΠI (≝-project₁ Γ,x∶A⊢b≝b'∶B)
 ≝-project₁ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = ΠE (ΠI Γ,x∶A⊢b∶B) Γ⊢a∶A B[a]≡B'
-≝-project₁ (ΠU Γ⊢f∶ΠFAB) = Γ⊢f∶ΠFAB
+≝-project₁ (ΠU Γ⊢f∶ΠFAB x∉f) = Γ⊢f∶ΠFAB
 ≝-project₁ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI Γ⊢x∶A⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A) (≝-project₁ Γ⊢b≝b'∶B[a])
 ≝-project₁ (ΣE Γ,z∶ΣFAB⊢C∶𝒰 Γ,x∶A,y∶B⊢g∶C[ΣIxy] Γ⊢a∶A Γ⊢b∶B[a] C[ΣIab]≡A _) = ΣE Γ,z∶ΣFAB⊢C∶𝒰 Γ,x∶A,y∶B⊢g∶C[ΣIxy] (ΣI (ctxHead⊩ (wfctx₁ Γ,x∶A,y∶B⊢g∶C[ΣIxy]) .proof) Γ⊢a∶A Γ⊢b∶B[a]) C[ΣIab]≡A
 ≝-project₁ (+Iˡ Γ⊢A∶𝒰 Γ⊢B∶𝒰 Γ⊢a≝a'∶A) = +Iˡ Γ⊢A∶𝒰 Γ⊢B∶𝒰 (≝-project₁ Γ⊢a≝a'∶A)
@@ -174,7 +174,7 @@ ap : ∀ {Γ x a A b B b' B'}
 ≝-project₂ (≝-subst Γ⊢a≝b∶A Γ⊢A≝B∶𝒰) = ≝-subst (≝-project₂ Γ⊢a≝b∶A) Γ⊢A≝B∶𝒰
 ≝-project₂ (ΠI Γ,x∶A⊢b≝b'∶B) = ΠI (≝-project₂ Γ,x∶A⊢b≝b'∶B)
 ≝-project₂ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = {!!}
-≝-project₂ (ΠU Γ⊢f∶ΠFAB) = {!!}
+≝-project₂ (ΠU Γ⊢f∶ΠFAB x∉f) = {!!}
 ≝-project₂ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI {!!} {!!} {!!}
 ≝-project₂ (ΣE x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
 ≝-project₂ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}

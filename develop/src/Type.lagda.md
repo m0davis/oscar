@@ -294,6 +294,12 @@ import Agdasugarmedo
 
 It turns out that the problem experienced about is caused by absurd lambdas inheriting the parameters of the datatype in which they are mutually defined with a function that uses that lambda. The solution is to move the computation of the absurd lambda outside the datatype.
 
+During this development, I discovered a need to change the `Π-UNIQ` rule to avoid certain variable-name clashes. I outline the problem here:
+
+```agda
+import BadHoTTPiUniq
+```
+
 ```
 module SandboxOuting where
   open import Type.Theory.Outing
