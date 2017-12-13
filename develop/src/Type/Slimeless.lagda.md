@@ -56,11 +56,8 @@ Sort-checked scope-checked terms are then `data SSTerm (N : Nat) : Sort → Set`
 I can see that I've been a bit imprecise, maybe even wrong in the above. Slimelessly, I shall continue.
 
 ```agda
-open import Prelude
-```
-
-```agda
-Universe = Nat
+open import Type.Prelude
+open import Type.Universe
 ```
 
 ```agda
