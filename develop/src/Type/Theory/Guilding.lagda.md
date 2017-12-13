@@ -5,7 +5,7 @@
 ```
 
 ```agda
-module Type.Guilding where
+module Type.Theory.Guilding where
 ```
 
 ```agda

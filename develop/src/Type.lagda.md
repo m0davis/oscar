@@ -223,13 +223,13 @@ import Type.HoTTer
 There, finding that I needed to build-up from syntactically-valid forms to well-scoped expressions (and not the other way around), I proceed to:
 
 ```agda
-import Type.Building
+import Type.Theory.Building
 ```
 
 The proof for the (admissable) weakening rule for well-typed terms confused me. I suspect I could clarify the situation if I removed the green slime. The lazy way to do this is simply to put the green stuff in outputs in argument positions using propositional equality. Which is what I try here:
 
 ```agda
-import Type.Guilding
+import Type.Theory.Guilding
 ```
 
 All was going well it seemed until Agda gave me the sugar-me-do, allowing me to fill a hole but then complaining about it afterwards. As this is not type-theory related, I sideline the investigation into how this can happen separately.
@@ -237,8 +237,8 @@ All was going well it seemed until Agda gave me the sugar-me-do, allowing me to 
 It turns out that the problem experienced about is caused by absurd lambdas inheriting the parameters of the datatype in which they are mutually defined with a function that uses that lambda. The solution is to move the computation of the absurd lambda outside the datatype.
 
 ```agda
-import Type.Outing as O
-import Type.Outing.Admissible as OA
+import Type.Theory.Outing as O
+import Type.Theory.Outing.Admissible as OA
 ```
 
 Some definitions for scope-checked terms.

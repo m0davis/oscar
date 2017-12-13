@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Outing where
+module Type.Theory.Outing where
 ```
 
 ```agda

@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Building where
+module Type.Theory.Building where
 ```
 
 ```agda

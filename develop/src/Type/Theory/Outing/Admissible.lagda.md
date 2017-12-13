@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Outing.Admissible where
+module Type.Theory.Outing.Admissible where
 ```
 
 ```agda
@@ -13,7 +13,7 @@ open import Type.Formula
 open import Type.Universe
 open import Type.Variable
 open import Type.Context
-open import Type.Outing
+open import Type.Theory.Outing
 ```
 
 admissible rules
