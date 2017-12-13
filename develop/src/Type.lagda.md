@@ -17,15 +17,69 @@ open import Type.Prelude
 
 My first attempt at implementing a type theory was to represent that from the HoTT book, Appendix 2. I added a notion of complexity on the idea that it would help in proving that type inference (finding a term that witnesses a given type) is semi-decidable (that eventually, in some sense, any type capable of being witnessed will in fact be witnessed). I ran into trouble with cumbersome substitutions of DeBruijn-indexed variables. An idea to streamline the process was to use a mutually-defined weakening function for terms.
 
-```agda
-import Type.Theory.Mutual as M
+```
+module SandboxMutual where
+  open import Type.Theory.Mutual
+  open import Type.Complexity
+  open import Type.SCTerm
+  open DefinedFunctions
+
+  check-𝟙→𝟙 : [] ⊢ ΠI (𝓋 zero) ∶ ΠF 𝟙F 𝟙F ⋖ c (c [] ∷ c [] ∷ [])
+  check-𝟙→𝟙 = ΠI zero 𝟙F (Vble refl)
+
+  infer-𝟙→𝟙 : [] ⊢ ΠF 𝟙F 𝟙F
+  infer-𝟙→𝟙 = ΠI (𝓋 zero) ,, c (c [] ∷ c [] ∷ []) ,, ΠI zero 𝟙F (Vble refl)
+
+  check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
+  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
+
+  infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
+  infer-𝟎+𝟎=𝟎 = =I ℕIZ ,, c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
+
+  check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
+  check-𝟎+𝟏=𝟏 = {!!} ,, {!!}
+
+  infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
+                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
+  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) ,, {!!} ,, {!!}
+
+  check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
+  check-upsetting = {!!} ,, {!!}
 ```
 
 Then another idea was to come-up with a method for referring to variables by their names.
 
 ```agda
 import Type.Theory.oldname -- this is some previous development of `Named`?
-import Type.Theory.Named as N
+```
+
+```
+module SandboxNamed where
+  open import Type.Theory.Named
+  open import Type.SCTerm
+  open DefinedFunctions
+
+  check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)
+  check-𝟙→𝟙 = {!!}
+
+  infer-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F
+  infer-𝟙→𝟙 = {!!}
+
+  check-𝟎=𝟎 : ε ⊢ 𝟎 =ℕ 𝟎 ∋ =I 𝟎
+  check-𝟎=𝟎 = {!!}
+
+  infer-𝟎+𝟎=𝟎 : ε ⊢ (𝟎 =ℕ 𝟎)
+  infer-𝟎+𝟎=𝟎 = {!!}
+
+  check-𝟎+𝟏=𝟏 : ε ⊢ ((𝟎 +ℕ 𝟏) =ℕ 𝟏) ∋ =I 𝟏
+  check-𝟎+𝟏=𝟏 = {!!}
+
+  infer-∀n→doublen=𝟐*n : ε ⊢ ΠF ℕF
+                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
+  infer-∀n→doublen=𝟐*n = {!!}
+
+  check-upsetting : ε ⊢ ℕF ∋ ℕIS 𝟙I
+  check-upsetting = {!!}
 ```
 
 While trying to define a type-checked notion of substitution of a variable defined in one context for a term in a different (but, somehow, compatible) context, I discovered that representing type membership in a linear context would require representing the dependency structure. This is unlike in STLC, where a type can be identified by its encoding. In a dependent type, the encoding of the same type may be different, depending on the postitions of the types depended upon in the context. This reminded me of the tree-like structure of an argument from several premises to a conclusion.
@@ -234,81 +288,19 @@ import Type.Theory.Guilding
 
 All was going well it seemed until Agda gave me the sugar-me-do, allowing me to fill a hole but then complaining about it afterwards. As this is not type-theory related, I sideline the investigation into how this can happen separately.
 
+```agda
+import Agdasugarmedo
+```
+
 It turns out that the problem experienced about is caused by absurd lambdas inheriting the parameters of the datatype in which they are mutually defined with a function that uses that lambda. The solution is to move the computation of the absurd lambda outside the datatype.
 
-```agda
-import Type.Theory.Outing as O
-import Type.Theory.Outing.Admissible as OA
 ```
-
-## test drive(s)
-
-```
-module Sandbox-M where
-  open import Type.SCTerm
-  open import Type.Complexity
-  open DefinedFunctions
-  open M
-
-  check-𝟙→𝟙 : [] ⊢ ΠI (𝓋 zero) ∶ ΠF 𝟙F 𝟙F ⋖ c (c [] ∷ c [] ∷ [])
-  check-𝟙→𝟙 = ΠI zero 𝟙F (Vble refl)
-
-  infer-𝟙→𝟙 : [] ⊢ ΠF 𝟙F 𝟙F
-  infer-𝟙→𝟙 = ΠI (𝓋 zero) ,, c (c [] ∷ c [] ∷ []) ,, ΠI zero 𝟙F (Vble refl)
-
-  check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
-  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
-
-  infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
-  infer-𝟎+𝟎=𝟎 = =I ℕIZ ,, c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
-
-  check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
-  check-𝟎+𝟏=𝟏 = {!!} ,, {!!}
-
-  infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
-                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
-  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) ,, {!!} ,, {!!}
-
-  check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
-  check-upsetting = {!!} ,, {!!}
-```
-
-```
-module Sandbox-N where
-  open import Type.SCTerm
-  open DefinedFunctions
-  open N
-  check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)
-  check-𝟙→𝟙 = {!!}
-
-  infer-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F
-  infer-𝟙→𝟙 = {!!}
-
-  {- commented-out until I develop the API
-  check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
-  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
-
-  infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
-  infer-𝟎+𝟎=𝟎 = =I ℕIZ , c (c [] ∷ c [] ∷ []) , =I zero ℕF ℕIZ
-
-  check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
-  check-𝟎+𝟏=𝟏 = {!!} , {!!}
-
-  infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
-                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
-  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) , {!!} , {!!}
-
-  check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
-  check-upsetting = {!!} , {!!}
-  -}
-```
-
-```
-module Sandbox-O where
-  open import Type.Formula
+module SandboxOuting where
+  open import Type.Theory.Outing
+  open import Type.Theory.Outing.Admissible
   open import Type.Context
+  open import Type.Formula
   open DefinedFunctions
-  open O
 
   check-𝟙→𝟙 : ε ⊢ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠF 𝟙F (zero ↦₁ 𝟙F)
   check-𝟙→𝟙 = ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl)
