@@ -49,7 +49,9 @@ data _⊢_∶_ (Γ : Context) where
       → (i : Fin (lengthContext Γ))
       → ∀ {binder}
       → indexContext Γ i ≡ binder
-      → Γ ⊢ 𝓋 (fst binder) ∶ snd binder
+      → ∀ {i γ}
+      → binder ≡ (i ,, γ)
+      → Γ ⊢ 𝓋 i ∶ γ
   ≝-subst
     : ∀ {a A B ℓ}
     → Γ ⊢ a ∶ A
@@ -197,12 +199,13 @@ data _⊢_≝_∶_ (Γ : Context) where
 
 By requiring that the lambda-bound variable not be free in the term to be η-expanded, we avoid variable name-clashes.
 
+For reasons I don't fully understand, I have also found it necessary to require that the lambda-bound variable not even exist in the context in order to make the proof of ≝-project₂ go through for the ΠU case.
+
 ```agda
-  ΠU
-    : ∀ {x A B f}
-    → Γ ⊢ f ∶ ΠF A (x ↦₁ B)
-    → x ∉ f
-    → Γ ⊢ f ≝ ΠI A (x ↦₁ ΠE f (𝓋 x)) ∶ ΠF A (x ↦₁ B)
+  ΠU : ∀ {x A B f}
+     → Γ ⊢ f ∶ ΠF A (x ↦₁ B)
+     → x ∉ Γ
+     → Γ ⊢ f ≝ ΠI A (x ↦₁ ΠE f (𝓋 x)) ∶ ΠF A (x ↦₁ B)
 ```
 
 ```agda

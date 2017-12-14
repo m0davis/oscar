@@ -29,7 +29,7 @@ admissible rules
 wfctx₁ : ∀ {Γ c C}
           → Γ ⊢ c ∶ C
           → Γ ctx
-wfctx₁ (var Γctx _ _) = Γctx
+wfctx₁ (var Γctx _ _ _) = Γctx
 wfctx₁ (≝-subst Γ⊢ _) = wfctx₁ Γ⊢
 wfctx₁ (𝒰I Γctx) = Γctx
 wfctx₁ (𝒰C Γ⊢) = wfctx₁ Γ⊢
@@ -168,13 +168,30 @@ ap : ∀ {Γ x a A b B b' B'}
    → B [ a ←₁ x ] ≡ B'
    → Γ ⊢ b' ∶ B'
 
+Π-typed₁' : ∀ {Γ A φ B}
+          → Γ ⊢ ΠF A φ ∶ B
+          → Γ ⊩ A
+Π-typed₁' (≝-subst x x₁) = Π-typed₁' x
+Π-typed₁' (𝒰C x) = Π-typed₁' x
+Π-typed₁' (ΠF x x₁) = ⟨ _ ∋ x ⟩
+
+Π-typed₁ : ∀ {Γ A φ}
+         → Γ ⊩ ΠF A φ
+         → Γ ⊩ A
+Π-typed₁ ⟨ universe₁ ∋ proof₁ ⟩ = Π-typed₁' proof₁
+
+Π-inject₁ : ∀ {Γ A f φ}
+          → Γ ⊢ f ∶ ΠF A φ
+          → Γ ⊩ A
+Π-inject₁ Γ⊢f∶ΠF = Π-typed₁ (typed₁ Γ⊢f∶ΠF)
+
 ≝-project₂ (≝-reflexivity Γ⊢a∶A) = Γ⊢a∶A
 ≝-project₂ (≝-symmetry Γ⊢b≝a∶A) = ≝-project₁ Γ⊢b≝a∶A
 ≝-project₂ (≝-transitivity Γ⊢a≝b∶A Γ⊢b≝c∶A₁) = ≝-project₂ Γ⊢b≝c∶A₁
 ≝-project₂ (≝-subst Γ⊢a≝b∶A Γ⊢A≝B∶𝒰) = ≝-subst (≝-project₂ Γ⊢a≝b∶A) Γ⊢A≝B∶𝒰
 ≝-project₂ (ΠI Γ,x∶A⊢b≝b'∶B) = ΠI (≝-project₂ Γ,x∶A⊢b≝b'∶B)
 ≝-project₂ (ΠE Γ,x∶A⊢b∶B Γ⊢a∶A _ B[a]≡B') = {!!}
-≝-project₂ (ΠU Γ⊢f∶ΠFAB x∉f) = {!!}
+≝-project₂ (ΠU {x} {A = A} {B = B} Γ⊢f∶ΠFAB x∉f) = ΠI (ΠE (wkg₁ {Δ = ε} (Π-inject₁ Γ⊢f∶ΠFAB .proof) Γ⊢f∶ΠFAB x∉f refl) (var (ctx-EXT ((Π-inject₁ Γ⊢f∶ΠFAB .proof)) x∉f) zero refl refl) {!!})
 ≝-project₂ (ΣI Γ⊢x∶A⊢B∶𝒰 Γ⊢a≝a'∶A Γ⊢b≝b'∶B[a]) = ΣI {!!} {!!} {!!}
 ≝-project₂ (ΣE x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
 ≝-project₂ (+Iˡ x x₁ Γ⊢a≝b∶A) = {!!}
@@ -189,11 +206,4 @@ ap : ∀ {Γ x a A b B b' B'}
 ≝-project₂ (=E x₁ x₂ x₃ x₄ x₅) = {!!}
 
 ap Γ⊢a∶A Γ,x∶A⊢b∶B b[a]≡b' B[a]≡B' = {!!}
-```
-
-There are at least two problems here: (1) it seems impossible to complete ≝-project₂ especially because of case ΠU, and (2) I have no definitional equality for α-equivalence. For example, it's not obvious to me that this can be proved (in fact it may be refutable).
-
-```agda
-these-are-α-equivalent : ε ⊢ ΠF (𝒰 0) (0 ↦₁ 𝒰 0) ≝ ΠF (𝒰 0) (1 ↦₁ 𝒰 0) ∶ 𝒰 1
-these-are-α-equivalent = {!!}
 ```

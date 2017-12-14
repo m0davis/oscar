@@ -309,10 +309,10 @@ module SandboxOuting where
   open DefinedFunctions
 
   check-𝟙→𝟙 : ε ⊢ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠF 𝟙F (zero ↦₁ 𝟙F)
-  check-𝟙→𝟙 = ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl)
+  check-𝟙→𝟙 = ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl refl)
 
   infer-𝟙→𝟙 : ε ⊨ ΠF 𝟙F (zero ↦₁ 𝟙F)
-  infer-𝟙→𝟙 = ⟨ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl) ⟩
+  infer-𝟙→𝟙 = ⟨ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl refl) ⟩
 
   check-𝟎=𝟎 : ε ⊢ =I 𝟎 ∶ 𝟎 =ℕ 𝟎
   check-𝟎=𝟎 = =I (ℕIᶻ ctx-EMP)
@@ -328,3 +328,61 @@ module SandboxOuting where
   check-not-upsetting : ε ⊢ ℕIˢ 𝟙I ∶ ℕF → ⊥
   check-not-upsetting = {!!}
 ```
+
+The problem does not have an easy solution. In order to make the proof of ≝-project₂ go through for the ΠU case, the obvious (and, so far, afaics, the only) way to do it is to successively apply the Π-elim rule and then the Π-intro rule to f. To avoid name-clashes, one simply requires of ΠU that the binding variable in the lambda not be free in `f`.
+
+But this is not enough: Π-intro implicitly requires that the binding variable not appear in the context. This is by virtue of the clause `Γ , x ∶ A ⊢ b ∶ B` in `ΠI`. Adding in this additional requirement means that certain `f`s cannot be definitionally-equal to their η-expansions---that is, for those `f`s which happen to be of a type `ΠF A (x ↦ B)` where `x` appears in the context.
+
+This unwanted restriction on definitional equality is reminiscent of another problem I found during development: I have no definitional equality for α-equivalence. For example, it's not obvious to me that this can be proved (in fact it may be refutable).
+
+```agda
+  these-are-α-equivalent : ε ⊢ ΠF (𝒰 0) (0 ↦₁ 𝒰 0) ≝ ΠF (𝒰 0) (1 ↦₁ 𝒰 0) ∶ 𝒰 1
+  these-are-α-equivalent = {!!}
+```
+
+Reconsidering how I got here, I see that there is a problem with the typing judgement constructors, for example `ΠI`:
+
+    ΠI : ∀ {x A b B}
+       → Γ , x ∶ A ⊢ b ∶ B
+       → Γ ⊢ ΠI A (x ↦₁ b) ∶ ΠF A (x ↦₁ B)
+
+There is no need for the two binders to be exactly the variable `x`. Roughly speaking, we can build many other typing judgements as follows:
+
+    ΠI : ∀ {x A b B x' x''}
+       → Γ , x ∶ A ⊢ b ∶ B
+       → x' ∉ b
+       → x'' ∉ B
+       → Γ ⊢ ΠI A (x' ↦₁ b [ 𝓋 x' ←₁ x ]) ∶ ΠF A (x'' ↦₁ B [ 𝓋 x'' ←₁ x ])
+
+That is, we should follow a "maximal-allowance-but-no-confusion principal" when constructing `Abstraction`s from `Formula`s. Then Π-uniq can be written:
+
+    ΠU : ∀ {x x' A B f}
+       → Γ ⊢ f ∶ ΠF A (x ↦₁ B)
+       → x' ∉ f
+       → Γ ⊢ f ≝ ΠI A (x' ↦₁ ΠE f (𝓋 x')) ∶ ΠF A (x ↦₁ B)
+
+This still does not solve the problem of α-equivalence. For that, we need to loosen the other definitional equalities in similar fashion and add equalities for the formation and elimination constructors. As an example, the Π-formation typing judgement shall be something like
+
+    ΠF : ∀ {A x B ℓ}
+       → Γ ⊢ A ∶ 𝒰 ℓ
+       → Γ , x ∶ A ⊢ B ∶ 𝒰 ℓ
+       → ∀ {y} → y ∉ B
+       → ∀ {C} → B [ 𝓋 y ←₁ x ] ≡ C
+       → Γ ⊢ ΠF A (y ↦₁ C) ∶ 𝒰 ℓ
+
+and the corresponding definitional equality:
+
+    ΠF : ∀ {A A' x x' B B' ℓ}
+       → Γ ⊢ A ≝ A' ∶ 𝒰 ℓ
+       → Γ , x ∶ A ⊢ B ∶ 𝒰 ℓ
+       → Γ , x' ∶ A ⊢ B' ∶ 𝒰 ℓ
+       → ∀ {y} → y ∉ B
+       → ∀ {y'} → y' ∉ B
+       → ∀ {C} → B [ 𝓋 y ←₁ x ] ≡ C
+       → ∀ {C'} → B' [ 𝓋 y' ←₁ x' ] ≡ C'
+       → Γ , y ∶ A ⊢ B [ 𝓋 y ←₁ x ] ≝ B' [ 𝓋 y ←₁ x' ]
+       → Γ ⊢ ΠF A (y ↦₁ C) ≝ ΠF A' (y' ↦₁ C') ∶ 𝒰 ℓ
+
+That might be correct but it so complex that I don't trust myself to judge that that is really going to deliver what I want. Instead, perhaps it would be good to have a separate judgement for α-equivalence, which is much easier to state for DeBruijn-indexed formulas.
+
+My idea is to have a parallel set of judgements, one involving DeBruijn-indexed and another involving a named representation. The judgements involving the named representation shall be used to talk about substitutions (β-reductions) , while the judgements involving the DeBruijn-indexed representation shall be used to talk about renamings (α-conversions). Then of course there will need to be a link between the two.
