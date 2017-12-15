@@ -17,6 +17,9 @@ In the overloaded combinator `_∉_` I express
 record Distinctness (D : Set) : Set₁ where
   field
     _∉_ : Variable → D → Set
+
+  _∈_ : Variable → D → Set
+  _∈_ v d = ¬ v ∉ d
 open Distinctness ⦃ … ⦄ public
 ```
 
