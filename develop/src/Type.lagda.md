@@ -388,3 +388,15 @@ That might be correct but it so complex that I don't trust myself to judge that 
 My idea is to have a parallel set of judgements, one involving DeBruijn-indexed and another involving a named representation. The judgements involving the named representation shall be used to talk about substitutions (β-reductions) , while the judgements involving the DeBruijn-indexed representation shall be used to talk about renamings (α-conversions). Then of course there will need to be a link between the two.
 
 An indexed representation has many named variants, but a named representation has only one indexed representation (at least, for a given ordering of the context). Therefore, we can define a linked representation that includes the indexed representation and a particular named variant, along with a proof that the two correspond. Two linked representatives are α-equivalent iff their indexed parts are propositionally equal. But for that to make sense, the linked representation is itself indexed on the (name-laden) context that gives rise to the particular DeBruijn-indexed representation.
+
+```agda
+import Type.Theory.Linked
+```
+
+However, it feels cumbersome to me to continue this development. It's about time for a do-over.
+
+I would like to start with a minimal type theory, including only the Π type and see if I can obtain the requisite admissable rules. From there, the plan is to metaprogram the same, and then add in the other types.
+
+```agda
+import Type.Theory.Π-only
+```
