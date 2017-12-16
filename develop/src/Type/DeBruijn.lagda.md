@@ -14,6 +14,12 @@ weakenFinFrom (suc from) zero = zero
 weakenFinFrom (suc from) (suc x) = suc (weakenFinFrom from x)
 ```
 
+```agda
+weakenFinByFrom : ∀ M {N} → Fin (suc N) → Fin N → Fin (M + N)
+weakenFinByFrom zero from φ = φ
+weakenFinByFrom (suc by) from φ = transport Fin auto $ weakenFinByFrom by (weakenFinFrom zero from) (weakenFinFrom from φ)
+```
+
 Similarly, we may also want to talk about contractions of a context. Or we may want to talk about pidgeons. You are a pigeon. There are some pigeon holes labeled 0,1,...,N. You are given a particular pigeon hole, i. One of the holes that you are not given, labeled h, is removed, and the pigeon holes are relabeled 0,1,...,N-1. What is the new label on your pigeon hole?
 
 ```agda
