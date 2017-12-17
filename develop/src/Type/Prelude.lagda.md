@@ -19,7 +19,7 @@ I will repurpose _,_.
 ```
 
 ```agda
-open import Tactic.Nat public using (auto)
+open import Tactic.Nat public
 ```
 
 ## some conveniences that are here, inconveniently
