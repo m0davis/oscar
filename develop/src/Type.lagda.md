@@ -404,3 +404,7 @@ import Type.Theory.Π-only
 Extraordinarily enough, that development did not go at all as planned. I managed almost immeditaely a small bit of metaprogramming that standardised the syntax of the various `Formula` (scope-checked term) constructors. While coding for well-typed terms I discovered (again) that the real challenge comes in the Σ type (not so much in Π), so I added in that type. I then stumbled into coding for type-checked weakenings and substitutions. The trick for my thinking was to create a function that (1) performed the low-level weakening or substitution (2) only in the case that certain typing judgements held (3) with a resultant type only indicating that it is in fact a `Formula` (4) and separating into another function any theorems insisting upon the correctness of the transformation.
 
 Surely there is a larger lesson here, but for now, I proceed towards a cleaner and complete version along the lines of what was just developed.
+
+```agda
+import Type.Theory.Checked
+```
