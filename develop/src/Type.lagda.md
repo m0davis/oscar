@@ -405,6 +405,21 @@ Extraordinarily enough, that development did not go at all as planned. I managed
 
 Surely there is a larger lesson here, but for now, I proceed towards a cleaner and complete version along the lines of what was just developed.
 
+Here, I made two attempts at defining a scope-checked term, both equivalent but different.
+
+```agda
+import Type.Formulaturez
+import Type.Formulaturenz
+```
+
+I was unsure which was better to use, so I found the kernel of sameness between the two!
+
+```agda
+import Type.Kernel
+```
+
+...and proceed to the development of the theory
+
 ```agda
 import Type.Theory.Checked
 ```

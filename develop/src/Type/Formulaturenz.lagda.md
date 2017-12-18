@@ -1,12 +1,12 @@
 
 ```agda
-{-# OPTIONS --allow-unsolved-metas #-}
+-- {-# OPTIONS --allow-unsolved-metas #-}
 ```
 
 Disallowing empty signature.
 
 ```agda
-module Type.Theory.Checked.Formulaturenz where
+module Type.Formulaturenz where
 ```
 
 ```agda

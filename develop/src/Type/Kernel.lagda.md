@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Theory.Checked.Metaformulaturez where
+module Type.Kernel where
 ```
 
 ```agda
@@ -143,18 +143,6 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
   context≾ [] = ε
   context≾ (ω ∷ Ξ) = [ ω ]∷ context≾ Ξ
 
-  _,⋆_ : ∀ {M N O} → M ≾ N → N ≾ O → M ≾ O
-  Γ ,⋆ ε       = Γ
-  Γ ,⋆ (Δ , δ) = Γ ,⋆ Δ , δ
-
-  _,∷⋆_ : ∀ {M N O} → M ≾ N → O ≿ N → M ≾ O
-  Γ ,∷⋆ []      = Γ
-  Γ ,∷⋆ (⋆ ∷ Ξ) = (Γ , ⋆) ,∷⋆ Ξ
-
-  _⋆∷_ : ∀ {M N O} → N ≿ M → O ≿ N → O ≿ M
-  [] ⋆∷ Ξ      = Ξ
-  (ω ∷ Ω) ⋆∷ Ξ = ω ∷ Ω ⋆∷ Ξ
-
   context≤ : ∀ {M N} → M ≾ N → M ≤ N
   context≤ ε       = auto
   context≤ (Δ , _) = by (context≤ Δ)
@@ -170,6 +158,30 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
   diff≿ : ∀ {M N} → N ≿ M → Fin (suc N)
   diff≿ Ξ = diff≾ (context≾ Ξ)
 
+  infixr 7 _<<<_ _<><_ _<>>_
+
+  _<<<_ : ∀ {M N O} → M ≾ N → N ≾ O → M ≾ O
+  Γ <<< ε       = Γ
+  Γ <<< (Δ , δ) = Γ <<< Δ , δ
+
+  _<><_ : ∀ {M N O} → M ≾ N → O ≿ N → M ≾ O
+  Γ <>< []      = Γ
+  Γ <>< (⋆ ∷ Ξ) = (Γ , ⋆) <>< Ξ
+
+  _>>>_ : ∀ {M N O} → N ≿ M → O ≿ N → O ≿ M
+  [] >>> Ξ      = Ξ
+  (ω ∷ Ω) >>> Ξ = ω ∷ Ω >>> Ξ
+
+  _<>>_ : ∀ {M N n} → N ≿ M → M ≾ n → (n - M + N) ≿ M -- FIXME slime
+  Ξ <>> ε = transport (_≿ _) auto Ξ
+  _<>>_ {M} Ξ (Δ , δ) =
+    transport (_≿ M)
+      (case (context≤ Δ) of λ { (diff! k) → auto})
+      ((Ξ <>> Δ) ,[ (case context≥ Ξ of λ { (diff! N-M) →
+                     case context≤ Δ of λ { (diff! n-M) →
+                     transport Expression auto $
+                     weakenExpressionByFrom N-M (diff≾ Δ) δ } }) ])
+
   shift≾ : ∀ {M N} → M ≾ N → suc M ≾ suc N
   shift≾ ε       = ε
   shift≾ (Γ , δ) = shift≾ Γ , weakenExpressionFrom zero δ
@@ -177,6 +189,8 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
   shift≿ : ∀ {M N} → N ≿ M → suc N ≿ suc M
   shift≿ []      = []
   shift≿ (ω ∷ Ξ) = weakenExpressionFrom zero ω ∷ shift≿ Ξ
+
+  -- shift≾By :
 
   index≾ : ∀ {M N} → (Γ : M ≾ N) → Fin (finToNat (diff≾ Γ)) → Expression N
   index≾ ε ()
@@ -207,8 +221,8 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
       : ∀ {M} {Γ : 0 ≾ M}
       → ∀ {N} {Δ : M ≾ N}
       → ∀ {a A b B}
-      → (Γ , A) ,⋆ shift≾ Δ ⊢ b ∶ B
-      → Γ ,⋆ Δ ⊢ a ∶ weakenExpression≾ Δ A
+      → (Γ , A) <<< shift≾ Δ ⊢ b ∶ B
+      → Γ <<< Δ ⊢ a ∶ weakenExpression≾ Δ A
       → Expression N
     tcInstantiateAt {Δ = Δ} {a} {b = b} _ _ = instantiateExpressionAt (diff≾ Δ) b a
 {-
@@ -249,9 +263,9 @@ private
     module _ where
       open Meta
 
-      pattern z = zero
+      -- pattern z = zero
 
-      pattern ΠF x = 𝓉 z x
+      pattern ΠF x = 𝓉 zero x
       pattern ΠI x = 𝓉 (suc zero) x
       pattern ΠE f x = 𝓉 (suc (suc zero)) (f ∷ x ∷ [])
       pattern ΣF A B = 𝓉 3 (A ∷ B ∷ []) -- there's a problem with Agda assuming this 3 is a Nat (and not possibly a Fin)
