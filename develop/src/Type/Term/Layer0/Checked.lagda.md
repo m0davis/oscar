@@ -139,6 +139,15 @@ weaken⊢ByFrom : ∀ {M} {Γ : 0 ≾ M}
               → ∃ λ (wk : _ → _)
               → Γ <>< (Ξ <>> Δ) ⊢ wk a ∶ wk A
 
+weaken⊢ByFrom' : ∀ {M} {Γ : 0 ≾ M}
+               → ∀ {N} {Δ : N ≿ M}
+               → ∀ {X} {Ξ : M ≾ X}
+               → ∀ {a A}
+               → Γ <>< Δ ⊢ a ∶ A         -- infixl
+               → Γ <<< Ξ ctx
+               → ∃ λ (wk : _ → _)
+               → Γ <<< (Ξ <<> Δ) ⊢ wk a ∶ wk A
+
 
 {-
               → (Γ <>> Ξ) ><< Δ ⊢ wk a ∶ wk A -- infixl
@@ -268,7 +277,12 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             Γ,A,B/ctx : Γ , A , B ctx
             Γ,A,B/ctx = {!!}
             Γ,A,B⊢Σiab∶ΣfAB : Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ _
-            Γ,A,B⊢Σiab∶ΣfAB = ΣI {!weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd!} {!!} (𝓋 {!!} {!!} {!!})
+            Γ,A,B⊢Σiab∶ΣfAB =
+              ΣI
+                {!weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd!}
+                -- weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
+                {!!}
+                (𝓋 {!!} {!!} {!!})
             Γ,A,B,ΣfAB⊢C∶𝒰 : Γ , A , B , Σf _ _ ⊢ _ ∶ 𝒰 ℓ
             Γ,A,B,ΣfAB⊢C∶𝒰 = {!!}
             Γ,ΣfAB,A,B⊢C∶𝒰 : Γ , Σf A B , _ , _ ⊢ _ ∶ 𝒰 ℓ
@@ -304,6 +318,8 @@ weaken⊢ Γ⊢W∶𝒰 Γ⊢a∶A = {!!}
 
 weaken⊢ByFrom {Ξ = Meta.[]} x x₁ = {!!}
 weaken⊢ByFrom {Γ = Γ} {Δ = Δ} {Ξ = x₂ Meta.∷ Ξ} x x₁ = {!Γ <>< (x₂ ∷ Ξ) <>> Δ!}
+
+weaken⊢ByFrom' = {!!}
 
 split/ctx = {!!}
 
