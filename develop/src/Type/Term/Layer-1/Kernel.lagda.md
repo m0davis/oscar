@@ -180,12 +180,26 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
   _>>>_ : ∀ {M N O} → N ≿ M → O ≿ N → O ≿ M
   [] >>> Ξ      = Ξ
   (ω ∷ Ω) >>> Ξ = ω ∷ Ω >>> Ξ
+```
 
+`shift≾By` Γ Ξ shifts Ξ through Γ.
+
+γᴹγ¹⁺ᴹ...(N-M ≾-elements)...γᴺ⁻¹
+ξᴹξ¹⁺ᴹ...(n-M ≿-elements)...ξⁿ⁻¹
+---------------------------------------------------------------------
+                                χᴺχ¹⁺ᴺ...(n-M ≿-elements)...χⁿ⁻ᴹ⁺ᴺ⁻¹
+so that
+ξᴹ----------------------------->χᴺ
+  ξ¹⁺ᴹ--------------------------->χ¹⁺ᴺ
+                            ξⁿ⁻¹--------------------------->χⁿ⁻ᴹ⁺ᴺ⁻¹
+
+```agda
   shift≾By : ∀ {M N n} → M ≾ N → n ≿ M → (n - M + N) ≿ N
   shift≾By {N = N} Γ [] = transport (_≿ N) auto []
-  shift≾By {M} {N} Γ (⋆ ∷ Ξ) with context≿ Γ
-  shift≾By {M} {.M} Γ (⋆ ∷ Ξ) | [] = {!!}
-  shift≾By {M} {N} Γ (⋆ ∷ Ξ) | x ∷ Γ' = {!!} ∷ {!shift≿ (shift≾By (context≾ Γ') Ξ)!}
+  shift≾By {M} {N} Γ (ξ ∷ Ξ) with context≥ Ξ | context≿ Γ
+  -- {!ξ shifted through Γ (N - M)!} ∷ {!shift≾By Γ!}
+  shift≾By {M} {.M} Γ (ξ ∷ Ξ) | diff! n-M-1 | [] = ξ ∷ transport (_≿ suc M) auto (shift≾By ε Ξ)
+  shift≾By {M} {N} {n} Γ (ξ ∷ Ξ) | diff! n-M-1 | γ ∷ Γ' = {!ξ {-weakened by N - M-}!} ∷ {!(shift≾By (context≾ Γ') Ξ) {-weakened by 1-}!}
 
   _<<>_ : ∀ {M N n} → M ≾ N → n ≿ M → M ≾ (n - M + N)
   Ξ <<> Δ = Ξ <>< shift≾By Ξ Δ
