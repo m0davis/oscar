@@ -181,6 +181,15 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
   [] >>> Ξ      = Ξ
   (ω ∷ Ω) >>> Ξ = ω ∷ Ω >>> Ξ
 
+  shift≾By : ∀ {M N n} → M ≾ N → n ≿ M → (n - M + N) ≿ N
+  shift≾By {N = N} Γ [] = transport (_≿ N) auto []
+  shift≾By {M} {N} Γ (⋆ ∷ Ξ) with context≿ Γ
+  shift≾By {M} {.M} Γ (⋆ ∷ Ξ) | [] = {!!}
+  shift≾By {M} {N} Γ (⋆ ∷ Ξ) | x ∷ Γ' = {!!} ∷ {!shift≿ (shift≾By (context≾ Γ') Ξ)!}
+
+  _<<>_ : ∀ {M N n} → M ≾ N → n ≿ M → M ≾ (n - M + N)
+  Ξ <<> Δ = Ξ <>< shift≾By Ξ Δ
+
   _<>>_ : ∀ {M N n} → N ≿ M → M ≾ n → (n - M + N) ≿ M -- FIXME slime
   Ξ <>> ε = transport (_≿ _) auto Ξ
   _<>>_ {M} Ξ (Δ , δ) =
@@ -198,8 +207,6 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
   shift≿ : ∀ {M N} → N ≿ M → suc N ≿ suc M
   shift≿ []      = []
   shift≿ (ω ∷ Ξ) = weakenExpressionFrom zero ω ∷ shift≿ Ξ
-
-  -- shift≾By :
 
   index≾ : ∀ {M N} → (Γ : M ≾ N) → Fin (finToNat (diff≾ Γ)) → Expression N
   index≾ ε ()
