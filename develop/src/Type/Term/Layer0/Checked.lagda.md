@@ -258,9 +258,12 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             ∃ℓ→Γ⊢ΣfAB∶𝒰 = case Γ,ΣfAB/ctx of λ { (_ , Γ⊢ΣfAB∶𝒰) → , Γ⊢ΣfAB∶𝒰}
             ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 : ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ × Γ , A ⊢ B ∶ 𝒰 ℓ
             ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 = ΣF-inj₂ (∃ℓ→Γ⊢ΣfAB∶𝒰 .snd)
+            Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 {!ℓ!}
+            Γ,A⊢B∶𝒰 = ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .snd
+            Γ,A,B/ctx : Γ , A , B ctx
+            Γ,A,B/ctx = {!!}
             Γ,A,B⊢Σiab∶ΣfAB : Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ _
-            Γ,A,B⊢Σiab∶ΣfAB = ΣI {!(∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .fst)!} {!!} (𝓋 {!!} {!!} {!!})
-            -- weaken⊢ (∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .snd) $ weaken⊢ (∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .fst) $ ∃ℓ→Γ⊢ΣfAB∶𝒰 .snd
+            Γ,A,B⊢Σiab∶ΣfAB = ΣI {!weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd!} {!!} (𝓋 {!!} {!!} {!!})
             Γ,A,B,ΣfAB⊢C∶𝒰 : Γ , A , B , Σf _ _ ⊢ _ ∶ 𝒰 ℓ
             Γ,A,B,ΣfAB⊢C∶𝒰 = {!!}
             Γ,ΣfAB,A,B⊢C∶𝒰 : Γ , Σf A B , _ , _ ⊢ _ ∶ 𝒰 ℓ
