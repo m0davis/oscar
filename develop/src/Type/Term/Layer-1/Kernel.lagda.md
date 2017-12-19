@@ -167,6 +167,14 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
   diff≿ : ∀ {M N} → N ≿ M → Fin (suc N)
   diff≿ Ξ = diff≾ (context≾ Ξ)
 
+  shift≾ : ∀ {M N} → M ≾ N → suc M ≾ suc N
+  shift≾ ε       = ε
+  shift≾ (Γ , δ) = shift≾ Γ , weakenExpressionFrom zero δ
+
+  shift≿ : ∀ {M N} → N ≿ M → suc N ≿ suc M
+  shift≿ []      = []
+  shift≿ (ω ∷ Ξ) = weakenExpressionFrom zero ω ∷ shift≿ Ξ
+
   infixr 7 _<<<_ _<><_ _<>>_
 
   _<<<_ : ∀ {M N O} → M ≾ N → N ≾ O → M ≾ O
@@ -180,6 +188,27 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
   _>>>_ : ∀ {M N O} → N ≿ M → O ≿ N → O ≿ M
   [] >>> Ξ      = Ξ
   (ω ∷ Ω) >>> Ξ = ω ∷ Ω >>> Ξ
+```
+
+```agda
+  index≾ : ∀ {M N} → (Γ : M ≾ N) → Fin (finToNat (diff≾ Γ)) → Expression N
+  index≾ ε ()
+  index≾ (Γ , δ) zero = weakenExpressionFrom zero δ
+  index≾ (Γ , δ) (suc x) = weakenExpressionFrom zero $ index≾ Γ x
+
+  diff≾-eq : ∀ {M N} → (Γ : M ≾ N) → finToNat (diff≾ Γ) + M ≡ N
+  diff≾-eq ε = auto
+  diff≾-eq (Γ , x) = by (diff≾-eq Γ)
+```
+
+```agda
+  weakenExpression≾ : ∀ {M N} → M ≾ N → Expression M → Expression N
+  weakenExpression≾ ε x       = x
+  weakenExpression≾ (Γ , _) x = weakenExpressionFrom zero (weakenExpression≾ Γ x)
+
+  weakenExpression≿ : ∀ {M N} → N ≿ M → Expression M → Expression N
+  weakenExpression≿ [] x = x
+  weakenExpression≿ (_ ∷ Ξ) x = weakenExpression≿ Ξ (weakenExpressionFrom zero x)
 ```
 
 `shift≾By` Γ Ξ shifts Ξ through Γ.
@@ -213,33 +242,6 @@ so that
                      case context≤ Δ of λ { (diff! n-M) →
                      transport Expression auto $
                      weakenExpressionByFrom N-M (diff≾ Δ) δ } }) ])
-
-  shift≾ : ∀ {M N} → M ≾ N → suc M ≾ suc N
-  shift≾ ε       = ε
-  shift≾ (Γ , δ) = shift≾ Γ , weakenExpressionFrom zero δ
-
-  shift≿ : ∀ {M N} → N ≿ M → suc N ≿ suc M
-  shift≿ []      = []
-  shift≿ (ω ∷ Ξ) = weakenExpressionFrom zero ω ∷ shift≿ Ξ
-
-  index≾ : ∀ {M N} → (Γ : M ≾ N) → Fin (finToNat (diff≾ Γ)) → Expression N
-  index≾ ε ()
-  index≾ (Γ , δ) zero = weakenExpressionFrom zero δ
-  index≾ (Γ , δ) (suc x) = weakenExpressionFrom zero $ index≾ Γ x
-
-  diff≾-eq : ∀ {M N} → (Γ : M ≾ N) → finToNat (diff≾ Γ) + M ≡ N
-  diff≾-eq ε = auto
-  diff≾-eq (Γ , x) = by (diff≾-eq Γ)
-```
-
-```agda
-  weakenExpression≾ : ∀ {M N} → M ≾ N → Expression M → Expression N
-  weakenExpression≾ ε x       = x
-  weakenExpression≾ (Γ , _) x = weakenExpressionFrom zero (weakenExpression≾ Γ x)
-
-  weakenExpression≿ : ∀ {M N} → N ≿ M → Expression M → Expression N
-  weakenExpression≿ [] x = x
-  weakenExpression≿ (_ ∷ Ξ) x = weakenExpression≿ Ξ (weakenExpressionFrom zero x)
 ```
 
 ```agda
