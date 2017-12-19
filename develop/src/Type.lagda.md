@@ -19,9 +19,9 @@ My first attempt at implementing a type theory was to represent that from the Ho
 
 ```
 module SandboxMutual where
-  open import Type.Theory.Mutual
+  open import Type.Term.Layer0.Mutual
   open import Type.Complexity
-  open import Type.SCTerm
+  open import Type.Term.Layer-1.SCTerm
   open DefinedFunctions
 
   check-𝟙→𝟙 : [] ⊢ ΠI (𝓋 zero) ∶ ΠF 𝟙F 𝟙F ⋖ c (c [] ∷ c [] ∷ [])
@@ -50,13 +50,13 @@ module SandboxMutual where
 Then another idea was to come-up with a method for referring to variables by their names.
 
 ```agda
-import Type.Theory.oldname -- this is some previous development of `Named`?
+import Type.Term.Layer0.oldname -- this is some previous development of `Named`?
 ```
 
 ```
 module SandboxNamed where
-  open import Type.Theory.Named
-  open import Type.SCTerm
+  open import Type.Term.Layer0.Named
+  open import Type.Term.Layer-1.SCTerm
   open DefinedFunctions
 
   check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)
@@ -145,13 +145,13 @@ which still has green slime, but least is relegated to a single constructor.
 I try this out in:
 
 ```agda
-import Type.Theory.Slimdex
+import Type.Term.Layer0.Slimdex
 ```
 
 I also had another idea, thinking maybe I could just build much more information into the indices of the type. I tested it out here:
 
 ```agda
-import Type.Slimeless
+import Type.Term.Layer0.Slimeless
 ```
 
 Yet another idea is to represent renaming and substitution with datatypes. How to do this?
@@ -226,7 +226,7 @@ weakened[ τ ]≈ τ' at[ from ] = weakenTermFrom from 𝒙 ≡ 𝒙'
 
 Idea #4
 
-Waay back at `Type.Theory.Mutual`, I had something like this (plus some complexity stuff)
+Waay back at `Type.Term.Layer0.Mutual`, I had something like this (plus some complexity stuff)
 
     ΣF : ∀ {ℓ 𝑨 𝑩}
        → (A : Γ ⊢ 𝑨 ∶ 𝒰 ℓ)
@@ -268,22 +268,22 @@ Now, I'd like to build-up the defining argument for `g` like so:
 
 Idea #5
 
-Carry out what I had barely started in `Type.Theory.Mutual` and implement proofs of Subst₁ and Wkg₁ (and also their definitional-equality counterparts). But the trick will be in even stating the theorems because the context, as I have so far defined it, is itself a proof that the context consists of (type-checked) universe inhabitants. Perhaps an easier way to go will be to take the context over which the typing judgement applies to be a (snoc?) list of `Term _`, then have a separate judgement that validates the context for those rules (such as 𝒰-intro) that call for such a thing. This will more closely represent what's formalised in Appendix A.2 of the HoTT book.
+Carry out what I had barely started in `Type.Term.Layer0.Mutual` and implement proofs of Subst₁ and Wkg₁ (and also their definitional-equality counterparts). But the trick will be in even stating the theorems because the context, as I have so far defined it, is itself a proof that the context consists of (type-checked) universe inhabitants. Perhaps an easier way to go will be to take the context over which the typing judgement applies to be a (snoc?) list of `Term _`, then have a separate judgement that validates the context for those rules (such as 𝒰-intro) that call for such a thing. This will more closely represent what's formalised in Appendix A.2 of the HoTT book.
 
 ```agda
-import Type.HoTTer
+import Type.Term.Layer0.HoTTer
 ```
 
 There, finding that I needed to build-up from syntactically-valid forms to well-scoped expressions (and not the other way around), I proceed to:
 
 ```agda
-import Type.Theory.Building
+import Type.Term.Layer0.Building
 ```
 
 The proof for the (admissable) weakening rule for well-typed terms confused me. I suspect I could clarify the situation if I removed the green slime. The lazy way to do this is simply to put the green stuff in outputs in argument positions using propositional equality. Which is what I try here:
 
 ```agda
-import Type.Theory.Guilding
+import Type.Term.Layer0.Guilding
 ```
 
 All was going well it seemed until Agda gave me the sugar-me-do, allowing me to fill a hole but then complaining about it afterwards. As this is not type-theory related, I sideline the investigation into how this can happen separately.
@@ -302,10 +302,10 @@ import BadHoTTPiUniq
 
 ```
 module SandboxOuting where
-  open import Type.Theory.Outing
-  open import Type.Theory.Outing.Admissible
-  open import Type.Context
-  open import Type.Formula
+  open import Type.Term.Layer0.Outing
+  open import Type.Term.Layer0.Outing.Admissible
+  open import Type.Term.Layer+1.Context
+  open import Type.Term.Layer+1.Formula
   open DefinedFunctions
 
   check-𝟙→𝟙 : ε ⊢ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠF 𝟙F (zero ↦₁ 𝟙F)
@@ -390,7 +390,7 @@ My idea is to have a parallel set of judgements, one involving DeBruijn-indexed 
 An indexed representation has many named variants, but a named representation has only one indexed representation (at least, for a given ordering of the context). Therefore, we can define a linked representation that includes the indexed representation and a particular named variant, along with a proof that the two correspond. Two linked representatives are α-equivalent iff their indexed parts are propositionally equal. But for that to make sense, the linked representation is itself indexed on the (name-laden) context that gives rise to the particular DeBruijn-indexed representation.
 
 ```agda
-import Type.Theory.Linked
+import Type.Term.Layer0.Linked
 ```
 
 However, it feels cumbersome to me to continue this development. It's about time for a do-over.
@@ -398,7 +398,7 @@ However, it feels cumbersome to me to continue this development. It's about time
 I would like to start with a minimal type theory, including only the Π type and see if I can obtain the requisite admissable rules. From there, the plan is to metaprogram the same, and then add in the other types.
 
 ```agda
-import Type.Theory.Π-only
+import Type.Term.Layer0.Π-only
 ```
 
 Extraordinarily enough, that development did not go at all as planned. I managed almost immeditaely a small bit of metaprogramming that standardised the syntax of the various `Formula` (scope-checked term) constructors. While coding for well-typed terms I discovered (again) that the real challenge comes in the Σ type (not so much in Π), so I added in that type. I then stumbled into coding for type-checked weakenings and substitutions. The trick for my thinking was to create a function that (1) performed the low-level weakening or substitution (2) only in the case that certain typing judgements held (3) with a resultant type only indicating that it is in fact a `Formula` (4) and separating into another function any theorems insisting upon the correctness of the transformation.
@@ -408,18 +408,18 @@ Surely there is a larger lesson here, but for now, I proceed towards a cleaner a
 Here, I made two attempts at defining a scope-checked term, both equivalent but different.
 
 ```agda
-import Type.Formulaturez
-import Type.Formulaturenz
+import Type.Term.Layer-1.Formulaturez
+import Type.Term.Layer-1.Formulaturenz
 ```
 
 I was unsure which was better to use, so I found the kernel of sameness between the two!
 
 ```agda
-import Type.Kernel
+import Type.Term.Layer-1.Kernel
 ```
 
 ...and proceed to the development of the theory
 
 ```agda
-import Type.Theory.Checked
+import Type.Term.Layer0.Checked
 ```

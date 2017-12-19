@@ -3,24 +3,153 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 ```
 
-# Including mutually-defined weakening and substitution functions for type-checked terms
+# Type theory with named variables
 
 ```agda
-module Type.Theory.Mutual where
+module Type.Term.Layer0.oldname where
 ```
+
+I would like to use the type-checker to prevent mistakes when renaming and substituting DeBruijn-indexed variables.
 
 ```agda
 open import Type.Prelude
 open import Type.Complexity
-open import Type.SCTerm
 open import Type.Universe
 ```
+
+I shall take the notion of a symbol to be a primitive concept, except insofar as I think of a symbol as something that can be written down, strung together, moved around. A term is an arrangement of symbols that have been given meta-theoretic semantics. A term is called lexically-checked if it is guaranteed to be in a suitable arrangement to have some meta-theoretically-denoted meaning. A term is called scope-checked if ...
+
+An `STerm` is a scope-checked term.
+
+```agda
+open import Type.Term.Layer-1.SCTerm
+```
+
+A context is a container of types. A
+
+```agda
+data Cx : Set where
+```
+
+length-and-complexity-indexed contexts
+
+```agda
+data _ctx⋖_ : Nat → Complexity → Set
+```
+
+```agda
+record _ctx (N : Nat) : Set where
+  field
+    complexity : Complexity
+    context : N ctx⋖ complexity
+open _ctx public
+```
+
+type-checked terms
+
+```agda
+data _⊢_∋_⋖_ {N} (Γ : Cx) : Universe → Term N → Complexity → Set
+```
+
+...
+
+I would like to have a type-checked version of `instantiateTerm {N} n ρ τ`. I define a type-checked substutition of Γ ⊢ τ[ρ/γₙ] as that yielding `instantiateTerm {N} n ρ τ` if and only if Γ ⊢ ρ and Δ ⊢ τ, where Γ = γ₀ , γ₁ , ... γ_N-1 and Δ = γ₀ , γ₁ , ... , γₙ₋₁ , γₙ , γₙ₊₁ , ... γ_N-1. Currently, `instantiateTerm` yields such a result under the conditions specified but also under other conditions as well.
+
+sketch of new way:
+
+ℕE :
+     (X : ⊣ Γ , ℕF)
+     (x₀ : Γ ⊢ X)
+     (xₛ : Γ , ℕF , X ⊢ X [ ℕIˢ (𝓋 zero) / zero ])
+     (n : Γ ⊢ ℕF)
+     (X[n] : X [ n / zero ])
+
+or
+
+ℕE : (N : ℕF ⊣ Γ)
+     (X : ⊣ Γ , N)
+     (x₀ : Γ ⊢ X)
+     (xₛ : Γ , ℕF , X ⊢ X [ ℕIˢ (ℕF ∋ 𝓋 zero) / ℕF ∋ zero ])
+     (n : Γ ⊢ ℕF)
+     (X[n] : X [ n / N ])
+     → Γ ⊢ ℕe X x₀ xₛ n ∶ X[n] ⋖ χ
+
+⊢ ⊣ ⊤ ⊥ ⊦ ⊧ ⊨ ⊩ ⊪ ⊫ ⊬ ⊭ ⊮ ⊯
+∈ ∉ ∊ ∋ ∌ ∍ ⋲ ⋳ ⋴ ⋵ ⋶ ⋷ ⋸ ⋹ ⋺ ⋻ ⋼ ⋽ ⋾ ⋿
+< ≪ ⋘ ≤ ≦ ≲ ≶ ≺ ≼ ≾ ⊂ ⊆ ⋐ ⊏ ⊑ ⊰ ⊲ ⊴ ⋖ ⋚ ⋜ ⋞
+> ≫ ⋙ ≥ ≧ ≳ ≷ ≻ ≽ ≿ ⊃ ⊇ ⋑ ⊐ ⊒ ⊱ ⊳ ⊵ ⋗ ⋛ ⋝ ⋟
+
+
+infix 5 ⊣_
+infixl 10 _,_
+infix ?? _∈_
+infix ?? _⊢_
+infix 15 _[_/_]
+
+ctx₀     : Set -- context of scope-checked terms (historically, ctx₀ = Nat)
+ctx=     : Nat → Set -- size-indexed context of sort-checked terms, Γ
+ctx      : Set -- context
+⊣_       : ∀ {N} → ctx= N → Set -- sort-checked term, γ
+-- want _,_ and _⊢_ overloaded
+_,_      : ∀ {N} (Γ : ctx= N) → ⊣ Γ → ctx= (suc N) -- Γ , γ = context constructor, prefixing γ to Γ
+_,_      : ∀ {N} (Γ : ctx N) → ⊣ Γ → ctx (suc N) -- Γ , γ = context constructor, prefixing γ to Γ
+_∶_      : ∀ {N} → Fin N → ∀ {Γ : ctx N} → ⊣ Γ → Set -- x ∶ γ = a named variable, 𝓍, of sort-checked term γ at position x in its context
+_⊢_      : ∀ {N} → (Γ : ctx= N) → ⊣ Γ → Set -- Γ ⊢ γ = a type-checked term, τ, of type γ in context Γ
+_[_/_]   : ∀ {N} {Γ : ctx= N} {γ₀ : ⊣ Γ} {γ₁ : ⊣ Γ , γ₀}
+                 (τ₁ : Γ , γ₀ ⊢ γ₁) →
+                 Γ ⊢ γ₀ →
+                 ∀ {x} → x ∶ γ₀ →
+                 Set -- τ₁ [ τ₀ / 𝓍 ] = a substitution, σ, of τ₀ for 𝓍 in τ₁.
+ℕF       : ∀ {Γ} → ⊣ Γ -- ℕF = context-indexed type constructor, natural numbers
+ℕIˢ      : ∀ {Γ} → Γ ⊢ ℕF → ⊣ Γ -- ℕIˢ n = context-indexed type constructor,
+ℕE       :
+data _⊢_∶_⋖_ {N} (Γ : ctx= N) : Term N → Term N →
+_⊢_∶_⋖_
+
+ℕE : (X : ⊣ Γ , ℕF)
+     (𝓍 : zero ∶ X) -- Γ , x ∶ ℕF ⊢ X
+     (x₀ : Γ ⊢ X)
+     (xₛ : Γ , ℕF , X ⊢ X [ ℕIˢ 𝓍 / 𝓍 ])
+     (n : Γ ⊢ ℕF)
+     (X[n] : X [ n / 𝓍 ])
+     → Γ ⊢ ℕe X x₀ xₛ n ∶ X[n] ⋖ χ
+
++E :
+
+ΣE :
+  (A : ℓ ⊣ Γ)
+  (B : ℓ ⊣ Γ , A)
+  (C : ℓ ⊣ Γ , ΣF A B)
+  (g : Γ , A , B ⊢ C [ ΣI A B / zero ])
+
+  ΠE :
+    -- there is some type provided by Γ, we call it A.
+    -- a projection, term : ∀ {N} {Γ : N ctx} → ⊣ Γ → Term N
+    -- That is, Γ ⊢ term A
+    (A : ⊣ Γ)
+    (B : ⊣ (Γ , A))
+    (f : Γ ⊢ Π A B) -- I should use ΠF here but I am worried about name conflicts between the scope-checked-term constructor and the type-checked-term constructor. Perhaps these should be renamed or use module name disambiguation. A new naming scheme would have Πf or πF, σF, 1f, 0f, or ∨F ... I think I prefer using the lowercase f, e, i, etc. to distinguish. ... actually, the input here is clearly not a SCTerm b/c A has been defined as ⊣ Γ... So ΠF is fine anyway --
+    (a : Γ ⊢ A)
+    (B[a] : B [ a / zero ∶ A ]) -- the extra "∶ A" is just there for readability. Agda should know from the context related to B that the zeroeth member is of type A. The given datatype guarantees that the contexts are the same except in for an insertion in the prescribed place.
+    → Γ ⊢ Πe f a -- Πe is a field with an instance argument to decide what to make of the input and output types. If we were to spell it out w/o such help, perhaps it would go: ΠE (term⊢ f) (term⊢ a)
+     -- but this gets dangerous with the green slime and all... so we need a conversion datatype
+       {-
+          one way to go is to use ≡. Before the last argument of the constructor, we would have something like
+          ∀ {τf τa τB[a] δf δa δB[a]} →
+          term⊢ f ≡ τf →
+          term⊢ a ≡ τa →
+          termσ B[a] ≡ τB[a] →
+          complexity⊢ f ≡ δf →
+          complexity⊢ a ≡ δa →
+          complexityσ B[a] ≡ δB[a] →
+          Γ ⊢ ΠE τf τa ∶ τB[a]
+       -}
+     ∶ ?? B[a]
+     ⋖ sumcomplexity
 
 ## type-checked terms
 
 ```
-data _ctx⋖_ : Nat → Complexity → Set
-
 -- Γ ⊢ a : A ⋖ χ = a proves A given Γ, with complexity χ
 data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) : Term N → Term N → Complexity → Set
 
@@ -32,13 +161,63 @@ _⊢_∶_ : ∀ {N χ} (Γ : N ctx⋖ χ) → Term N → Term N → Set
 Γ ⊢ a ∶ A = ∃ (Γ ⊢ a ∶ A ⋖_)
 
 -- Γ ⊢ A = there is a proof of A given Γ
-_⊢_ : ∀ {N χ} (Γ : N ctx⋖ χ) → Term N → Set
-Γ ⊢ A = ∃ (Γ ⊢_∶ A)
+--record _⊢_ {N χ} (Γ : N ctx⋖ χ) (τ : Term N) : Set where
+record _⊢_ {N} (Γ : N ctx) (τ : Term N) : Set where
+  field
+    χ : Complexity
+    proof : Term N
+    the-field : _⊢_∶_⋖_ (context Γ) proof τ χ
 
 -- Γ ⊢ A ≼ δ = there is a proof of A given Γ of size ≤ δ
 _⊢_≼_ : ∀ {N χ} (Γ : N ctx⋖ χ) → Term N → Nat → Set
 Γ ⊢ A ≼ δ = ∃ λ a → ∃ λ χ → χ-measure χ ≤ δ × Γ ⊢ a ∶ A ⋖ χ
+```
 
+I write the conditions of compatible contexts as
+
+    B ∋ A ⊣ Γ⊢A ∧ Δ⊢B
+
+Or maybe this idea
+
+    ρ < τ ⊣ Γ -- meaning ρ and τ share a common context and ρ is less specific than τ
+
+      which should imply that
+
+        (Γ ⋯ Ξ ⊢ ρ →
+
+```agda
+data _∋_⊣_∧_ {N} (B : Term (suc N)) (A : Term N)
+             : ∀ {Γ : N ctx} {Δ : suc N ctx}
+             → Γ ⊢ A → Δ ⊢ B → Set
+```
+
+We should be able to extract the position of the difference.
+
+```agda
+δ-position : ∀ {N} {B : Term (suc N)} {A : Term N}
+           → ∀ {Γ : N ctx} {Δ : suc N ctx}
+           → {Γ⊢A : Γ ⊢ A} {Δ⊢B : Δ ⊢ B}
+           → B ∋ A ⊣ Γ⊢A ∧ Δ⊢B
+           → Fin (suc N)
+δ-position = {!!}
+```
+
+Then a type-checked singular substitution may be defined as:
+
+```agda
+substitute : ∀ {N} {B : Term (suc N)} {A : Term N}
+           → ∀ {Γ : N ctx} {Δ : suc N ctx}
+           → {Γ⊢A : Γ ⊢ A} {Δ⊢B : Δ ⊢ B}
+           → B ∋ A ⊣ Γ⊢A ∧ Δ⊢B
+           → Term N
+substitute {B = B} {A = A} B∋A = instantiateTerm (δ-position B∋A) A B
+```
+
+Notice that the above does not give us a guarantee we want: namely that
+
+  Γ ⊢ substitute B∋A⊣Γ⊢A∧Δ⊢B ∶
+
+```agda
 infixl 25 _,_
 
 data _ctx⋖_ where
@@ -50,15 +229,32 @@ data _ctx⋖_ where
 _at_ : ∀ {N χ} → N ctx⋖ χ → Fin N → Term N
 _,_ {A = A} Γ γ at zero = weakenTermFrom zero A
 (Γ , _) at suc n = weakenTermFrom zero (Γ at n)
+```
 
-wk⊢ : ∀ {N χ} {Γ : N ctx⋖ χ} {ℓ G δG}
-    → (Δ : Γ ⊢ G ∶ 𝒰 ℓ ⋖ δG)
-    → ∀ {a A δa}
-    → Γ ⊢ a ∶ A ⋖ δa
-    → ∀ {wka wkA}
-    → weakenTermFrom zero a ≡ wka
-    → weakenTermFrom zero A ≡ wkA
-    → Γ , Δ ⊢ wka ∶ wkA
+Γ at n = the type of the n-th member of the context Γ. Shall we not also be able to talk about τ ∈ Γ as evidence for a (scope-checked) Term being
+
+Maybe what I need is a notion of a type-checked rather than a scope-checked term.
+
+```agda
+data _∈_ : {N : Nat} → Term N → N ctx → Set where
+  ⟨_⟩ : ∀ {N χ} (location : Fin N) → {!!}
+```
+
+```agda
+data _⊢_∋_⋖_ {N} (Γ : Cx) where
+  zero :
+    Γ ⊢ suc zero ∋ 𝒰 zero ⋖ c []
+  suc : ∀ {ℓ A δA} →
+    Γ ⊢ ℓ ∋ A ⋖ δA →
+    Γ ⊢ (suc ℓ) ∋ A ⋖ c (δA ∷ [])
+```
+
+```agda
+```
+
+```agda
+data _∋_⊣_∧_ {N} (B : Term (suc N)) (A : Term N) where
+  -- ε : ∀ {ℓ χ} → (⊢B : {!!} ⊢ B ∶ 𝒰 ℓ ⋖ χ) → B ∋ A ⊣ evidence {![]!} ∧ evidence {![]!} -- ({!{![]!} ,, {!⊢B!}!})
 
 data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
   Vble :
@@ -88,12 +284,23 @@ data _⊢_∶_⋖_ {N χ} (Γ : N ctx⋖ χ) where
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
     Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ ΣF A B ∶ 𝒰 ℓ ⋖ c (δA ∷ δB ∷ [])
+```
+
+
+
+```agda
   ΣI : ∀ ℓ {A B a b δA δB δa δb} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
     Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB →
     Γ ⊢ a ∶ A ⋖ δa →
     Γ ⊢ b ∶ instantiateTerm zero a B ⋖ δb →
     Γ ⊢ ΣI a b ∶ ΣF A B ⋖ c (δA ∷ δB ∷ δa ∷ δb ∷ [])
+```
+
+I would like to have written this instead as
+
+
+```agda
   ΣE : ∀ ℓ A B {C[p] C g p δA δB δC δg δp} →
       (⊢A : Γ ⊢ A ∶ 𝒰 ℓ ⋖ δA) →
       (⊢B : Γ , ⊢A ⊢ B ∶ 𝒰 ℓ ⋖ δB) →
@@ -211,8 +418,7 @@ Here I am experimenting with
                                 ((𝓋 zero))
                            ∶ 𝒰 ℓ
                            ⋖ δp) →
-      (⊢C : Γ , ⊢A , snd (wk⊢ _ ⊢A refl refl) , =F (snd (wk⊢ _ (snd (wk⊢ _ ⊢A refl refl)) refl refl)) (Vble {n = suc zero} refl) (Vble {n = zero} refl) ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
-      -- (⊢C : Γ , ⊢A , ⊢A' , ⊢p ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
+      (⊢C : Γ , ⊢A , ⊢A' , ⊢p ⊢ X ∶ 𝒰 ℓ ⋖ δC) →
       Γ , ⊢A ⊢ c' ∶ instantiateTerm (suc zero) (𝓋 zero)
                        (instantiateTerm (suc zero) (𝓋 zero)
                                       (instantiateTerm (suc zero) (=I (𝓋 zero))
@@ -373,13 +579,11 @@ Instead of something like the above, could simpler computation rules like these 
     Γ ⊢ =E C c' a a (=I a) ≝ c[a] ∶ C[a,a,=Ia] ⋖ c []
 ```
 
-```agda
-wk⊢ Δ x refl refl = {!!}
-```
-
 ## validation
 
 ```agda
+{- commented-out until I develop the API
+
 consistent : ∀ ℓ → [] ⊢ 𝟘F ∶ 𝒰 ℓ × ¬ ([] ⊢ 𝟘F)
 consistent = {!!}
 
@@ -400,3 +604,5 @@ TC-decidable = {!!}
             → ∀ σ
             → Dec (Γ ⊢ A ≼ σ)
 σ-decidable = {!!}
+-}
+```

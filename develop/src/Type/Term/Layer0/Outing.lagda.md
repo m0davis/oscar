@@ -4,15 +4,15 @@
 ```
 
 ```agda
-module Type.Theory.Outing where
+module Type.Term.Layer0.Outing where
 ```
 
 ```agda
 open import Type.Prelude
-open import Type.Formula
+open import Type.Term.Layer+1.Formula
 open import Type.Universe
-open import Type.Variable
-open import Type.Context
+open import Type.Term.Layer+2.Variable
+open import Type.Term.Layer+1.Context
 ```
 
 -- I mutually-define well-formed contexts with well-typed (and?) well-scoped formulas in such contexts.

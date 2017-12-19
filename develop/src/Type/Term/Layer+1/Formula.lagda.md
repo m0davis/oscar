@@ -4,13 +4,13 @@
 ```
 
 ```agda
-module Type.Formula where
+module Type.Term.Layer+1.Formula where
 ```
 
 ```agda
 open import Type.Prelude
 open import Type.Universe
-open import Type.Variable
+open import Type.Term.Layer+2.Variable
 ```
 
 Some of the terminology here borrows from Dr. Gergő Érdi in [Universe of scope- and type-safe syntaxes](https://raw.githubusercontent.com/gergoerdi/universe-of-syntax/d7d5952cce76be551ff5869914b273be2d398069/README.md).

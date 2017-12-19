@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.HoTTer where
+module Type.Term.Layer0.HoTTer where
 ```
 
 ```agda
@@ -14,7 +14,7 @@ open import Type.Prelude
 Borrowing from Dr. Gergő Érdi in [Universe of scope- and type-safe syntaxes](https://raw.githubusercontent.com/gergoerdi/universe-of-syntax/d7d5952cce76be551ff5869914b273be2d398069/README.md), an expression is a well-scoped formula.
 
 ```agda
-open import Type.SCTerm
+open import Type.Term.Layer-1.SCTerm
   hiding
     (applyTerm
     ;weakenTermFrom
@@ -36,14 +36,14 @@ Renaming to make more in-line with the names of rules in Appendix 2 of the HoTT 
 
 ```agda
 wkgExpr : ∀ {N} → Fin (suc N) → Expr N → Expr (suc N)
-wkgExpr = Type.SCTerm.weakenTermFrom
+wkgExpr = Type.Term.Layer-1.SCTerm.weakenTermFrom
 ```
 
 It's somewhat troubling that I have need to mention a hidden argument here.
 
 ```agda
 substExpr : ∀ {M N} → Expr N → Expr (M + suc N) → Expr (M + N)
-substExpr {M} a b = Type.SCTerm.substituteTerm {M} (transport Expr auto b) a
+substExpr {M} a b = Type.Term.Layer-1.SCTerm.substituteTerm {M} (transport Expr auto b) a
 ```
 
 It feels a bit backwards to me to take a well-scoped thing and demote it to a syntactically valid one but my idea is that it will be easier to work with proofs with lessened requirements. The requirement of well-scopedness will be inserted at the appropriate junctures.

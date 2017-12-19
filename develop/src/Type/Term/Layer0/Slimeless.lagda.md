@@ -5,7 +5,7 @@
 # Slimeless Type Theory
 
 ```agda
-module Type.Slimeless where
+module Type.Term.Layer0.Slimeless where
 ```
 
 I think it will be more fruitful if I shift the question from "do my datatypes construct green slime?" to "could my datatype indices carry more information?" In this regard, I notice that, for example, `ℕIZ` cannot be a universe inhabitant. ℕE, might be or might not be, depending the "sort" (which I have not defined) of its first argument.
@@ -149,7 +149,7 @@ module AnotherGoAtIt where
 ```
 
 ```agda
-  open import Type.SCTerm
+  open import Type.Term.Layer-1.SCTerm
   infixr 10 _▷_
   data Kind (N : Nat) : Set where
     ⟦_⟧ : Term N → Kind N

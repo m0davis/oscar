@@ -4,13 +4,13 @@
 ```
 
 ```agda
-module Type.Context where
+module Type.Term.Layer+1.Context where
 ```
 
 ```agda
 open import Type.Prelude
-open import Type.Formula
-open import Type.Variable
+open import Type.Term.Layer+1.Formula
+open import Type.Term.Layer+2.Variable
 ```
 
 ```agda

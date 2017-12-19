@@ -1,6 +1,6 @@
 
 ```agda
-module Type.Variable where
+module Type.Term.Layer+2.Variable where
 ```
 
 ```agda

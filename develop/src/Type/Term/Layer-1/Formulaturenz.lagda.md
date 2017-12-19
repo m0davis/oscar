@@ -6,7 +6,7 @@
 Disallowing empty signature.
 
 ```agda
-module Type.Formulaturenz where
+module Type.Term.Layer-1.Formulaturenz where
 ```
 
 ```agda
@@ -14,7 +14,7 @@ open import Type.Prelude
 ```
 
 ```agda
-open import Type.DeBruijn
+open import Type.Term.Layer-2.DeBruijn
 
 Universe = Nat
 data Formula (N : Nat) : Set

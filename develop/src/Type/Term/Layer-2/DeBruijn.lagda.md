@@ -1,6 +1,6 @@
 
 ```agda
-module Type.DeBruijn where
+module Type.Term.Layer-2.DeBruijn where
 
 open import Type.Prelude
 ```

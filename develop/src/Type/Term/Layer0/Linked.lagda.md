@@ -4,15 +4,15 @@
 ```
 
 ```agda
-module Type.Theory.Linked where
+module Type.Term.Layer0.Linked where
 ```
 
 ```agda
 open import Type.Prelude
-open import Type.Formula -- named terms
-open import Type.SCTerm  -- DeBruijn-indexed terms
-open import Type.Context -- context of named terms
-open import Type.Variable -- named variables
+open import Type.Term.Layer+1.Formula -- named terms
+open import Type.Term.Layer-1.SCTerm  -- DeBruijn-indexed terms
+open import Type.Term.Layer+1.Context -- context of named terms
+open import Type.Term.Layer+2.Variable -- named variables
 ```
 
 Conversion from a named term in a context to its DeBruijn representation. I will take it that names in the prefix of a context may shadow names in its suffix, just as abstractions shadow the names they bind. I will not accomodate the case that a variable in a named term has a referent that is not in the context or in an enclosing abstraction.

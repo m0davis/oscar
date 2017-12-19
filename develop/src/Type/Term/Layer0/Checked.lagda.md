@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Theory.Checked where
+module Type.Term.Layer0.Checked where
 ```
 
 ```agda
@@ -15,8 +15,8 @@ transportFin n .n {refl} = refl
 ```
 
 ```agda
-open import Type.DeBruijn
-open import Type.Kernel
+open import Type.Term.Layer-2.DeBruijn
+open import Type.Term.Layer-1.Kernel
 ```
 
 ```agda

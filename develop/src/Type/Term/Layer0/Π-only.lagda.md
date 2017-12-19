@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Theory.Π-only where
+module Type.Term.Layer0.Π-only where
 ```
 
 ```agda
@@ -157,7 +157,7 @@ module #3 where
 ```
 
 ```agda
-  open import Type.DeBruijn
+  open import Type.Term.Layer-2.DeBruijn
 
   Universe = Nat
   Variable = Nat

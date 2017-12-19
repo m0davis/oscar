@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Theory.Slimdex where
+module Type.Term.Layer0.Slimdex where
 ```
 
 ```agda
@@ -12,7 +12,7 @@ open import Type.Prelude
 ```
 
 ```agda
-open import Type.SCTerm renaming (Term to STerm)
+open import Type.Term.Layer-1.SCTerm renaming (Term to STerm)
 open import Type.Universe
 ```
 

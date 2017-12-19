@@ -1,10 +1,10 @@
 
 ```agda
-module Type.SCTerm where
+module Type.Term.Layer-1.SCTerm where
 
 open import Type.Prelude
 open import Type.Universe
-open import Type.DeBruijn
+open import Type.Term.Layer-2.DeBruijn
 ```
 
 ## scope-checked terms

@@ -4,7 +4,7 @@
 ```
 
 ```agda
-module Type.Kernel where
+module Type.Term.Layer-1.Kernel where
 ```
 
 ```agda
@@ -12,7 +12,7 @@ open import Type.Prelude
 ```
 
 ```agda
-open import Type.DeBruijn
+open import Type.Term.Layer-2.DeBruijn
 
 Universe = Nat
 

@@ -4,16 +4,16 @@
 ```
 
 ```agda
-module Type.Theory.Outing.Admissible where
+module Type.Term.Layer0.Outing.Admissible where
 ```
 
 ```agda
 open import Type.Prelude
-open import Type.Formula
+open import Type.Term.Layer+1.Formula
 open import Type.Universe
-open import Type.Variable
-open import Type.Context
-open import Type.Theory.Outing
+open import Type.Term.Layer+2.Variable
+open import Type.Term.Layer+1.Context
+open import Type.Term.Layer0.Outing
 ```
 
 admissible rules

@@ -6,7 +6,7 @@
 # Type theory with named variables
 
 ```agda
-module Type.Theory.Named where
+module Type.Term.Layer0.Named where
 ```
 
 I would like to use the type-checker to prevent mistakes when renaming and substituting DeBruijn-indexed variables.
@@ -24,7 +24,7 @@ I shall take the notion of a symbol to be a primitive concept, except insofar as
 An `STerm` is a scope-checked term, indexed by the number of elements in its (meta-theoretic) context.
 
 ```agda
-open import Type.SCTerm renaming (Term to STerm)
+open import Type.Term.Layer-1.SCTerm renaming (Term to STerm)
 ```
 
 ```agda
