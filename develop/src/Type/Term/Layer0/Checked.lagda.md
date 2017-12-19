@@ -80,12 +80,17 @@ pattern Σe C g p = Meta.𝓉 #5 (C ∷ g ∷ p ∷ [])
 {-# DISPLAY Meta.diff≾ _ = diff≾ #-}
 {-# DISPLAY Meta.Expression _ = Expression #-}
 {-# DISPLAY Meta.weakenExpressionFrom _ = weakenExpressionFrom #-}
+{-# DISPLAY Meta.weakenExpressionByFrom _ = weakenExpressionByFrom #-}
 {-# DISPLAY Meta.instantiateExpressionAt _ = instantiateExpressionAt #-}
 {-# DISPLAY Meta.Abstractions _ = Abstractions #-}
 {-# DISPLAY Meta.shift≾ _ = shift≾ #-}
 {-# DISPLAY Meta._<<<_ _ = _<<<_ #-}
 {-# DISPLAY Meta._<><_ _ = _<><_ #-}
 {-# DISPLAY Meta._<>>_ _ = _<>>_ #-}
+{-# DISPLAY Meta._,[_] _ = _,[_] #-}
+{-# DISPLAY Meta.context≤ _ = context≤ #-}
+{-# DISPLAY Meta.context≥ _ = context≥ #-}
+
 -- {-# DISPLAY Meta._>>>_ _ = _>>>_ #-}
 ```
 
