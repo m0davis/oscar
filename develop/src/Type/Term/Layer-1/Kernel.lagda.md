@@ -13,8 +13,7 @@ open import Type.Prelude
 
 ```agda
 open import Type.Term.Layer-2.DeBruijn
-
-Universe = Nat
+open import Type.Universe
 
 module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
 
