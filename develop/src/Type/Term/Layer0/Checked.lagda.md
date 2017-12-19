@@ -303,7 +303,7 @@ weaken⊢ Γ⊢W∶𝒰 Γ⊢a∶A = {!!}
 <><→<<< = {!!}
 
 weaken⊢ByFrom {Ξ = Meta.[]} x x₁ = {!!}
-weaken⊢ByFrom {Ξ = x₂ Meta.∷ Ξ} x x₁ = {!!}
+weaken⊢ByFrom {Γ = Γ} {Δ = Δ} {Ξ = x₂ Meta.∷ Ξ} x x₁ = {!Γ <>< (x₂ ∷ Ξ) <>> Δ!}
 
 split/ctx = {!!}
 
