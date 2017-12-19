@@ -228,7 +228,7 @@ so that
   shift≾By {M} {N} Γ (ξ ∷ Ξ) with context≥ Ξ | context≿ Γ
   -- {!ξ shifted through Γ (N - M)!} ∷ {!shift≾By Γ!}
   shift≾By {M} {.M} Γ (ξ ∷ Ξ) | diff! n-M-1 | [] = ξ ∷ transport (_≿ suc M) auto (shift≾By ε Ξ)
-  shift≾By {M} {N} {n} Γ (ξ ∷ Ξ) | diff! n-M-1 | γ ∷ Γ' = {!ξ {-weakened by N - M-}!} ∷ {!(shift≾By (context≾ Γ') Ξ) {-weakened by 1-}!}
+  shift≾By {M} {N} {n} Γ (ξ ∷ Ξ) | diff! n-M-1 | γ ∷ Γ' = weakenExpression≾ Γ ξ ∷ (transport (_≿ suc N) auto $ shift≿ (shift≾By (context≾ Γ') Ξ))
 
   _<<>_ : ∀ {M N n} → M ≾ N → n ≿ M → M ≾ (n - M + N)
   Ξ <<> Δ = Ξ <>< shift≾By Ξ Δ
