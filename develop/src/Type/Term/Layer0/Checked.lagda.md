@@ -90,6 +90,8 @@ pattern Σe C g p = Meta.𝓉 #5 (C ∷ g ∷ p ∷ [])
 {-# DISPLAY Meta._,[_] _ = _,[_] #-}
 {-# DISPLAY Meta.context≤ _ = context≤ #-}
 {-# DISPLAY Meta.context≥ _ = context≥ #-}
+{-# DISPLAY Meta.shift≾ _ = shift≾ #-}
+{-# DISPLAY Meta.shift≿ _ = shift≿ #-}
 
 -- {-# DISPLAY Meta._>>>_ _ = _>>>_ #-}
 ```
