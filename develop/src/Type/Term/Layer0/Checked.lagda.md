@@ -92,6 +92,7 @@ pattern Σe C g p = Meta.𝓉 #5 (C ∷ g ∷ p ∷ [])
 {-# DISPLAY Meta.context≥ _ = context≥ #-}
 {-# DISPLAY Meta.shift≾ _ = shift≾ #-}
 {-# DISPLAY Meta.shift≿ _ = shift≿ #-}
+{-# DISPLAY Meta.shift≾By _ = shift≾By #-}
 
 -- {-# DISPLAY Meta._>>>_ _ = _>>>_ #-}
 ```
