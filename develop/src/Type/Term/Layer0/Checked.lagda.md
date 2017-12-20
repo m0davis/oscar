@@ -220,6 +220,11 @@ var₁ : ∀ {M} {Γ : 0 ≾ M} {N} {Δ : N ≿ M}
      → ∃ λ ℓ
      → Γ ⊢ φ ∶ 𝒰 ℓ
 
+Γ,A,B⊢Σiab∶ΣfAB
+  : ∀ {N} {Γ : 0 ≾ N} {ℓ A B C}
+  → (Γ,ΣfAB⊢C∶𝒰 : Γ , Σf A B ⊢ C ∶ 𝒰 ℓ)
+  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ _
+
 data _⊢_∶_ {N} (Γ : 0 ≾ N) where
   𝓋 : ∀ v {φ}
     → Γ ctx
@@ -279,19 +284,7 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             Γ,A,B/ctx : Γ , A , B ctx
             Γ,A,B/ctx = {!!}
             Γ,A,B⊢Σiab∶ΣfAB : Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ _
-            Γ,A,B⊢Σiab∶ΣfAB =
-              ΣI
-                (let slimy = weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
-                     slimy' = weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
-                     eq : ∀ Z e → transport (_≿ Z) e [] ≡ []
-                     eq Z = λ {refl → refl}
-                     lamslimy' : (e1 : suc (suc N) ≡ suc (suc N)) (e2 : suc (suc (suc N)) ≡ suc (suc (suc N))) → 0 ≾ suc (suc (suc N))
-                     lamslimy' e1 e2 = Γ <<< (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A)) <>< transport (_≿ suc (suc (suc N))) e2 (shift≿ (transport (_≿ suc (suc N)) e1 []))
-                 in
-                 {!transport₂ {A = {!!}} {B = {!!}} (λ f1 f2 → {!lamslimy' ? ? ⊢ ? ∶ ? !}) {{!!}} {{!!}} {{!!}} {{!!}} (eq (suc (suc N)) refl) (eq (suc (suc (suc N))) refl) slimy'!}
-                )
-                {!!}
-                (𝓋 {!!} {!!} {!!})
+            Γ,A,B⊢Σiab∶ΣfAB = Γ,A,B⊢Σiab∶ΣfAB Γ,ΣfAB⊢C∶𝒰
             Γ,A,B,ΣfAB⊢C∶𝒰 : Γ , A , B , Σf _ _ ⊢ _ ∶ 𝒰 ℓ
             Γ,A,B,ΣfAB⊢C∶𝒰 = {!!}
             Γ,ΣfAB,A,B⊢C∶𝒰 : Γ , Σf A B , _ , _ ⊢ _ ∶ 𝒰 ℓ
@@ -300,6 +293,29 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
      → Γ , A , B ⊢ g ∶ {!!} -- Γ , a ∶ A , b ∶ B ⊢ g ∶ C [ ΣI a b / z ]
      → (Γ⊢p∶ΣfAB : Γ ⊢ p ∶ Σf A B)
      → Γ ⊢ Σe C g p ∶ {!!} -- C [ p / z ]
+
+Γ,A,B⊢Σiab∶ΣfAB {N} {Γ} {ℓ} {A} {B} {C} Γ,ΣfAB⊢C∶𝒰 =
+  ΣI
+    {!transport₂ {A = {!!}} {B = {!!}} (λ f1 f2 → {!lamslimy' ? ? ⊢ ? ∶ ? !}) {{!!}} {{!!}} {{!!}} {{!!}} (eq (suc (suc N)) refl) (eq (suc (suc (suc N))) refl) slimy'!}
+    {!!}
+    (𝓋 {!!} {!!} {!!})
+  where
+  Γ,ΣfAB/ctx : Γ , Σf A B ctx
+  Γ,ΣfAB/ctx = wfctx₁ Γ,ΣfAB⊢C∶𝒰
+  ∃ℓ→Γ⊢ΣfAB∶𝒰 : ∃ λ ℓ → Γ ⊢ Σf A B ∶ 𝒰 ℓ
+  ∃ℓ→Γ⊢ΣfAB∶𝒰 = case Γ,ΣfAB/ctx of λ { (_ , Γ⊢ΣfAB∶𝒰) → , Γ⊢ΣfAB∶𝒰}
+  ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 : ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ × Γ , A ⊢ B ∶ 𝒰 ℓ
+  ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 = ΣF-inj₂ (∃ℓ→Γ⊢ΣfAB∶𝒰 .snd)
+  Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 {!ℓ!}
+  Γ,A⊢B∶𝒰 = ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .snd
+  Γ,A,B/ctx : Γ , A , B ctx
+  Γ,A,B/ctx = {!!}
+  slimy = weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
+  slimy' = weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
+  eq : ∀ Z e → transport (_≿ Z) e [] ≡ []
+  eq Z = λ {refl → refl}
+  lamslimy' : (e1 : suc (suc N) ≡ suc (suc N)) (e2 : suc (suc (suc N)) ≡ suc (suc (suc N))) → 0 ≾ suc (suc (suc N))
+  lamslimy' e1 e2 = Γ <<< (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A)) <>< transport (_≿ suc (suc (suc N))) e2 (shift≿ (transport (_≿ suc (suc N)) e1 []))
 
 data _⊢_≝_∶_ {N} (Γ : 0 ≾ N) where
 
