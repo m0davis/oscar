@@ -224,7 +224,7 @@ var₁ : ∀ {M} {Γ : 0 ≾ M} {N} {Δ : N ≿ M}
 Γ,A,B⊢Σiab∶ΣfAB
   : ∀ {N} {Γ : 0 ≾ N} {ℓ A B C}
   → (Γ,ΣfAB⊢C∶𝒰 : Γ , Σf A B ⊢ C ∶ 𝒰 ℓ)
-  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ _
+  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ {!!}
 
 data _⊢_∶_ {N} (Γ : 0 ≾ N) where
   𝓋 : ∀ v {φ}
@@ -295,27 +295,11 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
      → (Γ⊢p∶ΣfAB : Γ ⊢ p ∶ Σf A B)
      → Γ ⊢ Σe C g p ∶ {!!} -- C [ p / z ]
 
-slimy'→unslimy'
-  : ∀ {N} {Γ : 0 ≾ N} {ℓ} {A : Expression N}
-      {B C : Expression (suc N)}
-      (Γ,ΣfAB⊢C∶𝒰 : Γ , 𝓉 #3 (A ∷ B ∷ []) ⊢ C ∶ 𝒰 ℓ)
-    → ∀ eq1 eq2
-    → ∀ (p P : Expression (suc N - N + suc (suc N)))
-    → Γ <<<
-      (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A))
-      <><
-      transport (_≿ suc (suc (suc N))) eq2
-      (shift≿ {N = N - N + suc (suc N)} (transport (_≿ suc (suc N)) eq1 []))
-      ⊢ p ∶ P
-    → Γ , A , B , {!_!} ⊢ transport Expression {!!} p ∶ transport Expression {!!} P
-slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 eq1 eq2 p P x with transport (_≿ suc (suc (suc N))) eq2 (shift≿ (transport (_≿ suc (suc N)) eq1 []))
-… | t = {!!}
-
 Γ,A,B⊢Σiab∶ΣfAB {N} {Γ} {ℓ} {A} {B} {C} Γ,ΣfAB⊢C∶𝒰 =
   ΣI {ℓ = {!!}}
-    (slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 {!!} {!!} {!!} {!!} slimy')
-    {!!}
-    (𝓋 {!!} {!!} {!!})
+    {!slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 weakener (? ofType suc (suc N) ≡ N - N + suc (suc N)) (? ofType Nat.suc (N - N + suc (suc N)) ≡ suc (N - N + suc (suc N))) (? ofType Nat.suc (suc N) ≡ N - N + suc (suc N)) slimy'!}
+    (𝓋 1 {{!!}} Γ,A,B/ctx refl)
+    (𝓋 0 {{!!}} Γ,A,B/ctx {!!})
   where
   Γ,ΣfAB/ctx : Γ , Σf A B ctx
   Γ,ΣfAB/ctx = wfctx₁ Γ,ΣfAB⊢C∶𝒰
@@ -327,10 +311,12 @@ slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 eq1 eq2 p P x with transport (_≿ suc
   Γ,A⊢B∶𝒰 = ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .snd
   Γ,A,B/ctx : Γ , A , B ctx
   Γ,A,B/ctx = {!!}
+  weakener : Expression (suc N) → Expression (suc N - N + suc (suc N))
+  weakener = weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .fst
   slimy = weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
   slimy' : Γ <<< ((ε , A , B) <<> (A ∷ [])) ⊢
-             weaken⊢ByFrom' {M = N} Γ,A⊢B∶𝒰 Γ,A,B/ctx .fst B ∶
-             weaken⊢ByFrom' {M = N} Γ,A⊢B∶𝒰 Γ,A,B/ctx .fst (𝒰 (∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .fst))
+             weakener B ∶
+             weakener (𝒰 (∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .fst))
   slimy' = weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
   eq : ∀ Z e → transport (_≿ Z) e [] ≡ []
   eq Z = λ {refl → refl}
