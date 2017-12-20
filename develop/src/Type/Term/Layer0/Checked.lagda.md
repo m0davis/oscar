@@ -294,9 +294,25 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
      → (Γ⊢p∶ΣfAB : Γ ⊢ p ∶ Σf A B)
      → Γ ⊢ Σe C g p ∶ {!!} -- C [ p / z ]
 
+slimy'→unslimy'
+  : ∀ {N} {Γ : 0 ≾ N} {ℓ} {A : Expression N}
+      {B C : Expression (suc N)}
+      (Γ,ΣfAB⊢C∶𝒰 : Γ , 𝓉 #3 (A ∷ B ∷ []) ⊢ C ∶ 𝒰 ℓ)
+    → ∀ eq1 eq2
+    → ∀ (p P : Expression (suc N - N + suc (suc N)))
+    → Γ <<<
+      (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A))
+      <><
+      transport (_≿ suc (suc (suc N))) eq2
+      (shift≿ {N = N - N + suc (suc N)} (transport (_≿ suc (suc N)) eq1 []))
+      ⊢ p ∶ P
+    → Γ , A , B , {!_!} ⊢ transport Expression {!!} p ∶ transport Expression {!!} P
+slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 eq1 eq2 p P x with transport (_≿ suc (suc (suc N))) eq2 (shift≿ (transport (_≿ suc (suc N)) eq1 []))
+… | t = {!!}
+
 Γ,A,B⊢Σiab∶ΣfAB {N} {Γ} {ℓ} {A} {B} {C} Γ,ΣfAB⊢C∶𝒰 =
-  ΣI
-    {!transport₂ {A = {!!}} {B = {!!}} (λ f1 f2 → {!lamslimy' ? ? ⊢ ? ∶ ? !}) {{!!}} {{!!}} {{!!}} {{!!}} (eq (suc (suc N)) refl) (eq (suc (suc (suc N))) refl) slimy'!}
+  ΣI {ℓ = {!!}}
+    (slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 {!!} {!!} {!!} {!!} slimy')
     {!!}
     (𝓋 {!!} {!!} {!!})
   where
@@ -311,6 +327,9 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
   Γ,A,B/ctx : Γ , A , B ctx
   Γ,A,B/ctx = {!!}
   slimy = weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
+  slimy' : Γ <<< ((ε , A , B) <<> (A ∷ [])) ⊢
+             weaken⊢ByFrom' {M = N} Γ,A⊢B∶𝒰 Γ,A,B/ctx .fst B ∶
+             weaken⊢ByFrom' {M = N} Γ,A⊢B∶𝒰 Γ,A,B/ctx .fst (𝒰 (∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .fst))
   slimy' = weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
   eq : ∀ Z e → transport (_≿ Z) e [] ≡ []
   eq Z = λ {refl → refl}
