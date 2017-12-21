@@ -327,7 +327,15 @@ data _⊢_≝_∶_ {N} (Γ : 0 ≾ N) where
 
 ΠF-inj₂ = {!!}
 
-wfctx₁ = {!!}
+wfctx₁ (𝓋 v x x₁) = x
+wfctx₁ (𝒰I x) = x
+wfctx₁ (𝒰C x) = wfctx₁ x
+wfctx₁ (ΠF x x₁) = wfctx₁ x
+wfctx₁ (ΠI x) = case wfctx₁ x of (λ { (x , x₂) → x})
+wfctx₁ (ΠE x x₁ x₂) = wfctx₁ x₁
+wfctx₁ (ΣF x x₁) = wfctx₁ x
+wfctx₁ (ΣI x x₁ x₂) = wfctx₁ x₁
+wfctx₁ (ΣE x x₁ x₂) = wfctx₁ x₂
 
 well-typed₁ = {!!}
 
