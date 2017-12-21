@@ -224,7 +224,8 @@ var₁ : ∀ {M} {Γ : 0 ≾ M} {N} {Δ : N ≿ M}
 Γ,A,B⊢Σiab∶ΣfAB
   : ∀ {N} {Γ : 0 ≾ N} {ℓ A B C}
   → (Γ,ΣfAB⊢C∶𝒰 : Γ , Σf A B ⊢ C ∶ 𝒰 ℓ)
-  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ {!!}
+  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf {!!} -- (weakenExpressionByFrom 2 0 A)
+                                     {!!} -- (weakenExpressionByFrom 2 1 B)
 
 data _⊢_∶_ {N} (Γ : 0 ≾ N) where
   𝓋 : ∀ v {φ}
@@ -295,10 +296,31 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
      → (Γ⊢p∶ΣfAB : Γ ⊢ p ∶ Σf A B)
      → Γ ⊢ Σe C g p ∶ {!!} -- C [ p / z ]
 
+slimy'→unslimy' : ∀ {N} {Γ : 0 ≾ N} {ℓ} {A : Expression N}
+                    {B C : Expression (suc N)}
+                    (Γ,ΣfAB⊢C∶𝒰 : Γ , 𝓉 #3 (A ∷ B ∷ []) ⊢ C ∶ 𝒰 ℓ)
+                    ℓΣ
+                    (eq1 : suc (suc N) ≡ N - N + suc (suc N))
+                    (eq2 : suc (N - N + suc (suc N)) ≡ suc N - N + suc (suc N))
+                    (w : Expression (suc N) → Expression (suc N - N + suc (suc N))) →
+                  Γ <<<
+                  (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A))
+                  <><
+                  transport (_≿ suc (suc (suc N))) eq2
+                  (shift≿ {N = N - N + suc (suc N)} (transport (_≿ suc (suc N)) eq1 []))
+                  ⊢ w B ∶
+                  w
+                  (𝒰 ℓΣ) →
+                  Γ , A , B , weakenExpressionFrom #1 (weakenExpressionFrom #0 A) ⊢
+                  weakenExpressionFrom #2 (weakenExpressionFrom #1 B) ∶ 𝒰 ℓΣ
+slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 ℓΣ eq1 eq2 w x with transport (_≿ suc (suc N)) eq1 []
+… | t1 with transport (_≿ suc (suc N)) (sym eq1) t1
+… | t1' = {!!}
+
 Γ,A,B⊢Σiab∶ΣfAB {N} {Γ} {ℓ} {A} {B} {C} Γ,ΣfAB⊢C∶𝒰 =
   ΣI {ℓ = {!!}}
-    {!slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 weakener (? ofType suc (suc N) ≡ N - N + suc (suc N)) (? ofType Nat.suc (N - N + suc (suc N)) ≡ suc (N - N + suc (suc N))) (? ofType Nat.suc (suc N) ≡ N - N + suc (suc N)) slimy'!}
-    (𝓋 1 {{!!}} Γ,A,B/ctx refl)
+    (slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 {!!} {!!} {!!} weakener slimy') -- slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 weakener slimy'
+    (𝓋 1 {{!!}} Γ,A,B/ctx {!!})
     (𝓋 0 {{!!}} Γ,A,B/ctx {!!})
   where
   Γ,ΣfAB/ctx : Γ , Σf A B ctx
