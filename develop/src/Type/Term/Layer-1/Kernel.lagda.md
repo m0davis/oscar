@@ -56,6 +56,27 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
         from₋₁ = weakenFinFrom zero from
     in
     transport Expression auto $ weakenExpressionByFrom by from₋₁ x₋₁
+
+  data SLessNat m : Nat → Set where
+    zero : SLessNat m (suc m)
+    suc : ∀ {n} → SLessNat (suc m) n → SLessNat m n
+
+  weakenExpressionByFromS : ∀ {by+N} → ∀ {N} → SLessNat N (suc by+N) → Fin (suc N) → Expression N → Expression by+N
+  weakenExpressionByFromS zero _ x = x
+  weakenExpressionByFromS (suc N≤by+N) from x =
+    let x₋₁ = weakenExpressionFrom from x
+        from₋₁ = weakenFinFrom zero from
+    in
+    weakenExpressionByFromS N≤by+N from₋₁ x₋₁
+
+  {-# TERMINATING #-}
+  weakenExpressionByFrom′ : ∀ {by+N} → ∀ {N} → N ≤ by+N → Fin (suc N) → Expression N → Expression by+N
+  weakenExpressionByFrom′ (diff! zero) from x = x
+  weakenExpressionByFrom′ {by+N} {N} (diff! (suc k)) from x =
+    let x₋₁ = weakenExpressionFrom from x
+        from₋₁ = weakenFinFrom zero from
+    in
+    weakenExpressionByFrom′ (diff k auto) from₋₁ x₋₁
 ```
 
 ```agda
