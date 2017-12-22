@@ -61,14 +61,27 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
     zero : SLessNat m (suc m)
     suc : ∀ {n} → SLessNat (suc m) n → SLessNat m n
 
+  data ILessNat m : Nat → Nat → Set where
+    zero : ILessNat m (suc m) zero
+    suc : ∀ {n n-m} → ILessNat (suc m) n n-m → ILessNat m n (suc n-m)
+
   upSLessNat : ∀ {m n} → SLessNat m n → SLessNat (suc m) (suc n)
   upSLessNat zero = zero
   upSLessNat (suc x) = suc (upSLessNat x)
+
+  upILessNat : ∀ {m n n-m} → ILessNat m n n-m → ILessNat (suc m) (suc n) n-m
+  upILessNat zero = zero
+  upILessNat (suc x) = suc (upILessNat x)
 
   mkSLessNat : ∀ N v
              → SLessNat N (suc (v + N))
   mkSLessNat N zero = zero
   mkSLessNat N (suc v) = suc (upSLessNat (mkSLessNat N v))
+
+  mkILessNat : ∀ m n-m
+             → ILessNat m (suc (n-m + m)) n-m
+  mkILessNat m zero = zero
+  mkILessNat m (suc n-m) = suc (upILessNat (mkILessNat m n-m))
 
   weakenExpressionByFromS : ∀ {by+N} → ∀ {N} → SLessNat N (suc by+N) → Fin (suc N) → Expression N → Expression by+N
   weakenExpressionByFromS zero _ x = x
