@@ -78,22 +78,22 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
 ```
 
 ```agda
-  -- DContext and UContext view the context from the inside and outside, respectively
+  -- _≾_ and _≿_ view the context from the inside and outside, respectively
 
-  -- `DContext M N`: M ≤ N, includes expressions from N-1 down to M. e.g. DContext 3 7 = expression 6 ∷ (expression 5 ∷ (expression 4 ∷ (expression 3 ∷ []))); the most dependent expressions are exposed first
+  -- `M ≾ N`: M ≤ N, includes expressions from N-1 down to M. e.g. 3 ≾ 7 = expression 6 ∷ (expression 5 ∷ (expression 4 ∷ (expression 3 ∷ []))); the most dependent expressions are exposed first
   infixl 5 _,_
   data _≾_ (M : Nat) : Nat → Set where
     ε : M ≾ M
     _,_ : ∀ {N} → M ≾ N → Expression N → M ≾ suc N
 
-  -- `UContext N M`: M ≤ N, includes expressions from M up to N-1. e.g. UContext 7 3 = expression 3 ∷ (expression 4 ∷ (expression 5 ∷ (expression 6 ∷ []))); the most independent expressions are exposed first
+  -- `N ≿ M`: M ≤ N, includes expressions from M up to N-1. e.g. 7 ≿ 3 = expression 3 ∷ (expression 4 ∷ (expression 5 ∷ (expression 6 ∷ []))); the most independent expressions are exposed first
   infixr 5 _∷_
   data _≿_ (N : Nat) : Nat → Set where
     [] : N ≿ N
     _∷_ : ∀ {M} → Expression M → N ≿ suc M → N ≿ M
 ```
 
-I may prepend `M ≾ n` (having length `n - M`) to the inner portion of `N ≿ M`, resulting in the slimy `(n - M + N) ≿ M`. It will be a problem to prepend yet another `M ≾ n'` to
+I may prepend `M ≾ n` (having length `n - M`) to the inner portion of `N ≿ M`, resulting in the slimy `(n - M + N) ≿ M`. It will require a `transport` to append something, say `Z ≿ (n + N - M)` to this.
 
 If instead I represented `M ≾ n` as something that starts at `M` and goes for a length of `n - M`, e.g. `M ⟨+ (n - M)`, then I may prepend `M ⟨+ n-M` to the inner portion of N ≿ M, resulting in `(n-M + N) ≿ M`, which is still slimy but less so.
 
