@@ -128,14 +128,14 @@ weaken⊢ : ∀ {N} {Γ : 0 ≾ N} {a A ℓ W}
         → Γ ⊢ a ∶ A
         → Γ , W ⊢ weakenExpressionFrom zero a ∶ weakenExpressionFrom zero A
 
-weaken⊢ByFrom : ∀ {M} {Γ : 0 ≾ M}
-              → ∀ {N} {Δ : M ≾ N}
-              → ∀ {X} {Ξ : X ≿ M}
-              → ∀ {a A}
-              → Γ <<< Δ ⊢ a ∶ A         -- infixl
-              → Γ <>< Ξ ctx
-              → ∃ λ (wk : _ → _)
-              → Γ <>< (Ξ <>> Δ) ⊢ wk a ∶ wk A
+weaken⊢ByFrom′ : ∀ {M} {Γ : 0 ≾ M}
+               → ∀ {N} {Δ : M ≾ N}
+               → ∀ {X} {Ξ : X ≿ M}
+               → ∀ {a A}
+               → Γ <<< Δ ⊢ a ∶ A         -- infixl
+               → Γ <>< Ξ ctx
+               → ∃ λ (wk : _ → _)
+               → Γ <>< (Ξ <>> Δ) ⊢ wk a ∶ wk A
 
 weaken⊢ByFrom' : ∀ {M} {Γ : 0 ≾ M}
                → ∀ {N} {Δ : N ≿ M}
@@ -330,7 +330,7 @@ slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 ℓΣ eq1 eq2 w x with transport (_≿
   Γ,A,B/ctx = {!!}
   weakener : Expression (suc N) → Expression (suc N - N + suc (suc N))
   weakener = weaken⊢ByFrom' {Γ = Γ} {Δ = A ∷ []} {Ξ = ε , A , B} Γ,A⊢B∶𝒰 Γ,A,B/ctx .fst
-  slimy = weaken⊢ByFrom {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
+  slimy = weaken⊢ByFrom′ {Γ = Γ} {Δ = ε , A} {Ξ = A ∷ B ∷ []} Γ,A⊢B∶𝒰 Γ,A,B/ctx .snd
   slimy' : Γ <<< ((ε , A , B) <<> (A ∷ [])) ⊢
              weakener B ∶
              weakener (𝒰 (∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .fst))
@@ -360,8 +360,8 @@ weaken⊢ Γ⊢W∶𝒰 Γ⊢a∶A = {!!}
         → Γ <>< [] <>> Δ ≡ {!Γ <<< Δ!} -- FIXME requires slime
 <><→<<< = {!!}
 
-weaken⊢ByFrom {Ξ = Meta.[]} x x₁ = {!!}
-weaken⊢ByFrom {Γ = Γ} {Δ = Δ} {Ξ = x₂ Meta.∷ Ξ} x x₁ = {!Γ <>< (x₂ ∷ Ξ) <>> Δ!}
+weaken⊢ByFrom′ {Ξ = Meta.[]} x x₁ = {!!}
+weaken⊢ByFrom′ {Γ = Γ} {Δ = Δ} {Ξ = x₂ Meta.∷ Ξ} x x₁ = {!Γ <>< (x₂ ∷ Ξ) <>> Δ!}
 
 weaken⊢ByFrom' = {!!}
 

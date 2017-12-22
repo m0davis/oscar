@@ -211,6 +211,15 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
   weakenExpression≿ (_ ∷ Ξ) x = weakenExpression≿ Ξ (weakenExpressionFrom zero x)
 ```
 
+```agda
+  weakenExpressionBy≾From : ∀ {M N X}
+                          → M ≤ X
+                          → Fin (suc N)
+                          → Expression N
+                          → Expression (N - M + X)
+  weakenExpressionBy≾From = {!!}
+```
+
 `shift≾By` Γ Ξ shifts Ξ through Γ.
 
 γᴹγ¹⁺ᴹ...(N-M ≾-elements)...γᴺ⁻¹
@@ -294,6 +303,14 @@ so that
       weaken⊢By = λ { [] x → x
                     ; (δ ∷ Δ) x → {!!}
                     }
+
+      weaken⊢ByFrom : ∀ {M N X} {Γ : 0 ≾ M} {Δ : N ≿ M} {Ξ : M ≾ X}
+                    → ∀ {a A}
+                    → Γ <>< Δ ⊢ a ∶ A
+                    → Γ <<< Ξ ctx
+                    → Γ <<< (Ξ <<> Δ) ⊢ weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) a
+                                      ∶ weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) A
+      weaken⊢ByFrom = {!!}
 
       field
         substitute
