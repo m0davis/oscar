@@ -254,6 +254,8 @@ so that
 
 ```agda
   module Typechecked
+    (_ctx : ∀ {N} → 0 ≾ N → Set)
+    (let _ctx = _ctx ; infix 3 _ctx)
     (_⊢_∶_ : ∀ {N} → 0 ≾ N → Expression N → Expression N → Set)
     (let _⊢_∶_ = _⊢_∶_ ; infix 5 _⊢_∶_)
     where
@@ -265,13 +267,42 @@ so that
       → Γ <<< Δ ⊢ a ∶ weakenExpression≾ Δ A
       → Expression N
     tcInstantiateAt {Δ = Δ} {a} {b = b} _ _ = instantiateExpressionAt (diff≾ Δ) b a
-{-
-    tcWeakenFrom
-      : ∀ {M} {Γ : 0 ≾ M}
-      → ∀ {N} {Δ : M ≾ N}
-      →
-    tcWeakenFrom = ?
--}
+
+    record Syntactic : Set where
+      field
+        typed : ∀ {N} {Γ : 0 ≾ N}
+              → ∀ {a A}
+              → Γ ⊢ a ∶ A
+              → ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ
+        weaken
+          : ∀ {M} {Γ : 0 ≾ M}
+          → ∀ {N} {Δ : N ≿ M}
+          → ∀ {X}
+          → ∀ {a A}
+          → Γ , X ctx
+          → Γ <>< Δ ⊢ a ∶ A
+          → (Γ , X) <>< shift≿ Δ ⊢ weakenExpressionFrom (diff≿ Δ) a ∶ weakenExpressionFrom (diff≿ Δ) A
+      weaken⊢By : ∀ {M N} {Γ : 0 ≾ M}
+                → (Δ : N ≿ M)
+                → ∀ {a A}
+                → Γ ⊢ a ∶ A
+                → Γ <>< Δ ⊢ weakenExpression≿ Δ a ∶ weakenExpression≿ Δ A
+      weaken⊢By = λ { [] x → x
+                    ; (δ ∷ Δ) x → {!!}
+                    }
+      field
+        substitute
+          : ∀ {M} {Γ : 0 ≾ M}
+          → ∀ {N} {Δ : N ≿ M}
+          → ∀ {a A b B}
+          → (ΓAΔ⊢b∶B : (Γ , A) <>< shift≿ Δ ⊢ b ∶ B)
+          → (Γ⊢a∶A : Γ ⊢ a ∶ A)
+          → (let ΓΔ⊢a∶A = weaken⊢By Δ Γ⊢a∶A
+                 ΓAΔ⊢B∶𝒰 = typed ΓAΔ⊢b∶B .snd
+                 b[a] = tcInstantiateAt {Γ = Γ} {Δ = {!context≾ Δ!}} {A = A}  {!ΓAΔ⊢b∶B!} {!ΓΔ⊢a∶A!}
+                 B[a] = tcInstantiateAt ΓAΔ⊢b∶B ΓΔ⊢a∶A
+            )
+          → Γ <>< substitute≿ (shift≿ Δ) a ⊢ instantiateExpressionAt (diff≿ Δ) b (weakenExpression≿ Δ a) ∶ instantiateExpressionAt (diff≿ Δ) B (weakenExpression≿ Δ a)
 ```
 
 ```agda

@@ -102,7 +102,7 @@ data _ctx : ∀ {N} → 0 ≾ N → Set
 data _⊢_∶_ {N} (Γ : 0 ≾ N) : Expression N → Expression N → Set
 data _⊢_≝_∶_ {N} (Γ : 0 ≾ N) : Expression N → Expression N → Expression N → Set
 
-open Typechecked _⊢_∶_
+open Typechecked _ctx _⊢_∶_
 
 infix 3 _ctx
 infix 4 _⊢_∶_
