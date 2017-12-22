@@ -115,13 +115,8 @@ data _ctx where
         → Γ ⊢ f ∶ Πf A B
         → ∃ λ ℓ → Γ , A ⊢ B ∶ 𝒰 ℓ
 
-wfctx₁ : ∀ {N} {Γ : 0 ≾ N} {a A}
-       → Γ ⊢ a ∶ A
-       → Γ ctx
-
-well-typed₁ : ∀ {N} {Γ : 0 ≾ N} {c C}
-            → Γ ⊢ c ∶ C
-            → ∃ λ ℓ → Γ ⊢ C ∶ 𝒰 ℓ
+syntactic : Syntactic
+open Syntactic syntactic
 
 ΣF-inj₂ : ∀ {N} {Γ : 0 ≾ N} {ℓ A B}
         → Γ ⊢ Σf A B ∶ 𝒰 ℓ
@@ -349,18 +344,6 @@ data _⊢_≝_∶_ {N} (Γ : 0 ≾ N) where
 
 ΠF-inj₂ = {!!}
 
-wfctx₁ (𝓋 v x x₁) = x
-wfctx₁ (𝒰I x) = x
-wfctx₁ (𝒰C x) = wfctx₁ x
-wfctx₁ (ΠF x x₁) = wfctx₁ x
-wfctx₁ (ΠI x) = case wfctx₁ x of (λ { (x , x₂) → x})
-wfctx₁ (ΠE x x₁ x₂) = wfctx₁ x₁
-wfctx₁ (ΣF x x₁) = wfctx₁ x
-wfctx₁ (ΣI x x₁ x₂) = wfctx₁ x₁
-wfctx₁ (ΣE x x₁ x₂) = wfctx₁ x₂
-
-well-typed₁ = {!!}
-
 ΣF-inj₂ (𝒰C x) = ΣF-inj₂ x
 ΣF-inj₂ (ΣF ⊢A ⊢B) = , (⊢A ,, ⊢B)
 
@@ -391,4 +374,21 @@ var₁⋆ {Δ = ε} = var
 var₁⋆ {Δ = Δ , δ} (Γ,Δ/ctx , _) = var₁⋆ {Δ = Δ} Γ,Δ/ctx
 
 var₁ {Δ = Δ} Γ,Δ/ctx = var (split/ctx {Δ = Δ} Γ,Δ/ctx)
+
+syntactic .Meta.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
+  wfctx₁' : ∀ {N} {Γ : 0 ≾ N} {a A}
+          → Γ ⊢ a ∶ A
+          → Γ ctx
+  wfctx₁' (𝓋 v x x₁) = x
+  wfctx₁' (𝒰I x) = x
+  wfctx₁' (𝒰C x) = wfctx₁ x
+  wfctx₁' (ΠF x x₁) = wfctx₁ x
+  wfctx₁' (ΠI x) = case wfctx₁ x of (λ { (x , x₂) → x})
+  wfctx₁' (ΠE x x₁ x₂) = wfctx₁ x₁
+  wfctx₁' (ΣF x x₁) = wfctx₁ x
+  wfctx₁' (ΣI x x₁ x₂) = wfctx₁ x₁
+  wfctx₁' (ΣE x x₁ x₂) = wfctx₁ x₂
+syntactic .Meta.Typechecked.Syntactic.well-typed₁ = {!!}
+syntactic .Meta.Typechecked.Syntactic.weaken = {!!}
+syntactic .Meta.Typechecked.Syntactic.substitute = {!!}
 ```

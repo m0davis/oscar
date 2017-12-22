@@ -270,10 +270,13 @@ so that
 
     record Syntactic : Set where
       field
-        typed : ∀ {N} {Γ : 0 ≾ N}
-              → ∀ {a A}
-              → Γ ⊢ a ∶ A
-              → ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ
+        wfctx₁ : ∀ {N} {Γ : 0 ≾ N} {a A}
+               → Γ ⊢ a ∶ A
+               → Γ ctx
+        well-typed₁ : ∀ {N} {Γ : 0 ≾ N}
+                    → ∀ {a A}
+                    → Γ ⊢ a ∶ A
+                    → ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ
         weaken
           : ∀ {M} {Γ : 0 ≾ M}
           → ∀ {N} {Δ : N ≿ M}
@@ -282,6 +285,7 @@ so that
           → Γ , X ctx
           → Γ <>< Δ ⊢ a ∶ A
           → (Γ , X) <>< shift≿ Δ ⊢ weakenExpressionFrom (diff≿ Δ) a ∶ weakenExpressionFrom (diff≿ Δ) A
+
       weaken⊢By : ∀ {M N} {Γ : 0 ≾ M}
                 → (Δ : N ≿ M)
                 → ∀ {a A}
@@ -290,6 +294,7 @@ so that
       weaken⊢By = λ { [] x → x
                     ; (δ ∷ Δ) x → {!!}
                     }
+
       field
         substitute
           : ∀ {M} {Γ : 0 ≾ M}
@@ -298,7 +303,7 @@ so that
           → (ΓAΔ⊢b∶B : (Γ , A) <>< shift≿ Δ ⊢ b ∶ B)
           → (Γ⊢a∶A : Γ ⊢ a ∶ A)
           → (let ΓΔ⊢a∶A = weaken⊢By Δ Γ⊢a∶A
-                 ΓAΔ⊢B∶𝒰 = typed ΓAΔ⊢b∶B .snd
+                 ΓAΔ⊢B∶𝒰 = well-typed₁ ΓAΔ⊢b∶B .snd
                  b[a] = tcInstantiateAt {Γ = Γ} {Δ = {!context≾ Δ!}} {A = A}  {!ΓAΔ⊢b∶B!} {!ΓΔ⊢a∶A!}
                  B[a] = tcInstantiateAt ΓAΔ⊢b∶B ΓΔ⊢a∶A
             )
