@@ -245,6 +245,14 @@ so that
 ```
 
 ```agda
+  substitute≿ : ∀ {M N} (Δ : suc N ≿ suc M)
+              → Expression M
+              → N ≿ M
+  substitute≿ [] x = []
+  substitute≿ (δ ∷ Δ) x = instantiateExpressionAt zero δ x ∷ substitute≿ Δ (weakenExpressionFrom zero x)
+```
+
+```agda
   module Typechecked
     (_⊢_∶_ : ∀ {N} → 0 ≾ N → Expression N → Expression N → Set)
     (let _⊢_∶_ = _⊢_∶_ ; infix 5 _⊢_∶_)
