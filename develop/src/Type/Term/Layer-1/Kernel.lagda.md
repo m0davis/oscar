@@ -61,6 +61,15 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
     zero : SLessNat m (suc m)
     suc : ∀ {n} → SLessNat (suc m) n → SLessNat m n
 
+  upSLessNat : ∀ {m n} → SLessNat m n → SLessNat (suc m) (suc n)
+  upSLessNat zero = zero
+  upSLessNat (suc x) = suc (upSLessNat x)
+
+  mkSLessNat : ∀ N v
+             → SLessNat N (suc (v + N))
+  mkSLessNat N zero = zero
+  mkSLessNat N (suc v) = suc (upSLessNat (mkSLessNat N v))
+
   weakenExpressionByFromS : ∀ {by+N} → ∀ {N} → SLessNat N (suc by+N) → Fin (suc N) → Expression N → Expression by+N
   weakenExpressionByFromS zero _ x = x
   weakenExpressionByFromS (suc N≤by+N) from x =
@@ -89,11 +98,22 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
   … | no at≢v = 𝓋 (instantiateFinAt at≢v)
   instantiateExpressionAt at (𝓉 t ys) x = 𝓉 t (instantiateAbstractionsAt at ys x)
   instantiateAbstractionsAt at {0} [] x = []
+  -- variant using `weakenExpressionByFrom`
+  {-
   instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
     rewrite (auto ofType v + suc N ≡ suc (v + N)) =
     let at/v : Fin (suc (v + N))
         at/v = transport Fin auto $ weakenFinByFrom        v zero at
         x/v  =                      weakenExpressionByFrom v zero x -- TODO use `at` instead of `zero` here?
+    in
+    instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
+  -}
+  -- variant using `weakenExpressionByFromS`
+  instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
+    rewrite (auto ofType v + suc N ≡ suc (v + N)) =
+    let at/v : Fin (suc (v + N))
+        at/v = transport Fin auto $ weakenFinByFrom        v zero at
+        x/v  =                      weakenExpressionByFromS (mkSLessNat N v) zero x
     in
     instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
 ```
