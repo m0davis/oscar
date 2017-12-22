@@ -122,11 +122,21 @@ module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
     instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
   -}
   -- variant using `weakenExpressionByFromS`
+  {-
   instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
     rewrite (auto ofType v + suc N ≡ suc (v + N)) =
     let at/v : Fin (suc (v + N))
         at/v = transport Fin auto $ weakenFinByFrom        v zero at
         x/v  =                      weakenExpressionByFromS (mkSLessNat N v) zero x
+    in
+    instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
+  -}
+  -- variant using `weakenExpressionByFrom′`
+  instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
+    rewrite (auto ofType v + suc N ≡ suc (v + N)) =
+    let at/v : Fin (suc (v + N))
+        at/v = transport Fin auto $ weakenFinByFrom        v zero at
+        x/v  =                      weakenExpressionByFrom′ (diff! v) zero x
     in
     instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
 ```
