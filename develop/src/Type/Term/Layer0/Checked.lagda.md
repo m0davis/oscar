@@ -287,7 +287,7 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             Γ,ΣfAB,A,B⊢C∶𝒰 : Γ , Σf A B , _ , _ ⊢ _ ∶ 𝒰 ℓ
             Γ,ΣfAB,A,B⊢C∶𝒰 = {!!}
        )
-     → Γ , A , B ⊢ g ∶ {!!} -- Γ , a ∶ A , b ∶ B ⊢ g ∶ C [ ΣI a b / z ]
+     → Γ , A , B ⊢ g ∶ tcInstantiateAt {Γ = Γ} {Δ = ε , A , B} Γ,ΣfAB,A,B⊢C∶𝒰 {!Γ,A,B⊢Σiab∶ΣfAB!} -- Γ , a ∶ A , b ∶ B ⊢ g ∶ C [ ΣI a b / z ]
      → (Γ⊢p∶ΣfAB : Γ ⊢ p ∶ Σf A B)
      → Γ ⊢ Σe C g p ∶ {!!} -- C [ p / z ]
 
