@@ -220,8 +220,8 @@ var₁ : ∀ {M} {Γ : 0 ≾ M} {N} {Δ : N ≿ M}
 Γ,A,B⊢Σiab∶ΣfAB
   : ∀ {N} {Γ : 0 ≾ N} {ℓ A B C}
   → (Γ,ΣfAB⊢C∶𝒰 : Γ , Σf A B ⊢ C ∶ 𝒰 ℓ)
-  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf {!!} -- (weakenExpressionByFrom 2 0 A)
-                                     {!!} -- (weakenExpressionByFrom 2 1 B)
+  → Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _
+                                     _
 
 data _⊢_∶_ {N} (Γ : 0 ≾ N) where
   𝓋 : ∀ v {φ}
@@ -281,7 +281,7 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             ∃ℓ→Γ⊢ΣfAB∶𝒰 = case Γ,ΣfAB/ctx of λ { (_ , Γ⊢ΣfAB∶𝒰) → , Γ⊢ΣfAB∶𝒰}
             ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 : ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ × Γ , A ⊢ B ∶ 𝒰 ℓ
             ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 = ΣF-inj₂ (∃ℓ→Γ⊢ΣfAB∶𝒰 .snd)
-            Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 {!ℓ!}
+            Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 _
             Γ,A⊢B∶𝒰 = ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .snd
             Γ,A,B/ctx : Γ , A , B ctx
             Γ,A,B/ctx = {!!}
@@ -292,7 +292,7 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             Γ,ΣfAB,A,B⊢C∶𝒰 : Γ , Σf A B , _ , _ ⊢ _ ∶ 𝒰 ℓ
             Γ,ΣfAB,A,B⊢C∶𝒰 = {!!}
        )
-     → Γ , A , B ⊢ g ∶ tcInstantiateAt {Γ = Γ} {Δ = ε , A , B} Γ,ΣfAB,A,B⊢C∶𝒰 {!Γ,A,B⊢Σiab∶ΣfAB!} -- Γ , a ∶ A , b ∶ B ⊢ g ∶ C [ ΣI a b / z ]
+     → Γ , A , B ⊢ g ∶ tcInstantiateAt {Γ = Γ} {Δ = ε , A , B} {A = Σf A B} Γ,ΣfAB,A,B⊢C∶𝒰 {!Γ,A,B⊢Σiab∶ΣfAB!} -- Γ , a ∶ A , b ∶ B ⊢ g ∶ C [ ΣI a b / z ]
      → (Γ⊢p∶ΣfAB : Γ ⊢ p ∶ Σf A B)
      → Γ ⊢ Σe C g p ∶ {!!} -- C [ p / z ]
 
@@ -318,10 +318,10 @@ slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 ℓΣ eq1 eq2 w x with transport (_≿
 … | t1' = {!!}
 
 Γ,A,B⊢Σiab∶ΣfAB {N} {Γ} {ℓ} {A} {B} {C} Γ,ΣfAB⊢C∶𝒰 =
-  ΣI {ℓ = {!!}}
-    (slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 {!!} {!!} {!!} weakener slimy') -- slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 weakener slimy'
-    (𝓋 1 {{!!}} Γ,A,B/ctx {!!})
-    (𝓋 0 {{!!}} Γ,A,B/ctx {!!})
+  ΣI {ℓ = _}
+    (slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 _ auto auto weakener slimy') -- slimy'→unslimy' Γ,ΣfAB⊢C∶𝒰 weakener slimy'
+    (𝓋 1 {_} Γ,A,B/ctx {!!})
+    (𝓋 0 {_} Γ,A,B/ctx {!!})
   where
   Γ,ΣfAB/ctx : Γ , Σf A B ctx
   Γ,ΣfAB/ctx = wfctx₁ Γ,ΣfAB⊢C∶𝒰
@@ -329,7 +329,7 @@ slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 ℓΣ eq1 eq2 w x with transport (_≿
   ∃ℓ→Γ⊢ΣfAB∶𝒰 = case Γ,ΣfAB/ctx of λ { (_ , Γ⊢ΣfAB∶𝒰) → , Γ⊢ΣfAB∶𝒰}
   ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 : ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ × Γ , A ⊢ B ∶ 𝒰 ℓ
   ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 = ΣF-inj₂ (∃ℓ→Γ⊢ΣfAB∶𝒰 .snd)
-  Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 {!ℓ!}
+  Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 _
   Γ,A⊢B∶𝒰 = ∃ℓ→Γ⊢A∶𝒰×Γ,A⊢B∶𝒰 .snd .snd
   Γ,A,B/ctx : Γ , A , B ctx
   Γ,A,B/ctx = {!!}
