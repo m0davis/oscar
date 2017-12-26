@@ -15,6 +15,7 @@ transportFin n .n {refl} = refl
 ```
 
 ```agda
+open import Type.Universe
 open import Type.Term.Layer-2.DeBruijn
 open import Type.Term.Layer-1.Kernel
 ```
@@ -256,7 +257,11 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
      → (Γ⊢f∶ΠfAB : Γ ⊢ f ∶ Πf A B)
      → (Γ⊢a∶A : Γ ⊢ a ∶ A)
      → ∀ {B[a]}
-     → tcInstantiateAt {Δ = ε} (ΠF-inj₂ Γ⊢f∶ΠfAB .snd) Γ⊢a∶A ≡ B[a]
+     → (let ℓ : Universe
+            ℓ = _
+            Γ,A⊢B∶𝒰 : Γ , A ⊢ B ∶ 𝒰 ℓ
+            Γ,A⊢B∶𝒰 = ΠF-inj₂ Γ⊢f∶ΠfAB .snd)
+     → tcInstantiateAt {Δ = ε} Γ,A⊢B∶𝒰 Γ⊢a∶A ≡ B[a]
      → Γ ⊢ Πe f a ∶ B[a]
   ΣF : ∀ {A B ℓ}
      → Γ ⊢ A ∶ 𝒰 ℓ
