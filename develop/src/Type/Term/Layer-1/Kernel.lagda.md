@@ -276,12 +276,14 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
 ```
 
 ```agda
+  -- FIXME the requirements here are wrong. We would need M ≤ N.
   weakenExpressionBy≾From : ∀ {M N X}
                           → M ≤ X
                           → Fin (suc N)
                           → Expression N
                           → Expression (N - M + X)
-  weakenExpressionBy≾From = {!!}
+  weakenExpressionBy≾From (diff! zero) x φ = {!transport Expression ? φ!}
+  weakenExpressionBy≾From (diff! (suc k)) x φ = {!!}
 ```
 
 `shift≾By` Γ Ξ shifts Ξ through Γ.
