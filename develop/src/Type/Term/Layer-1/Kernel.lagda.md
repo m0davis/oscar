@@ -12,6 +12,13 @@ open import Type.Prelude
 ```
 
 ```agda
+-- for some reason, the auto tactic did not work in the module below
+auto′ : ∀ {a b c : Nat}
+          → a + b + (c + b) - b ≡ a + b - b + (c + b)
+auto′ {a} {b} {c} = auto
+```
+
+```agda
 open import Type.Term.Layer-2.DeBruijn
 open import Type.Universe
 
@@ -276,14 +283,13 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
 ```
 
 ```agda
-  -- FIXME the requirements here are wrong. We would need M ≤ N.
   weakenExpressionBy≾From : ∀ {M N X}
                           → M ≤ X
                           → Fin (suc N)
                           → Expression N
-                          → Expression (N - M + X)
-  weakenExpressionBy≾From (diff! zero) x φ = {!transport Expression ? φ!}
-  weakenExpressionBy≾From (diff! (suc k)) x φ = {!!}
+                          → Expression (N + X - M)
+  weakenExpressionBy≾From (diff! zero) x φ = transport Expression auto φ
+  weakenExpressionBy≾From {M} {N} {X} (diff! (suc k)) x φ = transport Expression auto $ weakenExpressionBy≾From {M = M} (diff! k) (suc x) (weakenExpressionFrom x φ)
 ```
 
 `shift≾By` Γ Ξ shifts Ξ through Γ.
@@ -374,8 +380,8 @@ so that
                     → ∀ {a A}
                     → Γ <>< Δ ⊢ a ∶ A
                     → Γ <<< Ξ ctx
-                    → Γ <<< (Ξ <<> Δ) ⊢ weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) a
-                                      ∶ weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) A
+                    → Γ <<< (Ξ <<> Δ) ⊢ transport Expression ((case context≤ Ξ of λ {(diff! X-M) → case context≥ Δ of λ {(diff! N-M) → auto′ {N-M} {M} {X-M}}})) $ weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) a
+                                      ∶ (transport Expression ((case context≤ Ξ of λ {(diff! X-M) → case context≥ Δ of λ {(diff! N-M) → auto′ {N-M} {M} {X-M}}})) (weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) A))
       weaken⊢ByFrom = {!!}
 
       field
