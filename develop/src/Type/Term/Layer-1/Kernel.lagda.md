@@ -273,6 +273,28 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
 ```
 
 ```agda
+  {- Where `x` has free variables v₀ … v₂
+     weakenExpressionBy≾From′ {3} {7} (ε , γ₃ , γ₄ , γ₅ , γ₆) 1
+     maps an expression such that v₀ ---> v₀
+                                  v₁ ---> v₅
+                                  v₂ ---> v₆
+     = map free vars (v₀ … v₆) in x to
+  -}
+
+  weakenExpressionBy≾From′ : ∀ {M N} → M ≾ N → Fin (suc M) → Expression M → Expression N
+  weakenExpressionBy≾From′ ε _ x = x
+  weakenExpressionBy≾From′ (Γ , ⋆) from x with context≤ Γ
+  … | diff! N-M = weakenExpressionFrom (transport Fin auto $ weakenFinByFrom N-M zero from) (weakenExpressionBy≾From′ Γ from x)
+
+  weakenExpressionBy≤From' : ∀ {M N} → M ≤ N → Fin (suc M) → Expression M → Expression N
+  weakenExpressionBy≤From' (diff! 0) _ x = x
+  weakenExpressionBy≤From' (diff! (suc k)) from x = weakenExpressionFrom (transport Fin auto $ weakenFinByFrom k zero from ) $ weakenExpressionBy≤From' auto from x
+
+  weakenExpressionBy≾From′′ : ∀ {M N} → M ≾ N → Fin (suc M) → Expression M → Expression N
+  weakenExpressionBy≾From′′ Δ = weakenExpressionBy≤From' (context≤ Δ)
+```
+
+```agda
   weakenExpression≾ : ∀ {M N} → M ≾ N → Expression M → Expression N
   weakenExpression≾ ε x       = x
   weakenExpression≾ (Γ , _) x = weakenExpressionFrom zero (weakenExpression≾ Γ x)
@@ -283,13 +305,20 @@ I can eliminate the slime entirely via encapsulation: use a resultant type that 
 ```
 
 ```agda
-  weakenExpressionBy≾From : ∀ {M N X}
+  weakenExpressionBy≤From : ∀ {M N X}
                           → M ≤ X
                           → Fin (suc N)
                           → Expression N
                           → Expression (N + X - M)
-  weakenExpressionBy≾From (diff! zero) x φ = transport Expression auto φ
-  weakenExpressionBy≾From {M} {N} {X} (diff! (suc k)) x φ = transport Expression auto $ weakenExpressionBy≾From {M = M} (diff! k) (suc x) (weakenExpressionFrom x φ)
+  weakenExpressionBy≤From (diff! zero) x φ = transport Expression auto φ
+  weakenExpressionBy≤From {M} {N} {X} (diff! (suc k)) x φ = transport Expression auto $ weakenExpressionBy≤From {M = M} (diff! k) (suc x) (weakenExpressionFrom x φ)
+
+  weakenExpressionBy≾From : ∀ {M N X}
+                          → M ≾ X
+                          → Fin (suc N)
+                          → Expression N
+                          → Expression (N + X - M)
+  weakenExpressionBy≾From M≾X = weakenExpressionBy≤From (context≤ M≾X)
 ```
 
 `shift≾By` Γ Ξ shifts Ξ through Γ.
@@ -380,8 +409,8 @@ so that
                     → ∀ {a A}
                     → Γ <>< Δ ⊢ a ∶ A
                     → Γ <<< Ξ ctx
-                    → Γ <<< (Ξ <<> Δ) ⊢ transport Expression ((case context≤ Ξ of λ {(diff! X-M) → case context≥ Δ of λ {(diff! N-M) → auto′ {N-M} {M} {X-M}}})) $ weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) a
-                                      ∶ (transport Expression ((case context≤ Ξ of λ {(diff! X-M) → case context≥ Δ of λ {(diff! N-M) → auto′ {N-M} {M} {X-M}}})) (weakenExpressionBy≾From (context≤ Ξ) (diff≿ Δ) A))
+                    → Γ <<< (Ξ <<> Δ) ⊢ (transport Expression ((case context≤ Ξ of λ {(diff! X-M) → case context≥ Δ of λ {(diff! N-M) → auto′ {N-M} {M} {X-M}}})) (weakenExpressionBy≾From Ξ (diff≿ Δ) a))
+                                      ∶ (transport Expression ((case context≤ Ξ of λ {(diff! X-M) → case context≥ Δ of λ {(diff! N-M) → auto′ {N-M} {M} {X-M}}})) (weakenExpressionBy≾From Ξ (diff≿ Δ) A))
       weaken⊢ByFrom = {!!}
 
       field
