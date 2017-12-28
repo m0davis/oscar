@@ -288,7 +288,7 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
             Γ,A,B⊢Σiab∶ΣfAB : Γ , A , B ⊢ Σi (𝓋 1) (𝓋 0) ∶ Σf _ _
             Γ,A,B⊢Σiab∶ΣfAB = Γ,A,B⊢Σiab∶ΣfAB Γ,ΣfAB⊢C∶𝒰
             Γ,A,B,ΣfAB⊢C∶𝒰 : Γ , A , B , Σf _ _ ⊢ _ ∶ 𝒰 ℓ
-            Γ,A,B,ΣfAB⊢C∶𝒰 = {!!}
+            Γ,A,B,ΣfAB⊢C∶𝒰 = {!weaken⊢ByFrom {Γ = Γ} {Δ = Σf A B ∷ []} {Ξ = ε , A , B} Γ,ΣfAB⊢C∶𝒰 Γ,A,B/ctx!}
             Γ,ΣfAB,A,B⊢C∶𝒰 : Γ , Σf A B , _ , _ ⊢ _ ∶ 𝒰 ℓ
             Γ,ΣfAB,A,B⊢C∶𝒰 = {!!}
        )
