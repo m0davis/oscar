@@ -17,7 +17,6 @@ transportFin n .n {refl} = refl
 ```agda
 open import Type.Universe
 open import Type.Term.Layer-2.DeBruijn
-open import Type.Term.Layer-1.Kernel
 ```
 
 ```agda
@@ -57,7 +56,8 @@ alphabet =
 
   []
 
-open Meta alphabet
+open import Type.Term.Layer-1.Kernel alphabet
+import Type.Term.Layer-1.Kernel as K
 
 pattern #0 = zero
 pattern #1 = suc #0
@@ -66,36 +66,36 @@ pattern #3 = suc #2
 pattern #4 = suc #3
 pattern #5 = suc #4
 
-pattern Πf A B   = Meta.𝓉 #0 (A ∷ B ∷ [])
-pattern Πi A b   = Meta.𝓉 #1 (A ∷ b ∷ [])
-pattern Πe f x   = Meta.𝓉 #2 (f ∷ x ∷ [])
-pattern Σf A B   = Meta.𝓉 #3 (A ∷ B ∷ [])
-pattern Σi a b   = Meta.𝓉 #4 (a ∷ b ∷ [])
-pattern Σe C g p = Meta.𝓉 #5 (C ∷ g ∷ p ∷ [])
+pattern Πf A B   = K.𝓉 #0 (A ∷ B ∷ [])
+pattern Πi A b   = K.𝓉 #1 (A ∷ b ∷ [])
+pattern Πe f x   = K.𝓉 #2 (f ∷ x ∷ [])
+pattern Σf A B   = K.𝓉 #3 (A ∷ B ∷ [])
+pattern Σi a b   = K.𝓉 #4 (a ∷ b ∷ [])
+pattern Σe C g p = K.𝓉 #5 (C ∷ g ∷ p ∷ [])
 ```
 
 ```agda
-{-# DISPLAY Meta.index≾ _ = index≾ #-}
-{-# DISPLAY Meta._≾_ _ = _≾_ #-}
-{-# DISPLAY Meta._≿_ _ = _≿_ #-}
-{-# DISPLAY Meta.diff≾ _ = diff≾ #-}
-{-# DISPLAY Meta.Expression _ = Expression #-}
-{-# DISPLAY Meta.weakenExpressionFrom _ = weakenExpressionFrom #-}
-{-# DISPLAY Meta.weakenExpressionByFrom _ = weakenExpressionByFrom #-}
-{-# DISPLAY Meta.instantiateExpressionAt _ = instantiateExpressionAt #-}
-{-# DISPLAY Meta.Abstractions _ = Abstractions #-}
-{-# DISPLAY Meta.shift≾ _ = shift≾ #-}
-{-# DISPLAY Meta._<<<_ _ = _<<<_ #-}
-{-# DISPLAY Meta._<><_ _ = _<><_ #-}
-{-# DISPLAY Meta._<>>_ _ = _<>>_ #-}
-{-# DISPLAY Meta._,[_] _ = _,[_] #-}
-{-# DISPLAY Meta.context≤ _ = context≤ #-}
-{-# DISPLAY Meta.context≥ _ = context≥ #-}
-{-# DISPLAY Meta.shift≾ _ = shift≾ #-}
-{-# DISPLAY Meta.shift≿ _ = shift≿ #-}
-{-# DISPLAY Meta.shift≾By _ = shift≾By #-}
+{-# DISPLAY K.Expression _ = Expression #-}
+{-# DISPLAY K.index≾ _ = index≾ #-}
+{-# DISPLAY K._≾_ _ = _≾_ #-}
+{-# DISPLAY K._≿_ _ = _≿_ #-}
+{-# DISPLAY K.diff≾ _ = diff≾ #-}
+{-# DISPLAY K.weakenExpressionFrom _ = weakenExpressionFrom #-}
+{-# DISPLAY K.weakenExpressionByFrom _ = weakenExpressionByFrom #-}
+{-# DISPLAY K.instantiateExpressionAt _ = instantiateExpressionAt #-}
+{-# DISPLAY K.Abstractions _ = Abstractions #-}
+{-# DISPLAY K.shift≾ _ = shift≾ #-}
+{-# DISPLAY K._<<<_ _ = _<<<_ #-}
+{-# DISPLAY K._<><_ _ = _<><_ #-}
+{-# DISPLAY K._<>>_ _ = _<>>_ #-}
+{-# DISPLAY K._,[_] _ = _,[_] #-}
+{-# DISPLAY K.context≤ _ = context≤ #-}
+{-# DISPLAY K.context≥ _ = context≥ #-}
+{-# DISPLAY K.shift≾ _ = shift≾ #-}
+{-# DISPLAY K.shift≿ _ = shift≿ #-}
+{-# DISPLAY K.shift≾By _ = shift≾By #-}
 
--- {-# DISPLAY Meta._>>>_ _ = _>>>_ #-}
+-- {-# DISPLAY K._>>>_ _ = _>>>_ #-}
 ```
 
 ```agda
@@ -365,8 +365,8 @@ weaken⊢ Γ⊢W∶𝒰 Γ⊢a∶A = {!!}
         → Γ <>< [] <>> Δ ≡ {!Γ <<< Δ!} -- FIXME requires slime
 <><→<<< = {!!}
 
-weaken⊢ByFrom′ {Ξ = Meta.[]} x x₁ = {!!}
-weaken⊢ByFrom′ {Γ = Γ} {Δ = Δ} {Ξ = x₂ Meta.∷ Ξ} x x₁ = {!Γ <>< (x₂ ∷ Ξ) <>> Δ!}
+weaken⊢ByFrom′ {Ξ = K.[]} x x₁ = {!!}
+weaken⊢ByFrom′ {Γ = Γ} {Δ = Δ} {Ξ = x₂ K.∷ Ξ} x x₁ = {!Γ <>< (x₂ ∷ Ξ) <>> Δ!}
 
 weaken⊢ByFrom' = {!!}
 
@@ -380,7 +380,7 @@ var₁⋆ {Δ = Δ , δ} (Γ,Δ/ctx , _) = var₁⋆ {Δ = Δ} Γ,Δ/ctx
 
 var₁ {Δ = Δ} Γ,Δ/ctx = var (split/ctx {Δ = Δ} Γ,Δ/ctx)
 
-syntactic .Meta.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
+syntactic .K.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
   wfctx₁' : ∀ {N} {Γ : 0 ≾ N} {a A}
           → Γ ⊢ a ∶ A
           → Γ ctx
@@ -393,7 +393,7 @@ syntactic .Meta.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
   wfctx₁' (ΣF x x₁) = wfctx₁ x
   wfctx₁' (ΣI x x₁ x₂) = wfctx₁ x₁
   wfctx₁' (ΣE x x₁ x₂) = wfctx₁ x₂
-syntactic .Meta.Typechecked.Syntactic.well-typed₁ = {!!}
-syntactic .Meta.Typechecked.Syntactic.weaken = {!!}
-syntactic .Meta.Typechecked.Syntactic.substitute = {!!}
+syntactic .K.Typechecked.Syntactic.well-typed₁ = {!!}
+syntactic .K.Typechecked.Syntactic.weaken = {!!}
+syntactic .K.Typechecked.Syntactic.substitute = {!!}
 ```

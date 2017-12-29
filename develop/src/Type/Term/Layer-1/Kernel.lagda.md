@@ -4,25 +4,26 @@
 ```
 
 ```agda
-module Type.Term.Layer-1.Kernel where
-```
-
-```agda
 open import Type.Prelude
 ```
 
 ```agda
--- for some reason, the auto tactic did not work in the module below
-auto′ : ∀ {a b c : Nat}
-          → a + b + (c + b) - b ≡ a + b - b + (c + b)
-auto′ {a} {b} {c} = auto
+module Type.Term.Layer-1.Kernel {# : Nat} (S : Vec (∃ Vec Nat) #) where
+```
+
+```agda
+private
+  -- for some reason, the auto tactic did not work in the module below
+  auto′ : ∀ {a b c : Nat}
+            → a + b + (c + b) - b ≡ a + b - b + (c + b)
+  auto′ {a} {b} {c} = auto
 ```
 
 ```agda
 open import Type.Term.Layer-2.DeBruijn
 open import Type.Universe
 
-module Meta {# : Nat} (S : Vec (∃ Vec Nat) #) where
+module _ where
 
   data Expression (N : Nat) : Set
   data Abstractions (N : Nat) : ∀ {M} → Vec Nat M → Set
@@ -429,6 +430,7 @@ so that
 ```
 
 ```agda
+{-
 private
 
   module Test where
@@ -481,6 +483,7 @@ private
 
       test-weakening-0 : Expression myMeta 3
       test-weakening-0 = weakenExpressionFrom myMeta 0 test-for-weakening
+-}
 ```
 
 ```agda
