@@ -64,49 +64,6 @@ module _ where
         from₋₁ = weakenFinFrom zero from
     in
     transport Expression auto $ weakenExpressionByFrom by from₋₁ x₋₁
-
-  data SLessNat m : Nat → Set where
-    zero : SLessNat m (suc m)
-    suc : ∀ {n} → SLessNat (suc m) n → SLessNat m n
-
-  data ILessNat m : Nat → Nat → Set where
-    zero : ILessNat m (suc m) zero
-    suc : ∀ {n n-m} → ILessNat (suc m) n n-m → ILessNat m n (suc n-m)
-
-  upSLessNat : ∀ {m n} → SLessNat m n → SLessNat (suc m) (suc n)
-  upSLessNat zero = zero
-  upSLessNat (suc x) = suc (upSLessNat x)
-
-  upILessNat : ∀ {m n n-m} → ILessNat m n n-m → ILessNat (suc m) (suc n) n-m
-  upILessNat zero = zero
-  upILessNat (suc x) = suc (upILessNat x)
-
-  mkSLessNat : ∀ N v
-             → SLessNat N (suc (v + N))
-  mkSLessNat N zero = zero
-  mkSLessNat N (suc v) = suc (upSLessNat (mkSLessNat N v))
-
-  mkILessNat : ∀ m n-m
-             → ILessNat m (suc (n-m + m)) n-m
-  mkILessNat m zero = zero
-  mkILessNat m (suc n-m) = suc (upILessNat (mkILessNat m n-m))
-
-  weakenExpressionByFromS : ∀ {by+N} → ∀ {N} → SLessNat N (suc by+N) → Fin (suc N) → Expression N → Expression by+N
-  weakenExpressionByFromS zero _ x = x
-  weakenExpressionByFromS (suc N≤by+N) from x =
-    let x₋₁ = weakenExpressionFrom from x
-        from₋₁ = weakenFinFrom zero from
-    in
-    weakenExpressionByFromS N≤by+N from₋₁ x₋₁
-
-  {-# TERMINATING #-}
-  weakenExpressionByFrom′ : ∀ {by+N} → ∀ {N} → N ≤ by+N → Fin (suc N) → Expression N → Expression by+N
-  weakenExpressionByFrom′ (diff! zero) from x = x
-  weakenExpressionByFrom′ {by+N} {N} (diff! (suc k)) from x =
-    let x₋₁ = weakenExpressionFrom from x
-        from₋₁ = weakenFinFrom zero from
-    in
-    weakenExpressionByFrom′ (diff k auto) from₋₁ x₋₁
 ```
 
 ```agda
@@ -119,8 +76,6 @@ module _ where
   … | no at≢v = 𝓋 (instantiateFinAt at≢v)
   instantiateExpressionAt at (𝓉 t ys) x = 𝓉 t (instantiateAbstractionsAt at ys x)
   instantiateAbstractionsAt at {0} [] x = []
-  -- variant using `weakenExpressionByFrom`
-  {-
   instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
     rewrite (auto ofType v + suc N ≡ suc (v + N)) =
     let at/v : Fin (suc (v + N))
@@ -128,30 +83,11 @@ module _ where
         x/v  =                      weakenExpressionByFrom v zero x -- TODO use `at` instead of `zero` here?
     in
     instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
-  -}
-  -- variant using `weakenExpressionByFromS`
-  {-
-  instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
-    rewrite (auto ofType v + suc N ≡ suc (v + N)) =
-    let at/v : Fin (suc (v + N))
-        at/v = transport Fin auto $ weakenFinByFrom        v zero at
-        x/v  =                      weakenExpressionByFromS (mkSLessNat N v) zero x
-    in
-    instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
-  -}
-  -- variant using `weakenExpressionByFrom′`
-  instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
-    rewrite (auto ofType v + suc N ≡ suc (v + N)) =
-    let at/v : Fin (suc (v + N))
-        at/v = transport Fin auto $ weakenFinByFrom        v zero at
-        x/v  =                      weakenExpressionByFrom′ (diff! v) zero x
-    in
-    instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
 ```
 
-```agda
-  -- _≾_ and _≿_ view the context from the inside and outside, respectively
+`_≾_` and `_≿_` view the context from the inside and outside, respectively
 
+```agda
   -- `M ≾ N`: M ≤ N, includes expressions from N-1 down to M. e.g. 3 ≾ 7 = expression 6 ∷ (expression 5 ∷ (expression 4 ∷ (expression 3 ∷ []))); the most dependent expressions are exposed first
   infixl 5 _,_
   data _≾_ (M : Nat) : Nat → Set where
@@ -484,7 +420,4 @@ private
       test-weakening-0 : Expression myMeta 3
       test-weakening-0 = weakenExpressionFrom myMeta 0 test-for-weakening
 -}
-```
-
-```agda
 ```
