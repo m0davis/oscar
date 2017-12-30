@@ -304,7 +304,7 @@ so that
     (_ctx : ∀ {N} → 0 ≾ N → Set)
     (let _ctx = _ctx ; infix 3 _ctx)
     (_⊢_∶_ : ∀ {N} → 0 ≾ N → Expression N → Expression N → Set)
-    (let _⊢_∶_ = _⊢_∶_ ; infix 5 _⊢_∶_)
+    (let _⊢_∶_ = _⊢_∶_ ; infix 4 _⊢_∶_)
     where
     tcInstantiateAt
       : ∀ {M} {Γ : 0 ≾ M}
