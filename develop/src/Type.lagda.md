@@ -17,34 +17,9 @@ open import Type.Prelude
 
 My first attempt at implementing a type theory was to represent that from the HoTT book, Appendix 2. I added a notion of complexity on the idea that it would help in proving that type inference (finding a term that witnesses a given type) is semi-decidable (that eventually, in some sense, any type capable of being witnessed will in fact be witnessed). I ran into trouble with cumbersome substitutions of DeBruijn-indexed variables. An idea to streamline the process was to use a mutually-defined weakening function for terms.
 
-```
-module SandboxMutual where
-  open import Type.Term.Layer0.Mutual
-  open import Type.Complexity
-  open import Type.Term.Layer-1.SCTerm
-  open DefinedFunctions
-
-  check-𝟙→𝟙 : [] ⊢ ΠI (𝓋 zero) ∶ ΠF 𝟙F 𝟙F ⋖ c (c [] ∷ c [] ∷ [])
-  check-𝟙→𝟙 = ΠI zero 𝟙F (Vble refl)
-
-  infer-𝟙→𝟙 : [] ⊢ ΠF 𝟙F 𝟙F
-  infer-𝟙→𝟙 = ΠI (𝓋 zero) ,, c (c [] ∷ c [] ∷ []) ,, ΠI zero 𝟙F (Vble refl)
-
-  check-𝟎=𝟎 : [] ⊢ =I 𝟎 ∶ (𝟎 =ℕ 𝟎)
-  check-𝟎=𝟎 = c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
-
-  infer-𝟎+𝟎=𝟎 : [] ⊢ (𝟎 =ℕ 𝟎)
-  infer-𝟎+𝟎=𝟎 = =I ℕIZ ,, c (c [] ∷ c [] ∷ []) ,, =I zero ℕF ℕIZ
-
-  check-𝟎+𝟏=𝟏 : [] ⊢ =I 𝟏 ∶ ((𝟎 +ℕ 𝟏) =ℕ 𝟏)
-  check-𝟎+𝟏=𝟏 = {!!} ,, {!!}
-
-  infer-∀n→doublen=𝟐*n : [] ⊢ ΠF ℕF
-                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
-  infer-∀n→doublen=𝟐*n = ΠI (=I (𝓋 zero)) ,, {!!} ,, {!!}
-
-  check-upsetting : [] ⊢ ℕIS 𝟙I ∶ ℕF
-  check-upsetting = {!!} ,, {!!}
+```agda
+import Type.Term.Layer0.Mutual
+import Type.Term.Layer0.Mutual.Sandbox
 ```
 
 Then another idea was to come-up with a method for referring to variables by their names.
@@ -53,33 +28,9 @@ Then another idea was to come-up with a method for referring to variables by the
 import Type.Term.Layer0.oldname -- this is some previous development of `Named`?
 ```
 
-```
-module SandboxNamed where
-  open import Type.Term.Layer0.Named
-  open import Type.Term.Layer-1.SCTerm
-  open DefinedFunctions
-
-  check-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F ∋ ΠI (𝓋 zero)
-  check-𝟙→𝟙 = {!!}
-
-  infer-𝟙→𝟙 : ε ⊢ ΠF 𝟙F 𝟙F
-  infer-𝟙→𝟙 = {!!}
-
-  check-𝟎=𝟎 : ε ⊢ 𝟎 =ℕ 𝟎 ∋ =I 𝟎
-  check-𝟎=𝟎 = {!!}
-
-  infer-𝟎+𝟎=𝟎 : ε ⊢ (𝟎 =ℕ 𝟎)
-  infer-𝟎+𝟎=𝟎 = {!!}
-
-  check-𝟎+𝟏=𝟏 : ε ⊢ ((𝟎 +ℕ 𝟏) =ℕ 𝟏) ∋ =I 𝟏
-  check-𝟎+𝟏=𝟏 = {!!}
-
-  infer-∀n→doublen=𝟐*n : ε ⊢ ΠF ℕF
-                                 let n = 𝓋 zero in (double n =ℕ (𝟐 *ℕ n))
-  infer-∀n→doublen=𝟐*n = {!!}
-
-  check-upsetting : ε ⊢ ℕF ∋ ℕIS 𝟙I
-  check-upsetting = {!!}
+```agda
+import Type.Term.Layer0.Named
+import Type.Term.Layer0.Named.Sandbox
 ```
 
 While trying to define a type-checked notion of substitution of a variable defined in one context for a term in a different (but, somehow, compatible) context, I discovered that representing type membership in a linear context would require representing the dependency structure. This is unlike in STLC, where a type can be identified by its encoding. In a dependent type, the encoding of the same type may be different, depending on the postitions of the types depended upon in the context. This reminded me of the tree-like structure of an argument from several premises to a conclusion.
@@ -301,32 +252,8 @@ import BadHoTTPiUniq
 ```
 
 ```
-module SandboxOuting where
-  open import Type.Term.Layer0.Outing
-  open import Type.Term.Layer0.Outing.Admissible
-  open import Type.Term.Layer+1.Context
-  open import Type.Term.Layer+1.Formula
-  open DefinedFunctions
-
-  check-𝟙→𝟙 : ε ⊢ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠF 𝟙F (zero ↦₁ 𝟙F)
-  check-𝟙→𝟙 = ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl refl)
-
-  infer-𝟙→𝟙 : ε ⊨ ΠF 𝟙F (zero ↦₁ 𝟙F)
-  infer-𝟙→𝟙 = ⟨ ΠI 𝟙F (zero ↦₁ 𝓋 zero) ∶ ΠI (var (ctx-EXT {ℓ = zero} (𝟙F ctx-EMP) unit) zero refl refl) ⟩
-
-  check-𝟎=𝟎 : ε ⊢ =I 𝟎 ∶ 𝟎 =ℕ 𝟎
-  check-𝟎=𝟎 = =I (ℕIᶻ ctx-EMP)
-
-  infer-𝟎+𝟎=𝟎 : ε ⊨ 𝟎 +ℕ 𝟎 =ℕ 𝟎
-  infer-𝟎+𝟎=𝟎 = ⟨ {!!} ∶ {!!} ⟩
-
-  infer-∀n→doublen=𝟐*n : ε ⊨ ΠF ℕF
-                                (let n = 0 in
-                                  n ↦₁ double (𝓋 n) =ℕ 𝟐 *ℕ (𝓋 n))
-  infer-∀n→doublen=𝟐*n = {!!}
-
-  check-not-upsetting : ε ⊢ ℕIˢ 𝟙I ∶ ℕF → ⊥
-  check-not-upsetting = {!!}
+import Type.Term.Layer0.Outing
+import Type.Term.Layer0.Outing.Sandbox
 ```
 
 The problem does not have an easy solution. In order to make the proof of ≝-project₂ go through for the ΠU case, the obvious (and, so far, afaics, the only) way to do it is to successively apply the Π-elim rule and then the Π-intro rule to f. To avoid name-clashes, one simply requires of ΠU that the binding variable in the lambda not be free in `f`.
@@ -336,6 +263,10 @@ But this is not enough: Π-intro implicitly requires that the binding variable n
 This unwanted restriction on definitional equality is reminiscent of another problem I found during development: I have no definitional equality for α-equivalence. For example, it's not obvious to me that this can be proved (in fact it may be refutable).
 
 ```agda
+private
+  open import Type.Term.Layer+1.Formula
+  open import Type.Term.Layer+1.Context
+  open import Type.Term.Layer0.Outing
   these-are-α-equivalent : ε ⊢ ΠF (𝒰 0) (0 ↦₁ 𝒰 0) ≝ ΠF (𝒰 0) (1 ↦₁ 𝒰 0) ∶ 𝒰 1
   these-are-α-equivalent = {!!}
 ```
