@@ -314,7 +314,33 @@ so that
       → Γ <<< Δ ⊢ a ∶ weakenExpression≾ Δ A
       → Expression N
     tcInstantiateAt {Δ = Δ} {a} {b = b} _ _ = instantiateExpressionAt (diff≾ Δ) b a
+    tcInstantiateAt'
+      : ∀ {M} {Γ : 0 ≾ M}
+      → ∀ {N} {Δ : N ≿ M}
+      → ∀ {a A b B}
+      → (Γ , A) <>< shift≿ Δ ⊢ b ∶ B
+      → Γ <>< Δ ⊢ a ∶ weakenExpression≿ Δ A
+      → Expression N
+    tcInstantiateAt' {Δ = Δ} {a} {b = b} _ _ = instantiateExpressionAt (diff≿ Δ) b a
+```
 
+Why can't Agda figure-out that Δ is empty?
+
+```agda
+    module Test/tcInstantiateAt where
+      postulate
+        N : Nat
+        Γ : 0 ≾ N
+        A a : Expression N
+        B b : Expression (suc N)
+        Γ,A⊢b∶B : Γ , A ⊢ b ∶ B
+        Γ⊢a∶A : Γ ⊢ a ∶ A
+        b[a] : Expression N
+        b'≡b[a]  : tcInstantiateAt  {Δ = ε } Γ,A⊢b∶B Γ⊢a∶A ≡ b[a]
+        b'≡b[a]' : tcInstantiateAt' {Δ = []} Γ,A⊢b∶B Γ⊢a∶A ≡ b[a]
+```
+
+```agda
     record Syntactic : Set where
       field
         wfctx₁ : ∀ {N} {Γ : 0 ≾ N} {a A}
