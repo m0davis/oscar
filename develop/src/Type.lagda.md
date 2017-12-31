@@ -21,6 +21,29 @@ My first attempt at implementing a type theory was to represent that from the Ho
 import Type.Term.Layer0.Mutual
 import Type.Term.Layer0.Mutual.Sandbox
 ```
+* complexity
+* scope-checked and well-typed context defined together
+* experiment with a mutually-defined weakening function
+
+The following separates the above into various features:
+
+```agda
+import Type.Term.Layer0.Mutual1
+```
+* complexity
+* scope-checked and well-typed context defined together
+
+```agda
+import Type.Term.Layer0.Mutual2
+```
+* no complexity
+* scope-checked and well-typed context defined together
+
+```agda
+import Type.Term.Layer0.Mutual3
+```
+* no complexity
+* scope-checked and well-typed context defined separately
 
 Then another idea was to come-up with a method for referring to variables by their names.
 
