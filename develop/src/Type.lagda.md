@@ -5,11 +5,7 @@
 module Type where
 ```
 
-I develop a partial (or maybe a full) implementation of a particular type theory and then turn back to re-develop it as an instance of a general (metaprogrammed) type theory.
-
-# Specification of Type Theory (from the HoTT book, mostly)
-
-This is inspired mainly from Appendix A.2, though I have taken a liberty or two.
+The aim here is to implement a generalised theory of dependent types. As a strategy for development, I envision developing a particular type theory and then turning back to re-develop it as an instance of a general, metaprogrammed, one. As the prototype theory, I use that described in Appendix A.2 of the HoTT book (but I sometimes may take a liberty or two).
 
 ```agda
 open import Type.Prelude
