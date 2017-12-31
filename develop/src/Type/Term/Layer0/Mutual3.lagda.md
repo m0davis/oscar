@@ -11,14 +11,19 @@ module Type.Term.Layer0.Mutual3 where
 
 ```agda
 open import Type.Prelude
-open import Type.Term.Layer-1.SCTerm
+open import Type.Term.Layer-1 renaming (instantiateExpressionAt to instantiateExpressionAt')
+
+-- FIXME the order of arguments should be standardised across modules
+instantiateExpressionAt : ∀ {N} → Fin (suc N) → Expression N → Expression (suc N) → Expression N
+instantiateExpressionAt at r x = instantiateExpressionAt' at x r
+
 open import Type.Universe
 ```
 
 ```agda
 data Context : Nat → Set where
   [] : Context zero
-  _,_ : ∀ {N} → Context N → Term N → Context (suc N)
+  _,_ : ∀ {N} → Context N → Expression N → Context (suc N)
 ```
 
 ## type-checked terms
@@ -27,16 +32,16 @@ data Context : Nat → Set where
 data _ctx : ∀ {N} → Context N → Set
 
 -- Γ ⊢ a : A = a proves A given Γ
-data _⊢_∶_ {N} (Γ : Context N) : Term N → Term N → Set
+data _⊢_∶_ {N} (Γ : Context N) : Expression N → Expression N → Set
 
 
-data _⊢_≝_∶_ {N} (Γ : Context N) : Term N → Term N → Term N → Set
+data _⊢_≝_∶_ {N} (Γ : Context N) : Expression N → Expression N → Expression N → Set
 
 -- Γ ⊢ A = there is a proof of A given Γ
-_⊢_ : ∀ {N} (Γ : Context N) → Term N → Set
+_⊢_ : ∀ {N} (Γ : Context N) → Expression N → Set
 Γ ⊢ A = ∃ (Γ ⊢_∶ A)
 
-infixl 25 _,_
+-- infixl 25 _,_
 
 data _ctx where
   [] : [] ctx
@@ -44,10 +49,11 @@ data _ctx where
               {Γ : Context N} → Γ ctx → (Γ⊢A∶𝒰 : Γ ⊢ A ∶ 𝒰 ℓ) →
             (Γ , A) ctx
 
-_at_ : ∀ {N} (Γ : Context N) → Fin N → Term N
-(Γ , A) at zero = weakenTermFrom zero A
-(Γ , _) at suc n = weakenTermFrom zero (Γ at n)
+_at_ : ∀ {N} (Γ : Context N) → Fin N → Expression N
+(Γ , A) at zero = weakenExpressionFrom zero A
+(Γ , _) at suc n = weakenExpressionFrom zero (Γ at n)
 
+infix 4 _⊢_∶_
 data _⊢_∶_ {N} (Γ : Context N) where
   Vble :
     ∀ {n A} →
@@ -62,40 +68,40 @@ data _⊢_∶_ {N} (Γ : Context N) where
   ΠF : ∀ {ℓ A B} →
       Γ ⊢ A ∶ 𝒰 ℓ →
       Γ , A ⊢ B ∶ 𝒰 ℓ →
-    Γ ⊢ ΠF A B ∶ 𝒰 ℓ
+    Γ ⊢ Πf A B ∶ 𝒰 ℓ
   ΠI : ∀ ℓ {A B b} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ , A ⊢ b ∶ B →
-    Γ ⊢ ΠI b ∶ ΠF A B
+    Γ ⊢ Πi A b ∶ Πf A B
   ΠE : ∀ A B {B[a] f a} →
-    Γ ⊢ f ∶ ΠF A B →
+    Γ ⊢ f ∶ Πf A B →
     Γ ⊢ a ∶ A →
-    instantiateTerm zero a B ≡ B[a] →
-    Γ ⊢ ΠE f a ∶ B[a]
+    instantiateExpressionAt zero a B ≡ B[a] →
+    Γ ⊢ Πe f a ∶ B[a]
   ΣF : ∀ {ℓ A B} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ , A ⊢ B ∶ 𝒰 ℓ →
-    Γ ⊢ ΣF A B ∶ 𝒰 ℓ
+    Γ ⊢ Σf A B ∶ 𝒰 ℓ
   ΣI : ∀ ℓ {A B a b} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ , A ⊢ B ∶ 𝒰 ℓ →
     Γ ⊢ a ∶ A →
-    Γ ⊢ b ∶ instantiateTerm zero a B →
-    Γ ⊢ ΣI a b ∶ ΣF A B
+    Γ ⊢ b ∶ instantiateExpressionAt zero a B →
+    Γ ⊢ Σi a b ∶ Σf A B
   ΣE : ∀ ℓ A B {C[p] C g p} →
       Γ ⊢ A ∶ 𝒰 ℓ →
       Γ , A ⊢ B ∶ 𝒰 ℓ →
-      Γ , ΣF A B ⊢ C ∶ 𝒰 ℓ →
-      Γ , A , B ⊢ g ∶ instantiateTerm (suc (suc zero))
-                                      (ΣI (𝓋 (suc zero)) (𝓋 zero))
-                                      (weakenTermFrom zero (weakenTermFrom zero C)) →
-      Γ ⊢ p ∶ ΣF A B →
-      C[p] ≡ instantiateTerm zero p C →
-    Γ ⊢ ΣE C g p ∶ C[p]
+      Γ , Σf A B ⊢ C ∶ 𝒰 ℓ →
+      Γ , A , B ⊢ g ∶ instantiateExpressionAt (suc (suc zero))
+                                      (Σi (𝓋 (suc zero)) (𝓋 zero))
+                                      (weakenExpressionFrom zero (weakenExpressionFrom zero C)) →
+      Γ ⊢ p ∶ Σf A B →
+      C[p] ≡ instantiateExpressionAt zero p C →
+    Γ ⊢ Σe C g p ∶ C[p]
   +F : ∀ {ℓ A B} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ ⊢ B ∶ 𝒰 ℓ →
-    Γ ⊢ +F A B ∶ 𝒰 ℓ
+    Γ ⊢ +f A B ∶ 𝒰 ℓ
 ```
 
 Note that in the HoTT book, `+IL` demands that both arguments to `+F` be well-formed types, but as an alternative to that, I see no problem with allowing `B` to be garbage: if asked whether it is true that (zero equals zero) or (colorless green ideas sleep furiously), it seems that one should be able to answer positively yes and give the proof of the former, rather than complain that one doesn't understand the latter half of the question.
@@ -107,27 +113,27 @@ Note that in the HoTT book, `+IL` demands that both arguments to `+F` be well-fo
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ ⊢ B ∶ 𝒰 ℓ →
     Γ ⊢ a ∶ A →
-    Γ ⊢ +IL a ∶ +F A B
+    Γ ⊢ +iˡ a ∶ +f A B
   +IR : ∀ ℓ {A B b} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ ⊢ B ∶ 𝒰 ℓ →
     Γ ⊢ b ∶ B →
-    Γ ⊢ +IR b ∶ +F A B
+    Γ ⊢ +iʳ b ∶ +f A B
   +E : ∀ ℓ A B {N[a+b] N na nb a+b} →
       Γ ⊢ A ∶ 𝒰 ℓ →
       Γ ⊢ B ∶ 𝒰 ℓ →
-      Γ , +F A B ⊢ N ∶ 𝒰 ℓ →
-      Γ , A ⊢ na ∶ instantiateTerm (suc zero)
-                                   (+IL (𝓋 zero))
-                                   (weakenTermFrom zero N) →
-      Γ , B ⊢ nb ∶ instantiateTerm (suc zero)
-                                   (+IR (𝓋 zero))
-                                   (weakenTermFrom zero N) →
-      Γ ⊢ a+b ∶ +F A B →
-      instantiateTerm zero a+b N ≡ N[a+b] →
-    Γ ⊢ +E N na nb a+b ∶ N[a+b]
+      Γ , +f A B ⊢ N ∶ 𝒰 ℓ →
+      Γ , A ⊢ na ∶ instantiateExpressionAt (suc zero)
+                                   (+iˡ (𝓋 zero))
+                                   (weakenExpressionFrom zero N) →
+      Γ , B ⊢ nb ∶ instantiateExpressionAt (suc zero)
+                                   (+iʳ (𝓋 zero))
+                                   (weakenExpressionFrom zero N) →
+      Γ ⊢ a+b ∶ +f A B →
+      instantiateExpressionAt zero a+b N ≡ N[a+b] →
+    Γ ⊢ +e N na nb a+b ∶ N[a+b]
   𝟘F : ∀ {ℓ} →
-    Γ ⊢ 𝟘F ∶ 𝒰 ℓ
+    Γ ⊢ 𝟘f ∶ 𝒰 ℓ
 ```
 
 Similar to the above, unlike the HoTT book, I allow one to prove absolutely anything (that is scope-checked) given bottom. The philosophical justification, however is a little trickier, at least in my mind. For now, another reason I give is a practical one: I just don't care.
@@ -136,14 +142,14 @@ Similar to the above, unlike the HoTT book, I allow one to prove absolutely anyt
 
 ```agda
   𝟘E : ∀ ℓ {N[a] N a} →
-    Γ , 𝟘F ⊢ N ∶ 𝒰 ℓ →
-    Γ ⊢ a ∶ 𝟘F →
-    instantiateTerm zero a N ≡ N[a] →
-    Γ ⊢ 𝟘E N a ∶ N[a]
+    Γ , 𝟘f ⊢ N ∶ 𝒰 ℓ →
+    Γ ⊢ a ∶ 𝟘f →
+    instantiateExpressionAt zero a N ≡ N[a] →
+    Γ ⊢ 𝟘e N a ∶ N[a]
   𝟙F : ∀ {ℓ} →
-    Γ ⊢ 𝟙F ∶ 𝒰 ℓ
+    Γ ⊢ 𝟙f ∶ 𝒰 ℓ
   𝟙I :
-    Γ ⊢ 𝟙I ∶ 𝟙F
+    Γ ⊢ 𝟙i ∶ 𝟙f
 ```
 
 Here, by eliminating the requirement that N be well-formed, I fear to be treading on thin-ice: might I be allowing the successor of true be a natural number? Note that in this and in the case of bottom, we are dealing with elimination rules. The introduction rule for + did not seem nearly so... upsetting.
@@ -152,40 +158,40 @@ Here, by eliminating the requirement that N be well-formed, I fear to be treadin
 
 ```agda
   𝟙E : ∀ ℓ {N[a] N n1 a} →
-    Γ , 𝟙F ⊢ N ∶ 𝒰 ℓ →
-    Γ ⊢ n1 ∶ instantiateTerm zero 𝟙I N →
-    Γ ⊢ a ∶ 𝟙F →
-    instantiateTerm zero a N ≡ N[a] →
-    Γ ⊢ 𝟙E N n1 a ∶ N[a]
+    Γ , 𝟙f ⊢ N ∶ 𝒰 ℓ →
+    Γ ⊢ n1 ∶ instantiateExpressionAt zero 𝟙i N →
+    Γ ⊢ a ∶ 𝟙f →
+    instantiateExpressionAt zero a N ≡ N[a] →
+    Γ ⊢ 𝟙e N n1 a ∶ N[a]
   ℕF : ∀ {ℓ} →
-    Γ ⊢ ℕF ∶ 𝒰 ℓ
+    Γ ⊢ ℕf ∶ 𝒰 ℓ
   ℕIZ :
-    Γ ⊢ ℕIZ ∶ ℕF
+    Γ ⊢ ℕiᶻ ∶ ℕf
   ℕIS : ∀ {n} →
-    Γ ⊢ n ∶ ℕF →
-    Γ ⊢ ℕIS n ∶ ℕF
+    Γ ⊢ n ∶ ℕf →
+    Γ ⊢ ℕiˢ n ∶ ℕf
 ```
 
 ```agda
   ℕE : ∀ ℓ {X[n] X x₀  xₛ n} →
-    (⊢X : Γ , ℕF ⊢ X ∶ 𝒰 ℓ) →
-    Γ ⊢ x₀ ∶ instantiateTerm zero ℕIZ X →
-    Γ , ℕF , X ⊢ xₛ ∶ weakenTermFrom zero
-                                   (instantiateTerm (suc zero)
-                                     (ℕIS (𝓋 zero))
-                                     (weakenTermFrom zero X)) →
-    Γ ⊢ n ∶ ℕF →
-    instantiateTerm zero n X ≡ X[n] →
-    Γ ⊢ ℕE X x₀ xₛ n ∶ X[n]
+    (⊢X : Γ , ℕf ⊢ X ∶ 𝒰 ℓ) →
+    Γ ⊢ x₀ ∶ instantiateExpressionAt zero ℕiᶻ X →
+    Γ , ℕf , X ⊢ xₛ ∶ weakenExpressionFrom zero
+                                   (instantiateExpressionAt (suc zero)
+                                     (ℕiˢ (𝓋 zero))
+                                     (weakenExpressionFrom zero X)) →
+    Γ ⊢ n ∶ ℕf →
+    instantiateExpressionAt zero n X ≡ X[n] →
+    Γ ⊢ ℕe X x₀ xₛ n ∶ X[n]
   =F : ∀ {ℓ A a b} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ ⊢ a ∶ A →
     Γ ⊢ b ∶ A →
-    Γ ⊢ =F A a b ∶ 𝒰 ℓ
+    Γ ⊢ =f A a b ∶ 𝒰 ℓ
   =I : ∀ ℓ {A a} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ ⊢ a ∶ A →
-    Γ ⊢ =I a ∶ =F A a a
+    Γ ⊢ =i a ∶ =f A a a
 ```
 
 Here I am experimenting with
@@ -193,25 +199,25 @@ Here I am experimenting with
 ```agda
   =E : ∀ ℓ {X[a,b,p] X c' A a b p} →
       (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
-      (⊢A' : Γ , A ⊢ weakenTermFrom zero A ∶ 𝒰 ℓ) →
-      (⊢p : Γ , A , weakenTermFrom zero A ⊢ =F (weakenTermFrom zero (weakenTermFrom zero A))
+      (⊢A' : Γ , A ⊢ weakenExpressionFrom zero A ∶ 𝒰 ℓ) →
+      (⊢p : Γ , A , weakenExpressionFrom zero A ⊢ =f (weakenExpressionFrom zero (weakenExpressionFrom zero A))
                                 ((𝓋 (suc zero)))
                                 ((𝓋 zero))
                            ∶ 𝒰 ℓ) →
-      (⊢C : Γ , A , weakenTermFrom zero A , (weakenTermFrom zero (weakenTermFrom zero p)) ⊢ X ∶ 𝒰 ℓ) →
-      Γ , A ⊢ c' ∶ instantiateTerm (suc zero) (𝓋 zero)
-                       (instantiateTerm (suc zero) (𝓋 zero)
-                                      (instantiateTerm (suc zero) (=I (𝓋 zero))
-                                        (weakenTermFrom zero X))) →
+      (⊢C : Γ , A , weakenExpressionFrom zero A , (weakenExpressionFrom zero (weakenExpressionFrom zero p)) ⊢ X ∶ 𝒰 ℓ) →
+      Γ , A ⊢ c' ∶ instantiateExpressionAt (suc zero) (𝓋 zero)
+                       (instantiateExpressionAt (suc zero) (𝓋 zero)
+                                      (instantiateExpressionAt (suc zero) (=i (𝓋 zero))
+                                        (weakenExpressionFrom zero X))) →
       Γ ⊢ a ∶ A →
       Γ ⊢ b ∶ A →
-      Γ ⊢ p ∶ =F A a b →
-      instantiateTerm zero a
-        (instantiateTerm zero (weakenTermFrom zero b)
-          (instantiateTerm zero
-            (weakenTermFrom zero
-              (weakenTermFrom zero p)) X)) ≡ X[a,b,p] →
-      Γ ⊢ =E X c' a b p ∶ X[a,b,p]
+      Γ ⊢ p ∶ =f A a b →
+      instantiateExpressionAt zero a
+        (instantiateExpressionAt zero (weakenExpressionFrom zero b)
+          (instantiateExpressionAt zero
+            (weakenExpressionFrom zero
+              (weakenExpressionFrom zero p)) X)) ≡ X[a,b,p] →
+      Γ ⊢ =e X c' a b p ∶ X[a,b,p]
 ```
 
 The HoTT book has no name for this.
@@ -235,6 +241,7 @@ I was surprised to find this missing from the HoTT book. I do not see how to mak
 ```
 
 ```agda
+infix 4 _⊢_≝_∶_
 data _⊢_≝_∶_ {N} (Γ : Context N) where
   ≡-reflexivity :
     ∀ {a A} →
@@ -256,8 +263,8 @@ data _⊢_≝_∶_ {N} (Γ : Context N) where
     Γ ⊢ a ≝ b ∶ B
   Π-uniq :
     ∀ f A B →
-    Γ ⊢ f ∶ ΠF A B →
-    Γ ⊢ f ≝ ΠI (ΠE (weakenTermFrom zero f) (𝓋 zero)) ∶ ΠF A B
+    Γ ⊢ f ∶ Πf A B →
+    Γ ⊢ f ≝ Πi A (Πe (weakenExpressionFrom zero f) (𝓋 zero)) ∶ Πf A B
 ```
 
 The HoTT book takes `Π-intro-eq` to require `Γ , x:A ⊢ B : 𝒰ᵢ`. However, I conjecture that such a judgement would already have been made in order to conclude another of its requirements, `Γ , x:A ⊢ b ≡ b' : B`, so I leave it out.
@@ -269,26 +276,26 @@ On the other hand, the requirement `Γ ⊢ A : 𝒰ᵢ` is needed as part of the
     ∀ ℓ {A B b b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
     Γ , A ⊢ b ≝ b' ∶ B →
-    Γ ⊢ ΠI b ≝ ΠI b' ∶ ΠF A B
+    Γ ⊢ Πi A b ≝ Πi A b' ∶ Πf A B
   ΣI :
     ∀ {ℓ A B a a' b b'} →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
     Γ , A ⊢ B ∶ 𝒰 ℓ →
     Γ ⊢ a ≝ a' ∶ A →
-    Γ ⊢ b ≝ b' ∶ instantiateTerm zero a B →
-    Γ ⊢ ΣI a b ≝ ΣI a' b' ∶ ΣF A B
+    Γ ⊢ b ≝ b' ∶ instantiateExpressionAt zero a B →
+    Γ ⊢ Σi a b ≝ Σi a' b' ∶ Σf A B
   +IL :
     ∀ {A a a' B} →
     Γ ⊢ a ≝ a' ∶ A →
-    Γ ⊢ +IL a ≝ +IL a' ∶ +F A B
+    Γ ⊢ +iˡ a ≝ +iˡ a' ∶ +f A B
   +IR :
     ∀ {A B b b'} →
     Γ ⊢ b ≝ b' ∶ B →
-    Γ ⊢ +IR b ≝ +IR b' ∶ +F A B
+    Γ ⊢ +iʳ b ≝ +iʳ b' ∶ +f A B
   ℕIS :
     ∀ {n n'} →
-    Γ ⊢ n ≝ n' ∶ ℕF →
-    Γ ⊢ ℕIS n ≝ ℕIS n' ∶ ℕF
+    Γ ⊢ n ≝ n' ∶ ℕf →
+    Γ ⊢ ℕiˢ n ≝ ℕiˢ n' ∶ ℕf
 ```
 
 This definitional equality is not obvious from Appendix 2.
@@ -296,7 +303,7 @@ This definitional equality is not obvious from Appendix 2.
 ```agda
   =I : ∀ {A a a'} →
     Γ ⊢ a ≝ a' ∶ A →
-    Γ ⊢ =I a ≝ =I a' ∶ =F A a a'
+    Γ ⊢ =i a ≝ =i a' ∶ =f A a a'
 ```
 
 Computation rules:
@@ -306,55 +313,55 @@ Computation rules:
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
     Γ , A ⊢ b ∶ B →
     Γ ⊢ a ∶ A →
-    Γ ⊢ ΠE (ΠI b) a ≝ instantiateTerm zero a b ∶ instantiateTerm zero a B
+    Γ ⊢ Πe (Πi A b) a ≝ instantiateExpressionAt zero a b ∶ instantiateExpressionAt zero a B
   ΣE : ∀ {ℓ A B C g a b} →
-    (⊢ΠAB : Γ ⊢ ΠF A B ∶ 𝒰 ℓ) →
-    Γ , ΠF A B ⊢ C ∶ 𝒰 ℓ →
+    (⊢ΠAB : Γ ⊢ Πf A B ∶ 𝒰 ℓ) →
+    Γ , Πf A B ⊢ C ∶ 𝒰 ℓ →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
     (⊢B : Γ , A ⊢ B ∶ 𝒰 ℓ) →
-    Γ , A , B ⊢ g ∶ instantiateTerm (suc (suc zero)) (ΣI (𝓋 (suc zero)) (𝓋 (suc zero))) (weakenTermFrom zero (weakenTermFrom zero C)) →
+    Γ , A , B ⊢ g ∶ instantiateExpressionAt (suc (suc zero)) (Σi (𝓋 (suc zero)) (𝓋 (suc zero))) (weakenExpressionFrom zero (weakenExpressionFrom zero C)) →
     Γ ⊢ a ∶ A →
-    Γ ⊢ b ∶ instantiateTerm zero a B →
-    Γ ⊢ ΣE C g (ΣI a b) ≝ instantiateTerm zero a (instantiateTerm zero (weakenTermFrom zero b) g) ∶ instantiateTerm zero (ΣI a b) C
+    Γ ⊢ b ∶ instantiateExpressionAt zero a B →
+    Γ ⊢ Σe C g (Σi a b) ≝ instantiateExpressionAt zero a (instantiateExpressionAt zero (weakenExpressionFrom zero b) g) ∶ instantiateExpressionAt zero (Σi a b) C
   +LE : ∀ {ℓ C A B c' d a} →
-    (⊢+FAB : Γ ⊢ +F A B ∶ 𝒰 ℓ) →
-    Γ , +F A B ⊢ C ∶ 𝒰 ℓ →
+    (⊢+FAB : Γ ⊢ +f A B ∶ 𝒰 ℓ) →
+    Γ , +f A B ⊢ C ∶ 𝒰 ℓ →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
-    Γ , A ⊢ c' ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) →
+    Γ , A ⊢ c' ∶ instantiateExpressionAt (suc zero) (+iˡ (𝓋 zero)) (weakenExpressionFrom zero C) →
     (⊢B : Γ ⊢ B ∶ 𝒰 ℓ) →
-    Γ , B ⊢ d ∶ instantiateTerm (suc zero) (+IL (𝓋 zero)) (weakenTermFrom zero C) →
+    Γ , B ⊢ d ∶ instantiateExpressionAt (suc zero) (+iˡ (𝓋 zero)) (weakenExpressionFrom zero C) →
     Γ ⊢ a ∶ A →
-    Γ ⊢ +E C c' d (+IL a) ≝ instantiateTerm zero a c' ∶ instantiateTerm zero (+IL a) C
+    Γ ⊢ +e C c' d (+iˡ a) ≝ instantiateExpressionAt zero a c' ∶ instantiateExpressionAt zero (+iˡ a) C
 ```
 
 Instead of something like the above, could simpler computation rules like these work?
 
 ```agda
-  +RE : ∀ {b B C C[+IRb] c' d d[b]} →
+  +RE : ∀ {b B C C[+iʳb] c' d d[b]} →
     Γ ⊢ b ∶ B →
-    instantiateTerm zero (+IR b) C ≡ C[+IRb] →
-    instantiateTerm zero b d ≡ d[b] →
-    Γ ⊢ +E C c' d (+IR b) ≝ d[b] ∶ C[+IRb]
+    instantiateExpressionAt zero (+iʳ b) C ≡ C[+iʳb] →
+    instantiateExpressionAt zero b d ≡ d[b] →
+    Γ ⊢ +e C c' d (+iʳ b) ≝ d[b] ∶ C[+iʳb]
   𝟙E : ∀ {C c' C[𝟙I]} →
-    instantiateTerm zero 𝟙I C ≡ C[𝟙I] →
-    Γ ⊢ 𝟙E C c' 𝟙I ≝ c' ∶ C[𝟙I]
+    instantiateExpressionAt zero 𝟙i C ≡ C[𝟙I] →
+    Γ ⊢ 𝟙e C c' 𝟙i ≝ c' ∶ C[𝟙I]
   ℕEZ : ∀ {n C c₀ cₛ C[ℕIZ]} →
-    Γ ⊢ n ∶ ℕF →
-    instantiateTerm zero ℕIZ C ≡ C[ℕIZ] →
-    Γ ⊢ ℕE C c₀ cₛ ℕIZ ≝ c₀ ∶ C[ℕIZ]
+    Γ ⊢ n ∶ ℕf →
+    instantiateExpressionAt zero ℕiᶻ C ≡ C[ℕIZ] →
+    Γ ⊢ ℕe C c₀ cₛ ℕiᶻ ≝ c₀ ∶ C[ℕIZ]
   ℕES : ∀ {n C c₀ cₛ cₛ[n,ℕEn] C[ℕISn]} →
-    Γ ⊢ n ∶ ℕF →
-    instantiateTerm zero n ((instantiateTerm zero (weakenTermFrom zero (Term.ℕE C c₀ cₛ n)) cₛ)) ≡ cₛ[n,ℕEn] →
-    instantiateTerm zero (ℕIS n) C ≡ C[ℕISn] →
-    Γ ⊢ ℕE C c₀ cₛ (ℕIS n) ≝ cₛ[n,ℕEn] ∶ C[ℕISn]
+    Γ ⊢ n ∶ ℕf →
+    instantiateExpressionAt zero n ((instantiateExpressionAt zero (weakenExpressionFrom zero (ℕe C c₀ cₛ n)) cₛ)) ≡ cₛ[n,ℕEn] →
+    instantiateExpressionAt zero (ℕiˢ n) C ≡ C[ℕISn] →
+    Γ ⊢ ℕe C c₀ cₛ (ℕiˢ n) ≝ cₛ[n,ℕEn] ∶ C[ℕISn]
   =E : ∀ {a c' c[a] C C[a,a,=Ia]} →
-    instantiateTerm zero a c' ≡ c[a] →
-    instantiateTerm zero a
-      (instantiateTerm zero
-        (weakenTermFrom zero a)
-        ((instantiateTerm zero
-          (weakenTermFrom zero
-            (weakenTermFrom zero
-              (=I a))) C))) ≡ C[a,a,=Ia] →
-    Γ ⊢ =E C c' a a (=I a) ≝ c[a] ∶ C[a,a,=Ia]
+    instantiateExpressionAt zero a c' ≡ c[a] →
+    instantiateExpressionAt zero a
+      (instantiateExpressionAt zero
+        (weakenExpressionFrom zero a)
+        ((instantiateExpressionAt zero
+          (weakenExpressionFrom zero
+            (weakenExpressionFrom zero
+              (=i a))) C))) ≡ C[a,a,=Ia] →
+    Γ ⊢ =e C c' a a (=i a) ≝ c[a] ∶ C[a,a,=Ia]
 ```
