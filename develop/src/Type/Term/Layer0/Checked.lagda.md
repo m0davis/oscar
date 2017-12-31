@@ -17,61 +17,12 @@ transportFin n .n {refl} = refl
 ```agda
 open import Type.Universe
 open import Type.Term.Layer-2.DeBruijn
+open import Type.Term.Layer-1 hiding (module K)
 ```
 
 ```agda
 pattern ,_ s = _ ,, s
-
-alphabet : Vec (∃ Vec Nat) _
-alphabet =
-
-  {- ΠF  -} , (0 ∷ 1 ∷ [])             ∷
-  {- ΠI  -} , (0 ∷ 1 ∷ [])             ∷
-  {- ΠE  -} , (0 ∷ 0 ∷ [])             ∷
-
-  {- ΣF  -} , (0 ∷ 1 ∷ [])             ∷
-  {- ΣI  -} , (0 ∷ 0 ∷ [])             ∷
-  {- ΣE  -} , (1 ∷ 2 ∷ 0 ∷ [])         ∷
-
-  {- +F  -} , (0 ∷ 0 ∷ [])             ∷
-  {- +Iˡ -} , (0 ∷ [])                 ∷
-  {- +Iʳ -} , (0 ∷ [])                 ∷
-  {- +E  -} , (1 ∷ 1 ∷ 1 ∷ 0 ∷ [])     ∷
-
-  {- 𝟘F  -} , []                       ∷
-  {- 𝟘E  -} , (1 ∷ 0 ∷ [])             ∷
-
-  {- 𝟙F  -} , []                       ∷
-  {- 𝟙I  -} , []                       ∷
-  {- 𝟙E  -} , (1 ∷ 0 ∷ 0 ∷ [])         ∷
-
-  {- ℕF  -} , []                       ∷
-  {- ℕIᶻ -} , []                       ∷
-  {- ℕIˢ -} , (0 ∷ [])                 ∷
-  {- ℕE  -} , (1 ∷ 0 ∷ 2 ∷ 0 ∷ [])     ∷
-
-  {- =F  -} , (0 ∷ 0 ∷ 0 ∷ [])         ∷
-  {- =I  -} , (0 ∷ [])                 ∷
-  {- =E  -} , (3 ∷ 1 ∷ 0 ∷ 0 ∷ 0 ∷ []) ∷
-
-  []
-
-open import Type.Term.Layer-1.Kernel alphabet
 import Type.Term.Layer-1.Kernel as K
-
-pattern #0 = zero
-pattern #1 = suc #0
-pattern #2 = suc #1
-pattern #3 = suc #2
-pattern #4 = suc #3
-pattern #5 = suc #4
-
-pattern Πf A B   = K.𝓉 #0 (A ∷ B ∷ [])
-pattern Πi A b   = K.𝓉 #1 (A ∷ b ∷ [])
-pattern Πe f x   = K.𝓉 #2 (f ∷ x ∷ [])
-pattern Σf A B   = K.𝓉 #3 (A ∷ B ∷ [])
-pattern Σi a b   = K.𝓉 #4 (a ∷ b ∷ [])
-pattern Σe C g p = K.𝓉 #5 (C ∷ g ∷ p ∷ [])
 ```
 
 ```agda
@@ -298,21 +249,21 @@ Once I get to actually trying to use this constructor (e.g. in `ΣE` below), the
 
 slimy'→unslimy' : ∀ {N} {Γ : 0 ≾ N} {ℓ} {A : Expression N}
                     {B C : Expression (suc N)}
-                    (Γ,ΣfAB⊢C∶𝒰 : Γ , 𝓉 #3 (A ∷ B ∷ []) ⊢ C ∶ 𝒰 ℓ)
+                    (Γ,ΣfAB⊢C∶𝒰 : Γ , 𝓉 #ΣF (A ∷ B ∷ []) ⊢ C ∶ 𝒰 ℓ)
                     ℓΣ
                     (eq1 : suc (suc N) ≡ N - N + suc (suc N))
                     (eq2 : suc (N - N + suc (suc N)) ≡ suc N - N + suc (suc N))
                     (w : Expression (suc N) → Expression (suc N - N + suc (suc N))) →
                   Γ <<<
-                  (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A))
+                  (ε , A , B , weakenExpressionFrom 0 (weakenExpressionFrom 0 A))
                   <><
                   transport (_≿ suc (suc (suc N))) eq2
                   (shift≿ {N = N - N + suc (suc N)} (transport (_≿ suc (suc N)) eq1 []))
                   ⊢ w B ∶
                   w
                   (𝒰 ℓΣ) →
-                  Γ , A , B , weakenExpressionFrom #1 (weakenExpressionFrom #0 A) ⊢
-                  weakenExpressionFrom #2 (weakenExpressionFrom #1 B) ∶ 𝒰 ℓΣ
+                  Γ , A , B , weakenExpressionFrom 1 (weakenExpressionFrom 0 A) ⊢
+                  weakenExpressionFrom 2 (weakenExpressionFrom 1 B) ∶ 𝒰 ℓΣ
 slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 ℓΣ eq1 eq2 w x with transport (_≿ suc (suc N)) eq1 []
 … | t1 with transport (_≿ suc (suc N)) (sym eq1) t1
 … | t1' = {!!}
@@ -343,7 +294,7 @@ slimy'→unslimy' {N} Γ,ΣfAB⊢C∶𝒰 ℓΣ eq1 eq2 w x with transport (_≿
   eq : ∀ Z e → transport (_≿ Z) e [] ≡ []
   eq Z = λ {refl → refl}
   lamslimy' : (e1 : suc (suc N) ≡ suc (suc N)) (e2 : suc (suc (suc N)) ≡ suc (suc (suc N))) → 0 ≾ suc (suc (suc N))
-  lamslimy' e1 e2 = Γ <<< (ε , A , B , weakenExpressionFrom #0 (weakenExpressionFrom #0 A)) <>< transport (_≿ suc (suc (suc N))) e2 (shift≿ (transport (_≿ suc (suc N)) e1 []))
+  lamslimy' e1 e2 = Γ <<< (ε , A , B , weakenExpressionFrom 0 (weakenExpressionFrom 0 A)) <>< transport (_≿ suc (suc (suc N))) e2 (shift≿ (transport (_≿ suc (suc N)) e1 []))
 
 data _⊢_≝_∶_ {N} (Γ : 0 ≾ N) where
 
@@ -372,7 +323,7 @@ weaken⊢ByFrom' = {!!}
 
 split/ctx = {!!}
 
-var (Γ , δ) #0 = , , weaken⊢ δ δ
+var (Γ , δ) zero = , , weaken⊢ δ δ
 var (Γ , δ) (suc x) = , , weaken⊢ δ (var Γ x .snd .snd)
 
 var₁⋆ {Δ = ε} = var
