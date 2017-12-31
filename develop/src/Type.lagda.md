@@ -11,6 +11,32 @@ The aim here is to implement a generalised theory of dependent types. As a strat
 open import Type.Prelude
 ```
 
+Using DeBruijn-indexed variables in terms makes it easy to specify α-equivalence (being just the same as propositional equivalence) but hard to specify substitutions. Using named variables, on the other hand, makes it easy to specify substitutions (one simply provides the variable names) but hard to specify α-equivalence.
+
+## DeBruijn-indexed variables
+
+```agda
+import Type.Term.Layer-2.DeBruijn
+```
+
+## Named variables
+
+```agda
+import Type.Term.Layer+2.Variable
+```
+
+## DeBruijn-indexed terms and contexts:
+
+```agda
+import Type.Term.Layer-1.Kernel
+```
+
+## Named terms and contexts:
+
+```agda
+{- TODO -}
+```
+
 My first attempt at implementing a type theory was to represent that from the HoTT book, Appendix 2. I added a notion of complexity on the idea that it would help in proving that type inference (finding a term that witnesses a given type) is semi-decidable (that eventually, in some sense, any type capable of being witnessed will in fact be witnessed). I ran into trouble with cumbersome substitutions of DeBruijn-indexed variables. An idea to streamline the process was to use a mutually-defined weakening function for terms.
 
 ```agda
