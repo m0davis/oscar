@@ -23,6 +23,7 @@ open import Type.Term.Layer-1 hiding (module K)
 ```agda
 pattern ,_ s = _ ,, s
 import Type.Term.Layer-1.Kernel as K
+open import Type.Term.Layer-1.Kernel.TypeChecked alphabet as KTC
 ```
 
 ```agda
@@ -331,7 +332,7 @@ var₁⋆ {Δ = Δ , δ} (Γ,Δ/ctx , _) = var₁⋆ {Δ = Δ} Γ,Δ/ctx
 
 var₁ {Δ = Δ} Γ,Δ/ctx = var (split/ctx {Δ = Δ} Γ,Δ/ctx)
 
-syntactic .K.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
+syntactic .KTC.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
   wfctx₁' : ∀ {N} {Γ : 0 ≾ N} {a A}
           → Γ ⊢ a ∶ A
           → Γ ctx
@@ -344,7 +345,7 @@ syntactic .K.Typechecked.Syntactic.wfctx₁ = wfctx₁' where
   wfctx₁' (ΣF x x₁) = wfctx₁ x
   wfctx₁' (ΣI x x₁ x₂) = wfctx₁ x₁
   wfctx₁' (ΣE x x₁ x₂) = wfctx₁ x₂
-syntactic .K.Typechecked.Syntactic.well-typed₁ = {!!}
-syntactic .K.Typechecked.Syntactic.weaken = {!!}
-syntactic .K.Typechecked.Syntactic.substitute = {!!}
+syntactic .KTC.Typechecked.Syntactic.well-typed₁ = {!!}
+syntactic .KTC.Typechecked.Syntactic.weaken = {!!}
+syntactic .KTC.Typechecked.Syntactic.substitute = {!!}
 ```
