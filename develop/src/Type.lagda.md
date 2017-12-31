@@ -13,22 +13,24 @@ open import Type.Prelude
 
 Using DeBruijn-indexed variables in terms makes it easy to specify α-equivalence (being just the same as propositional equivalence) but hard to specify substitutions. Using named variables, on the other hand, makes it easy to specify substitutions (one simply provides the variable names) but hard to specify α-equivalence.
 
+# Deprecated Section
+
 ## DeBruijn-indexed variables
 
 ```agda
-import Type.Term.Layer-2.DeBruijn
+import Type.deprecated.Term.Layer-2.DeBruijn
 ```
 
 ## Named variables
 
 ```agda
-import Type.Term.Layer+2.Variable
+import Type.deprecated.Term.Layer+2.Variable
 ```
 
 ## DeBruijn-indexed terms and contexts:
 
 ```agda
-import Type.Term.Layer-1.Kernel
+import Type.deprecated.Term.Layer-1.Kernel
 ```
 
 ## Named terms and contexts:
@@ -40,8 +42,8 @@ import Type.Term.Layer-1.Kernel
 My first attempt at implementing a type theory was to represent that from the HoTT book, Appendix 2. I added a notion of complexity on the idea that it would help in proving that type inference (finding a term that witnesses a given type) is semi-decidable (that eventually, in some sense, any type capable of being witnessed will in fact be witnessed). I ran into trouble with cumbersome substitutions of DeBruijn-indexed variables. An idea to streamline the process was to use a mutually-defined weakening function for terms.
 
 ```agda
-import Type.Term.Layer0.Mutual
-import Type.Term.Layer0.Mutual.Sandbox
+import Type.deprecated.Term.Layer0.Mutual
+import Type.deprecated.Term.Layer0.Mutual.Sandbox
 ```
 * complexity
 * scope-checked and well-typed context defined together
@@ -50,19 +52,19 @@ import Type.Term.Layer0.Mutual.Sandbox
 The following separates the above into various features:
 
 ```agda
-import Type.Term.Layer0.Mutual1
+import Type.deprecated.Term.Layer0.Mutual1
 ```
 * complexity
 * scope-checked and well-typed context defined together
 
 ```agda
-import Type.Term.Layer0.Mutual2
+import Type.deprecated.Term.Layer0.Mutual2
 ```
 * no complexity
 * scope-checked and well-typed context defined together
 
 ```agda
-import Type.Term.Layer0.Mutual3
+import Type.deprecated.Term.Layer0.Mutual3
 ```
 * no complexity
 * scope-checked and well-typed context defined separately
@@ -70,18 +72,18 @@ import Type.Term.Layer0.Mutual3
 Then another idea was to come-up with a method for referring to variables by their names.
 
 ```agda
-import Type.Term.Layer0.oldname -- this is some previous development of `Named`?
+import Type.deprecated.Term.Layer0.oldname -- this is some previous development of `Named`?
 ```
 
 ```agda
-import Type.Term.Layer0.Named
-import Type.Term.Layer0.Named.Sandbox
+import Type.deprecated.Term.Layer0.Named
+import Type.deprecated.Term.Layer0.Named.Sandbox
 ```
 
 While trying to define a type-checked notion of substitution of a variable defined in one context for a term in a different (but, somehow, compatible) context, I discovered that representing type membership in a linear context would require representing the dependency structure. This is unlike in STLC, where a type can be identified by its encoding. In a dependent type, the encoding of the same type may be different, depending on the postitions of the types depended upon in the context. This reminded me of the tree-like structure of an argument from several premises to a conclusion.
 
 ```agda
-import Type.Argument
+import Type.deprecated.Argument
 ```
 
 `Argument` was just getting started when I went back to `Named` with the idea I might have a fix. While working on that, I thought that it would be helpful to prove that one can apply term instantiation and weakening in different orders and produce equal results. However, when I tried to prove this, I found it quite cumbersome and was reminded of the McBride's advisement against "green slime" in "How to Keep Your Neighbours in Order". I realised then that I had a more fundamental problem.
@@ -141,13 +143,13 @@ which still has green slime, but least is relegated to a single constructor.
 I try this out in:
 
 ```agda
-import Type.Term.Layer0.Slimdex
+import Type.deprecated.Term.Layer0.Slimdex
 ```
 
 I also had another idea, thinking maybe I could just build much more information into the indices of the type. I tested it out here:
 
 ```agda
-import Type.Term.Layer0.Slimeless
+import Type.deprecated.Term.Layer0.Slimeless
 ```
 
 Yet another idea is to represent renaming and substitution with datatypes. How to do this?
@@ -222,7 +224,7 @@ weakened[ τ ]≈ τ' at[ from ] = weakenTermFrom from 𝒙 ≡ 𝒙'
 
 Idea #4
 
-Waay back at `Type.Term.Layer0.Mutual`, I had something like this (plus some complexity stuff)
+Waay back at `Type.deprecated.Term.Layer0.Mutual`, I had something like this (plus some complexity stuff)
 
     ΣF : ∀ {ℓ 𝑨 𝑩}
        → (A : Γ ⊢ 𝑨 ∶ 𝒰 ℓ)
@@ -264,22 +266,22 @@ Now, I'd like to build-up the defining argument for `g` like so:
 
 Idea #5
 
-Carry out what I had barely started in `Type.Term.Layer0.Mutual` and implement proofs of Subst₁ and Wkg₁ (and also their definitional-equality counterparts). But the trick will be in even stating the theorems because the context, as I have so far defined it, is itself a proof that the context consists of (type-checked) universe inhabitants. Perhaps an easier way to go will be to take the context over which the typing judgement applies to be a (snoc?) list of `Term _`, then have a separate judgement that validates the context for those rules (such as 𝒰-intro) that call for such a thing. This will more closely represent what's formalised in Appendix A.2 of the HoTT book.
+Carry out what I had barely started in `Type.deprecated.Term.Layer0.Mutual` and implement proofs of Subst₁ and Wkg₁ (and also their definitional-equality counterparts). But the trick will be in even stating the theorems because the context, as I have so far defined it, is itself a proof that the context consists of (type-checked) universe inhabitants. Perhaps an easier way to go will be to take the context over which the typing judgement applies to be a (snoc?) list of `Term _`, then have a separate judgement that validates the context for those rules (such as 𝒰-intro) that call for such a thing. This will more closely represent what's formalised in Appendix A.2 of the HoTT book.
 
 ```agda
-import Type.Term.Layer0.HoTTer
+import Type.deprecated.Term.Layer0.HoTTer
 ```
 
 There, finding that I needed to build-up from syntactically-valid forms to well-scoped expressions (and not the other way around), I proceed to:
 
 ```agda
-import Type.Term.Layer0.Building
+import Type.deprecated.Term.Layer0.Building
 ```
 
 The proof for the (admissable) weakening rule for well-typed terms confused me. I suspect I could clarify the situation if I removed the green slime. The lazy way to do this is simply to put the green stuff in outputs in argument positions using propositional equality. Which is what I try here:
 
 ```agda
-import Type.Term.Layer0.Guilding
+import Type.deprecated.Term.Layer0.Guilding
 ```
 
 All was going well it seemed until Agda gave me the sugar-me-do, allowing me to fill a hole but then complaining about it afterwards. As this is not type-theory related, I sideline the investigation into how this can happen separately.
@@ -297,8 +299,8 @@ import BadHoTTPiUniq
 ```
 
 ```
-import Type.Term.Layer0.Outing
-import Type.Term.Layer0.Outing.Sandbox
+import Type.deprecated.Term.Layer0.Outing
+import Type.deprecated.Term.Layer0.Outing.Sandbox
 ```
 
 The problem does not have an easy solution. In order to make the proof of ≝-project₂ go through for the ΠU case, the obvious (and, so far, afaics, the only) way to do it is to successively apply the Π-elim rule and then the Π-intro rule to f. To avoid name-clashes, one simply requires of ΠU that the binding variable in the lambda not be free in `f`.
@@ -309,9 +311,9 @@ This unwanted restriction on definitional equality is reminiscent of another pro
 
 ```agda
 private
-  open import Type.Term.Layer+1.Formula
-  open import Type.Term.Layer+1.Context
-  open import Type.Term.Layer0.Outing
+  open import Type.deprecated.Term.Layer+1.Formula
+  open import Type.deprecated.Term.Layer+1.Context
+  open import Type.deprecated.Term.Layer0.Outing
   these-are-α-equivalent : ε ⊢ ΠF (𝒰 0) (0 ↦₁ 𝒰 0) ≝ ΠF (𝒰 0) (1 ↦₁ 𝒰 0) ∶ 𝒰 1
   these-are-α-equivalent = {!!}
 ```
@@ -366,7 +368,7 @@ My idea is to have a parallel set of judgements, one involving DeBruijn-indexed 
 An indexed representation has many named variants, but a named representation has only one indexed representation (at least, for a given ordering of the context). Therefore, we can define a linked representation that includes the indexed representation and a particular named variant, along with a proof that the two correspond. Two linked representatives are α-equivalent iff their indexed parts are propositionally equal. But for that to make sense, the linked representation is itself indexed on the (name-laden) context that gives rise to the particular DeBruijn-indexed representation.
 
 ```agda
-import Type.Term.Layer0.Linked
+import Type.deprecated.Term.Layer0.Linked
 ```
 
 However, it feels cumbersome to me to continue this development. It's about time for a do-over.
@@ -374,7 +376,7 @@ However, it feels cumbersome to me to continue this development. It's about time
 I would like to start with a minimal type theory, including only the Π type and see if I can obtain the requisite admissable rules. From there, the plan is to metaprogram the same, and then add in the other types.
 
 ```agda
-import Type.Term.Layer0.Π-only
+import Type.deprecated.Term.Layer0.Π-only
 ```
 
 Extraordinarily enough, that development did not go at all as planned. I managed almost immeditaely a small bit of metaprogramming that standardised the syntax of the various `Formula` (scope-checked term) constructors. While coding for well-typed terms I discovered (again) that the real challenge comes in the Σ type (not so much in Π), so I added in that type. I then stumbled into coding for type-checked weakenings and substitutions. The trick for my thinking was to create a function that (1) performed the low-level weakening or substitution (2) only in the case that certain typing judgements held (3) with a resultant type only indicating that it is in fact a `Formula` (4) and separating into another function any theorems insisting upon the correctness of the transformation.
@@ -384,18 +386,18 @@ Surely there is a larger lesson here, but for now, I proceed towards a cleaner a
 Here, I made two attempts at defining a scope-checked term, both equivalent but different.
 
 ```agda
-import Type.Term.Layer-1.Formulaturez
-import Type.Term.Layer-1.Formulaturenz
+import Type.deprecated.Term.Layer-1.Formulaturez
+import Type.deprecated.Term.Layer-1.Formulaturenz
 ```
 
 I was unsure which was better to use, so I found the kernel of sameness between the two!
 
 ```agda
-import Type.Term.Layer-1.Kernel
+import Type.deprecated.Term.Layer-1.Kernel
 ```
 
 ...and proceed to the development of the theory
 
 ```agda
-import Type.Term.Layer0.Checked
+import Type.deprecated.Term.Layer0.Checked
 ```
