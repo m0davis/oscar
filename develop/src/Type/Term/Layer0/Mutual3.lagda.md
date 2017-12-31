@@ -88,16 +88,16 @@ data _⊢_∶_ {N} (Γ : Context N) where
     Γ ⊢ a ∶ A →
     Γ ⊢ b ∶ instantiateExpressionAt zero a B →
     Γ ⊢ Σi a b ∶ Σf A B
-  ΣE : ∀ ℓ A B {C[p] C g p} →
-      Γ ⊢ A ∶ 𝒰 ℓ →
-      Γ , A ⊢ B ∶ 𝒰 ℓ →
-      Γ , Σf A B ⊢ C ∶ 𝒰 ℓ →
-      Γ , A , B ⊢ g ∶ instantiateExpressionAt (suc (suc zero))
-                                      (Σi (𝓋 (suc zero)) (𝓋 zero))
-                                      (weakenExpressionFrom zero (weakenExpressionFrom zero C)) →
-      Γ ⊢ p ∶ Σf A B →
-      C[p] ≡ instantiateExpressionAt zero p C →
-    Γ ⊢ Σe C g p ∶ C[p]
+  ΣE : ∀ ℓ A B {C[p] C g p}
+     → Γ ⊢ A ∶ 𝒰 ℓ
+     → Γ , A ⊢ B ∶ 𝒰 ℓ
+     → Γ , Σf A B ⊢ C ∶ 𝒰 ℓ
+     → Γ , A , B ⊢ g ∶ instantiateExpressionAt 2
+                                               (Σi (𝓋 1) (𝓋 0))
+                                               (weakenExpressionFrom 0 (weakenExpressionFrom 0 C))
+     → Γ ⊢ p ∶ Σf A B
+     → C[p] ≡ instantiateExpressionAt zero p C
+     → Γ ⊢ Σe C g p ∶ C[p]
   +F : ∀ {ℓ A B} →
     Γ ⊢ A ∶ 𝒰 ℓ →
     Γ ⊢ B ∶ 𝒰 ℓ →
