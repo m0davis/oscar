@@ -1,5 +1,9 @@
 
 ```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
+```agda
 module Type.Term.Layer-1 where
 
 open import Type.Prelude
@@ -10,6 +14,62 @@ open import Type.Prelude
 ```agda
 -- open import Type.Term.Layer-1.Kernel public
 import Type.Term.Layer-1.Kernel
+```
+
+
+```agda
+private
+
+  module Test where
+
+    pattern ,_ s = _ ,, s
+
+    myMeta : Vec (∃ Vec Nat) _
+    myMeta =
+      -- Π
+      , (0 ∷ 1 ∷ []) ∷
+      , (0 ∷ 1 ∷ []) ∷
+      , (0 ∷ 0 ∷ []) ∷
+      -- Σ
+      , (0 ∷ 1 ∷ []) ∷
+      , (0 ∷ 0 ∷ []) ∷
+      , (1 ∷ 2 ∷ 0 ∷ []) ∷
+      -- +
+      []
+
+    module _ where
+      open import Type.Term.Layer-1.Kernel myMeta
+
+      testExpression₁ : Expression 0
+      testExpression₁ = 𝓉 0 (𝒰 0 ∷ 𝓋 0 ∷ [])
+
+    module _ where
+      open import Type.Term.Layer-1.Kernel
+
+      -- pattern z = zero
+
+      pattern ΠF x = 𝓉 zero x
+      pattern ΠI x = 𝓉 (suc zero) x
+      pattern ΠE f x = 𝓉 (suc (suc zero)) (f ∷ x ∷ [])
+      pattern ΣF A B = 𝓉 3 (A ∷ B ∷ []) -- there's a problem with Agda assuming this 3 is a Nat (and not possibly a Fin)
+
+      testExpression₁' : Expression myMeta 0
+      testExpression₁' = ΠF (𝒰 0 ∷ 𝓋 0 ∷ [])
+
+      testExpression₂ : Expression myMeta 0
+      testExpression₂ = ΠI (𝒰 0 ∷ 𝓋 0 ∷ [])
+
+      test₃ : Expression myMeta 2
+      test₃ = ΠE (𝓋 0) (𝒰 17)
+
+      test-fail-pattern : Expression myMeta 1
+      test-fail-pattern = {!ΣF!}
+
+      test-for-weakening : Expression myMeta 2
+      test-for-weakening = ΠI ((𝓋 0) ∷ ((ΠE (𝓋 0) (𝓋 2)) ∷ []))
+
+      test-weakening-0 : Expression myMeta 3
+      test-weakening-0 = weakenExpressionFrom myMeta 0 test-for-weakening
 ```
 
 ## A particular implementation (for HoTT)
