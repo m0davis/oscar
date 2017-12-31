@@ -103,8 +103,8 @@ pattern 𝟙e C g x     = K.𝓉 #𝟙E  (C ∷ g ∷ x ∷ [])
 
 pattern ℕf           = K.𝓉 #ℕF  []
 pattern ℕiᶻ          = K.𝓉 #ℕIᶻ []
-pattern ℕIˢ n        = K.𝓉 #ℕIˢ (n ∷ [])
-pattern ℕE C cᶻ cˢ x = K.𝓉 #ℕE  (C ∷ cᶻ ∷ cˢ ∷ x ∷ [])
+pattern ℕiˢ n        = K.𝓉 #ℕIˢ (n ∷ [])
+pattern ℕe C cᶻ cˢ x = K.𝓉 #ℕE  (C ∷ cᶻ ∷ cˢ ∷ x ∷ [])
 
 pattern =f A a b     = K.𝓉 #=F (A ∷ a ∷ b ∷ [])
 pattern =i a         = K.𝓉 #=I (a ∷ [])
