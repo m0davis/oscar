@@ -60,6 +60,7 @@ _at_ : ∀ {N} (Γ : Context N) → Fin N → Expression N
 infix 4 _⊢_∶_
 data _⊢_∶_ {N} (Γ : Context N) where
   Vble :
+    Γ ctx →
     ∀ {n A} →
     Γ at n ≡ A →
     Γ ⊢ 𝓋 n ∶ A

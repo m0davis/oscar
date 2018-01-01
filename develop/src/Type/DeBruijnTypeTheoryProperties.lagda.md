@@ -44,7 +44,7 @@ open import Type.DeBruijnTypeTheory
 ≝-project₂ (≝-symmetry x₁) = {!!}
 ≝-project₂ (≝-transitivity x₁ x₂) = {!!}
 ≝-project₂ (≝-type-substitution x₁ x₂) = {!!}
-≝-project₂ (ΠU f A B x) = ΠI {!!} {!!} (ΠE (weakenExpressionFrom 0 A) (weakenExpressionFrom 1 B) {!!} (Vble refl) {!!})
+≝-project₂ (ΠU f A B x) = ΠI {!!} {!!} (ΠE (weakenExpressionFrom 0 A) (weakenExpressionFrom 1 B) {!!} (Vble {!!} refl) {!!})
 ≝-project₂ (ΠI ℓ x x₁) = {!!}
 ≝-project₂ (ΣI ⊢A x x₁ x₂) = {!!}
 ≝-project₂ (+Iˡ x₁) = {!!}
