@@ -11,17 +11,40 @@ The aim here is to implement a generalised theory of dependent types. As a strat
 open import Type.Prelude
 ```
 
+## WIP: development of type theory from Appendix 2 of HoTT
+
+```agda
+import Type.A2
+```
+
+```agda
+import Type.DeBruijnA2
+import Type.DeBruijnVariable
+import Type.DeBruijnContext
+import Type.DeBruijnExpression
+import Type.DeBruijnTypeTheory
+import Type.DeBruijnTypeTheoryProperties
+```
+
+```agda
+import Type.NamedA2
+import Type.NamedVariable
+import Type.NamedContext
+import Type.NamedExpression
+import Type.NamedTypeTheoryProperties
+```
+
 Using DeBruijn-indexed variables in terms makes it easy to specify α-equivalence (being just the same as propositional equivalence) but hard to specify substitutions. Using named variables, on the other hand, makes it easy to specify substitutions (one simply provides the variable names) but hard to specify α-equivalence.
 
-# Deprecated Section
+## Deprecated
 
-## DeBruijn-indexed variables
+### DeBruijn-indexed variables
 
 ```agda
 import Type.deprecated.Term.Layer-2.DeBruijn
 ```
 
-## Named variables
+### Named variables
 
 ```agda
 import Type.deprecated.Term.Layer+2.Variable
@@ -33,7 +56,7 @@ import Type.deprecated.Term.Layer+2.Variable
 import Type.deprecated.Term.Layer-1.Kernel
 ```
 
-## Named terms and contexts:
+### Named terms and contexts:
 
 ```agda
 {- TODO -}
