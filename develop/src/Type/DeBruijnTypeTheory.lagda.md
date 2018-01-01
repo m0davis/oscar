@@ -170,7 +170,7 @@ Here, by eliminating the requirement that N be well-formed, I fear to be treadin
     Γ ⊢ 𝟙e N n1 a ∶ N[a]
   ℕF : ∀ {ℓ} →
     Γ ⊢ ℕf ∶ 𝒰 ℓ
-  ℕIZ :
+  ℕIᶻ :
     Γ ⊢ ℕiᶻ ∶ ℕf
   ℕIˢ : ∀ {n} →
     Γ ⊢ n ∶ ℕf →
@@ -228,7 +228,7 @@ Here I am experimenting with
 The HoTT book has no name for this.
 
 ```agda
-  ≝-type-substitution :
+  ≝-subst :
     ∀ {ℓ a A B} →
     Γ ⊢ a ∶ A →
     Γ ⊢ A ≝ B ∶ 𝒰 ℓ →
@@ -251,7 +251,7 @@ data _⊢_≝_∶_ {N} (Γ : Context N) where
     Γ ⊢ a ≝ b ∶ A →
     Γ ⊢ b ≝ c' ∶ A →
     Γ ⊢ a ≝ c' ∶ A
-  ≝-type-substitution :
+  ≝-subst :
     ∀ {ℓ a b A B} →
     Γ ⊢ a ≝ b ∶ A →
     Γ ⊢ A ≝ B ∶ 𝒰 ℓ →
@@ -318,7 +318,7 @@ Computation rules:
     Γ ⊢ a ∶ A →
     Γ ⊢ b ∶ instantiateExpressionAt zero a B →
     Γ ⊢ Σe C g (Σi a b) ≝ instantiateExpressionAt zero a (instantiateExpressionAt zero (weakenExpressionFrom zero b) g) ∶ instantiateExpressionAt zero (Σi a b) C
-  +LE : ∀ {ℓ C A B c' d a} →
+  +Eˡ : ∀ {ℓ C A B c' d a} →
     (⊢+FAB : Γ ⊢ +f A B ∶ 𝒰 ℓ) →
     Γ , +f A B ⊢ C ∶ 𝒰 ℓ →
     (⊢A : Γ ⊢ A ∶ 𝒰 ℓ) →
@@ -332,7 +332,7 @@ Computation rules:
 Instead of something like the above, could simpler computation rules like these work?
 
 ```agda
-  +RE : ∀ {b B C C[+iʳb] c' d d[b]} →
+  +Eʳ : ∀ {b B C C[+iʳb] c' d d[b]} →
     Γ ⊢ b ∶ B →
     instantiateExpressionAt zero (+iʳ b) C ≡ C[+iʳb] →
     instantiateExpressionAt zero b d ≡ d[b] →
