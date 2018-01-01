@@ -235,16 +235,6 @@ The HoTT book has no name for this.
     Γ ⊢ a ∶ B
 ```
 
-I was surprised to find this missing from the HoTT book. I do not see how to make use of computational equalities without it.
-
-```agda
-  ≝-term-substitution :
-    ∀ {a b A} →
-    Γ ⊢ a ∶ A →
-    Γ ⊢ a ≝ b ∶ A →
-    Γ ⊢ b ∶ A
-```
-
 ```agda
 infix 4 _⊢_≝_∶_
 data _⊢_≝_∶_ {N} (Γ : Context N) where
