@@ -46,7 +46,7 @@ open import Type.NamedTypeTheory
 ≝-project₂ (≝-subst x₁ x₂) = {!!}
 ≝-project₂ (ΠI x₁) = ΠI (≝-project₂ x₁)
 ≝-project₂ (ΠE x₁ x₂ x₃ x₄) = {!!}
-≝-project₂ (ΠU x₂ x₃) = ΠI (ΠE {!!} (var (ctx-EXT {!!} x₃) zero refl refl) refl)
+≝-project₂ (ΠU x₂ x₃) = ΠI (ΠE {!!} (Vble (ctx-EXT {!!} x₃) zero refl refl) refl)
 ≝-project₂ (ΣI x₁ x₂ x₃) = {!!}
 ≝-project₂ (ΣE x₁ x₂ x₃ x₄ x₅ x₆) = {!!}
 ≝-project₂ (+Iˡ x x₁ x₂) = {!!}

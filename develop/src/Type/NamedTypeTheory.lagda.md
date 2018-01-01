@@ -47,13 +47,13 @@ data _ctx where
 
 ```agda
 data _⊢_∶_ (Γ : Context) where
-  var : Γ ctx
-      → (i : Fin (lengthContext Γ))
-      → ∀ {binder}
-      → indexContext Γ i ≡ binder
-      → ∀ {i γ}
-      → binder ≡ (i ,, γ)
-      → Γ ⊢ 𝓋 i ∶ γ
+  Vble : Γ ctx
+       → (i : Fin (lengthContext Γ))
+       → ∀ {binder}
+       → indexContext Γ i ≡ binder
+       → ∀ {i γ}
+       → binder ≡ (i ,, γ)
+       → Γ ⊢ 𝓋 i ∶ γ
   ≝-subst
     : ∀ {a A B ℓ}
     → Γ ⊢ a ∶ A
