@@ -356,8 +356,3 @@ Instead of something like the above, could simpler computation rules like these 
               (=i a))) C))) ≡ C[a,a,=Ia] →
     Γ ⊢ =e C c' a a (=i a) ≝ c[a] ∶ C[a,a,=Ia]
 ```
-
-```agda
-Expression' = Expression
-{-# DISPLAY Expression _ = Expression' #-}
-```
