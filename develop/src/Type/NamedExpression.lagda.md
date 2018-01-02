@@ -1,5 +1,9 @@
 
 ```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
+```agda
 open import Type.Prelude
 ```
 
@@ -71,4 +75,10 @@ x [ σ₁ , σ₂ ↤₂E v₁ , v₂ ] = x [ σ₁ ∷ σ₂ ∷ [] ↤E v₁ �
 
 _[_,_,_↤₃E_,_,_] : Expression → Expression → Expression → Expression → Variable → Variable → Variable → Expression
 x [ σ₁ , σ₂ , σ₃ ↤₃E v₁ , v₂ , v₃ ] = x [ σ₁ ∷ σ₂ ∷ σ₃ ∷ [] ↤E v₁ ∷ v₂ ∷ v₃ ∷ [] ]
+
+subId₁ : ∀ {A x} → A [ 𝓋 x ↤₁E x ] ≡ A
+subId₁ {A} {x} with A [ 𝓋 x ↤₁E x ] | graphAt (A [ 𝓋 x ↤₁E_]) x
+subId₁ {𝓋 x₁} {x} | ._ | ingraph refl = {!!}
+subId₁ {𝒰 x₁} {x} | .(𝒰 x₁) | ingraph refl = refl
+subId₁ {𝓉 t x₁} {x} | .(𝓉 t (x₁ [ 𝓋 x ∷ [] ↤A x ∷ [] ])) | ingraph refl = {!!}
 ```
