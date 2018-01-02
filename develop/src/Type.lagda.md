@@ -31,6 +31,7 @@ import Type.NamedA2
 import Type.NamedVariable
 import Type.NamedContext
 import Type.NamedExpression
+import Type.NamedTypeTheory
 import Type.NamedTypeTheoryProperties
 ```
 
