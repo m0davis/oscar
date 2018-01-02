@@ -6,7 +6,7 @@
 ```agda
 open import Type.Prelude
 
-module Type.NamedContext {# : Nat} (S : Vec (∃ Vec Nat) #) where
+module Type.NamedContext {# : Set} (S : # → ∃ Vec Nat)  where
 ```
 
 ```agda

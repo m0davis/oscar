@@ -4,7 +4,7 @@ open import Type.Prelude
 ```
 
 ```agda
-module Type.DeBruijnExpression {# : Nat} (S : Vec (∃ Vec Nat) #) where
+module Type.DeBruijnExpression {# : Set} (S : # → ∃ Vec Nat) where
 ```
 
 ```agda
@@ -17,7 +17,7 @@ data Abstractions (N : Nat) : ∀ {M} → Vec Nat M → Set
 data Expression (N : Nat) where
   𝓋 : Fin N → Expression N
   𝒰 : Universe → Expression N
-  𝓉 : (t : Fin #) → Abstractions N (snd $ indexVec S t) → Expression N
+  𝓉 : (t : #) → Abstractions N (snd $ S t) → Expression N
 data Abstractions (N : Nat) where
   [] : Abstractions N []
   _∷_ : ∀ {v} → Expression (v + N)

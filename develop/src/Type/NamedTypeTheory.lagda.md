@@ -13,8 +13,8 @@ open import Type.Universe
 open import Type.NamedVariable
 open import Type.A2
 open import Type.NamedA2
-open import Type.NamedExpression alphabet
-open import Type.NamedContext alphabet
+open import Type.NamedExpression interpretAlphabet
+open import Type.NamedContext interpretAlphabet
 ```
 
 -- I mutually-define well-formed contexts with well-typed (and?) well-scoped formulas in such contexts.

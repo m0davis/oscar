@@ -4,7 +4,7 @@ open import Type.Prelude
 ```
 
 ```agda
-module Type.DeBruijnContext {# : Nat} (S : Vec (∃ Vec Nat) #) where
+module Type.DeBruijnContext {# : Set} (S : # → ∃ Vec Nat) where
 ```
 
 ```agda

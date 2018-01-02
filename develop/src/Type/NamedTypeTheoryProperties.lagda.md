@@ -11,8 +11,8 @@ open import Type.Prelude
 open import Type.A2
 open import Type.NamedA2
 open import Type.NamedVariable
-open import Type.NamedContext alphabet
-open import Type.NamedExpression alphabet
+open import Type.NamedContext interpretAlphabet
+open import Type.NamedExpression interpretAlphabet
 open import Type.NamedTypeTheory
 ```
 

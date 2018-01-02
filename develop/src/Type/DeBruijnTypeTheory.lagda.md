@@ -14,8 +14,8 @@ open import Type.Prelude
 open import Type.A2
 open import Type.DeBruijnA2
 open import Type.DeBruijnVariable
-open import Type.DeBruijnExpression alphabet renaming (instantiateExpressionAt to instantiateExpressionAt')
-open import Type.DeBruijnContext alphabet
+open import Type.DeBruijnExpression interpretAlphabet renaming (instantiateExpressionAt to instantiateExpressionAt')
+-- open import Type.DeBruijnContext alphabet
 
 -- FIXME the order of arguments should be standardised across modules
 instantiateExpressionAt : ∀ {N} → Fin (suc N) → Expression N → Expression (suc N) → Expression N
@@ -45,7 +45,7 @@ data _⊢_≝_∶_ {N} (Γ : Context N) : Expression N → Expression N → Expr
 _⊢_ : ∀ {N} (Γ : Context N) → Expression N → Set
 Γ ⊢ A = ∃ (Γ ⊢_∶ A)
 
--- infixl 25 _,_
+infixl 25 _,_
 
 data _ctx where
   [] : [] ctx

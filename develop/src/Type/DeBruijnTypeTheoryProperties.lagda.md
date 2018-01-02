@@ -11,8 +11,8 @@ open import Type.Prelude
 open import Type.A2
 open import Type.DeBruijnA2
 open import Type.DeBruijnVariable
-open import Type.DeBruijnContext alphabet
-open import Type.DeBruijnExpression alphabet
+open import Type.DeBruijnContext interpretAlphabet
+open import Type.DeBruijnExpression interpretAlphabet
 open import Type.DeBruijnTypeTheory
 ```
 

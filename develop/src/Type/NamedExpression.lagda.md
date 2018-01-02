@@ -4,7 +4,7 @@ open import Type.Prelude
 ```
 
 ```agda
-module Type.NamedExpression {# : Nat} (S : Vec (∃ Vec Nat) #) where
+module Type.NamedExpression {# : Set} (S : # → ∃ Vec Nat) where
 ```
 
 ```agda
@@ -27,7 +27,7 @@ record BoundExpression (N : Nat) : Set where
 data Expression where
   𝓋 : Variable → Expression
   𝒰 : Universe → Expression
-  𝓉 : (t : Fin #) → Abstractions (snd $ indexVec S t) → Expression
+  𝓉 : (t : #) → Abstractions (snd $ S t) → Expression
 
 data Abstractions where
   [] : Abstractions []
