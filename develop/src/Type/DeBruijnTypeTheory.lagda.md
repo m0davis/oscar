@@ -44,9 +44,9 @@ _⊢_ : ∀ {N} (Γ : Context N) → Expression N → Set
 Γ ⊢ A = ∃ (Γ ⊢_∶ A)
 
 data _ctx where
-  [] : ε ctx
-  _,_ : ∀ {N ℓ A} →
-              {Γ : Context N} → Γ ctx → (Γ⊢A∶𝒰 : Γ ⊢ A ∶ 𝒰 ℓ) →
+  ctx-EMP : ε ctx
+  ctx-EXT : ∀ {N ℓ A} →
+              {Γ : Context N} → (Γ⊢A∶𝒰 : Γ ⊢ A ∶ 𝒰 ℓ) →
             (Γ , A) ctx
 
 _at_ : ∀ {N} (Γ : Context N) → Fin N → Expression N
