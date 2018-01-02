@@ -15,7 +15,7 @@ open import Type.A2
 open import Type.DeBruijnA2
 open import Type.DeBruijnVariable
 open import Type.DeBruijnExpression interpretAlphabet renaming (instantiateExpressionAt to instantiateExpressionAt')
--- open import Type.DeBruijnContext alphabet
+open import Type.DeBruijnContext interpretAlphabet
 
 -- FIXME the order of arguments should be standardised across modules
 instantiateExpressionAt : ∀ {N} → Fin (suc N) → Expression N → Expression (suc N) → Expression N
@@ -25,9 +25,7 @@ open import Type.Universe
 ```
 
 ```agda
-data Context : Nat → Set where
-  [] : Context zero
-  _,_ : ∀ {N} → Context N → Expression N → Context (suc N)
+Context = 0 ≾_
 ```
 
 ## type-checked terms
@@ -45,10 +43,8 @@ data _⊢_≝_∶_ {N} (Γ : Context N) : Expression N → Expression N → Expr
 _⊢_ : ∀ {N} (Γ : Context N) → Expression N → Set
 Γ ⊢ A = ∃ (Γ ⊢_∶ A)
 
-infixl 25 _,_
-
 data _ctx where
-  [] : [] ctx
+  [] : ε ctx
   _,_ : ∀ {N ℓ A} →
               {Γ : Context N} → Γ ctx → (Γ⊢A∶𝒰 : Γ ⊢ A ∶ 𝒰 ℓ) →
             (Γ , A) ctx
