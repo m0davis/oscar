@@ -1,5 +1,9 @@
 
 ```agda
+{-# OPTIONS --allow-unsolved-metas #-}
+```
+
+```agda
 open import Type.Prelude
 ```
 
