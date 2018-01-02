@@ -17,6 +17,15 @@ open import Type.DeBruijnTypeTheory
 ```
 
 ```agda
+weaken⊢ : ∀ {N} {Γ : Context N} {c C A ℓ}
+        → Γ ⊢ c ∶ C
+        → Γ ⊢ A ∶ 𝒰 ℓ
+        → Γ , A ⊢ weakenExpressionFrom zero c ∶ weakenExpressionFrom zero C
+weaken⊢ = {!!}
+
+ΠF-inj₁ : ∀ {N} {Γ : Context N} {A B p} → Γ ⊢ p ∶ Πf A B → ∃ λ ℓ → Γ ⊢ A ∶ 𝒰 ℓ
+ΠF-inj₁ = {!!}
+
 ≝-project₁ : ∀ {N} {Γ : Context N} {x y A} → Γ ⊢ x ≝ y ∶ A → Γ ⊢ x ∶ A
 ≝-project₂ : ∀ {N} {Γ : Context N} {x y A} → Γ ⊢ x ≝ y ∶ A → Γ ⊢ y ∶ A
 
@@ -44,7 +53,7 @@ open import Type.DeBruijnTypeTheory
 ≝-project₂ (≝-symmetry x₁) = {!!}
 ≝-project₂ (≝-transitivity x₁ x₂) = {!!}
 ≝-project₂ (≝-subst x₁ x₂) = {!!}
-≝-project₂ (ΠU f A B x) = ΠI {!!} {!!} (ΠE (weakenExpressionFrom 0 A) (weakenExpressionFrom 1 B) {!!} (Vble {!!} refl) {!!})
+≝-project₂ (ΠU f A B x) = ΠI _ (snd $ ΠF-inj₁ x) (ΠE (weakenExpressionFrom 0 A) (weakenExpressionFrom 1 B) (weaken⊢ x (snd $ ΠF-inj₁ x)) (Vble (ctx-EXT (snd $ ΠF-inj₁ x)) refl) (subId₁))
 ≝-project₂ (ΠI ℓ x x₁) = {!!}
 ≝-project₂ (ΣI ⊢A x x₁ x₂) = {!!}
 ≝-project₂ (+Iˡ x₁) = {!!}

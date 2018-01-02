@@ -74,3 +74,8 @@ instantiateAbstractionsAt {N} at {suc M} (_∷_ {v} y/v ys) x
   in
   instantiateExpressionAt at/v y/v x/v ∷ instantiateAbstractionsAt at ys x
 ```
+
+```agda
+subId₁ : ∀ {N} {m : Fin N} {k : Fin (suc N)} {A : Expression N} → instantiateExpressionAt (weakenFinFrom k m) (weakenExpressionFrom k A) (𝓋 m) ≡ A
+subId₁ = {!!}
+```
